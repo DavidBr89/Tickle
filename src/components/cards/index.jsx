@@ -114,12 +114,20 @@ Media.propTypes = {
 Media.defaultProps = { data: defaultProps.media, extended: false };
 
 const CardFront = ({ tags, img, description, media, children }) =>
-  <div className={cx.cardDetail} style={{ height: '100%', width: '100%' }}>
+  <div
+    className={cx.cardDetail}
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      height: '90%'
+    }}
+  >
     <PreviewTags data={tags} />
-    <div className="mt-1 mb-1" style={{ height: '40%', width: '100%' }}>
+    <div className="mt-1 mb-1">
       <img src={img} alt="Card cap" style={{ width: '100%', height: '100%' }} />
     </div>
-    <div style={{ height: '27%' }}>
+    <div>
       <fieldset className={cx.field}>
         <legend>description</legend>
         <div className={cx.textClamp}>
@@ -127,15 +135,13 @@ const CardFront = ({ tags, img, description, media, children }) =>
         </div>
       </fieldset>
     </div>
-    <div style={{ height: '10%' }}>
+    <div>
       <fieldset className={cx.field}>
         <legend>Media:</legend>
         <Media data={media} />
       </fieldset>
     </div>
-    <div style={{ display: 'flex', position: 'relative' }}>
-      {children}
-    </div>
+    {children}
   </div>;
 
 CardFront.propTypes = {
@@ -149,12 +155,12 @@ CardFront.defaultProps = defaultProps;
 const Tags = ({ data }) =>
   <div
     style={{
-      display: 'flex',
-      flexWrap: 'wrap'
+      // display: 'flex',
+      // flexWrap: 'wrap'
       // alignItems: 'flex-start',
       // alignContent: 'center'
     }}
-    className={`${cx.textTrunc} ${cx.tags}`}
+    className={cx.tags}
   >
     {data.map(t =>
       <div key={t} className={`${cx.tag} ${colorClass()}`}>
@@ -194,8 +200,8 @@ const PreviewCard = ({ title, tags, img, challenge, style, onClick }) =>
   <div
     className={cx.cardMini2}
     style={{
-      background: colorScale(challenge.type),
-      ...style
+      ...style,
+      background: colorScale(challenge.type)
     }}
     onClick={onClick}
   >
@@ -247,6 +253,7 @@ const CardFrame = ({
     style={{
       background: colorScale(challenge.type),
       overflow: 'hidden',
+      height: '100%',
       ...style
     }}
   >
@@ -263,9 +270,7 @@ const CardFrame = ({
         </button>
       </div>
     </div>
-    <div style={{ width: '100%', height: '100%' }}>
-      {children}
-    </div>
+    {children}
   </div>;
 
 CardFrame.propTypes = {
@@ -401,31 +406,31 @@ class CardBack extends Component {
         extended: prevstate.extended !== field ? field : null
       }));
 
-    const setStyle = field => {
+    const setSizeProps = field => {
       if (field === extended)
         return {
-          height: '100%',
-          gridColumn: `span ${2}`,
-          gridRow: `span ${3}`
+          colSpan: 2,
+          rowSpan: 3
         };
-      return {
-        display: extended !== null ? 'none' : null
-      };
+      return {};
     };
+    const isVisible = field => ({
+      display: extended !== null && extended !== field ? 'none' : null
+    });
 
     return (
       <div
         className={`container ${cx.cardMini2} `}
         style={{
-          background: colorScale(challenge.type),
-          height: '100%',
+          height: '90%',
           zIndex: -10
         }}
       >
         <Grid cols={2} rows={3} gap={1}>
           <fieldset
             className={cx.field}
-            style={{ ...setStyle('author') }}
+            {...setSizeProps('author')}
+            style={isVisible('author')}
             onClick={selectField('author')}
           >
             <legend>Author:</legend>
@@ -433,7 +438,9 @@ class CardBack extends Component {
           </fieldset>
           <fieldset
             className={cx.field}
-            style={{ height: '100%', width: '100%' }}
+            onClick={selectField('map')}
+            style={isVisible('map')}
+            {...setSizeProps('map')}
           >
             <legend>Map:</legend>
             <Wrapper>
@@ -449,24 +456,29 @@ class CardBack extends Component {
           </fieldset>
           <fieldset
             className={cx.field}
-            style={setStyle('cardSets')}
+            style={isVisible('cardSets')}
             onClick={selectField('cardSets')}
+            {...setSizeProps('cardSets')}
           >
             <legend>Cardsets:</legend>
             <Tags data={cardSets} />
           </fieldset>
           <fieldset
             className={cx.field}
-            style={setStyle('linkedCards')}
+            style={isVisible('linkedCards')}
             onClick={selectField('linkedCards')}
+            {...setSizeProps('linkedCards')}
           >
             <legend>Linked Cards</legend>
-            <Tags data={linkedCards} />
+            <div>
+              <Tags data={linkedCards} />
+            </div>
           </fieldset>
           <fieldset
             colSpan={2}
             className={cx.field}
-            style={{ ...setStyle('comments') }}
+            style={isVisible('comments')}
+            {...setSizeProps('comments')}
             onClick={selectField('comments')}
           >
             <legend>Comments:</legend>
@@ -508,11 +520,10 @@ CardBack.defaultProps = {
 // };
 
 const CollectButton = ({ collected, dataTarget, onClick, expPoints }) =>
-  <div className="p-1 pt-3" style={{ alignSelf: 'end', width: '100%' }}>
+  <div className="p-1 pt-3">
     <button
       className={`btn btn-secondary btn-lg btn-block}`}
-      style={{ width: '100%' }}
-      data-toggle="modal"
+      style={{ width: '100%', alignSelf: 'flex-end' }}
       data-target={dataTarget}
       onClick={onClick}
     >
@@ -573,7 +584,7 @@ class Card extends React.Component {
     const { frontView } = this.state;
     // const { onClose } = this.props;
     const sideToggler = frontView ? cx.flipAnim : null;
-    const { collectHandler } = this.props;
+    const { onCollect } = this.props;
     const flipHandler = () => {
       console.log('flipHandler');
       this.setState(oldState => ({
@@ -584,7 +595,7 @@ class Card extends React.Component {
       if (frontView) {
         <CardFrame {...this.props} flipHandler={flipHandler}>
           <CardFront {...this.props}>
-            <CollectButton onClick={collectHandler} />
+            <CollectButton onClick={onCollect} />
           </CardFront>
         </CardFrame>;
       } else {
@@ -595,11 +606,13 @@ class Card extends React.Component {
     };
 
     return (
-      <div
-        className={`${cx.flipContainer} ${sideToggler}`}
-        style={{ ...style }}
-      >
-        <div className={`${cx.flipper} ${sideToggler}`}>
+      <div className={`${cx.flipContainer} ${sideToggler}`} style={style}>
+        <div
+          className={`${cx.flipper} ${sideToggler}`}
+          style={{
+            background: colorScale(this.props.challenge.type)
+          }}
+        >
           {ToggleCard}
         </div>
       </div>
@@ -623,4 +636,4 @@ Card.defaultProps = {
 
 // CardCont.propTypes = { selected: PropTypes.bool };
 
-export { Card, CardFrontPreview, PreviewCard };
+export { Card, PreviewCard };

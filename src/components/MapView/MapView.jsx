@@ -68,17 +68,22 @@ class CardGrid extends React.Component {
           style={{ width: `${cards.length * 40}%` }}
         >
           {cards.map(d =>
-            <VisibilitySensor
-              offset={{ left: offset, right: offset }}
-              onChange={visible => visible && onSelect(d.id)}
-            >
-              {({ isVisible }) =>
-                <PreviewCard
-                  {...d}
-                  onClick={() => isVisible && onExtend(d.id)}
-                  style={{ opacity: !isVisible ? 0.56 : null, height: '100%' }}
-                />}
-            </VisibilitySensor>
+            <div>
+              <VisibilitySensor
+                offset={{ left: offset, right: offset }}
+                onChange={visible => visible && onSelect(d.id)}
+              >
+                {({ isVisible }) =>
+                  <PreviewCard
+                    {...d}
+                    onClick={() => isVisible && onExtend(d.id)}
+                    style={{
+                      opacity: !isVisible ? 0.56 : null,
+                      height: '100%'
+                    }}
+                  />}
+              </VisibilitySensor>
+            </div>
           )}
         </Grid>
       </div>
@@ -185,12 +190,13 @@ class MapView extends React.Component {
       width,
       height,
       extCardId,
+      headerPad,
 
       userMoveAction,
       changeMapViewportAction,
       selectCardAction,
       extCardAction,
-      // cardChallengeOpen,
+      cardChallengeOpen,
       toggleCardChallengeAction
     } = this.props;
 
@@ -204,62 +210,65 @@ class MapView extends React.Component {
       : null;
 
     return (
-      <div style={{ position: 'relative' }}>
-        <div
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            // pointerEvents: extCardId !== null ? 'none' : null
-          }}
-        >
-          <MapGL
-            {...mapViewport}
-            onViewportChange={changeMapViewportAction}
-            isdragging={false}
-            startdraglnglat={null}
-            onClick={userMoveAction}
-          >
-            <DivOverlay {...mapViewport} data={cards}>
-              {(c, [x, y]) =>
-                <AnimMarker
-                  key={c.id}
-                  selected={extCardId === c.id}
-                  width={extCardId === c.id ? width - 10 : 40}
-                  height={extCardId === c.id ? height - 5 : 50}
-                  x={x}
-                  y={y}
-                >
-                  <Card
-                    {...c}
-                    style={{ height: '100%' }}
-                    onClose={() => extCardAction(null)}
-                  />
-                </AnimMarker>}
-            </DivOverlay>
-            <UserOverlay {...mapViewport} location={userLocation} />
-          </MapGL>
-        </div>
+      <div>
         <Modal
-          id="exampleModal"
+          id="modal"
           content={selectedCard}
-          visible={false}
+          visible={cardChallengeOpen}
           closeHandler={() =>
             toggleCardChallengeAction({ cardChallengeOpen: false })}
         >
           <iframe
             title="emperors"
             src="http://thescalli.com/emperors/"
-            style={{ border: 'none', width: '100%', height: '500px' }}
+            style={{ border: 'none', width: '100%', height: height + 100 }}
           />
         </Modal>
+        <div style={{ position: 'relative' }}>
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0
+              // pointerEvents: extCardId !== null ? 'none' : null
+            }}
+          >
+            <MapGL
+              {...mapViewport}
+              onViewportChange={changeMapViewportAction}
+              isdragging={false}
+              startdraglnglat={null}
+              onClick={userMoveAction}
+            >
+              <DivOverlay {...mapViewport} data={cards}>
+                {(c, [x, y]) =>
+                  <AnimMarker
+                    key={c.id}
+                    selected={extCardId === c.id}
+                    width={extCardId === c.id ? width - 10 : 40}
+                    height={extCardId === c.id ? height - 5 : 50}
+                    x={x}
+                    y={y}
+                  >
+                    <Card
+                      {...c}
+                      onClose={() => extCardAction(null)}
+                      onCollect={() =>
+                        toggleCardChallengeAction({ cardChallengeOpen: true })}
+                    />
+                  </AnimMarker>}
+              </DivOverlay>
+              <UserOverlay {...mapViewport} location={userLocation} />
+            </MapGL>
+          </div>
 
-        <CardGrid
-          cards={cards}
-          onSelect={selectCardAction}
-          onExtend={extCardAction}
-          offset={width / 6}
-        />
+          <CardGrid
+            cards={cards}
+            onSelect={selectCardAction}
+            onExtend={extCardAction}
+            offset={width / 6}
+          />
+        </div>
       </div>
     );
   }

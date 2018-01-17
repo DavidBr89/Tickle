@@ -69,6 +69,7 @@ function reducer(state = {}, action) {
     }
 
     case SCREEN_RESIZE: {
+      const {headerPad} = state;
       const height = action.options.height - state.headerPad;
       const width = action.options.width;
       const mapHeight = height;
@@ -77,7 +78,8 @@ function reducer(state = {}, action) {
         defaultHeight,
         height,
         width,
-        mapHeight
+        mapHeight,
+        headerPad
       };
       return { ...state, ...newState };
     }

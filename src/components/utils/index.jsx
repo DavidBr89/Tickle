@@ -6,16 +6,26 @@ import Grid from './Grid';
 
 const Modal = ({ visible, children, closeHandler }) =>
   <div
-    className="modal"
     tabIndex="-1"
-    style={{ display: visible ? 'block' : 'none', zIndex: '4000' }}
+    style={{
+      display: visible ? 'block' : 'none',
+      zIndex: '8000',
+      position: 'absolute',
+      top: 0,
+      width: '100%',
+      height: '100%'
+    }}
   >
-    <div className="modal-dialog" role="document">
-      <div className="modal-content">
-        <div className="modal-header">
-          <h5 className="modal-title" id="exampleModalLabel">
-            Modal title
-          </h5>
+    <div role="document">
+      <div className="modal-content" style={{ position: 'relative' }}>
+        <div
+          style={{
+            position: 'absolute',
+            zIndex: '8000',
+            right: 5,
+            top: 5
+          }}
+        >
           <button
             type="button"
             className="close"
@@ -27,20 +37,7 @@ const Modal = ({ visible, children, closeHandler }) =>
           </button>
         </div>
         <div className="modal-body">
-          {/* TODO: include real game */}
           {children}
-        </div>
-        <div className="modal-footer">
-          <button
-            type="button"
-            className="btn btn-secondary"
-            data-dismiss="modal"
-          >
-            Close
-          </button>
-          <button type="button" className="btn btn-primary">
-            Save changes
-          </button>
         </div>
       </div>
     </div>
@@ -90,5 +87,4 @@ class Wrapper extends React.Component {
   }
 }
 
-
-export { Modal, Wrapper, Grid};
+export { Modal, Wrapper, Grid };
