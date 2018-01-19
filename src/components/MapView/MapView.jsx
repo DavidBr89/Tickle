@@ -1,5 +1,5 @@
 import React from 'react';
-import * as d3 from 'd3';
+// import * as d3 from 'd3';
 import VisibilitySensor from 'react-visibility-sensor';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -27,7 +27,8 @@ import Grid from 'mygrid/dist';
 import {
   DivOverlay,
   UserOverlay,
-  CardMarker,
+  SvgOverlay,
+  // CardMarker,
   AnimMarker
 } from '../utils/map-layers/DivOverlay';
 // import cardIconSrc from '../utils/map-layers/cardIcon.svg';
@@ -67,13 +68,13 @@ class CardGrid extends React.Component {
           gap={2}
           style={{ width: `${cards.length * 40}%` }}
         >
-          {cards.map(d =>
+          {cards.map(d => (
             <div>
               <VisibilitySensor
                 offset={{ left: offset, right: offset }}
                 onChange={visible => visible && onSelect(d.id)}
               >
-                {({ isVisible }) =>
+                {({ isVisible }) => (
                   <PreviewCard
                     {...d}
                     onClick={() => isVisible && onExtend(d.id)}
@@ -81,10 +82,11 @@ class CardGrid extends React.Component {
                       opacity: !isVisible ? 0.56 : null,
                       height: '100%'
                     }}
-                  />}
+                  />
+                )}
               </VisibilitySensor>
             </div>
-          )}
+          ))}
         </Grid>
       </div>
     );
@@ -216,12 +218,13 @@ class MapView extends React.Component {
           content={selectedCard}
           visible={cardChallengeOpen}
           closeHandler={() =>
-            toggleCardChallengeAction({ cardChallengeOpen: false })}
+            toggleCardChallengeAction({ cardChallengeOpen: false })
+          }
         >
           <iframe
             title="emperors"
             src="http://thescalli.com/emperors/"
-            style={{ border: 'none', width: '100%', height: height + 100 }}
+            style={{ border: 'none', width: '100%', height: height + 20 }}
           />
         </Modal>
         <div style={{ position: 'relative' }}>
@@ -241,7 +244,7 @@ class MapView extends React.Component {
               onClick={userMoveAction}
             >
               <DivOverlay {...mapViewport} data={cards}>
-                {(c, [x, y]) =>
+                {(c, [x, y]) => (
                   <AnimMarker
                     key={c.id}
                     selected={extCardId === c.id}
@@ -254,11 +257,18 @@ class MapView extends React.Component {
                       {...c}
                       onClose={() => extCardAction(null)}
                       onCollect={() =>
-                        toggleCardChallengeAction({ cardChallengeOpen: true })}
+                        toggleCardChallengeAction({ cardChallengeOpen: true })
+                      }
                     />
-                  </AnimMarker>}
+                  </AnimMarker>
+                )}
               </DivOverlay>
               <UserOverlay {...mapViewport} location={userLocation} />
+              <SvgOverlay {...mapViewport} data={cards}>
+                {(c, [x, y]) => (
+                  <circle r="20" cx={x} cy={y} fill="red" opacity={0.1} />
+                )}
+              </SvgOverlay>
             </MapGL>
           </div>
 

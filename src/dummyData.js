@@ -640,6 +640,7 @@ const VUBSports2 = {
 };
 
 const challengeTypes = ['quiz', 'gap text', 'hangman'];
+const skillTypes = ['arts', 'sports', 'mathematics'];
 const dummyCards = [
   notification,
   notification2,
@@ -658,4 +659,4 @@ const dummyCards = [
 
 const mediaTypes = ['game', 'hyperlink', 'photo', 'video'];
 
-export { dummyCards, challengeTypes, mediaTypes };
+export { dummyCards, challengeTypes, mediaTypes, skillTypes};

@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 const loaders = require('./webpack.loaders');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+// const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 // const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const HOST = process.env.HOST || '127.0.0.1';
@@ -109,7 +110,7 @@ module.exports = {
     './src/index.jsx' // your app's entry point
   ],
   // TODO:change for production
-  devtool: 'cheap-module-eval-source-map',
+  devtool: 'eval-source-map',
   output: {
     path: path.join(__dirname, 'public'),
     filename: 'bundle.js'
@@ -166,7 +167,8 @@ module.exports = {
       MapboxAccessToken:
         'pk.eyJ1Ijoiam1hdXNoYWciLCJhIjoiY2o4dHlmZTBkMGowbTJ3cDI3a3J3cHhoZSJ9.W-cFyxdadt5EXzRXKuXKrQ'
     })
-    // new webpack.optimize.ModuleConcatenationPlugin(),
+    // new webpack.optimize.ModuleConcatenationPlugin()
+    // new HardSourceWebpackPlugin()
     // new ExtractTextPlugin('style.css')
     // new webpack.ProvidePlugin({
     // $: 'jquery',

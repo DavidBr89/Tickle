@@ -4,13 +4,14 @@ module.exports = [
   {
     enforce: 'pre',
     test: /\.js$/,
-    loader: 'remove-flow-types-loader',
-    include: [/node_modules\/mapbox-gl\/js/]
+    loader: 'babel-loader?cacheDirectory=true',
+    exclude: /(node_modules|bower_components|public)/
   },
   {
-    test: /\.jsx?$/,
-    exclude: /(node_modules|bower_components|public)/,
-    loader: 'babel-loader',
+    enforce: 'pre',
+    test: /\.jsx$/,
+    loader: 'babel-loader?cacheDirectory=true',
+    exclude: /(node_modules|bower_components|public)/
   },
   {
     test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,

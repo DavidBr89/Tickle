@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 // import styles from './CardOverlay.scss';
 // const window = require('global/window');
 import HTMLOverlay from './div.react';
+import SVGOverlay from './svg.react';
 // import { HTMLOverlay } from 'react-map-gl';
 
 import cardIconSrc from './cardIcon.svg';
@@ -14,10 +15,8 @@ function round(x, n) {
 }
 
 // TODO
-
 class DivOverlay extends React.Component {
   static propTypes = {
-    // locations: React.PropTypes.array.isRequired,
     cardClickHandler: PropTypes.func.isRequired,
     data: PropTypes.array.isRequired,
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
@@ -101,6 +100,66 @@ DivOverlay.defaultProps = {
   // location(c) {return }
 };
 
+class SvgOverlay extends React.Component {
+  static propTypes = {
+    cardClickHandler: PropTypes.func.isRequired,
+    data: PropTypes.array.isRequired,
+    children: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
+    itemWidth: PropTypes.number,
+    itemHeight: PropTypes.number,
+    location: PropTypes.func,
+    style: PropTypes.object
+  };
+
+  static defaultProps = { style: {} };
+
+  constructor(props) {
+    super(props);
+    this.getDim = this.getDim.bind(this);
+    this.redraw = this.redraw.bind(this);
+  }
+
+  getDim(childComp) {
+    if (
+      childComp.props.style &&
+      childComp.props.style.width &&
+      childComp.props.style.height
+    ) {
+      return [
+        parseInt(childComp.props.style.width, 10),
+        parseInt(childComp.props.style.height, 10)
+      ];
+    }
+    if (childComp.width && childComp.height)
+      return [childComp.props.width, childComp.props.height];
+    return [this.props.itemWidth, this.props.itemHeight];
+  }
+
+  redraw(opt) {
+    const { data, children } = this.props;
+    return data.map(c => {
+      const loc = [c.loc.longitude, c.loc.latitude];
+      const pixel = opt.project(loc);
+      const [x, y] = [round(pixel[0], 1), round(pixel[1], 1)];
+      return children(c, [x, y], opt.unproject);
+    });
+  }
+
+  render() {
+    return <SVGOverlay {...this.props} redraw={this.redraw} />;
+  }
+}
+
+SvgOverlay.defaultProps = {
+  cardClickHandler: d => d,
+  children: <div />,
+  cards: [],
+  itemHeight: 40,
+  itemWidth: 30
+  // location(c) {return }
+};
+
+
 const UserOverlay = props => {
   function redraw(opt) {
     const { longitude, latitude } = props.location;
@@ -119,12 +178,12 @@ const UserOverlay = props => {
 };
 
 UserOverlay.propTypes = {
-  location: React.PropTypes.object.isRequired
+  location: PropTypes.object.isRequired
 };
 
 const CardOverlay = ({ ...mapViewport, cards, onClick }) =>
   <DivOverlay {...mapViewport} data={cards}>
-    <CardMarker width={30} height={40} onClick={onClick} />
+    <img src={cardIconSrc} alt="icon" width={width} height={height} onClick={onClick}/>
   </DivOverlay>;
 
 CardOverlay.propTypes = {
@@ -132,6 +191,7 @@ CardOverlay.propTypes = {
   cards: PropTypes.array.isRequired
 };
 
+//TODO: rename
 const CardMarker = ({ width, height }) =>
   <img src={cardIconSrc} alt="icon" width={width} height={height} />;
 
@@ -206,4 +266,9 @@ AnimMarker.defaultProps = {
   preview: <CardMarker />
 };
 
-export { DivOverlay, UserOverlay, CardOverlay, CardMarker, AnimMarker };
+
+
+
+
+
+export { DivOverlay, UserOverlay, CardOverlay, CardMarker, AnimMarker, SvgOverlay};

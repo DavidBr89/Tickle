@@ -2,16 +2,16 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import MapGL from 'react-map-gl';
-import ClampLines from 'react-clamp-lines';
-
+// import ClampLines from 'react-clamp-lines';
 import 'w3-css';
 
-import Grid from 'mygrid/dist';
-import { challengeTypes, mediaTypes } from '../../dummyData';
-// TODO: replace
+import { CardMarker } from '../utils/map-layers/DivOverlay';
 
+import Grid from 'mygrid/dist';
+// TODO: replace
 import * as chromatic from 'd3-scale-chromatic';
 
+import { challengeTypes, mediaTypes, skillTypes } from '../../dummyData';
 import cx from './Card.scss';
 import colorClasses from '../colorClasses';
 // import StarRating from './utils/StarRating';
@@ -41,6 +41,11 @@ const colorScaleRandom = d3
   .domain(d3.range(colorClasses.length))
   .range(colorClasses)
   .clamp(true);
+
+const skillColorScale = d3
+  .scaleOrdinal()
+  .domain(skillTypes)
+  .range(colorClasses);
 
 const colorClass = () => colorScaleRandom(Math.random() * 30);
 
@@ -89,9 +94,9 @@ const defaultProps = {
   linkedCards: ['Frank Liszt', 'Music school Arthur de Greef']
 };
 
-const Media = ({ data }) =>
+const Media = ({ data }) => (
   <Grid cols={2} rows={1}>
-    {data.map(m =>
+    {data.map(m => (
       <div key={m.src}>
         <div className="mr-1 row">
           <i
@@ -103,8 +108,9 @@ const Media = ({ data }) =>
           </div>
         </div>
       </div>
-    )}
-  </Grid>;
+    ))}
+  </Grid>
+);
 
 Media.propTypes = {
   data: PropTypes.array.isRequired,
@@ -113,7 +119,7 @@ Media.propTypes = {
 
 Media.defaultProps = { data: defaultProps.media, extended: false };
 
-const CardFront = ({ tags, img, description, media, children }) =>
+const CardFront = ({ tags, img, description, media, children }) => (
   <div
     className={cx.cardDetail}
     style={{
@@ -130,9 +136,7 @@ const CardFront = ({ tags, img, description, media, children }) =>
     <div>
       <fieldset className={cx.field}>
         <legend>description</legend>
-        <div className={cx.textClamp}>
-          {description}
-        </div>
+        <div className={cx.textClamp}>{description}</div>
       </fieldset>
     </div>
     <div>
@@ -142,7 +146,8 @@ const CardFront = ({ tags, img, description, media, children }) =>
       </fieldset>
     </div>
     {children}
-  </div>;
+  </div>
+);
 
 CardFront.propTypes = {
   description: PropTypes.string.isRequired,
@@ -152,26 +157,27 @@ CardFront.propTypes = {
 
 CardFront.defaultProps = defaultProps;
 
-const Tags = ({ data }) =>
+const Tags = ({ data }) => (
   <div
-    style={{
-      // display: 'flex',
-      // flexWrap: 'wrap'
-      // alignItems: 'flex-start',
-      // alignContent: 'center'
-    }}
+    style={
+    {
+        // display: 'flex',
+        // flexWrap: 'wrap'
+        // alignItems: 'flex-start',
+        // alignContent: 'center'
+    }
+    }
     className={cx.tags}
   >
-    {data.map(t =>
+    {data.map(t => (
       <div key={t} className={`${cx.tag} ${colorClass()}`}>
-        <small>
-          {t}
-        </small>
+        <small>{t}</small>
       </div>
-    )}
-  </div>;
+    ))}
+  </div>
+);
 
-const PreviewTags = ({ data }) =>
+const PreviewTags = ({ data }) => (
   <div
     style={{
       display: 'flex'
@@ -180,23 +186,25 @@ const PreviewTags = ({ data }) =>
     }}
     className={`${cx.textTrunc} ${cx.tags}`}
   >
-    {data.map(t =>
+    {data.map(t => (
       <small key={t} className={`${cx.tag} ${colorClass()}`}>
         {t}
       </small>
-    )}
-  </div>;
+    ))}
+  </div>
+);
 
-const SmallCategories = ({ data }) =>
+const SmallCategories = ({ data }) => (
   <div className={`${cx.textTrunc} ${cx.tags}`}>
-    {data.map(t =>
+    {data.map(t => (
       <small key={t} className={`${cx.tag} ${colorClass()}`}>
         {t}
       </small>
-    )}
-  </div>;
+    ))}
+  </div>
+);
 
-const PreviewCard = ({ title, tags, img, challenge, style, onClick }) =>
+const PreviewCard = ({ title, tags, img, challenge, style, onClick }) => (
   <div
     className={cx.cardMini2}
     style={{
@@ -206,9 +214,7 @@ const PreviewCard = ({ title, tags, img, challenge, style, onClick }) =>
     onClick={onClick}
   >
     <div className={cx.cardHeader}>
-      <h5 className="text-truncate">
-        {title}
-      </h5>
+      <h5 className="text-truncate">{title}</h5>
     </div>
     <div>
       <SmallCategories data={tags} />
@@ -224,7 +230,8 @@ const PreviewCard = ({ title, tags, img, challenge, style, onClick }) =>
         />
       </div>
     </div>
-  </div>;
+  </div>
+);
 
 PreviewCard.propTypes = {
   title: PropTypes.string.isRequired,
@@ -247,7 +254,7 @@ const CardFrame = ({
   flipHandler,
   style
   // id
-}) =>
+}) => (
   <div
     className={`${cx.cardMini2} `}
     style={{
@@ -258,9 +265,7 @@ const CardFrame = ({
     }}
   >
     <div className={cx.cardHeader}>
-      <h3 className="text-truncate">
-        {title}
-      </h3>
+      <h3 className="text-truncate">{title}</h3>
       <div className="btn-group">
         <button className="close mr-2" onClick={onClose}>
           <i className="fa fa-window-close fa-lg" aria-hidden="true" />
@@ -271,7 +276,8 @@ const CardFrame = ({
       </div>
     </div>
     {children}
-  </div>;
+  </div>
+);
 
 CardFrame.propTypes = {
   title: PropTypes.string,
@@ -284,9 +290,11 @@ CardFrame.propTypes = {
 
 CardFrame.defaultProps = defaultProps;
 
-const Comments = ({ data, extended }) =>
-  <div style={{ display: 'flex', justifyContent: 'center' }}>
-    {data.map(({ comment, user, date }) =>
+const Comments = ({ data, extended }) => (
+  <div
+    style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+  >
+    {data.map(({ comment, user, date }) => (
       <div>
         <img
           className={`${cx.avatar}`}
@@ -295,22 +303,22 @@ const Comments = ({ data, extended }) =>
           src={profileSrc()}
           alt="alt"
         />
-        {extended &&
+        {extended && (
           <div className="media-body">
             <div className={cx.textClamp}>
-              <small>
-                {comment}
-              </small>
+              <small>{comment}</small>
             </div>
             <div>
               <small className="font-italic">
                 - {user}, {date}
               </small>
             </div>
-          </div>}
+          </div>
+        )}
       </div>
-    )}
-  </div>;
+    ))}
+  </div>
+);
 
 Comments.PropTypes = {
   data: PropTypes.array.isRequired,
@@ -322,25 +330,163 @@ Comments.defaultProps = {
   extended: false
 };
 
-const Author = ({ profile, extended }) =>
-  <div
-    className="media"
-    style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center'
-    }}
-  >
-    <img
-      className={`${cx.avatar}`}
-      width={82}
-      height={82}
-      src={profileSrc()}
-      alt="alt"
-    />
-  </div>;
+const SkillBar = ({ data }) => {
+  const scale = d3
+    .scaleLinear()
+    .domain(d3.extent(data, d => d.level))
+    .range([30, 100]);
 
-const Profile = ({ data }) =>
+  console.log('scale', scale.domain());
+
+  return (
+    <div style={{ display: 'flex' }}>
+      {data.map(d => (
+        <div
+          className={`${skillColorScale(d.type)} ${cx.textTrunc}`}
+          style={{
+            width: `${scale(d.level)}%`,
+            height: '30px',
+            display: 'inline-flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          <span>{d.type}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const CardStack = ({ number }) => (
+  // const scale = d3
+  //   .scaleLinear()
+  //   .domain([0])
+  //   .range([30, 100]);
+
+  <div style={{ display: 'flex' }}>
+    {d3.range(0, number).map(() => (
+      <div style={{ width: `${2}%` }}>
+        <CardMarker width={30} />
+      </div>
+    ))}
+  </div>
+);
+const Author = ({ profile, extended, onClose }) => {
+  const { name, skills, activity, interests } = profile;
+  if (!extended) {
+    return (
+      <fieldset className={cx.field}>
+        <legend>Author:</legend>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%'
+          }}
+        >
+          <img
+            className={`${cx.avatar}`}
+            width={'80%'}
+            height={'80%'}
+            src={profileSrc()}
+            alt="alt"
+          />
+        </div>
+      </fieldset>
+    );
+  }
+  return (
+    <div
+      style={{
+        display: 'flex',
+        position: 'relative',
+        justifyContent: 'center',
+        // alignItems: 'center',
+        flexDirection: 'column'
+      }}
+      className="mt-3"
+    >
+      <button
+        type="button"
+        className="close "
+        style={{ position: 'absolute', top: 0 }}
+        data-dismiss="modal"
+        aria-label="Close"
+        onClick={onClose}
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <img
+        className={`${cx.avatar}`}
+        style={{ alignSelf: 'center' }}
+        width={'40%'}
+        height={'40%'}
+        src={profileSrc()}
+        alt="alt"
+      />
+
+      <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
+        Personal
+      </div>
+      <fieldset className={cx.field}>
+        <legend>Interests:</legend>
+        <SkillBar data={interests} />
+      </fieldset>
+
+      <fieldset className={cx.field}>
+        <legend>skills:</legend>
+        <SkillBar data={skills} />
+      </fieldset>
+      <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
+        Activity
+      </div>
+      <fieldset className={cx.field}>
+        <legend>Collected Cards:</legend>
+        <CardStack number={30} />
+      </fieldset>
+      <fieldset className={cx.field}>
+        <legend>Created Cards:</legend>
+        <CardStack number={14} />
+      </fieldset>
+    </div>
+  );
+};
+
+// Author.propTypes = {
+//   profile: PropTypes.shape({
+//     name: PropTypes.string,
+//     skills: PropTypes.array(
+//       PropTypes.shape({ name: PropTypes.string, level: PropTypes.number })
+//     ),
+//     activity: PropTypes.shape({
+//       collectedCards: PropTypes.number,
+//       createdCards: PropTypes.number
+//     })
+//   }),
+//   extended: PropTypes.bool
+// };
+
+Author.defaultProps = {
+  profile: {
+    name: 'jan',
+    skills: [
+      { type: 'arts', level: 22 },
+      { type: 'music', level: 14 },
+      { type: 'sports', level: 10 }
+    ],
+    interests: [
+      { type: 'movies', level: 12 },
+      { type: 'football', level: 5 },
+      { type: 'xbox', level: 10 }
+    ],
+    activity: { collectedCards: 20, createdCards: 13 }
+  },
+  extended: false
+};
+
+const Profile = ({ data }) => (
   <div className="media mt-3">
     <img
       className={`d-flex mr-3 ${cx.avatar}`}
@@ -350,16 +496,13 @@ const Profile = ({ data }) =>
       alt="alt"
     />
     <div className="media-body">
-      <div className={cx.textClamp}>
-        {data.comment}
-      </div>
+      <div className={cx.textClamp}>{data.comment}</div>
       <div>
-        <small className="font-italic">
-          - {data.name}
-        </small>
+        <small className="font-italic">- {data.name}</small>
       </div>
     </div>
-  </div>;
+  </div>
+);
 
 Profile.PropTypes = {
   data: PropTypes.object.isRequired
@@ -386,7 +529,6 @@ class CardBack extends Component {
 
   constructor(props) {
     super(props);
-
     this.state = { extended: null };
   }
 
@@ -414,8 +556,9 @@ class CardBack extends Component {
         };
       return {};
     };
-    const isVisible = field => ({
-      display: extended !== null && extended !== field ? 'none' : null
+    const isHidden = field => extended !== null && extended !== field;
+    const display = field => ({
+      display: isHidden(field) ? 'none' : null
     });
 
     return (
@@ -427,36 +570,43 @@ class CardBack extends Component {
         }}
       >
         <Grid cols={2} rows={3} gap={1}>
-          <fieldset
-            className={cx.field}
+          <div
             {...setSizeProps('author')}
-            style={isVisible('author')}
+            style={display('author')}
             onClick={selectField('author')}
           >
-            <legend>Author:</legend>
-            <Author profile={author} />
-          </fieldset>
+            <Author
+              profile={author}
+              extended={extended === 'author'}
+              onClose={() => {
+                // TODO
+                // console.log('onCLose');
+                // this.setState({ extended: null });
+              }}
+            />
+          </div>
           <fieldset
             className={cx.field}
             onClick={selectField('map')}
-            style={isVisible('map')}
+            style={display('map')}
             {...setSizeProps('map')}
           >
             <legend>Map:</legend>
             <Wrapper>
-              {(width, height) =>
+              {(width, height) => (
                 <MapGL
                   width={width}
                   height={height}
                   latitude={loc.latitude}
                   longitude={loc.longitude}
                   zoom={8}
-                />}
+                />
+              )}
             </Wrapper>
           </fieldset>
           <fieldset
             className={cx.field}
-            style={isVisible('cardSets')}
+            style={display('cardSets')}
             onClick={selectField('cardSets')}
             {...setSizeProps('cardSets')}
           >
@@ -465,7 +615,7 @@ class CardBack extends Component {
           </fieldset>
           <fieldset
             className={cx.field}
-            style={isVisible('linkedCards')}
+            style={display('linkedCards')}
             onClick={selectField('linkedCards')}
             {...setSizeProps('linkedCards')}
           >
@@ -477,7 +627,7 @@ class CardBack extends Component {
           <fieldset
             colSpan={2}
             className={cx.field}
-            style={isVisible('comments')}
+            style={display('comments')}
             {...setSizeProps('comments')}
             onClick={selectField('comments')}
           >
@@ -519,7 +669,7 @@ CardBack.defaultProps = {
 //   author: { name: 'jan', comment: 'welcome to my super hard challenge!' }
 // };
 
-const CollectButton = ({ collected, dataTarget, onClick, expPoints }) =>
+const CollectButton = ({ collected, dataTarget, onClick, expPoints }) => (
   <div className="p-1 pt-3">
     <button
       className={`btn btn-secondary btn-lg btn-block}`}
@@ -528,9 +678,7 @@ const CollectButton = ({ collected, dataTarget, onClick, expPoints }) =>
       onClick={onClick}
     >
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <span>
-          {'Collect'}
-        </span>
+        <span>{'Collect'}</span>
         <div
           style={{
             marginLeft: '4px',
@@ -544,7 +692,8 @@ const CollectButton = ({ collected, dataTarget, onClick, expPoints }) =>
         </div>
       </div>
     </button>
-  </div>;
+  </div>
+);
 
 CollectButton.propTypes = {
   dataTarget: PropTypes.string,

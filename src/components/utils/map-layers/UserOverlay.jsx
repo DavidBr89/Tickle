@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 // const window = require('global/window');
 import DIVOverlay from './div.react';
 
@@ -20,7 +21,7 @@ const UserMarker = props => {
 };
 
 UserMarker.propTypes = {
-  location: React.PropTypes.object.isRequired
+  location: PropTypes.object.isRequired
 };
 
 export default UserMarker;

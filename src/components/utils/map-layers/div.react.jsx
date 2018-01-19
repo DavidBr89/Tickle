@@ -1,8 +1,11 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
-import ViewportMercator from 'viewport-mercator-project';
+import WebMercatorViewport from 'viewport-mercator-project';
 
-import { FlatMercatorViewport } from 'viewport-mercator-project';
+// console.log('ViewportMercator', ViewportMercator);
+
+// import { FlatMercatorViewport } from 'viewport-mercator-project';
 
 export default class DivOverlay extends Component {
   static propTypes() {
@@ -29,7 +32,7 @@ export default class DivOverlay extends Component {
       height: `${height}px`,
       ...this.props.style
     };
-    const mercator = FlatMercatorViewport(this.props);
+    const mercator = new WebMercatorViewport(this.props);
     const { project, unproject } = mercator;
 
     return (

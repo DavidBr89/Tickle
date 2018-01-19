@@ -2,11 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
-import Grid from './Grid';
-
 const Modal = ({ visible, children, closeHandler }) =>
   <div
-    tabIndex="-1"
     style={{
       display: visible ? 'block' : 'none',
       zIndex: '8000',
@@ -22,13 +19,14 @@ const Modal = ({ visible, children, closeHandler }) =>
           style={{
             position: 'absolute',
             zIndex: '8000',
-            right: 5,
-            top: 5
+            right: 10,
+            top: 10
           }}
         >
           <button
             type="button"
-            className="close"
+            className="close "
+            style={{ width: '20px', height: '20px' }}
             data-dismiss="modal"
             aria-label="Close"
             onClick={closeHandler}
@@ -87,4 +85,4 @@ class Wrapper extends React.Component {
   }
 }
 
-export { Modal, Wrapper, Grid };
+export { Modal, Wrapper};

@@ -1,9 +1,9 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
-import ViewportMercator from 'viewport-mercator-project';
+import WebMercatorViewport from 'viewport-mercator-project';
 
 export default class SVGOverlay extends Component {
-
   static propTypes() {
     return {
       width: PropTypes.number.isRequired,
@@ -25,17 +25,12 @@ export default class SVGOverlay extends Component {
       top: 0,
       ...this.props.style
     };
-    const mercator = ViewportMercator(this.props);
+    const mercator = new WebMercatorViewport(this.props);
     const { project, unproject } = mercator;
 
     return (
-      <svg
-        ref="overlay"
-        width={width}
-        height={height}
-        style={style}
-      >
-        { this.props.redraw({ width, height, project, unproject, isDragging }) }
+      <svg ref="overlay" width={width} height={height} style={style}>
+        {this.props.redraw({ width, height, project, unproject, isDragging })}
       </svg>
     );
   }
