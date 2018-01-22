@@ -5,8 +5,7 @@
   "plugins": [
     "react",
     "jsx-a11y",
-    "import",
-    "prettier"
+    "import"
   ],
   "parser": "babel-eslint",
   "parserOptions": {
@@ -17,10 +16,6 @@
     }
   },
   "rules": {
-    "prettier/prettier": ["error", {
-      "singleQuote": true,
-      "jsxBracketSameLine": false
-    }],
     "indent": ["error", 2, {
       "SwitchCase": 1
     }],
@@ -45,5 +40,5 @@
     "react/jsx-wrap-multilines": 0,
     "jsx-a11y/no-static-element-interactions": 0
   },
-  "extends": ["airbnb", "prettier"]
+  "extends": ["airbnb", "plugin:prettier/recommended"]
 }

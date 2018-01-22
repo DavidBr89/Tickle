@@ -241,7 +241,6 @@ class MapView extends React.Component {
               onViewportChange={changeMapViewportAction}
               isdragging={false}
               startdraglnglat={null}
-              onClick={userMoveAction}
             >
               <DivOverlay {...mapViewport} data={cards}>
                 {(c, [x, y]) => (

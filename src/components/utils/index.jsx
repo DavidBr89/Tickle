@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
-const Modal = ({ visible, children, closeHandler }) =>
+const Modal = ({ visible, children, closeHandler }) => (
   <div
     style={{
       display: visible ? 'block' : 'none',
@@ -34,12 +34,11 @@ const Modal = ({ visible, children, closeHandler }) =>
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div className="modal-body">
-          {children}
-        </div>
+        <div className="modal-body">{children}</div>
       </div>
     </div>
-  </div>;
+  </div>
+);
 
 Modal.propTypes = {
   children: PropTypes.element.isRequired,
@@ -49,11 +48,7 @@ Modal.propTypes = {
 
 Modal.defaultProps = {
   id: 'exampleModal',
-  children: (
-    <div>
-      {'Modal'}
-    </div>
-  ),
+  children: <div>{'Modal'}</div>,
   closeHandler: d => d
 };
 
@@ -85,4 +80,4 @@ class Wrapper extends React.Component {
   }
 }
 
-export { Modal, Wrapper};
+export { Modal, Wrapper };

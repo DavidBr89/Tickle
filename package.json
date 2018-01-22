@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --config webpack.production.config.js --progress --profile --colors",
     "start": "webpack-dev-server --progress --profile --colors --inline ",
-    "lint": "eslint --ext js --ext jsx src || exit 0"
+    "lint": "./node_modules/eslint/bin/eslint.js --ext js --ext jsx src || exit 0"
   },
   "repository": {
     "type": "git",
@@ -36,6 +36,7 @@
     "jquery": "^3.2.1",
     "labella": "^1.1.2",
     "lodash": "^4.17.4",
+    "mapbox-gl": "^0.43.0",
     "materialize-css": "^0.100.2",
     "mygrid": "git+https://github.com/DinoJay/MyGrid.git",
     "ngeohash": "^0.6.0",
@@ -68,7 +69,7 @@
   },
   "devDependencies": {
     "babel-core": "6.25.0",
-    "babel-eslint": "^7.2.3",
+    "babel-eslint": "^8.2.1",
     "babel-loader": "7.0.0",
     "babel-plugin-syntax-do-expressions": "^6.13.0",
     "babel-plugin-transform-class-properties": "^6.11.5",
@@ -81,14 +82,14 @@
     "babel-preset-react": "6.24.1",
     "babel-runtime": "^6.11.6",
     "css-loader": "0.28.4",
-    "eslint": "^3.19.0",
+    "eslint": "4.0",
     "eslint-config-airbnb": "^15.0.1",
-    "eslint-config-prettier": "^2.3.0",
+    "eslint-config-prettier": "^2.9.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-plugin-import": "^2.3.0",
     "eslint-plugin-jsx-a11y": "^5.0.3",
     "eslint-plugin-node": "^5.0.0",
-    "eslint-plugin-prettier": "^2.1.2",
+    "eslint-plugin-prettier": "^2.5.0",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-react": "^7.0.1",
     "eslint-plugin-standard": "^3.0.1",
@@ -96,7 +97,7 @@
     "file-loader": "0.11.2",
     "html-webpack-plugin": "^2.22.0",
     "postcss-loader": "^2.0.5",
-    "prettier": "^1.5.2",
+    "prettier": "^1.10.2",
     "react-hot-loader": "^3.0.0-beta.7",
     "remove-flow-types-loader": "^1.0.0",
     "sass-variable-loader": "^0.1.2",

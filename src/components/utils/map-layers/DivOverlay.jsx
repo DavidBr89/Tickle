@@ -1,13 +1,13 @@
-import React from 'react';
-import { Motion, spring } from 'react-motion';
-import PropTypes from 'prop-types';
+import React from "react";
+import { Motion, spring } from "react-motion";
+import PropTypes from "prop-types";
 // import styles from './CardOverlay.scss';
 // const window = require('global/window');
-import HTMLOverlay from './div.react';
-import SVGOverlay from './svg.react';
+import HTMLOverlay from "./div.react";
+import SVGOverlay from "./svg.react";
 // import { HTMLOverlay } from 'react-map-gl';
 
-import cardIconSrc from './cardIcon.svg';
+import cardIconSrc from "./cardIcon.svg";
 
 function round(x, n) {
   const tenN = 10 ** n;
@@ -58,7 +58,7 @@ class DivOverlay extends React.Component {
       const pixel = opt.project(loc);
       const [x, y] = [round(pixel[0], 1), round(pixel[1], 1)];
 
-      if (typeof children === 'function') {
+      if (typeof children === "function") {
         return children(c, [x, y], opt.unproject);
       }
 
@@ -68,13 +68,13 @@ class DivOverlay extends React.Component {
         <div
           key={c.key}
           style={{
-            position: 'absolute',
-            left: `${cx}px`,
-            top: `${cy}px`,
+            position: "absolute",
+            left: `${cx - h / 2}px`,
+            top: `${cy - h / 2}px`,
             width: `${w}px`,
             height: `${h}px`,
             // cursor: 'pointer',
-            transition: 'left 1s, top 1s'
+            transition: "left 1s, top 1s"
             // zIndex: 1000
             // border: '2px black solid'
             // background: `url(${cardIconSrc})`
@@ -159,7 +159,6 @@ SvgOverlay.defaultProps = {
   // location(c) {return }
 };
 
-
 const UserOverlay = props => {
   function redraw(opt) {
     const { longitude, latitude } = props.location;
@@ -181,10 +180,17 @@ UserOverlay.propTypes = {
   location: PropTypes.object.isRequired
 };
 
-const CardOverlay = ({ ...mapViewport, cards, onClick }) =>
+const CardOverlay = ({ cards, onClick, ...mapViewport }) => (
   <DivOverlay {...mapViewport} data={cards}>
-    <img src={cardIconSrc} alt="icon" width={width} height={height} onClick={onClick}/>
-  </DivOverlay>;
+    <img
+      src={cardIconSrc}
+      alt="icon"
+      width={width}
+      height={height}
+      onClick={onClick}
+    />
+  </DivOverlay>
+);
 
 CardOverlay.propTypes = {
   mapViewport: PropTypes.object.isRequired,
@@ -192,8 +198,9 @@ CardOverlay.propTypes = {
 };
 
 //TODO: rename
-const CardMarker = ({ width, height }) =>
-  <img src={cardIconSrc} alt="icon" width={width} height={height} />;
+const CardMarker = ({ width, height }) => (
+  <img src={cardIconSrc} alt="icon" width={width} height={height} />
+);
 
 CardMarker.propTypes = { width: PropTypes.number, height: PropTypes.number };
 CardMarker.defaultProps = { width: 30, height: 40 };
@@ -209,12 +216,12 @@ const AnimMarker = ({
   children,
   onClick,
   preview
-}) =>
+}) => (
   <div
     key={key}
     onClick={onClick}
     style={{
-      position: 'absolute',
+      position: "absolute",
       left: selected ? `${0}px` : `${x - width / 2}px`,
       top: selected ? `${0}px` : `${y - height / 2}px`,
       width: `${width}px`,
@@ -223,31 +230,32 @@ const AnimMarker = ({
       zIndex: selected ? 5000 : null
     }}
   >
-    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+    <div style={{ position: "relative", width: "100%", height: "100%" }}>
       <div
         style={{
-          position: 'absolute',
+          position: "absolute",
           opacity: selected ? 0 : 1,
-          width: '100%',
-          height: '100%'
+          width: "100%",
+          height: "100%"
         }}
       >
         {preview}
       </div>
       <div
-        className={selected ? 'selectedCard' : null}
+        className={selected ? "selectedCard" : null}
         style={{
-          position: 'absolute',
+          position: "absolute",
           opacity: selected ? 1 : 0,
           transition: `left ${delay}s, top ${delay}s, width ${delay}s, height ${delay}s, opacity ${delay}s`,
-          width: '100%',
-          height: '100%'
+          width: "100%",
+          height: "100%"
         }}
       >
         {children}
       </div>
     </div>
-  </div>;
+  </div>
+);
 
 AnimMarker.PropTypes = {
   delay: PropTypes.number,
@@ -266,9 +274,11 @@ AnimMarker.defaultProps = {
   preview: <CardMarker />
 };
 
-
-
-
-
-
-export { DivOverlay, UserOverlay, CardOverlay, CardMarker, AnimMarker, SvgOverlay};
+export {
+  DivOverlay,
+  UserOverlay,
+  CardOverlay,
+  CardMarker,
+  AnimMarker,
+  SvgOverlay
+};
