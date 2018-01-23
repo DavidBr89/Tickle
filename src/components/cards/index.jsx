@@ -18,6 +18,8 @@ import colorClasses from '../colorClasses';
 // import exampleImg from './example_challenge.jpg';
 import { Wrapper } from '../utils';
 
+const random = () => Math.random() * 1000;
+
 const profileSrc = () => {
   const gender = Math.random() < 0.5 ? 'men' : 'women';
   const i = Math.round(Math.random() * 100);
@@ -97,7 +99,7 @@ const defaultProps = {
 const Media = ({ data }) => (
   <Grid cols={2} rows={1}>
     {data.map(m => (
-      <div key={m.src}>
+      <div key={m.src + random()}>
         <div className="mr-1 row">
           <i
             className={`fa ${mediaScale(m.type)} fa-2x col-1`}
@@ -160,17 +162,17 @@ CardFront.defaultProps = defaultProps;
 const Tags = ({ data }) => (
   <div
     style={
-    {
+      {
         // display: 'flex',
         // flexWrap: 'wrap'
         // alignItems: 'flex-start',
         // alignContent: 'center'
-    }
+      }
     }
     className={cx.tags}
   >
     {data.map(t => (
-      <div key={t} className={`${cx.tag} ${colorClass()}`}>
+      <div key={t + random()} className={`${cx.tag} ${colorClass()}`}>
         <small>{t}</small>
       </div>
     ))}
@@ -187,7 +189,7 @@ const PreviewTags = ({ data }) => (
     className={`${cx.textTrunc} ${cx.tags}`}
   >
     {data.map(t => (
-      <small key={t} className={`${cx.tag} ${colorClass()}`}>
+      <small key={t + random()} className={`${cx.tag} ${colorClass()}`}>
         {t}
       </small>
     ))}
@@ -197,41 +199,50 @@ const PreviewTags = ({ data }) => (
 const SmallCategories = ({ data }) => (
   <div className={`${cx.textTrunc} ${cx.tags}`}>
     {data.map(t => (
-      <small key={t} className={`${cx.tag} ${colorClass()}`}>
+      <small key={t + random()} className={`${cx.tag} ${colorClass()}`}>
         {t}
       </small>
     ))}
   </div>
 );
 
-const PreviewCard = ({ title, tags, img, challenge, style, onClick }) => (
-  <div
-    className={cx.cardMini2}
-    style={{
-      ...style,
-      background: colorScale(challenge.type)
-    }}
-    onClick={onClick}
-  >
-    <div className={cx.cardHeader}>
-      <h5 className="text-truncate">{title}</h5>
-    </div>
-    <div>
-      <SmallCategories data={tags} />
-      <div className="mt-1 mb-1">
-        <img
-          style={{
-            display: 'block',
-            maxWidth: '100%',
-            height: 'auto'
-          }}
-          src={img}
-          alt="Card cap"
-        />
+class PreviewCard extends Component {
+  shouldComponentUpdate(nextProps) {
+    return this.props.selected !== nextProps.selected;
+  }
+
+  render() {
+    const { title, tags, img, challenge, style, onClick } = this.props;
+    return (
+      <div
+        className={cx.cardMini2}
+        style={{
+          ...style,
+          background: colorScale(challenge.type)
+        }}
+        onClick={onClick}
+      >
+        <div className={cx.cardHeader}>
+          <h5 className="text-truncate">{title}</h5>
+        </div>
+        <div>
+          <SmallCategories data={tags} />
+          <div className="mt-1 mb-1">
+            <img
+              style={{
+                display: 'block',
+                maxWidth: '100%',
+                height: 'auto'
+              }}
+              src={img}
+              alt="Card cap"
+            />
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-);
+    );
+  }
+}
 
 PreviewCard.propTypes = {
   title: PropTypes.string.isRequired,

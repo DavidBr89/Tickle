@@ -1,13 +1,15 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
+// import ReactTimeout from 'react-timeout';
 import WebMercatorViewport from 'viewport-mercator-project';
 
 // console.log('ViewportMercator', ViewportMercator);
 
 // import { FlatMercatorViewport } from 'viewport-mercator-project';
 
-export default class DivOverlay extends Component {
+// @ReactTimeout
+export default class DivOverlay extends PureComponent {
   static propTypes() {
     return {
       width: PropTypes.number.isRequired,
@@ -36,7 +38,7 @@ export default class DivOverlay extends Component {
     const { project, unproject } = mercator;
 
     return (
-      <div ref="overlay" style={style}>
+      <div  style={style}>
         {this.props.redraw({ width, height, project, unproject, isDragging })}
       </div>
     );

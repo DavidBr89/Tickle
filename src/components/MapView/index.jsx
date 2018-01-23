@@ -23,24 +23,19 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   cardClick: card => {
-    console.log('before dispatch cardClick');
     dispatch(selectCard(card));
   },
   resizeCardWindow: options => {
-    console.log('before dispatch resizeCardWindow');
     dispatch(resizeCardWindow(options));
   },
   userMoveAction: pos => {
-    console.log('before dispatch usermove');
     dispatch(userMove(pos));
   },
   changeMapViewportAction: viewport => {
-    console.log('dispatch vp', viewport);
     dispatch(changeMapViewport(viewport));
   },
   selectCardAction: options => {
     // console.log('dispatch', viewport);
-    console.log('before dispatch selectCard');
     dispatch(selectCard(options));
   },
   screenResizeAction: options => {

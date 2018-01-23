@@ -1,4 +1,4 @@
-import React, { Component, PureComponent } from 'react';
+import React from 'react';
 import * as d3 from 'd3';
 import VisibilitySensor from 'react-visibility-sensor';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -11,8 +11,6 @@ import PropTypes from 'prop-types';
 // import jsonp from 'superagent-jsonp';
 
 import MapGL, { LinearInterpolator, FlyToInterpolator } from 'react-map-gl';
-
-import ReactTimeout from 'react-timeout';
 // import rasterTileStyle from 'raster-tile-style';
 // import ngeohash from 'ngeohash';,
 import cx from './MapView.scss';
@@ -28,7 +26,6 @@ import Grid from 'mygrid/dist';
 // import CardOverlay from '../utils/map-layers/CardOverlay';
 import {
   DivOverlay,
-  SlowDivOverlay,
   UserOverlay,
   SvgOverlay,
   UserMarker,
@@ -63,13 +60,12 @@ function overlap(e, o) {
     return false;
   } else if (d < Math.abs(e.r - o.r)) {
     // No Solution. one circle is contained in the other
-    return true;
+    return false;
   }
   return true;
 }
 
-@ReactTimeout
-class CardGrid extends PureComponent {
+class CardGrid extends React.Component {
   static propTypes = {
     cards: PropTypes.array.isRequired,
     onSelect: PropTypes.func.isRequired,
@@ -77,38 +73,12 @@ class CardGrid extends PureComponent {
     offset: PropTypes.number.isRequired
   };
 
-  constructor(props) {
-    super(props);
-    this.id = null;
-  }
-
   shouldComponentUpdate() {
     return false;
   }
 
-  // componentDidUpdate(prevProps, prevState) {
-  //   console.log('upd');
-  // }
-
   render() {
-    const {
-      cards,
-      onSelect,
-      onExtend,
-      offset
-      // setTimeout,
-      // clearTimeout
-    } = this.props;
-
-    const onChange = d => visible => {
-      // console.log('id', this.id);
-      if (visible) {
-        this.props.clearTimeout(this.id);
-        this.id = this.props.setTimeout(() => onSelect(d.id), 1000);
-        // onSelect(d.id);
-      }
-    };
-
+    const { cards, onSelect, onExtend, offset } = this.props;
     // TODO: isVisible
     return (
       <div
@@ -117,6 +87,7 @@ class CardGrid extends PureComponent {
           position: 'absolute',
           left: 0,
           right: 0,
+          // zIndex: 10,
           marginTop: '20px'
         }}
       >
@@ -126,23 +97,20 @@ class CardGrid extends PureComponent {
           colSpan={2}
           rowSpan={1}
           gap={2}
-          style={{ width: `${cards.length * 40}%`, overflow: 'visible' }}
+          style={{ width: `${cards.length * 40}%` }}
         >
           {cards.map(d => (
             <div>
               <VisibilitySensor
                 offset={{ left: offset, right: offset }}
-                onChange={onChange(d)}
+                onChange={visible => visible && onSelect(d.id)}
               >
                 {({ isVisible }) => (
                   <PreviewCard
                     {...d}
                     onClick={() => isVisible && onExtend(d.id)}
-                    selected={isVisible}
                     style={{
                       opacity: !isVisible ? 0.56 : null,
-                      // transform: isVisible ? 'scale(1.2)' : null,
-                      // transition: 'transform 1s',
                       height: '100%'
                     }}
                   />
@@ -156,8 +124,6 @@ class CardGrid extends PureComponent {
   }
 }
 
-// const TimoutGrid = ReactTimeout(CardGrid);
-
 // import { dummyCards } from '../../dummyData';
 //
 // // TODO:  change
@@ -165,7 +131,7 @@ class CardGrid extends PureComponent {
 //   d.id = i;
 // });
 
-class MapView extends PureComponent {
+class MapView extends React.Component {
   static propTypes = {
     cards: PropTypes.array.isRequired,
     mapZoom: PropTypes.number.isRequired,
@@ -275,6 +241,8 @@ class MapView extends PureComponent {
     const selectedCard =
       selectedCardId !== null ? cards.find(d => d.id === selectedCardId) : null;
 
+    console.log('userLocation', userLocation);
+
     return (
       <div>
         <Modal
@@ -307,7 +275,7 @@ class MapView extends PureComponent {
               startdraglnglat={null}
               onClick={userMoveAction}
             >
-              <SlowDivOverlay {...mapViewport} data={cards}>
+              <DivOverlay {...mapViewport} data={cards}>
                 {(c, [x, y]) => (
                   <AnimMarker
                     key={c.id}
@@ -326,7 +294,8 @@ class MapView extends PureComponent {
                     />
                   </AnimMarker>
                 )}
-              </SlowDivOverlay>
+              </DivOverlay>
+
               <DivOverlay {...mapViewport} data={[{ loc: userLocation }]}>
                 {(c, [x, y]) => (
                   <span>
@@ -335,33 +304,17 @@ class MapView extends PureComponent {
                       <SvgOverlay {...mapViewport} data={[selectedCard]}>
                         {(_, [x1, y1]) => (
                           <circle
-                            key={Math.random() * 1000}
                             r={d3.max([
                               geometricRadius(
                                 centerLocation.latitude,
-                                500,
+                                100,
                                 mapZoom
                               ),
                               22
                             ])}
                             cx={x1}
                             cy={y1}
-                            fill={
-                              overlap(
-                                { x, y, r: 40 },
-                                {
-                                  x: x1,
-                                  y: y1,
-                                  r: geometricRadius(
-                                    centerLocation.latitude,
-                                    500,
-                                    mapZoom
-                                  )
-                                }
-                              ) && mapZoom > 11
-                                ? 'green'
-                                : 'red'
-                            }
+                            fill="green"
                             opacity={0.3}
                           />
                         )}
@@ -373,11 +326,12 @@ class MapView extends PureComponent {
               <UserOverlay {...mapViewport} location={userLocation} />
             </MapGL>
           </div>
+
           <CardGrid
             cards={cards}
             onSelect={selectCardAction}
             onExtend={extCardAction}
-            offset={width / 2}
+            offset={width / 6}
           />
         </div>
       </div>

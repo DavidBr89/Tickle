@@ -1,21 +1,22 @@
-import React from "react";
-import { Motion, spring } from "react-motion";
-import PropTypes from "prop-types";
+import React, { PureComponent, Component } from 'react';
+import PropTypes from 'prop-types';
+import throttle from 'react-throttle-render';
+
 // import styles from './CardOverlay.scss';
 // const window = require('global/window');
-import HTMLOverlay from "./div.react";
-import SVGOverlay from "./svg.react";
+import HTMLOverlay from './div.react';
+import SVGOverlay from './svg.react';
+
 // import { HTMLOverlay } from 'react-map-gl';
 
-import cardIconSrc from "./cardIcon.svg";
+import cardIconSrc from './cardIcon.svg';
 
 function round(x, n) {
   const tenN = 10 ** n;
   return Math.round(x * tenN) / tenN;
 }
 
-// TODO
-class DivOverlay extends React.Component {
+class DivOverlay extends PureComponent {
   static propTypes = {
     cardClickHandler: PropTypes.func.isRequired,
     data: PropTypes.array.isRequired,
@@ -30,24 +31,7 @@ class DivOverlay extends React.Component {
 
   constructor(props) {
     super(props);
-    this.getDim = this.getDim.bind(this);
     this.redraw = this.redraw.bind(this);
-  }
-
-  getDim(childComp) {
-    if (
-      childComp.props.style &&
-      childComp.props.style.width &&
-      childComp.props.style.height
-    ) {
-      return [
-        parseInt(childComp.props.style.width, 10),
-        parseInt(childComp.props.style.height, 10)
-      ];
-    }
-    if (childComp.width && childComp.height)
-      return [childComp.props.width, childComp.props.height];
-    return [this.props.itemWidth, this.props.itemHeight];
   }
 
   redraw(opt) {
@@ -58,31 +42,7 @@ class DivOverlay extends React.Component {
       const pixel = opt.project(loc);
       const [x, y] = [round(pixel[0], 1), round(pixel[1], 1)];
 
-      if (typeof children === "function") {
-        return children(c, [x, y], opt.unproject);
-      }
-
-      const [w, h] = this.getDim(children);
-      const [cx, cy] = [x - w / 2, y - h / 2];
-      return (
-        <div
-          key={c.key}
-          style={{
-            position: "absolute",
-            left: `${cx - h / 2}px`,
-            top: `${cy - h / 2}px`,
-            width: `${w}px`,
-            height: `${h}px`,
-            // cursor: 'pointer',
-            transition: "left 1s, top 1s"
-            // zIndex: 1000
-            // border: '2px black solid'
-            // background: `url(${cardIconSrc})`
-          }}
-        >
-          {children}
-        </div>
-      );
+      return children(c, [x, y], opt.unproject);
     });
   }
 
@@ -100,6 +60,8 @@ DivOverlay.defaultProps = {
   // location(c) {return }
 };
 
+const SlowDivOverlay = throttle(1000)(DivOverlay);
+
 class SvgOverlay extends React.Component {
   static propTypes = {
     cardClickHandler: PropTypes.func.isRequired,
@@ -115,24 +77,7 @@ class SvgOverlay extends React.Component {
 
   constructor(props) {
     super(props);
-    this.getDim = this.getDim.bind(this);
     this.redraw = this.redraw.bind(this);
-  }
-
-  getDim(childComp) {
-    if (
-      childComp.props.style &&
-      childComp.props.style.width &&
-      childComp.props.style.height
-    ) {
-      return [
-        parseInt(childComp.props.style.width, 10),
-        parseInt(childComp.props.style.height, 10)
-      ];
-    }
-    if (childComp.width && childComp.height)
-      return [childComp.props.width, childComp.props.height];
-    return [this.props.itemWidth, this.props.itemHeight];
   }
 
   redraw(opt) {
@@ -197,7 +142,7 @@ CardOverlay.propTypes = {
   cards: PropTypes.array.isRequired
 };
 
-//TODO: rename
+// TODO: rename
 const CardMarker = ({ width, height }) => (
   <img src={cardIconSrc} alt="icon" width={width} height={height} />
 );
@@ -221,7 +166,7 @@ const AnimMarker = ({
     key={key}
     onClick={onClick}
     style={{
-      position: "absolute",
+      position: 'absolute',
       left: selected ? `${0}px` : `${x - width / 2}px`,
       top: selected ? `${0}px` : `${y - height / 2}px`,
       width: `${width}px`,
@@ -230,25 +175,26 @@ const AnimMarker = ({
       zIndex: selected ? 5000 : null
     }}
   >
-    <div style={{ position: "relative", width: "100%", height: "100%" }}>
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <div
         style={{
-          position: "absolute",
+          position: 'absolute',
           opacity: selected ? 0 : 1,
-          width: "100%",
-          height: "100%"
+          width: '100%',
+          height: '100%',
+          transition: `left ${delay}s, top ${delay}s, width ${delay}s, height ${delay}s, opacity ${delay}s`
         }}
       >
         {preview}
       </div>
       <div
-        className={selected ? "selectedCard" : null}
+        className={selected ? 'selectedCard' : null}
         style={{
-          position: "absolute",
+          position: 'absolute',
           opacity: selected ? 1 : 0,
           transition: `left ${delay}s, top ${delay}s, width ${delay}s, height ${delay}s, opacity ${delay}s`,
-          width: "100%",
-          height: "100%"
+          width: '100%',
+          height: '100%'
         }}
       >
         {children}
@@ -274,11 +220,23 @@ AnimMarker.defaultProps = {
   preview: <CardMarker />
 };
 
+const UserMarker = ({ x, y }) => (
+  <i
+    style={{
+      transform: `translate(${x}px, ${y}px)`
+    }}
+    className="fa fa-street-view fa-2x"
+    aria-hidden="true"
+  />
+);
+
 export {
+  SlowDivOverlay,
   DivOverlay,
   UserOverlay,
   CardOverlay,
   CardMarker,
   AnimMarker,
-  SvgOverlay
+  SvgOverlay,
+  UserMarker
 };

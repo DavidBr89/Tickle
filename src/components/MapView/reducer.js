@@ -20,7 +20,7 @@ import {
 // export default mapViewApp;
 
 function reducer(state = {}, action) {
-  console.log('action', action);
+  // console.log('action', action);
   switch (action.type) {
     case RESIZE_CARD_WINDOW: {
       return { ...state, ...action };
@@ -64,12 +64,12 @@ function reducer(state = {}, action) {
 
     case EXTEND_SELECTED_CARD: {
       const extCardId = action.options;
-      console.log('extCardId', extCardId);
+      // console.log('extCardId', extCardId);
       return { ...state, extCardId };
     }
 
     case SCREEN_RESIZE: {
-      const {headerPad} = state;
+      const { headerPad } = state;
       const height = action.options.height - state.headerPad;
       const width = action.options.width;
       const mapHeight = height;

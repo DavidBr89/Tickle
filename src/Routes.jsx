@@ -78,40 +78,44 @@ console.log('actions', actions);
 //   );
 // });
 
-const Routes = () =>
+const Routes = () => (
   <HashRouter>
     <Switch>
       <Route
         exact
         path="/"
-        render={() =>
+        render={() => (
           <DefaultLayout>
             <Provider store={store}>
               <MapView />
             </Provider>
-          </DefaultLayout>}
+          </DefaultLayout>
+        )}
       />
       <Route
         exact
         path="/card_creator"
-        render={() =>
+        render={() => (
           <DefaultLayout>
             <Provider store={store}>
               <CardCreator />
             </Provider>
-          </DefaultLayout>}
+          </DefaultLayout>
+        )}
       />
       <Route
         exact
         path="/generator"
-        render={() =>
+        render={() => (
           <DefaultLayout>
             <Provider store={store}>
               <Generator />
             </Provider>
-          </DefaultLayout>}
+          </DefaultLayout>
+        )}
       />
     </Switch>
-  </HashRouter>;
+  </HashRouter>
+);
 
 export default Routes;

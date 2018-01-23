@@ -37,7 +37,7 @@ loaders.push(
       {
         loader: 'sass-loader',
         options: {
-          includePaths: [path.resolve(__dirname, 'node_modules')]
+          includePaths: [path.resolve(__dirname, 'node_modules/bootstrap')]
         }
       }
     ]
@@ -46,14 +46,14 @@ loaders.push(
   {
     test: /\.scss$/,
     include: /[/\\](components)[/\\]/,
-    exclude: /[/\\](global)[/\\]/,
+    exclude: /[/\\](node_modules)[/\\]/,
     loaders: [
       'style-loader?sourceMap',
       'css-loader?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]',
       'postcss-loader',
       'sass-loader'
     ]
-  },
+  }
   // TODO: production
   // {
   //   test: /\.scss$/,
@@ -76,14 +76,10 @@ loaders.push(
   //     'postcss-loader'
   //   ]
   // },
-  {
-    test: /bootstrap\/dist\/js\/umd\//,
-    loader: 'imports-loader?jQuery=jquery'
-  },
-  {
-    test: /mapbox-gl.+\.js$/,
-    loader: 'transform-loader/cacheable?brfs'
-  }
+  // {
+  //   test: /bootstrap\/dist\/js\/umd\//,
+  //   loader: 'imports-loader?jQuery=jquery'
+  // }
 );
 
 // local css modules
@@ -110,7 +106,7 @@ module.exports = {
     './src/index.jsx' // your app's entry point
   ],
   // TODO:change for production
-  devtool: 'eval-source-map',
+  devtool: 'cheap-module-eval-source-map',
   output: {
     path: path.join(__dirname, 'public'),
     filename: 'bundle.js'

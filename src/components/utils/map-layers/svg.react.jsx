@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
 import WebMercatorViewport from 'viewport-mercator-project';
 
-export default class SVGOverlay extends Component {
+export default class SVGOverlay extends PureComponent {
   static propTypes() {
     return {
       width: PropTypes.number.isRequired,
