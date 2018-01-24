@@ -106,7 +106,7 @@ module.exports = {
     './src/index.jsx' // your app's entry point
   ],
   // TODO:change for production
-  devtool: 'cheap-module-eval-source-map',
+  devtool: 'eval-source-map ',
   output: {
     path: path.join(__dirname, 'public'),
     filename: 'bundle.js'
@@ -125,7 +125,7 @@ module.exports = {
   devServer: {
     contentBase: './public',
     noInfo: true,
-    // hot: true,
+    hot: true,
     inline: true,
     historyApiFallback: true,
     port: PORT,

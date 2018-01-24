@@ -60,7 +60,7 @@ DivOverlay.defaultProps = {
   // location(c) {return }
 };
 
-const SlowDivOverlay = throttle(1000)(DivOverlay);
+const SlowDivOverlay = throttle(10)(DivOverlay);
 
 class SvgOverlay extends React.Component {
   static propTypes = {
@@ -125,22 +125,22 @@ UserOverlay.propTypes = {
   location: PropTypes.object.isRequired
 };
 
-const CardOverlay = ({ cards, onClick, ...mapViewport }) => (
-  <DivOverlay {...mapViewport} data={cards}>
-    <img
-      src={cardIconSrc}
-      alt="icon"
-      width={width}
-      height={height}
-      onClick={onClick}
-    />
-  </DivOverlay>
-);
+// const CardOverlay = ({ cards, onClick, ...mapViewport }) => (
+//   <DivOverlay {...mapViewport} data={cards}>
+//     <img
+//       src={cardIconSrc}
+//       alt="icon"
+//       width={width}
+//       height={height}
+//       onClick={onClick}
+//     />
+//   </DivOverlay>
+// );
 
-CardOverlay.propTypes = {
-  mapViewport: PropTypes.object.isRequired,
-  cards: PropTypes.array.isRequired
-};
+// CardOverlay.propTypes = {
+//   mapViewport: PropTypes.object.isRequired,
+//   cards: PropTypes.array.isRequired
+// };
 
 // TODO: rename
 const CardMarker = ({ width, height }) => (
@@ -177,27 +177,15 @@ const AnimMarker = ({
   >
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <div
-        style={{
-          position: 'absolute',
-          opacity: selected ? 0 : 1,
-          width: '100%',
-          height: '100%',
-          transition: `left ${delay}s, top ${delay}s, width ${delay}s, height ${delay}s, opacity ${delay}s`
-        }}
-      >
-        {preview}
-      </div>
-      <div
         className={selected ? 'selectedCard' : null}
         style={{
           position: 'absolute',
-          opacity: selected ? 1 : 0,
-          transition: `left ${delay}s, top ${delay}s, width ${delay}s, height ${delay}s, opacity ${delay}s`,
+          transition: `width ${delay}s, height ${delay}s, opacity ${delay}s`,
           width: '100%',
           height: '100%'
         }}
       >
-        {children}
+        {selected ? children : preview}
       </div>
     </div>
   </div>
@@ -234,7 +222,7 @@ export {
   SlowDivOverlay,
   DivOverlay,
   UserOverlay,
-  CardOverlay,
+  // CardOverlay,
   CardMarker,
   AnimMarker,
   SvgOverlay,

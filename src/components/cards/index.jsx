@@ -65,6 +65,7 @@ const defaultProps = {
   loc: { latitude: 50.828797, longitude: 4.352191 },
   place: 'Park next to my Home',
   creator: 'Jan',
+  radius: 400,
   media: [
     {
       type: 'photo',
@@ -746,7 +747,6 @@ class Card extends React.Component {
     const sideToggler = frontView ? cx.flipAnim : null;
     const { onCollect } = this.props;
     const flipHandler = () => {
-      console.log('flipHandler');
       this.setState(oldState => ({
         frontView: !oldState.frontView
       }));

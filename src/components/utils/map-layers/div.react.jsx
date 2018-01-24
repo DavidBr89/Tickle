@@ -38,7 +38,7 @@ export default class DivOverlay extends PureComponent {
     const { project, unproject } = mercator;
 
     return (
-      <div  style={style}>
+      <div style={style}>
         {this.props.redraw({ width, height, project, unproject, isDragging })}
       </div>
     );

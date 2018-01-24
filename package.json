@@ -59,6 +59,7 @@
     "react-router-dom": "^4.2.2",
     "react-router-redux": "^5.0.0-alpha.8",
     "react-scroll-to-component": "^1.0.1",
+    "react-throttle": "^0.3.0",
     "react-throttle-render": "^2.0.0",
     "react-timeout": "^1.0.1",
     "react-visibility-sensor": "^3.11.0",

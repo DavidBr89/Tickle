@@ -10,18 +10,18 @@ import { DragDropContextProvider } from 'react-dnd';
 import MapGL from 'react-map-gl';
 // import update from 'immutability-helper';
 
-import { CardFrame, Card } from '../cards';
+import { PreviewCard, Card } from '../cards';
 import cxx from './CardCreator.scss';
 
-import DivOverlay from '../utils/map-layers/DivOverlay';
-import cardIconSrc from '../utils/map-layers/cardIcon.svg';
+import { DivOverlay, AnimMarker} from '../utils/map-layers/DivOverlay';
+// import cardIconSrc from '../utils/map-layers/cardIcon.svg';
 
 import CardDragPreview from './DragLayer/CardDragPreview';
 
 import { DragSourceCont, DropTargetCont } from './DragLayer/SourceTargetCont';
 import DragLayer from './DragLayer/DragLayer';
 import Analytics from './Analytics';
-import { Marker } from '../utils';
+// import { AnimMarker } from '../utils/map-layers/DivOverlay';
 
 // const container = ({}) =>
 
@@ -146,8 +146,8 @@ class CardCreator extends Component {
               >
                 {/* TODO: change Key */}
                 <DivOverlay {...mapState} data={tempCards}>
-                  {(c, [x, y]) =>
-                    <Marker
+                  {(c, [x, y]) => (
+                    <AnimMarker
                       key={c.id}
                       selected={highlighted}
                       width={highlighted ? width : w}
@@ -165,11 +165,12 @@ class CardCreator extends Component {
                           {highlighted ? <Card {...c} /> : <CardDragPreview />}
                         </div>
                       </DragSourceCont>
-                    </Marker>}
+                    </AnimMarker>
+                  )}
                 </DivOverlay>
                 <DivOverlay {...mapState} data={cards}>
-                  {(c, [x, y]) =>
-                    <Marker
+                  {(c, [x, y]) => (
+                    <AnimMarker
                       key={Math.random()}
                       selected={selectedCardId === c.id}
                       width={c.id === selectedCardId ? width : w}
@@ -179,11 +180,14 @@ class CardCreator extends Component {
                       onClick={() => selectCard(c)}
                     >
                       <div>
-                        {selectedExtended
-                          ? <Card {...c} />
-                          : <CardDragPreview />}
+                        {selectedExtended ? (
+                          <Card {...c} />
+                        ) : (
+                          <CardDragPreview />
+                        )}
                       </div>
-                    </Marker>}
+                    </AnimMarker>
+                  )}
                 </DivOverlay>
               </MapGL>
             </DropTargetCont>
@@ -216,15 +220,15 @@ class CardCreator extends Component {
                     <i className="fa fa-4x fa-plus" aria-hidden="true" />
                   </div>
                 </DragSourceCont>
-                {cards.map(d =>
+                {cards.map(d => (
                   <div onClick={() => openCardDetails(d.id)}>
                     <DragSourceCont key={`${d.title}  ${d.date}`}>
                       <div style={{ border: '1px dashed gray' }}>
-                        <CardFrame {...d} {...this.props} />
+                        <PreviewCard {...d} {...this.props} />
                       </div>
                     </DragSourceCont>
                   </div>
-                )}
+                ))}
               </div>
             </div>
           </div>

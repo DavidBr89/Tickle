@@ -1,6 +1,9 @@
 import React, { Component, PureComponent } from 'react';
 import * as d3 from 'd3';
 import VisibilitySensor from 'react-visibility-sensor';
+import WebMercatorViewport from 'viewport-mercator-project';
+import Grid from 'mygrid/dist';
+
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 // import { Motion, spring } from 'react-motion';
@@ -17,7 +20,6 @@ import ReactTimeout from 'react-timeout';
 // import ngeohash from 'ngeohash';,
 import cx from './MapView.scss';
 import { Card, PreviewCard } from '../cards';
-import Grid from 'mygrid/dist';
 
 // console.log('grid', Grid);
 // import { Grid } from '../utils';
@@ -69,11 +71,13 @@ function overlap(e, o) {
 }
 
 @ReactTimeout
-class CardGrid extends PureComponent {
+class CardGrid extends Component {
   static propTypes = {
     cards: PropTypes.array.isRequired,
     onSelect: PropTypes.func.isRequired,
     onExtend: PropTypes.func.isRequired,
+    setTimeout: PropTypes.func.isRequired,
+    clearTimeout: PropTypes.func.isRequired,
     offset: PropTypes.number.isRequired
   };
 
@@ -102,56 +106,47 @@ class CardGrid extends PureComponent {
 
     const onChange = d => visible => {
       // console.log('id', this.id);
+      const { setTimeout, clearTimeout } = this.props;
       if (visible) {
-        this.props.clearTimeout(this.id);
-        this.id = this.props.setTimeout(() => onSelect(d.id), 1000);
+        clearTimeout(this.id);
+        this.id = setTimeout(() => onSelect(d.id), 1000);
         // onSelect(d.id);
       }
     };
 
     // TODO: isVisible
     return (
-      <div
-        className={`${cx.cardGridCont}`}
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          marginTop: '20px'
-        }}
+      <Grid
+        rows={1}
+        cols={Math.floor(cards.length) * 2}
+        colSpan={2}
+        rowSpan={1}
+        gap={2}
+        style={{ width: `${cards.length * 40}%`, overflow: 'visible' }}
       >
-        <Grid
-          rows={1}
-          cols={Math.floor(cards.length) * 2}
-          colSpan={2}
-          rowSpan={1}
-          gap={2}
-          style={{ width: `${cards.length * 40}%`, overflow: 'visible' }}
-        >
-          {cards.map(d => (
-            <div>
-              <VisibilitySensor
-                offset={{ left: offset, right: offset }}
-                onChange={onChange(d)}
-              >
-                {({ isVisible }) => (
-                  <PreviewCard
-                    {...d}
-                    onClick={() => isVisible && onExtend(d.id)}
-                    selected={isVisible}
-                    style={{
-                      opacity: !isVisible ? 0.56 : null,
-                      // transform: isVisible ? 'scale(1.2)' : null,
-                      // transition: 'transform 1s',
-                      height: '100%'
-                    }}
-                  />
-                )}
-              </VisibilitySensor>
-            </div>
-          ))}
-        </Grid>
-      </div>
+        {cards.map(d => (
+          <div>
+            <VisibilitySensor
+              offset={{ left: offset, right: offset }}
+              onChange={onChange(d)}
+            >
+              {({ isVisible }) => (
+                <PreviewCard
+                  {...d}
+                  onClick={() => isVisible && onExtend(d.id)}
+                  selected={isVisible}
+                  style={{
+                    opacity: !isVisible ? 0.56 : null,
+                    transform: isVisible ? 'scale(1.2)' : null,
+                    transition: 'transform 1s',
+                    height: '100%'
+                  }}
+                />
+              )}
+            </VisibilitySensor>
+          </div>
+        ))}
+      </Grid>
     );
   }
 }
@@ -164,6 +159,37 @@ class CardGrid extends PureComponent {
 // dummyCards.forEach((d, i) => {
 //   d.id = i;
 // });
+
+const CircleOverlay = ({ mapViewport, userLocation, selectedCard }) => {
+  const { zoom } = mapViewport;
+  const { latitude, longitude } = userLocation;
+  const r = geometricRadius(latitude, 500, zoom);
+
+  const mercator = new WebMercatorViewport(mapViewport);
+  const [x, y] = mercator.project([longitude, latitude]);
+  const [x1, y1] = mercator.project([
+    selectedCard.loc.longitude,
+    selectedCard.loc.latitude
+  ]);
+  // console.log('CircleOverlay', [x1, y1]);
+
+  const accessible = overlap({ x, y, r: 40 }, { x: x1, y: y1, r });
+  // TODO: change SvgOverlay
+  return (
+    <SvgOverlay {...mapViewport} data={[selectedCard]}>
+      {() => (
+        <circle
+          r={r}
+          cx={x1}
+          cy={y1}
+          stroke="black"
+          fill={accessible && zoom > 11 ? 'green' : 'red'}
+          opacity={0.3}
+        />
+      )}
+    </SvgOverlay>
+  );
+};
 
 class MapView extends PureComponent {
   static propTypes = {
@@ -307,6 +333,13 @@ class MapView extends PureComponent {
               startdraglnglat={null}
               onClick={userMoveAction}
             >
+              {selectedCard && (
+                <CircleOverlay
+                  userLocation={userLocation}
+                  mapViewport={mapViewport}
+                  selectedCard={selectedCard}
+                />
+              )}
               <SlowDivOverlay {...mapViewport} data={cards}>
                 {(c, [x, y]) => (
                   <AnimMarker
@@ -328,57 +361,28 @@ class MapView extends PureComponent {
                 )}
               </SlowDivOverlay>
               <DivOverlay {...mapViewport} data={[{ loc: userLocation }]}>
-                {(c, [x, y]) => (
-                  <span>
-                    <UserMarker x={x} y={y} />
-                    {selectedCard && (
-                      <SvgOverlay {...mapViewport} data={[selectedCard]}>
-                        {(_, [x1, y1]) => (
-                          <circle
-                            key={Math.random() * 1000}
-                            r={d3.max([
-                              geometricRadius(
-                                centerLocation.latitude,
-                                500,
-                                mapZoom
-                              ),
-                              22
-                            ])}
-                            cx={x1}
-                            cy={y1}
-                            fill={
-                              overlap(
-                                { x, y, r: 40 },
-                                {
-                                  x: x1,
-                                  y: y1,
-                                  r: geometricRadius(
-                                    centerLocation.latitude,
-                                    500,
-                                    mapZoom
-                                  )
-                                }
-                              ) && mapZoom > 11
-                                ? 'green'
-                                : 'red'
-                            }
-                            opacity={0.3}
-                          />
-                        )}
-                      </SvgOverlay>
-                    )}
-                  </span>
-                )}
+                {(c, [x, y]) => <UserMarker x={x} y={y} />}
               </DivOverlay>
               <UserOverlay {...mapViewport} location={userLocation} />
             </MapGL>
           </div>
-          <CardGrid
-            cards={cards}
-            onSelect={selectCardAction}
-            onExtend={extCardAction}
-            offset={width / 2}
-          />
+
+          <div
+            className={`${cx.cardGridCont}`}
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              paddingTop: '20px'
+            }}
+          >
+            <CardGrid
+              cards={cards}
+              onSelect={selectCardAction}
+              onExtend={extCardAction}
+              offset={width / 4}
+            />
+          </div>
         </div>
       </div>
     );
