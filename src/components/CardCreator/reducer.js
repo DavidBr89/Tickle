@@ -9,8 +9,9 @@ import {
   UPDATE_CARD,
   CREATE_CARD,
   DRAG_CARD,
-  OPEN_CARD_DETAILS
-} from './actions_cardCreator';
+  OPEN_CARD_DETAILS,
+  OPEN_CARD_TEMPLATE
+} from './actions';
 
 // const mapViewApp = combineReducers({
 //   cards,
@@ -23,7 +24,7 @@ const dummyCard = ({ latitude, longitude }) => ({
   title: '-',
   type: '-',
   // TODO: change
-  key: Math.random() * 1000,
+  id: Math.random() * 1000,
   date: '04/04/2012 10:00',
   tags: ['', ''],
   img: '',
@@ -31,8 +32,7 @@ const dummyCard = ({ latitude, longitude }) => ({
   xpPoints: 0,
   // TODO: remove in future to component
   description: '',
-  location: { latitude, longitude },
-  place: '',
+  loc: { latitude, longitude },
   creator: 'Jan',
   media: [],
   friends: [],
@@ -104,28 +104,36 @@ function reducer(state = {}, action) {
     case CREATE_CARD: {
       const { width, height, mapViewport } = state;
 
-      const mercator = ViewportMercator({ width, height, ...mapViewport });
+      const mercator = new ViewportMercator({ width, height, ...mapViewport });
       const { unproject } = mercator;
       const { x, y } = action.options;
       const pos = unproject([x, y]);
       const newCard = dummyCard({
-        id: 'tempCard',
+        id: `tempCard${Math.random() * 100}`,
         longitude: pos[0],
         latitude: pos[1]
       });
       newCard.temp = true;
       return {
         ...state,
-        tempCards: [...state.tempCards, newCard],
+        cards: [...state.cards, newCard],
         isDragging: false
       };
     }
-
     case DRAG_CARD: {
       return {
         ...state,
         isDragging: true
       };
+    }
+    case OPEN_CARD_TEMPLATE: {
+      console.log('card tem');
+      // return {
+      //
+      //   ...state,
+      //   isDragging: true
+      // };
+      return { ...state, cardTemplateOpen: !state.cardTemplateOpen };
     }
     default:
       return state;

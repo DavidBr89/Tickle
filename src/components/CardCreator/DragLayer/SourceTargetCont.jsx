@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Fragment, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { DragSource, DropTarget } from 'react-dnd';
 
@@ -41,7 +41,7 @@ const boxSource = {
   sourceClientOffset: monitor.getSourceClientOffset(),
   diffFromInitialOffset: monitor.getDifferenceFromInitialOffset()
 }))
-class DragSourceCont extends Component {
+class DragSourceCont extends PureComponent {
   static propTypes = {
     connectDragSource: PropTypes.func.isRequired,
     isDragging: PropTypes.bool.isRequired,
@@ -67,9 +67,7 @@ class DragSourceCont extends Component {
     const opacity = isDragging ? 0.4 : 1;
 
     return connectDragSource(
-      <div style={{ ...style, opacity }}>
-        {children}
-      </div>
+      <div style={{ width: '100%', height: '100%', opacity }}>{children}</div>
     );
   }
 }
@@ -94,7 +92,7 @@ const boxTarget = {
   sourceClientOffset: monitor.getSourceClientOffset(),
   diffFromInitialOffset: monitor.getDifferenceFromInitialOffset()
 }))
-class DropTargetCont extends Component {
+class DropTargetCont extends PureComponent {
   static propTypes = {
     connectDropTarget: PropTypes.func.isRequired,
     // isOver: PropTypes.bool.isRequired,
@@ -121,8 +119,10 @@ class DropTargetCont extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { dropHandler } = this.props;
     const { dropped, id, left, top } = this.state;
+    // console.log('yeah dropHandler');
 
-    if (dropped && !prevState.dropped) dropHandler({ id, x: left, y: top });
+    if (dropped && !prevState.dropped)
+      dropHandler({ id: Math.random() * 100, x: left, y: top });
   }
 
   moveBox(id, left, top) {

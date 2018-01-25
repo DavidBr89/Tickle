@@ -7,8 +7,9 @@ import {
   selectCard,
   createCard,
   dragCard,
-  openCardDetails
-} from './actions_cardCreator';
+  openCardDetails,
+  toggleCardTemplate
+} from './actions';
 
 import CardCreator from './CardCreator';
 
@@ -31,6 +32,9 @@ const mapDispatchToProps = dispatch => ({
   },
   openCardDetails: options => {
     dispatch(openCardDetails(options));
+  },
+  toggleCardTemplateAction: options => {
+    dispatch(toggleCardTemplate(options));
   },
   createCard: options => {
     dispatch(createCard(options));

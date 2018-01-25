@@ -8,12 +8,13 @@ import { default as TouchBackend } from 'react-dnd-touch-backend';
 import { DragDropContextProvider } from 'react-dnd';
 
 import MapGL from 'react-map-gl';
+import Grid from 'mygrid/dist';
 // import update from 'immutability-helper';
 
 import { PreviewCard, Card } from '../cards';
 import cxx from './CardCreator.scss';
 
-import { DivOverlay, AnimMarker} from '../utils/map-layers/DivOverlay';
+import { DivOverlay, AnimMarker } from '../utils/map-layers/DivOverlay';
 // import cardIconSrc from '../utils/map-layers/cardIcon.svg';
 
 import CardDragPreview from './DragLayer/CardDragPreview';
@@ -54,6 +55,7 @@ class CardCreator extends Component {
     height: 100,
     tempCards: [],
     selected: null,
+    cardTemplateOpen: false,
     openCardDetails: d => d,
     selectedCard: d => d,
     createCard: d => d,
@@ -69,6 +71,7 @@ class CardCreator extends Component {
     // TODO: fix later;
     const [width, height] = [window.innerWidth - 4, window.innerHeight];
     screenResize({ width, height });
+    console.log('constr');
     // this.state = { newCards: [] };
   }
 
@@ -111,14 +114,18 @@ class CardCreator extends Component {
       cards,
       width,
       height,
+      toggleCardTemplateAction,
+
       changeMapViewport,
       openCardDetails,
+
       selectCard,
       selected,
       createCard,
       tempCards,
       dragCard,
-      highlighted
+      highlighted,
+      cardTemplateOpen
     } = this.props;
 
     const mapState = { width, height, ...mapViewport };
@@ -127,14 +134,21 @@ class CardCreator extends Component {
     const selectedCardId = selected ? selected.id : null;
     const selectedExtended = selected ? selected.extended : null;
 
-    console.log('selected', selected);
-
     return (
       <DragDropContextProvider backend={TouchBackend}>
         <div
           className={`${cxx.base}`}
-          style={{ width: `${width}px`, height: `${height}px` }}
+          style={{
+            position: 'relative',
+            width: `${width}px`,
+            height: `${height}px`
+          }}
         >
+          {cardTemplateOpen && (
+            <div style={{ display: 'absolute', width: '100%', height: '100%' }}>
+              <Card onClose={toggleCardTemplateAction} />
+            </div>
+          )}
           <div style={{ position: 'absolute' }}>
             <DragLayer />
             <DropTargetCont dropHandler={createCard}>
@@ -145,60 +159,43 @@ class CardCreator extends Component {
                 onViewportChange={changeMapViewport}
               >
                 {/* TODO: change Key */}
-                <DivOverlay {...mapState} data={tempCards}>
+                <DivOverlay {...mapState} data={cards}>
                   {(c, [x, y]) => (
                     <AnimMarker
                       key={c.id}
-                      selected={highlighted}
+                      selected={false}
                       width={highlighted ? width : w}
                       height={highlighted ? height : h}
                       x={x}
                       y={y}
-                      zIndex={1000}
-                      onClick={() => openCardDetails(c.id)}
                     >
                       <DragSourceCont
                         key={`${c.title}  ${c.date}`}
                         dragHandler={dragCard}
                       >
                         <div style={{ background: 'lightgreen' }}>
-                          {highlighted ? <Card {...c} /> : <CardDragPreview />}
+                          <Card {...c} />
                         </div>
                       </DragSourceCont>
-                    </AnimMarker>
-                  )}
-                </DivOverlay>
-                <DivOverlay {...mapState} data={cards}>
-                  {(c, [x, y]) => (
-                    <AnimMarker
-                      key={Math.random()}
-                      selected={selectedCardId === c.id}
-                      width={c.id === selectedCardId ? width : w}
-                      height={c.id === selectedCardId ? height : h}
-                      x={x}
-                      y={y}
-                      onClick={() => selectCard(c)}
-                    >
-                      <div>
-                        {selectedExtended ? (
-                          <Card {...c} />
-                        ) : (
-                          <CardDragPreview />
-                        )}
-                      </div>
                     </AnimMarker>
                   )}
                 </DivOverlay>
               </MapGL>
             </DropTargetCont>
           </div>
-          <div className="row no-gutters">
+          <div
+            className="row no-gutters"
+            style={{
+              zIndex: 1000,
+              background: 'lightcyan',
+              marginBottom: '20px'
+            }}
+          >
             <div
               className={`col-12 ${cxx.animHeight}`}
               style={{
                 height: `${selected ? height / 2 : 0}px`,
-                background: 'white',
-                zIndex: 10000
+                background: 'white'
               }}
             >
               <Analytics
@@ -207,29 +204,57 @@ class CardCreator extends Component {
                 closeHandler={() => selectCard(null)}
               />
             </div>
-            <div className="col-2">
-              <div
-                className={cxx.grid}
+            <input className="form-control input-lg" type="text" />
+            <div
+              style={{
+                width: '100%',
+                overflowX: 'scroll',
+
+                zIndex: 1000
+              }}
+            >
+              <Grid
+                cols={cards.length + 1}
+                rows={1}
+                gap={1}
                 style={{
                   transition: 'opacity .25s ease-in-out',
-                  opacity: !selected ? 1 : 0
+                  opacity: !selected ? 1 : 0,
+                  width: '300%',
+                  height: '20%'
                 }}
               >
-                <DragSourceCont key={'newCard'}>
-                  <div className={cxx.cardTemp}>
-                    <i className="fa fa-4x fa-plus" aria-hidden="true" />
+                <DragSourceCont>
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      display: 'flex',
+                      alignContent: 'center',
+                      alignItems: 'center',
+                      background: 'lightgrey',
+                      border: '1px dashed grey'
+                      // margin: '10%'
+                    }}
+                    onClick={() => toggleCardTemplateAction()}
+                  >
+                    <i
+                      className="fa fa-4x fa-plus"
+                      aria-hidden="true"
+                      style={{
+                        textAlign: 'center',
+                        width: '100%',
+                        color: 'grey'
+                      }}
+                    />
                   </div>
                 </DragSourceCont>
                 {cards.map(d => (
                   <div onClick={() => openCardDetails(d.id)}>
-                    <DragSourceCont key={`${d.title}  ${d.date}`}>
-                      <div style={{ border: '1px dashed gray' }}>
-                        <PreviewCard {...d} {...this.props} />
-                      </div>
-                    </DragSourceCont>
+                    <PreviewCard {...d} {...this.props} />
                   </div>
                 ))}
-              </div>
+              </Grid>
             </div>
           </div>
         </div>

@@ -61,7 +61,8 @@ const defaultState = {
     height: 100,
     mapViewport: { ...defaultLocation, zoom: 10 },
     selectedCardId: null,
-    tempCards: []
+    tempCards: [],
+    cardTemplateOpen: false
   }
 };
 
@@ -94,7 +95,7 @@ const Routes = () => (
       />
       <Route
         exact
-        path="/card_creator"
+        path="/cardcreator"
         render={() => (
           <DefaultLayout>
             <Provider store={store}>
