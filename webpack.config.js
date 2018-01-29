@@ -5,8 +5,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 // const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-const HOST = process.env.HOST || '127.0.0.1';
-const PORT = process.env.PORT || '8888';
+const HOST = process.env.HOST || '0.0.0.0';
+const PORT = process.env.PORT || '3000';
 
 loaders.push(
   {

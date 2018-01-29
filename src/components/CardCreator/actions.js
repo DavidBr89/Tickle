@@ -4,7 +4,7 @@ export const OPEN_CARD_DETAILS = 'OPEN_CARD_DETAILS';
 export const CARD_CREATOR_SCREEN_RESIZE = 'CARD_CREATOR_SCREEN_RESIZE';
 export const CHANGE_MAP_VIEWPORT = 'CHANGE_MAP_VIEWPORT_1';
 export const CREATE_CARD = 'CREATE_CARD';
-export const OPEN_CARD_TEMPLATE = 'OPEN_CARD_TEMPLATE';
+export const TOGGLE_CARD_TEMPLATE = 'TOGGLE_CARD_TEMPLATE';
 export const UPDATE_CARD = 'UPDATE_CARD';
 export const REMOVE_CARD = 'REMOVE_CARD';
 export const DRAG_CARD = 'DRAG_CARD';
@@ -54,7 +54,7 @@ export function dragCard(options) {
 }
 // export function toggleTodo(index) {
 export function toggleCardTemplate(options) {
-  return { type: OPEN_CARD_TEMPLATE, options };
+  return { type: TOGGLE_CARD_TEMPLATE, options };
 }
 //   return { type: TOGGLE_TODO, index };
 // }

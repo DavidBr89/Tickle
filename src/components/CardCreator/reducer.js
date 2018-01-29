@@ -10,7 +10,7 @@ import {
   CREATE_CARD,
   DRAG_CARD,
   OPEN_CARD_DETAILS,
-  OPEN_CARD_TEMPLATE
+  TOGGLE_CARD_TEMPLATE
 } from './actions';
 
 // const mapViewApp = combineReducers({
@@ -126,7 +126,7 @@ function reducer(state = {}, action) {
         isDragging: true
       };
     }
-    case OPEN_CARD_TEMPLATE: {
+    case TOGGLE_CARD_TEMPLATE: {
       console.log('card tem');
       // return {
       //

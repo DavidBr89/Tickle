@@ -144,11 +144,23 @@ class CardCreator extends Component {
             height: `${height}px`
           }}
         >
-          {cardTemplateOpen && (
-            <div style={{ display: 'absolute', width: '100%', height: '100%' }}>
-              <Card onClose={toggleCardTemplateAction} />
-            </div>
-          )}
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width: '100%',
+              height: '100%',
+              visibility: cardTemplateOpen ? 'visible' : 'hidden',
+              opacity: cardTemplateOpen ? 1 : 0,
+              transition: 'opacity 1s',
+              zIndex: 400
+            }}
+          >
+            {cardTemplateOpen && (
+              <Card editable onClose={toggleCardTemplateAction} />
+            )}
+          </div>
           <div style={{ position: 'absolute' }}>
             <DragLayer />
             <DropTargetCont dropHandler={createCard}>
@@ -186,8 +198,7 @@ class CardCreator extends Component {
           <div
             className="row no-gutters"
             style={{
-              zIndex: 1000,
-              background: 'lightcyan',
+              // zIndex: 1000,
               marginBottom: '20px'
             }}
           >
@@ -204,13 +215,31 @@ class CardCreator extends Component {
                 closeHandler={() => selectCard(null)}
               />
             </div>
-            <input className="form-control input-lg" type="text" />
+            <div className="input-group mt-3 mb-3 ml-1 mr-1">
+              <textarea className="form-control" aria-label="With textarea" />
+              <div className="input-group-prepend">
+                <span
+                  className="input-group-text"
+                  onClick={toggleCardTemplateAction}
+                >
+                  <i
+                    className="fa fa-2x fa-plus"
+                    aria-hidden="true"
+                    style={{
+                      textAlign: 'center',
+                      width: '100%',
+                      color: 'grey',
+                      pointerEvents: 'cursor'
+                    }}
+                  />
+                </span>
+              </div>
+            </div>
             <div
               style={{
                 width: '100%',
                 overflowX: 'scroll',
-
-                zIndex: 1000
+                zIndex: 200
               }}
             >
               <Grid
@@ -220,8 +249,8 @@ class CardCreator extends Component {
                 style={{
                   transition: 'opacity .25s ease-in-out',
                   opacity: !selected ? 1 : 0,
-                  width: '300%',
-                  height: '20%'
+                  width: '300%'
+                  // height: '20%'
                 }}
               >
                 <DragSourceCont>
@@ -244,7 +273,8 @@ class CardCreator extends Component {
                       style={{
                         textAlign: 'center',
                         width: '100%',
-                        color: 'grey'
+                        color: 'grey',
+                        pointerEvents: 'cursor'
                       }}
                     />
                   </div>

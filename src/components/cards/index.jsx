@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import MapGL from 'react-map-gl';
+import { WithContext as ReactTags } from 'react-tag-input';
 // import ClampLines from 'react-clamp-lines';
 import 'w3-css';
 
@@ -61,7 +62,7 @@ const defaultProps = {
   xpPoints: 100,
   // TODO: remove in future to component
   description:
-    'This is an empty description. That means the card has been initialized without data',
+    '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."',
   loc: { latitude: 50.828797, longitude: 4.352191 },
   place: 'Park next to my Home',
   creator: 'Jan',
@@ -97,8 +98,16 @@ const defaultProps = {
   linkedCards: ['Frank Liszt', 'Music school Arthur de Greef']
 };
 
+const EditButton = ({ style, onClick }) => (
+  <i
+    className="fa fa-2x fa-pencil-square-o ml-1"
+    style={style}
+    onClick={onClick}
+  />
+);
+
 const Media = ({ data }) => (
-  <Grid cols={2} rows={1}>
+  <Grid cols={data.length} rows={1}>
     {data.map(m => (
       <div key={m.src + random()}>
         <div className="mr-1 row">
@@ -122,6 +131,65 @@ Media.propTypes = {
 
 Media.defaultProps = { data: defaultProps.media, extended: false };
 
+const SmallModal = ({ visible, title, children, content, onClose, onSave }) => (
+  <div
+    className="modal fade modal-open"
+    id="exampleModal"
+    tabIndex="-1"
+    role="dialog"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+    style={{ opacity: visible ? 1 : 0, display: visible ? 'block' : 'none' }}
+  >
+    <div className="modal-dialog modal-dialog-centered" role="document">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title" id="exampleModalLabel">
+            {title}
+          </h5>
+          <button
+            type="button"
+            className="close"
+            data-dismiss="modal"
+            aria-label="Close"
+            onClick={onClose}
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div className="modal-body">{content}</div>
+        <div className="modal-footer">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            data-dismiss="modal"
+          >
+            Close
+          </button>
+          <button type="button" className="btn btn-primary">
+            Save changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+SmallModal.propTypes = {
+  visible: PropTypes.bool,
+  title: PropTypes.string,
+  children: PropTypes.node,
+  onClose: PropTypes.func,
+  onSave: PropTypes.func
+};
+SmallModal.defaultProps = {
+  visible: true,
+  title: '-',
+  children: <div>{'test'}</div>,
+  onClose: () => null,
+  onSave: () => null
+};
+
 const CardFront = ({ tags, img, description, media, children }) => (
   <div
     className={cx.cardDetail}
@@ -134,7 +202,7 @@ const CardFront = ({ tags, img, description, media, children }) => (
   >
     <PreviewTags data={tags} />
     <div className="mt-1 mb-1">
-      <img src={img} alt="Card cap" style={{ width: '100%', height: '100%' }} />
+      <img src={img} alt="Card img" style={{ width: '100%', height: '100%' }} />
     </div>
     <div>
       <fieldset className={cx.field}>
@@ -159,6 +227,207 @@ CardFront.propTypes = {
 };
 
 CardFront.defaultProps = defaultProps;
+
+class EditableCardFront extends Component {
+  static propTypes = CardFront.propTypes;
+  static defaultProps = CardFront.defaultProps;
+
+  constructor(props) {
+    super(props);
+    this.state = { data: { ...props }, dialog: null };
+  }
+
+  render() {
+    // console.log('hey', this.props);
+    const {
+      tags,
+      img,
+      description,
+      media,
+      children,
+      challenge
+    } = this.state.data;
+    const { dialog } = this.state;
+    const modalVisible = dialog !== null;
+    return (
+      <div style={{ height: '100%' }}>
+        <SmallModal
+          visible={modalVisible}
+          onClose={() => this.setState({ dialog: null })}
+        >
+          {modalVisible ? dialog.content : ''}
+        </SmallModal>
+        <div
+          className={cx.cardDetail}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            // justifyContent: 'space-between',
+            height: '90%'
+          }}
+        >
+          <div style={{ display: 'flex' }}>
+            <PreviewTags data={tags} />
+            <i
+              style={{ fontSize: '24px' }}
+              className="fa fa-pencil-square-o ml-1"
+              onClick={() => this.setState({ title: 'Tags', content: tags })}
+            />
+          </div>
+          <div className="mt-1 mb-1">
+            <div
+              alt="Card cap"
+              style={{
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              <div className="mt-1 mb-1">
+                <img
+                  src="http://via.placeholder.com/450x270"
+                  alt="Card img"
+                  style={{ width: '100%', height: '100%' }}
+                />
+              </div>
+            </div>
+          </div>
+          <div style={{ height: '20%' }}>
+            <fieldset className={`${cx.field}`} style={{ height: '90%' }}>
+              <legend>description</legend>
+              <div
+                style={{ display: 'flex', alignContent: 'end', height: '100%' }}
+              >
+                <div className={cx.textClamp} style={{ height: '100%' }}>
+                  {description}
+                </div>
+                <div>
+                  <EditButton
+                    onClick={() =>
+                      this.setState({
+                        dialog: { title: 'description', content: description }
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            </fieldset>
+          </div>
+          <div style={{ height: '15%' }}>
+            <fieldset className={cx.field}>
+              <legend>Media:</legend>
+              <div style={{ display: 'flex', alignContent: 'end' }}>
+                <Media />
+                <div>
+                  <EditButton
+                    onClick={() =>
+                      this.setState({
+                        dialog: { title: 'Media', content: media }
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            </fieldset>
+          </div>
+          <div onClick={() => this.setState({ dialog: true })}>
+            <div style={{ display: 'flex', alignContent: 'end' }}>
+              <div className="p-1 pt-3" style={{ width: '100%' }}>
+                <button
+                  className={`btn btn-secondary btn-lg btn-block}`}
+                  style={{ width: '100%', alignSelf: 'flex-end' }}
+                  onClick={() => null}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignContent: 'center'
+                    }}
+                  >
+                    <div>{'Challenge'}</div>
+                    <div
+                      style={{
+                        marginLeft: '4px',
+                        paddingLeft: '4px',
+                        paddingRight: '4px'
+                      }}
+                    >
+                      <EditButton
+                        onClick={() =>
+                          this.setState({
+                            dialog: { title: 'Challenge', content: challenge }
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+          {children}
+        </div>
+      </div>
+    );
+  }
+}
+
+EditableCardFront.defaultProps = defaultProps;
+
+// const EditableCardFront = ({ tags, img, description, media, children }) => (
+//   <div
+//     className={cx.cardDetail}
+//     style={{
+//       display: 'flex',
+//       flexDirection: 'column',
+//       // justifyContent: 'space-between',
+//       height: '90%'
+//     }}
+//   >
+//     <PreviewTags data={tags} />
+//     <div className="mt-1 mb-1">
+//       <div
+//         alt="Card cap"
+//         style={{
+//           width: '100%',
+//           height: '100%',
+//           display: 'flex',
+//           alignContent: 'center',
+//           alignItems: 'center'
+//         }}
+//       >
+//         <div className="mt-1 mb-1">
+//           <img
+//             src="http://via.placeholder.com/450x270"
+//             alt="Card img"
+//             style={{ width: '100%', height: '100%' }}
+//           />
+//         </div>
+//       </div>
+//     </div>
+//     <div>
+//       <fieldset className={cx.field}>
+//         <legend>description</legend>
+//         <textarea className="form-control" rows="3" />
+//       </fieldset>
+//     </div>
+//     <div>
+//       <fieldset className={cx.field}>
+//         <legend>Media:</legend>
+//         <TagInput />
+//       </fieldset>
+//     </div>
+//     <div onClick={() => this.setState({ dialog: true })}>
+//       <fieldset className={cx.field}>
+//         <legend>Challenge:</legend>
+//       </fieldset>
+//     </div>
+//     {children}
+//   </div>
+// );
 
 const Tags = ({ data }) => (
   <div
@@ -208,6 +477,22 @@ const SmallCategories = ({ data }) => (
 );
 
 class PreviewCard extends Component {
+  static propTypes = {
+    title: PropTypes.string.isRequired,
+    tags: PropTypes.array.isRequired,
+    img: PropTypes.string,
+    challenge: PropTypes.func.isRequired,
+    onClick: PropTypes.func.isRequired,
+    style: PropTypes.object,
+    selected: PropTypes.bool
+  };
+
+  static defaultProps = {
+    ...defaultProps,
+    style: {},
+    selected: false
+  };
+
   shouldComponentUpdate(nextProps) {
     return this.props.selected !== nextProps.selected;
   }
@@ -245,20 +530,8 @@ class PreviewCard extends Component {
   }
 }
 
-PreviewCard.propTypes = {
-  title: PropTypes.string.isRequired,
-  tags: PropTypes.array.isRequired,
-  img: PropTypes.string,
-  challenge: PropTypes.func.isRequired,
-  onClick: PropTypes.func.isRequired,
-  style: PropTypes.object
-};
-
-PreviewCard.defaultProps = { ...defaultProps, style: {} };
-
 const CardFrame = ({
   title,
-  tags,
   img,
   onClose,
   challenge,
@@ -530,8 +803,8 @@ class CardBack extends Component {
     challenge: PropTypes.object.isRequired,
     author: PropTypes.object.isRequired,
     flipHandler: PropTypes.func.isRequired,
-    cardSets: PropTypes.object.isRequired,
-    linkedCards: PropTypes.object.isRequireds,
+    cardSets: PropTypes.array,
+    linkedCards: PropTypes.array,
     loc: PropTypes.shape({
       latitude: PropTypes.number,
       longitude: PropTypes.number
@@ -616,36 +889,38 @@ class CardBack extends Component {
               )}
             </Wrapper>
           </fieldset>
-          <fieldset
-            className={cx.field}
-            style={display('cardSets')}
-            onClick={selectField('cardSets')}
-            {...setSizeProps('cardSets')}
-          >
-            <legend>Cardsets:</legend>
-            <Tags data={cardSets} />
-          </fieldset>
-          <fieldset
-            className={cx.field}
-            style={display('linkedCards')}
-            onClick={selectField('linkedCards')}
-            {...setSizeProps('linkedCards')}
-          >
-            <legend>Linked Cards</legend>
-            <div>
-              <Tags data={linkedCards} />
-            </div>
-          </fieldset>
-          <fieldset
-            colSpan={2}
-            className={cx.field}
-            style={display('comments')}
-            {...setSizeProps('comments')}
-            onClick={selectField('comments')}
-          >
-            <legend>Comments:</legend>
-            <Comments data={comments} />
-          </fieldset>
+          <div onClick={selectField('cardSets')}>
+            <fieldset
+              className={cx.field}
+              style={display('cardSets')}
+              {...setSizeProps('cardSets')}
+            >
+              <legend>Cardsets:</legend>
+              <Tags data={cardSets} />
+            </fieldset>
+          </div>
+          <div onClick={selectField('linkedCards')}>
+            <fieldset
+              className={cx.field}
+              style={display('linkedCards')}
+              {...setSizeProps('linkedCards')}
+            >
+              <legend>Linked Cards</legend>
+              <div>
+                <Tags data={linkedCards} />
+              </div>
+            </fieldset>
+          </div>
+          <div onClick={selectField('comments')} colSpan={2}>
+            <fieldset
+              className={cx.field}
+              style={display('comments')}
+              {...setSizeProps('comments')}
+            >
+              <legend>Comments:</legend>
+              <Comments data={comments} />
+            </fieldset>
+          </div>
         </Grid>
       </div>
     );
@@ -661,6 +936,138 @@ CardBack.defaultProps = {
   loc: { latitude: 0, longitude: 0 },
   author: Profile.defaultProps.data
 };
+
+class EditableCardBack extends Component {
+  static propTypes = {
+    key: PropTypes.string.isRequired,
+    challenge: PropTypes.object.isRequired,
+    author: PropTypes.object.isRequired,
+    flipHandler: PropTypes.func.isRequired,
+    cardSets: PropTypes.object.isRequired,
+    linkedCards: PropTypes.object.isRequireds,
+    loc: PropTypes.shape({
+      latitude: PropTypes.number,
+      longitude: PropTypes.number
+    }),
+    media: PropTypes.array.isRequired
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = { extended: null };
+  }
+
+  render() {
+    const { challenge, media, cardSets, linkedCards, loc } = this.props;
+    const { extended } = this.state;
+    const selectField = field => () =>
+      this.setState(prevstate => ({
+        extended: prevstate.extended !== field ? field : null
+      }));
+
+    const setSizeProps = field => {
+      if (field === extended)
+        return {
+          colSpan: 2,
+          rowSpan: 3
+        };
+      return {};
+    };
+    const isHidden = field => extended !== null && extended !== field;
+    const display = field => ({
+      display: isHidden(field) ? 'none' : null
+    });
+
+    return (
+      <div
+        className={`container ${cx.cardMini2} `}
+        style={{
+          height: '90%',
+          zIndex: -10
+        }}
+      >
+        <Grid cols={2} rows={3} gap={1}>
+          <div>
+            <fieldset
+              className={cx.field}
+              style={display('author')}
+              {...setSizeProps('author')}
+              onClick={selectField('author')}
+            >
+              <legend>Author:</legend>
+              <div style={{ display: 'flex' }}>
+                <div>{'Placeholder'}</div>
+                <EditButton
+                  onClick={() =>
+                    this.setState({ dialog: { title: 'author', content: '' } })
+                  }
+                />
+              </div>
+            </fieldset>
+          </div>
+          <div onClick={selectField('map')}>
+            <fieldset
+              className={cx.field}
+              style={display('map')}
+              {...setSizeProps('map')}
+            >
+              <legend>Map:</legend>
+              <Wrapper>
+                {(width, height) => (
+                  <MapGL
+                    width={width}
+                    height={height}
+                    latitude={loc.latitude}
+                    longitude={loc.longitude}
+                    zoom={8}
+                  />
+                )}
+              </Wrapper>
+            </fieldset>
+          </div>
+          <div onClick={selectField('cardSets')}>
+            <fieldset
+              className={cx.field}
+              style={display('cardSets')}
+              {...setSizeProps('cardSets')}
+            >
+              <legend>Cardsets:</legend>
+              <Tags data={cardSets} />
+              <EditButton
+                onClick={() =>
+                  this.setState({ dialog: { title: 'author', content: '' } })
+                }
+              />
+            </fieldset>
+          </div>
+          <div onClick={selectField('linkedCards')}>
+            <fieldset
+              className={cx.field}
+              style={display('linkedCards')}
+              {...setSizeProps('linkedCards')}
+            >
+              <legend>Linked Cards</legend>
+              <div>
+                <Tags data={linkedCards} />
+              </div>
+            </fieldset>
+          </div>
+          <div onClick={selectField('comments')}>
+            <fieldset
+              colSpan={2}
+              className={cx.field}
+              style={display('comments')}
+              {...setSizeProps('comments')}
+            >
+              <legend>Comments:</legend>
+              {'Placeholder'}
+            </fieldset>
+          </div>
+        </Grid>
+      </div>
+    );
+  }
+}
 
 // CardBack.defaultProps = {
 //   key: 'asa',
@@ -725,12 +1132,14 @@ class Card extends React.Component {
   static propTypes = {
     onClose: PropTypes.oneOf([null, PropTypes.func]),
     collectHandler: PropTypes.oneOf([null, PropTypes.func]),
-    style: PropTypes.object
+    style: PropTypes.object,
+    editable: PropTypes.bool
   };
   static defaultProps = {
     onClose: d => d,
     collectHandler: null,
-    style: {}
+    style: {},
+    editable: false
   };
 
   constructor(props) {
@@ -741,7 +1150,7 @@ class Card extends React.Component {
   }
 
   render() {
-    const { style } = this.props;
+    const { style, editable } = this.props;
     const { frontView } = this.state;
     // const { onClose } = this.props;
     const sideToggler = frontView ? cx.flipAnim : null;
@@ -754,16 +1163,26 @@ class Card extends React.Component {
     const ToggleCard = do {
       if (frontView) {
         <CardFrame {...this.props} flipHandler={flipHandler}>
-          <CardFront {...this.props}>
-            <CollectButton onClick={onCollect} />
-          </CardFront>
+          {editable ? (
+            <EditableCardFront {...this.props} />
+          ) : (
+            <CardFront {...this.props}>
+              <CollectButton onClick={onCollect} />
+            </CardFront>
+          )}
         </CardFrame>;
       } else {
         <CardFrame {...this.props} flipHandler={flipHandler}>
-          <CardBack {...this.props} />
+          {editable ? (
+            <EditableCardBack {...this.props} />
+          ) : (
+            <CardBack {...this.props} />
+          )}
         </CardFrame>;
       }
     };
+
+    // console.log('ToggleCard', ToggleCard);
 
     return (
       <div className={`${cx.flipContainer} ${sideToggler}`} style={style}>
@@ -790,10 +1209,73 @@ Card.defaultProps = {
   ...CardBack.defaultProps
 };
 
+class TagInput extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      tags: [{ id: 1, text: 'Thailand' }, { id: 2, text: 'India' }],
+      suggestions: ['Belgium', 'Germany', 'Brazil']
+    };
+    this.handleDelete = this.handleDelete.bind(this);
+    this.handleAddition = this.handleAddition.bind(this);
+    this.handleDrag = this.handleDrag.bind(this);
+  }
+
+  handleDelete(i) {
+    const tags = this.state.tags;
+    tags.splice(i, 1);
+    this.setState({ tags });
+  }
+
+  handleAddition(tag) {
+    const tags = this.state.tags;
+    tags.push({
+      id: tags.length + 1,
+      text: tag
+    });
+    this.setState({ tags });
+  }
+
+  handleDrag(tag, currPos, newPos) {
+    const tags = this.state.tags;
+
+    // mutate array
+    tags.splice(currPos, 1);
+    tags.splice(newPos, 0, tag);
+
+    // re-render
+    this.setState({ tags });
+  }
+
+  render() {
+    const { tags, suggestions } = this.state;
+    return (
+      <ReactTags
+        classNames={{
+          tags: 'tagsClass',
+          tagInput: 'tagInputClass',
+          tagInputField: 'tagInputFieldClass',
+          selected: 'selectedClass',
+          tag: `${cx.tag} ${colorScaleRandom()}`,
+          remove: 'removeClass',
+          suggestions: 'suggestionsClass',
+          activeSuggestion: 'activeSuggestionClass'
+        }}
+        tags={tags}
+        suggestions={suggestions}
+        handleDelete={this.handleDelete}
+        handleAddition={this.handleAddition}
+        handleDrag={this.handleDrag}
+      />
+    );
+  }
+}
+
 // CardCont.defaultProps = {
 //   selected: true
 // };
 
 // CardCont.propTypes = { selected: PropTypes.bool };
 
-export { Card, PreviewCard };
+export { Card, PreviewCard, TagInput };

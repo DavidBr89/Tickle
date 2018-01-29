@@ -191,16 +191,16 @@ const AnimMarker = ({
   </div>
 );
 
-AnimMarker.PropTypes = {
+AnimMarker.propTypes = {
   delay: PropTypes.number,
-  key: PropTypes.string,
-  width: PropTypes.string,
-  height: PropTypes.string,
-  selected: PropTypes.bool,
-  x: PropTypes.number,
-  y: PropTypes.number,
-  children: PropTypes.element,
-  preview: PropTypes.children
+  key: PropTypes.string.isRequired,
+  width: PropTypes.string.isRequired,
+  height: PropTypes.string.isRequired,
+  selected: PropTypes.bool.isRequired,
+  x: PropTypes.number.isRequired,
+  y: PropTypes.number.isRequired,
+  children: PropTypes.node.isRequired,
+  preview: PropTypes.node
 };
 
 AnimMarker.defaultProps = {
