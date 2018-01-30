@@ -617,6 +617,7 @@ class PreviewCard extends Component {
     title: PropTypes.string.isRequired,
     tags: PropTypes.array.isRequired,
     img: PropTypes.string,
+    color: PropTypes.string,
     challenge: PropTypes.func.isRequired,
     onClick: PropTypes.func.isRequired,
     style: PropTypes.object,
@@ -634,13 +635,13 @@ class PreviewCard extends Component {
   }
 
   render() {
-    const { title, tags, img, challenge, style, onClick } = this.props;
+    const { title, tags, img, challenge, style, onClick, color} = this.props;
     return (
       <div
         className={cx.cardMini2}
         style={{
           ...style,
-          background: colorScale(challenge.type)
+          background: color
         }}
         onClick={onClick}
       >
@@ -674,13 +675,14 @@ const CardFrame = ({
   children,
   flipHandler,
   edit,
+  color,
   style
   // id
 }) => (
   <div
     className={`${cx.cardMini2} `}
     style={{
-      background: colorScale(challenge.type),
+      background: color,
       overflow: 'hidden',
       height: '100%',
       ...style
@@ -709,6 +711,7 @@ CardFrame.propTypes = {
   flipHandler: PropTypes.func,
   challenge: PropTypes.object,
   children: PropTypes.node,
+  color: PropTypes.string
 };
 
 CardFrame.defaultProps = { ...defaultProps, edit: false };
