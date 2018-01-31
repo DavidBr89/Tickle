@@ -2,17 +2,20 @@ const webpack = require('webpack');
 const path = require('path');
 const loaders = require('./webpack.loaders');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 // const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 // const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const HOST = process.env.HOST || '0.0.0.0';
 const PORT = process.env.PORT || '3000';
 
+//TODO: exclude css
 loaders.push(
   {
     // global css
     test: /\.css$/,
-    exclude: /[/\\]src[/\\]/,
+    include: /[/\\]node_modules[/\\]/,
     // include: /[\/\\](globalStyles)[\/\\]/,
     loaders: ['style-loader?sourceMap', 'css-loader']
   },
@@ -120,7 +123,8 @@ module.exports = {
     }
   },
   module: {
-    loaders
+    loaders,
+    noParse: /jquery/
   },
   devServer: {
     contentBase: './public',
@@ -150,6 +154,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/template.html'
     }),
+    // new HardSourceWebpackPlugin(),
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',

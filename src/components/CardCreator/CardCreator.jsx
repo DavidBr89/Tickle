@@ -173,7 +173,7 @@ class CardCreator extends Component {
                 {...mapViewport}
                 width={width}
                 height={height}
-                onViewportChange={changeMapViewport}
+                onViewportChange={!isDragging ? changeMapViewport : null}
               >
                 {/* TODO: change Key */}
                 <DivOverlay {...mapState} data={cards}>

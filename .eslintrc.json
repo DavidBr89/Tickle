@@ -37,6 +37,8 @@
     "default-case": ["error", {
       "commentPattern": "^skip\\sdefault"
     }],
+    "no-return-assign": 0,
+    "no-undef": "error",
     "react/forbid-prop-types": 0,
     "react/no-find-dom-node": 0,
     "react/no-multi-comp": 0,

@@ -107,7 +107,12 @@ const EditButton = ({ style, onClick }) => (
   />
 );
 
-EditButton.PropTypes = { style: PropTypes.object, onClick: PropTypes.func };
+EditButton.propTypes = {
+  style: PropTypes.object,
+  onClick: PropTypes.func
+};
+
+EditButton.defaultProps = { style: {}, onClick: () => null };
 
 const Media = ({ data }) => (
   <Grid cols={data.length} rows={1}>
@@ -128,8 +133,8 @@ const Media = ({ data }) => (
 );
 
 Media.propTypes = {
-  data: PropTypes.array.isRequired,
-  extended: PropTypes.bool
+  data: PropTypes.array.isRequired
+  // extended: PropTypes.bool
 };
 
 Media.defaultProps = { data: defaultProps.media, extended: false };
@@ -345,6 +350,13 @@ const MediaSearch = ({ media, onSubmit }) => (
   </ModalHeaderFooter>
 );
 
+MediaSearch.propTypes = {
+  media: PropTypes.array.isRequired,
+  onSubmit: PropTypes.func
+};
+
+MediaSearch.defaultProps = { onSubmit: () => null };
+
 class EditableCardFront extends Component {
   static propTypes = ReadCardFront.propTypes;
   static defaultProps = ReadCardFront.defaultProps;
@@ -363,9 +375,9 @@ class EditableCardFront extends Component {
     const { dialog } = this.state;
     const modalVisible = dialog !== null;
     const id = dialog !== null ? dialog.id : null;
-    const modalStyle = modalVisible
-      ? { background: 'black', opacity: 0.5 }
-      : {};
+    // const modalStyle = modalVisible
+    //   ? { background: 'black', opacity: 0.5 }
+    //   : {};
     const setFieldState = field =>
       this.setState(oldState => ({
         data: { ...oldState.data, ...field }
@@ -558,6 +570,10 @@ function CardFront(props) {
   );
 }
 
+CardFront.propTypes = { ...ReadCardFront.propTypes, edit: PropTypes.bool };
+
+CardFront.defaultProps = { edit: false };
+
 // const EditableCardFront = ({ tags, img, description, media, children }) => (
 //   <div
 //     className={cx.cardDetail}
@@ -611,17 +627,7 @@ function CardFront(props) {
 // );
 
 const Tags = ({ data }) => (
-  <div
-    style={
-      {
-        // display: 'flex',
-        // flexWrap: 'wrap'
-        // alignItems: 'flex-start',
-        // alignContent: 'center'
-      }
-    }
-    className={cx.tags}
-  >
+  <div className={cx.tags}>
     {data.map(t => (
       <div key={t + random()} className={`${cx.tag} ${colorClass(t)}`}>
         <small>{t}</small>
@@ -629,6 +635,9 @@ const Tags = ({ data }) => (
     ))}
   </div>
 );
+
+Tags.propTypes = { data: PropTypes.array };
+Tags.defaultProps = { data: ['tag1', 'exampleTag'] };
 
 const PreviewTags = ({ data }) => (
   <div
@@ -655,15 +664,15 @@ PreviewTags.defaultProps = {
   data: ['tag', 'tag1', 'tag2']
 };
 
-const SmallCategories = ({ data }) => (
-  <div className={`${cx.textTrunc} ${cx.tags}`}>
-    {data.map(t => (
-      <small key={t + random()} className={`${cx.tag} ${colorClass(t)}`}>
-        {t}
-      </small>
-    ))}
-  </div>
-);
+// const SmallCategories = ({ data }) => (
+//   <div className={`${cx.textTrunc} ${cx.tags}`}>
+//     {data.map(t => (
+//       <small key={t + random()} className={`${cx.tag} ${colorClass(t)}`}>
+//         {t}
+//       </small>
+//     ))}
+//   </div>
+// );
 
 class PreviewCard extends Component {
   static propTypes = {
@@ -701,7 +710,7 @@ class PreviewCard extends Component {
           <h5 className="text-truncate">{title}</h5>
         </div>
         <div>
-          <SmallCategories data={tags} />
+          <PreviewTags data={tags} />
           <div className="mt-1 mb-1">
             <img
               style={{
@@ -721,7 +730,7 @@ class PreviewCard extends Component {
 
 const CardFrame = ({
   title,
-  img,
+  // img,
   onClose,
   challenge,
   children,
@@ -739,8 +748,11 @@ const CardFrame = ({
       ...style
     }}
   >
-    <div className={cx.cardHeader}>
-      <h3 className="text-truncate">{title}</h3>
+    <div className={cx.cardHeader} style={{ display: 'flex' }}>
+      <h3 className="text-truncate">
+        {title}
+        {edit || <EditButton />}
+      </h3>
       <div className="btn-group">
         <button className="close mr-2" onClick={onClose}>
           <i className="fa fa-window-close fa-lg" aria-hidden="true" />
@@ -757,14 +769,16 @@ const CardFrame = ({
 CardFrame.propTypes = {
   title: PropTypes.string,
   // tags: PropTypes.array,
-  edit: PropTypes.bool,
-  img: PropTypes.string,
+  // img: PropTypes.string,
   flipHandler: PropTypes.func,
   challenge: PropTypes.object,
-  children: PropTypes.node
+  children: PropTypes.node,
+  style: PropTypes.object,
+  onClose: PropTypes.func,
+  edit: PropTypes.bool
 };
 
-CardFrame.defaultProps = { ...defaultProps, edit: false };
+CardFrame.defaultProps = { ...defaultProps, edit: false, onClose: () => null };
 
 const Comments = ({ data, extended }) => (
   <div
@@ -796,7 +810,7 @@ const Comments = ({ data, extended }) => (
   </div>
 );
 
-Comments.PropTypes = {
+Comments.propTypes = {
   data: PropTypes.array.isRequired,
   extended: PropTypes.bool.isRequired
 };
@@ -812,7 +826,7 @@ const SkillBar = ({ data }) => {
     .domain(d3.extent(data, d => d.level))
     .range([30, 100]);
 
-  console.log('scale', scale.domain());
+  // console.log('scale', scale.domain());
 
   return (
     <div style={{ display: 'flex' }}>
@@ -834,6 +848,10 @@ const SkillBar = ({ data }) => {
   );
 };
 
+SkillBar.propTypes = { data: PropTypes.array };
+
+SkillBar.defaultProps = { data: [] };
+
 const CardStack = ({ number }) => (
   // const scale = d3
   //   .scaleLinear()
@@ -848,7 +866,14 @@ const CardStack = ({ number }) => (
     ))}
   </div>
 );
-const Author = ({ profile, extended, onClose }) => {
+
+CardStack.propTypes = {
+  number: PropTypes.number
+};
+
+CardStack.defaultProps = { number: 0 };
+
+const Author = ({ extended, onClose, ...profile }) => {
   const { name, skills, activity, interests } = profile;
   if (!extended) {
     return (
@@ -931,34 +956,35 @@ const Author = ({ profile, extended, onClose }) => {
 };
 
 // Author.propTypes = {
-//   profile: PropTypes.shape({
-//     name: PropTypes.string,
-//     skills: PropTypes.array(
-//       PropTypes.shape({ name: PropTypes.string, level: PropTypes.number })
-//     ),
-//     activity: PropTypes.shape({
+//   //  profile: PropTypes.shape({
+//   name: PropTypes.string,
+//   skills: PropTypes.array(
+//     PropTypes.shape({ name: PropTypes.string, level: PropTypes.number })
+//   ),
+//   activity: PropTypes.object(
+//     PropTypes.shape({
 //       collectedCards: PropTypes.number,
 //       createdCards: PropTypes.number
 //     })
-//   }),
+//   ),
 //   extended: PropTypes.bool
 // };
 
 Author.defaultProps = {
-  profile: {
-    name: 'jan',
-    skills: [
-      { type: 'arts', level: 22 },
-      { type: 'music', level: 14 },
-      { type: 'sports', level: 10 }
-    ],
-    interests: [
-      { type: 'movies', level: 12 },
-      { type: 'football', level: 5 },
-      { type: 'xbox', level: 10 }
-    ],
-    activity: { collectedCards: 20, createdCards: 13 }
-  },
+  // profile: {
+  name: 'jan',
+  skills: [
+    { type: 'arts', level: 22 },
+    { type: 'music', level: 14 },
+    { type: 'sports', level: 10 }
+  ],
+  interests: [
+    { type: 'movies', level: 12 },
+    { type: 'football', level: 5 },
+    { type: 'xbox', level: 10 }
+  ],
+  activity: { collectedCards: 20, createdCards: 13 },
+  // },
   extended: false
 };
 
@@ -980,8 +1006,11 @@ const Profile = ({ data }) => (
   </div>
 );
 
-Profile.PropTypes = {
+Profile.propTypes = {
   data: PropTypes.object.isRequired
+};
+Profile.defaultProps = {
+  data: {}
 };
 
 // TODO; rempve
@@ -1052,7 +1081,7 @@ class ReadCardBack extends Component {
             onClick={selectField('author')}
           >
             <Author
-              profile={author}
+              {...author}
               extended={extended === 'author'}
               onClose={() => {
                 // TODO
@@ -1061,25 +1090,26 @@ class ReadCardBack extends Component {
               }}
             />
           </div>
-          <fieldset
-            className={cx.field}
-            onClick={selectField('map')}
-            style={display('map')}
-            {...setSizeProps('map')}
-          >
-            <legend>Map:</legend>
-            <Wrapper>
-              {(width, height) => (
-                <MapGL
-                  width={width}
-                  height={height}
-                  latitude={loc.latitude}
-                  longitude={loc.longitude}
-                  zoom={8}
-                />
-              )}
-            </Wrapper>
-          </fieldset>
+          <div onClick={selectField('map')}>
+            <fieldset
+              className={cx.field}
+              style={display('map')}
+              {...setSizeProps('map')}
+            >
+              <legend>Map:</legend>
+              <Wrapper>
+                {(width, height) => (
+                  <MapGL
+                    width={width}
+                    height={height}
+                    latitude={loc.latitude}
+                    longitude={loc.longitude}
+                    zoom={8}
+                  />
+                )}
+              </Wrapper>
+            </fieldset>
+          </div>
           <div onClick={selectField('cardSets')}>
             <fieldset
               className={cx.field}
