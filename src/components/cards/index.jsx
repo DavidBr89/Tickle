@@ -647,6 +647,14 @@ const PreviewTags = ({ data }) => (
   </div>
 );
 
+PreviewTags.propTypes = {
+  data: PropTypes.array
+};
+
+PreviewTags.defaultProps = {
+  data: ['tag', 'tag1', 'tag2']
+};
+
 const SmallCategories = ({ data }) => (
   <div className={`${cx.textTrunc} ${cx.tags}`}>
     {data.map(t => (

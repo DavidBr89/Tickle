@@ -198,7 +198,7 @@ const AnimMarker = ({
       </div>
     </div>
   );
-  if (node !== null) ReactDOM.createPortal(node);
+  if (node !== null) ReactDOM.createPortal(marker, node);
   return marker;
 };
 

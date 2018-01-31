@@ -191,6 +191,19 @@ const CircleOverlay = ({ mapViewport, userLocation, selectedCard }) => {
   );
 };
 
+CircleOverlay.propTypes = {
+  mapViewport: PropTypes.shape({
+    width: PropTypes.number,
+    height: PropTypes.number,
+    latitude: PropTypes.number,
+    longitude: PropTypes.number
+  })
+};
+
+CircleOverlay.defaultProps = {
+  mapViewport: { width: 200, height: 200, latitude: 0, longitude: 0 }
+};
+
 class MapView extends PureComponent {
   static propTypes = {
     cards: PropTypes.array.isRequired,
@@ -271,7 +284,7 @@ class MapView extends PureComponent {
       timeout: 1
     });
 
-    navigator.geolocation.clearWatch(this.state.watchPosId);
+    // navigator.geolocation.clearWatch(this.state.watchPosId);
   }
 
   render() {
@@ -318,7 +331,7 @@ class MapView extends PureComponent {
             style={{ border: 'none', width: '100%', height: height + 20 }}
           />
         </Modal>
-        <div style={{ position: 'relative' }} ref={node => this.node = node}>
+        <div ref={node => (this.node = node)} style={{ position: 'relative' }}>
           <div
             style={{
               position: 'absolute',
