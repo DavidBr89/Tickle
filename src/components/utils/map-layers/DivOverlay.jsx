@@ -1,4 +1,5 @@
 import React, { PureComponent, Component } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import throttle from 'react-throttle-render';
 
@@ -24,7 +25,8 @@ class DivOverlay extends PureComponent {
     itemWidth: PropTypes.number,
     itemHeight: PropTypes.number,
     location: PropTypes.func,
-    style: PropTypes.object
+    style: PropTypes.object,
+    node: PropTypes.node
   };
 
   static defaultProps = { style: {} };
@@ -47,7 +49,11 @@ class DivOverlay extends PureComponent {
   }
 
   render() {
-    return <HTMLOverlay {...this.props} redraw={this.redraw} />;
+    const { node } = this.props;
+
+    const overlay = <HTMLOverlay {...this.props} redraw={this.redraw} />;
+    if (node !== null) return ReactDOM.createPortal(overlay, node);
+    return overlay;
   }
 }
 
@@ -56,7 +62,8 @@ DivOverlay.defaultProps = {
   children: <div />,
   cards: [],
   itemHeight: 40,
-  itemWidth: 30
+  itemWidth: 30,
+  node: null
   // location(c) {return }
 };
 
@@ -160,36 +167,40 @@ const AnimMarker = ({
   y,
   children,
   onClick,
-  preview
-}) => (
-  <div
-    key={key}
-    onClick={onClick}
-    style={{
-      position: 'absolute',
-      left: selected ? `${0}px` : `${x - width / 2}px`,
-      top: selected ? `${0}px` : `${y - height / 2}px`,
-      width: `${width}px`,
-      height: `${height}px`,
-      transition: `left ${delay}s, top ${delay}s, width ${delay}s, height ${delay}s, opacity ${delay}s`,
-      zIndex: selected ? 5000 : null
-    }}
-  >
-    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <div
-        className={selected ? 'selectedCard' : null}
-        style={{
-          position: 'absolute',
-          transition: `width ${delay}s, height ${delay}s, opacity ${delay}s`,
-          width: '100%',
-          height: '100%'
-        }}
-      >
-        {selected ? children : preview}
+  preview,
+  node
+}) => {
+  const marker = (
+    <div
+      onClick={onClick}
+      style={{
+        position: 'absolute',
+        left: selected ? `${0}px` : `${x - width / 2}px`,
+        top: selected ? `${0}px` : `${y - height / 2}px`,
+        width: `${width}px`,
+        height: `${height}px`,
+        transition: `left ${delay}s, top ${delay}s, width ${delay}s, height ${delay}s, opacity ${delay}s`,
+        zIndex: 5000
+      }}
+    >
+      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+        <div
+          className={selected ? 'selectedCard' : null}
+          style={{
+            position: 'absolute',
+            transition: `width ${delay}s, height ${delay}s, opacity ${delay}s`,
+            width: '100%',
+            height: '100%'
+          }}
+        >
+          {selected ? children : preview}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+  if (node !== null) ReactDOM.createPortal(node);
+  return marker;
+};
 
 AnimMarker.propTypes = {
   delay: PropTypes.number,
@@ -200,12 +211,14 @@ AnimMarker.propTypes = {
   x: PropTypes.number.isRequired,
   y: PropTypes.number.isRequired,
   children: PropTypes.node.isRequired,
-  preview: PropTypes.node
+  preview: PropTypes.node,
+  node: PropTypes.object
 };
 
 AnimMarker.defaultProps = {
   delay: 0.5,
-  preview: <CardMarker />
+  preview: <CardMarker />,
+  node: null
 };
 
 const UserMarker = ({ x, y }) => (

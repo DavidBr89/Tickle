@@ -21,17 +21,21 @@ const style = {
 
 const boxSource = {
   beginDrag(props) {
-    return props.children.props;
-  }
+    console.log('props', props);
+    props.dragHandler(true);
+    return {};
+  },
 
-  // endDrag(props, monitor) {
-  //   const item = monitor.getItem();
-  //   const dropResult = monitor.getDropResult();
-  //
-  //   // if (dropResult) {
-  //   //   alert(`You dropped ${item.name} into ${dropResult.name}!`); // eslint-disable-line no-alert
-  //   // }
-  // }
+  endDrag(props, monitor) {
+    const item = monitor.getItem();
+    const dropResult = monitor.getDropResult();
+
+    if (dropResult) {
+      alert(`You dropped ${item.name} into ${dropResult.name}!`); // eslint-disable-line no-alert
+    }
+    props.dragHandler(false);
+    return {};
+  }
 };
 
 @DragSource('DragSourceCont', boxSource, (connect, monitor) => ({
@@ -39,7 +43,8 @@ const boxSource = {
   isDragging: monitor.isDragging(),
   clientOffset: monitor.getClientOffset(),
   sourceClientOffset: monitor.getSourceClientOffset(),
-  diffFromInitialOffset: monitor.getDifferenceFromInitialOffset()
+  diffFromInitialOffset: monitor.getDifferenceFromInitialOffset(),
+  isdropped: monitor.didDrop()
 }))
 class DragSourceCont extends PureComponent {
   static propTypes = {
@@ -54,12 +59,12 @@ class DragSourceCont extends PureComponent {
     dragHandler: d => d
   };
 
-  componentDidUpdate() {
-    const { dragHandler, isDragging } = this.props;
-    if (isDragging) {
-      dragHandler(isDragging);
-    }
-  }
+  // componentDidUpdate() {
+  //   const { dragHandler, isDragging } = this.props;
+  //   // if (isDragging) {
+  //   //   dragHandler(isDragging);
+  //   // }
+  // }
 
   render() {
     const { isDragging, connectDragSource, children } = this.props;
@@ -80,17 +85,23 @@ const boxTarget = {
     const left = Math.round(delta.x);
     const top = Math.round(delta.y);
 
-    component.moveBox(item.id, left, top);
+    console.log('drop', monitor.didDrop());
+    component.drop(item.id, left, top, props.dragged);
   }
+  // },
+  // canDrop(props, monitor, component) {
+  //   console.log('canDrop', component, monitor);
+  //   // component.undrop();
+  // }
 };
 
 @DropTarget('DragSourceCont', boxTarget, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
   isOver: monitor.isOver(),
-  canDrop: monitor.canDrop(),
   clientOffset: monitor.getClientOffset(),
   sourceClientOffset: monitor.getSourceClientOffset(),
-  diffFromInitialOffset: monitor.getDifferenceFromInitialOffset()
+  diffFromInitialOffset: monitor.getDifferenceFromInitialOffset(),
+  isdropped: monitor.didDrop()
 }))
 class DropTargetCont extends PureComponent {
   static propTypes = {
@@ -116,19 +127,22 @@ class DropTargetCont extends PureComponent {
     };
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const { dropHandler } = this.props;
-    const { dropped, id, left, top } = this.state;
-    // console.log('yeah dropHandler');
-
-    if (dropped && !prevState.dropped)
-      dropHandler({ id: Math.random() * 100, x: left, y: top });
+  componentDidUpdate(prevProps) {
+    const { dropHandler, children } = this.props;
+    const { left, top } = this.state;
+    // console.log('yeah dropHandler', this.props);
+    // const newid = Math.random() * 100;
+    // console.log('dropped', dropped, 'prevDropped', prevState.dropped);
+    console.log(this.props.dragged,  prevProps.dragged)
+    if (prevProps.dragged && !this.props.dragged)
+      dropHandler({ id: Math.random() * 1999, x: left, y: top });
   }
 
-  moveBox(id, left, top) {
-    this.setState({ id, left, top, dropped: true });
+  drop(id, left, top, dropped) {
+    console.log('drop', dropped);
+    this.setState({ id, left, top, dropped });
   }
-  // componentDidUpdate(nextProps, nextState) {
+
   // }
 
   render() {
@@ -141,16 +155,14 @@ class DropTargetCont extends PureComponent {
     } = this.props;
     const { id, left, top, dropped } = this.state;
     // const { x, y } = clientOffset || { x: 0, y: 0 };
+    // console.log('dropped', dropped);
 
     return connectDropTarget(
       <div
         style={{
-          position: 'absolute',
-          height: `${children.props.height}px`,
-          width: `${children.props.width}px`
+          position: 'absolute'
         }}
       >
-        <div style={style} />
         {children}
       </div>
     );

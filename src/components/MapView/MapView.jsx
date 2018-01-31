@@ -234,6 +234,7 @@ class MapView extends PureComponent {
       height: window.innerHeight
     });
     this.scrollTo = scrollTo.bind(this);
+    this.node = null;
   }
 
   componentDidMount() {
@@ -317,7 +318,7 @@ class MapView extends PureComponent {
             style={{ border: 'none', width: '100%', height: height + 20 }}
           />
         </Modal>
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative' }} ref={node => this.node = node}>
           <div
             style={{
               position: 'absolute',
@@ -349,6 +350,7 @@ class MapView extends PureComponent {
                     height={extCardId === c.id ? height - 5 : 50}
                     x={x + 5}
                     y={y + 3}
+                    node={this.node}
                   >
                     <Card
                       {...c}

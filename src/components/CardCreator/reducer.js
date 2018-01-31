@@ -121,9 +121,11 @@ function reducer(state = {}, action) {
       };
     }
     case DRAG_CARD: {
+
+      const isDragging = action.options;
       return {
         ...state,
-        isDragging: true
+        isDragging
       };
     }
     case TOGGLE_CARD_TEMPLATE: {

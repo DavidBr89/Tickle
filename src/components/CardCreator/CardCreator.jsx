@@ -14,7 +14,11 @@ import Grid from 'mygrid/dist';
 import { PreviewCard, Card } from '../cards';
 import cxx from './CardCreator.scss';
 
-import { DivOverlay, AnimMarker } from '../utils/map-layers/DivOverlay';
+import {
+  DivOverlay,
+  CardMarker,
+  AnimMarker
+} from '../utils/map-layers/DivOverlay';
 // import cardIconSrc from '../utils/map-layers/cardIcon.svg';
 
 import CardDragPreview from './DragLayer/CardDragPreview';
@@ -114,6 +118,7 @@ class CardCreator extends Component {
       cards,
       width,
       height,
+      isDragging,
       toggleCardTemplateAction,
 
       changeMapViewport,
@@ -163,7 +168,7 @@ class CardCreator extends Component {
           </div>
           <div style={{ position: 'absolute' }}>
             <DragLayer />
-            <DropTargetCont dropHandler={createCard}>
+            <DropTargetCont dropHandler={createCard} dragged={isDragging}>
               <MapGL
                 {...mapViewport}
                 width={width}
@@ -173,23 +178,25 @@ class CardCreator extends Component {
                 {/* TODO: change Key */}
                 <DivOverlay {...mapState} data={cards}>
                   {(c, [x, y]) => (
-                    <AnimMarker
-                      key={c.id}
-                      selected={false}
-                      width={highlighted ? width : w}
-                      height={highlighted ? height : h}
+                    <div
                       x={x}
                       y={y}
+                      style={{
+                        position: 'absolute',
+                        width: `${w}px`,
+                        height: `${h}px`,
+                        left: x,
+                        top: y
+                      }}
                     >
                       <DragSourceCont
                         key={`${c.title}  ${c.date}`}
                         dragHandler={dragCard}
+                        dragged={isDragging}
                       >
-                        <div style={{ background: 'lightgreen' }}>
-                          <Card {...c} />
-                        </div>
+                        <CardMarker {...c} />
                       </DragSourceCont>
-                    </AnimMarker>
+                    </div>
                   )}
                 </DivOverlay>
               </MapGL>
@@ -253,7 +260,7 @@ class CardCreator extends Component {
                   // height: '20%'
                 }}
               >
-                <DragSourceCont>
+                <DragSourceCont dragHandler={dragCard}>
                   <div
                     style={{
                       width: '100%',

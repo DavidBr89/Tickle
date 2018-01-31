@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReacDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import MapGL from 'react-map-gl';
@@ -133,37 +134,55 @@ Media.propTypes = {
 
 Media.defaultProps = { data: defaultProps.media, extended: false };
 
-const SmallModal = ({ visible, title, children, onClose, onSave }) => (
-  <div
-    className="modal fade show"
-    id="exampleModal"
-    tabIndex="-1"
-    role="dialog"
-    aria-labelledby="exampleModalLabel"
-    aria-hidden="true"
-    style={{ opacity: visible ? 1 : 0, display: visible ? 'block' : 'none' }}
-  >
-    <div className="modal-dialog modal-dialog-centered" role="document">
-      <div className="modal-content">
-        <div className="modal-header">
-          <h5 className="modal-title" id="exampleModalLabel">
-            {title}
-          </h5>
-          <button
-            type="button"
-            className="close"
-            data-dismiss="modal"
-            aria-label="Close"
-            onClick={onClose}
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
+const SmallModal = ({ visible, title, children, onClose, onSave }) =>
+  ReacDOM.createPortal(
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        background: 'rgba(0, 0, 0, 0.5)',
+        opacity: visible ? 1 : 0,
+        transition: 'opacity 1s',
+        zIndex: visible ? '4000' : '-10',
+        left: 0,
+        top: 0,
+        position: 'absolute'
+      }}
+    >
+      <div
+        className="modal fade show"
+        tabIndex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+        style={{
+          opacity: visible ? 1 : 0,
+          display: visible ? 'block' : 'none'
+        }}
+      >
+        <div className="modal-dialog modal-dialog-centered" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="exampleModalLabel">
+                {title}
+              </h5>
+              <button
+                type="button"
+                className="close"
+                data-dismiss="modal"
+                aria-label="Close"
+                onClick={onClose}
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            {children}
+          </div>
         </div>
-        {children}
       </div>
-    </div>
-  </div>
-);
+    </div>,
+    document.querySelector('body')
+  );
 
 SmallModal.propTypes = {
   visible: PropTypes.bool,
@@ -180,12 +199,35 @@ SmallModal.defaultProps = {
   onSave: () => null
 };
 
+const ModalHeaderFooter = ({ children, onSubmit }) => (
+  <div>
+    <div className="modal-body">{children}</div>
+    <div className="modal-footer">
+      <button type="button" className="btn btn-secondary" data-dismiss="modal">
+        Close
+      </button>
+      <button type="button" className="btn btn-primary" onClick={onSubmit}>
+        Save changes
+      </button>
+    </div>
+  </div>
+);
+
+ModalHeaderFooter.propTypes = {
+  children: PropTypes.node.isRequired,
+  onSubmit: PropTypes.func
+};
+
+ModalHeaderFooter.defaultProps = {
+  onSubmit: () => null
+};
+
 const ReadCardFront = ({
   tags,
   img,
   description,
   media,
-  children,
+  // children,
   edit,
   onCollect
 }) => (
@@ -321,6 +363,9 @@ class EditableCardFront extends Component {
     const { dialog } = this.state;
     const modalVisible = dialog !== null;
     const id = dialog !== null ? dialog.id : null;
+    const modalStyle = modalVisible
+      ? { background: 'black', opacity: 0.5 }
+      : {};
     const setFieldState = field =>
       this.setState(oldState => ({
         data: { ...oldState.data, ...field }
@@ -708,7 +753,7 @@ CardFrame.propTypes = {
   img: PropTypes.string,
   flipHandler: PropTypes.func,
   challenge: PropTypes.object,
-  children: PropTypes.node,
+  children: PropTypes.node
 };
 
 CardFrame.defaultProps = { ...defaultProps, edit: false };
@@ -1270,7 +1315,6 @@ CollectButton.propTypes = {
 };
 
 CollectButton.defaultProps = {
-  dataTarget: '#exampleModal',
   collected: false,
   toggleCardChallenge: d => d,
   expPoints: 60
@@ -1354,20 +1398,6 @@ Card.defaultProps = {
   ...ReadCardFront.defaultProps,
   ...ReadCardBack.defaultProps
 };
-
-const ModalHeaderFooter = ({ children, onSubmit }) => (
-  <div>
-    <div className="modal-body">{children}</div>
-    <div className="modal-footer">
-      <button type="button" className="btn btn-secondary" data-dismiss="modal">
-        Close
-      </button>
-      <button type="button" className="btn btn-primary" onClick={onSubmit}>
-        Save changes
-      </button>
-    </div>
-  </div>
-);
 
 class TagInput extends React.Component {
   static propTypes = {
