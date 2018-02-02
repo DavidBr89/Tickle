@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ReacDOM from 'react-dom';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import MapGL from 'react-map-gl';
@@ -114,6 +114,55 @@ EditButton.propTypes = {
 
 EditButton.defaultProps = { style: {}, onClick: () => null };
 
+const CardImg = ({ src }) => (
+  <div className="mt-1 mb-1">
+    <div
+      alt="Card cap"
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignContent: 'center',
+        alignItems: 'center'
+      }}
+    >
+      <div className="mt-1 mb-1">
+        <img
+          src={src}
+          alt="Card img"
+          style={{ width: '100%', height: '100%' }}
+        />
+      </div>
+    </div>
+  </div>
+);
+
+const Description = ({ text, onEdit }) => (
+  <div style={{ height: '20%' }}>
+    <fieldset className={`${cx.field}`} style={{ height: '90%' }}>
+      <legend>description</legend>
+      <div style={{ display: 'flex', alignContent: 'end', height: '100%' }}>
+        <div className={cx.textClamp} style={{ height: '100%' }}>
+          {text}
+        </div>
+        {onEdit && (
+          <div>
+            <EditButton onClick={onEdit} />
+          </div>
+        )}
+      </div>
+    </fieldset>
+  </div>
+);
+
+Description.propTypes = {
+  text: PropTypes.string.isRequired,
+  // TODO: how to
+  onEdit: PropTypes.oneOf([PropTypes.func, null])
+};
+
+Description.defaultProps = { onEdit: null };
+
 const Media = ({ data }) => (
   <Grid cols={data.length} rows={1}>
     {data.map(m => (
@@ -140,7 +189,7 @@ Media.propTypes = {
 Media.defaultProps = { data: defaultProps.media, extended: false };
 
 const SmallModal = ({ visible, title, children, onClose, onSave }) =>
-  ReacDOM.createPortal(
+  ReactDOM.createPortal(
     <div
       style={{
         width: '100%',
@@ -204,13 +253,10 @@ SmallModal.defaultProps = {
   onSave: () => null
 };
 
-const ModalHeaderFooter = ({ children, onSubmit }) => (
+const ModalBody = ({ children, onSubmit }) => (
   <div>
     <div className="modal-body">{children}</div>
     <div className="modal-footer">
-      <button type="button" className="btn btn-secondary" data-dismiss="modal">
-        Close
-      </button>
       <button type="button" className="btn btn-primary" onClick={onSubmit}>
         Save changes
       </button>
@@ -218,12 +264,12 @@ const ModalHeaderFooter = ({ children, onSubmit }) => (
   </div>
 );
 
-ModalHeaderFooter.propTypes = {
+ModalBody.propTypes = {
   children: PropTypes.node.isRequired,
   onSubmit: PropTypes.func
 };
 
-ModalHeaderFooter.defaultProps = {
+ModalBody.defaultProps = {
   onSubmit: () => null
 };
 
@@ -246,15 +292,10 @@ const ReadCardFront = ({
     }}
   >
     <PreviewTags data={tags} />
-    <div className="mt-1 mb-1">
+    <div style={{ height: '30%' }} className="mt-1 mb-1">
       <img src={img} alt="Card img" style={{ width: '100%', height: '100%' }} />
     </div>
-    <div>
-      <fieldset className={cx.field}>
-        <legend>description</legend>
-        <div className={cx.textClamp}>{description}</div>
-      </fieldset>
-    </div>
+    <Description text={description} />
     <div>
       <fieldset className={cx.field}>
         <legend>Media:</legend>
@@ -276,7 +317,7 @@ ReadCardFront.propTypes = {
 ReadCardFront.defaultProps = { ...defaultProps, onCollect: null };
 
 const MediaSearch = ({ media, onSubmit }) => (
-  <ModalHeaderFooter>
+  <ModalBody>
     <div style={{ width: '100%' }}>
       <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
         <li className="nav-item">
@@ -347,7 +388,7 @@ const MediaSearch = ({ media, onSubmit }) => (
         </div>
       </div>
     </div>
-  </ModalHeaderFooter>
+  </ModalBody>
 );
 
 MediaSearch.propTypes = {
@@ -357,7 +398,7 @@ MediaSearch.propTypes = {
 
 MediaSearch.defaultProps = { onSubmit: () => null };
 
-class EditableCardFront extends Component {
+class EditCardFront extends Component {
   static propTypes = ReadCardFront.propTypes;
   static defaultProps = ReadCardFront.defaultProps;
 
@@ -367,6 +408,56 @@ class EditableCardFront extends Component {
     this.nodeDescription = null;
   }
 
+  setFieldState(field) {
+    this.setState(oldState => ({
+      data: { ...oldState.data, ...field }
+    }));
+  }
+
+  modalContent(id) {
+    const { data } = this.state;
+    const { tags, img, description, media, children, challenge } = data;
+    switch (id) {
+      case 'tags':
+        return (
+          <TagInput
+            tags={tags}
+            onSubmit={newTags => this.setFieldState({ tags: newTags })}
+          />
+        );
+      case 'photo':
+        return <div>photo</div>;
+      case 'description':
+        return (
+          <ModalBody
+            onSubmit={() =>
+              this.setFieldState({ description: this.nodeDescription.value })
+            }
+          >
+            <div className="form-group">
+              <textarea
+                ref={n => (this.nodeDescription = n)}
+                style={{ width: '100%' }}
+                onSubmit={() => null}
+              >
+                {description}
+              </textarea>
+            </div>
+          </ModalBody>
+        );
+      case 'media':
+        return (
+          <div>
+            <MediaSearch media={media} onSubmit={() => null} />
+          </div>
+        );
+      case 'challenge':
+        return <div>challenge</div>;
+      default:
+        return <div>error</div>;
+    }
+  }
+
   render() {
     // console.log('hey', this.props);
     //
@@ -374,55 +465,10 @@ class EditableCardFront extends Component {
     const { tags, img, description, media, children, challenge } = data;
     const { dialog } = this.state;
     const modalVisible = dialog !== null;
-    const id = dialog !== null ? dialog.id : null;
+    const dialogId = dialog !== null ? dialog.id : null;
     // const modalStyle = modalVisible
     //   ? { background: 'black', opacity: 0.5 }
     //   : {};
-    const setFieldState = field =>
-      this.setState(oldState => ({
-        data: { ...oldState.data, ...field }
-      }));
-    const modalContent = () => {
-      switch (id) {
-        case 'tags':
-          return (
-            <TagInput
-              tags={tags}
-              onSubmit={newTags => setFieldState({ tags: newTags })}
-            />
-          );
-        case 'photo':
-          return <div>photo</div>;
-        case 'description':
-          return (
-            <ModalHeaderFooter
-              onSubmit={() =>
-                setFieldState({ description: this.nodeDescription.value })
-              }
-            >
-              <div className="form-group">
-                <textarea
-                  ref={n => (this.nodeDescription = n)}
-                  style={{ width: '100%' }}
-                  onSubmit={() => null}
-                >
-                  {description}
-                </textarea>
-              </div>
-            </ModalHeaderFooter>
-          );
-        case 'media':
-          return (
-            <div>
-              <MediaSearch media={media} onSubmit={() => null} />
-            </div>
-          );
-        case 'challenge':
-          return <div>challenge</div>;
-        default:
-          return <div>error</div>;
-      }
-    };
     return (
       <div style={{ height: '100%' }}>
         <SmallModal
@@ -430,7 +476,7 @@ class EditableCardFront extends Component {
           title={modalVisible ? dialog.title : ''}
           onClose={() => this.setState({ dialog: null })}
         >
-          {modalContent()}
+          {this.modalContent(dialogId)}
         </SmallModal>
         <div
           className={cx.cardDetail}
@@ -443,9 +489,8 @@ class EditableCardFront extends Component {
         >
           <div style={{ display: 'flex' }}>
             <PreviewTags data={tags} />
-            <i
-              style={{ fontSize: '24px', cursor: 'pointer' }}
-              className="fa fa-pencil-square-o ml-1"
+            <EditButton
+              style={{ fontSize: '24px' }}
               onClick={() =>
                 this.setState({
                   dialog: { title: 'Tags', id: 'tags', data: tags }
@@ -453,51 +498,20 @@ class EditableCardFront extends Component {
               }
             />
           </div>
-          <div className="mt-1 mb-1">
-            <div
-              alt="Card cap"
-              style={{
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                alignContent: 'center',
-                alignItems: 'center'
-              }}
-            >
-              <div className="mt-1 mb-1">
-                <img
-                  src="http://via.placeholder.com/450x270"
-                  alt="Card img"
-                  style={{ width: '100%', height: '100%' }}
-                />
-              </div>
-            </div>
-          </div>
-          <div style={{ height: '20%' }}>
-            <fieldset className={`${cx.field}`} style={{ height: '90%' }}>
-              <legend>description</legend>
-              <div
-                style={{ display: 'flex', alignContent: 'end', height: '100%' }}
-              >
-                <div className={cx.textClamp} style={{ height: '100%' }}>
-                  {description}
-                </div>
-                <div>
-                  <EditButton
-                    onClick={() =>
-                      this.setState({
-                        dialog: {
-                          title: 'Description',
-                          id: 'description',
-                          data: description
-                        }
-                      })
-                    }
-                  />
-                </div>
-              </div>
-            </fieldset>
-          </div>
+          <CardImg src={img} />
+          <Description
+            text={description}
+            onEdit={() =>
+              this.setState({
+                dialog: {
+                  title: 'Description',
+                  id: 'description',
+                  data: description
+                }
+              })
+            }
+          />
+
           <div style={{ height: '15%' }}>
             <fieldset className={cx.field}>
               <legend>Media:</legend>
@@ -560,11 +574,11 @@ class EditableCardFront extends Component {
   }
 }
 
-EditableCardFront.defaultProps = defaultProps;
+EditCardFront.defaultProps = defaultProps;
 
 function CardFront(props) {
   return props.edit ? (
-    <EditableCardFront {...props} />
+    <EditCardFront {...props} />
   ) : (
     <ReadCardFront {...props} />
   );
@@ -573,58 +587,6 @@ function CardFront(props) {
 CardFront.propTypes = { ...ReadCardFront.propTypes, edit: PropTypes.bool };
 
 CardFront.defaultProps = { edit: false };
-
-// const EditableCardFront = ({ tags, img, description, media, children }) => (
-//   <div
-//     className={cx.cardDetail}
-//     style={{
-//       display: 'flex',
-//       flexDirection: 'column',
-//       // justifyContent: 'space-between',
-//       height: '90%'
-//     }}
-//   >
-//     <PreviewTags data={tags} />
-//     <div className="mt-1 mb-1">
-//       <div
-//         alt="Card cap"
-//         style={{
-//           width: '100%',
-//           height: '100%',
-//           display: 'flex',
-//           alignContent: 'center',
-//           alignItems: 'center'
-//         }}
-//       >
-//         <div className="mt-1 mb-1">
-//           <img
-//             src="http://via.placeholder.com/450x270"
-//             alt="Card img"
-//             style={{ width: '100%', height: '100%' }}
-//           />
-//         </div>
-//       </div>
-//     </div>
-//     <div>
-//       <fieldset className={cx.field}>
-//         <legend>description</legend>
-//         <textarea className="form-control" rows="3" />
-//       </fieldset>
-//     </div>
-//     <div>
-//       <fieldset className={cx.field}>
-//         <legend>Media:</legend>
-//         <TagInput />
-//       </fieldset>
-//     </div>
-//     <div onClick={() => this.setState({ dialog: true })}>
-//       <fieldset className={cx.field}>
-//         <legend>Challenge:</legend>
-//       </fieldset>
-//     </div>
-//     {children}
-//   </div>
-// );
 
 const Tags = ({ data }) => (
   <div className={cx.tags}>
@@ -751,7 +713,7 @@ const CardFrame = ({
     <div className={cx.cardHeader} style={{ display: 'flex' }}>
       <h3 className="text-truncate">
         {title}
-        {edit || <EditButton />}
+        {edit && <EditButton />}
       </h3>
       <div className="btn-group">
         <button className="close mr-2" onClick={onClose}>
@@ -1487,7 +1449,7 @@ class TagInput extends React.Component {
     const { onSubmit } = this.props;
 
     return (
-      <ModalHeaderFooter onSubmit={() => onSubmit(tags.map(d => d.text))}>
+      <ModalBody onSubmit={() => onSubmit(tags.map(d => d.text))}>
         <ReactTags
           classNames={{
             tags: 'tagsClass',
@@ -1505,7 +1467,7 @@ class TagInput extends React.Component {
           handleAddition={this.handleAddition}
           handleDrag={this.handleDrag}
         />
-      </ModalHeaderFooter>
+      </ModalBody>
     );
   }
 }

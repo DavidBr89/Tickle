@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-// import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
 // import HTML5Backend from 'react-dnd-html5-backend';
@@ -39,8 +39,8 @@ class CardCreator extends Component {
     tempCards: PropTypes.array,
     selected: PropTypes.string,
     openCardDetails: PropTypes.func,
-    selectCard: PropTypes.func,
-    createCard: PropTypes.func,
+    selectCard: PropTypes.funcisRequired,
+    createUpdateCardAction: PropTypes.func,
     screenResize: PropTypes.func,
     changeMapViewport: PropTypes.func,
     dragCard: PropTypes.func
@@ -62,10 +62,11 @@ class CardCreator extends Component {
     cardTemplateOpen: false,
     openCardDetails: d => d,
     selectedCard: d => d,
-    createCard: d => d,
+    createUpdateCardAction: d => d,
     screenResize: d => d,
     changeMapViewport: d => d,
-    dragCard: d => d
+    dragCard: d => d,
+    selectCard: d => d
   };
 
   constructor(props) {
@@ -87,31 +88,6 @@ class CardCreator extends Component {
   }
 
   // componentDidUpdate() {}
-
-  // shouldComponentUpdate(nextProps) {
-  //   const { mapViewport, tempCards, isDragging } = nextProps;
-  //   const newVpStr = JSON.stringify(mapViewport);
-  //   const vpStr = JSON.stringify(this.props.mapViewport);
-  //   // mapViewport.latitude !== this.props.mapViewport.latitude ||
-  //   // mapViewport.longitude !== this.props.mapViewport.longitude;
-  //
-  //   if (!isDragging) return true;
-  //   return false;
-  // }
-
-  // scrollTo = name => {
-  //
-  //   this._scroller.scrollTo(name);
-  // };
-
-  // latitude={lat}
-  // longitude={long}
-  // zoom={zoom}
-  // mapboxApiAccessToken={process.env.MapboxAccessToken}
-  // onChangeViewport={onChangeViewport}
-  // onClick={onClick}
-  // isDragging={isDragging}
-  // startDragLngLat={startDragLngLat}
   render() {
     const {
       mapViewport,
@@ -126,7 +102,7 @@ class CardCreator extends Component {
 
       selectCard,
       selected,
-      createCard,
+      createUpdateCardAction,
       tempCards,
       dragCard,
       highlighted,
@@ -142,6 +118,7 @@ class CardCreator extends Component {
     return (
       <DragDropContextProvider backend={TouchBackend}>
         <div
+          ref={node => (this.node = node)}
           className={`${cxx.base}`}
           style={{
             position: 'relative',
@@ -162,13 +139,30 @@ class CardCreator extends Component {
               zIndex: 400
             }}
           >
-            {cardTemplateOpen && (
-              <Card editable onClose={toggleCardTemplateAction} />
-            )}
+            {cardTemplateOpen &&
+              ReactDOM.createPortal(
+                <Card
+                  editable
+                  onClose={toggleCardTemplateAction}
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    width: '100%',
+                    height: '100%',
+                    // padding: '5px',
+                    zIndex: 3000
+                  }}
+                />,
+                document.querySelector('body')
+              )}
           </div>
           <div style={{ position: 'absolute' }}>
             <DragLayer />
-            <DropTargetCont dropHandler={createCard} dragged={isDragging}>
+            <DropTargetCont
+              dropHandler={createUpdateCardAction}
+              dragged={isDragging}
+            >
               <MapGL
                 {...mapViewport}
                 width={width}
@@ -193,8 +187,22 @@ class CardCreator extends Component {
                         key={`${c.title}  ${c.date}`}
                         dragHandler={dragCard}
                         dragged={isDragging}
+                        dropHandler={createUpdateCardAction}
+                        id={c.id}
                       >
-                        <CardMarker {...c} />
+                        {c.temp ? (
+                          <div
+                            style={{
+                              border: '1px dashed green',
+                              height: '43px',
+                              width: '31.5px'
+                            }}
+                          >
+                            <AnimMarker {...c} />
+                          </div>
+                        ) : (
+                          <AnimMarker {...c} />
+                        )}
                       </DragSourceCont>
                     </div>
                   )}
@@ -209,19 +217,20 @@ class CardCreator extends Component {
               marginBottom: '20px'
             }}
           >
-            <div
+            {/* <div
               className={`col-12 ${cxx.animHeight}`}
               style={{
                 height: `${selected ? height / 2 : 0}px`,
                 background: 'white'
               }}
-            >
+              >
               <Analytics
-                width={width}
-                height={height / 2}
-                closeHandler={() => selectCard(null)}
+              width={width}
+              height={height / 2}
+              closeHandler={() => selectCard(null)}
               />
-            </div>
+              </div>
+              */}
             <div className="input-group mt-3 mb-3 ml-1 mr-1">
               <textarea className="form-control" aria-label="With textarea" />
               <div className="input-group-prepend">
@@ -256,11 +265,13 @@ class CardCreator extends Component {
                 style={{
                   transition: 'opacity .25s ease-in-out',
                   opacity: !selected ? 1 : 0,
-                  width: '300%'
+                  width: `${cards.length * 30}%`
                   // height: '20%'
                 }}
               >
-                <DragSourceCont dragHandler={dragCard}>
+                {/* TODO: pay attention here */}
+                <DragSourceCont
+dragHandler={dragCard} id={cards.length + 1}>
                   <div
                     style={{
                       width: '100%',

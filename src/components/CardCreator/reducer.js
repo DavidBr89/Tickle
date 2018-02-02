@@ -42,13 +42,12 @@ const dummyCard = ({ latitude, longitude }) => ({
 });
 
 function reducer(state = {}, action) {
-  console.log(action.type, action.options);
+  console.log(action.type, action.options); // eslint-disable-line no-console
   switch (action.type) {
     case CARD_CREATOR_SCREEN_RESIZE: {
       console.log('state taken', action);
       const height = action.options.height - state.headerPad;
       const width = action.options.width;
-      console.log('width', width, 'height', height);
       return { ...state, width, height };
     }
 
@@ -86,7 +85,6 @@ function reducer(state = {}, action) {
     }
     case OPEN_CARD_DETAILS: {
       const selectedCardId = action.options;
-      console.log('open', action);
 
       return {
         ...state,
@@ -101,27 +99,39 @@ function reducer(state = {}, action) {
         selectedCardId
       };
     }
+    // TODO: rename to update
     case CREATE_CARD: {
-      const { width, height, mapViewport } = state;
+      const { width, height, mapViewport, cards } = state;
+      const { id, x, y } = action.options;
 
       const mercator = new ViewportMercator({ width, height, ...mapViewport });
       const { unproject } = mercator;
-      const { x, y } = action.options;
       const pos = unproject([x, y]);
-      const newCard = dummyCard({
-        id: `tempCard${Math.random() * 100}`,
-        longitude: pos[0],
-        latitude: pos[1]
-      });
-      newCard.temp = true;
-      return {
-        ...state,
-        cards: [...state.cards, newCard],
-        isDragging: false
+
+      const foundCard = cards.find(c => c.id === id);
+      if (!foundCard) {
+        const card = dummyCard({
+          id: `tempCard${Math.random() * 10000}`,
+          longitude: pos[0],
+          latitude: pos[1]
+        });
+        card.temp = true;
+
+        return {
+          ...state,
+          cards: [...state.cards, card],
+          isDragging: false
+        };
+      }
+      const updatedCard = {
+        ...foundCard,
+        loc: { longitude: pos[0], latitude: pos[1] }
       };
+      console.log('foundCard', foundCard);
+      const oldCards = cards.filter(c => c.id !== foundCard.id);
+      return { ...state, cards: [...oldCards, updatedCard] };
     }
     case DRAG_CARD: {
-
       const isDragging = action.options;
       return {
         ...state,

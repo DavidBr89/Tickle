@@ -36,7 +36,7 @@ const mapDispatchToProps = dispatch => ({
   toggleCardTemplateAction: options => {
     dispatch(toggleCardTemplate(options));
   },
-  createCard: options => {
+  createUpdateCardAction: options => {
     dispatch(createCard(options));
   },
   dragCard: options => {

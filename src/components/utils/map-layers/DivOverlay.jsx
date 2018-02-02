@@ -179,8 +179,7 @@ const AnimMarker = ({
         top: selected ? `${0}px` : `${y - height / 2}px`,
         width: `${width}px`,
         height: `${height}px`,
-        transition: `left ${delay}s, top ${delay}s, width ${delay}s, height ${delay}s, opacity ${delay}s`,
-        zIndex: 5000
+        transition: `left ${delay}s, top ${delay}s, width ${delay}s, height ${delay}s, opacity ${delay}s`
       }}
     >
       <div style={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -190,7 +189,9 @@ const AnimMarker = ({
             position: 'absolute',
             transition: `width ${delay}s, height ${delay}s, opacity ${delay}s`,
             width: '100%',
-            height: '100%'
+            height: '100%',
+            // padding: '5px',
+            zIndex: selected ? 2000 : 0
           }}
         >
           {selected ? children : preview}
@@ -198,7 +199,7 @@ const AnimMarker = ({
       </div>
     </div>
   );
-  if (node !== null) ReactDOM.createPortal(marker, node);
+  if (node !== null) return ReactDOM.createPortal(marker, node);
   return marker;
 };
 

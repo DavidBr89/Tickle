@@ -21,20 +21,13 @@ const style = {
 
 const boxSource = {
   beginDrag(props) {
-    console.log('props', props);
     props.dragHandler(true);
-    return {};
+    return { id: props.id };
   },
 
   endDrag(props, monitor) {
-    const item = monitor.getItem();
-    const dropResult = monitor.getDropResult();
-
-    if (dropResult) {
-      alert(`You dropped ${item.name} into ${dropResult.name}!`); // eslint-disable-line no-alert
-    }
     props.dragHandler(false);
-    return {};
+    return { id: props.id };
   }
 };
 
@@ -79,13 +72,14 @@ class DragSourceCont extends PureComponent {
 
 const boxTarget = {
   drop(props, monitor, component) {
-    const delta = monitor.getDifferenceFromInitialOffset();
+    const delta = monitor.getSourceClientOffset();
+    // console.log('monitorXXXX', monitor);
     const item = monitor.getItem();
 
     const left = Math.round(delta.x);
     const top = Math.round(delta.y);
+    console.log('item', item);
 
-    console.log('drop', monitor.didDrop());
     component.drop(item.id, left, top, props.dragged);
   }
   // },
@@ -129,17 +123,17 @@ class DropTargetCont extends PureComponent {
 
   componentDidUpdate(prevProps) {
     const { dropHandler, children } = this.props;
-    const { left, top } = this.state;
+    const { left, top, id } = this.state;
+    // console.log('this.state', this.state);
     // console.log('yeah dropHandler', this.props);
     // const newid = Math.random() * 100;
     // console.log('dropped', dropped, 'prevDropped', prevState.dropped);
-    console.log(this.props.dragged,  prevProps.dragged)
+    // console.log('this.props', this.props);
     if (prevProps.dragged && !this.props.dragged)
-      dropHandler({ id: Math.random() * 1999, x: left, y: top });
+      dropHandler({ id, x: left, y: top });
   }
 
   drop(id, left, top, dropped) {
-    console.log('drop', dropped);
     this.setState({ id, left, top, dropped });
   }
 
@@ -153,19 +147,11 @@ class DropTargetCont extends PureComponent {
       // clientOffset,
       children
     } = this.props;
-    const { id, left, top, dropped } = this.state;
+    // const { id, left, top, dropped } = this.state;
     // const { x, y } = clientOffset || { x: 0, y: 0 };
     // console.log('dropped', dropped);
 
-    return connectDropTarget(
-      <div
-        style={{
-          position: 'absolute'
-        }}
-      >
-        {children}
-      </div>
-    );
+    return connectDropTarget(<div>{children}</div>);
   }
 }
 

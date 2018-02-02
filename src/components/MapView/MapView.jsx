@@ -122,7 +122,11 @@ class CardGrid extends Component {
         colSpan={2}
         rowSpan={1}
         gap={2}
-        style={{ width: `${cards.length * 40}%`, overflow: 'visible' }}
+        style={{
+          width: `${cards.length * 40}%`,
+          overflow: 'visible',
+          zIndex: 2000
+        }}
       >
         {cards.map(d => (
           <div>
