@@ -2,6 +2,7 @@
 // import cards from './cards';
 // import visibilityFilter from './visibilityFilter';
 import ViewportMercator from 'viewport-mercator-project';
+import { timeFormat } from 'd3';
 import {
   CARD_CREATOR_SCREEN_RESIZE,
   CHANGE_MAP_VIEWPORT,
@@ -10,8 +11,13 @@ import {
   CREATE_CARD,
   DRAG_CARD,
   OPEN_CARD_DETAILS,
-  TOGGLE_CARD_TEMPLATE
+  TOGGLE_CARD_TEMPLATE,
+  UPDATE_CARD_TEMPLATE
 } from './actions';
+
+import { timespec } from './helper';
+
+const tif = timeFormat(timespec);
 
 // const mapViewApp = combineReducers({
 //   cards,
@@ -20,25 +26,22 @@ import {
 //
 // export default mapViewApp;
 
-const dummyCard = ({ latitude, longitude }) => ({
-  title: '-',
-  type: '-',
-  // TODO: change
-  id: Math.random() * 1000,
-  date: '04/04/2012 10:00',
-  tags: ['', ''],
-  img: '',
-  caption: '',
-  xpPoints: 0,
+const EmptyCard = ({ latitude, longitude }) => ({
+  // title: '-',
+  // type: '-',
+  date: tif(new Date()),
+  // tags: ['', ''],
+  // img: '',
+  // xpPoints: 0,
   // TODO: remove in future to component
-  description: '',
-  loc: { latitude, longitude },
-  creator: 'Jan',
-  media: [],
-  friends: [],
-  rating: [],
-  cardSets: [],
-  linkedCards: []
+  // description: '',
+  loc: { latitude, longitude }
+  // creator: 'Jan',
+  // media: [],
+  // friends: [],
+  // rating: [],
+  // cardSets: [],
+  // linkedCards: []
 });
 
 function reducer(state = {}, action) {
@@ -46,7 +49,7 @@ function reducer(state = {}, action) {
   switch (action.type) {
     case CARD_CREATOR_SCREEN_RESIZE: {
       console.log('state taken', action);
-      const height = action.options.height - state.headerPad;
+      const height = action.options.height;
       const width = action.options.width;
       return { ...state, width, height };
     }
@@ -62,25 +65,30 @@ function reducer(state = {}, action) {
     case SELECT_CARD: {
       const { width, height } = state;
       if (action.options) {
-        const { latitude, longitude } = action.options.location;
-        const selected = { ...action.options, extended: false };
+        const { latitude, longitude } = action.options.loc;
+        const selected = { ...action.options };
         const mapViewport = {
           ...state.mapViewport,
           latitude,
           longitude,
-          height: height * 1.5
+          zoom: 20
         };
+        const extended =
+          state.selected && state.selected.id === selected.id ? selected : null;
         return {
           ...state,
           mapViewport,
-          oldViewport: { ...state.mapViewport },
-          selected
+          oldViewport: { ...mapViewport },
+          selected,
+          extended
         };
       }
+      console.log('remove action');
       return {
         ...state,
         mapViewport: state.oldViewport,
-        selected: null
+        selected: state.extended ? state.selected : null,
+        extended: null
       };
     }
     case OPEN_CARD_DETAILS: {
@@ -110,15 +118,17 @@ function reducer(state = {}, action) {
 
       const foundCard = cards.find(c => c.id === id);
       if (!foundCard) {
-        const card = dummyCard({
-          id: `tempCard${Math.random() * 10000}`,
+        const card = EmptyCard({
           longitude: pos[0],
           latitude: pos[1]
         });
         card.temp = true;
+        card.id = id;
+        // console.log('newId', id);
 
         return {
           ...state,
+          cardTemplate: {},
           cards: [...state.cards, card],
           isDragging: false
         };
@@ -127,7 +137,6 @@ function reducer(state = {}, action) {
         ...foundCard,
         loc: { longitude: pos[0], latitude: pos[1] }
       };
-      console.log('foundCard', foundCard);
       const oldCards = cards.filter(c => c.id !== foundCard.id);
       return { ...state, cards: [...oldCards, updatedCard] };
     }
@@ -135,6 +144,7 @@ function reducer(state = {}, action) {
       const isDragging = action.options;
       return {
         ...state,
+        // cards: [...state.cards].sort((a, b) => tip(a.date) - tip(b.date)),
         isDragging
       };
     }
@@ -146,6 +156,11 @@ function reducer(state = {}, action) {
       //   isDragging: true
       // };
       return { ...state, cardTemplateOpen: !state.cardTemplateOpen };
+    }
+    case UPDATE_CARD_TEMPLATE: {
+      const cardTemplate = action.options;
+      // console.log('Card template', cardTemplateOpen);
+      return { ...state, cardTemplate };
     }
     default:
       return state;

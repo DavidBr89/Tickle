@@ -1,5 +1,7 @@
 // import React from 'react';
 import { connect } from 'react-redux';
+import { timeParse } from 'd3';
+import { timespec } from './helper';
 // import { toggleChallenge } from '../actions';
 import {
   screenResize,
@@ -8,7 +10,8 @@ import {
   createCard,
   dragCard,
   openCardDetails,
-  toggleCardTemplate
+  toggleCardTemplate,
+  updateCardTemplate
 } from './actions';
 
 import CardCreator from './CardCreator';
@@ -16,8 +19,13 @@ import CardCreator from './CardCreator';
 // import mapViewReducer from './reducer';
 
 // Container
+// const tif = timeFormat(timespec);
+// const tip = timeParse(timespec);
+
 const mapStateToProps = state => ({
-  ...state.CardCreator
+  ...state.CardCreator,
+  // TODO: check later when real cards changed
+  cards: state.CardCreator.cards.sort((a, b) => b.id - a.id)
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -27,7 +35,7 @@ const mapDispatchToProps = dispatch => ({
   changeMapViewport: options => {
     dispatch(changeMapViewport(options));
   },
-  selectCard: options => {
+  selectCardAction: options => {
     dispatch(selectCard(options));
   },
   openCardDetails: options => {
@@ -39,8 +47,11 @@ const mapDispatchToProps = dispatch => ({
   createUpdateCardAction: options => {
     dispatch(createCard(options));
   },
-  dragCard: options => {
+  dragCardAction: options => {
     dispatch(dragCard(options));
+  },
+  updateCardTemplateAction: options => {
+    dispatch(updateCardTemplate(options));
   }
 });
 

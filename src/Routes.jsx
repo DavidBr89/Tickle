@@ -24,10 +24,6 @@ import DefaultLayout from './layouts/MainLayout';
 
 import { dummyCards } from './dummyData';
 
-dummyCards.forEach((d, i) => {
-  d.id = i;
-  return d;
-});
 // import NotFound from './containers/NotFound/NotFound';
 
 const defaultLocation = {
@@ -37,7 +33,6 @@ const defaultLocation = {
 // debug('lego:routes');
 const defaultState = {
   MapView: {
-    headerPad: 60, // TODO: remove
     cards: dummyCards,
     mapZoom: 20,
     centerLocation: defaultLocation,
@@ -55,14 +50,13 @@ const defaultState = {
     extCardId: false
   },
   CardCreator: {
-    headerPad: 60, // TODO: remove
     cards: dummyCards,
     width: 100,
     height: 100,
     mapViewport: { ...defaultLocation, zoom: 10 },
     selectedCardId: null,
-    tempCards: [],
-    cardTemplateOpen: false
+    cardTemplateOpen: false,
+    cardTemplate: {}
   }
 };
 

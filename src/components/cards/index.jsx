@@ -1,23 +1,22 @@
-import React, { Component } from 'react';
+import 'w3-css';
+
+import React, { Component, PureComponent } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import MapGL from 'react-map-gl';
 import { WithContext as ReactTags } from 'react-tag-input';
 import Grid from 'mygrid/dist';
-// TODO: replace
 import * as chromatic from 'd3-scale-chromatic';
 // import ClampLines from 'react-clamp-lines';
-import 'w3-css';
 // import 'react-tagsinput/react-tagsinput.css'; // If using WebPack and style-loader.
 
 import { CardMarker } from '../utils/map-layers/DivOverlay';
 import { challengeTypes, mediaTypes, skillTypes } from '../../dummyData';
 import cx from './Card.scss';
 import colorClasses from '../colorClasses';
-// import StarRating from './utils/StarRating';
-// import exampleImg from './example_challenge.jpg';
 import { Wrapper } from '../utils';
+import placeholderImg from './placeholder.png';
 
 const random = () => Math.random() * 1000;
 
@@ -54,49 +53,19 @@ const colorClass = (title = 'title') =>
   colorScaleRandom(title.length % colorClasses.length);
 
 const defaultProps = {
-  title: 'The peculiar story of Arthur De Greef',
+  title: 'Enter a Title',
   challenge: { type: 'gap text' },
-  date: '28/04/2012 10:00',
-  tags: ['Art', 'Culture', 'Music'],
-  img:
-    'https://drive.google.com/uc?export=view&id=1N9Ed6a_CDa8SEMZeLaxULF4FtkHBQf4Feg',
-  xpPoints: 100,
+  // date: '28/04/2012 10:00',
+  tags: [],
+  img: placeholderImg,
+  xpPoints: 0,
   // TODO: remove in future to component
-  description:
-    '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."',
+  description: '',
   loc: { latitude: 50.828797, longitude: 4.352191 },
-  place: 'Park next to my Home',
   creator: 'Jan',
-  radius: 400,
-  media: [
-    {
-      type: 'photo',
-      name: 'franz-liszt---the-first-rock-star',
-      src: ''
-    },
-    {
-      type: 'hyperlink',
-      name: 'franz-liszt---the-first-rock-star',
-      src: ''
-    },
-    {
-      type: 'game',
-      name: 'franz-liszt---the-first-rock-star',
-      src: ''
-    }
-  ],
-  comments: [
-    {
-      user: 'Nils',
-      comment: 'I did not know that he was such a famous composer'
-    },
-    {
-      user: 'Babba',
-      comment: 'What a nice park, strange, that they put a mask on his face!'
-    }
-  ],
-  cardSets: ['european_composers'],
-  linkedCards: ['Frank Liszt', 'Music school Arthur de Greef']
+  radius: 200,
+  media: [],
+  comments: []
 };
 
 const EditButton = ({ style, onClick }) => (
@@ -116,34 +85,17 @@ EditButton.defaultProps = { style: {}, onClick: () => null };
 
 const CardImg = ({ src }) => (
   <div className="mt-1 mb-1">
-    <div
-      alt="Card cap"
-      style={{
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        alignContent: 'center',
-        alignItems: 'center'
-      }}
-    >
-      <div className="mt-1 mb-1">
-        <img
-          src={src}
-          alt="Card img"
-          style={{ width: '100%', height: '100%' }}
-        />
-      </div>
-    </div>
+    <img src={src} alt="Card img" style={{ width: '100%', height: '100%' }} />
   </div>
 );
 
-const Description = ({ text, onEdit }) => (
+const Description = ({ text, onEdit, placeholder }) => (
   <div style={{ height: '20%' }}>
     <fieldset className={`${cx.field}`} style={{ height: '90%' }}>
       <legend>description</legend>
       <div style={{ display: 'flex', alignContent: 'end', height: '100%' }}>
         <div className={cx.textClamp} style={{ height: '100%' }}>
-          {text}
+          {text !== '' && onEdit ? text : placeholder}
         </div>
         {onEdit && (
           <div>
@@ -158,10 +110,14 @@ const Description = ({ text, onEdit }) => (
 Description.propTypes = {
   text: PropTypes.string.isRequired,
   // TODO: how to
-  onEdit: PropTypes.oneOf([PropTypes.func, null])
+  onEdit: PropTypes.oneOf([PropTypes.func, null]),
+  placeholder: PropTypes.string
 };
 
-Description.defaultProps = { onEdit: null };
+Description.defaultProps = {
+  onEdit: null,
+  placeholder: 'Add a description'
+};
 
 const Media = ({ data }) => (
   <Grid cols={data.length} rows={1}>
@@ -188,7 +144,7 @@ Media.propTypes = {
 
 Media.defaultProps = { data: defaultProps.media, extended: false };
 
-const SmallModal = ({ visible, title, children, onClose, onSave }) =>
+const SmallModal = ({ visible, title, children, onClose }) =>
   ReactDOM.createPortal(
     <div
       style={{
@@ -278,40 +234,44 @@ const ReadCardFront = ({
   img,
   description,
   media,
-  // children,
-  edit,
-  onCollect
+  onCollect,
+  flipHandler,
+  onClose,
+  style
 }) => (
-  <div
-    className={cx.cardDetail}
-    style={{
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-      height: '90%'
-    }}
-  >
-    <PreviewTags data={tags} />
-    <div style={{ height: '30%' }} className="mt-1 mb-1">
-      <img src={img} alt="Card img" style={{ width: '100%', height: '100%' }} />
+  <CardHeader onClose={onClose} flipHandler={flipHandler} style={style}>
+    <div
+      className={cx.cardDetail}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        height: '90%'
+      }}
+    >
+      <PreviewTags data={tags} />
+
+      <CardImg src={img} />
+      <Description text={description} />
+      <div>
+        <fieldset className={cx.field}>
+          <legend>Media:</legend>
+          <Media data={media} />
+        </fieldset>
+      </div>
+      <CollectButton onClick={onCollect} />
     </div>
-    <Description text={description} />
-    <div>
-      <fieldset className={cx.field}>
-        <legend>Media:</legend>
-        <Media data={media} />
-      </fieldset>
-    </div>
-    {/* TODO: change by real check */}
-    {!edit ? <CollectButton onClick={onCollect} /> : null}
-  </div>
+  </CardHeader>
 );
 
 ReadCardFront.propTypes = {
   description: PropTypes.string.isRequired,
   img: PropTypes.string.isRequired,
   onCollect: PropTypes.func,
-  children: PropTypes.array
+  children: PropTypes.array,
+  onClose: PropTypes.func,
+  flipHandler: PropTypes.func,
+  style: PropTypes.object
 };
 
 ReadCardFront.defaultProps = { ...defaultProps, onCollect: null };
@@ -398,15 +358,37 @@ MediaSearch.propTypes = {
 
 MediaSearch.defaultProps = { onSubmit: () => null };
 
-class EditCardFront extends Component {
-  static propTypes = ReadCardFront.propTypes;
-  static defaultProps = ReadCardFront.defaultProps;
+class EditCardFront extends PureComponent {
+  static propTypes = {
+    ...ReadCardFront.propTypes,
+    onUpdate: PropTypes.func
+  };
+  static defaultProps = {
+    ...ReadCardFront.defaultProps,
+    onUpdate: () => null
+  };
 
   constructor(props) {
     super(props);
     this.state = { data: { ...props }, dialog: null };
     this.nodeDescription = null;
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    const prevData = prevState.data;
+    const { data } = this.state;
+    // TODO: check the other attrs
+    if (
+      prevData.description !== data.description ||
+      prevData.title !== data.title
+    )
+      this.props.onAttrUpdate({ ...data });
+  }
+
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   // return this.props.description !== nextProps.description;
+  //   return false;
+  // }
 
   setFieldState(field) {
     this.setState(oldState => ({
@@ -416,8 +398,25 @@ class EditCardFront extends Component {
 
   modalContent(id) {
     const { data } = this.state;
-    const { tags, img, description, media, children, challenge } = data;
+    // TODO: img
+    const { title, tags, img, description, media, challenge } = data;
     switch (id) {
+      case 'title':
+        return (
+          <ModalBody
+            onSubmit={() =>
+              this.setFieldState({ title: this.nodeTitle.value })
+            }
+          >
+            <div className="form-group">
+              <input
+                ref={n => (this.nodeTitle = n)}
+                style={{ width: '100%' }}
+                defaultValue={title}
+              />
+            </div>
+          </ModalBody>
+        );
       case 'tags':
         return (
           <TagInput
@@ -439,6 +438,7 @@ class EditCardFront extends Component {
                 ref={n => (this.nodeDescription = n)}
                 style={{ width: '100%' }}
                 onSubmit={() => null}
+                placeholder={'<Please insert your description>'}
               >
                 {description}
               </textarea>
@@ -459,10 +459,9 @@ class EditCardFront extends Component {
   }
 
   render() {
-    // console.log('hey', this.props);
-    //
+    const { onClose, flipHandler, style } = this.props;
     const { data } = this.state;
-    const { tags, img, description, media, children, challenge } = data;
+    const { title, tags, img, description, media, children, challenge } = data;
     const { dialog } = this.state;
     const modalVisible = dialog !== null;
     const dialogId = dialog !== null ? dialog.id : null;
@@ -470,123 +469,143 @@ class EditCardFront extends Component {
     //   ? { background: 'black', opacity: 0.5 }
     //   : {};
     return (
-      <div style={{ height: '100%' }}>
-        <SmallModal
-          visible={modalVisible}
-          title={modalVisible ? dialog.title : ''}
-          onClose={() => this.setState({ dialog: null })}
-        >
-          {this.modalContent(dialogId)}
-        </SmallModal>
-        <div
-          className={cx.cardDetail}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            // justifyContent: 'space-between',
-            height: '90%'
-          }}
-        >
-          <div style={{ display: 'flex' }}>
-            <PreviewTags data={tags} />
-            <EditButton
-              style={{ fontSize: '24px' }}
-              onClick={() =>
+      <CardHeader
+        edit
+        title={title}
+        onClose={onClose}
+        onEdit={() =>
+          this.setState({
+            dialog: { title: 'Title', id: 'title', data: title }
+          })
+        }
+        flipHandler={flipHandler}
+        style={style}
+      >
+        <div style={{ height: '100%' }}>
+          <SmallModal
+            visible={modalVisible}
+            title={modalVisible ? dialog.title : ''}
+            onClose={() => this.setState({ dialog: null })}
+          >
+            {this.modalContent(dialogId)}
+          </SmallModal>
+          <div
+            className={cx.cardDetail}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              // justifyContent: 'space-between',
+              height: '90%'
+            }}
+          >
+            <div style={{ display: 'flex' }}>
+              {tags.length !== 0 ? (
+                <PreviewTags data={tags} />
+              ) : (
+                <div>{'Add a tag'}</div>
+              )}
+              <EditButton
+                style={{ fontSize: '24px' }}
+                onclick={() =>
+                  this.setstate({
+                    dialog: { title: 'tags', id: 'tags', data: tags }
+                  })
+                }
+              />
+            </div>
+            <CardImg src={img} />
+            <Description
+              text={description}
+              onEdit={() =>
                 this.setState({
-                  dialog: { title: 'Tags', id: 'tags', data: tags }
+                  dialog: {
+                    title: 'Description',
+                    id: 'description',
+                    data: description
+                  }
                 })
               }
             />
-          </div>
-          <CardImg src={img} />
-          <Description
-            text={description}
-            onEdit={() =>
-              this.setState({
-                dialog: {
-                  title: 'Description',
-                  id: 'description',
-                  data: description
-                }
-              })
-            }
-          />
 
-          <div style={{ height: '15%' }}>
-            <fieldset className={cx.field}>
-              <legend>Media:</legend>
+            <div style={{ height: '15%' }}>
+              <fieldset className={cx.field}>
+                <legend>Media:</legend>
+                <div style={{ display: 'flex', alignContent: 'end' }}>
+                  <Media />
+                  <div>
+                    <EditButton
+                      onClick={() =>
+                        this.setState({
+                          dialog: { title: 'Media', id: 'media', data: media }
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+            <div>
               <div style={{ display: 'flex', alignContent: 'end' }}>
-                <Media />
-                <div>
-                  <EditButton
+                <div className="p-1 pt-3" style={{ width: '100%' }}>
+                  <button
+                    className={`btn btn-secondary btn-lg btn-block}`}
+                    style={{ width: '100%', alignSelf: 'flex-end' }}
                     onClick={() =>
                       this.setState({
-                        dialog: { title: 'Media', id: 'media', data: media }
+                        dialog: {
+                          title: 'Challenge',
+                          id: 'challenge',
+                          data: challenge
+                        }
                       })
                     }
-                  />
-                </div>
-              </div>
-            </fieldset>
-          </div>
-          <div>
-            <div style={{ display: 'flex', alignContent: 'end' }}>
-              <div className="p-1 pt-3" style={{ width: '100%' }}>
-                <button
-                  className={`btn btn-secondary btn-lg btn-block}`}
-                  style={{ width: '100%', alignSelf: 'flex-end' }}
-                  onClick={() =>
-                    this.setState({
-                      dialog: {
-                        title: 'Challenge',
-                        id: 'challenge',
-                        data: challenge
-                      }
-                    })
-                  }
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignContent: 'center'
-                    }}
                   >
-                    <div>{'Challenge'}</div>
                     <div
                       style={{
-                        marginLeft: '4px',
-                        paddingLeft: '4px',
-                        paddingRight: '4px'
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignContent: 'center'
                       }}
                     >
-                      <EditButton />
+                      <div>{'Challenge'}</div>
+                      <div
+                        style={{
+                          marginLeft: '4px',
+                          paddingLeft: '4px',
+                          paddingRight: '4px'
+                        }}
+                      >
+                        <EditButton />
+                      </div>
                     </div>
-                  </div>
-                </button>
+                  </button>
+                </div>
               </div>
             </div>
+            {children}
           </div>
-          {children}
         </div>
-      </div>
+      </CardHeader>
     );
   }
 }
 
 EditCardFront.defaultProps = defaultProps;
 
-function CardFront(props) {
-  return props.edit ? (
-    <EditCardFront {...props} />
-  ) : (
-    <ReadCardFront {...props} />
-  );
-}
+const CardFront = props =>
+  props.edit ? <EditCardFront {...props} /> : <ReadCardFront {...props} />;
 
-CardFront.propTypes = { ...ReadCardFront.propTypes, edit: PropTypes.bool };
+CardFront.propTypes = {
+  ...ReadCardFront.propTypes,
+  edit: PropTypes.bool,
+  onAttrUpdate: PropTypes.func
+};
 
-CardFront.defaultProps = { edit: false };
+CardFront.defaultProps = {
+  ...defaultProps,
+  edit: false,
+  onAttrUpdate: () => null
+};
 
 const Tags = ({ data }) => (
   <div className={cx.tags}>
@@ -601,12 +620,39 @@ const Tags = ({ data }) => (
 Tags.propTypes = { data: PropTypes.array };
 Tags.defaultProps = { data: ['tag1', 'exampleTag'] };
 
-const PreviewTags = ({ data }) => (
+const PreviewTags = ({ data, style }) => (
   <div
     style={{
-      display: 'flex'
+      display: 'flex',
+      ...style
       // flexWrap: 'no-wrap'
       // alignItems: 'center'
+    }}
+    className={`${cx.textTrunc} ${cx.tags}`}
+  >
+    {data.map(t => (
+      <span key={t + random()} className={`${cx.tag} ${colorClass(t)}`}>
+        {t}
+      </span>
+    ))}
+  </div>
+);
+
+PreviewTags.propTypes = {
+  data: PropTypes.array,
+  style: PropTypes.object
+};
+
+PreviewTags.defaultProps = {
+  data: ['tag', 'tag1', 'tag2'],
+  style: {}
+};
+
+const SmallPreviewTags = ({ data, style }) => (
+  <div
+    style={{
+      display: 'flex',
+      ...style
     }}
     className={`${cx.textTrunc} ${cx.tags}`}
   >
@@ -618,12 +664,44 @@ const PreviewTags = ({ data }) => (
   </div>
 );
 
-PreviewTags.propTypes = {
-  data: PropTypes.array
+SmallPreviewTags.propTypes = {
+  data: PropTypes.array,
+  style: PropTypes.object
 };
 
-PreviewTags.defaultProps = {
-  data: ['tag', 'tag1', 'tag2']
+SmallPreviewTags.defaultProps = {
+  data: ['tag', 'tag1', 'tag2'],
+  style: {}
+};
+
+const EmptySmallTags = ({ data, style }) => (
+  <div
+    style={{
+      display: 'flex',
+      ...style
+    }}
+    className={`${cx.textTrunc} ${cx.tags}`}
+  >
+    {data.map(t => (
+      <small
+        key={t + random()}
+        style={{ background: 'grey' }}
+        className={`${cx.tag}`}
+      >
+        <span style={{ opacity: 0 }}>{t}</span>
+      </small>
+    ))}
+  </div>
+);
+
+EmptySmallTags.propTypes = {
+  data: PropTypes.array,
+  style: PropTypes.object
+};
+
+EmptySmallTags.defaultProps = {
+  data: ['tag', 'tag1', 'tag2'],
+  style: {}
 };
 
 // const SmallCategories = ({ data }) => (
@@ -635,6 +713,159 @@ PreviewTags.defaultProps = {
 //     ))}
 //   </div>
 // );
+
+// const PlaceholderCard = ({ onClick }) => (
+//   <div
+//     style={{
+//       width: '100%',
+//       height: '100%',
+//       display: 'flex',
+//       alignContent: 'center',
+//       alignItems: 'center',
+//       background: 'lightgrey',
+//       border: '1px dashed grey'
+//       // margin: '10%'
+//     }}
+//     onClick={onClick}
+//   >
+//     <i
+//       className="fa fa-4x fa-plus"
+//       aria-hidden="true"
+//       style={{
+//         textAlign: 'center',
+//         width: '100%',
+//         color: 'grey',
+//         pointerEvents: 'cursor'
+//       }}
+//     />
+//   </div>
+// );
+//
+//
+const PlaceholderAttr = ({ text, style }) => (
+  <div
+    style={{
+      display: 'flex',
+      border: 'grey 1px dashed',
+      width: '100%',
+      height: '100%',
+      justifyContent: 'center',
+      alignItems: 'center'
+    }}
+  >
+    <h4
+      style={{
+        // width: '10%',
+        marginTop: '4px',
+        marginBottom: '4px',
+        color: 'grey',
+        paddingLeft: '2px',
+        ...style
+      }}
+    >
+      {text}
+    </h4>
+    <i
+      className="fa fa-1x fa-plus"
+      aria-hidden="true"
+      style={{
+        textalign: 'center',
+        // width: '10%',
+        marginLeft: '2px',
+        color: 'grey',
+        pointerevents: 'cursor'
+      }}
+    />
+  </div>
+);
+PlaceholderAttr.propTypes = {
+  text: PropTypes.string.isRequired,
+  style: PropTypes.object
+};
+PlaceholderAttr.defaultProps = {
+  style: {}
+};
+
+const PlaceholderCard = ({ title, tags, img, challengeType, onClick }) => (
+  <div
+    style={{
+      padding: '5px',
+      boxShadow: 'inset 0 0 0 1px rgba(0, 0, 0, 0.08)',
+      backfaceVisibility: 'hidden',
+      height: '100%',
+      background: challengeType ? colorScale(challengeType) : 'lightgrey'
+    }}
+    onClick={onClick}
+  >
+    <div className={cx.cardHeader}>
+      {title ? (
+        <div
+          style={{
+            width: '100%',
+            height: '24px',
+            background: 'grey',
+            // border: 'black 1px solid',
+            marginTop: '4px',
+            marginBottom: '4px'
+          }}
+        />
+      ) : (
+        <div style={{ height: '10%', width: '100%', marginBottom: '4px' }}>
+          <PlaceholderAttr
+            text={'Title'}
+            style={{ height: '20px', fontSize: '18px' }}
+          />
+        </div>
+      )}
+    </div>
+    {tags ? (
+      <EmptySmallTags
+        style={{ height: '18px' }}
+        data={['sasa', 'osaas', 'sa']}
+      />
+    ) : (
+      <div style={{ height: '18%' }}>
+        <PlaceholderAttr
+          text={'Tags'}
+          style={{ height: '14px', fontSize: '14px' }}
+        />
+      </div>
+    )}
+    <div className="mt-1 mb-1" style={{ height: '50%' }}>
+      {img ? (
+        <img
+          style={{
+            display: 'block',
+            width: '100%',
+            height: '100%'
+          }}
+          src={img}
+          alt="Card cap"
+        />
+      ) : (
+        <PlaceholderAttr
+          text={'IMG'}
+          style={{ height: '20px', fontSize: '18px' }}
+        />
+      )}
+    </div>
+  </div>
+);
+
+PlaceholderCard.propTypes = {
+  title: PropTypes.bool,
+  tags: PropTypes.bool,
+  img: PropTypes.bool,
+  challengeType: PropTypes.string,
+  onClick: PropTypes.func
+};
+
+PlaceholderCard.defaultProps = {
+  title: false,
+  tags: false,
+  img: false,
+  challengeType: null
+};
 
 class PreviewCard extends Component {
   static propTypes = {
@@ -648,9 +879,13 @@ class PreviewCard extends Component {
   };
 
   static defaultProps = {
-    ...defaultProps,
+    title: '<Empty Title>',
+    tags: ['tag1', 'tag2', 'tag3'],
+    img: placeholderImg,
     style: {},
-    selected: false
+    selected: false,
+    // TODO: include only type
+    challenge: { type: 'hangman' }
   };
 
   shouldComponentUpdate(nextProps) {
@@ -661,36 +896,42 @@ class PreviewCard extends Component {
     const { title, tags, img, challenge, style, onClick } = this.props;
     return (
       <div
-        className={cx.cardMini2}
         style={{
           ...style,
+          padding: '5px',
+          boxShadow: 'inset 0 0 0 1px rgba(0, 0, 0, 0.08)',
+          backfaceVisibility: 'hidden',
+          height: '100%',
           background: colorScale(challenge.type)
         }}
         onClick={onClick}
       >
         <div className={cx.cardHeader}>
-          <h5 className="text-truncate">{title}</h5>
-        </div>
-        <div>
-          <PreviewTags data={tags} />
-          <div className="mt-1 mb-1">
-            <img
-              style={{
-                display: 'block',
-                maxWidth: '100%',
-                height: 'auto'
-              }}
-              src={img}
-              alt="Card cap"
-            />
+          <div
+            className="text-truncate"
+            style={{ fontSize: '16px', margin: '4px 0' }}
+          >
+            {title}
           </div>
+        </div>
+        <SmallPreviewTags data={tags} />
+        <div className="mt-1 mb-1" style={{ height: '50%' }}>
+          <img
+            style={{
+              display: 'block',
+              width: '100%',
+              height: '100%'
+            }}
+            src={img}
+            alt="Card cap"
+          />
         </div>
       </div>
     );
   }
 }
 
-const CardFrame = ({
+const CardHeader = ({
   title,
   // img,
   onClose,
@@ -698,6 +939,7 @@ const CardFrame = ({
   children,
   flipHandler,
   edit,
+  onEdit,
   style
   // id
 }) => (
@@ -711,10 +953,13 @@ const CardFrame = ({
     }}
   >
     <div className={cx.cardHeader} style={{ display: 'flex' }}>
-      <h3 className="text-truncate">
-        {title}
-        {edit && <EditButton />}
-      </h3>
+      {/* TODO: find Solution */}
+      <div style={{ display: 'inline-flex' }}>
+        <h3 className="text-truncate" style={{ margin: '0' }}>
+          {title}
+        </h3>
+        {edit && <EditButton onClick={onEdit} />}
+      </div>
       <div className="btn-group">
         <button className="close mr-2" onClick={onClose}>
           <i className="fa fa-window-close fa-lg" aria-hidden="true" />
@@ -728,7 +973,7 @@ const CardFrame = ({
   </div>
 );
 
-CardFrame.propTypes = {
+CardHeader.propTypes = {
   title: PropTypes.string,
   // tags: PropTypes.array,
   // img: PropTypes.string,
@@ -737,10 +982,16 @@ CardFrame.propTypes = {
   children: PropTypes.node,
   style: PropTypes.object,
   onClose: PropTypes.func,
-  edit: PropTypes.bool
+  edit: PropTypes.bool,
+  onEdit: PropTypes.func
 };
 
-CardFrame.defaultProps = { ...defaultProps, edit: false, onClose: () => null };
+CardHeader.defaultProps = {
+  ...defaultProps,
+  edit: false,
+  onClose: () => null,
+  onEdit: () => null
+};
 
 const Comments = ({ data, extended }) => (
   <div
@@ -985,7 +1236,6 @@ class ReadCardBack extends Component {
     challenge: PropTypes.object.isRequired,
     author: PropTypes.object.isRequired,
     flipHandler: PropTypes.func.isRequired,
-    cardSets: PropTypes.array,
     linkedCards: PropTypes.array,
     loc: PropTypes.shape({
       latitude: PropTypes.number,
@@ -1120,7 +1370,7 @@ ReadCardBack.defaultProps = {
   author: Profile.defaultProps.data
 };
 
-class EditableCardBack extends Component {
+class EditCardBack extends Component {
   static propTypes = {
     key: PropTypes.string.isRequired,
     challenge: PropTypes.object.isRequired,
@@ -1209,35 +1459,6 @@ class EditableCardBack extends Component {
               </Wrapper>
             </fieldset>
           </div>
-          <div onClick={selectField('cardSets')}>
-            <fieldset
-              className={cx.field}
-              style={display('cardSets')}
-              {...setSizeProps('cardSets')}
-            >
-              <legend>Cardsets:</legend>
-              <Tags data={cardSets} />
-              <EditButton
-                onClick={() =>
-                  this.setState({
-                    dialog: { title: 'author', id: 'author', data: '' }
-                  })
-                }
-              />
-            </fieldset>
-          </div>
-          <div onClick={selectField('linkedCards')}>
-            <fieldset
-              className={cx.field}
-              style={display('linkedCards')}
-              {...setSizeProps('linkedCards')}
-            >
-              <legend>Linked Cards</legend>
-              <div>
-                <Tags data={linkedCards} />
-              </div>
-            </fieldset>
-          </div>
           <div onClick={selectField('comments')}>
             <fieldset
               colSpan={2}
@@ -1256,11 +1477,7 @@ class EditableCardBack extends Component {
 }
 
 function CardBack(props) {
-  return props.edit ? (
-    <EditableCardBack {...props} />
-  ) : (
-    <ReadCardBack {...props} />
-  );
+  return props.edit ? <EditCardBack {...props} /> : <ReadCardBack {...props} />;
 }
 
 // ReadCardBack.defaultProps = {
@@ -1331,7 +1548,7 @@ class Card extends React.Component {
     onClose: d => d,
     collectHandler: null,
     style: {},
-    editable: false
+    edit: false
   };
 
   constructor(props) {
@@ -1342,7 +1559,7 @@ class Card extends React.Component {
   }
 
   render() {
-    const { style, editable, challenge } = this.props;
+    const { style, edit, challenge, onAttrUpdate } = this.props;
     const { frontView } = this.state;
     // const { onClose } = this.props;
     const sideToggler = frontView ? cx.flipAnim : null;
@@ -1352,23 +1569,25 @@ class Card extends React.Component {
         frontView: !oldState.frontView
       }));
     };
+    const onAttrUpdateFunc = edit ? { onAttrUpdate } : {};
+
     const color = colorScale(challenge.type);
     const togglecard = () => {
       if (frontView)
         return (
-          <CardFrame {...this.props} flipHandler={flipHandler} color={color}>
-            <CardFront
-              {...this.props}
-              edit={editable}
-              onCollect={onCollect}
-              color={color}
-            />
-          </CardFrame>
+          <CardFront
+            {...this.props}
+            edit={edit}
+            onCollect={onCollect}
+            color={color}
+            flipHandler={flipHandler}
+            {...onAttrUpdateFunc}
+          />
         );
       return (
-        <CardFrame {...this.props} flipHandler={flipHandler} color={color}>
-          <CardBack {...this.props} edit={editable} />
-        </CardFrame>
+        <CardHeader {...this.props} flipHandler={flipHandler} color={color}>
+          <CardBack {...this.props} edit={edit} />
+        </CardHeader>
       );
     };
 
@@ -1478,4 +1697,4 @@ class TagInput extends React.Component {
 
 // CardCont.propTypes = { selected: PropTypes.bool };
 
-export { Card, PreviewCard, TagInput };
+export { Card, PreviewCard, TagInput, PlaceholderCard };

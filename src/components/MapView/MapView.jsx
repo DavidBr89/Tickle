@@ -301,7 +301,7 @@ class MapView extends PureComponent {
       width,
       height,
       extCardId,
-      headerPad,
+      // headerPad,
 
       userMoveAction,
       changeMapViewportAction,
@@ -363,8 +363,8 @@ class MapView extends PureComponent {
                   <AnimMarker
                     key={c.id}
                     selected={extCardId === c.id}
-                    width={extCardId === c.id ? width - 10 : 40}
-                    height={extCardId === c.id ? height - 5 : 50}
+                    width={extCardId === c.id ? width : 40}
+                    height={extCardId === c.id ? height  : 50}
                     x={x + 5}
                     y={y + 3}
                     node={this.node}
@@ -392,7 +392,7 @@ class MapView extends PureComponent {
               position: 'absolute',
               left: 0,
               right: 0,
-              paddingTop: '20px'
+              paddingTop: '60px'
             }}
           >
             <CardGrid

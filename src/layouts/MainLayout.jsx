@@ -34,11 +34,20 @@ export default class MainLayout extends Component {
     return (
       <div>
         <div className="layout layout--main">
-          <nav className="navbar navbar-expand-lg navbar-dark bg-1">
-            <a className="navbar-brand" href="#">
-              Tickle
-            </a>
+          <nav
+            className="navbar navbar-expand-lg navbar-dark "
+            style={{
+              width: '100%',
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              zIndex: 2000,
+              display: 'flex',
+              justifyContent: 'flex-end'
+            }}
+          >
             <button
+              style={{ border: 'black 1px solid' }}
               className="navbar-toggler"
               type="button"
               data-toggle="collapse"
@@ -47,7 +56,10 @@ export default class MainLayout extends Component {
               aria-expanded="false"
               aria-label="Toggle navigation"
             >
-              <span className="navbar-toggler-icon" />
+              <span
+                className="navbar-toggler-icon"
+                style={{ color: 'black' }}
+              />
             </button>
             <div className="collapse navbar-collapse" id="navbarNav">
               <ul className="navbar-nav">
@@ -74,9 +86,7 @@ export default class MainLayout extends Component {
               </ul>
             </div>
           </nav>
-          <div className="layout__content pt-1 pl-1 pr-1">
-            {children}
-          </div>
+          <div className="layout__content">{children}</div>
         </div>
       </div>
     );

@@ -1,7 +1,9 @@
+import { timeParse } from 'd3';
+
 const ArthurDeGreefCard = {
   title: 'The peculiar story of Arthur De Greef',
   challenge: { type: 'gap text' },
-  date: '28/04/2012 10:00',
+  date: '28/04/2012 00:00:00',
   tags: ['Art', 'Culture', 'Music'],
   img:
     'https://drive.google.com/uc?export=view&id=1N9Ed6a_CDa8SEMZeLaxULF4FtkHBQf4Feg',
@@ -53,7 +55,7 @@ const ArthurDeGreefCard = {
 const ArthurDeGreefCard2 = {
   title: 'The peculiar story of Arthur De Greef',
   challenge: { type: 'gap text' },
-  date: '28/04/2012 10:00',
+  date: '28/04/2012 00:00:00',
   tags: ['Art', 'Culture', 'Music'],
   img:
     'https://drive.google.com/uc?export=view&id=1N9Ed6a_CDa8SEMZeLaxULF4FtkHBQf4Feg',
@@ -104,7 +106,7 @@ const ArthurDeGreefCard2 = {
 const ArthurDeGreefCard3 = {
   title: 'The peculiar story of Arthur De Greef',
   challenge: { type: 'gap text' },
-  date: '28/04/2012 10:00',
+  date: '28/04/2012 00:00:00',
   tags: ['Art', 'Culture', 'Music'],
   img:
     'https://drive.google.com/uc?export=view&id=1N9Ed6a_CDa8SEMZeLaxULF4FtkHBQf4Feg',
@@ -157,7 +159,7 @@ const ArthurDeGreefCard3 = {
 const MapEvent = {
   title: 'an event on a loc on a map',
   challenge: { type: 'gap text' },
-  date: '27/04/2012 10:00',
+  date: '27/04/2012 00:00:00',
   // tags: ['Art', 'Culture', 'Music'],
   // img: 'https://drive.google.com/uc?export=view&id=1N9Ed6a_CDa8SEMZeLaxULF4FtkHBQf4Feg',
   xpPoints: 100,
@@ -173,7 +175,7 @@ const MapEvent = {
 const FranzLisztCard = {
   title: 'The life of Frank Liszt',
   challenge: { type: 'gap text' },
-  date: '24/04/2012 10:00',
+  date: '24/04/2012 00:00:00',
   type: 'card',
   tags: ['Art', 'Culture', 'classic', 'music'],
   img:
@@ -197,14 +199,14 @@ const FranzLisztCard = {
     {
       user: 'Nils',
       comment: 'the band Phoenix dedicated an album to Liszt',
-      date: '01/04/2012 10:00'
+      date: '01/04/2012 00:00'
     }
   ],
   rating: [
     {
       user: 'Nils',
       value: 4,
-      date: '01/04/2012 10:00'
+      date: '01/04/2012 00:00'
     }
   ],
   cardSets: ['european_composers', 'Music challenge'],
@@ -220,7 +222,7 @@ const jimiHendrixCard = {
   challenge: {
     type: 'hangman'
   },
-  date: '01/04/2012 10:00',
+  date: '01/04/2012 00:00:00',
   tags: ["Rock 'n ' Roll", 'Culture', 'music'],
   img:
     'http://www.memoire60-70.be/Images/Chronique_1966_1972/Jimi_Hendrix_Belgium_67.jpg',
@@ -276,7 +278,7 @@ const jimiHendrixCard2 = {
   challenge: {
     type: 'hangman'
   },
-  date: '01/04/2012 10:00',
+  date: '01/04/2012 00:00:00',
   tags: ["Rock 'n ' Roll", 'Culture', 'music'],
   img:
     'http://www.memoire60-70.be/Images/Chronique_1966_1972/Jimi_Hendrix_Belgium_67.jpg',
@@ -304,7 +306,7 @@ const jimiHendrixCard2 = {
     {
       user: 'Nils',
       comment: 'jimi yeah',
-      date: '22/04/2017'
+      date: '22/04/2017 00:00:00'
     },
     {
       user: 'Kiran',
@@ -337,7 +339,7 @@ const notification = {
   challenge: {
     type: 'hangman'
   },
-  date: '02/04/2012 10:00',
+  date: '02/04/2012 00:00:00',
   tags: ["Rock 'n ' Roll", 'Culture', 'music', 'techno', 'yeah'],
   // img: "https://www.w3schools.com/images/w3schools_green.jpg",
   xpPoints: 50,
@@ -400,7 +402,7 @@ const notification2 = {
   challenge: {
     type: 'quiz'
   },
-  date: '02/04/2012 10:00',
+  date: '02/04/2012 00:00:00',
   tags: ["Rock 'n ' Roll", 'Culture', 'music'],
   // img: "https://www.w3schools.com/images/w3schools_green.jpg",
   xpPoints: 50,
@@ -458,7 +460,7 @@ const VUBcard = {
   challenge: {
     type: 'quiz'
   },
-  date: '28/04/2012 10:00',
+  date: '28/04/2012 00:00:00',
   tags: ['Uni', 'education'],
   img:
     'https://drive.google.com/uc?export=view&id=1N9Ed6a_CDa8SEMZeLaxULF4FtkHBQf4Feg',
@@ -484,12 +486,12 @@ const VUBcard = {
     {
       user: 'Chauncey',
       comment: 'here I succeeded my Master studies.',
-      date: '22/03/2017'
+      date: '22/03/2012'
     },
     {
       user: 'Jan',
       comment: 'Now, I finally earn money as PhD student at the VUB!',
-      date: '22/03/2017'
+      date: '22/03/2012'
     }
   ],
   rating: [
@@ -505,7 +507,7 @@ const VUBcard = {
 const VubCard2 = {
   title: 'Vrije Universiteit Brussel',
   type: 'card',
-  date: '28/04/2012 10:00',
+  date: '28/04/2012 00:00:00',
   tags: ['Uni', 'education'],
   img:
     'https://drive.google.com/uc?export=view&id=1N9Ed6a_CDa8SEMZeLaxULF4FtkHBQf4Feg',
@@ -533,12 +535,12 @@ const VubCard2 = {
     {
       user: 'Chauncey',
       comment: 'here I succeeded my Master studies.',
-      date: '22/03/2017'
+      date: '22/03/2012'
     },
     {
       user: 'Jan',
       comment: 'Now, I finally earn money as PhD student at the VUB!',
-      date: '22/03/2017'
+      date: '22/03/2012'
     }
   ],
   rating: [
@@ -554,7 +556,7 @@ const VUBSports = {
   title: 'Sport center VUB',
   type: 'card',
   key: 4,
-  date: '04/04/2012 10:00',
+  date: '04/04/2012 00:00:00',
   tags: ['Uni', 'sports'],
   img:
     'http://uabsport.be/wp-content/uploads/2015/10/817SOap_binnenzicht_01.jpg',
@@ -577,13 +579,13 @@ const VUBSports = {
     {
       user: 'Lars',
       comment: 'they have two squash courts and they are not expensive',
-      date: '22/03/2017'
+      date: '22/03/2012'
     },
     {
       user: 'Jan',
       comment:
         'In the basic fit you can work out with many different equipment!',
-      date: '22/03/2017'
+      date: '22/03/2012'
     }
   ],
   rating: [
@@ -599,7 +601,7 @@ const VUBSports = {
 // TODO Hassan template to create more cards based on the brik cards
 const VUBSports2 = {
   title: 'Sport center VUB',
-  date: '04/04/2012 10:00',
+  date: '04/04/2012 00:00:00',
   // TODO; rename topics
   tags: ['Uni', 'sports'],
   img:
@@ -641,7 +643,7 @@ const VUBSports2 = {
 
 const challengeTypes = ['quiz', 'gap text', 'hangman'];
 const skillTypes = ['arts', 'sports', 'mathematics'];
-const dummyCards = [
+const rawDummyCards = [
   notification,
   notification2,
   MapEvent,
@@ -656,7 +658,18 @@ const dummyCards = [
   VUBSports2,
   VubCard2
 ];
+const tip = timeParse('%d/%m/%Y');
+// console.log('dummyCards', dummyCards.map(d => tip(d.date)));
+
+const dummyCards = rawDummyCards
+  .sort((b, a) => tip(b.date) - tip(a.date))
+  .map((d, i) => {
+    d.id = i;
+    return d;
+  });
+
+console.log('sortedCards', dummyCards);
 
 const mediaTypes = ['game', 'hyperlink', 'photo', 'video'];
 
-export { dummyCards, challengeTypes, mediaTypes, skillTypes};
+export { dummyCards, challengeTypes, mediaTypes, skillTypes };

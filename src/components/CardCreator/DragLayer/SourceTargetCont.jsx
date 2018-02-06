@@ -145,13 +145,14 @@ class DropTargetCont extends PureComponent {
       // isOver,
       connectDropTarget,
       // clientOffset,
+      style,
       children
     } = this.props;
     // const { id, left, top, dropped } = this.state;
     // const { x, y } = clientOffset || { x: 0, y: 0 };
     // console.log('dropped', dropped);
 
-    return connectDropTarget(<div>{children}</div>);
+    return connectDropTarget(<div >{children}</div>);
   }
 }
 
