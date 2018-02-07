@@ -1,7 +1,7 @@
 import 'w3-css';
 
 import React, { Component, PureComponent } from 'react';
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import MapGL from 'react-map-gl';
@@ -15,8 +15,10 @@ import { CardMarker } from '../utils/map-layers/DivOverlay';
 import { challengeTypes, mediaTypes, skillTypes } from '../../dummyData';
 import cx from './Card.scss';
 import colorClasses from '../colorClasses';
+// TODO: rename
 import { Wrapper } from '../utils';
 import placeholderImg from './placeholder.png';
+import { SmallModal, ModalBody, MediaSearch } from './utils';
 
 const random = () => Math.random() * 1000;
 
@@ -110,7 +112,7 @@ const Description = ({ text, onEdit, placeholder }) => (
 Description.propTypes = {
   text: PropTypes.string.isRequired,
   // TODO: how to
-  onEdit: PropTypes.oneOf([PropTypes.func, null]),
+  onEdit: PropTypes.func,
   placeholder: PropTypes.string
 };
 
@@ -119,7 +121,7 @@ Description.defaultProps = {
   placeholder: 'Add a description'
 };
 
-const Media = ({ data }) => (
+const PreviewMedia = ({ data }) => (
   <Grid cols={data.length} rows={1}>
     {data.map(m => (
       <div key={m.src + random()}>
@@ -137,99 +139,15 @@ const Media = ({ data }) => (
   </Grid>
 );
 
-Media.propTypes = {
+PreviewMedia.propTypes = {
   data: PropTypes.array.isRequired
   // extended: PropTypes.bool
 };
 
-Media.defaultProps = { data: defaultProps.media, extended: false };
-
-const SmallModal = ({ visible, title, children, onClose }) =>
-  ReactDOM.createPortal(
-    <div
-      style={{
-        width: '100%',
-        height: '100%',
-        background: 'rgba(0, 0, 0, 0.5)',
-        opacity: visible ? 1 : 0,
-        transition: 'opacity 1s',
-        zIndex: visible ? '4000' : '-10',
-        left: 0,
-        top: 0,
-        position: 'absolute'
-      }}
-    >
-      <div
-        className="modal fade show"
-        tabIndex="-1"
-        role="dialog"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-        style={{
-          opacity: visible ? 1 : 0,
-          display: visible ? 'block' : 'none'
-        }}
-      >
-        <div className="modal-dialog modal-dialog-centered" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLabel">
-                {title}
-              </h5>
-              <button
-                type="button"
-                className="close"
-                data-dismiss="modal"
-                aria-label="Close"
-                onClick={onClose}
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            {children}
-          </div>
-        </div>
-      </div>
-    </div>,
-    document.querySelector('body')
-  );
-
-SmallModal.propTypes = {
-  visible: PropTypes.bool,
-  title: PropTypes.string,
-  children: PropTypes.node,
-  onClose: PropTypes.func,
-  onSave: PropTypes.func
-};
-SmallModal.defaultProps = {
-  visible: true,
-  title: '-',
-  children: <div>{'test'}</div>,
-  onClose: () => null,
-  onSave: () => null
-};
-
-const ModalBody = ({ children, onSubmit }) => (
-  <div>
-    <div className="modal-body">{children}</div>
-    <div className="modal-footer">
-      <button type="button" className="btn btn-primary" onClick={onSubmit}>
-        Save changes
-      </button>
-    </div>
-  </div>
-);
-
-ModalBody.propTypes = {
-  children: PropTypes.node.isRequired,
-  onSubmit: PropTypes.func
-};
-
-ModalBody.defaultProps = {
-  onSubmit: () => null
-};
+PreviewMedia.defaultProps = { data: defaultProps.media, extended: false };
 
 const ReadCardFront = ({
+  title,
   tags,
   img,
   description,
@@ -239,7 +157,12 @@ const ReadCardFront = ({
   onClose,
   style
 }) => (
-  <CardHeader onClose={onClose} flipHandler={flipHandler} style={style}>
+  <CardHeader
+    title={title}
+    onClose={onClose}
+    flipHandler={flipHandler}
+    style={style}
+  >
     <div
       className={cx.cardDetail}
       style={{
@@ -256,7 +179,7 @@ const ReadCardFront = ({
       <div>
         <fieldset className={cx.field}>
           <legend>Media:</legend>
-          <Media data={media} />
+          <PreviewMedia data={media} />
         </fieldset>
       </div>
       <CollectButton onClick={onCollect} />
@@ -265,6 +188,7 @@ const ReadCardFront = ({
 );
 
 ReadCardFront.propTypes = {
+  title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   img: PropTypes.string.isRequired,
   onCollect: PropTypes.func,
@@ -275,88 +199,6 @@ ReadCardFront.propTypes = {
 };
 
 ReadCardFront.defaultProps = { ...defaultProps, onCollect: null };
-
-const MediaSearch = ({ media, onSubmit }) => (
-  <ModalBody>
-    <div style={{ width: '100%' }}>
-      <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
-        <li className="nav-item">
-          <a
-            className="nav-link active"
-            id="pills-home-tab"
-            data-toggle="pill"
-            href="#pills-home"
-            role="tab"
-            aria-controls="pills-home"
-            aria-selected="true"
-          >
-            <i className={`fa fa-link fa-2x col-1`} aria-hidden="true" />
-          </a>
-        </li>
-        <li className="nav-item">
-          <a
-            className="nav-link"
-            id="pills-profile-tab"
-            data-toggle="pill"
-            href="#pills-profile"
-            role="tab"
-            aria-controls="pills-profile"
-            aria-selected="false"
-          >
-            <i className={`fa fa-camera fa-2x col-1`} aria-hidden="true" />
-          </a>
-        </li>
-        <li className="nav-item">
-          <a
-            className="nav-link"
-            id="pills-contact-tab"
-            data-toggle="pill"
-            href="#pills-contact"
-            role="tab"
-            aria-controls="pills-contact"
-            aria-selected="false"
-          >
-            <i
-              className={`fa fa-video-camera fa-2x col-1`}
-              aria-hidden="true"
-            />
-          </a>
-        </li>
-      </ul>
-      <div className="tab-content" id="pills-tabContent">
-        <div
-          className="tab-pane fade show active"
-          id="pills-home"
-          role="tabpanel"
-          aria-labelledby="pills-home-tab"
-        />
-        <div
-          className="tab-pane fade"
-          id="pills-profile"
-          role="tabpanel"
-          aria-labelledby="pills-profile-tab"
-        >
-          ...
-        </div>
-        <div
-          className="tab-pane fade"
-          id="pills-contact"
-          role="tabpanel"
-          aria-labelledby="pills-contact-tab"
-        >
-          ...
-        </div>
-      </div>
-    </div>
-  </ModalBody>
-);
-
-MediaSearch.propTypes = {
-  media: PropTypes.array.isRequired,
-  onSubmit: PropTypes.func
-};
-
-MediaSearch.defaultProps = { onSubmit: () => null };
 
 class EditCardFront extends PureComponent {
   static propTypes = {
@@ -396,17 +238,15 @@ class EditCardFront extends PureComponent {
     }));
   }
 
-  modalContent(id) {
+  modalContent(modalTitle) {
     const { data } = this.state;
     // TODO: img
     const { title, tags, img, description, media, challenge } = data;
-    switch (id) {
-      case 'title':
+    switch (modalTitle) {
+      case 'Title':
         return (
           <ModalBody
-            onSubmit={() =>
-              this.setFieldState({ title: this.nodeTitle.value })
-            }
+            onSubmit={() => this.setFieldState({ title: this.nodeTitle.value })}
           >
             <div className="form-group">
               <input
@@ -417,16 +257,16 @@ class EditCardFront extends PureComponent {
             </div>
           </ModalBody>
         );
-      case 'tags':
+      case 'Tags':
         return (
           <TagInput
             tags={tags}
             onSubmit={newTags => this.setFieldState({ tags: newTags })}
           />
         );
-      case 'photo':
+      case 'Photo':
         return <div>photo</div>;
-      case 'description':
+      case 'Description':
         return (
           <ModalBody
             onSubmit={() =>
@@ -445,13 +285,13 @@ class EditCardFront extends PureComponent {
             </div>
           </ModalBody>
         );
-      case 'media':
+      case 'Media':
         return (
           <div>
             <MediaSearch media={media} onSubmit={() => null} />
           </div>
         );
-      case 'challenge':
+      case 'Challenge':
         return <div>challenge</div>;
       default:
         return <div>error</div>;
@@ -464,7 +304,7 @@ class EditCardFront extends PureComponent {
     const { title, tags, img, description, media, children, challenge } = data;
     const { dialog } = this.state;
     const modalVisible = dialog !== null;
-    const dialogId = dialog !== null ? dialog.id : null;
+    const dialogTitle = dialog !== null ? dialog.title : null;
     // const modalStyle = modalVisible
     //   ? { background: 'black', opacity: 0.5 }
     //   : {};
@@ -475,7 +315,7 @@ class EditCardFront extends PureComponent {
         onClose={onClose}
         onEdit={() =>
           this.setState({
-            dialog: { title: 'Title', id: 'title', data: title }
+            dialog: { title: 'Title', data: title }
           })
         }
         flipHandler={flipHandler}
@@ -487,7 +327,7 @@ class EditCardFront extends PureComponent {
             title={modalVisible ? dialog.title : ''}
             onClose={() => this.setState({ dialog: null })}
           >
-            {this.modalContent(dialogId)}
+            {this.modalContent(dialogTitle)}
           </SmallModal>
           <div
             className={cx.cardDetail}
@@ -508,7 +348,7 @@ class EditCardFront extends PureComponent {
                 style={{ fontSize: '24px' }}
                 onclick={() =>
                   this.setstate({
-                    dialog: { title: 'tags', id: 'tags', data: tags }
+                    dialog: { title: 'Tags', data: tags }
                   })
                 }
               />
@@ -531,12 +371,16 @@ class EditCardFront extends PureComponent {
               <fieldset className={cx.field}>
                 <legend>Media:</legend>
                 <div style={{ display: 'flex', alignContent: 'end' }}>
-                  <Media />
+                  {media.length !== 0 ? (
+                    <PreviewMedia data={tags} />
+                  ) : (
+                    <div>{'Add a video, webpage or a sound snippet'}</div>
+                  )}
                   <div>
                     <EditButton
                       onClick={() =>
                         this.setState({
-                          dialog: { title: 'Media', id: 'media', data: media }
+                          dialog: { title: 'Media', data: media }
                         })
                       }
                     />
@@ -554,7 +398,6 @@ class EditCardFront extends PureComponent {
                       this.setState({
                         dialog: {
                           title: 'Challenge',
-                          id: 'challenge',
                           data: challenge
                         }
                       })
@@ -1363,7 +1206,7 @@ class ReadCardBack extends Component {
 ReadCardBack.defaultProps = {
   challenge: { type: '0' },
   comments: Comments.defaultProps.data,
-  media: Media.defaultProps.data,
+  media: PreviewMedia.defaultProps.data,
   cardSets: ['testseries', 'pirateSet'],
   linkedCards: ['Captain hook', 'yeah'],
   loc: { latitude: 0, longitude: 0 },

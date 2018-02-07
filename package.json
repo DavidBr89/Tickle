@@ -30,6 +30,7 @@
     "d3-scale-chromatic": "^1.1.1",
     "dsv-loader": "^2.0.0",
     "font-awesome": "^4.7.0",
+    "giphy-js-sdk-core": "^1.0.3",
     "history": "^4.7.2",
     "immutability-helper": "^2.5.0",
     "immutable": "^3.8.1",
