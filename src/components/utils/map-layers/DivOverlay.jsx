@@ -162,6 +162,8 @@ const AnimMarker = ({
   width,
   height,
   selected,
+  offsetX,
+  offsetY,
   delay,
   x,
   y,
@@ -175,8 +177,8 @@ const AnimMarker = ({
       onClick={onClick}
       style={{
         position: 'absolute',
-        left: selected ? `${0}px` : `${x - width / 2}px`,
-        top: selected ? `${0}px` : `${y - height / 2}px`,
+        left: selected ? `${offsetX}px` : `${x - width / 2}px`,
+        top: selected ? `${offsetY}px` : `${y - height / 2}px`,
         width: `${width}px`,
         height: `${height}px`,
         transition: `left ${delay}s, top ${delay}s, width ${delay}s, height ${delay}s, opacity ${delay}s`
@@ -211,6 +213,8 @@ AnimMarker.propTypes = {
   selected: PropTypes.bool.isRequired,
   x: PropTypes.number.isRequired,
   y: PropTypes.number.isRequired,
+  offsetX: PropTypes.number,
+  offsetY: PropTypes.number,
   children: PropTypes.node.isRequired,
   preview: PropTypes.node,
   node: PropTypes.object
@@ -219,7 +223,9 @@ AnimMarker.propTypes = {
 AnimMarker.defaultProps = {
   delay: 0.5,
   preview: <CardMarker />,
-  node: null
+  node: null,
+  offsetX: 0,
+  offsetY: 0
 };
 
 const UserMarker = ({ x, y }) => (

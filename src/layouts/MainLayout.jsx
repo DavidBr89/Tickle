@@ -47,7 +47,7 @@ export default class MainLayout extends Component {
             }}
           >
             <button
-              style={{ border: 'black 1px solid' }}
+              style={{ border: 'grey 1px solid' }}
               className="navbar-toggler"
               type="button"
               data-toggle="collapse"
@@ -56,10 +56,7 @@ export default class MainLayout extends Component {
               aria-expanded="false"
               aria-label="Toggle navigation"
             >
-              <span
-                className="navbar-toggler-icon"
-                style={{ color: 'black' }}
-              />
+              <span className="navbar-toggler-icon" style={{ color: 'grey' }} />
             </button>
             <div className="collapse navbar-collapse" id="navbarNav">
               <ul className="navbar-nav">

@@ -40,3 +40,55 @@
 
 //darkseagreen cornsilk
 
+$sw:4px;
+
+.btn {
+  @extend .btn;
+  border-radius: 0;
+  box-shadow: $sw $sw grey;
+}
+
+.btn-danger {
+  @extend .btn-danger;
+  box-shadow: $sw $sw #dc3545;
+  border: 1px #dc3545 solid !important;
+  background: white;
+}
+
+.btn-danger:hover {
+  background: #dc3545;
+  box-shadow: $sw $sw white;
+}
+
+.btn:hover {
+  box-shadow: $sw $sw #007bff;
+}
+
+.nav-link {
+  @extend .nav-link;
+  border-radius: 0 !important;
+}
+
+.nav-pills {
+  @extend .nav-pills;
+  border-radius: 0 !important;
+}
+
+.modal-content {
+  @extend .modal-content;
+  border-radius: 0px;
+
+}
+
+.navbar-toggler {
+  @extend .navbar-toggler;
+  border-radius: 0;
+  box-shadow: $sw $sw grey;
+}
+
+input {
+  border-radius: 0;
+  padding: 5px;
+}
+
+

@@ -633,7 +633,7 @@ const PlaceholderCard = ({ title, tags, img, challengeType, onClick }) => (
   <div
     style={{
       padding: '5px',
-      boxShadow: 'inset 0 0 0 1px rgba(0, 0, 0, 0.08)',
+      boxShadow: '9px 9px grey',
       backfaceVisibility: 'hidden',
       height: '100%',
       background: challengeType ? colorScale(challengeType) : 'lightgrey'
@@ -742,10 +742,10 @@ class PreviewCard extends Component {
         style={{
           ...style,
           padding: '5px',
-          boxShadow: 'inset 0 0 0 1px rgba(0, 0, 0, 0.08)',
           backfaceVisibility: 'hidden',
           height: '100%',
-          background: colorScale(challenge.type)
+          background: colorScale(challenge.type),
+          boxShadow: '9px 9px grey'
         }}
         onClick={onClick}
       >
@@ -792,6 +792,7 @@ const CardHeader = ({
       background: colorScale(challenge.type),
       overflow: 'hidden',
       height: '100%',
+      boxShadow: '9px 9px grey',
       ...style
     }}
   >

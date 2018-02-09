@@ -78,7 +78,12 @@ class CardGrid extends Component {
     onExtend: PropTypes.func.isRequired,
     setTimeout: PropTypes.func.isRequired,
     clearTimeout: PropTypes.func.isRequired,
-    offset: PropTypes.number.isRequired
+    offset: PropTypes.number.isRequired,
+    style: PropTypes.object
+  };
+
+  static defaultProps = {
+    style: {}
   };
 
   constructor(props) {
@@ -99,7 +104,8 @@ class CardGrid extends Component {
       cards,
       onSelect,
       onExtend,
-      offset
+      offset,
+      style
       // setTimeout,
       // clearTimeout
     } = this.props;
@@ -122,11 +128,7 @@ class CardGrid extends Component {
         colSpan={2}
         rowSpan={1}
         gap={2}
-        style={{
-          width: `${cards.length * 40}%`,
-          overflow: 'visible',
-          zIndex: 2000
-        }}
+        style={style}
       >
         {cards.map(d => (
           <div>
@@ -358,13 +360,15 @@ class MapView extends PureComponent {
                   selectedCard={selectedCard}
                 />
               )}
-              <SlowDivOverlay {...mapViewport} data={cards}>
+              <DivOverlay {...mapViewport} data={cards}>
                 {(c, [x, y]) => (
                   <AnimMarker
                     key={c.id}
                     selected={extCardId === c.id}
-                    width={extCardId === c.id ? width : 40}
-                    height={extCardId === c.id ? height  : 50}
+                    width={extCardId === c.id ? width - 15 : 40}
+                    height={extCardId === c.id ? height - 15 : 50}
+                    offsetX={3}
+                    offsetY={3}
                     x={x + 5}
                     y={y + 3}
                     node={this.node}
@@ -378,7 +382,7 @@ class MapView extends PureComponent {
                     />
                   </AnimMarker>
                 )}
-              </SlowDivOverlay>
+              </DivOverlay>
               <DivOverlay {...mapViewport} data={[{ loc: userLocation }]}>
                 {(c, [x, y]) => <UserMarker x={x} y={y} />}
               </DivOverlay>
@@ -391,8 +395,15 @@ class MapView extends PureComponent {
             style={{
               position: 'absolute',
               left: 0,
-              right: 0,
-              paddingTop: '60px'
+              top: 60,
+              overflowX: 'scroll',
+              width: '100%'
+              // height: '100%'
+              // top: 60,
+              // paddingTop: '60px',
+              // paddingBottom: '30px',
+              // paddingTop: '10px',
+              // paddingBottom: '50px'
             }}
           >
             <CardGrid
@@ -400,6 +411,13 @@ class MapView extends PureComponent {
               onSelect={selectCardAction}
               onExtend={extCardAction}
               offset={width / 4}
+              style={{
+                height: '26vh',
+                paddingTop: '15px',
+                paddingBottom: '15px',
+                width: `${cards.length * 40}vw`,
+                zIndex: 2000
+              }}
             />
           </div>
         </div>

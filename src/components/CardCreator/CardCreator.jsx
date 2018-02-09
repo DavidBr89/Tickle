@@ -165,8 +165,10 @@ class CardCreator extends Component {
                     <AnimMarker
                       key={c.id}
                       selected={extCardId === c.id}
-                      width={extCardId === c.id ? width : 40}
-                      height={extCardId === c.id ? height : 50}
+                      width={extCardId === c.id ? width - 15 : 40}
+                      height={extCardId === c.id ? height - 15 : 50}
+                      offsetX={3}
+                      offsetY={3}
                       x={x + 5}
                       y={y + 3}
                       node={document.querySelector('body')}
