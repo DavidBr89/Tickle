@@ -4,9 +4,12 @@ import PropTypes from 'prop-types';
 import $ from 'jquery';
 import MyGrid from 'mygrid/dist';
 import cxs from 'cxs';
+import { DDG } from 'node-ddg-api';
 
 import { ScrollView, ScrollElement } from '../utils/ScrollView';
 import gapi from './gapi';
+
+// const ddg = new DDG('tickle');
 
 const fullDim = cxs({ width: '100%', height: '100%' });
 const shadow = (color = 'black') =>
@@ -164,7 +167,9 @@ const MediaSearch = ({ media, onSubmit }) => (
           id="pills-home"
           role="tabpanel"
           aria-labelledby="pills-home-tab"
-        />
+        >
+          <DuckDuckGo onSelect={onSubmit} />
+        </div>
         <div
           className={`tab-pane fade ${fullDim}`}
           id="pills-profile"
@@ -512,4 +517,111 @@ class WikiSearch extends Component {
   }
 }
 
-export { SmallModal, ModalBody, MediaSearch };
+const duckSearch = q =>
+  new Promise(resolve =>
+    $.ajax({
+      url: `https://api.duckduckgo.com/?q=${q}&pretty=1&no_html=0&no_redirect=0&skip_disambig=1&format=json&t=tickle&callback=callback`,
+      jsonp: true
+    }).then(r => resolve(r))
+  );
+
+class DuckDuckGo extends Component {
+  static propTypes = {};
+
+  constructor(props) {
+    super(props);
+
+    this.state = { results: [], selected: null };
+    this._scroller = null;
+    this.searchBar = null;
+  }
+
+  scrollTo = name => {
+    this._scroller.scrollTo(name);
+  };
+
+  componentDidMount() {
+    duckSearch('cooking').then(r => console.log('res', r))
+    // $.ajax(options)
+    //   .then(resolve)
+    //   .fail(reject),
+    // ddg.instantAnswer('megaman', {}, (err, response) => {
+    //   console.log(response);
+    // });
+  }
+
+  componentDidUpdate() {
+    this.scrollTo(this.state.selected);
+  }
+
+  render() {
+    const { results, selected } = this.state;
+    // let GoogleAuth;
+    // const SCOPE = 'https://www.googleapis.com/auth/youtube.force-ssl';
+    // Load the API's client and auth2 modules.
+    // Call the initClient function after the modules load.
+    // }
+
+    // TODO: fix view height
+    return (
+      <div style={{ width: '100%', height: '60vh' }}>
+        <div className="mb-3" style={{ display: 'flex' }}>
+          <form>
+            <input
+              ref={searchBar => (this.searchBar = searchBar)}
+              type="text"
+              placeholder={'Search...'}
+            />
+            <button
+              className="ml-3 btn btn-outline-primary"
+              onClick={() =>
+                searchWikipedia(this.searchBar.value).then(({ items }) => {
+                  console.log('new res', results);
+                  this.setState({ results: items });
+                })
+              }
+            >
+              <i className="fa fa-search" />
+            </button>
+          </form>
+        </div>
+        <div style={{ width: '100%', height: '90%', overflowY: 'scroll' }}>
+          <div>
+            <ScrollView ref={scroller => (this._scroller = scroller)}>
+              <div style={{ width: '100%', height: '400%' }}>
+                {results.map(d => (
+                  <div
+                    style={{ width: '90%' }}
+                    className={`p-2 mb-3 mr-3 ${shadow(
+                      selected === d.url ? 'grey' : 'lightgrey'
+                    )} ${fullDim}`}
+                  >
+                    <ScrollElement name={d.url}>
+                      <div
+                        onClick={() => this.setState({ selected: d.url })}
+                        style={{
+                          position: 'relative',
+                          width: '100%',
+                          height: '100%',
+                          overflow: 'hidden'
+                        }}
+                      >
+                        <div style={{ fontSize: '18px' }}>
+                          <a href={d.url}>{d.header} </a>
+                        </div>
+                        <small>{d.url} </small>
+                        <div>{d.descr} </div>
+                      </div>
+                    </ScrollElement>
+                  </div>
+                ))}
+              </div>
+            </ScrollView>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
+export { SmallModal, ModalBody, MediaSearch, DuckDuckGo };

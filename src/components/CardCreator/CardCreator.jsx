@@ -85,7 +85,7 @@ class CardCreator extends Component {
     // const el = ReactDOM.findDOMNode(this);
     // scrollTo(5);
     // this._scroller.scrollTo(5);
-    console.log('scroller', this._scroller);
+    // console.log('scroller', this._scroller);
   }
 
   // componentDidUpdate() {}
@@ -222,7 +222,7 @@ class CardCreator extends Component {
               <Grid
                 cols={cards.length + 1}
                 rows={1}
-                gap={1}
+                gap={1.5}
                 style={{ width: `${cards.length * 40}%`, height: '30%' }}
               >
                 <DragSourceCont dragHandler={dragCardAction} id={cards.length}>

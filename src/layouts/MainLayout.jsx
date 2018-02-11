@@ -56,7 +56,10 @@ export default class MainLayout extends Component {
               aria-expanded="false"
               aria-label="Toggle navigation"
             >
-              <span className="navbar-toggler-icon" style={{ color: 'grey' }} />
+              <i
+                className="fa fa-1x fa-bars"
+                style={{ fontSize: '25px', color: 'grey', padding: '2px' }}
+              />
             </button>
             <div className="collapse navbar-collapse" id="navbarNav">
               <ul className="navbar-nav">
@@ -83,7 +86,7 @@ export default class MainLayout extends Component {
               </ul>
             </div>
           </nav>
-          <div className="layout__content">{children}</div>
+          <div id="content" className="layout__content">{children}</div>
         </div>
       </div>
     );

@@ -42,6 +42,7 @@
     "materialize-css": "^0.100.2",
     "mygrid": "git+https://github.com/DinoJay/MyGrid.git",
     "ngeohash": "^0.6.0",
+    "node-ddg-api": "^0.1.4",
     "node-sass": "^4.5.0",
     "popper.js": "^1.12.5",
     "prop-types": "^15.6.0",

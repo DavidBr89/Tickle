@@ -20,6 +20,7 @@ import ReactTimeout from 'react-timeout';
 // import ngeohash from 'ngeohash';,
 import cx from './MapView.scss';
 import { Card, PreviewCard } from '../cards';
+// import { VisibleView, VisibleElement } from '../utils/MySensor.jsx';
 
 // console.log('grid', Grid);
 // import { Grid } from '../utils';
@@ -30,7 +31,6 @@ import { Card, PreviewCard } from '../cards';
 // import CardOverlay from '../utils/map-layers/CardOverlay';
 import {
   DivOverlay,
-  SlowDivOverlay,
   UserOverlay,
   SvgOverlay,
   UserMarker,
@@ -70,7 +70,6 @@ function overlap(e, o) {
   return true;
 }
 
-@ReactTimeout
 class CardGrid extends Component {
   static propTypes = {
     cards: PropTypes.array.isRequired,
@@ -79,20 +78,23 @@ class CardGrid extends Component {
     setTimeout: PropTypes.func.isRequired,
     clearTimeout: PropTypes.func.isRequired,
     offset: PropTypes.number.isRequired,
-    style: PropTypes.object
+    style: PropTypes.object,
+    selected: PropTypes.number
   };
 
   static defaultProps = {
-    style: {}
+    style: {},
+    selected: null
   };
 
   constructor(props) {
     super(props);
     this.id = null;
+    this.box = null;
   }
 
-  shouldComponentUpdate() {
-    return false;
+  shouldComponentUpdate(nextProps) {
+    return nextProps.selected !== this.props.selected;
   }
 
   // componentDidUpdate(prevProps, prevState) {
@@ -104,55 +106,76 @@ class CardGrid extends Component {
       cards,
       onSelect,
       onExtend,
-      offset,
-      style
+      style,
+      selected
+
       // setTimeout,
       // clearTimeout
     } = this.props;
 
     const onChange = d => visible => {
-      // console.log('id', this.id);
-      const { setTimeout, clearTimeout } = this.props;
+      // const { setTimeout, clearTimeout } = this.props;
       if (visible) {
-        clearTimeout(this.id);
-        this.id = setTimeout(() => onSelect(d.id), 1000);
-        // onSelect(d.id);
+        onSelect(d.id);
       }
     };
 
     // TODO: isVisible
     return (
-      <Grid
-        rows={1}
-        cols={Math.floor(cards.length) * 2}
-        colSpan={2}
-        rowSpan={1}
-        gap={2}
-        style={style}
-      >
-        {cards.map(d => (
+      <div>
+        <div
+          ref={node => (this.node = node)}
+          style={{
+            position: 'absolute',
+            left: '30vw',
+            width: '40vw',
+            height: '30vh'
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            overflowX: 'scroll',
+            width: '100%',
+            height: '30vh'
+          }}
+        >
           <div>
-            <VisibilitySensor
-              offset={{ left: offset, right: offset }}
-              onChange={onChange(d)}
+            <Grid
+              rows={1}
+              cols={Math.floor(cards.length) * 2}
+              colSpan={2}
+              rowSpan={1}
+              gap={2}
+              style={style}
             >
-              {({ isVisible }) => (
-                <PreviewCard
-                  {...d}
-                  onClick={() => isVisible && onExtend(d.id)}
-                  selected={isVisible}
-                  style={{
-                    opacity: !isVisible ? 0.56 : null,
-                    transform: isVisible ? 'scale(1.2)' : null,
-                    transition: 'transform 1s',
-                    height: '100%'
-                  }}
-                />
-              )}
-            </VisibilitySensor>
+              {cards.map((d) => (
+                <div key={d.id}>
+                  <VisibilitySensor
+                    onChange={onChange(d)}
+                    scrollCheck
+                    scrollDelay={0}
+                    containment={this.node}
+                  >
+                    <PreviewCard
+                      {...d}
+                      onClick={() => selected === d.id && onExtend(d.id)}
+                      selected={selected === d.id}
+                      style={{
+                        opacity: selected !== d.id ? 0.56 : null,
+                        transform: selected === d.id ? 'scale(1.2)' : null,
+                        transition: 'transform 1s',
+                        height: '100%',
+                        padding: '10px'
+                      }}
+                    />
+                  </VisibilitySensor>
+                </div>
+              ))}
+            </Grid>
           </div>
-        ))}
-      </Grid>
+        </div>
+      </div>
     );
   }
 }
@@ -371,7 +394,6 @@ class MapView extends PureComponent {
                     offsetY={3}
                     x={x + 5}
                     y={y + 3}
-                    node={this.node}
                   >
                     <Card
                       {...c}
@@ -390,33 +412,21 @@ class MapView extends PureComponent {
             </MapGL>
           </div>
 
-          <div
-            className={`${cx.cardGridCont}`}
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: 60,
-              overflowX: 'scroll',
-              width: '100%'
-              // height: '100%'
-              // top: 60,
-              // paddingTop: '60px',
-              // paddingBottom: '30px',
-              // paddingTop: '10px',
-              // paddingBottom: '50px'
-            }}
-          >
+          <div style={{ paddingTop: 60 }}>
             <CardGrid
               cards={cards}
               onSelect={selectCardAction}
+              selected={selectedCardId}
               onExtend={extCardAction}
-              offset={width / 4}
+              offset={0}
               style={{
                 height: '26vh',
                 paddingTop: '15px',
+                paddingLeft: '30vw',
+                paddingRight: '30vw',
                 paddingBottom: '15px',
                 width: `${cards.length * 40}vw`,
-                zIndex: 2000
+                zIndex: 8000
               }}
             />
           </div>
