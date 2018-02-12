@@ -25,7 +25,8 @@ import CardCreator from './CardCreator';
 const mapStateToProps = state => ({
   ...state.CardCreator,
   // TODO: check later when real cards changed
-  cards: state.CardCreator.cards.sort((a, b) => b.id - a.id)
+  cards: state.CardCreator.cards.sort((a, b) => b.id - a.id),
+  user: state.user
 });
 
 const mapDispatchToProps = dispatch => ({

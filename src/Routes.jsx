@@ -13,6 +13,7 @@ import {
 } from 'react-router-dom';
 // import debug from 'debug';
 
+import md5 from 'blueimp-md5';
 import actions from './actions';
 import reducers from './reducers';
 
@@ -26,12 +27,23 @@ import { dummyCards } from './dummyData';
 
 // import NotFound from './containers/NotFound/NotFound';
 
+function gravatar(email) {
+  const base = 'http://www.gravatar.com/avatar/';
+  const hash = md5(email.trim().toLowerCase());
+  return base + hash;
+}
+
 const defaultLocation = {
   latitude: 50.85146,
   longitude: 4.315483
 };
 // debug('lego:routes');
 const defaultState = {
+  user: {
+    name: 'jan',
+    email: 'jmaushag@gmail.com',
+    img: gravatar('jmaushag@gmail.com')
+  },
   MapView: {
     cards: dummyCards,
     mapZoom: 20,

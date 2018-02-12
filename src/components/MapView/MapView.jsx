@@ -149,7 +149,7 @@ class CardGrid extends Component {
               gap={2}
               style={style}
             >
-              {cards.map((d) => (
+              {cards.map(d => (
                 <div key={d.id}>
                   <VisibilitySensor
                     onChange={onChange(d)}
@@ -394,6 +394,7 @@ class MapView extends PureComponent {
                     offsetY={3}
                     x={x + 5}
                     y={y + 3}
+                    node={this.node}
                   >
                     <Card
                       {...c}

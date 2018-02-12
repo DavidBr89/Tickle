@@ -8,6 +8,7 @@ import MapGL from 'react-map-gl';
 import { WithContext as ReactTags } from 'react-tag-input';
 import Grid from 'mygrid/dist';
 import * as chromatic from 'd3-scale-chromatic';
+import cxs from 'cxs';
 // import ClampLines from 'react-clamp-lines';
 // import 'react-tagsinput/react-tagsinput.css'; // If using WebPack and style-loader.
 
@@ -18,7 +19,8 @@ import colorClasses from '../colorClasses';
 // TODO: rename
 import { Wrapper } from '../utils';
 import placeholderImg from './placeholder.png';
-import { SmallModal, ModalBody, MediaSearch } from './utils';
+import { SmallModal, ModalBody } from './modal';
+import MediaSearch from './MediaSearch';
 
 const random = () => Math.random() * 1000;
 
@@ -70,20 +72,29 @@ const defaultProps = {
   comments: []
 };
 
-const EditButton = ({ style, onClick }) => (
-  <i
-    className="fa fa-2x fa-pencil-square-o ml-1"
-    style={{ cursor: 'pointer', ...style }}
-    onClick={onClick}
-  />
+const fieldLayout = cxs({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  height: '95%'
+});
+
+const EditButton = ({ style, onClick, className }) => (
+  <button className={`close ${className}`} onClick={onClick}>
+    <i
+      className={`fa  fa-pencil-square-o ml-1 `}
+      style={{ cursor: 'pointer', fontSize: '2rem', ...style }}
+    />
+  </button>
 );
 
 EditButton.propTypes = {
   style: PropTypes.object,
+  className: PropTypes.string,
   onClick: PropTypes.func
 };
 
-EditButton.defaultProps = { style: {}, onClick: () => null };
+EditButton.defaultProps = { style: {}, onClick: () => null, className: '' };
 
 const CardImg = ({ src }) => (
   <div className="mt-1 mb-1">
@@ -95,7 +106,13 @@ const Description = ({ text, onEdit, placeholder }) => (
   <div style={{ height: '20%' }}>
     <fieldset className={`${cx.field}`} style={{ height: '90%' }}>
       <legend>description</legend>
-      <div style={{ display: 'flex', alignContent: 'end', height: '100%' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          height: '100%'
+        }}
+      >
         <div className={cx.textClamp} style={{ height: '100%' }}>
           {text !== '' && onEdit ? text : placeholder}
         </div>
@@ -121,30 +138,63 @@ Description.defaultProps = {
   placeholder: 'Add a description'
 };
 
-const PreviewMedia = ({ data }) => (
-  <Grid cols={data.length} rows={1}>
-    {data.map(m => (
-      <div key={m.src + random()}>
-        <div className="mr-1 row">
-          <i
-            className={`fa ${mediaScale(m.type)} fa-2x col-1`}
-            aria-hidden="true"
-          />
-          <div className="ml-1 col">
-            <a href={m.src}>name</a>
+const MediaField = ({ media, onEdit, style, placeholder }) => (
+  <div style={style}>
+    <fieldset className={cx.field}>
+      <legend>Media:</legend>
+      <div style={{ display: 'flex', alignContent: 'end' }}>
+        {media.length !== 0 ? (
+          <PreviewMedia data={media} style={{ width: '90%' }} />
+        ) : (
+          <div>{placeholder}</div>
+        )}
+        <div>{onEdit && <EditButton onClick={onEdit} />}</div>
+      </div>
+    </fieldset>
+  </div>
+);
+
+MediaField.propTypes = {
+  media: PropTypes.array.isRequired,
+  onEdit: PropTypes.func,
+  placeholder: PropTypes.string
+};
+
+MediaField.defaultProps = {
+  onEdit: null,
+  placeholder: 'Add a video, webpage or a sound snippet'
+};
+const PreviewMedia = ({ data, style }) => (
+  <div style={style}>
+    <Grid cols={2} rows={Math.min(data.length / 2, 2)}>
+      {data.map(m => (
+        <div key={m.url}>
+          <div className="mr-1 row">
+            <i
+              className={`fa ${mediaScale(m.type)} fa-1x col-1`}
+              aria-hidden="true"
+            />
+            <div className={`ml-1 col ${cx.textTrunc}`}>
+              <a href={m.url}>{m.title}</a>
+            </div>
           </div>
         </div>
-      </div>
-    ))}
-  </Grid>
+      ))}
+    </Grid>
+  </div>
 );
 
 PreviewMedia.propTypes = {
-  data: PropTypes.array.isRequired
+  data: PropTypes.array.isRequired,
+  style: PropTypes.object
   // extended: PropTypes.bool
 };
 
-PreviewMedia.defaultProps = { data: defaultProps.media, extended: false };
+PreviewMedia.defaultProps = {
+  data: defaultProps.media,
+  extended: false,
+  style: { width: '90%' }
+};
 
 const ReadCardFront = ({
   title,
@@ -163,15 +213,7 @@ const ReadCardFront = ({
     flipHandler={flipHandler}
     style={style}
   >
-    <div
-      className={cx.cardDetail}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        height: '90%'
-      }}
-    >
+    <div className={fieldLayout}>
       <PreviewTags data={tags} />
 
       <CardImg src={img} />
@@ -238,6 +280,12 @@ class EditCardFront extends PureComponent {
     }));
   }
 
+  extendFieldState(field) {
+    this.setState(oldState => ({
+      data: { ...oldState.data, ...field }
+    }));
+  }
+
   modalContent(modalTitle) {
     const { data } = this.state;
     // TODO: img
@@ -288,7 +336,13 @@ class EditCardFront extends PureComponent {
       case 'Media':
         return (
           <div>
-            <MediaSearch media={media} onSubmit={() => null} />
+            <MediaSearch
+              media={media}
+              onSubmit={mediaItems => {
+                console.log('Submit', mediaItems);
+                this.setFieldState({ media: mediaItems });
+              }}
+            />
           </div>
         );
       case 'Challenge':
@@ -321,7 +375,7 @@ class EditCardFront extends PureComponent {
         flipHandler={flipHandler}
         style={style}
       >
-        <div style={{ height: '100%' }}>
+        <div className="ml-1 mr-1" style={{ height: '100%' }}>
           <SmallModal
             visible={modalVisible}
             title={modalVisible ? dialog.title : ''}
@@ -329,15 +383,7 @@ class EditCardFront extends PureComponent {
           >
             {this.modalContent(dialogTitle)}
           </SmallModal>
-          <div
-            className={cx.cardDetail}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              // justifyContent: 'space-between',
-              height: '90%'
-            }}
-          >
+          <div className={fieldLayout}>
             <div style={{ display: 'flex' }}>
               {tags.length !== 0 ? (
                 <PreviewTags data={tags} />
@@ -346,11 +392,12 @@ class EditCardFront extends PureComponent {
               )}
               <EditButton
                 style={{ fontSize: '24px' }}
-                onclick={() =>
-                  this.setstate({
+                onClick={() => {
+                  console.log('onYag', tags);
+                  this.setState({
                     dialog: { title: 'Tags', data: tags }
-                  })
-                }
+                  });
+                }}
               />
             </div>
             <CardImg src={img} />
@@ -367,27 +414,14 @@ class EditCardFront extends PureComponent {
               }
             />
 
-            <div style={{ height: '15%' }}>
-              <fieldset className={cx.field}>
-                <legend>Media:</legend>
-                <div style={{ display: 'flex', alignContent: 'end' }}>
-                  {media.length !== 0 ? (
-                    <PreviewMedia data={tags} />
-                  ) : (
-                    <div>{'Add a video, webpage or a sound snippet'}</div>
-                  )}
-                  <div>
-                    <EditButton
-                      onClick={() =>
-                        this.setState({
-                          dialog: { title: 'Media', data: media }
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-              </fieldset>
-            </div>
+            <MediaField
+              media={media}
+              onEdit={() =>
+                this.setState({
+                  dialog: { title: 'Media', data: media }
+                })
+              }
+            />
             <div>
               <div style={{ display: 'flex', alignContent: 'end' }}>
                 <div className="p-1 pt-3" style={{ width: '100%' }}>
@@ -796,15 +830,20 @@ const CardHeader = ({
       ...style
     }}
   >
-    <div className={cx.cardHeader} style={{ display: 'flex' }}>
+    <div
+      className={cx.cardHeader}
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        width: '100%'
+      }}
+    >
       {/* TODO: find Solution */}
-      <div style={{ display: 'inline-flex' }}>
-        <h3 className="text-truncate" style={{ margin: '0' }}>
-          {title}
-        </h3>
-        {edit && <EditButton onClick={onEdit} />}
-      </div>
+      <h3 className="text-truncate" style={{ margin: '0', width: '80%' }}>
+        {title}
+      </h3>
       <div className="btn-group">
+        {edit && <EditButton className="mr-2" onClick={onEdit} />}
         <button className="close mr-2" onClick={onClose}>
           <i className="fa fa-window-close fa-lg" aria-hidden="true" />
         </button>
@@ -1263,7 +1302,7 @@ class EditCardBack extends Component {
           zIndex: -10
         }}
       >
-        <Grid cols={2} rows={3} gap={1}>
+        <Grid cols={1} rows={3} gap={1}>
           <div onClick={selectField('author')}>
             <fieldset
               className={cx.field}

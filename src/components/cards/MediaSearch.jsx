@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import $ from 'jquery';
 import MyGrid from 'mygrid/dist';
 import cxs from 'cxs';
-import { DDG } from 'node-ddg-api';
+import giphyReq from 'giphy-api';
+
+// import { DDG } from 'node-ddg-api';
 
 import { ScrollView, ScrollElement } from '../utils/ScrollView';
+import { ModalBody } from './modal';
 import gapi from './gapi';
 
-// const ddg = new DDG('tickle');
+const giphy = giphyReq();
 
 const fullDim = cxs({ width: '100%', height: '100%' });
 const shadow = (color = 'black') =>
@@ -18,95 +20,8 @@ const shadow = (color = 'black') =>
     boxShadow: `9px 9px ${color}`
   });
 
-const SmallModal = ({ visible, title, children, onClose }) =>
-  ReactDOM.createPortal(
-    <div
-      style={{
-        width: '100%',
-        height: '100%',
-        background: 'rgba(0, 0, 0, 0.5)',
-        opacity: visible ? 1 : 0,
-        transition: 'opacity 1s',
-        zIndex: visible ? '4000' : '-10',
-        left: 0,
-        top: 0,
-        position: 'absolute'
-      }}
-    >
-      <div
-        className="modal fade show"
-        tabIndex="-1"
-        role="dialog"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-        style={{
-          opacity: visible ? 1 : 0,
-          display: visible ? 'block' : 'none'
-        }}
-      >
-        <div className="modal-dialog modal-dialog-centered" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLabel">
-                {title}
-              </h5>
-              <button
-                type="button"
-                className="close"
-                data-dismiss="modal"
-                aria-label="Close"
-                onClick={onClose}
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            {children}
-          </div>
-        </div>
-      </div>
-    </div>,
-    document.querySelector('body')
-  );
-
-SmallModal.propTypes = {
-  visible: PropTypes.bool,
-  title: PropTypes.string,
-  children: PropTypes.node,
-  onClose: PropTypes.func,
-  onSave: PropTypes.func
-};
-SmallModal.defaultProps = {
-  visible: true,
-  title: '-',
-  children: <div>{'test'}</div>,
-  onClose: () => null,
-  onSave: () => null
-};
-
-const ModalBody = ({ children, onSubmit, submitText }) => (
-  <div>
-    <div className="modal-body">{children}</div>
-    <div className="modal-footer">
-      <button type="button" className="btn btn-primary" onClick={onSubmit}>
-        {submitText}
-      </button>
-    </div>
-  </div>
-);
-
-ModalBody.propTypes = {
-  children: PropTypes.node.isRequired,
-  onSubmit: PropTypes.func,
-  submitText: PropTypes.text
-};
-
-ModalBody.defaultProps = {
-  onSubmit: () => null,
-  submitText: 'Save Changes'
-};
-
 const MediaSearch = ({ media, onSubmit }) => (
-  <ModalBody submitText={'Add media'}>
+  <ModalBody>
     <div style={{ width: '100%' }}>
       <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
         <li className="nav-item">
@@ -160,6 +75,24 @@ const MediaSearch = ({ media, onSubmit }) => (
             />
           </a>
         </li>
+
+        <li className="nav-item">
+          <a
+            className="nav-link"
+            id="giphy-link"
+            data-toggle="pill"
+            href="#giphy"
+            role="tab"
+            aria-controls="giphy"
+            aria-selected="false"
+          >
+            <i
+              className={`fa fa-amazon fa-1x col-1`}
+              style={{ fontSize: '19px' }}
+              aria-hidden="true"
+            />
+          </a>
+        </li>
       </ul>
       <div className="tab-content" id="pills-tabContent">
         <div
@@ -168,7 +101,7 @@ const MediaSearch = ({ media, onSubmit }) => (
           role="tabpanel"
           aria-labelledby="pills-home-tab"
         >
-          <DuckDuckGo onSelect={onSubmit} />
+          <SearchOverview data={media} onSelect={onSubmit} />
         </div>
         <div
           className={`tab-pane fade ${fullDim}`}
@@ -176,7 +109,7 @@ const MediaSearch = ({ media, onSubmit }) => (
           role="tabpanel"
           aria-labelledby="pills-profile-tab"
         >
-          <WikiSearch onSelect={onSubmit} />
+          <WikiSearch data={media} onSelect={onSubmit} />
         </div>
         <div
           className={`tab-pane fade ${fullDim}`}
@@ -184,7 +117,15 @@ const MediaSearch = ({ media, onSubmit }) => (
           role="tabpanel"
           aria-labelledby="pills-contact-tab"
         >
-          <YoutubeSearch onSelect={onSubmit} />
+          <YoutubeSearch data={media} onSelect={onSubmit} />
+        </div>
+        <div
+          className={`tab-pane fade ${fullDim}`}
+          id="giphy"
+          role="tabpanel"
+          aria-labelledby="giphy"
+        >
+          <GiphySearch data={media} onSelect={onSubmit} />
         </div>
       </div>
     </div>
@@ -222,6 +163,7 @@ class YoutubeSearch extends Component {
     this.state = { results: [], selected: null };
     this._scroller = null;
     this.searchBar = null;
+    this.updateState = this.updateState.bind(this);
   }
 
   componentDidMount() {
@@ -234,17 +176,14 @@ class YoutubeSearch extends Component {
       // 'scope' field specifies space-delimited list of access scopes.
       gapi.client
         .init({
+          // TODO: put in config
           apiKey: 'AIzaSyBgA3WQwm6X8arx4X5sLSXuoM9_TSucgdI',
           discoveryDocs: [discoveryUrl]
           // clientId:
           //   '655124348640-ip7r33kh1vt5lbc2h5rij96mku6unreu.apps.googleusercontent.com',
           // scope: SCOPE
         })
-        .then(() =>
-          searchYoutube('the clash').then(({ items }) =>
-            this.setState({ results: items })
-          )
-        );
+        .then(() => searchYoutube('the clash').then(this.updateState));
     });
   }
 
@@ -254,6 +193,26 @@ class YoutubeSearch extends Component {
 
   componentDidUpdate() {
     this.scrollTo(this.state.selected);
+  }
+
+  updateState({ items }) {
+    console.log('items', items);
+    const res = items.map(d => ({
+      url: `http://www.youtube.com/embed/${d.id.videoId}`,
+      title: d.snippet.title,
+      descr: d.snippet.description,
+      thumbnail: d.snippet.thumbnails.default.url
+    }));
+    this.setState({ results: res });
+  }
+
+  selectHandler() {
+    const { data, onSelect } = this.props;
+    const { results, selected } = this.state;
+    onSelect([
+      ...data,
+      { ...results.find(d => d.url === selected), type: 'video' }
+    ]);
   }
 
   render() {
@@ -276,9 +235,7 @@ class YoutubeSearch extends Component {
             <button
               className="ml-3 btn btn-outline-primary"
               onClick={() =>
-                searchYoutube(this.searchBar.value).then(({ items }) => {
-                  this.setState({ results: items });
-                })
+                searchYoutube(this.searchBar.value).then(this.updateState)
               }
             >
               <i className="fa fa-search" />
@@ -302,24 +259,24 @@ class YoutubeSearch extends Component {
               >
                 {results.map(d => (
                   <div
-                    key={d.id.videoId}
-                    selected={selected === d.id.videoId}
-                    colSpan={selected === d.id.videoId ? 2 : 1}
-                    rowSpan={selected === d.id.videoId ? 2 : 1}
+                    key={d.url}
+                    selected={selected === d.url}
+                    colSpan={selected === d.url ? 2 : 1}
+                    rowSpan={selected === d.url ? 2 : 1}
                     style={{
                       height: '100%',
                       width: '100%'
                     }}
                   >
-                    <ScrollElement name={d.id.videoId}>
+                    <ScrollElement name={d.url}>
                       <div
                         style={{ width: '100%', height: '100%' }}
                         onClick={() => {
-                          if (selected !== d.id.videoId)
-                            this.setState({ selected: d.id.videoId });
+                          if (selected !== d.url)
+                            this.setState({ selected: d.url });
                         }}
                       >
-                        {selected === d.id.videoId ? (
+                        {selected === d.url ? (
                           <div
                             className={shadow('grey')}
                             style={{
@@ -351,13 +308,11 @@ class YoutubeSearch extends Component {
                               />
                             </button>
                             <iframe
-                              title={d.id.videoId}
+                              title={d.title}
                               type="text/html"
                               width="100%"
                               height="100%"
-                              src={`http://www.youtube.com/embed/${
-                                d.id.videoId
-                              }`}
+                              src={d.url}
                               frameBorder="0"
                               style={{ zIndex: '4000' }}
                             />
@@ -367,7 +322,7 @@ class YoutubeSearch extends Component {
                             <img
                               className={shadow('lightgrey')}
                               alt="pix"
-                              src={d.snippet.thumbnails.default.url}
+                              src={d.thumbnail}
                               style={{
                                 width: '90%',
                                 height: '90%'
@@ -383,6 +338,22 @@ class YoutubeSearch extends Component {
             </ScrollView>
           </div>
         </div>
+
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'flex-end',
+            marginTop: '10px'
+          }}
+        >
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => this.selectHandler()}
+          >
+            {selected ? 'Submit Video' : 'Select Video'}
+          </button>
+        </div>
       </div>
     );
   }
@@ -390,11 +361,10 @@ class YoutubeSearch extends Component {
 
 // const myHeaders = new Headers();
 
-const searchWikipedia = () =>
+const searchWikipedia = (q = 'dragon') =>
   // new Promise(resolve => {
   $.ajax({
-    url:
-      'https://en.wikipedia.org/w/api.php?action=opensearch&search=dragon&format=json&namespace=0',
+    url: `https://en.wikipedia.org/w/api.php?action=opensearch&search=${q}&format=json&namespace=0`,
 
     // The name of the callback parameter, as specified by the YQL service
     jsonp: 'callback',
@@ -410,7 +380,7 @@ const searchWikipedia = () =>
     // }
   }).then(([, headers, descriptions, links]) => {
     const results = headers.map((h, i) => ({
-      header: h,
+      title: h,
       descr: descriptions[i],
       url: links[i]
     }));
@@ -448,6 +418,7 @@ class WikiSearch extends Component {
   }
 
   render() {
+    const { onSelect, data } = this.props;
     const { results, selected } = this.state;
     // let GoogleAuth;
     // const SCOPE = 'https://www.googleapis.com/auth/youtube.force-ssl';
@@ -468,8 +439,8 @@ class WikiSearch extends Component {
             <button
               className="ml-3 btn btn-outline-primary"
               onClick={() =>
-                searchWikipedia(this.searchBar.value).then(({ items }) => {
-                  console.log('new res', results);
+                searchWikipedia(this.searchBar.value).then(items => {
+                  console.log('new res', items);
                   this.setState({ results: items });
                 })
               }
@@ -500,7 +471,7 @@ class WikiSearch extends Component {
                         }}
                       >
                         <div style={{ fontSize: '18px' }}>
-                          <a href={d.url}>{d.header} </a>
+                          <a href={d.url}>{d.title} </a>
                         </div>
                         <small>{d.url} </small>
                         <div>{d.descr} </div>
@@ -512,20 +483,29 @@ class WikiSearch extends Component {
             </ScrollView>
           </div>
         </div>
+        <div
+          style={{ display: 'flex', alignItems: 'flex-end', marginTop: '10px' }}
+        >
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => {
+              if (selected)
+                onSelect([
+                  ...data,
+                  { ...results.find(d => d.url === selected), type: 'article' }
+                ]);
+            }}
+          >
+            {selected ? 'Add wiki' : 'Select wiki'}
+          </button>
+        </div>
       </div>
     );
   }
 }
 
-const duckSearch = q =>
-  new Promise(resolve =>
-    $.ajax({
-      url: `https://api.duckduckgo.com/?q=${q}&pretty=1&no_html=0&no_redirect=0&skip_disambig=1&format=json&t=tickle&callback=callback`,
-      jsonp: true
-    }).then(r => resolve(r))
-  );
-
-class DuckDuckGo extends Component {
+class GiphySearch extends Component {
   static propTypes = {};
 
   constructor(props) {
@@ -541,13 +521,19 @@ class DuckDuckGo extends Component {
   };
 
   componentDidMount() {
-    duckSearch('cooking').then(r => console.log('res', r))
-    // $.ajax(options)
-    //   .then(resolve)
-    //   .fail(reject),
-    // ddg.instantAnswer('megaman', {}, (err, response) => {
-    //   console.log(response);
-    // });
+    // searchWikipedia().then(results => this.setState({ results }));
+    giphy.search('pokemon', (_, res) => this.updateState(res));
+  }
+
+  updateState({ data }) {
+    console.log('data', data);
+    const res = data.map(d => ({
+      url: d.embed_url,
+      title: d.title,
+      descr: '',
+      thumbnail: d.images.downsized_still.url
+    }));
+    this.setState({ results: res });
   }
 
   componentDidUpdate() {
@@ -555,6 +541,7 @@ class DuckDuckGo extends Component {
   }
 
   render() {
+    const { onSelect, data } = this.props;
     const { results, selected } = this.state;
     // let GoogleAuth;
     // const SCOPE = 'https://www.googleapis.com/auth/youtube.force-ssl';
@@ -575,10 +562,9 @@ class DuckDuckGo extends Component {
             <button
               className="ml-3 btn btn-outline-primary"
               onClick={() =>
-                searchWikipedia(this.searchBar.value).then(({ items }) => {
-                  console.log('new res', results);
-                  this.setState({ results: items });
-                })
+                giphy.search(this.searchBar.value, (_, res) =>
+                  this.updateState(res)
+                )
               }
             >
               <i className="fa fa-search" />
@@ -589,7 +575,135 @@ class DuckDuckGo extends Component {
           <div>
             <ScrollView ref={scroller => (this._scroller = scroller)}>
               <div style={{ width: '100%', height: '400%' }}>
-                {results.map(d => (
+                <MyGrid cols={2} rows={results.length / 2} gap={1}>
+                  {results.map(d => (
+                    <div
+                      style={{ width: '90%' }}
+                      className={`p-2 mb-3 mr-3 ${shadow(
+                        selected === d.url ? 'grey' : 'lightgrey'
+                      )} ${fullDim}`}
+                      colSpan={selected === d.url ? 2 : 1}
+                      rowSpan={selected === d.url ? 12 : 1}
+                    >
+                      <ScrollElement name={d.url}>
+                        <div
+                          onClick={() => this.setState({ selected: d.url })}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            overflow: 'hidden',
+                            backgroundImage: `url('${d.thumbnail}')`
+                          }}
+                        >
+                          <div
+                            className="mt-1 ml-1 p-1"
+                            style={{
+                              fontSize: '18px',
+                              overflow: 'hidden'
+                            }}
+                          >
+                            <span
+                              style={{
+                                background: 'white',
+                              }}
+                            >
+                              {selected === d.url ? (
+                                <a href={d.url}>{d.title} </a>
+                              ) : (
+                                d.title
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      </ScrollElement>
+                    </div>
+                  ))}
+                </MyGrid>
+              </div>
+            </ScrollView>
+          </div>
+        </div>
+        <div
+          style={{ display: 'flex', alignItems: 'flex-end', marginTop: '10px' }}
+        >
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => {
+              if (selected)
+                onSelect([
+                  ...data,
+                  { ...results.find(d => d.url === selected), type: 'article' }
+                ]);
+            }}
+          >
+            {selected ? 'Add wiki' : 'Select wiki'}
+          </button>
+        </div>
+      </div>
+    );
+  }
+}
+
+const duckSearch = q =>
+  new Promise(resolve =>
+    $.ajax({
+      url: `https://api.duckduckgo.com/?q=${q}&pretty=1&no_html=0&no_redirect=0&skip_disambig=1&format=json&t=tickle&callback=callback`,
+      jsonp: true
+    }).then(r => resolve(r))
+  );
+
+class SearchOverview extends Component {
+  static propTypes = {};
+
+  constructor(props) {
+    super(props);
+
+    const { data } = props;
+    this.state = { data, selected: null };
+    this._scroller = null;
+    this.searchBar = null;
+  }
+
+  scrollTo = name => {
+    this._scroller.scrollTo(name);
+  };
+
+  componentDidMount() {
+    duckSearch('cooking').then(r => console.log('res', r));
+    // $.ajax(options)
+    //   .then(resolve)
+    //   .fail(reject),
+    // ddg.instantAnswer('megaman', {}, (err, response) => {
+    //   console.log(response);
+    // });
+  }
+
+  componentDidUpdate() {
+    this.scrollTo(this.state.selected);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { data } = nextProps;
+    this.setState({ data });
+  }
+
+  render() {
+    const { data, selected } = this.state;
+    // let GoogleAuth;
+    // const SCOPE = 'https://www.googleapis.com/auth/youtube.force-ssl';
+    // Load the API's client and auth2 modules.
+    // Call the initClient function after the modules load.
+    // }
+
+    // TODO: fix view height
+    return (
+      <div style={{ width: '100%', height: '60vh' }}>
+        <div style={{ width: '100%', height: '90%', overflowY: 'scroll' }}>
+          <div>
+            <ScrollView ref={scroller => (this._scroller = scroller)}>
+              <div style={{ width: '100%', height: '400%' }}>
+                {data.map(d => (
                   <div
                     style={{ width: '90%' }}
                     className={`p-2 mb-3 mr-3 ${shadow(
@@ -607,7 +721,7 @@ class DuckDuckGo extends Component {
                         }}
                       >
                         <div style={{ fontSize: '18px' }}>
-                          <a href={d.url}>{d.header} </a>
+                          <a href={d.url}>{d.title} </a>
                         </div>
                         <small>{d.url} </small>
                         <div>{d.descr} </div>
@@ -624,4 +738,4 @@ class DuckDuckGo extends Component {
   }
 }
 
-export { SmallModal, ModalBody, MediaSearch, DuckDuckGo };
+export default MediaSearch;
