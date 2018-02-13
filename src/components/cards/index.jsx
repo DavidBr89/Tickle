@@ -19,8 +19,8 @@ import colorClasses from '../colorClasses';
 // TODO: rename
 import { Wrapper } from '../utils';
 import placeholderImg from './placeholder.png';
-import { SmallModal, ModalBody } from './modal';
-import MediaSearch from './MediaSearch';
+import { Modal, ModalBody } from '../utils/modal';
+import { MediaSearch, MediaOverview } from './MediaSearch';
 
 const random = () => Math.random() * 1000;
 
@@ -72,12 +72,25 @@ const defaultProps = {
   comments: []
 };
 
-const fieldLayout = cxs({
+const cardLayout = cxs({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
-  height: '95%'
+  height: '90%'
 });
+
+const Legend = ({ children, style }) => (
+  <legend style={{ width: 'unset', marginRight: '2px', ...style }}>
+    {children}
+  </legend>
+);
+
+Legend.propTypes = {
+  style: PropTypes.object,
+  children: PropTypes.node
+};
+
+Legend.defaultProps = { style: {}, children: null };
 
 const EditButton = ({ style, onClick, className }) => (
   <button className={`close ${className}`} onClick={onClick}>
@@ -96,16 +109,63 @@ EditButton.propTypes = {
 
 EditButton.defaultProps = { style: {}, onClick: () => null, className: '' };
 
+const SearchIcon = ({ style, className }) => (
+  <i
+    className={`fa fa-search ${className}`}
+    style={{ cursor: 'pointer', fontSize: '1rem', ...style }}
+  />
+);
+
+SearchIcon.propTypes = { style: PropTypes.object, className: PropTypes.string };
+SearchIcon.defaultProps = { style: {}, className: '' };
+
+const EditIcon = ({ style, className }) => (
+  <i
+    className={`fa fa-pencil-square-o ${className}`}
+    style={{ cursor: 'pointer', fontSize: '1.2rem', ...style }}
+  />
+);
+
+EditIcon.propTypes = { style: PropTypes.object, className: PropTypes.string };
+EditIcon.defaultProps = { style: {}, className: '' };
+
+const DetailButton = ({ style, onClick, className }) => (
+  <button
+    className={`close ${className} mr-1`}
+    onClick={onClick}
+    style={{ float: 'unset', ...style }}
+  >
+    <SearchIcon />
+  </button>
+);
+
+DetailButton.propTypes = {
+  style: PropTypes.object,
+  className: PropTypes.string,
+  onClick: PropTypes.func
+};
+
+DetailButton.defaultProps = { style: {}, onClick: () => null, className: '' };
+
 const CardImg = ({ src }) => (
   <div className="mt-1 mb-1">
     <img src={src} alt="Card img" style={{ width: '100%', height: '100%' }} />
   </div>
 );
 
-const Description = ({ text, onEdit, placeholder }) => (
-  <div style={{ height: '20%' }}>
-    <fieldset className={`${cx.field}`} style={{ height: '90%' }}>
-      <legend>description</legend>
+const DescriptionField = ({ text, onEdit, onClick, placeholder }) => (
+  <div style={{ height: '20%' }} onClick={onClick || onEdit}>
+    <fieldset className={`${cx.field} `} style={{ height: '90%' }}>
+      <Legend>
+        <span>
+          Description{' '}
+          {onClick ? (
+            <SearchIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
+          ) : (
+            <EditIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
+          )}
+        </span>
+      </Legend>
       <div
         style={{
           display: 'flex',
@@ -116,39 +176,50 @@ const Description = ({ text, onEdit, placeholder }) => (
         <div className={cx.textClamp} style={{ height: '100%' }}>
           {text !== '' && onEdit ? text : placeholder}
         </div>
-        {onEdit && (
-          <div>
-            <EditButton onClick={onEdit} />
-          </div>
-        )}
       </div>
     </fieldset>
   </div>
 );
 
-Description.propTypes = {
+DescriptionField.propTypes = {
   text: PropTypes.string.isRequired,
   // TODO: how to
   onEdit: PropTypes.func,
+  onClick: PropTypes.func,
   placeholder: PropTypes.string
 };
 
-Description.defaultProps = {
+DescriptionField.defaultProps = {
   onEdit: null,
+  onClick: null,
   placeholder: 'Add a description'
 };
 
-const MediaField = ({ media, onEdit, style, placeholder }) => (
-  <div style={style}>
+const MediaField = ({ media, onEdit, onClick, style, placeholder }) => (
+  // TODO: fix icon alignment
+  <div style={style} onClick={onClick || onEdit}>
     <fieldset className={cx.field}>
-      <legend>Media:</legend>
+      <Legend>
+        <span>
+          Media{' '}
+          {onClick ? (
+            <SearchIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
+          ) : (
+            <EditIcon
+              style={{ cursor: 'pointer', fontSize: '1.2rem', ...style }}
+            />
+          )}
+        </span>
+      </Legend>
       <div style={{ display: 'flex', alignContent: 'end' }}>
         {media.length !== 0 ? (
-          <PreviewMedia data={media} style={{ width: '90%' }} />
+          <PreviewMedia
+            data={media}
+            style={{ width: '100%', height: '100%' }}
+          />
         ) : (
           <div>{placeholder}</div>
         )}
-        <div>{onEdit && <EditButton onClick={onEdit} />}</div>
       </div>
     </fieldset>
   </div>
@@ -157,26 +228,30 @@ const MediaField = ({ media, onEdit, style, placeholder }) => (
 MediaField.propTypes = {
   media: PropTypes.array.isRequired,
   onEdit: PropTypes.func,
-  placeholder: PropTypes.string
+  onClick: PropTypes.func,
+  placeholder: PropTypes.string,
+  style: PropTypes.object
 };
 
 MediaField.defaultProps = {
   onEdit: null,
-  placeholder: 'Add a video, webpage or a sound snippet'
+  onClick: null,
+  placeholder: 'Add a video, webpage or a sound snippet',
+  style: {}
 };
+
 const PreviewMedia = ({ data, style }) => (
   <div style={style}>
-    <Grid cols={2} rows={Math.min(data.length / 2, 2)}>
+    <Grid cols={data.length > 1 ? 2 : 0} rows={Math.min(data.length / 2, 1)}>
       {data.map(m => (
         <div key={m.url}>
           <div className="mr-1 row">
             <i
-              className={`fa ${mediaScale(m.type)} fa-1x col-1`}
+              style={{ fontSize: '20px' }}
+              className={`fa ${mediaScale(m.type)} col-1`}
               aria-hidden="true"
             />
-            <div className={`ml-1 col ${cx.textTrunc}`}>
-              <a href={m.url}>{m.title}</a>
-            </div>
+            <div className={`ml-1 col ${cx.textTrunc}`}>{m.title}</div>
           </div>
         </div>
       ))}
@@ -196,38 +271,78 @@ PreviewMedia.defaultProps = {
   style: { width: '90%' }
 };
 
-const ReadCardFront = ({
-  title,
-  tags,
-  img,
-  description,
-  media,
-  onCollect,
-  flipHandler,
-  onClose,
-  style
-}) => (
-  <CardHeader
-    title={title}
-    onClose={onClose}
-    flipHandler={flipHandler}
-    style={style}
-  >
-    <div className={fieldLayout}>
-      <PreviewTags data={tags} />
+class ReadCardFront extends Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string
+  };
 
-      <CardImg src={img} />
-      <Description text={description} />
-      <div>
-        <fieldset className={cx.field}>
-          <legend>Media:</legend>
-          <PreviewMedia data={media} />
-        </fieldset>
+  constructor(props) {
+    super(props);
+    this.state = { dialog: null };
+  }
+
+  modalReadContent(modalTitle) {
+    const { title, tags, description, media, challenge } = this.props;
+    switch (modalTitle) {
+      case 'Title':
+        return <p style={{ width: '100%' }}>{title}</p>;
+      case 'Tags':
+        return <p style={{ width: '100%' }}>{tags}</p>;
+      case 'Photo':
+        return <div>photo</div>;
+      case 'Description':
+        return <p style={{ width: '100%' }}>{description}</p>;
+      case 'Media':
+        return (
+          <div>
+            <MediaOverview data={media} />
+          </div>
+        );
+      case 'Challenge':
+        return <div>challenge</div>;
+      default:
+        return <div>error</div>;
+    }
+  }
+
+  render() {
+    const { tags, img, description, media, onCollect, background } = this.props;
+
+    const { dialog } = this.state;
+    const modalVisible = dialog !== null;
+    const dialogTitle = dialog !== null ? dialog.title : null;
+    return (
+      <div className={cardLayout}>
+        <Modal
+          visible={modalVisible}
+          title={dialogTitle}
+          onClose={() => this.setState({ dialog: null })}
+        >
+          <ModalBody>{this.modalReadContent(dialogTitle)}</ModalBody>
+        </Modal>
+        <PreviewTags data={tags} />
+
+        <CardImg src={img} />
+        <DescriptionField
+          text={description}
+          onClick={() =>
+            this.setState({
+              dialog: { title: 'Description', data: description }
+            })
+          }
+        />
+        <MediaField
+          media={media}
+          onClick={() =>
+            this.setState({ dialog: { title: 'Media', data: media } })
+          }
+        />
+        <CollectButton onClick={onCollect} />
       </div>
-      <CollectButton onClick={onCollect} />
-    </div>
-  </CardHeader>
-);
+    );
+  }
+}
 
 ReadCardFront.propTypes = {
   title: PropTypes.string.isRequired,
@@ -237,7 +352,8 @@ ReadCardFront.propTypes = {
   children: PropTypes.array,
   onClose: PropTypes.func,
   flipHandler: PropTypes.func,
-  style: PropTypes.object
+  style: PropTypes.object,
+  background: PropTypes.string
 };
 
 ReadCardFront.defaultProps = { ...defaultProps, onCollect: null };
@@ -286,7 +402,7 @@ class EditCardFront extends PureComponent {
     }));
   }
 
-  modalContent(modalTitle) {
+  modalWriteContent(modalTitle) {
     const { data } = this.state;
     // TODO: img
     const { title, tags, img, description, media, challenge } = data;
@@ -353,12 +469,13 @@ class EditCardFront extends PureComponent {
   }
 
   render() {
-    const { onClose, flipHandler, style } = this.props;
+    const { onClose, flipHandler, style, background } = this.props;
     const { data } = this.state;
     const { title, tags, img, description, media, children, challenge } = data;
     const { dialog } = this.state;
     const modalVisible = dialog !== null;
     const dialogTitle = dialog !== null ? dialog.title : null;
+    // const background = colorScale(challenge.type);
     // const modalStyle = modalVisible
     //   ? { background: 'black', opacity: 0.5 }
     //   : {};
@@ -367,6 +484,7 @@ class EditCardFront extends PureComponent {
         edit
         title={title}
         onClose={onClose}
+        background={background}
         onEdit={() =>
           this.setState({
             dialog: { title: 'Title', data: title }
@@ -376,14 +494,15 @@ class EditCardFront extends PureComponent {
         style={style}
       >
         <div className="ml-1 mr-1" style={{ height: '100%' }}>
-          <SmallModal
+          <Modal
             visible={modalVisible}
             title={modalVisible ? dialog.title : ''}
             onClose={() => this.setState({ dialog: null })}
+            style={{ background }}
           >
-            {this.modalContent(dialogTitle)}
-          </SmallModal>
-          <div className={fieldLayout}>
+            {this.modalWriteContent(dialogTitle)}
+          </Modal>
+          <div className={cardLayout}>
             <div style={{ display: 'flex' }}>
               {tags.length !== 0 ? (
                 <PreviewTags data={tags} />
@@ -393,7 +512,6 @@ class EditCardFront extends PureComponent {
               <EditButton
                 style={{ fontSize: '24px' }}
                 onClick={() => {
-                  console.log('onYag', tags);
                   this.setState({
                     dialog: { title: 'Tags', data: tags }
                   });
@@ -401,7 +519,7 @@ class EditCardFront extends PureComponent {
               />
             </div>
             <CardImg src={img} />
-            <Description
+            <DescriptionField
               text={description}
               onEdit={() =>
                 this.setState({
@@ -470,7 +588,13 @@ class EditCardFront extends PureComponent {
 EditCardFront.defaultProps = defaultProps;
 
 const CardFront = props =>
-  props.edit ? <EditCardFront {...props} /> : <ReadCardFront {...props} />;
+  props.edit ? (
+    <EditCardFront {...props} />
+  ) : (
+    <CardHeader {...props}>
+      <ReadCardFront {...props} />
+    </CardHeader>
+  );
 
 CardFront.propTypes = {
   ...ReadCardFront.propTypes,
@@ -812,18 +936,18 @@ const CardHeader = ({
   title,
   // img,
   onClose,
-  challenge,
   children,
   flipHandler,
   edit,
   onEdit,
-  style
+  style,
+  background
   // id
 }) => (
   <div
     className={`${cx.cardMini2} `}
     style={{
-      background: colorScale(challenge.type),
+      background,
       overflow: 'hidden',
       height: '100%',
       boxShadow: '9px 9px grey',
@@ -831,26 +955,26 @@ const CardHeader = ({
     }}
   >
     <div
-      className={cx.cardHeader}
       style={{
         display: 'flex',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
         width: '100%'
       }}
     >
-      {/* TODO: find Solution */}
-      <h3 className="text-truncate" style={{ margin: '0', width: '80%' }}>
+      {/* TODO: cleaner solution */}
+      <button className="close" onClick={flipHandler}>
+        <i className="fa fa-retweet fa-lg mr-1" aria-hidden="true" />
+      </button>
+      {edit && <EditButton className="mr-2" onClick={onEdit} />}
+      <h3
+        className="text-truncate"
+        style={{ marginBottom: '10px', width: '80%' }}
+      >
         {title}
       </h3>
-      <div className="btn-group">
-        {edit && <EditButton className="mr-2" onClick={onEdit} />}
-        <button className="close mr-2" onClick={onClose}>
-          <i className="fa fa-window-close fa-lg" aria-hidden="true" />
-        </button>
-        <button className="close" onClick={flipHandler}>
-          <i className="fa fa-retweet fa-lg" aria-hidden="true" />
-        </button>
-      </div>
+      <button className="close mr-2" onClick={onClose}>
+        <i className="fa fa-window-close fa-lg" aria-hidden="true" />
+      </button>
     </div>
     {children}
   </div>
@@ -861,7 +985,7 @@ CardHeader.propTypes = {
   // tags: PropTypes.array,
   // img: PropTypes.string,
   flipHandler: PropTypes.func,
-  challenge: PropTypes.object,
+  background: PropTypes.string,
   children: PropTypes.node,
   style: PropTypes.object,
   onClose: PropTypes.func,
@@ -873,7 +997,8 @@ CardHeader.defaultProps = {
   ...defaultProps,
   edit: false,
   onClose: () => null,
-  onEdit: () => null
+  onEdit: () => null,
+  background: 'tomato'
 };
 
 const Comments = ({ data, extended }) => (
@@ -974,7 +1099,7 @@ const Author = ({ extended, onClose, ...profile }) => {
   if (!extended) {
     return (
       <fieldset className={cx.field}>
-        <legend>Author:</legend>
+        <Legend>Author:</Legend>
         <div
           style={{
             display: 'flex',
@@ -1028,23 +1153,23 @@ const Author = ({ extended, onClose, ...profile }) => {
         Personal
       </div>
       <fieldset className={cx.field}>
-        <legend>Interests:</legend>
+        <Legend>Interests:</Legend>
         <SkillBar data={interests} />
       </fieldset>
 
       <fieldset className={cx.field}>
-        <legend>skills:</legend>
+        <Legend>skills:</Legend>
         <SkillBar data={skills} />
       </fieldset>
       <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
         Activity
       </div>
       <fieldset className={cx.field}>
-        <legend>Collected Cards:</legend>
+        <Legend>Collected Cards:</Legend>
         <CardStack number={30} />
       </fieldset>
       <fieldset className={cx.field}>
-        <legend>Created Cards:</legend>
+        <Legend>Created Cards:</Legend>
         <CardStack number={14} />
       </fieldset>
     </div>
@@ -1191,7 +1316,7 @@ class ReadCardBack extends Component {
               style={display('map')}
               {...setSizeProps('map')}
             >
-              <legend>Map:</legend>
+              <Legend>Map:</Legend>
               <Wrapper>
                 {(width, height) => (
                   <MapGL
@@ -1211,7 +1336,7 @@ class ReadCardBack extends Component {
               style={display('cardSets')}
               {...setSizeProps('cardSets')}
             >
-              <legend>Cardsets:</legend>
+              <Legend>Cardsets:</Legend>
               <Tags data={cardSets} />
             </fieldset>
           </div>
@@ -1221,7 +1346,7 @@ class ReadCardBack extends Component {
               style={display('linkedCards')}
               {...setSizeProps('linkedCards')}
             >
-              <legend>Linked Cards</legend>
+              <Legend>Linked Cards</Legend>
               <div>
                 <Tags data={linkedCards} />
               </div>
@@ -1233,7 +1358,7 @@ class ReadCardBack extends Component {
               style={display('comments')}
               {...setSizeProps('comments')}
             >
-              <legend>Comments:</legend>
+              <Legend>Comments:</Legend>
               <Comments data={comments} />
             </fieldset>
           </div>
@@ -1309,7 +1434,7 @@ class EditCardBack extends Component {
               style={display('author')}
               {...setSizeProps('author')}
             >
-              <legend>Author:</legend>
+              <Legend>Author:</Legend>
               <div style={{ display: 'flex' }}>
                 <div>{'Placeholder'}</div>
                 <EditButton
@@ -1328,7 +1453,7 @@ class EditCardBack extends Component {
               style={display('map')}
               {...setSizeProps('map')}
             >
-              <legend>Map:</legend>
+              <Legend>Map:</Legend>
               <Wrapper>
                 {(width, height) => (
                   <MapGL
@@ -1349,7 +1474,7 @@ class EditCardBack extends Component {
               style={display('comments')}
               {...setSizeProps('comments')}
             >
-              <legend>Comments:</legend>
+              <Legend>Comments:</Legend>
               {'Placeholder'}
             </fieldset>
           </div>
@@ -1454,7 +1579,9 @@ class Card extends React.Component {
     };
     const onAttrUpdateFunc = edit ? { onAttrUpdate } : {};
 
-    const color = colorScale(challenge.type);
+    const background = colorScale(challenge.type);
+    console.log('background', background);
+
     const togglecard = () => {
       if (frontView)
         return (
@@ -1462,13 +1589,17 @@ class Card extends React.Component {
             {...this.props}
             edit={edit}
             onCollect={onCollect}
-            color={color}
+            background={background}
             flipHandler={flipHandler}
             {...onAttrUpdateFunc}
           />
         );
       return (
-        <CardHeader {...this.props} flipHandler={flipHandler} color={color}>
+        <CardHeader
+          {...this.props}
+          flipHandler={flipHandler}
+          background={background}
+        >
           <CardBack {...this.props} edit={edit} />
         </CardHeader>
       );
@@ -1481,7 +1612,7 @@ class Card extends React.Component {
         <div
           className={`${cx.flipper} ${sideToggler}`}
           style={{
-            background: color
+            background
           }}
         >
           {togglecard()}

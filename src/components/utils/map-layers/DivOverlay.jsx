@@ -24,12 +24,14 @@ class DivOverlay extends PureComponent {
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
     itemWidth: PropTypes.number,
     itemHeight: PropTypes.number,
-    location: PropTypes.func,
+    // location: PropTypes.func,
     style: PropTypes.object,
-    node: PropTypes.node
+    node: PropTypes.node,
+    width: PropTypes.number,
+    height: PropTypes.number
   };
 
-  static defaultProps = { style: {} };
+  static defaultProps = { style: {}, width: 0, height: 0 };
 
   constructor(props) {
     super(props);
@@ -37,14 +39,16 @@ class DivOverlay extends PureComponent {
   }
 
   redraw(opt) {
-    const { data, children } = this.props;
+    const { data, children, width, height } = this.props;
     return data.map(c => {
       // TODO
       const loc = [c.loc.longitude, c.loc.latitude];
       const pixel = opt.project(loc);
       const [x, y] = [round(pixel[0], 1), round(pixel[1], 1)];
 
-      return children(c, [x, y], opt.unproject);
+      if (x > 0 && x < width && y > 0 && y < height)
+        return children(c, [x, y], opt.unproject);
+      return null;
     });
   }
 

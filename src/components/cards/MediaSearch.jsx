@@ -8,7 +8,7 @@ import giphyReq from 'giphy-api';
 // import { DDG } from 'node-ddg-api';
 
 import { ScrollView, ScrollElement } from '../utils/ScrollView';
-import { ModalBody } from './modal';
+import { ModalBody } from '../utils/modal';
 import gapi from './gapi';
 
 const giphy = giphyReq();
@@ -19,6 +19,195 @@ const shadow = (color = 'black') =>
     border: `1px solid ${color}`,
     boxShadow: `9px 9px ${color}`
   });
+
+const YoutubeIframe = ({ title, url, onClick }) => (
+  <div
+    className={fullDim}
+    style={{
+      position: 'relative'
+      // border: '10px tomato solid'
+    }}
+  >
+    <button
+      onClick={onClick}
+      className="btn-danger"
+      style={{
+        // background: 'white',
+        border: 0,
+        paddingLeft: '5px',
+        paddingRight: '5px',
+        paddingTop: '5px',
+        paddingBottom: '1px',
+        position: 'absolute',
+        zIndex: 1000,
+        right: 8,
+        top: 3
+      }}
+    >
+      <i className="fa fa-2x fa-window-close" style={{ color: 'black' }} />
+    </button>
+    <iframe
+      title={title}
+      type="text/html"
+      width="100%"
+      height="100%"
+      src={url}
+      frameBorder="0"
+      style={{ zIndex: '4000' }}
+    />
+  </div>
+);
+
+YoutubeIframe.propTypes = {
+  title: PropTypes.string,
+  url: PropTypes.string,
+  onClick: PropTypes.func
+};
+
+const Article = ({ url, title, descr, onClick }) => (
+  <div
+    onClick={onClick}
+    style={{
+      position: 'relative',
+      width: '100%',
+      height: '100%',
+      overflow: 'hidden'
+    }}
+  >
+    <div style={{ fontSize: '18px' }}>
+      <a href={url}>{title} </a>
+    </div>
+    <small>{url}</small>
+    <div>{descr}</div>
+  </div>
+);
+
+Article.propTypes = {
+  title: PropTypes.string,
+  url: PropTypes.string,
+  descr: PropTypes.string,
+  onClick: PropTypes.func
+};
+
+Article.defaultProps = {
+  title: '',
+  url: '',
+  descr: '',
+  onClick: d => d
+};
+
+const ThumbNailSwitchDetail = props => {
+  switch (props.type) {
+    case 'video':
+      return <YoutubeIframe {...props} />;
+    case 'article':
+      return <Article {...props} />;
+    default:
+      return <div>{'unknown type'}</div>;
+  }
+};
+
+YoutubeIframe.defaultProps = {
+  title: '',
+  url: '',
+  onClick: d => d
+};
+
+const ThumbCell = ({
+  url,
+  thumbnail,
+  title,
+  selected,
+  onClick,
+  style,
+  className,
+  type,
+  descr
+}) => (
+  <div
+    className={`p-3 ${shadow(
+      selected ? 'grey' : 'lightgrey'
+    )} ${fullDim} ${className}`}
+    style={style}
+  >
+    {selected ? (
+      <ThumbNailSwitchDetail
+        url={url}
+        title={title}
+        descr={descr}
+        type={type}
+      />
+    ) : (
+      <div
+        onClick={onClick}
+        className={fullDim}
+        style={{
+          overflow: 'hidden',
+          backgroundImage: thumbnail !== null && `url('${thumbnail}')`,
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: '100% 100%'
+        }}
+      >
+        {thumbnail ? (
+          <div
+            className="mt-1 ml-1 p-1"
+            style={{
+              fontSize: '18px',
+              overflow: 'hidden',
+              zIndex: 2
+            }}
+          >
+            <span
+              style={{
+                background: 'white'
+              }}
+            >
+              {selected ? <a href={url}>{title} </a> : title}
+            </span>
+          </div>
+        ) : (
+          <div
+            style={{
+              position: 'relative',
+              width: '100%',
+              height: '100%',
+              overflow: 'hidden'
+            }}
+          >
+            <div style={{ fontSize: '18px' }}>
+              <a href={url}>{title} </a>
+            </div>
+            <small>{url}</small>
+            <div>{descr}</div>
+          </div>
+        )}
+      </div>
+    )}
+  </div>
+);
+
+ThumbCell.propTypes = {
+  url: PropTypes.string,
+  thumbnail: PropTypes.string,
+  title: PropTypes.string,
+  descr: PropTypes.string,
+  selected: PropTypes.bool,
+  onClick: PropTypes.func,
+  style: PropTypes.object,
+  className: PropTypes.string,
+  type: PropTypes.oneOf(['video', 'article', 'gif']).isRequired
+};
+
+ThumbCell.defaultProps = {
+  url: '',
+  thumbnail: null,
+  title: '',
+  descr: '',
+  selected: false,
+  onClick: d => d,
+  style: {},
+  className: ''
+};
 
 const MediaSearch = ({ media, onSubmit }) => (
   <ModalBody>
@@ -101,7 +290,7 @@ const MediaSearch = ({ media, onSubmit }) => (
           role="tabpanel"
           aria-labelledby="pills-home-tab"
         >
-          <SearchOverview data={media} onSelect={onSubmit} />
+          <MediaOverview data={media} onSelect={onSubmit} />
         </div>
         <div
           className={`tab-pane fade ${fullDim}`}
@@ -201,7 +390,8 @@ class YoutubeSearch extends Component {
       url: `http://www.youtube.com/embed/${d.id.videoId}`,
       title: d.snippet.title,
       descr: d.snippet.description,
-      thumbnail: d.snippet.thumbnails.default.url
+      thumbnail: d.snippet.thumbnails.default.url,
+      type: 'video'
     }));
     this.setState({ results: res });
   }
@@ -276,60 +466,7 @@ class YoutubeSearch extends Component {
                             this.setState({ selected: d.url });
                         }}
                       >
-                        {selected === d.url ? (
-                          <div
-                            className={shadow('grey')}
-                            style={{
-                              position: 'relative',
-                              height: '90%',
-                              width: '95%'
-                              // border: '10px tomato solid'
-                            }}
-                          >
-                            <button
-                              onClick={() => this.setState({ selected: null })}
-                              className="btn-danger"
-                              style={{
-                                // background: 'white',
-                                border: 0,
-                                paddingLeft: '5px',
-                                paddingRight: '5px',
-                                paddingTop: '5px',
-                                paddingBottom: '1px',
-                                position: 'absolute',
-                                zIndex: 1000,
-                                right: 8,
-                                top: 3
-                              }}
-                            >
-                              <i
-                                className="fa fa-2x fa-window-close"
-                                style={{ color: 'black' }}
-                              />
-                            </button>
-                            <iframe
-                              title={d.title}
-                              type="text/html"
-                              width="100%"
-                              height="100%"
-                              src={d.url}
-                              frameBorder="0"
-                              style={{ zIndex: '4000' }}
-                            />
-                          </div>
-                        ) : (
-                          <div className={fullDim}>
-                            <img
-                              className={shadow('lightgrey')}
-                              alt="pix"
-                              src={d.thumbnail}
-                              style={{
-                                width: '90%',
-                                height: '90%'
-                              }}
-                            />
-                          </div>
-                        )}
+                        <ThumbCell {...d} selected={selected === d.url} />
                       </div>
                     </ScrollElement>
                   </div>
@@ -359,30 +496,21 @@ class YoutubeSearch extends Component {
   }
 }
 
-// const myHeaders = new Headers();
-
 const searchWikipedia = (q = 'dragon') =>
   // new Promise(resolve => {
   $.ajax({
-    url: `https://en.wikipedia.org/w/api.php?action=opensearch&search=${q}&format=json&namespace=0`,
-
-    // The name of the callback parameter, as specified by the YQL service
+    url: `https://en.wikipedia.org/w/api.php?action=query&format=json&generator=prefixsearch&gpssearch=${q}&gpslimit=20&prop=info|pageimages|pageterms|extracts&piprop=thumbnail&pithumbsize=200&pilimit=10&exlimit=max&exintro&inprop=url&explaintext`,
     jsonp: 'callback',
-
-    // Tell jQuery we're expecting JSONP
     dataType: 'jsonp'
-
-    // Tell YQL what we want and that we want JSON
-    // Work with the response
-    // done(response) {
-    //   console.log('results', response);
-    //   // resolve(response); // server response
-    // }
-  }).then(([, headers, descriptions, links]) => {
-    const results = headers.map((h, i) => ({
-      title: h,
-      descr: descriptions[i],
-      url: links[i]
+  }).then(({ query: { pages } }) => {
+    const values = Object.values(pages);
+    console.log('pages', pages);
+    const results = values.map(d => ({
+      title: d.title,
+      descr: d.extract,
+      thumbnail: d.thumbnail ? d.thumbnail.source : null, // d.thumbnail.source,
+      url: d.fullurl,
+      type: 'article'
     }));
 
     return new Promise(resolve => resolve(results));
@@ -411,6 +539,7 @@ class WikiSearch extends Component {
 
   componentDidMount() {
     searchWikipedia().then(results => this.setState({ results }));
+    // duckSearch('cooking').then(r => console.log('ducksearch', r));
   }
 
   componentDidUpdate() {
@@ -452,30 +581,15 @@ class WikiSearch extends Component {
         <div style={{ width: '100%', height: '90%', overflowY: 'scroll' }}>
           <div>
             <ScrollView ref={scroller => (this._scroller = scroller)}>
-              <div style={{ width: '100%', height: '400%' }}>
+              <div style={{ width: '95%', height: '400%' }}>
                 {results.map(d => (
                   <div
-                    style={{ width: '90%' }}
-                    className={`p-2 mb-3 mr-3 ${shadow(
-                      selected === d.url ? 'grey' : 'lightgrey'
-                    )} ${fullDim}`}
+                    className="mb-3"
+                    style={{ height: !selected === d.url ? '200px': null }}
+                    onClick={() => this.setState({ selected: d.url })}
                   >
                     <ScrollElement name={d.url}>
-                      <div
-                        onClick={() => this.setState({ selected: d.url })}
-                        style={{
-                          position: 'relative',
-                          width: '100%',
-                          height: '100%',
-                          overflow: 'hidden'
-                        }}
-                      >
-                        <div style={{ fontSize: '18px' }}>
-                          <a href={d.url}>{d.title} </a>
-                        </div>
-                        <small>{d.url} </small>
-                        <div>{d.descr} </div>
-                      </div>
+                      <ThumbCell {...d} selected={selected === d.url} />
                     </ScrollElement>
                   </div>
                 ))}
@@ -521,7 +635,6 @@ class GiphySearch extends Component {
   };
 
   componentDidMount() {
-    // searchWikipedia().then(results => this.setState({ results }));
     giphy.search('pokemon', (_, res) => this.updateState(res));
   }
 
@@ -531,7 +644,8 @@ class GiphySearch extends Component {
       url: d.embed_url,
       title: d.title,
       descr: '',
-      thumbnail: d.images.downsized_still.url
+      thumbnail: d.images.downsized_still.url,
+      type: 'gif'
     }));
     this.setState({ results: res });
   }
@@ -575,46 +689,11 @@ class GiphySearch extends Component {
           <div>
             <ScrollView ref={scroller => (this._scroller = scroller)}>
               <div style={{ width: '100%', height: '400%' }}>
-                <MyGrid cols={2} rows={results.length / 2} gap={1}>
+                <MyGrid cols={2} rows={results.length / 2}>
                   {results.map(d => (
-                    <div
-                      style={{ width: '90%' }}
-                      className={`p-2 mb-3 mr-3 ${shadow(
-                        selected === d.url ? 'grey' : 'lightgrey'
-                      )} ${fullDim}`}
-                      colSpan={selected === d.url ? 2 : 1}
-                      rowSpan={selected === d.url ? 12 : 1}
-                    >
+                    <div>
                       <ScrollElement name={d.url}>
-                        <div
-                          onClick={() => this.setState({ selected: d.url })}
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            overflow: 'hidden',
-                            backgroundImage: `url('${d.thumbnail}')`
-                          }}
-                        >
-                          <div
-                            className="mt-1 ml-1 p-1"
-                            style={{
-                              fontSize: '18px',
-                              overflow: 'hidden'
-                            }}
-                          >
-                            <span
-                              style={{
-                                background: 'white',
-                              }}
-                            >
-                              {selected === d.url ? (
-                                <a href={d.url}>{d.title} </a>
-                              ) : (
-                                d.title
-                              )}
-                            </span>
-                          </div>
-                        </div>
+                        <ThumbCell {...d} selected={selected === d.url} />
                       </ScrollElement>
                     </div>
                   ))}
@@ -648,19 +727,19 @@ class GiphySearch extends Component {
 const duckSearch = q =>
   new Promise(resolve =>
     $.ajax({
-      url: `https://api.duckduckgo.com/?q=${q}&pretty=1&no_html=0&no_redirect=0&skip_disambig=1&format=json&t=tickle&callback=callback`,
+      url: `https://api.duckduckgo.com/?q=${q}&pretty=1&no_html=0&no_redirect=0&skip_disambig=1&format=json&t=tickle`,
       jsonp: true
     }).then(r => resolve(r))
   );
-
-class SearchOverview extends Component {
+//
+class MediaOverview extends Component {
   static propTypes = {};
 
   constructor(props) {
     super(props);
 
-    const { data } = props;
-    this.state = { data, selected: null };
+    const { data, selected } = props;
+    this.state = { data, selected };
     this._scroller = null;
     this.searchBar = null;
   }
@@ -670,7 +749,6 @@ class SearchOverview extends Component {
   };
 
   componentDidMount() {
-    duckSearch('cooking').then(r => console.log('res', r));
     // $.ajax(options)
     //   .then(resolve)
     //   .fail(reject),
@@ -705,27 +783,19 @@ class SearchOverview extends Component {
               <div style={{ width: '100%', height: '400%' }}>
                 {data.map(d => (
                   <div
-                    style={{ width: '90%' }}
-                    className={`p-2 mb-3 mr-3 ${shadow(
-                      selected === d.url ? 'grey' : 'lightgrey'
-                    )} ${fullDim}`}
+                    colSpan={selected === d.url ? 2 : 1}
+                    rowSpan={selected === d.url ? 12 : 1}
                   >
                     <ScrollElement name={d.url}>
-                      <div
-                        onClick={() => this.setState({ selected: d.url })}
-                        style={{
-                          position: 'relative',
-                          width: '100%',
-                          height: '100%',
-                          overflow: 'hidden'
-                        }}
-                      >
-                        <div style={{ fontSize: '18px' }}>
-                          <a href={d.url}>{d.title} </a>
-                        </div>
-                        <small>{d.url} </small>
-                        <div>{d.descr} </div>
-                      </div>
+                      <ThumbCell
+                        {...d}
+                        selected={selected === d.url}
+                        onClick={() =>
+                          this.setState(oldState => ({
+                            selected: oldState.selected !== d.url ? d.url : null
+                          }))
+                        }
+                      />
                     </ScrollElement>
                   </div>
                 ))}
@@ -738,4 +808,4 @@ class SearchOverview extends Component {
   }
 }
 
-export default MediaSearch;
+export { MediaSearch, MediaOverview };

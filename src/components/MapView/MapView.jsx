@@ -1,7 +1,6 @@
 import React, { Component, PureComponent } from 'react';
 import * as d3 from 'd3';
 import VisibilitySensor from 'react-visibility-sensor';
-import WebMercatorViewport from 'viewport-mercator-project';
 import Grid from 'mygrid/dist';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -32,43 +31,12 @@ import { Card, PreviewCard } from '../cards';
 import {
   DivOverlay,
   UserOverlay,
-  SvgOverlay,
   UserMarker,
   AnimMarker
 } from '../utils/map-layers/DivOverlay';
+import CardArea from '../utils/map-layers/CardArea';
 // import cardIconSrc from '../utils/map-layers/cardIcon.svg';
-import { Modal } from '../utils';
-
-const metersPerPixel = function(latitude, zoomLevel) {
-  const earthCircumference = 40075017;
-  const latitudeRadians = latitude * (Math.PI / 180);
-  return (
-    earthCircumference * Math.cos(latitudeRadians) / Math.pow(2, zoomLevel + 8)
-  );
-};
-
-const geometricRadius = function(latitude, meters, zoomLevel) {
-  return meters / metersPerPixel(latitude, zoomLevel);
-};
-
-function overlap(e, o) {
-  // dx and dy are the vertical and horizontal distances
-  const dx = o.x - e.x;
-  const dy = o.y - e.y;
-
-  // Determine the straight-line distance between centers.
-  const d = Math.sqrt(dy * dy + dx * dx);
-
-  // Check Intersections
-  if (d > e.r + o.r) {
-    // No Solution. Circles do not intersect
-    return false;
-  } else if (d < Math.abs(e.r - o.r)) {
-    // No Solution. one circle is contained in the other
-    return true;
-  }
-  return true;
-}
+import { Modal } from '../utils/modal';
 
 class CardGrid extends Component {
   static propTypes = {
@@ -120,7 +88,6 @@ class CardGrid extends Component {
       }
     };
 
-    // TODO: isVisible
     return (
       <div>
         <div
@@ -137,7 +104,8 @@ class CardGrid extends Component {
             position: 'absolute',
             overflowX: 'scroll',
             width: '100%',
-            height: '30vh'
+            height: '30vh',
+            zIndex: 2000
           }}
         >
           <div>
@@ -188,50 +156,6 @@ class CardGrid extends Component {
 // dummyCards.forEach((d, i) => {
 //   d.id = i;
 // });
-
-const CircleOverlay = ({ mapViewport, userLocation, selectedCard }) => {
-  const { zoom } = mapViewport;
-  const { latitude, longitude } = userLocation;
-  const r = geometricRadius(latitude, 500, zoom);
-
-  const mercator = new WebMercatorViewport(mapViewport);
-  const [x, y] = mercator.project([longitude, latitude]);
-  const [x1, y1] = mercator.project([
-    selectedCard.loc.longitude,
-    selectedCard.loc.latitude
-  ]);
-  // console.log('CircleOverlay', [x1, y1]);
-
-  const accessible = overlap({ x, y, r: 40 }, { x: x1, y: y1, r });
-  // TODO: change SvgOverlay
-  return (
-    <SvgOverlay {...mapViewport} data={[selectedCard]}>
-      {() => (
-        <circle
-          r={r}
-          cx={x1}
-          cy={y1}
-          stroke="black"
-          fill={accessible && zoom > 11 ? 'green' : 'red'}
-          opacity={0.3}
-        />
-      )}
-    </SvgOverlay>
-  );
-};
-
-CircleOverlay.propTypes = {
-  mapViewport: PropTypes.shape({
-    width: PropTypes.number,
-    height: PropTypes.number,
-    latitude: PropTypes.number,
-    longitude: PropTypes.number
-  })
-};
-
-CircleOverlay.defaultProps = {
-  mapViewport: { width: 200, height: 200, latitude: 0, longitude: 0 }
-};
 
 class MapView extends PureComponent {
   static propTypes = {
@@ -347,17 +271,15 @@ class MapView extends PureComponent {
     return (
       <div>
         <Modal
-          id="modal"
-          content={selectedCard}
           visible={cardChallengeOpen}
-          closeHandler={() =>
+          onClose={() =>
             toggleCardChallengeAction({ cardChallengeOpen: false })
           }
         >
           <iframe
             title="emperors"
             src="http://thescalli.com/emperors/"
-            style={{ border: 'none', width: '100%', height: height + 20 }}
+            style={{ border: 'none', width: '100%', height: '90vh' }}
           />
         </Modal>
         <div ref={node => (this.node = node)} style={{ position: 'relative' }}>
@@ -374,10 +296,13 @@ class MapView extends PureComponent {
               onViewportChange={changeMapViewportAction}
               isdragging={false}
               startdraglnglat={null}
-              onClick={userMoveAction}
+              onClick={({ lngLat, deltaTime }) =>
+                // TODO: fix later
+                deltaTime > 30 && userMoveAction({ lngLat })
+              }
             >
               {selectedCard && (
-                <CircleOverlay
+                <CardArea
                   userLocation={userLocation}
                   mapViewport={mapViewport}
                   selectedCard={selectedCard}
@@ -390,8 +315,8 @@ class MapView extends PureComponent {
                     selected={extCardId === c.id}
                     width={extCardId === c.id ? width - 15 : 40}
                     height={extCardId === c.id ? height - 15 : 50}
-                    offsetX={3}
-                    offsetY={3}
+                    offsetX={5}
+                    offsetY={5}
                     x={x + 5}
                     y={y + 3}
                     node={this.node}

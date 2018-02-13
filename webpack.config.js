@@ -166,7 +166,9 @@ module.exports = {
     }),
     new webpack.EnvironmentPlugin({
       MapboxAccessToken:
-        'pk.eyJ1Ijoiam1hdXNoYWciLCJhIjoiY2o4dHlmZTBkMGowbTJ3cDI3a3J3cHhoZSJ9.W-cFyxdadt5EXzRXKuXKrQ'
+        'pk.eyJ1Ijoiam1hdXNoYWciLCJhIjoiY2o4dHlmZTBkMGowbTJ3cDI3a3J3cHhoZSJ9.W-cFyxdadt5EXzRXKuXKrQ',
+      GeniusAccessToken:
+        'iIoMeOZSCQ7J3MrBLe2r6l41aAMSIE87B-CRwdCwgzZSOGQQVwXcWVhDdbSiO3TY'
     })
     // new webpack.optimize.ModuleConcatenationPlugin()
     // new HardSourceWebpackPlugin()

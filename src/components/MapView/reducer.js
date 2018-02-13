@@ -77,7 +77,7 @@ function reducer(state = {}, action) {
         defaultHeight,
         height,
         width,
-        mapHeight,
+        mapHeight
       };
       return { ...state, ...newState };
     }
@@ -100,12 +100,11 @@ function reducer(state = {}, action) {
     case USER_MOVE: {
       const options = action.options;
       // if (state.extCardId !== null) return state;
-      console.log('action options user move', action.options, state);
       const centerLocation = {
         longitude: options.lngLat[0],
         latitude: options.lngLat[1]
       };
-      const userLocation = { ...centerLocation };
+      const userLocation = Object.assign({}, centerLocation);
       console.log(
         'userLocation',
         userLocation,

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 // const ddg = new DDG('tickle');
 
-const SmallModal = ({ visible, title, children, onClose }) =>
+const Modal = ({ visible, title, children, onClose, style}) =>
   ReactDOM.createPortal(
     <div
       style={{
@@ -27,25 +27,48 @@ const SmallModal = ({ visible, title, children, onClose }) =>
         aria-hidden="true"
         style={{
           opacity: visible ? 1 : 0,
-          display: visible ? 'block' : 'none'
+          display: visible ? 'block' : 'none',
+          ...style
         }}
       >
         <div className="modal-dialog modal-dialog-centered" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLabel">
-                {title}
-              </h5>
-              <button
-                type="button"
-                className="close"
-                data-dismiss="modal"
-                aria-label="Close"
-                onClick={onClose}
+          <div className={`modal-content ${!title ? 'pb-2 pt-2' : null}`}>
+            {title ? (
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">
+                  {title}
+                </h5>
+                <button
+                  type="button"
+                  className="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                  onClick={onClose}
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            ) : (
+              <div
+                style={{
+                  position: 'absolute',
+                  zIndex: '8000',
+                  right: 10,
+                  top: 10
+                }}
               >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
+                <button
+                  type="button"
+                  className="close "
+                  style={{ width: '20px', height: '20px' }}
+                  data-dismiss="modal"
+                  aria-label="Close"
+                  onClick={onClose}
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            )}
             {children}
           </div>
         </div>
@@ -54,19 +77,21 @@ const SmallModal = ({ visible, title, children, onClose }) =>
     document.querySelector('body')
   );
 
-SmallModal.propTypes = {
+Modal.propTypes = {
   visible: PropTypes.bool,
   title: PropTypes.string,
   children: PropTypes.node,
   onClose: PropTypes.func,
-  onSave: PropTypes.func
+  onSave: PropTypes.func,
+  style: PropTypes.object
 };
-SmallModal.defaultProps = {
+Modal.defaultProps = {
   visible: true,
-  title: '-',
+  title: null,
   children: <div>{'test'}</div>,
   onClose: () => null,
-  onSave: () => null
+  onSave: () => null,
+  style: {}
 };
 
 const ModalBody = ({ children, onSubmit, submitText }) => (
@@ -96,4 +121,4 @@ ModalBody.defaultProps = {
   submitText: 'Save Changes'
 };
 
-export { SmallModal, ModalBody, MediaSearch, SearchOverview };
+export { Modal, ModalBody };

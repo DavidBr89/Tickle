@@ -14,22 +14,22 @@ const ArthurDeGreefCard = {
     'Pianist Arthur De Greef born in Louvain. He was a pupil of Frank Liszt. I do not why there is statue is placed here. There is music school with the same name not far.',
   loc: { latitude: 50.828797, longitude: 4.352191 },
   place: 'Park next to my Home',
-  creator: 'Jan',
+  author: 'Jan',
   media: [
     {
       type: 'photo',
-      name: 'franz-liszt---the-first-rock-star',
-      src: ''
+      title: 'franz-liszt---the-first-rock-star',
+      url: ''
     },
     {
-      type: 'hyperlink',
-      name: 'franz-liszt---the-first-rock-star',
-      src: ''
+      type: 'video',
+      title: 'franz-liszt---the-first-rock-star',
+      url: 'franz-liszt---the-first-rock-star'
     },
     {
-      type: 'game',
-      name: 'franz-liszt---the-first-rock-star',
-      src: ''
+      type: 'wiki',
+      title: 'franz-liszt---the-first-rock-star',
+      url: 'franz-liszt---the-first-rock-star'
     }
   ],
   comments: [
@@ -65,22 +65,22 @@ const ArthurDeGreefCard2 = {
     'Pianist Arthur De Greef born in Louvain. He was a pupil of Frank Liszt. I do not why there is statue is placed here. There is music school with the same name not far.',
   loc: { latitude: 50.828797, longitude: 4.352191 },
   place: 'Park next to my Home',
-  creator: 'Jan',
+  author: 'Jan',
   media: [
     {
       type: 'photo',
-      name: 'franz-liszt---the-first-rock-star',
-      src: ''
+      title: 'franz-liszt---the-first-rock-star',
+      url: ''
     },
     {
       type: 'hyperlink',
-      name: 'franz-liszt---the-first-rock-star',
-      src: ''
+      title: 'franz-liszt---the-first-rock-star',
+      url: ''
     },
     {
       type: 'game',
-      name: 'franz-liszt---the-first-rock-star',
-      src: ''
+      title: 'franz-liszt---the-first-rock-star',
+      url: ''
     }
   ],
   comments: [
@@ -116,22 +116,22 @@ const ArthurDeGreefCard3 = {
     'Pianist Arthur De Greef born in Louvain. He was a pupil of Frank Liszt. I do not why there is statue is placed here. There is music school with the same name not far.',
   loc: { latitude: 50.828797, longitude: 4.352191 },
   place: 'Park next to my Home',
-  creator: 'Jan',
+  author: 'Jan',
   media: [
     {
       type: 'photo',
-      name: 'franz-liszt---the-first-rock-star',
-      src: ''
+      title: 'franz-liszt---the-first-rock-star',
+      url: ''
     },
     {
       type: 'hyperlink',
-      name: 'franz-liszt---the-first-rock-star',
-      src: ''
+      title: 'franz-liszt---the-first-rock-star',
+      url: ''
     },
     {
       type: 'game',
-      name: 'franz-liszt---the-first-rock-star',
-      src: ''
+      title: 'franz-liszt---the-first-rock-star',
+      url: ''
     }
   ],
   comments: [
@@ -167,7 +167,7 @@ const MapEvent = {
   loc: { latitude: 50.828797, longitude: 4.352191 },
   place: 'Park next to my Home',
   tags: ['Art', 'Culture', 'classic', 'something', 'composer', 'classic'],
-  // creator: 'Jan',
+  // author: 'Jan',
   cardSets: [],
   linkedCards: []
 };
@@ -186,12 +186,12 @@ const FranzLisztCard = {
     'The first pop star of classical music. He made girls cry with his virtuosic piano play. Much like Jimi hendrix he redefined the way to play his instrument',
   loc: { latitude: 50.843018, longitude: 4.35908 },
   place: 'Bayreuth, a city with a long history of classical music',
-  creator: 'Jan',
+  author: 'Jan',
   media: [
     {
       type: 'hyperlink',
-      name: 'franz-liszt---the-first-rock-star',
-      src:
+      title: 'franz-liszt---the-first-rock-star',
+      url:
         'http://www.wagner-heavymetal.com/franz-liszt---the-first-rock-star.html'
     }
   ],
@@ -232,18 +232,18 @@ const jimiHendrixCard = {
     'The first pop star of classical music. He made girls cry with his virtuosic piano play. Much like Jimi hendrix he redefined the way to play his instrument',
   loc: { latitude: 50.893793, longitude: 4.352083 },
   place: 'Amerikaans Theater',
-  creator: 'Jan',
+  author: 'Jan',
   media: [
     {
       type: 'hyperlink',
-      name: 'Le Twenty Club',
-      src:
+      title: 'Le Twenty Club',
+      url:
         'http://www.memoire60-70.be/Chronique_1960_1965/Twenty_Club_Relais_de_la_Poste.htm'
     },
     {
       type: 'video',
-      name: 'Live at woodstock',
-      src: 'https://www.youtube.com/watch?v=_PVjcIO4MT4'
+      title: 'Live at woodstock',
+      url: 'https://www.youtube.com/watch?v=_PVjcIO4MT4'
     }
   ],
   comments: [
@@ -288,18 +288,18 @@ const jimiHendrixCard2 = {
     'The first pop star of classical music. He made girls cry with his virtuosic piano play. Much like Jimi hendrix he redefined the way to play his instrument',
   loc: { latitude: 50.893793, longitude: 4.352083 },
   place: 'Amerikaans Theater',
-  creator: 'Jan',
+  author: 'Jan',
   media: [
     {
       type: 'hyperlink',
-      name: 'Le Twenty Club',
-      src:
+      title: 'Le Twenty Club',
+      url:
         'http://www.memoire60-70.be/Chronique_1960_1965/Twenty_Club_Relais_de_la_Poste.htm'
     },
     {
       type: 'video',
-      name: 'Live at woodstock',
-      src: 'https://www.youtube.com/watch?v=_PVjcIO4MT4'
+      title: 'Live at woodstock',
+      url: 'https://www.youtube.com/watch?v=_PVjcIO4MT4'
     }
   ],
   comments: [
@@ -346,18 +346,18 @@ const notification = {
   description: 'more descriptive text',
   loc: { latitude: 50.893793, longitude: 4.352083 },
   place: 'Amerikaans Theater',
-  creator: 'Jan',
+  author: 'Jan',
   media: [
     {
       type: 'hyperlink',
-      name: 'Le Twenty Club',
-      src:
+      title: 'Le Twenty Club',
+      url:
         'http://www.memoire60-70.be/Chronique_1960_1965/Twenty_Club_Relais_de_la_Poste.htm'
     },
     {
       type: 'video',
-      name: 'Live at woodstock',
-      src: 'https://www.youtube.com/watch?v=_PVjcIO4MT4'
+      title: 'Live at woodstock',
+      url: 'https://www.youtube.com/watch?v=_PVjcIO4MT4'
     }
   ],
   comments: [
@@ -409,18 +409,18 @@ const notification2 = {
   description: 'more descriptive text',
   loc: { latitude: 50.893793, longitude: 4.352083 },
   place: 'Amerikaans Theater',
-  creator: 'Jan',
+  author: 'Jan',
   media: [
     {
       type: 'hyperlink',
-      name: 'Le Twenty Club',
-      src:
+      title: 'Le Twenty Club',
+      url:
         'http://www.memoire60-70.be/Chronique_1960_1965/Twenty_Club_Relais_de_la_Poste.htm'
     },
     {
       type: 'video',
-      name: 'Live at woodstock',
-      src: 'https://www.youtube.com/watch?v=_PVjcIO4MT4'
+      title: 'Live at woodstock',
+      url: 'https://www.youtube.com/watch?v=_PVjcIO4MT4'
     }
   ],
   comments: [
@@ -469,17 +469,17 @@ const VUBcard = {
     "The Vrije Universiteit Brussel is the only Flemish university that has incorporated the principle of 'free inquiry' in its statutes. This principle is based on a text by the French mathematician and natural philosopher Henri Poincaré (1854-1912)",
   loc: { latitude: 50.821705, longitude: 4.395165 },
   place: 'Pleinlaan 2 - 1050 BRUSSEL',
-  creator: 'Jan',
+  author: 'Jan',
   media: [
     {
       type: 'hyperlink',
-      name: 'Website',
-      src: 'http://we.vub.ac.be'
+      title: 'Website',
+      url: 'http://we.vub.ac.be'
     },
     {
       type: 'video',
-      name: "Some of the VUB's international students",
-      src: 'https://www.youtube.com/watch?v=YFCzlOqQW7M'
+      title: "Some of the VUB's international students",
+      url: 'https://www.youtube.com/watch?v=YFCzlOqQW7M'
     }
   ],
   comments: [
@@ -518,17 +518,17 @@ const VubCard2 = {
     "The Vrije Universiteit Brussel is the only Flemish university that has incorporated the principle of 'free inquiry' in its statutes. This principle is based on a text by the French mathematician and natural philosopher Henri Poincaré (1854-1912)",
   loc: { latitude: 50.821705, longitude: 4.395165 },
   place: 'Pleinlaan 2 - 1050 BRUSSEL',
-  creator: 'Jan',
+  author: 'Jan',
   media: [
     {
       type: 'hyperlink',
-      name: 'Website',
-      src: 'http://we.vub.ac.be'
+      title: 'Website',
+      url: 'http://we.vub.ac.be'
     },
     {
       type: 'video',
-      name: "Some of the VUB's international students",
-      src: 'https://www.youtube.com/watch?v=YFCzlOqQW7M'
+      title: "Some of the VUB's international students",
+      url: 'https://www.youtube.com/watch?v=YFCzlOqQW7M'
     }
   ],
   comments: [
@@ -567,12 +567,12 @@ const VUBSports = {
     "At a university, you set your mind in movement. At VUB, you do the same for your body. And no less intense, for that matter. There is a swimming pool. A running field. A complete Fit-O-Run course. You can partake in no less than 17 different sporting disciplines, individually or under guidance. You can work out in a Basic Fit hall or sign up for a student’s sporting club and aim for victory in competitions. Starting is as simple as contacting our Sports & Movement service. It's the only thing that involves no sweat whatsoever.",
   loc: { latitude: 50.824228, longitude: 4.395328 },
   place: 'Pleinlaan 2 - 1050 BRUSSEL',
-  creator: 'Jan',
+  author: 'Jan',
   media: [
     {
-      type: 'hyperlink',
-      name: 'Website',
-      src: 'http://www.vub.ac.be/en/sport'
+      type: 'article',
+      title: 'Website',
+      url: 'http://www.vub.ac.be/en/sport'
     }
   ],
   comments: [
@@ -612,12 +612,12 @@ const VUBSports2 = {
     "At a university, you set your mind in movement. At VUB, you do the same for your body. And no less intense, for that matter. There is a swimming pool. A running field. A complete Fit-O-Run course. You can partake in no less than 17 different sporting disciplines, individually or under guidance. You can work out in a Basic Fit hall or sign up for a student’s sporting club and aim for victory in competitions. Starting is as simple as contacting our Sports & Movement service. It's the only thing that involves no sweat whatsoever.",
   loc: { latitude: 50.824228, longitude: 4.395328 },
   place: 'Pleinlaan 2 - 1050 BRUSSEL',
-  creator: 'Jan',
+  author: 'Jan',
   media: [
     {
       type: 'hyperlink',
-      name: 'Website',
-      src: 'http://www.vub.ac.be/en/sport'
+      title: 'Website',
+      url: 'http://www.vub.ac.be/en/sport'
     }
   ],
   comments: [

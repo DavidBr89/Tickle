@@ -4,16 +4,21 @@ import PropTypes from 'prop-types';
 
 const Modal = ({ visible, children, closeHandler }) => (
   <div
+    className="modal fade show"
+    tabIndex="-1"
+    role="dialog"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
     style={{
       display: visible ? 'block' : 'none',
       zIndex: '8000',
       position: 'absolute',
       top: 0,
       width: '100%',
-      height: '100%'
+      height: '100vh'
     }}
   >
-    <div role="document">
+    <div className="modal-dialog modal-dialog-centered" role="document">
       <div className="modal-content" style={{ position: 'relative' }}>
         <div
           style={{
