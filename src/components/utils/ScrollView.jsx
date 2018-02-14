@@ -52,6 +52,9 @@ class ScrollElement extends Component {
   componentDidMount() {
     this.context.scroll.register(this.props.name, this);
   }
+  componentWillReceiveProps(nextProps) {
+    this.context.scroll.register(nextProps.name, this);
+  }
   componentWillUnmount() {
     this.context.scroll.unregister(this.props.name);
   }

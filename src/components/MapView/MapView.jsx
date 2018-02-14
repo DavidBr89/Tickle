@@ -268,6 +268,7 @@ class MapView extends PureComponent {
     const selectedCard =
       selectedCardId !== null ? cards.find(d => d.id === selectedCardId) : null;
 
+    const cardPadding = 15;
     return (
       <div>
         <Modal
@@ -313,10 +314,10 @@ class MapView extends PureComponent {
                   <AnimMarker
                     key={c.id}
                     selected={extCardId === c.id}
-                    width={extCardId === c.id ? width - 15 : 40}
-                    height={extCardId === c.id ? height - 15 : 50}
-                    offsetX={5}
-                    offsetY={5}
+                    width={extCardId === c.id ? width - cardPadding : 40}
+                    height={extCardId === c.id ? height - cardPadding : 50}
+                    offsetX={3}
+                    offsetY={3}
                     x={x + 5}
                     y={y + 3}
                     node={this.node}
@@ -347,7 +348,7 @@ class MapView extends PureComponent {
               offset={0}
               style={{
                 height: '26vh',
-                paddingTop: '15px',
+                paddingTop: '16px',
                 paddingLeft: '30vw',
                 paddingRight: '30vw',
                 paddingBottom: '15px',

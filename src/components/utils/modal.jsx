@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 // const ddg = new DDG('tickle');
 
-const Modal = ({ visible, title, children, onClose, style}) =>
+const Modal = ({ visible, title, children, onClose, style }) =>
   ReactDOM.createPortal(
     <div
       style={{

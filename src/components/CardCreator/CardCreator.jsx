@@ -118,6 +118,7 @@ class CardCreator extends Component {
 
     const selectedCardId = selected ? selected.id : null;
     const extCardId = extended ? extended.id : null;
+    const cardPadding = 15;
 
     return (
       <DragDropContextProvider backend={TouchBackend}>
@@ -138,10 +139,10 @@ class CardCreator extends Component {
                 onAttrUpdate={updateCardTemplateAction}
                 style={{
                   position: 'absolute',
-                  left: 0,
+                  left: 3,
                   top: 0,
-                  width: '100%',
-                  height: '100%',
+                  width: width - cardPadding,
+                  height: height - cardPadding,
                   // padding: '5px',
                   zIndex: 3000
                 }}
@@ -165,8 +166,8 @@ class CardCreator extends Component {
                     <AnimMarker
                       key={c.id}
                       selected={extCardId === c.id}
-                      width={extCardId === c.id ? width - 15 : 40}
-                      height={extCardId === c.id ? height - 15 : 50}
+                      width={extCardId === c.id ? width - cardPadding : 40}
+                      height={extCardId === c.id ? height - cardPadding : 50}
                       offsetX={3}
                       offsetY={3}
                       x={x + 5}

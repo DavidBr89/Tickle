@@ -8,6 +8,9 @@ import MapGL from 'react-map-gl';
 import { WithContext as ReactTags } from 'react-tag-input';
 import Grid from 'mygrid/dist';
 import * as chromatic from 'd3-scale-chromatic';
+import chroma from 'chroma-js';
+
+console.log('chroma', chroma);
 import cxs from 'cxs';
 // import ClampLines from 'react-clamp-lines';
 // import 'react-tagsinput/react-tagsinput.css'; // If using WebPack and style-loader.
@@ -79,6 +82,11 @@ const cardLayout = cxs({
   height: '90%'
 });
 
+const shadowStyle = {
+  boxShadow: '9px 9px grey',
+  border: '1px solid grey'
+};
+
 const Legend = ({ children, style }) => (
   <legend style={{ width: 'unset', marginRight: '2px', ...style }}>
     {children}
@@ -112,7 +120,7 @@ EditButton.defaultProps = { style: {}, onClick: () => null, className: '' };
 const SearchIcon = ({ style, className }) => (
   <i
     className={`fa fa-search ${className}`}
-    style={{ cursor: 'pointer', fontSize: '1rem', ...style }}
+    style={{ cursor: 'pointer', opacity: 0.75, fontSize: '1rem', ...style }}
   />
 );
 
@@ -122,7 +130,7 @@ SearchIcon.defaultProps = { style: {}, className: '' };
 const EditIcon = ({ style, className }) => (
   <i
     className={`fa fa-pencil-square-o ${className}`}
-    style={{ cursor: 'pointer', fontSize: '1.2rem', ...style }}
+    style={{ cursor: 'pointer', opacity: 0.75, fontSize: '1.2rem', ...style }}
   />
 );
 
@@ -153,8 +161,17 @@ const CardImg = ({ src }) => (
   </div>
 );
 
-const DescriptionField = ({ text, onEdit, onClick, placeholder }) => (
-  <div style={{ height: '20%' }} onClick={onClick || onEdit}>
+CardImg.propTypes = {
+  src: PropTypes.string
+};
+
+CardImg.defaultProps = { src: '' };
+
+const DescriptionField = ({ text, onEdit, onClick, placeholder, style }) => (
+  <div
+    style={{ height: '20%', ...style, cursor: 'pointer' }}
+    onClick={onClick || onEdit}
+  >
     <fieldset className={`${cx.field} `} style={{ height: '90%' }}>
       <Legend>
         <span>
@@ -186,18 +203,21 @@ DescriptionField.propTypes = {
   // TODO: how to
   onEdit: PropTypes.func,
   onClick: PropTypes.func,
-  placeholder: PropTypes.string
+  placeholder: PropTypes.string,
+  style: PropTypes.object
 };
 
 DescriptionField.defaultProps = {
   onEdit: null,
   onClick: null,
-  placeholder: 'Add a description'
+  placeholder:
+    'Add a description for your card to give hints how to succeed the Challenge',
+  style: {}
 };
 
 const MediaField = ({ media, onEdit, onClick, style, placeholder }) => (
   // TODO: fix icon alignment
-  <div style={style} onClick={onClick || onEdit}>
+  <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
     <fieldset className={cx.field}>
       <Legend>
         <span>
@@ -218,7 +238,7 @@ const MediaField = ({ media, onEdit, onClick, style, placeholder }) => (
             style={{ width: '100%', height: '100%' }}
           />
         ) : (
-          <div>{placeholder}</div>
+          <div style={{ fontStyle: 'italic' }}>{placeholder}</div>
         )}
       </div>
     </fieldset>
@@ -404,6 +424,7 @@ class EditCardFront extends PureComponent {
 
   modalWriteContent(modalTitle) {
     const { data } = this.state;
+    const { background } = this.props;
     // TODO: img
     const { title, tags, img, description, media, challenge } = data;
     switch (modalTitle) {
@@ -454,6 +475,9 @@ class EditCardFront extends PureComponent {
           <div>
             <MediaSearch
               media={media}
+              color={chroma(background)
+                // .saturate(1)
+                .darken(1)}
               onSubmit={mediaItems => {
                 console.log('Submit', mediaItems);
                 this.setFieldState({ media: mediaItems });
@@ -498,7 +522,6 @@ class EditCardFront extends PureComponent {
             visible={modalVisible}
             title={modalVisible ? dialog.title : ''}
             onClose={() => this.setState({ dialog: null })}
-            style={{ background }}
           >
             {this.modalWriteContent(dialogTitle)}
           </Modal>
@@ -791,10 +814,10 @@ const PlaceholderCard = ({ title, tags, img, challengeType, onClick }) => (
   <div
     style={{
       padding: '5px',
-      boxShadow: '9px 9px grey',
       backfaceVisibility: 'hidden',
       height: '100%',
-      background: challengeType ? colorScale(challengeType) : 'lightgrey'
+      background: challengeType ? colorScale(challengeType) : 'lightgrey',
+      ...shadowStyle
     }}
     onClick={onClick}
   >
@@ -903,7 +926,7 @@ class PreviewCard extends Component {
           backfaceVisibility: 'hidden',
           height: '100%',
           background: colorScale(challenge.type),
-          boxShadow: '9px 9px grey'
+          ...shadowStyle
         }}
         onClick={onClick}
       >
@@ -945,13 +968,13 @@ const CardHeader = ({
   // id
 }) => (
   <div
-    className={`${cx.cardMini2} `}
+    className={`${cx.cardMini2}`}
     style={{
       background,
       overflow: 'hidden',
       height: '100%',
-      boxShadow: '9px 9px grey',
-      ...style
+      ...style,
+      ...shadowStyle
     }}
   >
     <div
@@ -965,13 +988,12 @@ const CardHeader = ({
       <button className="close" onClick={flipHandler}>
         <i className="fa fa-retweet fa-lg mr-1" aria-hidden="true" />
       </button>
-      {edit && <EditButton className="mr-2" onClick={onEdit} />}
-      <h3
-        className="text-truncate"
-        style={{ marginBottom: '10px', width: '80%' }}
-      >
-        {title}
-      </h3>
+      <div style={{ display: 'inline-flex', width: '80%' }}>
+        <h3 className="text-truncate" style={{ marginBottom: '10px' }}>
+          {title}
+        </h3>
+        {edit && <EditButton className="mr-2" onClick={onEdit} />}
+      </div>
       <button className="close mr-2" onClick={onClose}>
         <i className="fa fa-window-close fa-lg" aria-hidden="true" />
       </button>
