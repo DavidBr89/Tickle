@@ -140,14 +140,14 @@ class CardCreator extends Component {
                 style={{
                   position: 'absolute',
                   left: 3,
-                  top: 0,
+                  top: 3,
                   width: width - cardPadding,
                   height: height - cardPadding,
                   // padding: '5px',
                   zIndex: 3000
                 }}
               />,
-              document.querySelector('body')
+              this.node
             )}
           <div style={{ position: 'absolute' }}>
             <DragLayer />

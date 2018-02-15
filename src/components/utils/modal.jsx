@@ -35,9 +35,9 @@ const Modal = ({ visible, title, children, onClose, style }) =>
           <div className={`modal-content ${!title ? 'pb-2 pt-2' : null}`}>
             {title ? (
               <div className="modal-header">
-                <h5 className="modal-title" id="exampleModalLabel">
+                <h3 className="modal-title" id="exampleModalLabel">
                   {title}
-                </h5>
+                </h3>
                 <button
                   type="button"
                   className="close"
@@ -94,7 +94,7 @@ Modal.defaultProps = {
   style: {}
 };
 
-const ModalBody = ({ children, onSubmit, submitText }) => (
+const ModalBody = ({ children, onSubmit, submitText, color }) => (
   <div>
     <div className="modal-body">{children}</div>
     <div
@@ -102,7 +102,12 @@ const ModalBody = ({ children, onSubmit, submitText }) => (
       style={{ paddingBottom: !onSubmit ? '50px' : null }}
     >
       {onSubmit && (
-        <button type="button" className="btn btn-primary" onClick={onSubmit}>
+        <button
+          type="button"
+          className="btn btn-primary"
+          style={{ background: color }}
+          onClick={onSubmit}
+        >
           {submitText}
         </button>
       )}
@@ -113,12 +118,14 @@ const ModalBody = ({ children, onSubmit, submitText }) => (
 ModalBody.propTypes = {
   children: PropTypes.node.isRequired,
   onSubmit: PropTypes.func,
-  submitText: PropTypes.text
+  submitText: PropTypes.text,
+  color: PropTypes.oneOf([PropTypes.string, null])
 };
 
 ModalBody.defaultProps = {
   onSubmit: null,
-  submitText: 'Save Changes'
+  submitText: 'Save Changes',
+  color: null
 };
 
 export { Modal, ModalBody };

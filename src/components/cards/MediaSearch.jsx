@@ -305,9 +305,10 @@ class MediaSearch extends Component {
     const { media, onSubmit, color } = this.props;
     const { selected } = this.state;
 
-    const activeBtnStyle = (sel, context) => ({
+    const btnStyle = (sel, context) => ({
       background: sel === context ? color : null,
-      ...shadowStyle
+      display: 'inline-flex',
+      color: sel === context ? 'white' : null
     });
 
     const updState = sel => () => this.setState({ selected: sel });
@@ -361,10 +362,11 @@ class MediaSearch extends Component {
             style={{ display: 'flex', justifyContent: 'space-between' }}
             role="tablist"
           >
-            <div
-              className="pb-1 pt-1"
+            <button
+              type="button"
+              className="btn"
               onClick={updState('overview')}
-              style={activeBtnStyle(selected, 'overview')}
+              style={btnStyle(selected, 'overview')}
               id="overview"
             >
               <i
@@ -372,11 +374,12 @@ class MediaSearch extends Component {
                 style={{ fontSize: '19px' }}
                 aria-hidden="true"
               />
-            </div>
-            <div
-              className="pb-1 pt-1"
+            </button>
+            <button
+              className="btn"
+              type="button"
               onClick={updState('wikipedia')}
-              style={activeBtnStyle(selected, 'wikipedia')}
+              style={btnStyle(selected, 'wikipedia')}
               id="wikipedia"
             >
               <i
@@ -384,11 +387,12 @@ class MediaSearch extends Component {
                 style={{ fontSize: '19px' }}
                 aria-hidden="true"
               />
-            </div>
-            <div
-              className="pb-1 pt-1"
+            </button>
+            <button
+              type="button"
+              className="btn"
               onClick={updState('youtube')}
-              style={activeBtnStyle(selected, 'youtube')}
+              style={btnStyle(selected, 'youtube')}
               id="youtube"
             >
               <i
@@ -396,11 +400,12 @@ class MediaSearch extends Component {
                 style={{ fontSize: '19px' }}
                 aria-hidden="true"
               />
-            </div>
-            <div
-              className="pb-1 pt-1"
+            </button>
+            <button
+              type="button"
+              className="btn"
               onClick={updState('giphy')}
-              style={activeBtnStyle(selected, 'giphy')}
+              style={btnStyle(selected, 'giphy')}
               id="giphy"
             >
               <small
@@ -412,7 +417,7 @@ class MediaSearch extends Component {
               >
                 GIF
               </small>
-            </div>
+            </button>
           </div>
           <div className="tab-content">
             {/* TODO: check fade */}
@@ -478,15 +483,16 @@ class MetaSearch extends Component {
     // TODO: fix view height
     return (
       <div style={{ width: '100%', height: '60vh' }}>
-        <div className="mb-3" style={{ display: 'flex' }}>
-          <form>
+        <div className="mb-3">
+          <form style={{ display: 'flex', justifyContent: 'space-between' }}>
             <input
               ref={searchBar => (this.searchBar = searchBar)}
               type="text"
               placeholder={'Search...'}
             />
             <button
-              className="ml-3 btn btn-outline-primary"
+              className="ml-3 btn btn-active"
+              style={{ background: color }}
               onClick={() =>
                 search(this.searchBar.value).then(items => {
                   this.setState({ results: items });
@@ -525,7 +531,7 @@ class MetaSearch extends Component {
         >
           <button
             type="button"
-            className="btn btn-primary"
+            className="btn"
             style={{ background: color, color: 'black' }}
             onClick={() => {
               if (selected)
@@ -599,6 +605,9 @@ class MediaOverview extends Component {
           <div>
             <ScrollView ref={scroller => (this._scroller = scroller)}>
               <div style={{ width: '100%', height: '400%' }}>
+                {data.length === 0 && (
+                  <h3>{'No media added to this Card!'} </h3>
+                )}
                 {data.map(d => (
                   <div>
                     <ScrollElement name={d.url}>

@@ -10,20 +10,27 @@ import Grid from 'mygrid/dist';
 import * as chromatic from 'd3-scale-chromatic';
 import chroma from 'chroma-js';
 
-console.log('chroma', chroma);
 import cxs from 'cxs';
 // import ClampLines from 'react-clamp-lines';
 // import 'react-tagsinput/react-tagsinput.css'; // If using WebPack and style-loader.
-
-import { CardMarker } from '../utils/map-layers/DivOverlay';
-import { challengeTypes, mediaTypes, skillTypes } from '../../dummyData';
 import cx from './Card.scss';
-import colorClasses from '../colorClasses';
+import Author from './Author';
+import { challengeTypes } from '../../dummyData';
 // TODO: rename
 import { Wrapper } from '../utils';
 import placeholderImg from './placeholder.png';
 import { Modal, ModalBody } from '../utils/modal';
 import { MediaSearch, MediaOverview } from './MediaSearch';
+import {
+  FieldSet,
+  PreviewMedia,
+  MediaField,
+  DescriptionField,
+  EditButton,
+  Img,
+  TagInput,
+  colorClass,
+} from './layout';
 
 const random = () => Math.random() * 1000;
 
@@ -34,30 +41,11 @@ const profileSrc = () => {
 };
 // console.log('colorClasses', colorClasses);
 
-const mediaScale = d3
-  .scaleOrdinal()
-  .domain(mediaTypes)
-  .range(['fa-gamepad', 'fa-link', 'fa-camera', 'fa-video-camera']);
-
 // console.log('mediaScale', mediaScale('hyperlink'));
 const colorScale = d3
   .scaleOrdinal()
   .domain(challengeTypes)
   .range(chromatic.schemePastel1);
-
-const colorScaleRandom = d3
-  .scaleLinear()
-  .domain(d3.range(colorClasses.length))
-  .range(colorClasses)
-  .clamp(true);
-
-const skillColorScale = d3
-  .scaleOrdinal()
-  .domain(skillTypes)
-  .range(colorClasses);
-
-const colorClass = (title = 'title') =>
-  colorScaleRandom(title.length % colorClasses.length);
 
 const defaultProps = {
   title: 'Enter a Title',
@@ -87,214 +75,11 @@ const shadowStyle = {
   border: '1px solid grey'
 };
 
-const Legend = ({ children, style }) => (
-  <legend style={{ width: 'unset', marginRight: '2px', ...style }}>
-    {children}
-  </legend>
-);
-
-Legend.propTypes = {
-  style: PropTypes.object,
-  children: PropTypes.node
-};
-
-Legend.defaultProps = { style: {}, children: null };
-
-const EditButton = ({ style, onClick, className }) => (
-  <button className={`close ${className}`} onClick={onClick}>
-    <i
-      className={`fa  fa-pencil-square-o ml-1 `}
-      style={{ cursor: 'pointer', fontSize: '2rem', ...style }}
-    />
-  </button>
-);
-
-EditButton.propTypes = {
-  style: PropTypes.object,
-  className: PropTypes.string,
-  onClick: PropTypes.func
-};
-
-EditButton.defaultProps = { style: {}, onClick: () => null, className: '' };
-
-const SearchIcon = ({ style, className }) => (
-  <i
-    className={`fa fa-search ${className}`}
-    style={{ cursor: 'pointer', opacity: 0.75, fontSize: '1rem', ...style }}
-  />
-);
-
-SearchIcon.propTypes = { style: PropTypes.object, className: PropTypes.string };
-SearchIcon.defaultProps = { style: {}, className: '' };
-
-const EditIcon = ({ style, className }) => (
-  <i
-    className={`fa fa-pencil-square-o ${className}`}
-    style={{ cursor: 'pointer', opacity: 0.75, fontSize: '1.2rem', ...style }}
-  />
-);
-
-EditIcon.propTypes = { style: PropTypes.object, className: PropTypes.string };
-EditIcon.defaultProps = { style: {}, className: '' };
-
-const DetailButton = ({ style, onClick, className }) => (
-  <button
-    className={`close ${className} mr-1`}
-    onClick={onClick}
-    style={{ float: 'unset', ...style }}
-  >
-    <SearchIcon />
-  </button>
-);
-
-DetailButton.propTypes = {
-  style: PropTypes.object,
-  className: PropTypes.string,
-  onClick: PropTypes.func
-};
-
-DetailButton.defaultProps = { style: {}, onClick: () => null, className: '' };
-
-const CardImg = ({ src }) => (
-  <div className="mt-1 mb-1">
-    <img src={src} alt="Card img" style={{ width: '100%', height: '100%' }} />
-  </div>
-);
-
-CardImg.propTypes = {
-  src: PropTypes.string
-};
-
-CardImg.defaultProps = { src: '' };
-
-const DescriptionField = ({ text, onEdit, onClick, placeholder, style }) => (
-  <div
-    style={{ height: '20%', ...style, cursor: 'pointer' }}
-    onClick={onClick || onEdit}
-  >
-    <fieldset className={`${cx.field} `} style={{ height: '90%' }}>
-      <Legend>
-        <span>
-          Description{' '}
-          {onClick ? (
-            <SearchIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
-          ) : (
-            <EditIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
-          )}
-        </span>
-      </Legend>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          height: '100%'
-        }}
-      >
-        <div className={cx.textClamp} style={{ height: '100%' }}>
-          {text !== '' && onEdit ? text : placeholder}
-        </div>
-      </div>
-    </fieldset>
-  </div>
-);
-
-DescriptionField.propTypes = {
-  text: PropTypes.string.isRequired,
-  // TODO: how to
-  onEdit: PropTypes.func,
-  onClick: PropTypes.func,
-  placeholder: PropTypes.string,
-  style: PropTypes.object
-};
-
-DescriptionField.defaultProps = {
-  onEdit: null,
-  onClick: null,
-  placeholder:
-    'Add a description for your card to give hints how to succeed the Challenge',
-  style: {}
-};
-
-const MediaField = ({ media, onEdit, onClick, style, placeholder }) => (
-  // TODO: fix icon alignment
-  <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
-    <fieldset className={cx.field}>
-      <Legend>
-        <span>
-          Media{' '}
-          {onClick ? (
-            <SearchIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
-          ) : (
-            <EditIcon
-              style={{ cursor: 'pointer', fontSize: '1.2rem', ...style }}
-            />
-          )}
-        </span>
-      </Legend>
-      <div style={{ display: 'flex', alignContent: 'end' }}>
-        {media.length !== 0 ? (
-          <PreviewMedia
-            data={media}
-            style={{ width: '100%', height: '100%' }}
-          />
-        ) : (
-          <div style={{ fontStyle: 'italic' }}>{placeholder}</div>
-        )}
-      </div>
-    </fieldset>
-  </div>
-);
-
-MediaField.propTypes = {
-  media: PropTypes.array.isRequired,
-  onEdit: PropTypes.func,
-  onClick: PropTypes.func,
-  placeholder: PropTypes.string,
-  style: PropTypes.object
-};
-
-MediaField.defaultProps = {
-  onEdit: null,
-  onClick: null,
-  placeholder: 'Add a video, webpage or a sound snippet',
-  style: {}
-};
-
-const PreviewMedia = ({ data, style }) => (
-  <div style={style}>
-    <Grid cols={data.length > 1 ? 2 : 0} rows={Math.min(data.length / 2, 1)}>
-      {data.map(m => (
-        <div key={m.url}>
-          <div className="mr-1 row">
-            <i
-              style={{ fontSize: '20px' }}
-              className={`fa ${mediaScale(m.type)} col-1`}
-              aria-hidden="true"
-            />
-            <div className={`ml-1 col ${cx.textTrunc}`}>{m.title}</div>
-          </div>
-        </div>
-      ))}
-    </Grid>
-  </div>
-);
-
-PreviewMedia.propTypes = {
-  data: PropTypes.array.isRequired,
-  style: PropTypes.object
-  // extended: PropTypes.bool
-};
-
-PreviewMedia.defaultProps = {
-  data: defaultProps.media,
-  extended: false,
-  style: { width: '90%' }
-};
-
 class ReadCardFront extends Component {
   static propTypes = {
     children: PropTypes.node,
-    className: PropTypes.string
+    className: PropTypes.string,
+    uiColor: PropTypes.string
   };
 
   constructor(props) {
@@ -303,7 +88,7 @@ class ReadCardFront extends Component {
   }
 
   modalReadContent(modalTitle) {
-    const { title, tags, description, media, challenge } = this.props;
+    const { title, tags, description, media, uiColor } = this.props;
     switch (modalTitle) {
       case 'Title':
         return <p style={{ width: '100%' }}>{title}</p>;
@@ -316,7 +101,7 @@ class ReadCardFront extends Component {
       case 'Media':
         return (
           <div>
-            <MediaOverview data={media} />
+            <MediaOverview data={media} color={uiColor} />
           </div>
         );
       case 'Challenge':
@@ -327,7 +112,7 @@ class ReadCardFront extends Component {
   }
 
   render() {
-    const { tags, img, description, media, onCollect, background } = this.props;
+    const { tags, img, description, media, onCollect, uiColor } = this.props;
 
     const { dialog } = this.state;
     const modalVisible = dialog !== null;
@@ -343,9 +128,10 @@ class ReadCardFront extends Component {
         </Modal>
         <PreviewTags data={tags} />
 
-        <CardImg src={img} />
+        <Img src={img} />
         <DescriptionField
           text={description}
+          color={uiColor}
           onClick={() =>
             this.setState({
               dialog: { title: 'Description', data: description }
@@ -354,11 +140,12 @@ class ReadCardFront extends Component {
         />
         <MediaField
           media={media}
+          color={uiColor}
           onClick={() =>
             this.setState({ dialog: { title: 'Media', data: media } })
           }
         />
-        <CollectButton onClick={onCollect} />
+        <CollectButton onClick={onCollect} color={uiColor} />
       </div>
     );
   }
@@ -424,13 +211,14 @@ class EditCardFront extends PureComponent {
 
   modalWriteContent(modalTitle) {
     const { data } = this.state;
-    const { background } = this.props;
+    const { uiColor } = this.props;
     // TODO: img
     const { title, tags, img, description, media, challenge } = data;
     switch (modalTitle) {
       case 'Title':
         return (
           <ModalBody
+            color={uiColor}
             onSubmit={() => this.setFieldState({ title: this.nodeTitle.value })}
           >
             <div className="form-group">
@@ -454,6 +242,7 @@ class EditCardFront extends PureComponent {
       case 'Description':
         return (
           <ModalBody
+            color={uiColor}
             onSubmit={() =>
               this.setFieldState({ description: this.nodeDescription.value })
             }
@@ -475,11 +264,8 @@ class EditCardFront extends PureComponent {
           <div>
             <MediaSearch
               media={media}
-              color={chroma(background)
-                // .saturate(1)
-                .darken(1)}
+              color={uiColor}
               onSubmit={mediaItems => {
-                console.log('Submit', mediaItems);
                 this.setFieldState({ media: mediaItems });
               }}
             />
@@ -493,7 +279,7 @@ class EditCardFront extends PureComponent {
   }
 
   render() {
-    const { onClose, flipHandler, style, background } = this.props;
+    const { onClose, flipHandler, style, background, uiColor } = this.props;
     const { data } = this.state;
     const { title, tags, img, description, media, children, challenge } = data;
     const { dialog } = this.state;
@@ -541,9 +327,10 @@ class EditCardFront extends PureComponent {
                 }}
               />
             </div>
-            <CardImg src={img} />
+            <Img src={img} />
             <DescriptionField
               text={description}
+              color={uiColor}
               onEdit={() =>
                 this.setState({
                   dialog: {
@@ -557,6 +344,7 @@ class EditCardFront extends PureComponent {
 
             <MediaField
               media={media}
+              color={uiColor}
               onEdit={() =>
                 this.setState({
                   dialog: { title: 'Media', data: media }
@@ -566,37 +354,14 @@ class EditCardFront extends PureComponent {
             <div>
               <div style={{ display: 'flex', alignContent: 'end' }}>
                 <div className="p-1 pt-3" style={{ width: '100%' }}>
-                  <button
-                    className={`btn btn-secondary btn-lg btn-block}`}
-                    style={{ width: '100%', alignSelf: 'flex-end' }}
+                  {/* TODO: make component */}
+                  <CollectButton
                     onClick={() =>
                       this.setState({
-                        dialog: {
-                          title: 'Challenge',
-                          data: challenge
-                        }
+                        dialog: { title: 'Challenge', data: challenge }
                       })
                     }
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignContent: 'center'
-                      }}
-                    >
-                      <div>{'Challenge'}</div>
-                      <div
-                        style={{
-                          marginLeft: '4px',
-                          paddingLeft: '4px',
-                          paddingRight: '4px'
-                        }}
-                      >
-                        <EditButton />
-                      </div>
-                    </div>
-                  </button>
+                  />
                 </div>
               </div>
             </div>
@@ -1063,207 +828,9 @@ Comments.defaultProps = {
   extended: false
 };
 
-const SkillBar = ({ data }) => {
-  const scale = d3
-    .scaleLinear()
-    .domain(d3.extent(data, d => d.level))
-    .range([30, 100]);
-
-  // console.log('scale', scale.domain());
-
-  return (
-    <div style={{ display: 'flex' }}>
-      {data.map(d => (
-        <div
-          className={`${skillColorScale(d.type)} ${cx.textTrunc}`}
-          style={{
-            width: `${scale(d.level)}%`,
-            height: '30px',
-            display: 'inline-flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
-          <span>{d.type}</span>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-SkillBar.propTypes = { data: PropTypes.array };
-
-SkillBar.defaultProps = { data: [] };
-
-const CardStack = ({ number }) => (
-  // const scale = d3
-  //   .scaleLinear()
-  //   .domain([0])
-  //   .range([30, 100]);
-
-  <div style={{ display: 'flex' }}>
-    {d3.range(0, number).map(() => (
-      <div style={{ width: `${2}%` }}>
-        <CardMarker width={30} />
-      </div>
-    ))}
-  </div>
-);
-
-CardStack.propTypes = {
-  number: PropTypes.number
-};
-
-CardStack.defaultProps = { number: 0 };
-
-const Author = ({ extended, onClose, ...profile }) => {
-  const { name, skills, activity, interests } = profile;
-  if (!extended) {
-    return (
-      <fieldset className={cx.field}>
-        <Legend>Author:</Legend>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100%'
-          }}
-        >
-          <img
-            className={`${cx.avatar}`}
-            width={'80%'}
-            height={'80%'}
-            src={profileSrc()}
-            alt="alt"
-          />
-        </div>
-      </fieldset>
-    );
-  }
-  return (
-    <div
-      style={{
-        display: 'flex',
-        position: 'relative',
-        justifyContent: 'center',
-        // alignItems: 'center',
-        flexDirection: 'column'
-      }}
-      className="mt-3"
-    >
-      <button
-        type="button"
-        className="close "
-        style={{ position: 'absolute', top: 0 }}
-        data-dismiss="modal"
-        aria-label="Close"
-        onClick={onClose}
-      >
-        <span aria-hidden="true">&times;</span>
-      </button>
-      <img
-        className={`${cx.avatar}`}
-        style={{ alignSelf: 'center' }}
-        width={'40%'}
-        height={'40%'}
-        src={profileSrc()}
-        alt="alt"
-      />
-
-      <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
-        Personal
-      </div>
-      <fieldset className={cx.field}>
-        <Legend>Interests:</Legend>
-        <SkillBar data={interests} />
-      </fieldset>
-
-      <fieldset className={cx.field}>
-        <Legend>skills:</Legend>
-        <SkillBar data={skills} />
-      </fieldset>
-      <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
-        Activity
-      </div>
-      <fieldset className={cx.field}>
-        <Legend>Collected Cards:</Legend>
-        <CardStack number={30} />
-      </fieldset>
-      <fieldset className={cx.field}>
-        <Legend>Created Cards:</Legend>
-        <CardStack number={14} />
-      </fieldset>
-    </div>
-  );
-};
-
-// Author.propTypes = {
-//   //  profile: PropTypes.shape({
-//   name: PropTypes.string,
-//   skills: PropTypes.array(
-//     PropTypes.shape({ name: PropTypes.string, level: PropTypes.number })
-//   ),
-//   activity: PropTypes.object(
-//     PropTypes.shape({
-//       collectedCards: PropTypes.number,
-//       createdCards: PropTypes.number
-//     })
-//   ),
-//   extended: PropTypes.bool
-// };
-
-Author.defaultProps = {
-  // profile: {
-  name: 'jan',
-  skills: [
-    { type: 'arts', level: 22 },
-    { type: 'music', level: 14 },
-    { type: 'sports', level: 10 }
-  ],
-  interests: [
-    { type: 'movies', level: 12 },
-    { type: 'football', level: 5 },
-    { type: 'xbox', level: 10 }
-  ],
-  activity: { collectedCards: 20, createdCards: 13 },
-  // },
-  extended: false
-};
-
-const Profile = ({ data }) => (
-  <div className="media mt-3">
-    <img
-      className={`d-flex mr-3 ${cx.avatar}`}
-      width={64}
-      height={64}
-      src={profileSrc()}
-      alt="alt"
-    />
-    <div className="media-body">
-      <div className={cx.textClamp}>{data.comment}</div>
-      <div>
-        <small className="font-italic">- {data.name}</small>
-      </div>
-    </div>
-  </div>
-);
-
-Profile.propTypes = {
-  data: PropTypes.object.isRequired
-};
-Profile.defaultProps = {
-  data: {}
-};
-
-// TODO; rempve
-Profile.defaultProps = { name: 'jan', comment: 'yeah' };
-
 class ReadCardBack extends Component {
   static propTypes = {
-    key: PropTypes.string.isRequired,
     comments: PropTypes.array.isRequired,
-    challenge: PropTypes.object.isRequired,
     author: PropTypes.object.isRequired,
     flipHandler: PropTypes.func.isRequired,
     linkedCards: PropTypes.array,
@@ -1271,7 +838,13 @@ class ReadCardBack extends Component {
       latitude: PropTypes.number,
       longitude: PropTypes.number
     }),
-    media: PropTypes.array.isRequired
+    uiColor: PropTypes.string
+  };
+
+  static defaultProps = {
+    linkedCards: [],
+    loc: { latitude: 0, longitude: 0 },
+    uiColor: 'grey'
   };
 
   constructor(props) {
@@ -1281,13 +854,12 @@ class ReadCardBack extends Component {
 
   render() {
     const {
-      challenge,
-      comments,
-      media,
       cardSets,
       linkedCards,
       loc,
-      author
+      author,
+      uiColor,
+      comments
     } = this.props;
     const { extended } = this.state;
     const selectField = field => () =>
@@ -1322,23 +894,24 @@ class ReadCardBack extends Component {
             style={display('author')}
             onClick={selectField('author')}
           >
-            <Author
-              {...author}
-              extended={extended === 'author'}
-              onClose={() => {
-                // TODO
-                // console.log('onCLose');
-                // this.setState({ extended: null });
-              }}
-            />
+            <FieldSet legend={'Author'} color={uiColor}>
+              <Author
+                {...author}
+                extended={extended === 'author'}
+                onClose={() => {
+                  // TODO
+                  // console.log('onCLose');
+                  // this.setState({ extended: null });
+                }}
+              />
+            </FieldSet>
           </div>
-          <div onClick={selectField('map')}>
-            <fieldset
-              className={cx.field}
+          <div onClick={selectField('map')} {...setSizeProps('map')}>
+            <FieldSet
               style={display('map')}
-              {...setSizeProps('map')}
+              legend={'Map radius'}
+              color={uiColor}
             >
-              <Legend>Map:</Legend>
               <Wrapper>
                 {(width, height) => (
                   <MapGL
@@ -1350,39 +923,43 @@ class ReadCardBack extends Component {
                   />
                 )}
               </Wrapper>
-            </fieldset>
+            </FieldSet>
           </div>
-          <div onClick={selectField('cardSets')}>
-            <fieldset
-              className={cx.field}
+          <div onClick={selectField('cardSets')} {...setSizeProps('cardSets')}>
+            <FieldSet
               style={display('cardSets')}
-              {...setSizeProps('cardSets')}
+              legend={'CardSets'}
+              color={uiColor}
             >
-              <Legend>Cardsets:</Legend>
               <Tags data={cardSets} />
-            </fieldset>
+            </FieldSet>
           </div>
-          <div onClick={selectField('linkedCards')}>
-            <fieldset
-              className={cx.field}
+          <div
+            onClick={selectField('linkedCards')}
+            {...setSizeProps('linkedCards')}
+          >
+            <FieldSet
+              legend={'linkedCards'}
               style={display('linkedCards')}
-              {...setSizeProps('linkedCards')}
+              color={uiColor}
             >
-              <Legend>Linked Cards</Legend>
               <div>
                 <Tags data={linkedCards} />
               </div>
-            </fieldset>
+            </FieldSet>
           </div>
-          <div onClick={selectField('comments')} colSpan={2}>
-            <fieldset
-              className={cx.field}
+          <div
+            onClick={selectField('comments')}
+            colSpan={2}
+            {...setSizeProps('comments')}
+          >
+            <FieldSet
+              legend={'Comments'}
               style={display('comments')}
-              {...setSizeProps('comments')}
+              color={uiColor}
             >
-              <Legend>Comments:</Legend>
               <Comments data={comments} />
-            </fieldset>
+            </FieldSet>
           </div>
         </Grid>
       </div>
@@ -1397,7 +974,7 @@ ReadCardBack.defaultProps = {
   cardSets: ['testseries', 'pirateSet'],
   linkedCards: ['Captain hook', 'yeah'],
   loc: { latitude: 0, longitude: 0 },
-  author: Profile.defaultProps.data
+  author: {}
 };
 
 class EditCardBack extends Component {
@@ -1421,7 +998,14 @@ class EditCardBack extends Component {
   }
 
   render() {
-    const { challenge, media, cardSets, linkedCards, loc } = this.props;
+    const {
+      challenge,
+      media,
+      cardSets,
+      linkedCards,
+      loc,
+      uiColor
+    } = this.props;
     const { extended } = this.state;
     const selectField = field => () =>
       this.setState(prevstate => ({
@@ -1450,32 +1034,21 @@ class EditCardBack extends Component {
         }}
       >
         <Grid cols={1} rows={3} gap={1}>
-          <div onClick={selectField('author')}>
-            <fieldset
-              className={cx.field}
-              style={display('author')}
-              {...setSizeProps('author')}
-            >
-              <Legend>Author:</Legend>
-              <div style={{ display: 'flex' }}>
-                <div>{'Placeholder'}</div>
-                <EditButton
-                  onClick={() =>
-                    this.setState({
-                      dialog: { title: 'author', id: 'author', data: '' }
-                    })
-                  }
-                />
-              </div>
-            </fieldset>
+          <div
+            onClick={selectField('author')}
+            style={display('author')}
+            {...setSizeProps('author')}
+          >
+            <FieldSet legend={'Author'} color={uiColor}>
+              <Author />
+            </FieldSet>
           </div>
-          <div onClick={selectField('map')}>
-            <fieldset
-              className={cx.field}
-              style={display('map')}
-              {...setSizeProps('map')}
-            >
-              <Legend>Map:</Legend>
+          <div
+            onClick={selectField('map')}
+            style={display('map')}
+            {...setSizeProps('map')}
+          >
+            <FieldSet legend={'Map:'}>
               <Wrapper>
                 {(width, height) => (
                   <MapGL
@@ -1487,18 +1060,15 @@ class EditCardBack extends Component {
                   />
                 )}
               </Wrapper>
-            </fieldset>
+            </FieldSet>
           </div>
-          <div onClick={selectField('comments')}>
-            <fieldset
-              colSpan={2}
-              className={cx.field}
-              style={display('comments')}
-              {...setSizeProps('comments')}
-            >
-              <Legend>Comments:</Legend>
-              {'Placeholder'}
-            </fieldset>
+          <div
+            onClick={selectField('comments')}
+            colSpan={2}
+            style={display('comments')}
+            {...setSizeProps('comments')}
+          >
+            <FieldSet legend={'Comments'}>{'Placeholder'}</FieldSet>
           </div>
         </Grid>
       </div>
@@ -1529,11 +1099,11 @@ function CardBack(props) {
 //   author: { name: 'jan', comment: 'welcome to my super hard challenge!' }
 // };
 
-const CollectButton = ({ collected, onClick, expPoints }) => (
+const CollectButton = ({ collected, onClick, expPoints, color }) => (
   <div className="p-1 pt-3">
     <button
-      className={`btn btn-secondary btn-lg btn-block}`}
-      style={{ width: '100%', alignSelf: 'flex-end' }}
+      className={`btn btn-active btn-lg btn-block}`}
+      style={{ width: '100%', alignSelf: 'flex-end', background: color }}
       onClick={onClick}
     >
       <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -1555,10 +1125,10 @@ const CollectButton = ({ collected, onClick, expPoints }) => (
 );
 
 CollectButton.propTypes = {
-  dataTarget: PropTypes.string,
   collected: PropTypes.bool,
   onClick: PropTypes.func,
-  expPoints: PropTypes.number
+  expPoints: PropTypes.number,
+  color: PropTypes.string
 };
 
 CollectButton.defaultProps = {
@@ -1602,6 +1172,7 @@ class Card extends React.Component {
     const onAttrUpdateFunc = edit ? { onAttrUpdate } : {};
 
     const background = colorScale(challenge.type);
+    const uiColor = chroma(background).darken(1);
     console.log('background', background);
 
     const togglecard = () => {
@@ -1613,6 +1184,7 @@ class Card extends React.Component {
             onCollect={onCollect}
             background={background}
             flipHandler={flipHandler}
+            uiColor={uiColor}
             {...onAttrUpdateFunc}
           />
         );
@@ -1622,7 +1194,8 @@ class Card extends React.Component {
           flipHandler={flipHandler}
           background={background}
         >
-          <CardBack {...this.props} edit={edit} />
+          <CardBack {...this.props} edit={edit} uiColor={uiColor}
+          />
         </CardHeader>
       );
     };
@@ -1654,78 +1227,6 @@ Card.defaultProps = {
   ...ReadCardBack.defaultProps
 };
 
-class TagInput extends React.Component {
-  static propTypes = {
-    values: PropTypes.array,
-    onSubmit: PropTypes.func
-  };
-
-  constructor(props) {
-    super(props);
-
-    const { tags } = props;
-    this.state = {
-      tags: tags.map((text, i) => ({ id: i, text })),
-      suggestions: ['Belgium', 'Germany', 'Brazil']
-    };
-    this.handleDelete = this.handleDelete.bind(this);
-    this.handleAddition = this.handleAddition.bind(this);
-    this.handleDrag = this.handleDrag.bind(this);
-  }
-
-  handleDelete(i) {
-    const tags = this.state.tags;
-    tags.splice(i, 1);
-    this.setState({ tags });
-  }
-
-  handleAddition(tag) {
-    const tags = this.state.tags;
-    tags.push({
-      id: tags.length + 1,
-      text: tag
-    });
-    this.setState({ tags });
-  }
-
-  handleDrag(tag, currPos, newPos) {
-    const tags = this.state.tags;
-
-    // mutate array
-    tags.splice(currPos, 1);
-    tags.splice(newPos, 0, tag);
-
-    // re-render
-    this.setState({ tags });
-  }
-
-  render() {
-    const { tags, suggestions } = this.state;
-    const { onSubmit } = this.props;
-
-    return (
-      <ModalBody onSubmit={() => onSubmit(tags.map(d => d.text))}>
-        <ReactTags
-          classNames={{
-            tags: 'tagsClass',
-            tagInput: 'tagInputClass',
-            tagInputField: 'tagInputFieldClass',
-            selected: 'selectedClass',
-            tag: `${cx.tag} ${colorScaleRandom()}`,
-            remove: 'removeClass',
-            suggestions: 'suggestionsClass',
-            activeSuggestion: 'activeSuggestionClass'
-          }}
-          tags={tags}
-          suggestions={suggestions}
-          handleDelete={this.handleDelete}
-          handleAddition={this.handleAddition}
-          handleDrag={this.handleDrag}
-        />
-      </ModalBody>
-    );
-  }
-}
 
 // CardCont.defaultProps = {
 //   selected: true
@@ -1733,4 +1234,4 @@ class TagInput extends React.Component {
 
 // CardCont.propTypes = { selected: PropTypes.bool };
 
-export { Card, PreviewCard, TagInput, PlaceholderCard };
+export { Card, PreviewCard, PlaceholderCard };
