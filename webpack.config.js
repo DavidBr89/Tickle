@@ -10,7 +10,7 @@ const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const HOST = process.env.HOST || '0.0.0.0';
 const PORT = process.env.PORT || '3000';
 
-//TODO: exclude css
+// TODO: exclude css
 loaders.push(
   {
     // global css
@@ -168,7 +168,8 @@ module.exports = {
       MapboxAccessToken:
         'pk.eyJ1Ijoiam1hdXNoYWciLCJhIjoiY2o4dHlmZTBkMGowbTJ3cDI3a3J3cHhoZSJ9.W-cFyxdadt5EXzRXKuXKrQ',
       GeniusAccessToken:
-        'iIoMeOZSCQ7J3MrBLe2r6l41aAMSIE87B-CRwdCwgzZSOGQQVwXcWVhDdbSiO3TY'
+        'iIoMeOZSCQ7J3MrBLe2r6l41aAMSIE87B-CRwdCwgzZSOGQQVwXcWVhDdbSiO3TY',
+      FlickrAccessToken: '78fbd30e5509305d14be4a1cc03ee65a'
     })
     // new webpack.optimize.ModuleConcatenationPlugin()
     // new HardSourceWebpackPlugin()

@@ -1,26 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from 'mygrid/dist';
-import { scaleOrdinal, scaleLinear, range } from 'd3';
 import { WithContext as ReactTags } from 'react-tag-input';
-import { Modal, ModalBody } from '../utils/modal';
+import { profileSrc, mediaScale, colorClass, colorScaleRandom } from './styles';
+// TODO: remove
+import { ModalBody } from '../utils/modal';
+// import placeholderImg from './placeholder.png';
 
 import cx from './Card.scss';
-
-import colorClasses from '../utils/colorClasses';
-import { mediaTypes } from '../../dummyData';
-
-const mediaScale = scaleOrdinal()
-  .domain(mediaTypes)
-  .range(['fa-gamepad', 'fa-link', 'fa-camera', 'fa-video-camera']);
-
-const colorScaleRandom = scaleLinear()
-  .domain(range(colorClasses.length))
-  .range(colorClasses)
-  .clamp(true);
-
-const colorClass = (title = 'title') =>
-  colorScaleRandom(title.length % colorClasses.length);
 
 const SearchIcon = ({ style, className }) => (
   <i
@@ -55,10 +42,16 @@ Legend.propTypes = {
 
 Legend.defaultProps = { style: {}, children: null };
 
-const FieldSet = ({ children, legend, style, edit, color }) => (
+const FieldSet = ({ children, legend, style, edit, color, onClick }) => (
   <fieldset
     className={cx.field}
-    style={{ ...style, border: `1px solid ${color}` }}
+    style={{
+      border: `1px solid ${color}`,
+      // width: '100%',
+      // height: '100%',
+      ...style
+    }}
+    onClick={onClick}
   >
     <Legend>
       {legend}{' '}
@@ -78,13 +71,15 @@ FieldSet.proptypes = {
   legend: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
   edit: PropTypes.bool,
-  style: PropTypes.object
+  style: PropTypes.object,
+  onClick: PropTypes.oneOf([null, PropTypes.func])
 };
 
 FieldSet.defaultProps = {
   edit: false,
   color: 'grey',
   classname: '',
+  onClick: null,
   style: {}
 };
 
@@ -325,6 +320,134 @@ class TagInput extends React.Component {
   }
 }
 
+const Tags = ({ data }) => (
+  <div className={cx.tags}>
+    {data.map(t => (
+      <div key={t} className={`${cx.tag} ${colorClass(t)}`}>
+        <small>{t}</small>
+      </div>
+    ))}
+  </div>
+);
+
+Tags.propTypes = { data: PropTypes.array };
+Tags.defaultProps = { data: ['tag1', 'exampleTag'] };
+
+const PreviewTags = ({ data, style }) => (
+  <div
+    style={{
+      display: 'flex',
+      ...style
+      // flexWrap: 'no-wrap'
+      // alignItems: 'center'
+    }}
+    className={`${cx.textTrunc} ${cx.tags}`}
+  >
+    {data.map(t => (
+      <span key={t} className={`${cx.tag} ${colorClass(t)}`}>
+        {t}
+      </span>
+    ))}
+  </div>
+);
+
+PreviewTags.propTypes = {
+  data: PropTypes.array,
+  style: PropTypes.object
+};
+
+PreviewTags.defaultProps = {
+  data: ['tag', 'tag1', 'tag2'],
+  style: {}
+};
+
+const CollectButton = ({ collected, onClick, expPoints, color }) => (
+  <div className="p-1 pt-3">
+    <button
+      className={`btn btn-active btn-lg btn-block}`}
+      style={{ width: '100%', alignSelf: 'flex-end', background: color }}
+      onClick={onClick}
+    >
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <span>{'Collect'}</span>
+        <div
+          style={{
+            marginLeft: '4px',
+            paddingLeft: '4px',
+            paddingRight: '4px',
+            border: '1px black solid',
+            borderRadius: '5px'
+          }}
+        >
+          {`${expPoints}xp`}
+        </div>
+      </div>
+    </button>
+  </div>
+);
+
+CollectButton.propTypes = {
+  collected: PropTypes.bool,
+  onClick: PropTypes.func,
+  expPoints: PropTypes.number,
+  color: PropTypes.string
+};
+
+CollectButton.defaultProps = {
+  collected: false,
+  toggleCardChallenge: d => d,
+  expPoints: 60,
+  color: 'black',
+  onClick: d => d
+};
+
+const Comments = ({ data, extended }) => (
+  <div
+    style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+  >
+    {data.map(({ comment, user, date, imgSrc }) => (
+      <div>
+        <img
+          className={`${cx.avatar}`}
+          width={'100%'}
+          height={'100%'}
+          src={imgSrc}
+          alt="alt"
+        />
+        {extended && (
+          <div className="media-body">
+            <div className={cx.textClamp}>
+              <small>{comment}</small>
+            </div>
+            <div>
+              <small className="font-italic">
+                - {user}, {date}
+              </small>
+            </div>
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+);
+
+Comments.propTypes = {
+  data: PropTypes.array.isRequired,
+  extended: PropTypes.bool.isRequired
+};
+
+Comments.defaultProps = {
+  data: [
+    {
+      user: 'Jan',
+      date: new Date(),
+      comment: 'Yes, cool shit',
+      imgSrc: profileSrc()
+    }
+  ],
+  extended: false
+};
+
 export {
   FieldSet,
   DescriptionField,
@@ -332,6 +455,9 @@ export {
   MediaField,
   EditButton,
   Img,
-  colorScaleRandom,
-  colorClass
+  Tags,
+  TagInput,
+  PreviewTags,
+  CollectButton,
+  Comments
 };

@@ -42,6 +42,27 @@ gapi.load('client', () => {
   });
 });
 
+const flickr = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${process.env.FlickrAccessToken}&tags=football&format=json`
+
+const searchFlickr = (q = 'dragon') =>
+  // new Promise(resolve => {
+  $.ajax({
+    url: flickr,
+    jsonp: 'callback',
+    dataType: 'jsonp'
+  }).then(({ query: { pages } }) => {
+    const values = Object.values(pages);
+    console.log('pages', pages);
+    const results = values.map(d => ({
+      title: d.title,
+      descr: d.extract,
+      thumbnail: d.thumbnail ? d.thumbnail.source : null, // d.thumbnail.source,
+      url: d.fullurl,
+      type: 'article'
+    }));
+
+    return new Promise(resolve => resolve(results));
+  });
 const searchWikipedia = (q = 'dragon') =>
   // new Promise(resolve => {
   $.ajax({
@@ -61,6 +82,8 @@ const searchWikipedia = (q = 'dragon') =>
 
     return new Promise(resolve => resolve(results));
   });
+
+
 
 const searchYoutube = (q = 'dragon') =>
   new Promise(resolve =>

@@ -1,5 +1,5 @@
 import React, { Component, PureComponent } from 'react';
-import * as d3 from 'd3';
+// import * as d3 from 'd3';
 import VisibilitySensor from 'react-visibility-sensor';
 import Grid from 'mygrid/dist';
 
@@ -7,17 +7,14 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 // import { Motion, spring } from 'react-motion';
 import PropTypes from 'prop-types';
-// import Immutable from 'immutable';
-// import _ from 'lodash';
-// import request from 'superagent';
-// import jsonp from 'superagent-jsonp';
 
-import MapGL, { LinearInterpolator, FlyToInterpolator } from 'react-map-gl';
+// TODO: { LinearInterpolator, FlyToInterpolator }
+import MapGL from 'react-map-gl';
 
-import ReactTimeout from 'react-timeout';
+// import ReactTimeout from 'react-timeout';
 // import rasterTileStyle from 'raster-tile-style';
 // import ngeohash from 'ngeohash';,
-import cx from './MapView.scss';
+// import cx from './MapView.scss';
 import { Card, PreviewCard } from '../cards';
 // import { VisibleView, VisibleElement } from '../utils/MySensor.jsx';
 

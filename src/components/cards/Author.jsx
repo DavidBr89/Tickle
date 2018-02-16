@@ -72,7 +72,7 @@ CardStack.propTypes = {
 
 CardStack.defaultProps = { number: 0 };
 
-const Author = ({ extended, onClose, color, ...profile }) => {
+const Author = ({ extended, onClose, color, ...profile, style}) => {
   const { name, skills, activity, interests } = profile;
   if (!extended) {
     return (
@@ -81,12 +81,13 @@ const Author = ({ extended, onClose, color, ...profile }) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          height: '100%'
+          height: '100%',
+          ...style
         }}
       >
         <img
           className={`${cx.avatar}`}
-          width={'80%'}
+          width={'40%'}
           height={'80%'}
           src={profileSrc()}
           alt="alt"
@@ -101,7 +102,8 @@ const Author = ({ extended, onClose, color, ...profile }) => {
         position: 'relative',
         justifyContent: 'center',
         // alignItems: 'center',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        ...style
       }}
       className="mt-3"
     >
@@ -162,6 +164,7 @@ const Author = ({ extended, onClose, color, ...profile }) => {
 // };
 
 Author.defaultProps = {
+  //TODO: check
   // profile: {
   name: 'jan',
   skills: [
@@ -176,6 +179,7 @@ Author.defaultProps = {
   ],
   activity: { collectedCards: 20, createdCards: 13 },
   // },
+  style: {},
   extended: false
 };
 

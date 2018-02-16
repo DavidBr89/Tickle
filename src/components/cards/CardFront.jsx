@@ -1,0 +1,357 @@
+import React, { Component, PureComponent } from 'react';
+import PropTypes from 'prop-types';
+
+import placeholderImg from './placeholder.png';
+import { Modal, ModalBody } from '../utils/modal';
+import { MediaSearch, MediaOverview } from './MediaSearch';
+import { cardLayout } from './styles';
+
+import {
+  // FieldSet,
+  // PreviewMedia,
+  MediaField,
+  DescriptionField,
+  EditButton,
+  Img,
+  TagInput,
+  // Tags,
+  // SmallPreviewTags,
+  PreviewTags,
+  CollectButton
+} from './layout';
+
+import CardHeader from './CardHeader';
+
+const defaultProps = {
+  title: 'Enter a Title',
+  challenge: { type: 'gap text' },
+  // date: '28/04/2012 10:00',
+  tags: [],
+  img: placeholderImg,
+  xpPoints: 0,
+  description: '',
+  loc: { latitude: 50.828797, longitude: 4.352191 },
+  creator: 'Jan',
+  radius: 200,
+  media: [],
+  comments: []
+};
+
+class ReadCardFront extends Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string,
+    uiColor: PropTypes.string
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = { dialog: null };
+  }
+
+  modalReadContent(modalTitle) {
+    const { title, tags, description, media, uiColor } = this.props;
+    switch (modalTitle) {
+      case 'Title':
+        return <p style={{ width: '100%' }}>{title}</p>;
+      case 'Tags':
+        return <p style={{ width: '100%' }}>{tags}</p>;
+      case 'Photo':
+        return <div>photo</div>;
+      case 'Description':
+        return <p style={{ width: '100%' }}>{description}</p>;
+      case 'Media':
+        return (
+          <div>
+            <MediaOverview data={media} color={uiColor} />
+          </div>
+        );
+      case 'Challenge':
+        return <div>challenge</div>;
+      default:
+        return <div>error</div>;
+    }
+  }
+
+  render() {
+    const { tags, img, description, media, onCollect, uiColor } = this.props;
+
+    const { dialog } = this.state;
+    const modalVisible = dialog !== null;
+    const dialogTitle = dialog !== null ? dialog.title : null;
+    return (
+      <div className={cardLayout}>
+        <Modal
+          visible={modalVisible}
+          title={dialogTitle}
+          onClose={() => this.setState({ dialog: null })}
+        >
+          <ModalBody>{this.modalReadContent(dialogTitle)}</ModalBody>
+        </Modal>
+        <PreviewTags data={tags} />
+
+        <Img src={img} />
+        <DescriptionField
+          text={description}
+          color={uiColor}
+          onClick={() =>
+            this.setState({
+              dialog: { title: 'Description', data: description }
+            })
+          }
+        />
+        <MediaField
+          media={media}
+          color={uiColor}
+          onClick={() =>
+            this.setState({ dialog: { title: 'Media', data: media } })
+          }
+        />
+        <CollectButton onClick={onCollect} color={uiColor} />
+      </div>
+    );
+  }
+}
+
+ReadCardFront.propTypes = {
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  img: PropTypes.string.isRequired,
+  onCollect: PropTypes.func,
+  children: PropTypes.array,
+  onClose: PropTypes.func,
+  flipHandler: PropTypes.func,
+  style: PropTypes.object,
+  background: PropTypes.string
+};
+
+ReadCardFront.defaultProps = { ...defaultProps, onCollect: null };
+
+class EditCardFront extends PureComponent {
+  static propTypes = {
+    ...ReadCardFront.propTypes,
+    onUpdate: PropTypes.func
+  };
+  static defaultProps = {
+    ...ReadCardFront.defaultProps,
+    onUpdate: () => null
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = { data: { ...props }, dialog: null };
+    this.nodeDescription = null;
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const prevData = prevState.data;
+    const { data } = this.state;
+    // TODO: check the other attrs
+    if (
+      prevData.description !== data.description ||
+      prevData.title !== data.title
+    )
+      this.props.onAttrUpdate({ ...data });
+  }
+
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   // return this.props.description !== nextProps.description;
+  //   return false;
+  // }
+
+  setFieldState(field) {
+    this.setState(oldState => ({
+      data: { ...oldState.data, ...field }
+    }));
+  }
+
+  extendFieldState(field) {
+    this.setState(oldState => ({
+      data: { ...oldState.data, ...field }
+    }));
+  }
+
+  modalWriteContent(modalTitle) {
+    const { data } = this.state;
+    const { uiColor } = this.props;
+    // TODO: img
+    const { title, tags, img, description, media, challenge } = data;
+    switch (modalTitle) {
+      case 'Title':
+        return (
+          <ModalBody
+            color={uiColor}
+            onSubmit={() => this.setFieldState({ title: this.nodeTitle.value })}
+          >
+            <div className="form-group">
+              <input
+                ref={n => (this.nodeTitle = n)}
+                style={{ width: '100%' }}
+                defaultValue={title}
+              />
+            </div>
+          </ModalBody>
+        );
+      case 'Tags':
+        return (
+          <TagInput
+            tags={tags}
+            onSubmit={newTags => this.setFieldState({ tags: newTags })}
+          />
+        );
+      case 'Photo':
+        return <div>photo</div>;
+      case 'Description':
+        return (
+          <ModalBody
+            color={uiColor}
+            onSubmit={() =>
+              this.setFieldState({ description: this.nodeDescription.value })
+            }
+          >
+            <div className="form-group">
+              <textarea
+                ref={n => (this.nodeDescription = n)}
+                style={{ width: '100%' }}
+                onSubmit={() => null}
+                placeholder={'<Please insert your description>'}
+              >
+                {description}
+              </textarea>
+            </div>
+          </ModalBody>
+        );
+      case 'Media':
+        return (
+          <div>
+            <MediaSearch
+              media={media}
+              color={uiColor}
+              onSubmit={mediaItems => {
+                this.setFieldState({ media: mediaItems });
+              }}
+            />
+          </div>
+        );
+      case 'Challenge':
+        return <div>challenge</div>;
+      default:
+        return <div>error</div>;
+    }
+  }
+
+  render() {
+    const { onClose, flipHandler, style, background, uiColor } = this.props;
+    const { data } = this.state;
+    const { title, tags, img, description, media, children, challenge } = data;
+    const { dialog } = this.state;
+    const modalVisible = dialog !== null;
+    const dialogTitle = dialog !== null ? dialog.title : null;
+
+    return (
+      <CardHeader
+        edit
+        title={title}
+        onClose={onClose}
+        background={background}
+        onEdit={() =>
+          this.setState({
+            dialog: { title: 'Title', data: title }
+          })
+        }
+        flipHandler={flipHandler}
+        style={style}
+      >
+        <div className="ml-1 mr-1" style={{ height: '100%' }}>
+          <Modal
+            visible={modalVisible}
+            title={modalVisible ? dialog.title : ''}
+            onClose={() => this.setState({ dialog: null })}
+          >
+            {this.modalWriteContent(dialogTitle)}
+          </Modal>
+          <div className={cardLayout}>
+            <div style={{ display: 'flex' }}>
+              {tags.length !== 0 ? (
+                <PreviewTags data={tags} />
+              ) : (
+                <div>{'Add a tag'}</div>
+              )}
+              <EditButton
+                style={{ fontSize: '24px' }}
+                onClick={() => {
+                  this.setState({
+                    dialog: { title: 'Tags', data: tags }
+                  });
+                }}
+              />
+            </div>
+            <Img src={img} />
+            <DescriptionField
+              text={description}
+              color={uiColor}
+              onEdit={() =>
+                this.setState({
+                  dialog: {
+                    title: 'Description',
+                    id: 'description',
+                    data: description
+                  }
+                })
+              }
+            />
+
+            <MediaField
+              media={media}
+              color={uiColor}
+              onEdit={() =>
+                this.setState({
+                  dialog: { title: 'Media', data: media }
+                })
+              }
+            />
+            <div>
+              <div style={{ display: 'flex', alignContent: 'end' }}>
+                <div className="p-1 pt-3" style={{ width: '100%' }}>
+                  {/* TODO: make component */}
+                  <CollectButton
+                    color={uiColor}
+                    onClick={() =>
+                      this.setState({
+                        dialog: { title: 'Challenge', data: challenge }
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+            {children}
+          </div>
+        </div>
+      </CardHeader>
+    );
+  }
+}
+
+EditCardFront.defaultProps = defaultProps;
+
+const CardFront = props =>
+  props.edit ? (
+    <EditCardFront {...props} />
+  ) : (
+    <CardHeader {...props}>
+      <ReadCardFront {...props} />
+    </CardHeader>
+  );
+
+CardFront.propTypes = {
+  edit: PropTypes.bool,
+  onAttrUpdate: PropTypes.func
+};
+
+CardFront.defaultProps = {
+  edit: false,
+  onAttrUpdate: () => null
+};
+
+export default CardFront;
