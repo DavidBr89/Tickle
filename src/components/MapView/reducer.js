@@ -9,7 +9,7 @@ import {
   SCREEN_RESIZE,
   PLAY_CARD_CHALLENGE,
   TOGGLE_CARD_CHALLENGE,
-  EXTEND_SELECTED_CARD
+  EXTEND_SELECTED_CARD,
 } from './actions';
 
 // const mapViewApp = combineReducers({
@@ -71,13 +71,9 @@ function reducer(state = {}, action) {
     case SCREEN_RESIZE: {
       const height = action.options.height;
       const width = action.options.width;
-      const mapHeight = height;
-      const defaultHeight = mapHeight;
       const newState = {
-        defaultHeight,
         height,
-        width,
-        mapHeight
+        width
       };
       return { ...state, ...newState };
     }
@@ -105,12 +101,6 @@ function reducer(state = {}, action) {
         latitude: options.lngLat[1]
       };
       const userLocation = Object.assign({}, centerLocation);
-      console.log(
-        'userLocation',
-        userLocation,
-        'centerLocation',
-        centerLocation
-      );
       return {
         ...state,
         centerLocation,

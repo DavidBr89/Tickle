@@ -16,6 +16,7 @@ import MapGL from 'react-map-gl';
 // import ngeohash from 'ngeohash';,
 // import cx from './MapView.scss';
 import { Card, PreviewCard } from '../cards';
+// import StartNav from './StartNav';
 // import { VisibleView, VisibleElement } from '../utils/MySensor.jsx';
 
 // console.log('grid', Grid);
@@ -79,9 +80,10 @@ class CardGrid extends Component {
     } = this.props;
 
     const onChange = d => visible => {
-      // const { setTimeout, clearTimeout } = this.props;
+      // TODO: check later
+      clearTimeout(this.id);
       if (visible) {
-        onSelect(d.id);
+        this.id = setTimeout(() => onSelect(d.id), 50);
       }
     };
 
@@ -105,40 +107,38 @@ class CardGrid extends Component {
             zIndex: 2000
           }}
         >
-          <div>
-            <Grid
-              rows={1}
-              cols={Math.floor(cards.length) * 2}
-              colSpan={2}
-              rowSpan={1}
-              gap={2}
-              style={style}
-            >
-              {cards.map(d => (
-                <div key={d.id}>
-                  <VisibilitySensor
-                    onChange={onChange(d)}
-                    scrollCheck
-                    scrollDelay={0}
-                    containment={this.node}
-                  >
-                    <PreviewCard
-                      {...d}
-                      onClick={() => selected === d.id && onExtend(d.id)}
-                      selected={selected === d.id}
-                      style={{
-                        opacity: selected !== d.id ? 0.56 : null,
-                        transform: selected === d.id ? 'scale(1.2)' : null,
-                        transition: 'transform 1s',
-                        height: '100%',
-                        padding: '10px'
-                      }}
-                    />
-                  </VisibilitySensor>
-                </div>
-              ))}
-            </Grid>
-          </div>
+          <Grid
+            rows={1}
+            cols={Math.floor(cards.length) * 2}
+            colSpan={2}
+            rowSpan={1}
+            gap={2}
+            style={style}
+          >
+            {cards.map(d => (
+              <div key={d.id}>
+                <VisibilitySensor
+                  onChange={onChange(d)}
+                  scrollCheck
+                  scrollDelay={0}
+                  containment={this.node}
+                >
+                  <PreviewCard
+                    {...d}
+                    onClick={() => selected === d.id && onExtend(d.id)}
+                    selected={selected === d.id}
+                    style={{
+                      opacity: selected !== d.id ? 0.56 : null,
+                      transform: selected === d.id ? 'scale(1.2)' : null,
+                      transition: 'transform 1s',
+                      height: '100%',
+                      padding: '10px'
+                    }}
+                  />
+                </VisibilitySensor>
+              </div>
+            ))}
+          </Grid>
         </div>
       </div>
     );
@@ -165,6 +165,7 @@ class MapView extends PureComponent {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
     cardChallengeOpen: PropTypes.bool.isRequired,
+    AppOpenFirstTime: PropTypes.bool.isRequired,
 
     userMoveAction: PropTypes.func.isRequired,
     changeMapViewportAction: PropTypes.func.isRequired,
@@ -247,6 +248,7 @@ class MapView extends PureComponent {
       width,
       height,
       extCardId,
+      // AppOpenFirstTime,
       // headerPad,
 
       userMoveAction,
@@ -255,6 +257,7 @@ class MapView extends PureComponent {
       extCardAction,
       cardChallengeOpen,
       toggleCardChallengeAction
+      // navigateFirstTimeAction
     } = this.props;
 
     // console.log('width', mapDim);

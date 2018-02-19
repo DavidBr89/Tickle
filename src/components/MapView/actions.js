@@ -10,6 +10,7 @@ export const SCREEN_RESIZE = 'SCREEN_RESIZE';
 export const PLAY_CARD_CHALLENGE = 'PLAY_CARD_CHALLENGE ';
 export const TOGGLE_CARD_CHALLENGE = 'TOGGLE_CARD_CHALLENGE';
 export const EXTEND_SELECTED_CARD = 'EXTEND_SELECTED_CARD';
+export const NAVIGATE_APP_FIRST_TIME = 'NAVIGATE_APP_FIRST_TIME';
 // export const SET_VISIBILITY_FILTER = 'SET_VISIBILITY_FILTER'
 
 /*
@@ -59,6 +60,11 @@ export function toggleCardChallenge(options) {
 
 export function screenResize(options) {
   return { type: SCREEN_RESIZE, options };
+}
+
+//TODO: remove
+export function navigateAppFirstTime(options) {
+  return { type: NAVIGATE_APP_FIRST_TIME, options };
 }
 // export function toggleTodo(index) {
 //   return { type: TOGGLE_TODO, index };

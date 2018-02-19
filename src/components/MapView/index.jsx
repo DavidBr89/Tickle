@@ -9,7 +9,8 @@ import {
   screenResize,
   playCardChallenge,
   toggleCardChallenge,
-  extendSelectedCard
+  extendSelectedCard,
+  navigateAppFirstTime
 } from './actions';
 
 import MapView from './MapView';
@@ -52,6 +53,10 @@ const mapDispatchToProps = dispatch => ({
   extCardAction: options => {
     console.log('dispatch options', options);
     dispatch(extendSelectedCard(options));
+  },
+  navigateFirstTimeAction: options => {
+    console.log('dispatch options', options);
+    dispatch(navigateAppFirstTime(options));
   }
 });
 
