@@ -42,8 +42,8 @@ const defaultLocation = {
   latitude: 50.85146,
   longitude: 4.315483
 };
-const mapZoom= 8;
-const {width, height} = {width: 100, height: 100};
+const mapZoom = 8;
+const [width, height] = [100, 100];
 // debug('lego:routes');
 const defaultState = {
   width,
@@ -86,7 +86,8 @@ const defaultState = {
     mapViewport: { ...defaultLocation, zoom: mapZoom },
     selectedCardId: null,
     cardTemplateOpen: false,
-    cardTemplate: {}
+    cardTemplate: {loc: defaultLocation},
+    defaultLocation
   }
 };
 

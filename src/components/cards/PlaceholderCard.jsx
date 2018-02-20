@@ -1,9 +1,11 @@
 import React from 'react';
 // import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import cxs from 'cxs';
+// import cxs from 'cxs';
 
 import cx from './Card.scss';
+
+import { colorScale } from './styles';
 
 const shadowStyle = {
   boxShadow: '9px 9px grey',

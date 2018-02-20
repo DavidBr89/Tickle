@@ -7,9 +7,7 @@ import { SvgOverlay } from './DivOverlay';
 const metersPerPixel = function(latitude, zoomLevel) {
   const earthCircumference = 40075017;
   const latitudeRadians = latitude * (Math.PI / 180);
-  return (
-    earthCircumference * Math.cos(latitudeRadians) / Math.pow(2, zoomLevel + 8)
-  );
+  return earthCircumference * Math.cos(latitudeRadians) / 2 ** (zoomLevel + 8);
 };
 
 const geometricRadius = function(latitude, meters, zoomLevel) {
@@ -35,17 +33,22 @@ function overlap(e, o) {
   return true;
 }
 
-class CardArea extends Component {
+class MapAreaRadius extends Component {
   static propTypes = {
     mapViewport: PropTypes.shape({
       width: PropTypes.number,
       height: PropTypes.number,
       latitude: PropTypes.number,
       longitude: PropTypes.number
+    }),
+    userLocation: PropTypes.shape({
+      latitude: PropTypes.number,
+      longitude: PropTypes.number
     })
   };
   static defaultProps = {
-    mapViewport: { width: 200, height: 200, latitude: 0, longitude: 0 }
+    mapViewport: { width: 200, height: 200, latitude: 0, longitude: 0 },
+    userLocation: { latitude: 0, longitude: 0 }
   };
 
   constructor(props) {
@@ -53,7 +56,7 @@ class CardArea extends Component {
   }
 
   render() {
-    const { mapViewport, userLocation, selectedCard } = this.props;
+    const { mapViewport, userLocation, cardPosition } = this.props;
 
     const { zoom } = mapViewport;
     const { latitude, longitude } = userLocation;
@@ -62,15 +65,15 @@ class CardArea extends Component {
     const mercator = new WebMercatorViewport(mapViewport);
     const [x, y] = mercator.project([longitude, latitude]);
     const [x1, y1] = mercator.project([
-      selectedCard.loc.longitude,
-      selectedCard.loc.latitude
+      cardPosition.longitude,
+      cardPosition.latitude
     ]);
     // console.log('CircleOverlay', [x1, y1]);
 
     const accessible = overlap({ x, y, r: 20 }, { x: x1, y: y1, r });
     // TODO: change SvgOverlay
     return (
-      <SvgOverlay {...mapViewport} data={[selectedCard]}>
+      <SvgOverlay {...mapViewport} data={[cardPosition]}>
         {() => (
           <circle
             r={r}
@@ -86,4 +89,4 @@ class CardArea extends Component {
   }
 }
 
-export default CardArea;
+export default MapAreaRadius;

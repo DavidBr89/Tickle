@@ -32,7 +32,7 @@ import {
   UserMarker,
   AnimMarker
 } from '../utils/map-layers/DivOverlay';
-import CardArea from '../utils/map-layers/CardArea';
+import MapAreaRadius from '../utils/map-layers/MapAreaRadius';
 // import cardIconSrc from '../utils/map-layers/cardIcon.svg';
 import { Modal } from '../utils/modal';
 
@@ -60,7 +60,8 @@ class CardGrid extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    return nextProps.selected !== this.props.selected;
+    // return nextProps.selected !== this.props.selected;
+    return true;
   }
 
   // componentDidUpdate(prevProps, prevState) {
@@ -303,10 +304,10 @@ class MapView extends PureComponent {
               }
             >
               {selectedCard && (
-                <CardArea
+                <MapAreaRadius
                   userLocation={userLocation}
                   mapViewport={mapViewport}
-                  selectedCard={selectedCard}
+                  cardPosition={{ ...selectedCard.loc }}
                 />
               )}
               <DivOverlay {...mapViewport} data={cards}>

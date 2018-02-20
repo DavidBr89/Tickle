@@ -1,6 +1,8 @@
 import React, { Component, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
+import { shallowEqualProps } from 'shallow-equal-props';
+
 import placeholderImg from './placeholder.png';
 import { Modal, ModalBody } from '../utils/modal';
 import { MediaSearch, MediaOverview } from './MediaSearch';
@@ -23,17 +25,17 @@ import {
 import CardHeader from './CardHeader';
 
 const defaultProps = {
-  title: 'Enter a Title',
+  title: null,
   challenge: { type: 'gap text' },
   // date: '28/04/2012 10:00',
-  tags: [],
+  tags: null,
   img: placeholderImg,
-  xpPoints: 0,
-  description: '',
-  loc: { latitude: 50.828797, longitude: 4.352191 },
+  xpPoints: null,
+  description: null,
+  // loc: { latitude: 50.828797, longitude: 4.352191 },
   creator: 'Jan',
-  radius: 200,
-  media: [],
+  radius: 500,
+  media: null,
   comments: []
 };
 
@@ -41,7 +43,8 @@ class ReadCardFront extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
-    uiColor: PropTypes.string
+    uiColor: PropTypes.string,
+    tags: PropTypes.oneOf([null, PropTypes.array])
   };
 
   constructor(props) {
@@ -130,11 +133,11 @@ ReadCardFront.defaultProps = { ...defaultProps, onCollect: null };
 class EditCardFront extends PureComponent {
   static propTypes = {
     ...ReadCardFront.propTypes,
-    onUpdate: PropTypes.func
+    onAttrUpdate: PropTypes.func
   };
   static defaultProps = {
     ...ReadCardFront.defaultProps,
-    onUpdate: () => null
+    onAttrUpdate: d => d
   };
 
   constructor(props) {
@@ -147,10 +150,7 @@ class EditCardFront extends PureComponent {
     const prevData = prevState.data;
     const { data } = this.state;
     // TODO: check the other attrs
-    if (
-      prevData.description !== data.description ||
-      prevData.title !== data.title
-    )
+    if (!shallowEqualProps(prevData, data))
       this.props.onAttrUpdate({ ...data });
   }
 
@@ -206,7 +206,9 @@ class EditCardFront extends PureComponent {
           <ModalBody
             color={uiColor}
             onSubmit={() =>
-              this.setFieldState({ description: this.nodeDescription.value })
+              this.setFieldState({
+                description: this.nodeDescription.value || null
+              })
             }
           >
             <div className="form-group">
@@ -250,19 +252,23 @@ class EditCardFront extends PureComponent {
 
     return (
       <CardHeader
-        edit
         title={title}
         onClose={onClose}
         background={background}
-        onEdit={() =>
-          this.setState({
-            dialog: { title: 'Title', data: title }
-          })
+        editButton={
+          <EditButton
+            className="mr-2"
+            onClick={() =>
+              this.setState({
+                dialog: { title: 'Title', data: title }
+              })
+            }
+          />
         }
         flipHandler={flipHandler}
         style={style}
       >
-        <div className="ml-1 mr-1" style={{ height: '100%' }}>
+        <div className={cardLayout} style={{ height: '100%' }}>
           <Modal
             visible={modalVisible}
             title={modalVisible ? dialog.title : ''}
@@ -272,11 +278,7 @@ class EditCardFront extends PureComponent {
           </Modal>
           <div className={cardLayout}>
             <div style={{ display: 'flex' }}>
-              {tags.length !== 0 ? (
-                <PreviewTags data={tags} />
-              ) : (
-                <div>{'Add a tag'}</div>
-              )}
+              <PreviewTags data={tags} />
               <EditButton
                 style={{ fontSize: '24px' }}
                 onClick={() => {
@@ -290,6 +292,7 @@ class EditCardFront extends PureComponent {
             <DescriptionField
               text={description}
               color={uiColor}
+              edit
               onEdit={() =>
                 this.setState({
                   dialog: {
@@ -300,10 +303,10 @@ class EditCardFront extends PureComponent {
                 })
               }
             />
-
             <MediaField
               media={media}
               color={uiColor}
+              edit
               onEdit={() =>
                 this.setState({
                   dialog: { title: 'Media', data: media }

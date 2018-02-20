@@ -1,13 +1,143 @@
+import 'react-rangeslider/lib/index.css';
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import MapGL from 'react-map-gl';
+import Slider from 'react-rangeslider';
 
 import cx from './Card.scss';
 
 import { FieldSet, Tags, Comments, PreviewMedia } from './layout';
 import CardHeader from './CardHeader';
 import { Wrapper } from '../utils';
+import MapAreaRadius from '../utils/map-layers/MapAreaRadius';
 import Author from './Author';
+
+class RadiusSlider extends Component {
+  constructor(props, context) {
+    super(props, context);
+    this.state = {
+      horizontal: 10,
+      vertical: 50
+    };
+  }
+  render() {
+    const { width, height, style, className } = this.props;
+    const btnStyle = {
+      border: '1px solid black'
+      // borderRadius: '50%',
+      // height: '30px',
+      // width: '30px'
+    };
+    return (
+      <div
+        style={{
+          height,
+          width
+        }}
+      >
+        <div
+          className={className}
+          style={{
+            height: '100%',
+            width: '25%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-evenly',
+            ...style
+            // marginTop: '40px'
+          }}
+        >
+          <button className="btn" style={btnStyle}>
+            Unlimited
+          </button>
+          <button className="btn" style={btnStyle}>
+            5km
+          </button>
+          <button className="btn" style={btnStyle}>
+            1km
+          </button>
+          <button className="btn" style={btnStyle}>
+            100m
+          </button>
+        </div>
+      </div>
+    );
+  }
+}
+RadiusSlider.propTypes = {
+  style: PropTypes.object,
+  className: PropTypes.string
+};
+
+RadiusSlider.defaultProps = {
+  style: {},
+  className: ''
+};
+
+class MapRadiusEditor extends Component {
+  static propTypes = {
+    radius: PropTypes.number,
+    latitude: PropTypes.number.isRequired,
+    longitude: PropTypes.number.isRequired,
+    extended: PropTypes.bool,
+    onClose: PropTypes.func
+  };
+
+  static defaultProps = {
+    radius: 500,
+    extended: false,
+    onClose: d => d
+  };
+
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    const { latitude, longitude, extended, onClose } = this.props;
+
+    return (
+      <Wrapper extended={extended}>
+        {(width, height) => (
+          <div
+            style={{
+              width: `${width}px`,
+              height: `${height}px`,
+              transition: 'all 1s ease-out',
+              position: 'relative'
+            }}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                zIndex: 2000,
+                right: 0,
+                bottom: 0
+              }}
+            >
+              <button
+                className="btn mr-2 mt-1"
+                style={{ float: 'right' }}
+                onClick={onClose}
+              >
+                <i className="fa fa-2x fa-undo" />
+              </button>
+              <RadiusSlider width={width} height={height} className="ml-3" />
+            </div>
+            <MapGL
+              width={width}
+              height={height}
+              latitude={latitude}
+              longitude={longitude}
+              zoom={8}
+            />
+          </div>
+        )}
+      </Wrapper>
+    );
+  }
+}
 
 class ReadCardBack extends Component {
   static propTypes = {
@@ -20,14 +150,16 @@ class ReadCardBack extends Component {
       latitude: PropTypes.number,
       longitude: PropTypes.number
     }),
-    uiColor: PropTypes.string
+    uiColor: PropTypes.string,
+    edit: PropTypes.bool
   };
 
   static defaultProps = {
     linkedCards: [],
     loc: { latitude: 0, longitude: 0 },
     cardSets: [],
-    uiColor: 'grey'
+    uiColor: 'grey',
+    edit: true
   };
 
   constructor(props) {
@@ -36,28 +168,27 @@ class ReadCardBack extends Component {
   }
 
   render() {
-    const {
-      cardSets,
-      linkedCards,
-      loc,
-      author,
-      uiColor,
-      comments
-    } = this.props;
+    const { loc, author, uiColor, comments, edit } = this.props;
+
+    console.log('cardback', this.props);
 
     const { extended } = this.state;
     const selectField = field => () =>
-      this.setState(prevstate => ({
-        extended: prevstate.extended !== field ? field : null
-      }));
+      extended !== field && this.setState({ extended: field });
+    const unSelectField = field => () =>
+      extended === field && this.setState({ extended: null });
 
     const isHidden = field => extended !== null && extended !== field;
+    const isExtended = field => ({ extended: extended === field });
     const display = field => ({
-      display: isHidden(field) ? 'none' : null
+      display: isHidden(field) ? 'none' : null,
+      height: extended === field ? '100%' : '30%'
+      // opacity: field !== 'map' && edit ? 0.5 : null
     });
 
     return (
       <div
+        ref={cont => (this.cont = cont)}
         className={`container ${cx.cardMini2} `}
         style={{
           height: '90%',
@@ -67,7 +198,7 @@ class ReadCardBack extends Component {
         <FieldSet
           legend={'Author'}
           color={uiColor}
-          style={{ height: '20%', ...display('author') }}
+          style={{ ...display('author') }}
           onClick={selectField('author')}
         >
           <Author
@@ -81,40 +212,18 @@ class ReadCardBack extends Component {
           />
         </FieldSet>
         <FieldSet
-          style={{ ...display('map'), height: '20%', width: '100%' }}
+          style={{ width: '100%', ...display('map') }}
+          edit={edit}
           legend={'Map radius'}
           color={uiColor}
           onClick={selectField('map')}
         >
-          <Wrapper>
-            {(width, height) => (
-              <MapGL
-                width={width}
-                height={height}
-                latitude={loc.latitude}
-                longitude={loc.longitude}
-                zoom={8}
-              />
-            )}
-          </Wrapper>
-        </FieldSet>
-        <FieldSet
-          onClick={selectField('cardSets')}
-          style={{ ...display('cardSets')}}
-          legend={'CardSets'}
-          color={uiColor}
-        >
-          <Tags data={cardSets} />
-        </FieldSet>
-        <FieldSet
-          onClick={selectField('linkedCards')}
-          legend={'linkedCards'}
-          style={display('linkedCards')}
-          color={uiColor}
-        >
-          <div>
-            <Tags data={linkedCards} />
-          </div>
+          <MapRadiusEditor
+            {...loc}
+            {...isExtended('map')}
+            node={this.cont}
+            onClose={unSelectField('map')}
+          />
         </FieldSet>
         <FieldSet
           onClick={selectField('comments')}
@@ -138,6 +247,25 @@ ReadCardBack.defaultProps = {
   loc: { latitude: 0, longitude: 0 },
   author: {}
 };
+
+// <FieldSet
+// onClick={selectField('cardSets')}
+// style={{ ...display('cardSets') }}
+// legend={'CardSets'}
+// color={uiColor}
+// >
+// <Tags data={cardSets} />
+// </FieldSet>
+// <FieldSet
+// onClick={selectField('linkedCards')}
+// legend={'linkedCards'}
+// style={display('linkedCards')}
+// color={uiColor}
+// >
+// <div>
+// <Tags data={linkedCards} />
+// </div>
+// </FieldSet>
 
 // class EditCardBack extends Component {
 //   static propTypes = {

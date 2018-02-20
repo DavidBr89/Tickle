@@ -17,6 +17,7 @@ function round(x, n) {
   return Math.round(x * tenN) / tenN;
 }
 
+// TODO: fix accessor function of DIVOverlay
 class DivOverlay extends PureComponent {
   static propTypes = {
     cardClickHandler: PropTypes.func.isRequired,
@@ -46,15 +47,16 @@ class DivOverlay extends PureComponent {
       const pixel = opt.project(loc);
       const [x, y] = [round(pixel[0], 1), round(pixel[1], 1)];
 
-      if (x > 0 && x < width && y > 0 && y < height)
-        return children(c, [x, y], opt.unproject);
-      return null;
+      return children(
+        c,
+        [Math.min(x, width), Math.min(y, height)],
+        opt.unproject
+      );
     });
   }
 
   render() {
     const { node } = this.props;
-
     const overlay = <HTMLOverlay {...this.props} redraw={this.redraw} />;
     if (node !== null) return ReactDOM.createPortal(overlay, node);
     return overlay;
@@ -94,7 +96,7 @@ class SvgOverlay extends React.Component {
   redraw(opt) {
     const { data, children } = this.props;
     return data.map(c => {
-      const loc = [c.loc.longitude, c.loc.latitude];
+      const loc = [c.longitude, c.latitude];
       const pixel = opt.project(loc);
       const [x, y] = [round(pixel[0], 1), round(pixel[1], 1)];
       return children(c, [x, y], opt.unproject);

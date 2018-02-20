@@ -37,7 +37,6 @@ class CardCreator extends Component {
     cards: PropTypes.array,
     width: PropTypes.number,
     height: PropTypes.number,
-    tempCards: PropTypes.array,
     selected: PropTypes.string,
     openCardDetails: PropTypes.func,
     selectCardAction: PropTypes.func.isRequired,
@@ -58,7 +57,6 @@ class CardCreator extends Component {
     cards: [],
     width: 100,
     height: 100,
-    tempCards: [],
     selected: null,
     cardTemplateOpen: false,
     openCardDetails: d => d,
@@ -104,10 +102,8 @@ class CardCreator extends Component {
       selectCardAction,
       selected,
       createUpdateCardAction,
-      // tempCards,
       dragCardAction,
       updateCardTemplateAction,
-      // highlighted,
       cardTemplateOpen,
       cardTemplate,
       extended
@@ -146,6 +142,7 @@ class CardCreator extends Component {
                   // padding: '5px',
                   zIndex: 3000
                 }}
+                {...cardTemplate}
               />,
               this.node
             )}
@@ -212,19 +209,18 @@ class CardCreator extends Component {
               className="ml-3 mr-3"
               style={{
                 width: '100%',
+                height: '27vh',
                 overflowX: 'scroll',
                 paddingTop: '20px',
                 paddingBottom: '20px',
                 zIndex: 200
-                // border: 'black 1px solid',
-                // borderRadius: '20%'
               }}
             >
               <Grid
                 cols={cards.length + 1}
                 rows={1}
                 gap={1.5}
-                style={{ width: `${cards.length * 40}%`, height: '30%' }}
+                style={{ width: `${cards.length * 40}%`, height: '100%' }}
               >
                 <DragSourceCont dragHandler={dragCardAction} id={cards.length}>
                   <PlaceholderCard

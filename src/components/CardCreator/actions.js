@@ -8,7 +8,6 @@ export const TOGGLE_CARD_TEMPLATE = 'TOGGLE_CARD_TEMPLATE';
 export const UPDATE_CARD = 'UPDATE_CARD';
 export const REMOVE_CARD = 'REMOVE_CARD';
 export const DRAG_CARD = 'DRAG_CARD';
-export const UPDATE_CARD_TEMPLATE = 'UPDATE_CARD_TEMPLATE';
 
 // export const VisibilityFilters = {
 //   SHOW_ALL: 'SHOW_ALL',
@@ -57,6 +56,7 @@ export function dragCard(options) {
 export function toggleCardTemplate(options) {
   return { type: TOGGLE_CARD_TEMPLATE, options };
 }
+export const UPDATE_CARD_TEMPLATE = 'UPDATE_CARD_TEMPLATE';
 export function updateCardTemplate(options) {
   return { type: UPDATE_CARD_TEMPLATE, options };
 }

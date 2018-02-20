@@ -6,16 +6,17 @@ import { EditButton } from './layout';
 
 import { shadowStyle } from './styles';
 
+const btnStyle = { fontSize: '1.5rem' };
 const CardHeader = ({
   title,
   // img,
   onClose,
   children,
   flipHandler,
-  edit,
-  onEdit,
+  editButton,
   style,
-  background
+  background,
+  placeholder
   // id
 }) => (
   <div
@@ -29,24 +30,31 @@ const CardHeader = ({
     }}
   >
     <div
+      className="mb-2"
       style={{
         display: 'flex',
         justifyContent: 'space-around',
-        width: '100%',
+        width: '100%'
         // height: '100%'
       }}
     >
       {/* TODO: cleaner solution */}
-      <button className="close" onClick={flipHandler}>
-        <i className="fa fa-retweet fa-lg mr-1" aria-hidden="true" />
+      <button className="btn mr-1" style={btnStyle} onClick={flipHandler}>
+        <i className="fa fa-retweet fa-lg" aria-hidden="true" />
       </button>
-      <div style={{ display: 'inline-flex', width: '80%' }}>
+      <div style={{ display: 'inline-flex', width: '70%' }}>
         <h3 className="text-truncate" style={{ marginBottom: '10px' }}>
-          {title}
+          {title === null ? (
+            <span style={{ fontStyle: editButton ? 'italic' : null }}>
+              {placeholder}
+            </span>
+          ) : (
+            title
+          )}
         </h3>
-        {edit && <EditButton className="mr-2" onClick={onEdit} />}
+        {editButton}
       </div>
-      <button className="close mr-2" onClick={onClose}>
+      <button className="btn" style={btnStyle} onClick={onClose}>
         <i className="fa fa-window-close fa-lg" aria-hidden="true" />
       </button>
     </div>
@@ -55,7 +63,7 @@ const CardHeader = ({
 );
 
 CardHeader.propTypes = {
-  title: PropTypes.string,
+  title: PropTypes.oneOf([PropTypes.string, null]),
   // tags: PropTypes.array,
   // img: PropTypes.string,
   flipHandler: PropTypes.func,
@@ -63,19 +71,21 @@ CardHeader.propTypes = {
   children: PropTypes.node,
   style: PropTypes.object,
   onClose: PropTypes.func,
-  edit: PropTypes.bool,
-  onEdit: PropTypes.func
+  editButton: PropTypes.oneOf([PropTypes.node, null]),
+  placeholder: PropTypes.string
 };
 
 CardHeader.defaultProps = {
-  title: 'testcard',
+  title: null,
   flipHandler: d => d,
   style: {},
   children: <div>{'test'}</div>,
   edit: false,
   onClose: () => null,
   onEdit: () => null,
-  background: 'tomato'
+  background: 'tomato',
+  editButton: null,
+  placeholder: 'Please add a title'
 };
 
 export default CardHeader;

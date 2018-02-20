@@ -8,6 +8,8 @@ import PropTypes from 'prop-types';
 // TODO: { LinearInterpolator, FlyToInterpolator }
 import MapGL from 'react-map-gl';
 
+import StartNav from './StartNav';
+
 class Login extends Component {
   static propTypes = {
     mapZoom: PropTypes.number.isRequired.isRequired,
@@ -49,9 +51,8 @@ class Login extends Component {
             right: 0
           }}
         >
-          <MapGL
-            {...mapViewport}
-          />
+          <StartNav />
+          <MapGL {...mapViewport} />
         </div>
       </div>
     );

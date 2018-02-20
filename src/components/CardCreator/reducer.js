@@ -107,6 +107,13 @@ function reducer(state = {}, action) {
         selectedCardId
       };
     }
+
+    case UPDATE_CARD_TEMPLATE: {
+      const newCardTemplate = { ...state.cardTemplate, ...action.options };
+
+      return { ...state, cardTemplate: newCardTemplate };
+    }
+
     // TODO: rename to update
     case CREATE_CARD: {
       const { width, height, mapViewport, cards } = state;
@@ -118,17 +125,15 @@ function reducer(state = {}, action) {
 
       const foundCard = cards.find(c => c.id === id);
       if (!foundCard) {
-        const card = EmptyCard({
-          longitude: pos[0],
-          latitude: pos[1]
-        });
+        const card = { ...state.cardTemplate };
         card.temp = true;
         card.id = id;
         // console.log('newId', id);
 
         return {
           ...state,
-          cardTemplate: {},
+          //TODO: change later
+          cardTemplate: { loc: { latitude: 0, longitude: 0 } },
           cards: [...state.cards, card],
           isDragging: false
         };

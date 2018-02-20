@@ -30,7 +30,16 @@ EditIcon.propTypes = { style: PropTypes.object, className: PropTypes.string };
 EditIcon.defaultProps = { style: {}, className: '' };
 
 const Legend = ({ children, style }) => (
-  <legend style={{ width: 'unset', marginRight: '2px', ...style }}>
+  <legend
+    style={{
+      width: 'unset',
+      marginRight: '2px',
+      fontSize: '18px',
+      marginBottom: 0,
+      fontStyle: 'italic',
+      ...style
+    }}
+  >
     {children}
   </legend>
 );
@@ -43,30 +52,30 @@ Legend.propTypes = {
 Legend.defaultProps = { style: {}, children: null };
 
 const FieldSet = ({ children, legend, style, edit, color, onClick }) => (
-  <fieldset
-    className={cx.field}
-    style={{
-      border: `1px solid ${color}`,
-      // width: '100%',
-      // height: '100%',
-      ...style
-    }}
-    onClick={onClick}
-  >
-    <Legend>
-      {legend}{' '}
-      {!edit ? (
-        <SearchIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
-      ) : (
-        <EditIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
-      )}
-    </Legend>
-    {children}
-  </fieldset>
+  <div style={style} onClick={onClick}>
+    <fieldset
+      style={{
+        border: `1px solid ${color}`,
+        marginTop: '4px',
+        padding: '6px',
+        width: '100%',
+        height: '100%'
+      }}
+    >
+      <Legend>
+        {legend}{' '}
+        {!edit ? (
+          <SearchIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
+        ) : (
+          <EditIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
+        )}
+      </Legend>
+      {children}
+    </fieldset>
+  </div>
 );
 
-FieldSet.proptypes = {
-  classname: PropTypes.string,
+FieldSet.propTypes = {
   color: PropTypes.string,
   legend: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
@@ -97,10 +106,10 @@ const DescriptionField = ({
     onClick={onClick || onEdit}
   >
     <FieldSet
-      style={{ height: '90%', border: `1px solid ${color}` }}
+      style={{ height: '90%' }}
       edit={edit}
       color={color}
-      legend={' Description '}
+      legend={'Description'}
     >
       <div
         style={{
@@ -110,7 +119,11 @@ const DescriptionField = ({
         }}
       >
         <div className={cx.textClamp} style={{ height: '100%' }}>
-          {!edit ? text : placeholder}
+          {text !== null ? (
+            text
+          ) : (
+            <span style={{ fontStyle: 'italic' }}>{placeholder}</span>
+          )}
         </div>
       </div>
     </FieldSet>
@@ -118,7 +131,7 @@ const DescriptionField = ({
 );
 
 DescriptionField.propTypes = {
-  text: PropTypes.string.isRequired,
+  text: PropTypes.oneOf([PropTypes.string, null]),
   // TODO: how to
   onEdit: PropTypes.func,
   onClick: PropTypes.func,
@@ -129,6 +142,7 @@ DescriptionField.propTypes = {
 };
 
 DescriptionField.defaultProps = {
+  text: null,
   onEdit: null,
   onClick: null,
   color: null,
@@ -148,14 +162,9 @@ const MediaField = ({
   edit
 }) => (
   <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
-    <FieldSet
-      style={{ border: `1px solid ${color}` }}
-      edit={edit}
-      legend={'Media'}
-      color={color}
-    >
+    <FieldSet edit={edit} legend={'Media'} color={color}>
       <div style={{ display: 'flex', alignContent: 'end' }}>
-        {media.length !== 0 ? (
+        {Array.isArray(media) ? (
           <PreviewMedia
             data={media}
             style={{ width: '100%', height: '100%' }}
@@ -169,7 +178,7 @@ const MediaField = ({
 );
 
 MediaField.propTypes = {
-  media: PropTypes.array.isRequired,
+  media: PropTypes.oneOf([null, PropTypes.array]),
   onEdit: PropTypes.func,
   onClick: PropTypes.func,
   placeholder: PropTypes.string,
@@ -179,6 +188,7 @@ MediaField.propTypes = {
 };
 
 MediaField.defaultProps = {
+  media: null,
   onEdit: null,
   onClick: null,
   placeholder: 'Add a video, webpage or a sound snippet',
@@ -333,7 +343,7 @@ const Tags = ({ data }) => (
 Tags.propTypes = { data: PropTypes.array };
 Tags.defaultProps = { data: ['tag1', 'exampleTag'] };
 
-const PreviewTags = ({ data, style }) => (
+const PreviewTags = ({ data, style, placeholder }) => (
   <div
     style={{
       display: 'flex',
@@ -343,22 +353,27 @@ const PreviewTags = ({ data, style }) => (
     }}
     className={`${cx.textTrunc} ${cx.tags}`}
   >
-    {data.map(t => (
-      <span key={t} className={`${cx.tag} ${colorClass(t)}`}>
-        {t}
-      </span>
-    ))}
+    {data !== null ? (
+      data.map(t => (
+        <span key={t} className={`${cx.tag} ${colorClass(t)}`}>
+          {t}
+        </span>
+      ))
+    ) : (
+      <div style={{ fontStyle: 'italic' }}>{placeholder}</div>
+    )}
   </div>
 );
 
 PreviewTags.propTypes = {
-  data: PropTypes.array,
+  data: PropTypes.oneOf([PropTypes.array, null]),
   style: PropTypes.object
 };
 
 PreviewTags.defaultProps = {
-  data: ['tag', 'tag1', 'tag2'],
-  style: {}
+  data: null,
+  style: {},
+  placeholder: 'Please add a tag'
 };
 
 const CollectButton = ({ collected, onClick, expPoints, color }) => (
