@@ -77,7 +77,8 @@ const defaultState = {
     gridHeight: 100,
     cardChallengeOpen: false,
     extCardId: false,
-    AppOpenFirstTime: true
+    AppOpenFirstTime: true,
+    selectedCardId: dummyCards[0].id
   },
   CardCreator: {
     cards: dummyCards,
@@ -86,7 +87,7 @@ const defaultState = {
     mapViewport: { ...defaultLocation, zoom: mapZoom },
     selectedCardId: null,
     cardTemplateOpen: false,
-    cardTemplate: {loc: defaultLocation},
+    cardTemplate: { loc: defaultLocation },
     defaultLocation
   }
 };

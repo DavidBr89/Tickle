@@ -53,7 +53,14 @@ class PreviewCard extends Component {
   };
 
   shouldComponentUpdate(nextProps) {
-    return this.props.selected !== nextProps.selected;
+    const { selected, title, tags, img } = this.props;
+    return (
+      selected !== nextProps.selected ||
+      title !== nextProps.title ||
+      // TODO: fix array comparison
+      tags.length !== nextProps.tags.length ||
+      img !== nextProps.img
+    );
   }
 
   render() {
@@ -94,4 +101,4 @@ class PreviewCard extends Component {
     );
   }
 }
-export default PreviewCard ;
+export default PreviewCard;

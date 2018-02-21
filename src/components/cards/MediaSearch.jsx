@@ -42,7 +42,9 @@ gapi.load('client', () => {
   });
 });
 
-const flickr = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${process.env.FlickrAccessToken}&tags=football&format=json`
+const flickr = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${
+  process.env.FlickrAccessToken
+}&tags=football&format=json`;
 
 const searchFlickr = (q = 'dragon') =>
   // new Promise(resolve => {
@@ -82,8 +84,6 @@ const searchWikipedia = (q = 'dragon') =>
 
     return new Promise(resolve => resolve(results));
   });
-
-
 
 const searchYoutube = (q = 'dragon') =>
   new Promise(resolve =>
@@ -514,7 +514,7 @@ class MetaSearch extends Component {
               placeholder={'Search...'}
             />
             <button
-              className="ml-3 btn btn-active"
+              className="ml-3 btn btn-active pl-3 pr-3"
               style={{ background: color }}
               onClick={() =>
                 search(this.searchBar.value).then(items => {
@@ -554,8 +554,8 @@ class MetaSearch extends Component {
         >
           <button
             type="button"
-            className="btn"
-            style={{ background: color, color: 'black' }}
+            className="btn btn-active"
+            style={{ background: color }}
             onClick={() => {
               if (selected)
                 onSelect([

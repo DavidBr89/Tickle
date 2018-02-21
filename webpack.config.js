@@ -99,7 +99,7 @@ module.exports = {
   entry: [
     'react-hot-loader/patch',
 
-    `webpack-dev-server/client?http://${HOST}:${PORT}`,
+    `webpack-dev-server/client?https://${HOST}:${PORT}`,
     // bundle the client for webpack-dev-server
     // and connect to the provided endpoint
 
@@ -134,6 +134,7 @@ module.exports = {
     historyApiFallback: true,
     port: PORT,
     host: HOST,
+    https: true,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',

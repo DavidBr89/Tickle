@@ -44,11 +44,13 @@ class MapAreaRadius extends Component {
     userLocation: PropTypes.shape({
       latitude: PropTypes.number,
       longitude: PropTypes.number
-    })
+    }),
+    radius: PropTypes.number
   };
   static defaultProps = {
     mapViewport: { width: 200, height: 200, latitude: 0, longitude: 0 },
-    userLocation: { latitude: 0, longitude: 0 }
+    userLocation: { latitude: 0, longitude: 0 },
+    radius: 500
   };
 
   constructor(props) {
@@ -56,11 +58,11 @@ class MapAreaRadius extends Component {
   }
 
   render() {
-    const { mapViewport, userLocation, cardPosition } = this.props;
+    const { mapViewport, userLocation, cardPosition, radius } = this.props;
 
     const { zoom } = mapViewport;
     const { latitude, longitude } = userLocation;
-    const r = geometricRadius(latitude, 500, zoom);
+    const r = geometricRadius(latitude, radius, zoom);
 
     const mercator = new WebMercatorViewport(mapViewport);
     const [x, y] = mercator.project([longitude, latitude]);
@@ -71,7 +73,7 @@ class MapAreaRadius extends Component {
     // console.log('CircleOverlay', [x1, y1]);
 
     const accessible = overlap({ x, y, r: 20 }, { x: x1, y: y1, r });
-    // TODO: change SvgOverlay
+
     return (
       <SvgOverlay {...mapViewport} data={[cardPosition]}>
         {() => (

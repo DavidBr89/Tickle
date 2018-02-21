@@ -165,12 +165,6 @@ class EditCardFront extends PureComponent {
     }));
   }
 
-  extendFieldState(field) {
-    this.setState(oldState => ({
-      data: { ...oldState.data, ...field }
-    }));
-  }
-
   modalWriteContent(modalTitle) {
     const { data } = this.state;
     const { uiColor } = this.props;
@@ -255,6 +249,7 @@ class EditCardFront extends PureComponent {
         title={title}
         onClose={onClose}
         background={background}
+        uiColor={uiColor}
         editButton={
           <EditButton
             className="mr-2"

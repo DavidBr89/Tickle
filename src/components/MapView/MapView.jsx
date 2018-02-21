@@ -1,7 +1,5 @@
 import React, { Component, PureComponent } from 'react';
 // import * as d3 from 'd3';
-import VisibilitySensor from 'react-visibility-sensor';
-import Grid from 'mygrid/dist';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -15,11 +13,11 @@ import MapGL from 'react-map-gl';
 // import rasterTileStyle from 'raster-tile-style';
 // import ngeohash from 'ngeohash';,
 // import cx from './MapView.scss';
-import { Card, PreviewCard } from '../cards';
+import { Card } from '../cards';
+import CardGrid from './CardGrid';
 // import StartNav from './StartNav';
 // import { VisibleView, VisibleElement } from '../utils/MySensor.jsx';
 
-// console.log('grid', Grid);
 // import { Grid } from '../utils';
 // import { ScrollElement, ScrollView } from '../utils/ScrollView';
 
@@ -35,116 +33,6 @@ import {
 import MapAreaRadius from '../utils/map-layers/MapAreaRadius';
 // import cardIconSrc from '../utils/map-layers/cardIcon.svg';
 import { Modal } from '../utils/modal';
-
-class CardGrid extends Component {
-  static propTypes = {
-    cards: PropTypes.array.isRequired,
-    onSelect: PropTypes.func.isRequired,
-    onExtend: PropTypes.func.isRequired,
-    setTimeout: PropTypes.func.isRequired,
-    clearTimeout: PropTypes.func.isRequired,
-    offset: PropTypes.number.isRequired,
-    style: PropTypes.object,
-    selected: PropTypes.number
-  };
-
-  static defaultProps = {
-    style: {},
-    selected: null
-  };
-
-  constructor(props) {
-    super(props);
-    this.id = null;
-    this.box = null;
-  }
-
-  shouldComponentUpdate(nextProps) {
-    // return nextProps.selected !== this.props.selected;
-    return true;
-  }
-
-  // componentDidUpdate(prevProps, prevState) {
-  //   console.log('upd');
-  // }
-
-  render() {
-    const {
-      cards,
-      onSelect,
-      onExtend,
-      style,
-      selected
-
-      // setTimeout,
-      // clearTimeout
-    } = this.props;
-
-    const onChange = d => visible => {
-      // TODO: check later
-      clearTimeout(this.id);
-      if (visible) {
-        this.id = setTimeout(() => onSelect(d.id), 50);
-      }
-    };
-
-    return (
-      <div>
-        <div
-          ref={node => (this.node = node)}
-          style={{
-            position: 'absolute',
-            left: '30vw',
-            width: '40vw',
-            height: '30vh'
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            overflowX: 'scroll',
-            width: '100%',
-            height: '30vh',
-            zIndex: 2000
-          }}
-        >
-          <Grid
-            rows={1}
-            cols={Math.floor(cards.length) * 2}
-            colSpan={2}
-            rowSpan={1}
-            gap={2}
-            style={style}
-          >
-            {cards.map(d => (
-              <div key={d.id}>
-                <VisibilitySensor
-                  onChange={onChange(d)}
-                  scrollCheck
-                  scrollDelay={0}
-                  containment={this.node}
-                >
-                  <PreviewCard
-                    {...d}
-                    onClick={() => selected === d.id && onExtend(d.id)}
-                    selected={selected === d.id}
-                    style={{
-                      opacity: selected !== d.id ? 0.56 : null,
-                      transform: selected === d.id ? 'scale(1.2)' : null,
-                      transition: 'transform 1s',
-                      height: '100%',
-                      padding: '10px'
-                    }}
-                  />
-                </VisibilitySensor>
-              </div>
-            ))}
-          </Grid>
-        </div>
-      </div>
-    );
-  }
-}
 
 // const TimoutGrid = ReactTimeout(CardGrid);
 
@@ -278,6 +166,7 @@ class MapView extends PureComponent {
             toggleCardChallengeAction({ cardChallengeOpen: false })
           }
         >
+          {/* TODO: put in real challenge */}
           <iframe
             title="emperors"
             src="http://thescalli.com/emperors/"
@@ -350,8 +239,8 @@ class MapView extends PureComponent {
               style={{
                 height: '26vh',
                 paddingTop: '16px',
-                paddingLeft: '30vw',
-                paddingRight: '30vw',
+                paddingLeft: '35vw',
+                paddingRight: '35vw',
                 paddingBottom: '15px',
                 width: `${cards.length * 40}vw`,
                 zIndex: 8000

@@ -11,7 +11,9 @@ import {
   dragCard,
   openCardDetails,
   toggleCardTemplate,
-  updateCardTemplate
+  updateCardTemplate,
+  updateCardLocation,
+  updateCardAttrs
 } from './actions';
 
 import CardCreator from './CardCreator';
@@ -30,7 +32,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  screenResize: options => {
+  screenResizeAction: options => {
     dispatch(screenResize(options));
   },
   changeMapViewport: options => {
@@ -45,7 +47,7 @@ const mapDispatchToProps = dispatch => ({
   toggleCardTemplateAction: options => {
     dispatch(toggleCardTemplate(options));
   },
-  createUpdateCardAction: options => {
+  createCardAction: options => {
     dispatch(createCard(options));
   },
   dragCardAction: options => {
@@ -53,6 +55,12 @@ const mapDispatchToProps = dispatch => ({
   },
   updateCardTemplateAction: options => {
     dispatch(updateCardTemplate(options));
+  },
+  updateCardLocationAction: options => {
+    dispatch(updateCardLocation(options));
+  },
+  updateCardAttrsAction: options => {
+    dispatch(updateCardAttrs(options));
   }
 });
 

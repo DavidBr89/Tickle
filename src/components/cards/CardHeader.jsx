@@ -2,11 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from './Card.scss';
 
-import { EditButton } from './layout';
+// import { EditButton } from './layout';
 
 import { shadowStyle } from './styles';
 
-const btnStyle = { fontSize: '1.5rem' };
 const CardHeader = ({
   title,
   // img,
@@ -16,51 +15,61 @@ const CardHeader = ({
   editButton,
   style,
   background,
-  placeholder
+  placeholder,
+  uiColor
   // id
-}) => (
-  <div
-    className={`${cx.cardMini2}`}
-    style={{
-      background,
-      overflow: 'hidden',
-      height: '100%',
-      ...style,
-      ...shadowStyle
-    }}
-  >
+}) => {
+  const btnStyle = {
+    fontSize: '1.5rem',
+    padding: '0.4rem 0.6rem 0.4rem 0.6rem',
+    background: uiColor,
+    color: 'whitesmoke'
+  };
+
+  return (
     <div
-      className="mb-2"
+      className={`${cx.cardMini2}`}
       style={{
-        display: 'flex',
-        justifyContent: 'space-around',
-        width: '100%'
-        // height: '100%'
+        background,
+        overflow: 'hidden',
+        height: '100%',
+        ...style,
+        ...shadowStyle
       }}
     >
-      {/* TODO: cleaner solution */}
-      <button className="btn mr-1" style={btnStyle} onClick={flipHandler}>
-        <i className="fa fa-retweet fa-lg" aria-hidden="true" />
-      </button>
-      <div style={{ display: 'inline-flex', width: '70%' }}>
-        <h3 className="text-truncate" style={{ marginBottom: '10px' }}>
-          {title === null ? (
-            <span style={{ fontStyle: editButton ? 'italic' : null }}>
-              {placeholder}
-            </span>
-          ) : (
-            title
-          )}
-        </h3>
-        {editButton}
+      <div
+        className="mb-2"
+        style={{
+          display: 'flex',
+          justifyContent: 'space-around',
+          width: '100%'
+          // height: '100%'
+        }}
+      >
+        {/* TODO: cleaner solution */}
+        <button className="btn mr-2" style={btnStyle} onClick={flipHandler}>
+          <i className="fa fa-retweet fa-lg" aria-hidden="true" />
+        </button>
+        <div style={{ display: 'inline-flex', maxWidth: '65%' }}>
+          <h3 className="text-truncate" style={{ marginBottom: '10px' }}>
+            {title === null ? (
+              <span style={{ fontStyle: editButton ? 'italic' : null }}>
+                {placeholder}
+              </span>
+            ) : (
+              title
+            )}
+          </h3>
+          {editButton}
+        </div>
+        <button className="btn" style={btnStyle} onClick={onClose}>
+          <i className="fa fa-times fa-lg" aria-hidden="true" />
+        </button>
       </div>
-      <button className="btn" style={btnStyle} onClick={onClose}>
-        <i className="fa fa-window-close fa-lg" aria-hidden="true" />
-      </button>
+      {children}
     </div>
-    {children}
-  </div>
-);
+  );
+};
 
 CardHeader.propTypes = {
   title: PropTypes.oneOf([PropTypes.string, null]),
@@ -72,7 +81,8 @@ CardHeader.propTypes = {
   style: PropTypes.object,
   onClose: PropTypes.func,
   editButton: PropTypes.oneOf([PropTypes.node, null]),
-  placeholder: PropTypes.string
+  placeholder: PropTypes.string,
+  uiColor: PropTypes.string
 };
 
 CardHeader.defaultProps = {
@@ -85,7 +95,8 @@ CardHeader.defaultProps = {
   onEdit: () => null,
   background: 'tomato',
   editButton: null,
-  placeholder: 'Please add a title'
+  placeholder: 'Please add a title',
+  uiColor: 'black'
 };
 
 export default CardHeader;

@@ -8,11 +8,13 @@ import {
   CHANGE_MAP_VIEWPORT,
   SELECT_CARD,
   UPDATE_CARD,
+  UPDATE_CARD_LOCATION,
   CREATE_CARD,
   DRAG_CARD,
   OPEN_CARD_DETAILS,
   TOGGLE_CARD_TEMPLATE,
-  UPDATE_CARD_TEMPLATE
+  UPDATE_CARD_TEMPLATE,
+  UPDATE_CARD_ATTRS
 } from './actions';
 
 import { timespec } from './helper';
@@ -99,51 +101,60 @@ function reducer(state = {}, action) {
         highlighted: true
       };
     }
-    case UPDATE_CARD: {
-      const { selectedCardId } = action.options;
-
-      return {
-        ...state,
-        selectedCardId
-      };
-    }
-
-    case UPDATE_CARD_TEMPLATE: {
-      const newCardTemplate = { ...state.cardTemplate, ...action.options };
-
-      return { ...state, cardTemplate: newCardTemplate };
-    }
-
-    // TODO: rename to update
-    case CREATE_CARD: {
+    case UPDATE_CARD_LOCATION: {
       const { width, height, mapViewport, cards } = state;
       const { id, x, y } = action.options;
 
       const mercator = new ViewportMercator({ width, height, ...mapViewport });
       const { unproject } = mercator;
-      const pos = unproject([x, y]);
+      const [longitude, latitude] = unproject([x, y]);
 
       const foundCard = cards.find(c => c.id === id);
-      if (!foundCard) {
-        const card = { ...state.cardTemplate };
-        card.temp = true;
-        card.id = id;
-        // console.log('newId', id);
-
-        return {
-          ...state,
-          //TODO: change later
-          cardTemplate: { loc: { latitude: 0, longitude: 0 } },
-          cards: [...state.cards, card],
-          isDragging: false
-        };
-      }
       const updatedCard = {
         ...foundCard,
-        loc: { longitude: pos[0], latitude: pos[1] }
+        loc: { longitude, latitude }
       };
       const oldCards = cards.filter(c => c.id !== foundCard.id);
       return { ...state, cards: [...oldCards, updatedCard] };
+    }
+
+    case UPDATE_CARD_TEMPLATE: {
+      const newCardTemplate = { ...state.cardTemplate, ...action.options };
+      return { ...state, cardTemplate: newCardTemplate };
+    }
+
+    case UPDATE_CARD_ATTRS: {
+      const { cards } = state;
+      const { id } = action.options;
+
+      const oldCard = cards.find(c => c.id === id);
+      const updatedCard = { ...oldCard, ...action.options };
+      const oldCards = cards.filter(c => c.id !== oldCard.id);
+      return { ...state, cards: [...oldCards, updatedCard] };
+    }
+
+    case CREATE_CARD: {
+      const { width, height, mapViewport } = state;
+      const { id, x, y } = action.options;
+
+      const mercator = new ViewportMercator({ width, height, ...mapViewport });
+      const { unproject } = mercator;
+      const [longitude, latitude] = unproject([x, y]);
+
+      const card = {
+        ...state.cardTemplate,
+        loc: { latitude, longitude },
+        temp: true,
+        id
+      };
+
+      return {
+        ...state,
+        // TODO: change later
+        cardTemplate: { loc: { latitude: 0, longitude: 0 } },
+        cards: [...state.cards, card],
+        isDragging: false
+      };
     }
     case DRAG_CARD: {
       const isDragging = action.options;

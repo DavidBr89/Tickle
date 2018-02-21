@@ -48,7 +48,7 @@ class Card extends React.Component {
     edit: PropTypes.bool,
     challenge: PropTypes.object,
     onCollect: PropTypes.func,
-    onAttrUpdate: PropTypes.func
+    onAttrUpdate: PropTypes.func.isRequired
   };
 
   static defaultProps = {
@@ -79,10 +79,10 @@ class Card extends React.Component {
         frontView: !oldState.frontView
       }));
     };
-    const onAttrUpdateFunc = edit ? { onAttrUpdate } : {};
-
     const background = colorScale(challenge.type);
     const uiColor = chroma(background).darken(1);
+
+    const updateAttrFunc = { onAttrUpdate: edit ? onAttrUpdate : null };
 
     const togglecard = () => {
       if (frontView)
@@ -94,7 +94,8 @@ class Card extends React.Component {
             background={background}
             flipHandler={flipHandler}
             uiColor={uiColor}
-            {...onAttrUpdateFunc}
+            onAttrUpdate={onAttrUpdate}
+            {...updateAttrFunc}
           />
         );
       return (
@@ -105,6 +106,9 @@ class Card extends React.Component {
           uiColor={uiColor}
           onCollect={onCollect}
           flipHandler={flipHandler}
+          setMapRadius={mapRadius => {
+            onAttrUpdate({ ...this.props, mapRadius });
+          }}
         />
       );
     };

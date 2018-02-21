@@ -40,8 +40,8 @@ class CardCreator extends Component {
     selected: PropTypes.string,
     openCardDetails: PropTypes.func,
     selectCardAction: PropTypes.func.isRequired,
-    createUpdateCardAction: PropTypes.func,
-    screenResize: PropTypes.func,
+    createCardAction: PropTypes.func,
+    screenResizeAction: PropTypes.func,
     changeMapViewport: PropTypes.func,
     dragCard: PropTypes.func
   };
@@ -61,8 +61,8 @@ class CardCreator extends Component {
     cardTemplateOpen: false,
     openCardDetails: d => d,
     selectedCard: d => d,
-    createUpdateCardAction: d => d,
-    screenResize: d => d,
+    createCardAction: d => d,
+    screenResizeAction: d => d,
     changeMapViewport: d => d,
     dragCard: d => d,
     selectCard: d => d
@@ -71,10 +71,16 @@ class CardCreator extends Component {
   constructor(props) {
     super(props);
 
-    const { screenResize } = this.props;
+    const { screenResizeAction } = this.props;
     // TODO: fix later;
     const [width, height] = [window.innerWidth, window.innerHeight];
-    screenResize({ width, height });
+    screenResizeAction({ width, height });
+    window.addEventListener('resize', () => {
+      screenResizeAction({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    });
     console.log('constr');
     // this.state = { newCards: [] };
   }
@@ -101,9 +107,11 @@ class CardCreator extends Component {
 
       selectCardAction,
       selected,
-      createUpdateCardAction,
+      createCardAction,
       dragCardAction,
       updateCardTemplateAction,
+      updateCardLocationAction,
+      updateCardAttrsAction,
       cardTemplateOpen,
       cardTemplate,
       extended
@@ -115,6 +123,7 @@ class CardCreator extends Component {
     const selectedCardId = selected ? selected.id : null;
     const extCardId = extended ? extended.id : null;
     const cardPadding = 15;
+    const cardIds = cards.map(d => d.id);
 
     return (
       <DragDropContextProvider backend={TouchBackend}>
@@ -149,7 +158,11 @@ class CardCreator extends Component {
           <div style={{ position: 'absolute' }}>
             <DragLayer />
             <DropTargetCont
-              dropHandler={createUpdateCardAction}
+              dropHandler={c =>
+                cardIds.includes(c.id)
+                  ? updateCardLocationAction(c)
+                  : createCardAction(c)
+              }
               dragged={isDragging}
             >
               <MapGL
@@ -175,7 +188,7 @@ class CardCreator extends Component {
                           key={`${c.title}  ${c.date}`}
                           dragHandler={dragCardAction}
                           dragged={isDragging}
-                          dropHandler={createUpdateCardAction}
+                          dropHandler={createCardAction}
                           id={c.id}
                         >
                           <CardMarker />
@@ -186,6 +199,7 @@ class CardCreator extends Component {
                         edit
                         {...c}
                         onClose={() => selectCardAction()}
+                        onAttrUpdate={updateCardAttrsAction}
                         style={{
                           width: '100%',
                           height: '100%'
