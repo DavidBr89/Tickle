@@ -73,7 +73,7 @@ DivOverlay.defaultProps = {
   // location(c) {return }
 };
 
-const SlowDivOverlay = throttle(10)(DivOverlay);
+const SlowDivOverlay = throttle(50)(DivOverlay);
 
 class SvgOverlay extends React.Component {
   static propTypes = {
@@ -163,53 +163,124 @@ const CardMarker = ({ width, height }) => (
 CardMarker.propTypes = { width: PropTypes.number, height: PropTypes.number };
 CardMarker.defaultProps = { width: 30, height: 40 };
 
-const AnimMarker = ({
-  key,
-  width,
-  height,
-  selected,
-  offsetX,
-  offsetY,
-  delay,
-  x,
-  y,
-  children,
-  onClick,
-  preview,
-  node
-}) => {
-  const marker = (
-    <div
-      onClick={onClick}
-      style={{
-        position: 'absolute',
-        left: selected ? `${offsetX}px` : `${x - width / 2}px`,
-        top: selected ? `${offsetY}px` : `${y - height / 2}px`,
-        width: `${width}px`,
-        height: `${height}px`,
-        transition: `left ${delay}s, top ${delay}s, width ${delay}s, height ${delay}s, opacity ${delay}s`
-      }}
-    >
-      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+class AnimMarker extends Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string,
+    isDragging: PropTypes.bool
+  };
+
+  constructor(props) {
+    super(props);
+    this.timeStamp = 0;
+  }
+
+  shouldComponentUpdate(nextProps) {
+    // const { x, y } = this.props;
+    const newTimeStamp = new Date().getMilliseconds();
+    const timediff = Math.abs(newTimeStamp - this.timeStamp);
+    console.log('isDragging', nextProps.isDragging)
+    return (
+      timediff > 200 ||
+      nextProps.selected ||
+      this.props.selected !== nextProps.selected ||
+      nextProps.isDragging ||
+      this.props.isDragging
+    );
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    this.timeStamp = new Date().getMilliseconds();
+  }
+
+  render() {
+    const {
+      width,
+      height,
+      selected,
+      offsetX,
+      offsetY,
+      delay,
+      x,
+      y,
+      children,
+      onClick,
+      preview,
+      node
+    } = this.props;
+
+    const marker = (
+      <div
+        onClick={onClick}
+        style={{
+          position: 'absolute',
+          left: selected ? `${offsetX}px` : `${x - width / 2}px`,
+          top: selected ? `${offsetY}px` : `${y - height / 2}px`,
+          width: `${width}px`,
+          height: `${height}px`,
+          transition: `left ${delay}s, top ${delay}s, width ${delay}s, height ${delay}s`
+        }}
+      >
         <div
           className={selected ? 'selectedCard' : null}
           style={{
             position: 'absolute',
-            transition: `width ${delay}s, height ${delay}s, opacity ${delay}s`,
             width: '100%',
             height: '100%',
-            // padding: '5px',
             zIndex: selected ? 2000 : 0
           }}
         >
           {selected ? children : preview}
         </div>
       </div>
-    </div>
-  );
-  if (node !== null) return ReactDOM.createPortal(marker, node);
-  return marker;
-};
+    );
+    if (node !== null) return ReactDOM.createPortal(marker, node);
+    return marker;
+  }
+}
+
+// const AnimMarker = ({
+//   width,
+//   height,
+//   selected,
+//   offsetx,
+//   offsety,
+//   delay,
+//   x,
+//   y,
+//   children,
+//   onclick,
+//   preview,
+//   node
+// }) => {
+//   const marker = (
+//     <div
+//       onClick={onClick}
+//       style={{
+//         position: 'absolute',
+//         left: selected ? `${offsetX}px` : `${x - width / 2}px`,
+//         top: selected ? `${offsetY}px` : `${y - height / 2}px`,
+//         width: `${width}px`,
+//         height: `${height}px`,
+//         transition: `left ${delay}s, top ${delay}s, width ${delay}s, height ${delay}s`
+//       }}
+//     >
+//         <div
+//           className={selected ? 'selectedCard' : null}
+//           style={{
+//             position: 'absolute',
+//             width: '100%',
+//             height: '100%',
+//             zIndex: selected ? 2000 : 0
+//           }}
+//         >
+//           {selected ? children : preview}
+//         </div>
+//       </div>
+//   );
+//   if (node !== null) return ReactDOM.createPortal(marker, node);
+//   return marker;
+// };
 
 AnimMarker.propTypes = {
   delay: PropTypes.number,

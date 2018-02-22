@@ -28,6 +28,7 @@ const mapStateToProps = state => ({
   ...state.CardCreator,
   // TODO: check later when real cards changed
   cards: state.CardCreator.cards.sort((a, b) => b.id - a.id),
+  selectedCardId: state.CardCreator.selected ? state.CardCreator.selected.id : null,
   user: state.user
 });
 

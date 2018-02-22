@@ -18,6 +18,7 @@ import CardFront from './CardFront';
 
 import PreviewCard from './PreviewCard';
 import PlaceholderCard from './PlaceholderCard';
+import CardMarker from './CardMarker';
 
 import { colorScale } from './styles';
 
@@ -130,4 +131,4 @@ class Card extends React.Component {
   }
 }
 
-export { Card, PreviewCard, PlaceholderCard };
+export { Card, PreviewCard, PlaceholderCard, CardMarker};

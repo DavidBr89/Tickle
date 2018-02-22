@@ -28,24 +28,6 @@ const tif = timeFormat(timespec);
 //
 // export default mapViewApp;
 
-const EmptyCard = ({ latitude, longitude }) => ({
-  // title: '-',
-  // type: '-',
-  date: tif(new Date()),
-  // tags: ['', ''],
-  // img: '',
-  // xpPoints: 0,
-  // TODO: remove in future to component
-  // description: '',
-  loc: { latitude, longitude }
-  // creator: 'Jan',
-  // media: [],
-  // friends: [],
-  // rating: [],
-  // cardSets: [],
-  // linkedCards: []
-});
-
 function reducer(state = {}, action) {
   console.log(action.type, action.options); // eslint-disable-line no-console
   switch (action.type) {
@@ -61,7 +43,8 @@ function reducer(state = {}, action) {
 
       return {
         ...state,
-        mapViewport
+        mapViewport,
+        cardDropped: false
       };
     }
     case SELECT_CARD: {
@@ -85,12 +68,12 @@ function reducer(state = {}, action) {
           extended
         };
       }
-      console.log('remove action');
       return {
         ...state,
         mapViewport: state.oldViewport,
         selected: state.extended ? state.selected : null,
-        extended: null
+        extended: null,
+        cardDropped: true
       };
     }
     case OPEN_CARD_DETAILS: {
@@ -115,7 +98,7 @@ function reducer(state = {}, action) {
         loc: { longitude, latitude }
       };
       const oldCards = cards.filter(c => c.id !== foundCard.id);
-      return { ...state, cards: [...oldCards, updatedCard] };
+      return { ...state, cards: [...oldCards, updatedCard], cardDropped: true };
     }
 
     case UPDATE_CARD_TEMPLATE: {
@@ -151,7 +134,7 @@ function reducer(state = {}, action) {
       return {
         ...state,
         // TODO: change later
-        cardTemplate: { loc: { latitude: 0, longitude: 0 } },
+        cardTemplate: { id: id + 1, loc: { latitude: 0, longitude: 0 } },
         cards: [...state.cards, card],
         isDragging: false
       };

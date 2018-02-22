@@ -9,12 +9,39 @@ import { shallowEqualProps } from 'shallow-equal-props';
 
 import cx from './Card.scss';
 
-import { FieldSet, Tags, Comments, PreviewMedia } from './layout';
+import { FieldSet, Comments, PreviewMedia, FlipButton } from './layout';
 import CardHeader from './CardHeader';
 import { Wrapper } from '../utils';
 import MapAreaRadius from '../utils/map-layers/MapAreaRadius';
 import { UserOverlay } from '../utils/map-layers/DivOverlay';
 import Author from './Author';
+
+const DeleteButton = ({ style, onClick, color, className }) => (
+  <button
+    className={`btn ${className}`}
+    style={{
+      background: color,
+      color: 'whitesmoke',
+      ...style
+    }}
+    onClick={onClick}
+  >
+    <i className="fa fa-trash fa-2x" aria-hidden="true" />
+  </button>
+);
+
+DeleteButton.propTypes = {
+  style: PropTypes.object,
+  onClick: PropTypes.func,
+  color: PropTypes.string,
+  className: PropTypes.string
+};
+DeleteButton.defaultProps = {
+  style: {},
+  onClick: d => d,
+  color: 'black',
+  className: ''
+};
 
 class RadiusSwitch extends Component {
   constructor(props, context) {
@@ -132,7 +159,14 @@ class MapRadiusEditor extends PureComponent {
   // }
 
   render() {
-    const { latitude, longitude, extended, onClose, uiColor } = this.props;
+    const {
+      latitude,
+      longitude,
+      extended,
+      onClose,
+      uiColor,
+      flipHandler
+    } = this.props;
     const { userLocation, radius } = this.state;
     const radRange = [100, 1000, 5000, 10000];
     const scaleRad = scaleOrdinal()
@@ -224,7 +258,10 @@ class CardBackSkeleton extends Component {
       longitude: PropTypes.number
     }),
     uiColor: PropTypes.string,
-    edit: PropTypes.bool
+    edit: PropTypes.bool,
+    mapRadius: PropTypes.number,
+    setMapRadius: PropTypes.func,
+    deleteHandler: PropTypes.func
   };
 
   static defaultProps = {
@@ -232,7 +269,11 @@ class CardBackSkeleton extends Component {
     loc: { latitude: 0, longitude: 0 },
     cardSets: [],
     uiColor: 'grey',
-    edit: true
+    edit: true,
+    flipHandler: d => d,
+    mapRadius: 100,
+    setMapRadius: d => d,
+    deleteHandler: d => d
   };
 
   constructor(props) {
@@ -252,7 +293,9 @@ class CardBackSkeleton extends Component {
       comments,
       edit,
       setMapRadius,
-      mapRadius
+      mapRadius,
+      flipHandler,
+      deleteHandler
     } = this.props;
 
     const { extended } = this.state;
@@ -265,7 +308,7 @@ class CardBackSkeleton extends Component {
     const isExtended = field => ({ extended: extended === field });
     const display = field => ({
       display: isHidden(field) ? 'none' : null,
-      height: extended === field ? '100%' : '30%'
+      height: extended === field ? '100%' : '29%'
       // opacity: field !== 'map' && edit ? 0.5 : null
     });
 
@@ -318,24 +361,31 @@ class CardBackSkeleton extends Component {
         >
           <Comments data={comments} />
         </FieldSet>
+        <div
+          className="mt-2"
+          style={{ display: 'flex', justifyContent: 'space-between' }}
+        >
+          {edit && (
+            <DeleteButton
+              onClick={deleteHandler}
+              color={uiColor}
+              style={{ width: '20%' }}
+            />
+          )}
+          <FlipButton
+            className="ml-2"
+            color={uiColor}
+            onClick={flipHandler}
+            style={{ width: edit ? '20%' : '100%' }}
+          />
+        </div>
       </div>
     );
   }
 }
 
-CardBackSkeleton.defaultProps = {
-  challenge: { type: '0' },
-  comments: Comments.defaultProps.data,
-  media: PreviewMedia.defaultProps.data,
-  cardSets: ['testseries', 'pirateSet'],
-  linkedCards: ['Captain hook', 'yeah'],
-  loc: { latitude: 0, longitude: 0 },
-  author: {}
-};
-
 const CardBack = props => (
   <CardHeader
-    flipHandler={props.flipHandler}
     onClose={props.onClose}
     background={props.background}
     title={props.title}

@@ -81,14 +81,22 @@ PlaceholderAttr.defaultProps = {
   style: {}
 };
 
-const PlaceholderCard = ({ title, tags, img, challengeType, onClick }) => (
+const PlaceholderCard = ({
+  title,
+  tags,
+  img,
+  challengeType,
+  onClick,
+  style
+}) => (
   <div
     style={{
       padding: '5px',
       backfaceVisibility: 'hidden',
       height: '100%',
       background: challengeType ? colorScale(challengeType) : 'lightgrey',
-      ...shadowStyle
+      ...shadowStyle,
+      ...style
     }}
     onClick={onClick}
   >
@@ -152,14 +160,17 @@ PlaceholderCard.propTypes = {
   tags: PropTypes.bool,
   img: PropTypes.bool,
   challengeType: PropTypes.string,
-  onClick: PropTypes.func
+  onClick: PropTypes.func,
+  style: PropTypes.object
 };
 
 PlaceholderCard.defaultProps = {
   title: false,
   tags: false,
   img: false,
-  challengeType: null
+  challengeType: null,
+  style: {},
+  onClick: d => d
 };
 
 export default PlaceholderCard;

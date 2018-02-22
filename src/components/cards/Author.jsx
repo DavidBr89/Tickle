@@ -72,7 +72,7 @@ CardStack.propTypes = {
 
 CardStack.defaultProps = { number: 0 };
 
-const Author = ({ extended, onClose, color, ...profile, style}) => {
+const Author = ({ extended, onClose, color,  style, ...profile,}) => {
   const { name, skills, activity, interests } = profile;
   if (!extended) {
     return (

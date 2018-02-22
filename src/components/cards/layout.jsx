@@ -260,15 +260,26 @@ Img.defaultProps = { src: '' };
 class TagInput extends React.Component {
   static propTypes = {
     values: PropTypes.array,
-    onSubmit: PropTypes.func
+    onSubmit: PropTypes.func,
+    tags: PropTypes.oneOf([ PropTypes.arrayOf(PropTypes.string), null ])
   };
+
+  static defaultProps = {
+    values: [],
+    tags: [],
+    onSubmit: d => d
+  }
 
   constructor(props) {
     super(props);
 
-    const { tags } = props;
+    const { tags: iniTags } = props;
+
+    const tags =
+      iniTags !== null ? iniTags.map((text, i) => ({ id: i, text })) : [];
+
     this.state = {
-      tags: tags.map((text, i) => ({ id: i, text })),
+      tags,
       suggestions: ['Belgium', 'Germany', 'Brazil']
     };
     this.handleDelete = this.handleDelete.bind(this);
@@ -376,36 +387,42 @@ PreviewTags.defaultProps = {
   placeholder: 'Please add a tag'
 };
 
-const CollectButton = ({ collected, onClick, expPoints, color }) => (
-  <div className="p-1 pt-3">
-    <button
-      className={`btn btn-active btn-lg btn-block}`}
-      style={{ width: '100%', alignSelf: 'flex-end', background: color }}
-      onClick={onClick}
-    >
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <span>{'Collect'}</span>
-        <div
-          style={{
-            marginLeft: '4px',
-            paddingLeft: '4px',
-            paddingRight: '4px',
-            border: '1px black solid',
-            borderRadius: '5px'
-          }}
-        >
-          {`${expPoints}xp`}
-        </div>
+const CollectButton = ({ collected, onClick, expPoints, color, style }) => (
+  <button
+    className={`btn btn-active btn-lg btn-block}`}
+    disabled={collected}
+    style={{
+      width: '100%',
+      alignSelf: 'flex-end',
+      background: color,
+      fontWeight: 'bold',
+      ...style
+    }}
+    onClick={onClick}
+  >
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <span>{'Collect'}</span>
+      <div
+        style={{
+          marginLeft: '4px',
+          paddingLeft: '4px',
+          paddingRight: '4px',
+          border: '2px grey solid'
+          // borderRadius: '5px'
+        }}
+      >
+        {`${expPoints}xp`}
       </div>
-    </button>
-  </div>
+    </div>
+  </button>
 );
 
 CollectButton.propTypes = {
   collected: PropTypes.bool,
   onClick: PropTypes.func,
   expPoints: PropTypes.number,
-  color: PropTypes.string
+  color: PropTypes.string,
+  style: PropTypes.object
 };
 
 CollectButton.defaultProps = {
@@ -413,7 +430,36 @@ CollectButton.defaultProps = {
   toggleCardChallenge: d => d,
   expPoints: 60,
   color: 'black',
-  onClick: d => d
+  onClick: d => d,
+  style: {}
+};
+
+const FlipButton = ({ style, onClick, color, className }) => (
+  <button
+    className={`btn ${className}`}
+    style={{
+      background: color,
+      color: 'whitesmoke',
+      width: '20%',
+      ...style
+    }}
+    onClick={onClick}
+  >
+    <i className="fa fa-retweet fa-2x" aria-hidden="true" />
+  </button>
+);
+
+FlipButton.propTypes = {
+  style: PropTypes.object,
+  onClick: PropTypes.func,
+  color: PropTypes.string,
+  className: PropTypes.string
+};
+FlipButton.defaultProps = {
+  style: {},
+  onClick: d => d,
+  color: 'black',
+  className: ''
 };
 
 const Comments = ({ data, extended }) => (
@@ -469,6 +515,7 @@ export {
   PreviewMedia,
   MediaField,
   EditButton,
+  FlipButton,
   Img,
   Tags,
   TagInput,

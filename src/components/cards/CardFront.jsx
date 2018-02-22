@@ -19,7 +19,8 @@ import {
   // Tags,
   // SmallPreviewTags,
   PreviewTags,
-  CollectButton
+  CollectButton,
+  FlipButton
 } from './layout';
 
 import CardHeader from './CardHeader';
@@ -44,7 +45,21 @@ class ReadCardFront extends Component {
     children: PropTypes.node,
     className: PropTypes.string,
     uiColor: PropTypes.string,
-    tags: PropTypes.oneOf([null, PropTypes.array])
+    tags: PropTypes.oneOf([null, PropTypes.array]),
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    img: PropTypes.string.isRequired,
+    onCollect: PropTypes.func,
+    onClose: PropTypes.func,
+    flipHandler: PropTypes.func,
+    style: PropTypes.object,
+    background: PropTypes.string
+  };
+
+  static defaultProps = {
+    ...defaultProps,
+    onCollect: null,
+    flipHandler: d => d
   };
 
   constructor(props) {
@@ -77,11 +92,20 @@ class ReadCardFront extends Component {
   }
 
   render() {
-    const { tags, img, description, media, onCollect, uiColor } = this.props;
+    const {
+      tags,
+      img,
+      description,
+      media,
+      onCollect,
+      uiColor,
+      flipHandler
+    } = this.props;
 
     const { dialog } = this.state;
     const modalVisible = dialog !== null;
     const dialogTitle = dialog !== null ? dialog.title : null;
+
     return (
       <div className={cardLayout}>
         <Modal
@@ -110,25 +134,19 @@ class ReadCardFront extends Component {
             this.setState({ dialog: { title: 'Media', data: media } })
           }
         />
-        <CollectButton onClick={onCollect} color={uiColor} />
+        <div className="p-1 pt-3" style={{ display: 'flex' }}>
+          <CollectButton
+            onClick={onCollect}
+            color={uiColor}
+            style={{ width: '80%' }}
+          />
+
+          <FlipButton color={uiColor} onClick={flipHandler} className="ml-2" />
+        </div>
       </div>
     );
   }
 }
-
-ReadCardFront.propTypes = {
-  title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  img: PropTypes.string.isRequired,
-  onCollect: PropTypes.func,
-  children: PropTypes.array,
-  onClose: PropTypes.func,
-  flipHandler: PropTypes.func,
-  style: PropTypes.object,
-  background: PropTypes.string
-};
-
-ReadCardFront.defaultProps = { ...defaultProps, onCollect: null };
 
 class EditCardFront extends PureComponent {
   static propTypes = {
@@ -201,7 +219,7 @@ class EditCardFront extends PureComponent {
             color={uiColor}
             onSubmit={() =>
               this.setFieldState({
-                description: this.nodeDescription.value || null
+                description: this.nodeDescriptin.value || null
               })
             }
           >
@@ -309,10 +327,14 @@ class EditCardFront extends PureComponent {
               }
             />
             <div>
-              <div style={{ display: 'flex', alignContent: 'end' }}>
-                <div className="p-1 pt-3" style={{ width: '100%' }}>
+              <div style={{ display: 'flex' }}>
+                <div
+                  className="p-1 pt-3"
+                  style={{ display: 'flex', width: '100%' }}
+                >
                   {/* TODO: make component */}
                   <CollectButton
+                    style={{ width: '80%' }}
                     color={uiColor}
                     onClick={() =>
                       this.setState({
@@ -320,6 +342,8 @@ class EditCardFront extends PureComponent {
                       })
                     }
                   />
+
+                  <FlipButton color={uiColor} onClick={flipHandler} className="ml-2"/>
                 </div>
               </div>
             </div>

@@ -88,7 +88,8 @@ const defaultState = {
     selectedCardId: null,
     cardTemplateOpen: false,
     cardTemplate: { loc: defaultLocation },
-    defaultLocation
+    defaultLocation,
+    cardDropped: false
   }
 };
 

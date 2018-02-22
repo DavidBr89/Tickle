@@ -11,7 +11,7 @@ const CardHeader = ({
   // img,
   onClose,
   children,
-  flipHandler,
+  // flipHandler,
   editButton,
   style,
   background,
@@ -26,31 +26,28 @@ const CardHeader = ({
     color: 'whitesmoke'
   };
 
+  // TODO: change cardMini2 class
   return (
     <div
-      className={`${cx.cardMini2}`}
+      className="pl-2 pr-2 pt-2"
       style={{
         background,
         overflow: 'hidden',
         height: '100%',
+        backfaceVisibility: 'hidden',
         ...style,
         ...shadowStyle
       }}
     >
       <div
-        className="mb-2"
+        className="mb-2 pr-2"
         style={{
           display: 'flex',
-          justifyContent: 'space-around',
+          justifyContent: 'space-between',
           width: '100%'
-          // height: '100%'
         }}
       >
-        {/* TODO: cleaner solution */}
-        <button className="btn mr-2" style={btnStyle} onClick={flipHandler}>
-          <i className="fa fa-retweet fa-lg" aria-hidden="true" />
-        </button>
-        <div style={{ display: 'inline-flex', maxWidth: '65%' }}>
+        <div style={{ display: 'inline-flex', maxWidth: '85%' }}>
           <h3 className="text-truncate" style={{ marginBottom: '10px' }}>
             {title === null ? (
               <span style={{ fontStyle: editButton ? 'italic' : null }}>
@@ -63,6 +60,7 @@ const CardHeader = ({
           {editButton}
         </div>
         <button className="btn" style={btnStyle} onClick={onClose}>
+          {/*TODO: fix button height*/}
           <i className="fa fa-times fa-lg" aria-hidden="true" />
         </button>
       </div>
@@ -75,7 +73,7 @@ CardHeader.propTypes = {
   title: PropTypes.oneOf([PropTypes.string, null]),
   // tags: PropTypes.array,
   // img: PropTypes.string,
-  flipHandler: PropTypes.func,
+  // flipHandler: PropTypes.func,
   background: PropTypes.string,
   children: PropTypes.node,
   style: PropTypes.object,
@@ -87,7 +85,7 @@ CardHeader.propTypes = {
 
 CardHeader.defaultProps = {
   title: null,
-  flipHandler: d => d,
+  // flipHandler: d => d,
   style: {},
   children: <div>{'test'}</div>,
   edit: false,
