@@ -29,18 +29,18 @@ class CardMarker extends Component {
       <div
         style={{
           background: colorScale(challenge.type),
-          width: '100%',
-          height: '100%',
+          width: '80%',
+          height: '80%',
           border: '1px solid grey',
           padding: '0.2rem',
           ...shadowStyle
         }}
       >
-        <div style={{ opacity: 0.3 }}>
+        <div style={{ opacity: 0.5, width: '100%', height: '100%' }}>
           <div
             style={{
               width: '100%',
-              height: '0.4rem',
+              height: '13%',
               background: 'black',
               marginTop: '0.23rem'
               // borderRadius: '4px'
@@ -49,7 +49,7 @@ class CardMarker extends Component {
           <div
             style={{
               width: '100%',
-              height: '0.4rem',
+              height: '13%',
               background: 'black',
               marginTop: '0.23rem'
               // borderRadius: '4px'
@@ -58,7 +58,7 @@ class CardMarker extends Component {
           <div
             style={{
               width: '100%',
-              height: '1.2rem',
+              height: '40%',
               background: 'gold',
               marginTop: '0.23rem'
               // borderRadius: '4px'

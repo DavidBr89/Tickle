@@ -89,7 +89,7 @@ const defaultState = {
     cardTemplateOpen: false,
     cardTemplate: { loc: defaultLocation },
     defaultLocation,
-    cardDropped: false
+    throttle: false
   }
 };
 

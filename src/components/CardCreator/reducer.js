@@ -44,7 +44,7 @@ function reducer(state = {}, action) {
       return {
         ...state,
         mapViewport,
-        cardDropped: false
+        throttle: true
       };
     }
     case SELECT_CARD: {
@@ -73,7 +73,7 @@ function reducer(state = {}, action) {
         mapViewport: state.oldViewport,
         selected: state.extended ? state.selected : null,
         extended: null,
-        cardDropped: true
+        throttle: false
       };
     }
     case OPEN_CARD_DETAILS: {
@@ -98,7 +98,7 @@ function reducer(state = {}, action) {
         loc: { longitude, latitude }
       };
       const oldCards = cards.filter(c => c.id !== foundCard.id);
-      return { ...state, cards: [...oldCards, updatedCard], cardDropped: true };
+      return { ...state, cards: [...oldCards, updatedCard], throttle: false };
     }
 
     case UPDATE_CARD_TEMPLATE: {

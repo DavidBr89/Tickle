@@ -1,7 +1,7 @@
 import React, { PureComponent, Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import throttle from 'react-throttle-render';
+// import throttle from 'react-throttle-render';
 
 // import styles from './CardOverlay.scss';
 // const window = require('global/window');
@@ -73,7 +73,7 @@ DivOverlay.defaultProps = {
   // location(c) {return }
 };
 
-const SlowDivOverlay = throttle(50)(DivOverlay);
+const SlowDivOverlay = DivOverlay;
 
 class SvgOverlay extends React.Component {
   static propTypes = {
@@ -165,9 +165,23 @@ CardMarker.defaultProps = { width: 30, height: 40 };
 
 class AnimMarker extends Component {
   static propTypes = {
-    children: PropTypes.node,
-    className: PropTypes.string,
-    isDragging: PropTypes.bool
+    // children: PropTypes.node,
+    // className: PropTypes.string,
+    throttle: PropTypes.oneOf([null, PropTypes.number]),
+    width: PropTypes.string.isRequired,
+    height: PropTypes.string.isRequired,
+    selected: PropTypes.bool.isRequired,
+    x: PropTypes.number.isRequired,
+    y: PropTypes.number.isRequired,
+    offsetX: PropTypes.number,
+    offsetY: PropTypes.number,
+    children: PropTypes.node.isRequired,
+    preview: PropTypes.node,
+    node: PropTypes.object
+  };
+
+  static defaultProps = {
+    throttle: null
   };
 
   constructor(props) {
@@ -176,16 +190,14 @@ class AnimMarker extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    // const { x, y } = this.props;
+    const { throttle } = nextProps;
     const newTimeStamp = new Date().getMilliseconds();
     const timediff = Math.abs(newTimeStamp - this.timeStamp);
-    console.log('isDragging', nextProps.isDragging)
     return (
-      timediff > 200 ||
-      nextProps.selected ||
-      this.props.selected !== nextProps.selected ||
-      nextProps.isDragging ||
-      this.props.isDragging
+      throttle === null || (throttle !== null && timediff >= throttle)
+      // nextProps.selected ||
+      // this.props.selected !== nextProps.selected ||
+      // !nextProps.throttle
     );
   }
 
@@ -284,7 +296,7 @@ class AnimMarker extends Component {
 
 AnimMarker.propTypes = {
   delay: PropTypes.number,
-  key: PropTypes.string.isRequired,
+  throttle: PropTypes.bool,
   width: PropTypes.string.isRequired,
   height: PropTypes.string.isRequired,
   selected: PropTypes.bool.isRequired,
@@ -302,7 +314,8 @@ AnimMarker.defaultProps = {
   preview: <CardMarker />,
   node: null,
   offsetX: 0,
-  offsetY: 0
+  offsetY: 0,
+  throttle: false
 };
 
 const UserMarker = ({ x, y }) => (

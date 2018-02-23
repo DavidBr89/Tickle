@@ -117,7 +117,7 @@ class CardCreator extends Component {
       cardTemplateOpen,
       cardTemplate,
       extended,
-      cardDropped
+      throttle
     } = this.props;
 
     const mapState = { width, height, ...mapViewport };
@@ -187,7 +187,7 @@ class CardCreator extends Component {
                       offsetY={3}
                       x={x + 5}
                       y={y + 3}
-                      isDragging={cardDropped}
+                      throttle={throttle ? 500 : null}
                       preview={
                         <DragSourceCont
                           key={`${c.title}  ${c.date}`}

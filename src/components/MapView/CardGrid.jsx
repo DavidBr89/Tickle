@@ -25,30 +25,23 @@ class CardGrid extends Component {
     super(props);
     this.id = null;
     this.box = null;
+    this.state = { visibleCardId: props.selected };
   }
 
-  shouldComponentUpdate(nextProps) {
-    return nextProps.selected !== this.props.selected;
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.state.visibleCardId !== nextState.visibleCardId; // nextProps.selected !== this.props.selected;
     // return true;
   }
 
   render() {
-    const {
-      cards,
-      onSelect,
-      onExtend,
-      style,
-      selected
-
-      // setTimeout,
-      // clearTimeout
-    } = this.props;
+    const { cards, onSelect, onExtend, style, selected } = this.props;
+    const { visibleCardId } = this.state;
 
     const onChange = d => visible => {
-      // TODO: check later
       clearTimeout(this.id);
       if (visible) {
-        this.id = setTimeout(() => onSelect(d.id), 50);
+        this.id = setTimeout(() => onSelect(d.id), 200);
+        this.setState({ visibleCardId: d.id });
       }
     };
 
@@ -59,7 +52,7 @@ class CardGrid extends Component {
           style={{
             position: 'absolute',
             left: '30vw',
-            width: '40vw',
+            width: '45vw',
             height: '30vh'
           }}
         />
@@ -85,16 +78,15 @@ class CardGrid extends Component {
                 <VisibilitySensor
                   onChange={onChange(d)}
                   scrollCheck
-                  scrollDelay={0}
                   containment={this.node}
                 >
                   <PreviewCard
                     {...d}
-                    onClick={() => selected === d.id && onExtend(d.id)}
-                    selected={selected === d.id}
+                    onClick={() => visibleCardId === d.id && onExtend(d.id)}
+                    selected={visibleCardId === d.id}
                     style={{
-                      opacity: selected !== d.id ? 0.56 : null,
-                      transform: selected === d.id ? 'scale(1.2)' : null,
+                      opacity: visibleCardId === d.id ? null : 0.56,
+                      transform: visibleCardId === d.id ? 'scale(1.2)' : null,
                       transition: 'transform 1s',
                       height: '100%',
                       padding: '10px'

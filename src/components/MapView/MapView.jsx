@@ -1,4 +1,4 @@
-import React, { Component, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 // import * as d3 from 'd3';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
