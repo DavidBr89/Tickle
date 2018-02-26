@@ -9,7 +9,7 @@ import {
   SCREEN_RESIZE,
   PLAY_CARD_CHALLENGE,
   TOGGLE_CARD_CHALLENGE,
-  EXTEND_SELECTED_CARD,
+  EXTEND_SELECTED_CARD
 } from './actions';
 
 // const mapViewApp = combineReducers({
@@ -52,10 +52,15 @@ function reducer(state = {}, action) {
     case SELECT_CARD: {
       const selectedCardId = action.options;
       const selectedCard = state.cards.find(d => d.id === selectedCardId);
+      const selectedCards = state.cards.filter(d => d.id === selectedCardId);
+      console.log('selectedCards', selectedCards.length);
+
+      // console.log('selectedCard', selectedCard);
       const newMapViewState = {
-        centerLocation: selectedCardId
-          ? selectedCard.loc
-          : { ...state.userLocation },
+        centerLocation:
+          selectedCardId !== null
+            ? selectedCard.loc
+            : { ...state.userLocation },
         mapZoom: selectedCardId ? 15 : state.mapZoom,
         selectedCardId
       };

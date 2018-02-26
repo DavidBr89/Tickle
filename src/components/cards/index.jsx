@@ -41,6 +41,7 @@ import { colorScale } from './styles';
 //   author: { name: 'jan', comment: 'welcome to my super hard challenge!' }
 // };
 
+
 class Card extends React.Component {
   static propTypes = {
     onClose: PropTypes.oneOf([null, PropTypes.func]),
@@ -131,4 +132,4 @@ class Card extends React.Component {
   }
 }
 
-export { Card, PreviewCard, PlaceholderCard, CardMarker};
+export { Card, PreviewCard, PlaceholderCard, CardMarker };

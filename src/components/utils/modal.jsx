@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 // const ddg = new DDG('tickle');
 
-const Modal = ({ visible, title, children, onClose, style }) =>
+const Modal = ({ visible, title, children, onClose, style, background, uiColor}) =>
   ReactDOM.createPortal(
     <div
       style={{
@@ -32,9 +32,15 @@ const Modal = ({ visible, title, children, onClose, style }) =>
         }}
       >
         <div className="modal-dialog modal-dialog-centered" role="document">
-          <div className={`modal-content ${!title ? 'pb-2 pt-2' : null}`}>
+          <div
+            className={`modal-content ${!title ? 'pb-2 pt-2' : null}`}
+            style={{ background }}
+          >
             {title ? (
-              <div className="modal-header">
+              <div
+                className="modal-header"
+                style={{ borderBottom: `1px solid ${uiColor}` }}
+              >
                 <h3 className="modal-title" id="exampleModalLabel">
                   {title}
                 </h3>
@@ -79,6 +85,7 @@ const Modal = ({ visible, title, children, onClose, style }) =>
 
 Modal.propTypes = {
   visible: PropTypes.bool,
+  background: PropTypes.string,
   title: PropTypes.string,
   children: PropTypes.node,
   onClose: PropTypes.func,
@@ -91,10 +98,11 @@ Modal.defaultProps = {
   children: <div>{'test'}</div>,
   onClose: () => null,
   onSave: () => null,
-  style: {}
+  style: {},
+  background: 'green'
 };
 
-const ModalBody = ({ children, onSubmit, submitText, color }) => (
+const ModalBody = ({ children, onSubmit, submitText, uiColor }) => (
   <div>
     <div className="modal-body">{children}</div>
     <div
@@ -105,7 +113,7 @@ const ModalBody = ({ children, onSubmit, submitText, color }) => (
         <button
           type="button"
           className="btn btn-primary"
-          style={{ background: color }}
+          style={{ background: uiColor }}
           onClick={onSubmit}
         >
           {submitText}
@@ -119,13 +127,14 @@ ModalBody.propTypes = {
   children: PropTypes.node.isRequired,
   onSubmit: PropTypes.func,
   submitText: PropTypes.text,
-  color: PropTypes.oneOf([PropTypes.string, null])
+  uiColor: PropTypes.oneOf([PropTypes.string, null]),
+  background: PropTypes.string
 };
 
 ModalBody.defaultProps = {
   onSubmit: null,
   submitText: 'Save Changes',
-  color: null
+  uiColor: 'black'
 };
 
 export { Modal, ModalBody };

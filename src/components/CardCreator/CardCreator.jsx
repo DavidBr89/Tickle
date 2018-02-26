@@ -187,7 +187,6 @@ class CardCreator extends Component {
                       offsetY={3}
                       x={x + 5}
                       y={y + 3}
-                      throttle={throttle ? 500 : null}
                       preview={
                         <DragSourceCont
                           key={`${c.title}  ${c.date}`}

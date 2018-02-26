@@ -1,5 +1,6 @@
 import React, { Component, PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import chroma from 'chroma-js';
 
 import { shallowEqualProps } from 'shallow-equal-props';
 
@@ -99,28 +100,33 @@ class ReadCardFront extends Component {
       media,
       onCollect,
       uiColor,
-      flipHandler
+      flipHandler,
+      background
     } = this.props;
 
     const { dialog } = this.state;
     const modalVisible = dialog !== null;
     const dialogTitle = dialog !== null ? dialog.title : null;
 
+    // TODO: modal color
     return (
       <div className={cardLayout}>
         <Modal
           visible={modalVisible}
           title={dialogTitle}
+          background={chroma(background).brighten(0.7)}
           onClose={() => this.setState({ dialog: null })}
         >
-          <ModalBody>{this.modalReadContent(dialogTitle)}</ModalBody>
+          <ModalBody uiColor={uiColor} background={background}>
+            {this.modalReadContent(dialogTitle)}
+          </ModalBody>
         </Modal>
         <PreviewTags data={tags} />
 
         <Img src={img} />
         <DescriptionField
           text={description}
-          color={uiColor}
+          borderColor={uiColor}
           onClick={() =>
             this.setState({
               dialog: { title: 'Description', data: description }
@@ -129,7 +135,7 @@ class ReadCardFront extends Component {
         />
         <MediaField
           media={media}
-          color={uiColor}
+          borderColor={uiColor}
           onClick={() =>
             this.setState({ dialog: { title: 'Media', data: media } })
           }
@@ -185,14 +191,15 @@ class EditCardFront extends PureComponent {
 
   modalWriteContent(modalTitle) {
     const { data } = this.state;
-    const { uiColor } = this.props;
+    const { uiColor, background } = this.props;
     // TODO: img
     const { title, tags, img, description, media, challenge } = data;
     switch (modalTitle) {
       case 'Title':
         return (
           <ModalBody
-            color={uiColor}
+            uiColor={uiColor}
+            background={background}
             onSubmit={() => this.setFieldState({ title: this.nodeTitle.value })}
           >
             <div className="form-group">
@@ -216,7 +223,8 @@ class EditCardFront extends PureComponent {
       case 'Description':
         return (
           <ModalBody
-            color={uiColor}
+            uiColor={uiColor}
+            background={background}
             onSubmit={() =>
               this.setFieldState({
                 description: this.nodeDescriptin.value || null
@@ -240,7 +248,8 @@ class EditCardFront extends PureComponent {
           <div>
             <MediaSearch
               media={media}
-              color={uiColor}
+              uiColor={uiColor}
+              background={background}
               onSubmit={mediaItems => {
                 this.setFieldState({ media: mediaItems });
               }}
@@ -286,6 +295,8 @@ class EditCardFront extends PureComponent {
             visible={modalVisible}
             title={modalVisible ? dialog.title : ''}
             onClose={() => this.setState({ dialog: null })}
+            uiColor={uiColor}
+            background={background}
           >
             {this.modalWriteContent(dialogTitle)}
           </Modal>
@@ -304,7 +315,7 @@ class EditCardFront extends PureComponent {
             <Img src={img} />
             <DescriptionField
               text={description}
-              color={uiColor}
+              borderColor={uiColor}
               edit
               onEdit={() =>
                 this.setState({
@@ -318,7 +329,7 @@ class EditCardFront extends PureComponent {
             />
             <MediaField
               media={media}
-              color={uiColor}
+              borderColor={uiColor}
               edit
               onEdit={() =>
                 this.setState({
@@ -343,7 +354,11 @@ class EditCardFront extends PureComponent {
                     }
                   />
 
-                  <FlipButton color={uiColor} onClick={flipHandler} className="ml-2"/>
+                  <FlipButton
+                    color={uiColor}
+                    onClick={flipHandler}
+                    className="ml-2"
+                  />
                 </div>
               </div>
             </div>

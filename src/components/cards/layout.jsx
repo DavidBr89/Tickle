@@ -51,11 +51,11 @@ Legend.propTypes = {
 
 Legend.defaultProps = { style: {}, children: null };
 
-const FieldSet = ({ children, legend, style, edit, color, onClick }) => (
+const FieldSet = ({ children, legend, style, edit, borderColor, onClick }) => (
   <div style={style} onClick={onClick}>
     <fieldset
       style={{
-        border: `1px solid ${color}`,
+        border: `1px solid ${borderColor}`,
         marginTop: '4px',
         padding: '6px',
         width: '100%',
@@ -76,7 +76,7 @@ const FieldSet = ({ children, legend, style, edit, color, onClick }) => (
 );
 
 FieldSet.propTypes = {
-  color: PropTypes.string,
+  borderColor: PropTypes.string,
   legend: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
   edit: PropTypes.bool,
@@ -86,7 +86,7 @@ FieldSet.propTypes = {
 
 FieldSet.defaultProps = {
   edit: false,
-  color: 'grey',
+  borderColor: 'grey',
   classname: '',
   onClick: null,
   style: {}
@@ -98,7 +98,7 @@ const DescriptionField = ({
   onClick,
   placeholder,
   style,
-  color,
+  borderColor,
   edit
 }) => (
   <div
@@ -108,7 +108,7 @@ const DescriptionField = ({
     <FieldSet
       style={{ height: '90%' }}
       edit={edit}
-      color={color}
+      borderColor={borderColor}
       legend={'Description'}
     >
       <div
@@ -136,7 +136,7 @@ DescriptionField.propTypes = {
   onEdit: PropTypes.func,
   onClick: PropTypes.func,
   placeholder: PropTypes.string,
-  color: PropTypes.string,
+  borderColor: PropTypes.string,
   style: PropTypes.object,
   edit: PropTypes.bool
 };
@@ -145,7 +145,7 @@ DescriptionField.defaultProps = {
   text: null,
   onEdit: null,
   onClick: null,
-  color: null,
+  borderColor: null,
   placeholder:
     'Add a description for your card to give hints how to succeed the Challenge',
   style: {},
@@ -158,11 +158,11 @@ const MediaField = ({
   onClick,
   style,
   placeholder,
-  color,
+  borderColor,
   edit
 }) => (
   <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
-    <FieldSet edit={edit} legend={'Media'} color={color}>
+    <FieldSet edit={edit} legend={'Media'} borderColor={borderColor}>
       <div style={{ display: 'flex', alignContent: 'end' }}>
         {Array.isArray(media) ? (
           <PreviewMedia
@@ -182,7 +182,7 @@ MediaField.propTypes = {
   onEdit: PropTypes.func,
   onClick: PropTypes.func,
   placeholder: PropTypes.string,
-  color: PropTypes.string,
+  borderColor: PropTypes.string,
   style: PropTypes.object,
   edit: PropTypes.bool
 };
@@ -193,7 +193,7 @@ MediaField.defaultProps = {
   onClick: null,
   placeholder: 'Add a video, webpage or a sound snippet',
   style: {},
-  color: 'grey',
+  borderColor: 'grey',
   edit: false
 };
 
@@ -261,14 +261,14 @@ class TagInput extends React.Component {
   static propTypes = {
     values: PropTypes.array,
     onSubmit: PropTypes.func,
-    tags: PropTypes.oneOf([ PropTypes.arrayOf(PropTypes.string), null ])
+    tags: PropTypes.oneOf([PropTypes.arrayOf(PropTypes.string), null])
   };
 
   static defaultProps = {
     values: [],
     tags: [],
     onSubmit: d => d
-  }
+  };
 
   constructor(props) {
     super(props);

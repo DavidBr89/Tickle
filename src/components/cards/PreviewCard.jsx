@@ -13,7 +13,7 @@ const SmallPreviewTags = ({ data, style }) => (
     }}
     className={`${cx.textTrunc} ${cx.tags}`}
   >
-    {data.map(t => (
+   {data.map(t => (
       <small key={t} className={`${cx.tag} ${colorClass(t)}`}>
         {t}
       </small>

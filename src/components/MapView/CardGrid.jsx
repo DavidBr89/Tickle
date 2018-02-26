@@ -40,7 +40,7 @@ class CardGrid extends Component {
     const onChange = d => visible => {
       clearTimeout(this.id);
       if (visible) {
-        this.id = setTimeout(() => onSelect(d.id), 200);
+        this.id = setTimeout(() => onSelect(d.id), 10);
         this.setState({ visibleCardId: d.id });
       }
     };

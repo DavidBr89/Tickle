@@ -47,9 +47,12 @@ class DivOverlay extends PureComponent {
       const pixel = opt.project(loc);
       const [x, y] = [round(pixel[0], 1), round(pixel[1], 1)];
 
+      // TODO: change later, make bounding box checj
+      const padding = 20;
+
       return children(
         c,
-        [Math.min(x, width), Math.min(y, height)],
+        [Math.min(x, width - padding), Math.min(y, height - padding)],
         opt.unproject
       );
     });
@@ -120,11 +123,12 @@ SvgOverlay.defaultProps = {
 const UserOverlay = props => {
   function redraw(opt) {
     const { longitude, latitude } = props.location;
+    const { w, h } = props;
     const pixel = opt.project([longitude, latitude]);
     return (
       <i
         style={{
-          transform: `translate(${pixel[0]}px, ${pixel[1]}px)`
+          transform: `translate(${pixel[0] - h / 2}px, ${pixel[1] - h / 2}px)`
         }}
         className="fa fa-street-view fa-2x"
         aria-hidden="true"
@@ -138,6 +142,17 @@ UserOverlay.propTypes = {
   location: PropTypes.object.isRequired
 };
 
+UserOverlay.propTypes = {
+  location: PropTypes.object.isRequired,
+  w: PropTypes.number,
+  h: PropTypes.number
+};
+
+UserOverlay.defaultProps = {
+  location: { latitude: 0, longitude: 0 },
+  w: 26,
+  h: 30
+};
 // const CardOverlay = ({ cards, onClick, ...mapViewport }) => (
 //   <DivOverlay {...mapViewport} data={cards}>
 //     <img
@@ -167,7 +182,7 @@ class AnimMarker extends Component {
   static propTypes = {
     // children: PropTypes.node,
     // className: PropTypes.string,
-    throttle: PropTypes.oneOf([null, PropTypes.number]),
+    // throttle: PropTypes.oneOf([null, PropTypes.number]),
     width: PropTypes.string.isRequired,
     height: PropTypes.string.isRequired,
     selected: PropTypes.bool.isRequired,
@@ -180,30 +195,30 @@ class AnimMarker extends Component {
     node: PropTypes.object
   };
 
-  static defaultProps = {
-    throttle: null
-  };
+  // static defaultProps = {
+  //   throttle: null
+  // };
 
   constructor(props) {
     super(props);
     this.timeStamp = 0;
   }
 
-  shouldComponentUpdate(nextProps) {
-    const { throttle } = nextProps;
-    const newTimeStamp = new Date().getMilliseconds();
-    const timediff = Math.abs(newTimeStamp - this.timeStamp);
-    return (
-      throttle === null || (throttle !== null && timediff >= throttle)
-      // nextProps.selected ||
-      // this.props.selected !== nextProps.selected ||
-      // !nextProps.throttle
-    );
-  }
+  // shouldComponentUpdate(nextProps) {
+  //   const { throttle } = nextProps;
+  //   const newTimeStamp = new Date().getMilliseconds();
+  //   const timediff = Math.abs(newTimeStamp - this.timeStamp);
+  //   return (
+  //     throttle === null || (throttle !== null && timediff >= throttle)
+  //     // nextProps.selected ||
+  //     // this.props.selected !== nextProps.selected ||
+  //     // !nextProps.throttle
+  // //   );
+  // // }
 
-  componentWillUpdate(nextProps, nextState) {
-    this.timeStamp = new Date().getMilliseconds();
-  }
+  // componentWillUpdate(nextProps, nextState) {
+  //   // this.timeStamp = new Date().getMilliseconds();
+  // }
 
   render() {
     const {

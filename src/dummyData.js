@@ -12,7 +12,7 @@ const ArthurDeGreefCard = {
   caption: 'A statue of Arthur de Greef',
   description:
     'Pianist Arthur De Greef born in Louvain. He was a pupil of Frank Liszt. I do not why there is statue is placed here. There is music school with the same name not far.',
-  loc: { latitude: 50.828797, longitude: 4.352191 },
+  loc: { latitude: 50.82879, longitude: 4.352191 },
   place: 'Park next to my Home',
   author: 'Jan',
   media: [
@@ -63,7 +63,7 @@ const ArthurDeGreefCard2 = {
   // TODO: remove in future to component
   description:
     'Pianist Arthur De Greef born in Louvain. He was a pupil of Frank Liszt. I do not why there is statue is placed here. There is music school with the same name not far.',
-  loc: { latitude: 50.828797, longitude: 4.352191 },
+  loc: { latitude: 50.82608, longitude: 4.378944 },
   place: 'Park next to my Home',
   author: 'Jan',
   media: [
@@ -218,7 +218,7 @@ const FranzLisztCard = {
 };
 
 const jimiHendrixCard = {
-  title: 'Jimi Hendrix in Belgium',
+  title: 'James Hendrix Father in Belgium',
   challenge: {
     type: 'hangman'
   },
@@ -230,7 +230,7 @@ const jimiHendrixCard = {
   // TODO: remove in future to component
   description:
     'The first pop star of classical music. He made girls cry with his virtuosic piano play. Much like Jimi hendrix he redefined the way to play his instrument',
-  loc: { latitude: 50.893793, longitude: 4.352083 },
+  loc: { latitude: 50.893, longitude: 4.352083 },
   place: 'Amerikaans Theater',
   author: 'Jan',
   media: [
@@ -335,7 +335,7 @@ const jimiHendrixCard2 = {
 };
 
 const notification = {
-  title: 'TestCard',
+  title: 'TestCard0',
   challenge: {
     type: 'hangman'
   },
@@ -344,7 +344,7 @@ const notification = {
   // img: "https://www.w3schools.com/images/w3schools_green.jpg",
   xpPoints: 50,
   description: 'more descriptive text',
-  loc: { latitude: 50.893793, longitude: 4.352083 },
+  loc: { latitude: 50.893082, longitude: 4.35208 },
   place: 'Amerikaans Theater',
   author: 'Jan',
   media: [
@@ -407,7 +407,7 @@ const notification2 = {
   // img: "https://www.w3schools.com/images/w3schools_green.jpg",
   xpPoints: 50,
   description: 'more descriptive text',
-  loc: { latitude: 50.893793, longitude: 4.352083 },
+  loc: { latitude: 50.893793, longitude: 4.35208 },
   place: 'Amerikaans Theater',
   author: 'Jan',
   media: [
@@ -467,7 +467,7 @@ const VUBcard = {
   xpPoints: 50,
   description:
     "The Vrije Universiteit Brussel is the only Flemish university that has incorporated the principle of 'free inquiry' in its statutes. This principle is based on a text by the French mathematician and natural philosopher Henri Poincaré (1854-1912)",
-  loc: { latitude: 50.821705, longitude: 4.395165 },
+  loc: { latitude: 50.821838, longitude: 4.394211 },
   place: 'Pleinlaan 2 - 1050 BRUSSEL',
   author: 'Jan',
   media: [
@@ -600,7 +600,7 @@ const VUBSports = {
 
 // TODO Hassan template to create more cards based on the brik cards
 const VUBSports2 = {
-  title: 'Sport center VUB',
+  title: 'Basic Fit',
   date: '04/04/2012 00:00:00',
   // TODO; rename topics
   tags: ['Uni', 'sports'],
@@ -610,7 +610,7 @@ const VUBSports2 = {
   // TODO: remove in future to component
   description:
     "At a university, you set your mind in movement. At VUB, you do the same for your body. And no less intense, for that matter. There is a swimming pool. A running field. A complete Fit-O-Run course. You can partake in no less than 17 different sporting disciplines, individually or under guidance. You can work out in a Basic Fit hall or sign up for a student’s sporting club and aim for victory in competitions. Starting is as simple as contacting our Sports & Movement service. It's the only thing that involves no sweat whatsoever.",
-  loc: { latitude: 50.824228, longitude: 4.395328 },
+  loc: { latitude: 50.821146, longitude: 4.370189 },
   place: 'Pleinlaan 2 - 1050 BRUSSEL',
   author: 'Jan',
   media: [
@@ -667,8 +667,6 @@ const dummyCards = rawDummyCards
     d.id = i;
     return d;
   });
-
-console.log('sortedCards', dummyCards);
 
 const mediaTypes = ['game', 'hyperlink', 'photo', 'video'];
 

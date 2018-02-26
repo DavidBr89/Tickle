@@ -7,13 +7,14 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import PropTypes from 'prop-types';
 
 // TODO: { LinearInterpolator, FlyToInterpolator }
-import MapGL from 'react-map-gl';
+import MapGL, { FlyToInterpolator } from 'react-map-gl';
+import { easeCubic } from 'd3';
 
 // import ReactTimeout from 'react-timeout';
 // import rasterTileStyle from 'raster-tile-style';
 // import ngeohash from 'ngeohash';,
 // import cx from './MapView.scss';
-import { Card } from '../cards';
+import { Card, CardMarker } from '../cards';
 import CardGrid from './CardGrid';
 // import StartNav from './StartNav';
 // import { VisibleView, VisibleElement } from '../utils/MySensor.jsx';
@@ -27,7 +28,7 @@ import CardGrid from './CardGrid';
 import {
   DivOverlay,
   UserOverlay,
-  UserMarker,
+  // UserMarker,
   AnimMarker
 } from '../utils/map-layers/DivOverlay';
 import MapAreaRadius from '../utils/map-layers/MapAreaRadius';
@@ -49,6 +50,7 @@ class MapView extends PureComponent {
     mapZoom: PropTypes.number.isRequired,
     userLocation: PropTypes.array.isRequired,
     selectedCardId: PropTypes.string.isRequired,
+    selectedCard: PropTypes.object.isRequired,
     extCardId: PropTypes.string.isRequired,
     centerLocation: PropTypes.object.isRequired,
     width: PropTypes.number.isRequired,
@@ -137,6 +139,7 @@ class MapView extends PureComponent {
       width,
       height,
       extCardId,
+      selectedCard,
       // AppOpenFirstTime,
       // headerPad,
 
@@ -152,10 +155,18 @@ class MapView extends PureComponent {
     // console.log('width', mapDim);
     const mapDim = { width, height };
     // console.log('userLocation', userLocation, 'centerLocation', centerLocation);
-    const mapViewport = { ...mapDim, ...centerLocation, zoom: mapZoom };
+    // const trans = {
+    //   transitionDuration: 199,
+    //   transitionInterpolator: new FlyToInterpolator(),
+    //   transitionEasing: easeCubic
+    // };
+    const mapViewport = {
+      ...mapDim,
+      ...centerLocation,
+      zoom: mapZoom,
+      // ...trans
+    };
     // const gridConfig = this.gridSpan();
-    const selectedCard =
-      selectedCardId !== null ? cards.find(d => d.id === selectedCardId) : null;
 
     const cardPadding = 15;
     return (
@@ -179,7 +190,6 @@ class MapView extends PureComponent {
               position: 'absolute',
               left: 0,
               right: 0
-              // pointerEvents: extCardId !== null ? 'none' : null
             }}
           >
             <MapGL
@@ -192,13 +202,11 @@ class MapView extends PureComponent {
                 deltaTime > 30 && userMoveAction({ lngLat })
               }
             >
-              {selectedCard && (
-                <MapAreaRadius
-                  userLocation={userLocation}
-                  mapViewport={mapViewport}
-                  cardPosition={{ ...selectedCard.loc }}
-                />
-              )}
+              <MapAreaRadius
+                userLocation={userLocation}
+                mapViewport={mapViewport}
+                cardPosition={{ ...selectedCard.loc }}
+              />
               <DivOverlay {...mapViewport} data={cards}>
                 {(c, [x, y]) => (
                   <AnimMarker
@@ -211,6 +219,12 @@ class MapView extends PureComponent {
                     x={x + 5}
                     y={y + 3}
                     node={this.node}
+                    preview={
+                      <CardMarker
+                        {...c}
+                        style={{ width: '70%', height: '70%' }}
+                      />
+                    }
                   >
                     <Card
                       {...c}
@@ -221,9 +235,6 @@ class MapView extends PureComponent {
                     />
                   </AnimMarker>
                 )}
-              </DivOverlay>
-              <DivOverlay {...mapViewport} data={[{ loc: userLocation }]}>
-                {(c, [x, y]) => <UserMarker x={x} y={y} />}
               </DivOverlay>
               <UserOverlay {...mapViewport} location={userLocation} />
             </MapGL>

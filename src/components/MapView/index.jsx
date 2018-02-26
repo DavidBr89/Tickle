@@ -19,7 +19,12 @@ import MapView from './MapView';
 
 // Container
 const mapStateToProps = state => ({
-  ...state.MapView
+  ...state.MapView,
+  selectedCard:
+    //TODO: clean uo
+    state.MapView.selectedCardId !== null
+      ? state.MapView.cards.find(d => d.id === state.MapView.selectedCardId)
+      : null
 });
 
 const mapDispatchToProps = dispatch => ({

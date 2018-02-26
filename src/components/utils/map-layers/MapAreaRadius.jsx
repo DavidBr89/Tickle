@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import WebMercatorViewport from 'viewport-mercator-project';
 
-import { SvgOverlay } from './DivOverlay';
+import { SvgOverlay, DivOverlay } from './DivOverlay';
 
 const metersPerPixel = function(latitude, zoomLevel) {
   const earthCircumference = 40075017;
@@ -26,9 +26,6 @@ function overlap(e, o) {
   if (d > e.r + o.r) {
     // No Solution. Circles do not intersect
     return false;
-  } else if (d < Math.abs(e.r - o.r)) {
-    // No Solution. one circle is contained in the other
-    return true;
   }
   return true;
 }
@@ -70,23 +67,29 @@ class MapAreaRadius extends Component {
       cardPosition.longitude,
       cardPosition.latitude
     ]);
-    // console.log('CircleOverlay', [x1, y1]);
+    console.log('CircleOverlay', [x1, y1]);
 
     const accessible = overlap({ x, y, r: 20 }, { x: x1, y: y1, r });
 
     return (
-      <SvgOverlay {...mapViewport} data={[cardPosition]}>
+      <DivOverlay {...mapViewport} data={[{ loc: cardPosition }]}>
         {() => (
-          <circle
-            r={r}
-            cx={x1}
-            cy={y1}
-            stroke="black"
-            fill={accessible && zoom > 11 ? 'green' : 'red'}
-            opacity={0.3}
+          <div
+            style={{
+              position: 'absolute',
+              left: x1 - r,
+              top: y1 - r,
+              border: '2px solid grey',
+              borderRadius: '50%',
+              transition: 'width 0.5s, height 0.5s, left 0.5s, top 0.5s',
+              width: r * 2,
+              height: r * 2,
+              background: accessible ? 'green' : 'tomato',
+              opacity: 0.3
+            }}
           />
         )}
-      </SvgOverlay>
+      </DivOverlay>
     );
   }
 }

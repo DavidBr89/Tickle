@@ -33,7 +33,8 @@ class CardMarker extends Component {
           height: '80%',
           border: '1px solid grey',
           padding: '0.2rem',
-          ...shadowStyle
+          ...shadowStyle,
+          ...style
         }}
       >
         <div style={{ opacity: 0.5, width: '100%', height: '100%' }}>
