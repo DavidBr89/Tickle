@@ -11,10 +11,10 @@ import { ScrollView, ScrollElement } from '../utils/ScrollView';
 import { ModalBody } from '../utils/modal';
 import gapi from './gapi';
 
-const giphy = giphyReq();
+const giphy = giphyReq({ https: true });
 
 const fullDim = cxs({ width: '100%', height: '100%' });
-const shadow = (color = 'black') =>
+const shadow = (color = 'grey') =>
   cxs({
     border: `1px solid ${color}`,
     boxShadow: `6px 6px ${color}`
@@ -54,7 +54,7 @@ const searchFlickr = (q = 'dragon') =>
     dataType: 'jsonp'
   }).then(({ query: { pages } }) => {
     const values = Object.values(pages);
-    console.log('pages', pages);
+    // console.log('pages', pages);
     const results = values.map(d => ({
       title: d.title,
       descr: d.extract,
@@ -279,7 +279,7 @@ Iframe.defaultProps = {
 const ThumbCell = props => (
   <div
     className={`p-3 ${shadow(
-      props.selected ? 'grey' : 'lightgrey'
+      props.selected ? 'var(--black)' : 'grey'
     )} ${fullDim} ${props.className}`}
     style={props.style}
   >
@@ -314,10 +314,10 @@ class MediaSearch extends Component {
   static propTypes = {
     media: PropTypes.array.isRequired,
     onSubmit: PropTypes.func,
-    color: PropTypes.string
+    uiColor: PropTypes.string
   };
 
-  static defaultProps = { onSubmit: () => null, media: [], color: 'tomato' };
+  static defaultProps = { onSubmit: () => null, media: [], uiColor: 'tomato' };
 
   constructor(props) {
     super(props);
@@ -325,11 +325,11 @@ class MediaSearch extends Component {
   }
 
   render() {
-    const { media, onSubmit, color } = this.props;
+    const { media, onSubmit, uiColor } = this.props;
     const { selected } = this.state;
 
     const btnStyle = (sel, context) => ({
-      background: sel === context ? color : null,
+      background: sel === context ? uiColor : null,
       display: 'inline-flex',
       color: sel === context ? 'white' : null
     });
@@ -340,14 +340,14 @@ class MediaSearch extends Component {
       switch (sel) {
         case 'overview':
           return (
-            <MediaOverview data={media} onSelect={onSubmit} color={color} />
+            <MediaOverview data={media} onSelect={onSubmit} uiColor={uiColor} />
           );
         case 'wikipedia':
           return (
             <MetaSearch
               data={media}
               onSelect={onSubmit}
-              color={color}
+              uiColor={uiColor}
               search={searchWikipedia}
               type="Article"
             />
@@ -357,7 +357,7 @@ class MediaSearch extends Component {
             <MetaSearch
               data={media}
               onSelect={onSubmit}
-              color={color}
+              uiColor={uiColor}
               search={searchYoutube}
               type="Video"
             />
@@ -367,7 +367,7 @@ class MediaSearch extends Component {
             <MetaSearch
               data={media}
               onSelect={onSubmit}
-              color={color}
+              uiColor={uiColor}
               search={searchGiphy}
               type="GIF"
             />
@@ -378,7 +378,7 @@ class MediaSearch extends Component {
     };
 
     return (
-      <ModalBody>
+      <ModalBody uiColor={uiColor}>
         <div style={{ width: '100%' }}>
           <div
             className="mb-3 nav"
@@ -459,7 +459,7 @@ class MetaSearch extends Component {
     search: PropTypes.func.isRequired,
     data: PropTypes.array,
     type: PropTypes.string,
-    color: PropTypes.string
+    uiColor: PropTypes.string
   };
 
   constructor(props) {
@@ -495,7 +495,7 @@ class MetaSearch extends Component {
     this.scrollTo(this.state.selected);
   }
   render() {
-    const { onSelect, data, color, search, type } = this.props;
+    const { onSelect, data, uiColor, search, type } = this.props;
     const { results, selected } = this.state;
     // let GoogleAuth;
     // const SCOPE = 'https://www.googleapis.com/auth/youtube.force-ssl';
@@ -515,7 +515,7 @@ class MetaSearch extends Component {
             />
             <button
               className="ml-3 btn btn-active pl-3 pr-3"
-              style={{ background: color }}
+              style={{ background: uiColor }}
               onClick={() =>
                 search(this.searchBar.value).then(items => {
                   this.setState({ results: items });
@@ -529,7 +529,7 @@ class MetaSearch extends Component {
         <div style={{ width: '100%', height: '90%', overflowY: 'scroll' }}>
           <div>
             <ScrollView ref={scroller => (this._scroller = scroller)}>
-              <div style={{ width: '95%', height: '400%' }}>
+              <div style={{ paddingRight: '5%', height: '400%' }}>
                 {results.map(d => (
                   <ScrollElement name={d.url}>
                     <div className="mb-3" style={{ height: '40vh' }}>
@@ -550,12 +550,13 @@ class MetaSearch extends Component {
           </div>
         </div>
         <div
-          style={{ display: 'flex', alignItems: 'flex-end', marginTop: '10px' }}
+          className="mt-3"
+          style={{ display: 'flex', alignItems: 'flex-end' }}
         >
           <button
             type="button"
             className="btn btn-active"
-            style={{ background: color }}
+            style={{ background: uiColor }}
             onClick={() => {
               if (selected)
                 onSelect([
@@ -624,32 +625,31 @@ class MediaOverview extends Component {
     // TODO: fix view height
     return (
       <div style={{ width: '100%', height: '60vh' }}>
-        <div style={{ width: '100%', height: '90%', overflowY: 'scroll' }}>
-          <div>
-            <ScrollView ref={scroller => (this._scroller = scroller)}>
-              <div style={{ width: '100%', height: '400%' }}>
-                {data.length === 0 && (
-                  <h3>{'No media added to this Card!'} </h3>
-                )}
-                {data.map(d => (
-                  <div>
-                    <ScrollElement name={d.url}>
-                      <ThumbCell
-                        {...d}
-                        selected={selected === d.url}
-                        onClick={() =>
-                          this.setState(oldState => ({
-                            selected: oldState.selected !== d.url ? d.url : null
-                          }))
-                        }
-                      />
-                    </ScrollElement>
-                  </div>
-                ))}
-              </div>
-            </ScrollView>
+        <ScrollView ref={scroller => (this._scroller = scroller)}>
+          <div className={fullDim} style={{ overflowY: 'scroll' }}>
+            {data.length === 0 && <h3>{'No media added to this Card!'} </h3>}
+            <div style={{ paddingRight: '5%', height: `${data.length * 30}%` }}>
+              {data.map(d => (
+                <div
+                  className="mb-3"
+                  style={{ height: d.thumbnail ? '40%' : null }}
+                >
+                  <ScrollElement name={d.url}>
+                    <ThumbCell
+                      {...d}
+                      selected={selected === d.url}
+                      onClick={() =>
+                        this.setState(oldState => ({
+                          selected: oldState.selected !== d.url ? d.url : null
+                        }))
+                      }
+                    />
+                  </ScrollElement>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        </ScrollView>
       </div>
     );
   }

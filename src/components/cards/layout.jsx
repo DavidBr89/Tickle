@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Grid from 'mygrid/dist';
 import { WithContext as ReactTags } from 'react-tag-input';
@@ -101,10 +101,7 @@ const DescriptionField = ({
   borderColor,
   edit
 }) => (
-  <div
-    style={{ height: '20%', ...style, cursor: 'pointer' }}
-    onClick={onClick || onEdit}
-  >
+  <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
     <FieldSet
       style={{ height: '90%' }}
       edit={edit}
@@ -161,12 +158,15 @@ const MediaField = ({
   borderColor,
   edit
 }) => (
-  <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
+  <div
+    style={{ ...style, cursor: 'pointer', overflow: 'hidden' }}
+    onClick={onClick || onEdit}
+  >
     <FieldSet edit={edit} legend={'Media'} borderColor={borderColor}>
       <div style={{ display: 'flex', alignContent: 'end' }}>
         {Array.isArray(media) ? (
           <PreviewMedia
-            data={media}
+            data={media.slice(0, 4)}
             style={{ width: '100%', height: '100%' }}
           />
         ) : (
@@ -229,11 +229,8 @@ PreviewMedia.defaultProps = {
 };
 
 const EditButton = ({ style, onClick, className }) => (
-  <button className={`close ${className}`} onClick={onClick}>
-    <i
-      className={`fa  fa-pencil-square-o ml-1 `}
-      style={{ cursor: 'pointer', fontSize: '2rem', ...style }}
-    />
+  <button className={`close ml-1 ${className}`} onClick={onClick}>
+    <EditIcon style={{ ...style, fontSize: '2rem' }} />
   </button>
 );
 
@@ -246,7 +243,7 @@ EditButton.propTypes = {
 EditButton.defaultProps = { style: {}, onClick: () => null, className: '' };
 
 const Img = ({ src }) => (
-  <div className="mt-1 mb-1">
+  <div className="mt-1 mb-1" style={{ border: '1px solid var(--black)' }}>
     <img src={src} alt="Card img" style={{ width: '100%', height: '100%' }} />
   </div>
 );
@@ -257,34 +254,90 @@ Img.propTypes = {
 
 Img.defaultProps = { src: '' };
 
+class MyTags extends Component {
+  static propTypes = {
+    className: PropTypes.string,
+    handleDelete: PropTypes.func,
+    handleAddition: PropTypes.func,
+    data: PropTypes.array,
+    uiColor: PropTypes.string
+  };
+
+  static defaultProps = {
+    className: '',
+    handleDelete: d => d,
+    handleAddition: d => d,
+    data: [],
+    uiColor: 'black'
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = { value: '' };
+  }
+
+  componentWillReceiveProps() {
+    this.setState({ value: '' });
+  }
+
+  render() {
+    const {
+      data,
+      uiColor,
+      handleDelete,
+      handleAddition,
+      className
+    } = this.props;
+    const { value } = this.state;
+    return (
+      <div className={className}>
+        <div className="mb-1" style={{ display: 'flex' }}>
+          <input
+            value={value}
+            onChange={({ target }) => this.setState({ value: target.value })}
+          />
+          <button
+            className="btn btn-active ml-2"
+            style={{ background: uiColor }}
+            onClick={() => handleAddition(value)}
+          >
+            Add
+          </button>
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+          {data.map((d, i) => (
+            <Tag title={d} edit onClick={() => handleDelete(i)} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+}
+
 class TagInput extends React.Component {
   static propTypes = {
-    values: PropTypes.array,
     onSubmit: PropTypes.func,
-    tags: PropTypes.oneOf([PropTypes.arrayOf(PropTypes.string), null])
+    tags: PropTypes.oneOf([PropTypes.arrayOf(PropTypes.string), null]),
+    uiColor: PropTypes.string
   };
 
   static defaultProps = {
     values: [],
     tags: [],
-    onSubmit: d => d
+    onSubmit: d => d,
+    uiColor: ''
   };
 
   constructor(props) {
     super(props);
 
-    const { tags: iniTags } = props;
+    const { tags } = props;
+    // const tags =
+    // iniTags !== null ? iniTags.map((text, i) => ({ id: i, text })) : [];
 
-    const tags =
-      iniTags !== null ? iniTags.map((text, i) => ({ id: i, text })) : [];
-
-    this.state = {
-      tags,
-      suggestions: ['Belgium', 'Germany', 'Brazil']
-    };
+    this.state = { tags: tags || [] };
     this.handleDelete = this.handleDelete.bind(this);
     this.handleAddition = this.handleAddition.bind(this);
-    this.handleDrag = this.handleDrag.bind(this);
   }
 
   handleDelete(i) {
@@ -295,46 +348,22 @@ class TagInput extends React.Component {
 
   handleAddition(tag) {
     const tags = this.state.tags;
-    tags.push({
-      id: tags.length + 1,
-      text: tag
-    });
-    this.setState({ tags });
-  }
-
-  handleDrag(tag, currPos, newPos) {
-    const tags = this.state.tags;
-
-    // mutate array
-    tags.splice(currPos, 1);
-    tags.splice(newPos, 0, tag);
-
-    // re-render
-    this.setState({ tags });
+    const newTags = [...new Set([...tags, tag])];
+    console.log('tags', tags, 'newTags', newTags, tag);
+    this.setState({ tags: newTags });
   }
 
   render() {
-    const { tags, suggestions } = this.state;
-    const { onSubmit } = this.props;
+    const { tags } = this.state;
+    const { onSubmit, uiColor } = this.props;
 
     return (
-      <ModalBody onSubmit={() => onSubmit(tags.map(d => d.text))}>
-        <ReactTags
-          classNames={{
-            tags: 'tagsClass',
-            tagInput: 'tagInputClass',
-            tagInputField: 'tagInputFieldClass',
-            selected: 'selectedClass',
-            tag: `${cx.tag} ${colorScaleRandom()}`,
-            remove: 'removeClass',
-            suggestions: 'suggestionsClass',
-            activeSuggestion: 'activeSuggestionClass'
-          }}
-          tags={tags}
-          suggestions={suggestions}
+      <ModalBody onSubmit={() => onSubmit(tags)} uiColor={uiColor}>
+        <MyTags
+          uiColor={uiColor}
+          data={tags}
           handleDelete={this.handleDelete}
           handleAddition={this.handleAddition}
-          handleDrag={this.handleDrag}
         />
       </ModalBody>
     );
@@ -354,6 +383,28 @@ const Tags = ({ data }) => (
 Tags.propTypes = { data: PropTypes.array };
 Tags.defaultProps = { data: ['tag1', 'exampleTag'] };
 
+const Tag = ({ title, onClick, edit, small }) => (
+  <div
+    key={title}
+    className={`${cx.tag} ${colorClass(title)}`}
+    onClick={onClick}
+  >
+    {small && <small>{title}</small>}
+    <span style={{ whiteSpace: 'no-wrap' }}>
+      {title} {edit && <span style={{ marginLeft: '2px' }}>x</span>}
+    </span>
+  </div>
+);
+
+Tag.propTypes = {
+  title: PropTypes.string,
+  onClick: PropTypes.func,
+  edit: PropTypes.bool,
+  small: PropTypes.bool
+};
+
+Tag.defaultProps = { title: '', onClick: d => d, edit: false, small: false };
+
 const PreviewTags = ({ data, style, placeholder }) => (
   <div
     style={{
@@ -365,11 +416,7 @@ const PreviewTags = ({ data, style, placeholder }) => (
     className={`${cx.textTrunc} ${cx.tags}`}
   >
     {data !== null ? (
-      data.map(t => (
-        <span key={t} className={`${cx.tag} ${colorClass(t)}`}>
-          {t}
-        </span>
-      ))
+      data.map(t => <Tag title={t} />)
     ) : (
       <div style={{ fontStyle: 'italic' }}>{placeholder}</div>
     )}
@@ -378,7 +425,8 @@ const PreviewTags = ({ data, style, placeholder }) => (
 
 PreviewTags.propTypes = {
   data: PropTypes.oneOf([PropTypes.array, null]),
-  style: PropTypes.object
+  style: PropTypes.object,
+  placeholder: PropTypes.string
 };
 
 PreviewTags.defaultProps = {
@@ -387,7 +435,14 @@ PreviewTags.defaultProps = {
   placeholder: 'Please add a tag'
 };
 
-const CollectButton = ({ collected, onClick, expPoints, color, style }) => (
+const ChallengeButton = ({
+  collected,
+  onClick,
+  expPoints,
+  color,
+  style,
+  edit
+}) => (
   <button
     className={`btn btn-active btn-lg btn-block}`}
     disabled={collected}
@@ -401,36 +456,48 @@ const CollectButton = ({ collected, onClick, expPoints, color, style }) => (
     onClick={onClick}
   >
     <div style={{ display: 'flex', justifyContent: 'center' }}>
-      <span>{'Collect'}</span>
-      <div
-        style={{
-          marginLeft: '4px',
-          paddingLeft: '4px',
-          paddingRight: '4px',
-          border: '2px grey solid'
-          // borderRadius: '5px'
-        }}
-      >
-        {`${expPoints}xp`}
-      </div>
+      <span style={{ display: 'inline-flex' }}>
+        {edit ? 'Add Challenge' : 'Collect'}
+        {edit && (
+          <EditIcon
+            className="ml-1"
+            style={{ color: 'white', fontSize: '2rem' }}
+          />
+        )}
+      </span>
+      {!edit && (
+        <div
+          style={{
+            marginLeft: '4px',
+            paddingLeft: '4px',
+            paddingRight: '4px',
+            border: '2px grey solid'
+            // borderRadius: '5px'
+          }}
+        >
+          {`${expPoints}xp`}
+        </div>
+      )}
     </div>
   </button>
 );
 
-CollectButton.propTypes = {
+ChallengeButton.propTypes = {
   collected: PropTypes.bool,
+  edit: PropTypes.bool,
   onClick: PropTypes.func,
   expPoints: PropTypes.number,
   color: PropTypes.string,
   style: PropTypes.object
 };
 
-CollectButton.defaultProps = {
+ChallengeButton.defaultProps = {
   collected: false,
   toggleCardChallenge: d => d,
   expPoints: 60,
   color: 'black',
   onClick: d => d,
+  edit: false,
   style: {}
 };
 
@@ -520,6 +587,6 @@ export {
   Tags,
   TagInput,
   PreviewTags,
-  CollectButton,
+  ChallengeButton,
   Comments
 };

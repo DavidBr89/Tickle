@@ -28,6 +28,8 @@ import DefaultLayout from './layouts/MainLayout';
 
 import { dummyCards } from './dummyData';
 
+import { fetchChallenges } from './async_actions';
+
 const loggerMiddleware = createLogger();
 
 // import NotFound from './containers/NotFound/NotFound';
@@ -59,14 +61,14 @@ const defaultState = {
     height,
     width,
     centerLocation: defaultLocation,
-    mapZoom
+    mapZoom,
+    challenges: []
   },
   MapView: {
     cards: dummyCards,
     mapZoom,
     centerLocation: defaultLocation,
     userLocation: defaultLocation,
-    selectedCardId: null,
     height: 100,
     width: 100,
     defaultHeight: 100,
@@ -89,7 +91,8 @@ const defaultState = {
     cardTemplateOpen: false,
     cardTemplate: { loc: defaultLocation },
     defaultLocation,
-    throttle: false
+    throttle: false,
+    challenges: []
   }
 };
 
@@ -110,6 +113,9 @@ const store = createStore(
 //     })
 //   );
 // });
+//
+
+store.dispatch(fetchChallenges(0));
 
 const Routes = () => (
   <HashRouter>

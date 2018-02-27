@@ -4,6 +4,9 @@ const loaders = require('./webpack.loaders');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+
+const apiTokens = require('./api_keys.json');
+
 // const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 // const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
@@ -99,7 +102,7 @@ module.exports = {
   entry: [
     'react-hot-loader/patch',
 
-    `webpack-dev-server/client?https://${HOST}:${PORT}`,
+    `webpack-dev-server/client?http://${HOST}:${PORT}`,
     // bundle the client for webpack-dev-server
     // and connect to the provided endpoint
 
@@ -108,7 +111,7 @@ module.exports = {
     // only- means to only hot reload for successful updates
     './src/index.jsx' // your app's entry point
   ],
-  // TODO:change for production
+  // TODO: change for production
   devtool: 'eval-source-map ',
   output: {
     path: path.join(__dirname, 'public'),
@@ -134,7 +137,8 @@ module.exports = {
     historyApiFallback: true,
     port: PORT,
     host: HOST,
-    https: true,
+    // TODO: change back later
+    https: false,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
@@ -165,13 +169,7 @@ module.exports = {
       Util: 'exports-loader?Util!bootstrap/js/dist/util',
       Dropdown: 'exports-loader?Dropdown!bootstrap/js/dist/dropdown'
     }),
-    new webpack.EnvironmentPlugin({
-      MapboxAccessToken:
-        'pk.eyJ1Ijoiam1hdXNoYWciLCJhIjoiY2o4dHlmZTBkMGowbTJ3cDI3a3J3cHhoZSJ9.W-cFyxdadt5EXzRXKuXKrQ',
-      GeniusAccessToken:
-        'iIoMeOZSCQ7J3MrBLe2r6l41aAMSIE87B-CRwdCwgzZSOGQQVwXcWVhDdbSiO3TY',
-      FlickrAccessToken: '78fbd30e5509305d14be4a1cc03ee65a'
-    })
+    new webpack.EnvironmentPlugin(apiTokens)
     // new webpack.optimize.ModuleConcatenationPlugin()
     // new HardSourceWebpackPlugin()
     // new ExtractTextPlugin('style.css')

@@ -1,10 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
+import chroma from 'chroma-js';
 
 // const ddg = new DDG('tickle');
 
-const Modal = ({ visible, title, children, onClose, style, background, uiColor}) =>
+const Modal = ({
+  visible,
+  title,
+  children,
+  onClose,
+  style,
+  // background,
+  uiColor
+}) =>
   ReactDOM.createPortal(
     <div
       style={{
@@ -34,7 +43,14 @@ const Modal = ({ visible, title, children, onClose, style, background, uiColor})
         <div className="modal-dialog modal-dialog-centered" role="document">
           <div
             className={`modal-content ${!title ? 'pb-2 pt-2' : null}`}
-            style={{ background }}
+            style={{
+              // TODO: why to check
+              background:
+                uiColor &&
+                chroma(uiColor)
+                  .brighten(1.6)
+                  .desaturate(0.6)
+            }}
           >
             {title ? (
               <div
@@ -102,12 +118,16 @@ Modal.defaultProps = {
   background: 'green'
 };
 
+// TODO: fix padding bottom
 const ModalBody = ({ children, onSubmit, submitText, uiColor }) => (
   <div>
     <div className="modal-body">{children}</div>
     <div
       className="modal-footer"
-      style={{ paddingBottom: !onSubmit ? '50px' : null }}
+      style={{
+        paddingBottom: !onSubmit ? '50px' : null,
+        borderTop: `1px solid ${uiColor}`
+      }}
     >
       {onSubmit && (
         <button
@@ -127,8 +147,8 @@ ModalBody.propTypes = {
   children: PropTypes.node.isRequired,
   onSubmit: PropTypes.func,
   submitText: PropTypes.text,
-  uiColor: PropTypes.oneOf([PropTypes.string, null]),
-  background: PropTypes.string
+  uiColor: PropTypes.oneOf([PropTypes.string, null])
+  // background: PropTypes.string
 };
 
 ModalBody.defaultProps = {

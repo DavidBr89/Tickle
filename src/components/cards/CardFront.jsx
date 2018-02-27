@@ -20,7 +20,7 @@ import {
   // Tags,
   // SmallPreviewTags,
   PreviewTags,
-  CollectButton,
+  ChallengeButton,
   FlipButton
 } from './layout';
 
@@ -82,7 +82,7 @@ class ReadCardFront extends Component {
       case 'Media':
         return (
           <div>
-            <MediaOverview data={media} color={uiColor} />
+            <MediaOverview data={media} uiColor={uiColor} />
           </div>
         );
       case 'Challenge':
@@ -114,10 +114,9 @@ class ReadCardFront extends Component {
         <Modal
           visible={modalVisible}
           title={dialogTitle}
-          background={chroma(background).brighten(0.7)}
           onClose={() => this.setState({ dialog: null })}
         >
-          <ModalBody uiColor={uiColor} background={background}>
+          <ModalBody uiColor={uiColor}>
             {this.modalReadContent(dialogTitle)}
           </ModalBody>
         </Modal>
@@ -125,6 +124,7 @@ class ReadCardFront extends Component {
 
         <Img src={img} />
         <DescriptionField
+          style={{ height: '20%' }}
           text={description}
           borderColor={uiColor}
           onClick={() =>
@@ -134,6 +134,7 @@ class ReadCardFront extends Component {
           }
         />
         <MediaField
+          style={{ height: '20%' }}
           media={media}
           borderColor={uiColor}
           onClick={() =>
@@ -141,7 +142,7 @@ class ReadCardFront extends Component {
           }
         />
         <div className="p-1 pt-3" style={{ display: 'flex' }}>
-          <CollectButton
+          <ChallengeButton
             onClick={onCollect}
             color={uiColor}
             style={{ width: '80%' }}
@@ -215,6 +216,7 @@ class EditCardFront extends PureComponent {
         return (
           <TagInput
             tags={tags}
+            uiColor={uiColor}
             onSubmit={newTags => this.setFieldState({ tags: newTags })}
           />
         );
@@ -227,13 +229,14 @@ class EditCardFront extends PureComponent {
             background={background}
             onSubmit={() =>
               this.setFieldState({
-                description: this.nodeDescriptin.value || null
+                description: this.nodeDescription.value || null
               })
             }
           >
             <div className="form-group">
               <textarea
                 ref={n => (this.nodeDescription = n)}
+                rows={5}
                 style={{ width: '100%' }}
                 onSubmit={() => null}
                 placeholder={'<Please insert your description>'}
@@ -301,10 +304,9 @@ class EditCardFront extends PureComponent {
             {this.modalWriteContent(dialogTitle)}
           </Modal>
           <div className={cardLayout}>
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: 'inline-flex' }}>
               <PreviewTags data={tags} />
               <EditButton
-                style={{ fontSize: '24px' }}
                 onClick={() => {
                   this.setState({
                     dialog: { title: 'Tags', data: tags }
@@ -314,6 +316,7 @@ class EditCardFront extends PureComponent {
             </div>
             <Img src={img} />
             <DescriptionField
+              style={{ maxHeight: '20%' }}
               text={description}
               borderColor={uiColor}
               edit
@@ -328,6 +331,7 @@ class EditCardFront extends PureComponent {
               }
             />
             <MediaField
+              style={{ maxHeight: '20%' }}
               media={media}
               borderColor={uiColor}
               edit
@@ -344,9 +348,10 @@ class EditCardFront extends PureComponent {
                   style={{ display: 'flex', width: '100%' }}
                 >
                   {/* TODO: make component */}
-                  <CollectButton
+                  <ChallengeButton
                     style={{ width: '80%' }}
                     color={uiColor}
+                    edit
                     onClick={() =>
                       this.setState({
                         dialog: { title: 'Challenge', data: challenge }

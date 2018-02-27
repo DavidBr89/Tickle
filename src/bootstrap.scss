@@ -42,6 +42,13 @@
 
 $sw:4px;
 
+$black:#3c3c3c;
+
+
+:root {
+    --black:$black;
+}
+
 .btn {
   @extend .btn;
   border-radius: 0;
@@ -55,8 +62,13 @@ $sw:4px;
   border-color: grey;
 }
 
+// .black {
+//   background: $black;
+// }
+
 .btn-active {
   color: whitesmoke;
+  box-shadow: $sw $sw grey;
 }
 
 .btn-danger {

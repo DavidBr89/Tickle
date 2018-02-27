@@ -17,6 +17,15 @@ export const DRAG_CARD = 'DRAG_CARD';
  * action creators
  */
 
+export const RECEIVE_CHALLENGES = 'RECEIVE_CHALLENGES';
+export function receiveCards(json) {
+  return {
+    type: RECEIVE_CHALLENGES,
+    challenges: json,
+    receivedAt: Date.now()
+  };
+}
+
 export function selectCard(options) {
   return { type: SELECT_CARD, options };
 }

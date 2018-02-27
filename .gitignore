@@ -29,3 +29,6 @@ node_modules
 
 # Ignore build files
 public
+
+# Ignore api keys
+api_keys.json

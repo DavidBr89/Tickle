@@ -14,7 +14,8 @@ import {
   OPEN_CARD_DETAILS,
   TOGGLE_CARD_TEMPLATE,
   UPDATE_CARD_TEMPLATE,
-  UPDATE_CARD_ATTRS
+  UPDATE_CARD_ATTRS,
+  RECEIVE_CHALLENGES
 } from './actions';
 
 import { timespec } from './helper';
@@ -31,6 +32,11 @@ const tif = timeFormat(timespec);
 function reducer(state = {}, action) {
   console.log(action.type, action.options); // eslint-disable-line no-console
   switch (action.type) {
+    case RECEIVE_CHALLENGES: {
+      const { challenges } = action;
+      return { ...state, challenges };
+    }
+
     case CARD_CREATOR_SCREEN_RESIZE: {
       console.log('state taken', action);
       const height = action.options.height;

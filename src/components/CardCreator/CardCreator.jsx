@@ -187,15 +187,16 @@ class CardCreator extends Component {
                       offsetY={3}
                       x={x + 5}
                       y={y + 3}
+                      node={this.node}
                       preview={
                         <DragSourceCont
-                          key={`${c.title}  ${c.date}`}
+                          key={`${c.title} ${c.date}`}
                           dragHandler={dragCardAction}
                           dragged={isDragging}
                           dropHandler={createCardAction}
                           id={c.id}
                         >
-                          <CardMarker />
+                          <CardMarker {...c} />
                         </DragSourceCont>
                       }
                     >
