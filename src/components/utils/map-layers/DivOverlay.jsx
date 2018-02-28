@@ -42,13 +42,13 @@ class DivOverlay extends PureComponent {
   redraw(opt) {
     const { data, children, width, height } = this.props;
     return data.map(c => {
-      // TODO
+      // TODO maybe remove loc attr
       const loc = [c.loc.longitude, c.loc.latitude];
       const pixel = opt.project(loc);
       const [x, y] = [round(pixel[0], 1), round(pixel[1], 1)];
 
       // TODO: change later, make bounding box checj
-      const padding = 20;
+      const padding = 50;
 
       return children(
         c,

@@ -125,48 +125,64 @@ const searchGiphy = (q = 'pokemon') =>
     )
   );
 //
-const Iframe = ({ title, url, onClick }) => (
+const Iframe = ({ title, url, onClick, edit, style }) => (
   <div
     className={fullDim}
     style={{
-      position: 'relative'
+      position: 'relative',
+      ...style
       // border: '10px tomato solid'
     }}
   >
-    <button
-      onClick={onClick}
-      className="btn-danger"
-      style={{
-        // background: 'white',
-        border: 0,
-        paddingLeft: '5px',
-        paddingRight: '5px',
-        paddingTop: '5px',
-        paddingBottom: '1px',
-        position: 'absolute',
-        zIndex: 1000,
-        right: 8,
-        top: 10
-      }}
-    >
-      <i className="fa fa-2x fa-window-close" style={{ color: 'black' }} />
-    </button>
-    <iframe
-      title={title}
-      type="text/html"
-      width="100%"
-      height="100%"
-      src={url}
-      frameBorder="0"
-      style={{ zIndex: '4000' }}
-    />
+    {edit && (
+      <button
+        onClick={onClick}
+        className="btn-danger"
+        style={{
+          // background: 'white',
+          border: 0,
+          paddingLeft: '5px',
+          paddingRight: '5px',
+          paddingTop: '5px',
+          paddingBottom: '1px',
+          position: 'absolute',
+          zIndex: 1000,
+          right: 8,
+          top: 10
+        }}
+      >
+        <i className="fa fa-2x fa-window-close" style={{ color: 'black' }} />
+      </button>
+    )}
+    <div className={fullDim} style={{ position: 'relative' }}>
+      <div className={fullDim} style={{ position: 'absolute' }} />
+      <iframe
+        title={title}
+        type="text/html"
+        width="100%"
+        height="100%"
+        src={url}
+        frameBorder="0"
+        style={{ zIndex: '-1', position: 'absolute' }}
+      />
+    </div>
   </div>
 );
 
 Iframe.propTypes = {
   title: PropTypes.string,
   url: PropTypes.string,
-  onClick: PropTypes.func
+  onClick: PropTypes.func,
+  edit: PropTypes.bool,
+  style: PropTypes.object
+};
+
+Iframe.defaultProps = {
+  title: '',
+  url: '',
+  onClick: d => d,
+  style: {},
+  edit: false
 };
 
 const Article = ({ url, title, descr, onClick }) => (
@@ -211,7 +227,16 @@ const ThumbNailSwitchDetail = ({
   onClick
 }) => {
   if (selected && (type === 'video' || type === 'gif'))
-    return <Iframe url={url} title={title} descr={descr} onClick={onClick} />;
+    return (
+      <Iframe edit url={url} title={title} descr={descr} onClick={onClick} />
+    );
+
+  // if (type === 'challenge')
+  //   return (
+  //     <div onClick={onClick} className={fullDim}>
+  //       <Iframe url={url} title={title} descr={descr} style={{ zIndex: 0 }} />
+  //     </div>
+  //   );
 
   return (
     <div
@@ -220,8 +245,8 @@ const ThumbNailSwitchDetail = ({
       style={{
         overflow: 'hidden',
         backgroundImage: thumbnail !== null && `url('${thumbnail}')`,
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: '100% 100%'
+        backgroundRepeat: thumbnail !== null && 'no-repeat',
+        backgroundSize: thumbnail !== null && '100% 100%'
       }}
     >
       {thumbnail ? (
@@ -270,18 +295,13 @@ ThumbNailSwitchDetail.propTypes = {
 ThumbNailSwitchDetail.defaultProps = {
   className: ''
 };
-Iframe.defaultProps = {
-  title: '',
-  url: '',
-  onClick: d => d
-};
 
 const ThumbCell = props => (
   <div
     className={`p-3 ${shadow(
       props.selected ? 'var(--black)' : 'grey'
     )} ${fullDim} ${props.className}`}
-    style={props.style}
+    style={{ ...props.style, cursor: 'pointer' }}
   >
     <ThumbNailSwitchDetail {...props} />
   </div>
@@ -456,53 +476,86 @@ class MediaSearch extends Component {
 
 class MetaSearch extends Component {
   static propTypes = {
-    search: PropTypes.func.isRequired,
+    search: PropTypes.oneOf(null, PropTypes.func),
     data: PropTypes.array,
     type: PropTypes.string,
-    uiColor: PropTypes.string
+    uiColor: PropTypes.string,
+    defaultData: PropTypes.array,
+    onSelect: PropTypes.func,
+    selected: PropTypes.oneOf([PropTypes.string, null])
+  };
+
+  static defaultProps = {
+    search: null,
+    data: [],
+    defaultData: [],
+    uiColor: 'black',
+    defaultResults: [],
+    type: null,
+    onSelect: d => d,
+    selected: null
   };
 
   constructor(props) {
     super(props);
 
-    this.state = { results: [], selected: null };
+    this.state = {
+      selected: props.selected,
+      results: props.search === null ? props.defaultData : []
+    };
     this._scroller = null;
     this.searchBar = null;
     this.mounted = true;
     this.scrollTo = this.scrollTo.bind(this);
   }
 
-  scrollTo = name => {
-    this._scroller.scrollTo(name);
-  };
-
   componentDidMount() {
     const { search } = this.props;
-    search().then(results => this.mounted && this.setState({ results }));
+    if (search !== null)
+      search().then(results => this.mounted && this.setState({ results }));
+
+    if (this.state.selected !== null) this.scrollTo(this.state.selected);
   }
 
-  componentWillReceiveProps(nextProps) {
-    nextProps.search().then(results => {
-      this.setState({ results });
-    });
+  // componentWillReceiveProps(nextProps) {
+  //   nextProps.search().then(results => {
+  //     this.setState({ results });
+  //   });
+  // }
+
+  componentDidUpdate() {
+    this.scrollTo(this.state.selected);
   }
 
   componentWillUnmount() {
     this.mounted = false;
   }
 
-  componentDidUpdate() {
-    this.scrollTo(this.state.selected);
-  }
+  scrollTo = name => {
+    this._scroller.scrollTo(name);
+  };
+
   render() {
-    const { onSelect, data, uiColor, search, type } = this.props;
+    const { onSelect, data, uiColor, search, type, defaultData } = this.props;
     const { results, selected } = this.state;
     // let GoogleAuth;
     // const SCOPE = 'https://www.googleapis.com/auth/youtube.force-ssl';
     // Load the API's client and auth2 modules.
     // Call the initClient function after the modules load.
     // }
-
+    const onSearch = () => {
+      const searchVal = this.searchBar.value;
+      if (search !== null) {
+        search().then(items => {
+          this.setState({ results: items });
+        });
+      } else {
+        // TODO real search
+        this.setState({
+          results: defaultData.filter(d => d.title === searchVal)
+        });
+      }
+    };
     // TODO: fix view height
     return (
       <div style={{ width: '100%', height: '60vh' }}>
@@ -516,11 +569,7 @@ class MetaSearch extends Component {
             <button
               className="ml-3 btn btn-active pl-3 pr-3"
               style={{ background: uiColor }}
-              onClick={() =>
-                search(this.searchBar.value).then(items => {
-                  this.setState({ results: items });
-                })
-              }
+              onClick={onSearch}
             >
               <i className="fa fa-search" />
             </button>
@@ -558,11 +607,10 @@ class MetaSearch extends Component {
             className="btn btn-active"
             style={{ background: uiColor }}
             onClick={() => {
-              if (selected)
-                onSelect([
-                  ...data,
-                  { ...results.find(d => d.url === selected), type: 'article' }
-                ]);
+              if (selected) {
+                const newItem = results.find(d => d.url === selected);
+                onSelect([...data, { type, ...newItem }]);
+              }
             }}
           >
             {selected ? `Add ${type}` : `Select ${type}`}
@@ -655,4 +703,20 @@ class MediaOverview extends Component {
   }
 }
 
-export { MediaSearch, MediaOverview };
+const ChallengeSearch = ({ data, selected, uiColor, onSubmit }) => (
+  <MetaSearch
+    onSelect={([ch]) => onSubmit(ch)}
+    selected={selected}
+    uiColor={uiColor}
+    type="Challenge"
+    defaultData={data.map(d => ({
+      url: d.url,
+      title: d.url,
+      descr: '',
+      thumbnail: d.url,
+      type: 'hangman'
+    }))}
+  />
+);
+
+export { MediaSearch, MediaOverview, ChallengeSearch };

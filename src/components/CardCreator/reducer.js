@@ -20,7 +20,7 @@ import {
 
 import { timespec } from './helper';
 
-const tif = timeFormat(timespec);
+// const tif = timeFormat(timespec);
 
 // const mapViewApp = combineReducers({
 //   cards,
@@ -34,6 +34,7 @@ function reducer(state = {}, action) {
   switch (action.type) {
     case RECEIVE_CHALLENGES: {
       const { challenges } = action;
+      console.log('action', action);
       return { ...state, challenges };
     }
 
@@ -115,7 +116,7 @@ function reducer(state = {}, action) {
     case UPDATE_CARD_ATTRS: {
       const { cards } = state;
       const { id } = action.options;
-
+      // TODO: create new card here, not obvious
       const oldCard = cards.find(c => c.id === id);
       const updatedCard = { ...oldCard, ...action.options };
       const oldCards = cards.filter(c => c.id !== oldCard.id);
@@ -124,7 +125,7 @@ function reducer(state = {}, action) {
 
     case CREATE_CARD: {
       const { width, height, mapViewport } = state;
-      const { id, x, y } = action.options;
+      const { x, y } = action.options;
 
       const mercator = new ViewportMercator({ width, height, ...mapViewport });
       const { unproject } = mercator;
@@ -132,15 +133,20 @@ function reducer(state = {}, action) {
 
       const card = {
         ...state.cardTemplate,
-        loc: { latitude, longitude },
-        temp: true,
-        id
+        template: false,
+        // id: state.cards.length ,
+        date: new Date(),
+        loc: { latitude, longitude }
       };
 
       return {
         ...state,
         // TODO: change later
-        cardTemplate: { id: id + 1, loc: { latitude: 0, longitude: 0 } },
+        cardTemplate: {
+          id: state.cards.length + 1,
+          template: true,
+          loc: { latitude: 0, longitude: 0 }
+        },
         cards: [...state.cards, card],
         isDragging: false
       };
@@ -163,9 +169,12 @@ function reducer(state = {}, action) {
       return { ...state, cardTemplateOpen: !state.cardTemplateOpen };
     }
     case UPDATE_CARD_TEMPLATE: {
-      const cardTemplate = action.options;
+      const newCardTemplate = action.options;
       // console.log('Card template', cardTemplateOpen);
-      return { ...state, cardTemplate };
+      return {
+        ...state,
+        cardTemplate: { ...state.cardTemplate, ...newCardTemplate }
+      };
     }
     default:
       return state;

@@ -88,8 +88,7 @@ const defaultState = {
     height,
     mapViewport: { ...defaultLocation, zoom: mapZoom },
     selectedCardId: null,
-    cardTemplateOpen: false,
-    cardTemplate: { loc: defaultLocation },
+    cardTemplate: { loc: defaultLocation, template: true, id: 'template' },
     defaultLocation,
     throttle: false,
     challenges: []

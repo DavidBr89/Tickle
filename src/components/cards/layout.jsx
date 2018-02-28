@@ -383,18 +383,44 @@ const Tags = ({ data }) => (
 Tags.propTypes = { data: PropTypes.array };
 Tags.defaultProps = { data: ['tag1', 'exampleTag'] };
 
-const Tag = ({ title, onClick, edit, small }) => (
-  <div
-    key={title}
-    className={`${cx.tag} ${colorClass(title)}`}
-    onClick={onClick}
-  >
-    {small && <small>{title}</small>}
+// const SmallPreviewTags = ({ data }) => (
+//   <div className={cx.tags}>
+//     {data.map(t => (
+//       <div key={t} className={`${cx.tag} ${colorClass(t)}`}>
+//         <small>{t}</small>
+//       </div>
+//     ))}
+//   </div>
+// );
+//
+const Tag = ({ title, onClick, edit, small }) => {
+  const children = (
     <span style={{ whiteSpace: 'no-wrap' }}>
-      {title} {edit && <span style={{ marginLeft: '2px' }}>x</span>}
+      {title}
+      {edit && <span style={{ marginLeft: '2px' }}>x</span>}
     </span>
-  </div>
-);
+  );
+  if (small)
+    return (
+      <small
+        key={title}
+        className={`${cx.tag} ${colorClass(title)}`}
+        onClick={onClick}
+      >
+        {/* TODO: put small out */}
+        {children}
+      </small>
+    );
+  return (
+    <div
+      key={title}
+      className={`${cx.tag} ${colorClass(title)}`}
+      onClick={onClick}
+    >
+      {children}
+    </div>
+  );
+};
 
 Tag.propTypes = {
   title: PropTypes.string,
@@ -405,7 +431,7 @@ Tag.propTypes = {
 
 Tag.defaultProps = { title: '', onClick: d => d, edit: false, small: false };
 
-const PreviewTags = ({ data, style, placeholder }) => (
+const PreviewTags = ({ data, style, placeholder, small }) => (
   <div
     style={{
       display: 'flex',
@@ -416,7 +442,7 @@ const PreviewTags = ({ data, style, placeholder }) => (
     className={`${cx.textTrunc} ${cx.tags}`}
   >
     {data !== null ? (
-      data.map(t => <Tag title={t} />)
+      data.map(t => <Tag title={t} small={small} />)
     ) : (
       <div style={{ fontStyle: 'italic' }}>{placeholder}</div>
     )}
@@ -426,13 +452,15 @@ const PreviewTags = ({ data, style, placeholder }) => (
 PreviewTags.propTypes = {
   data: PropTypes.oneOf([PropTypes.array, null]),
   style: PropTypes.object,
-  placeholder: PropTypes.string
+  placeholder: PropTypes.string,
+  small: PropTypes.bool
 };
 
 PreviewTags.defaultProps = {
   data: null,
   style: {},
-  placeholder: 'Please add a tag'
+  placeholder: 'Please add a tag',
+  small: false
 };
 
 const ChallengeButton = ({

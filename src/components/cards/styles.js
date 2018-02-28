@@ -39,7 +39,7 @@ const shadowStyle = {
 
 const colorScale = scaleOrdinal()
   .domain(challengeTypes)
-  .range(chromatic.schemePastel1);
+  .range([ ...chromatic.schemePastel1, 'wheat']);
 
 export {
   cardLayout,

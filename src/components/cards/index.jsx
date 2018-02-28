@@ -41,7 +41,6 @@ import { colorScale } from './styles';
 //   author: { name: 'jan', comment: 'welcome to my super hard challenge!' }
 // };
 
-
 class Card extends React.Component {
   static propTypes = {
     onClose: PropTypes.oneOf([null, PropTypes.func]),
@@ -58,7 +57,7 @@ class Card extends React.Component {
     collectHandler: null,
     style: {},
     edit: false,
-    challenge: { type: 'quiz' },
+    challenge: { type: null },
     onCollect: d => d,
     onAttrUpdate: d => d
   };
@@ -81,7 +80,7 @@ class Card extends React.Component {
         frontView: !oldState.frontView
       }));
     };
-    const background = colorScale(challenge.type);
+    const background = challenge.type ? colorScale(challenge.type) : 'whitesmoke';
     const uiColor = chroma(background).darken(1);
 
     const updateAttrFunc = { onAttrUpdate: edit ? onAttrUpdate : null };

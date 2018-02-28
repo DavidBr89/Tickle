@@ -40,7 +40,8 @@ class CardCreator extends Component {
     createCardAction: PropTypes.func,
     screenResizeAction: PropTypes.func,
     changeMapViewport: PropTypes.func,
-    dragCard: PropTypes.func
+    dragCard: PropTypes.func,
+    challenges: PropTypes.array
   };
 
   static defaultProps = {
@@ -62,7 +63,8 @@ class CardCreator extends Component {
     screenResizeAction: d => d,
     changeMapViewport: d => d,
     dragCard: d => d,
-    selectCard: d => d
+    selectCard: d => d,
+    challenges: []
   };
 
   constructor(props) {
@@ -117,7 +119,8 @@ class CardCreator extends Component {
       cardTemplateOpen,
       cardTemplate,
       extended,
-      throttle
+      throttle,
+      challenges
     } = this.props;
 
     const mapState = { width, height, ...mapViewport };
@@ -143,23 +146,6 @@ class CardCreator extends Component {
             height: `${height}px`
           }}
         >
-          {cardTemplateOpen && (
-            <Card
-              edit
-              onClose={toggleCardTemplateAction}
-              onAttrUpdate={updateCardTemplateAction}
-              style={{
-                position: 'absolute',
-                left: 3,
-                top: 3,
-                width: width - cardPadding,
-                height: height - cardPadding,
-                // padding: '5px',
-                zIndex: 3000
-              }}
-              {...cardTemplate}
-            />
-          )}
           <div style={{ position: 'absolute' }}>
             <DragLayer />
             <DropTargetCont
@@ -196,15 +182,20 @@ class CardCreator extends Component {
                           dropHandler={createCardAction}
                           id={c.id}
                         >
-                          <CardMarker {...c} />
+                          <CardMarker {...c} edit={c.template} />
                         </DragSourceCont>
                       }
                     >
                       <Card
                         edit
                         {...c}
+                        allChallenges={challenges}
                         onClose={() => selectCardAction()}
-                        onAttrUpdate={updateCardAttrsAction}
+                        onAttrUpdate={
+                          c.template
+                            ? updateCardTemplateAction
+                            : updateCardAttrsAction
+                        }
                         style={{
                           width: '100%',
                           height: '100%'
@@ -225,7 +216,7 @@ class CardCreator extends Component {
             }}
           >
             <div
-              className="pl-3 pr-3"
+              className="pl-3 pr-3 mt-3 ml-3"
               style={{
                 width: '100%',
                 height: '27vh',

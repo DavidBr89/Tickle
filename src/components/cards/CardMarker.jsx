@@ -7,7 +7,8 @@ class CardMarker extends Component {
   static propTypes = {
     challenge: PropTypes.func.isRequired,
     onClick: PropTypes.func.isRequired,
-    style: PropTypes.object
+    style: PropTypes.object,
+    edit: PropTypes.bool
   };
 
   static defaultProps = {
@@ -16,7 +17,8 @@ class CardMarker extends Component {
     style: {},
     selected: false,
     // TODO: include only type
-    challenge: { type: 'hangman' }
+    challenge: { type: null },
+    edit: false
   };
 
   shouldComponentUpdate() {
@@ -24,47 +26,58 @@ class CardMarker extends Component {
   }
 
   render() {
-    const { challenge, style, onClick } = this.props;
+    const { challenge, style, edit, onClick } = this.props;
     return (
       <div
         style={{
-          background: colorScale(challenge.type),
-          width: '80%',
-          height: '80%',
-          border: '1px solid grey',
-          padding: '0.2rem',
-          ...shadowStyle,
-          ...style
+          border: edit ? '2px dashed black' : null,
+          padding: '15%',
+          width: '115%',
+          height: '115%'
         }}
       >
-        <div style={{ opacity: 0.5, width: '100%', height: '100%' }}>
-          <div
-            style={{
-              width: '100%',
-              height: '13%',
-              background: 'black',
-              marginTop: '0.23rem'
-              // borderRadius: '4px'
-            }}
-          />
-          <div
-            style={{
-              width: '100%',
-              height: '13%',
-              background: 'black',
-              marginTop: '0.23rem'
-              // borderRadius: '4px'
-            }}
-          />
-          <div
-            style={{
-              width: '100%',
-              height: '40%',
-              background: 'gold',
-              marginTop: '0.23rem'
-              // borderRadius: '4px'
-            }}
-          />
+        <div
+          style={{
+            background: challenge.type
+              ? colorScale(challenge.type)
+              : 'whitesmoke',
+            width: '100%',
+            height: '100%',
+            padding: '0.2rem',
+            border: '1px solid grey',
+            ...shadowStyle,
+            ...style
+          }}
+        >
+          <div style={{ opacity: 0.5, width: '100%', height: '100%' }}>
+            <div
+              style={{
+                width: '100%',
+                height: '13%',
+                background: 'black',
+                marginTop: '0.23rem'
+                // borderRadius: '4px'
+              }}
+            />
+            <div
+              style={{
+                width: '100%',
+                height: '13%',
+                background: 'black',
+                marginTop: '0.23rem'
+                // borderRadius: '4px'
+              }}
+            />
+            <div
+              style={{
+                width: '100%',
+                height: '40%',
+                background: 'gold',
+                marginTop: '0.23rem'
+                // borderRadius: '4px'
+              }}
+            />
+          </div>
         </div>
       </div>
     );

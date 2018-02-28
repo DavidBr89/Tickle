@@ -4,37 +4,12 @@ import PropTypes from 'prop-types';
 import placeholderImg from './placeholder.png';
 import cx from './Card.scss';
 import { shadowStyle, colorClass, colorScale } from './styles';
-
-const SmallPreviewTags = ({ data, style }) => (
-  <div
-    style={{
-      display: 'flex',
-      ...style
-    }}
-    className={`${cx.textTrunc} ${cx.tags}`}
-  >
-   {data.map(t => (
-      <small key={t} className={`${cx.tag} ${colorClass(t)}`}>
-        {t}
-      </small>
-    ))}
-  </div>
-);
-
-SmallPreviewTags.propTypes = {
-  data: PropTypes.array,
-  style: PropTypes.object
-};
-
-SmallPreviewTags.defaultProps = {
-  data: ['tag', 'tag1', 'tag2'],
-  style: {}
-};
+import { PreviewTags } from './layout';
 
 class PreviewCard extends Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
-    tags: PropTypes.array.isRequired,
+    tags: PropTypes.oneOf([PropTypes.array.isRequired, null]),
     img: PropTypes.string,
     challenge: PropTypes.func.isRequired,
     onClick: PropTypes.func.isRequired,
@@ -49,7 +24,7 @@ class PreviewCard extends Component {
     style: {},
     selected: false,
     // TODO: include only type
-    challenge: { type: 'hangman' }
+    challenge: { type: null }
   };
 
   shouldComponentUpdate(nextProps) {
@@ -58,7 +33,7 @@ class PreviewCard extends Component {
       selected !== nextProps.selected ||
       title !== nextProps.title ||
       // TODO: fix array comparison
-      tags.length !== nextProps.tags.length ||
+      (tags !== null && tags.length !== nextProps.tags.length) ||
       img !== nextProps.img
     );
   }
@@ -72,7 +47,9 @@ class PreviewCard extends Component {
           padding: '5px',
           backfaceVisibility: 'hidden',
           height: '100%',
-          background: colorScale(challenge.type),
+          background: challenge.type
+            ? colorScale(challenge.type)
+            : 'whitesmoke',
           ...shadowStyle
         }}
         onClick={onClick}
@@ -85,7 +62,7 @@ class PreviewCard extends Component {
             {title}
           </div>
         </div>
-        <SmallPreviewTags data={tags} />
+        <PreviewTags small data={tags} />
         <div className="mt-1 mb-1" style={{ height: '50%' }}>
           <img
             style={{

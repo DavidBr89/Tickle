@@ -1,12 +1,12 @@
 import React, { Component, PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import chroma from 'chroma-js';
+// import chroma from 'chroma-js';
 
 import { shallowEqualProps } from 'shallow-equal-props';
 
 import placeholderImg from './placeholder.png';
 import { Modal, ModalBody } from '../utils/modal';
-import { MediaSearch, MediaOverview } from './MediaSearch';
+import { MediaSearch, MediaOverview, ChallengeSearch } from './MediaSearch';
 import { cardLayout } from './styles';
 
 import {
@@ -28,7 +28,7 @@ import CardHeader from './CardHeader';
 
 const defaultProps = {
   title: null,
-  challenge: { type: 'gap text' },
+  challenge: { type: null },
   // date: '28/04/2012 10:00',
   tags: null,
   img: placeholderImg,
@@ -158,11 +158,13 @@ class ReadCardFront extends Component {
 class EditCardFront extends PureComponent {
   static propTypes = {
     ...ReadCardFront.propTypes,
-    onAttrUpdate: PropTypes.func
+    onAttrUpdate: PropTypes.func,
+    allChallenges: PropTypes.array
   };
   static defaultProps = {
     ...ReadCardFront.defaultProps,
-    onAttrUpdate: d => d
+    onAttrUpdate: d => d,
+    allChallenges: []
   };
 
   constructor(props) {
@@ -192,7 +194,7 @@ class EditCardFront extends PureComponent {
 
   modalWriteContent(modalTitle) {
     const { data } = this.state;
-    const { uiColor, background } = this.props;
+    const { uiColor, background, allChallenges } = this.props;
     // TODO: img
     const { title, tags, img, description, media, challenge } = data;
     switch (modalTitle) {
@@ -250,7 +252,7 @@ class EditCardFront extends PureComponent {
         return (
           <div>
             <MediaSearch
-              media={media}
+              media={media || []}
               uiColor={uiColor}
               background={background}
               onSubmit={mediaItems => {
@@ -260,7 +262,25 @@ class EditCardFront extends PureComponent {
           </div>
         );
       case 'Challenge':
-        return <div>challenge</div>;
+        return (
+          <ModalBody uiColor={uiColor}>
+            <ChallengeSearch
+              onSubmit={ch => {
+                this.setFieldState({ challenge: ch });
+              }}
+              selected={challenge.url}
+              uiColor={uiColor}
+              type="Challenge"
+              data={allChallenges.map(d => ({
+                url: d.url,
+                title: d.url,
+                descr: '',
+                thumbnail: d.url,
+                type: 'hangman'
+              }))}
+            />
+          </ModalBody>
+        );
       default:
         return <div>error</div>;
     }

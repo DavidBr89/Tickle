@@ -27,12 +27,11 @@ import CardCreator from './CardCreator';
 const mapStateToProps = state => ({
   ...state.CardCreator,
   // TODO: check later when real cards changed
-  cards: state.CardCreator.cards.sort((a, b) => b.id - a.id),
+  cards: state.CardCreator.cards.sort((a, b) => b.date - a.date),
   selectedCardId: state.CardCreator.selected
     ? state.CardCreator.selected.id
     : null,
-  user: state.user,
-  challenges: state.Login.challenges
+  user: state.user
 });
 
 const mapDispatchToProps = dispatch => ({

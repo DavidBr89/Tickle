@@ -664,7 +664,8 @@ const tip = timeParse('%d/%m/%Y');
 const dummyCards = rawDummyCards
   .sort((b, a) => tip(b.date) - tip(a.date))
   .map((d, i) => {
-    d.id = i;
+    d.id = i + 1;
+    d.date = tip(d.date);
     return d;
   });
 
