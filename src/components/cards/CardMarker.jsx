@@ -21,9 +21,9 @@ class CardMarker extends Component {
     edit: false
   };
 
-  shouldComponentUpdate() {
-    return false;
-  }
+  // shouldComponentUpdate() {
+  //   return false;
+  // }
 
   render() {
     const { challenge, style, edit, onClick } = this.props;
@@ -31,9 +31,10 @@ class CardMarker extends Component {
       <div
         style={{
           border: edit ? '2px dashed black' : null,
-          padding: '15%',
-          width: '115%',
-          height: '115%'
+          // padding: '15%',
+          width: '9vw',
+          height: '6vh',
+          ...style
         }}
       >
         <div
@@ -45,8 +46,7 @@ class CardMarker extends Component {
             height: '100%',
             padding: '0.2rem',
             border: '1px solid grey',
-            ...shadowStyle,
-            ...style
+            ...shadowStyle
           }}
         >
           <div style={{ opacity: 0.5, width: '100%', height: '100%' }}>

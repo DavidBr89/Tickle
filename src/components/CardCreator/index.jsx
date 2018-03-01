@@ -31,6 +31,7 @@ const mapStateToProps = state => ({
   selectedCardId: state.CardCreator.selected
     ? state.CardCreator.selected.id
     : null,
+  cardIds: state.CardCreator.cards.map(d => d.id),
   user: state.user
 });
 

@@ -17,7 +17,6 @@ import CardBack from './CardBack';
 import CardFront from './CardFront';
 
 import PreviewCard from './PreviewCard';
-import PlaceholderCard from './PlaceholderCard';
 import CardMarker from './CardMarker';
 
 import { colorScale } from './styles';
@@ -80,7 +79,9 @@ class Card extends React.Component {
         frontView: !oldState.frontView
       }));
     };
-    const background = challenge.type ? colorScale(challenge.type) : 'whitesmoke';
+    const background = challenge.type
+      ? colorScale(challenge.type)
+      : 'whitesmoke';
     const uiColor = chroma(background).darken(1);
 
     const updateAttrFunc = { onAttrUpdate: edit ? onAttrUpdate : null };
@@ -131,4 +132,4 @@ class Card extends React.Component {
   }
 }
 
-export { Card, PreviewCard, PlaceholderCard, CardMarker };
+export { Card, PreviewCard, CardMarker };

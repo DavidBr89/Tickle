@@ -84,6 +84,7 @@ const defaultState = {
   },
   CardCreator: {
     cards: dummyCards,
+    userLocation: defaultLocation,
     width,
     height,
     mapViewport: { ...defaultLocation, zoom: mapZoom },

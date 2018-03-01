@@ -18,7 +18,7 @@ function round(x, n) {
 }
 
 // TODO: fix accessor function of DIVOverlay
-class DivOverlay extends PureComponent {
+class DivOverlay extends Component {
   static propTypes = {
     cardClickHandler: PropTypes.func.isRequired,
     data: PropTypes.array.isRequired,
@@ -41,7 +41,11 @@ class DivOverlay extends PureComponent {
 
   redraw(opt) {
     const { data, children, width, height } = this.props;
-    return data.map(c => {
+    // TODO: unsafe
+    let dataArray = data;
+    if (!Array.isArray(data)) dataArray = [data];
+
+    return dataArray.map(c => {
       // TODO maybe remove loc attr
       const loc = [c.loc.longitude, c.loc.latitude];
       const pixel = opt.project(loc);
@@ -241,8 +245,8 @@ class AnimMarker extends Component {
         onClick={onClick}
         style={{
           position: 'absolute',
-          left: selected ? `${offsetX}px` : `${x - width / 2}px`,
-          top: selected ? `${offsetY}px` : `${y - height / 2}px`,
+          left: selected ? offsetX : x - width / 2 + offsetX,
+          top: selected ? offsetY : y - height / 2 + offsetY,
           width: `${width}px`,
           height: `${height}px`,
           transition: `left ${delay}s, top ${delay}s, width ${delay}s, height ${delay}s`
@@ -311,15 +315,14 @@ class AnimMarker extends Component {
 
 AnimMarker.propTypes = {
   delay: PropTypes.number,
-  throttle: PropTypes.bool,
-  width: PropTypes.string.isRequired,
-  height: PropTypes.string.isRequired,
-  selected: PropTypes.bool.isRequired,
-  x: PropTypes.number.isRequired,
-  y: PropTypes.number.isRequired,
+  width: PropTypes.string,
+  height: PropTypes.string,
+  selected: PropTypes.bool,
+  x: PropTypes.number,
+  y: PropTypes.number,
   offsetX: PropTypes.number,
   offsetY: PropTypes.number,
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node,
   preview: PropTypes.node,
   node: PropTypes.object
 };
@@ -330,7 +333,12 @@ AnimMarker.defaultProps = {
   node: null,
   offsetX: 0,
   offsetY: 0,
-  throttle: false
+  selected: false,
+  x: 0,
+  y: 0,
+  width: 40,
+  height: 50,
+  children: <div style={{ background: 'blue' }} />
 };
 
 const UserMarker = ({ x, y }) => (

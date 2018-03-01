@@ -49,6 +49,12 @@ $black:#3c3c3c;
     --black:$black;
 }
 
+
+.shadow {
+  box-shadow: 0.4rem 0.4rem lightgrey;
+  border: 1px solid grey;
+};
+
 .btn {
   @extend .btn;
   border-radius: 0;

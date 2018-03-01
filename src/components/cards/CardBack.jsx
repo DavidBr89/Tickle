@@ -134,6 +134,7 @@ class CardBackSkeleton extends Component {
           onClick={selectField('map')}
         >
           <MapAreaControl
+            {...this.props}
             {...loc}
             {...isExtended('map')}
             onClose={unSelectField('map')}

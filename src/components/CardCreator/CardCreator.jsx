@@ -162,7 +162,7 @@ class CardCreator extends Component {
                 height={height}
                 onViewportChange={!isDragging ? changeMapViewport : null}
               >
-                <DivOverlay {...mapState} data={[cardTemplate, ...cards]}>
+                <DivOverlay {...mapState} data={cards}>
                   {(c, [x, y]) => (
                     <AnimMarker
                       key={c.id}
@@ -182,7 +182,7 @@ class CardCreator extends Component {
                           dropHandler={createCardAction}
                           id={c.id}
                         >
-                          <CardMarker {...c} edit={c.template} />
+                          <CardMarker {...c} edit={false} />
                         </DragSourceCont>
                       }
                     >
@@ -191,11 +191,55 @@ class CardCreator extends Component {
                         {...c}
                         allChallenges={challenges}
                         onClose={() => selectCardAction()}
-                        onAttrUpdate={
-                          c.template
-                            ? updateCardTemplateAction
-                            : updateCardAttrsAction
-                        }
+                        onAttrUpdate={updateCardAttrsAction}
+                        style={{
+                          width: '100%',
+                          height: '100%'
+                        }}
+                      />
+                    </AnimMarker>
+                  )}
+                </DivOverlay>
+
+                <DivOverlay {...mapState} data={cardTemplate}>
+                  {c => (
+                    <AnimMarker
+                      key={c.id}
+                      selected={extCardId === c.id}
+                      width={extCardId === c.id ? width - cardPadding : 150}
+                      height={extCardId === c.id ? height - cardPadding : 0}
+                      offsetX={0}
+                      offsetY={0}
+                      x={width / 2}
+                      y={height / 2}
+                      node={this.node}
+                      preview={
+                        selectedCardId === c.id ? (
+                          <div
+                            className="p-3 shadow rounded"
+                            style={{
+                              border: '1px dashed var(--black)',
+                              background: 'whitesmoke',
+                              opacity: 0.7,
+                              transition: 'opacity 1s',
+                              width: 150,
+                              textAlign: 'center',
+                              pointerEvents: 'none'
+                            }}
+                          >
+                            <h3>{`${
+                              isDragging ? 'drop' : 'drag'
+                            } card here`}</h3>
+                          </div>
+                        ) : null
+                      }
+                    >
+                      <Card
+                        edit
+                        {...c}
+                        allChallenges={challenges}
+                        onClose={() => selectCardAction()}
+                        onAttrUpdate={updateCardTemplateAction}
                         style={{
                           width: '100%',
                           height: '100%'
@@ -235,11 +279,12 @@ class CardCreator extends Component {
                 >
                   <DragSourceCont
                     dragHandler={dragCardAction}
-                    id={cards.length}
+                    id={cardTemplate.id}
                   >
-                    <PlaceholderCard
+                    <PreviewCard
                       {...cardTemplate}
                       onClick={() => selectCardAction(cardTemplate)}
+                      edit
                       style={transitionStyle(cardTemplate)}
                     />
                   </DragSourceCont>

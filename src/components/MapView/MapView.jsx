@@ -163,7 +163,7 @@ class MapView extends PureComponent {
     const mapViewport = {
       ...mapDim,
       ...centerLocation,
-      zoom: mapZoom,
+      zoom: mapZoom
       // ...trans
     };
     // const gridConfig = this.gridSpan();
@@ -214,17 +214,12 @@ class MapView extends PureComponent {
                     selected={extCardId === c.id}
                     width={extCardId === c.id ? width - cardPadding : 40}
                     height={extCardId === c.id ? height - cardPadding : 50}
-                    offsetX={3}
+                    offsetX={extCardId === c.id ? 3 : 0}
                     offsetY={3}
                     x={x + 5}
                     y={y + 3}
                     node={this.node}
-                    preview={
-                      <CardMarker
-                        {...c}
-                        style={{ width: '70%', height: '70%' }}
-                      />
-                    }
+                    preview={<CardMarker {...c} />}
                   >
                     <Card
                       {...c}

@@ -6,7 +6,8 @@ import { scaleOrdinal } from 'd3';
 
 import { Wrapper } from '../utils';
 import MapAreaRadius from '../utils/map-layers/MapAreaRadius';
-import { UserOverlay } from '../utils/map-layers/DivOverlay';
+import CardMarker from './CardMarker';
+import { DivOverlay, UserOverlay } from '../utils/map-layers/DivOverlay';
 
 function MapAreaForm({ ...props }) {
   const {
@@ -83,7 +84,9 @@ class MapAreaControl extends Component {
     onClose: PropTypes.func,
     uiColor: PropTypes.string,
     onChange: PropTypes.func,
-    edit: PropTypes.bool
+    edit: PropTypes.bool,
+    markerHeight: PropTypes.number,
+    markerWidth: PropTypes.number
   };
 
   static defaultProps = {
@@ -92,13 +95,15 @@ class MapAreaControl extends Component {
     onClose: d => d,
     uiColor: 'black',
     onChange: d => d,
-    edit: false
+    edit: false,
+    markerHeight: 40,
+    markerWidth: 30
   };
 
   constructor(props) {
     super(props);
     const { latitude, longitude, radius } = props;
-    this.state = { userLocation: { latitude, longitude }, radius };
+    this.state = { userLocation: { latitude: 0, longitude: 0 }, radius };
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -126,8 +131,12 @@ class MapAreaControl extends Component {
       extended,
       onClose,
       uiColor,
-      edit
+      edit,
+      markerWidth,
+      markerHeight,
+      loc
     } = this.props;
+
     const { userLocation, radius } = this.state;
     const radRange = [100, 1000, 5000, 10000];
     const scaleRad = scaleOrdinal()
@@ -170,9 +179,7 @@ class MapAreaControl extends Component {
                   style={{ float: 'right', padding: '2px 6px' }}
                   onClick={onClose}
                 >
-                  <i
-                    className="fa fa-2x fa-minus"
-                  />
+                  <i className="fa fa-2x fa-minus" />
                 </button>
 
                 {edit && (
@@ -195,13 +202,22 @@ class MapAreaControl extends Component {
               <MapAreaRadius
                 userLocation={userLocation}
                 mapViewport={mapViewport(width, height)}
-                cardPosition={{ latitude, longitude }}
+                cardPosition={{ ...loc }}
                 radius={radius}
               />
-              <UserOverlay
-                {...mapViewport(width, height)}
-                location={userLocation}
-              />
+              <DivOverlay {...mapViewport(width, height)} data={[{ loc }]}>
+                {(_, [left, top]) => (
+                  <CardMarker
+                    style={{
+                      position: 'absolute',
+                      left: left - markerWidth / 2,
+                      top: top - markerHeight / 2,
+                      width: markerWidth,
+                      height: markerHeight,
+                    }}
+                  />
+                )}
+              </DivOverlay>
             </MapGL>
           </div>
         )}

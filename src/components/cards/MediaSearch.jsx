@@ -4,6 +4,7 @@ import $ from 'jquery';
 // import MyGrid from 'mygrid/dist';
 import cxs from 'cxs';
 import giphyReq from 'giphy-api';
+import fetchJsonp from 'fetch-jsonp';
 
 // import { DDG } from 'node-ddg-api';
 
@@ -341,7 +342,7 @@ class MediaSearch extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { selected: 'overview' };
+    this.state = { selected: 'wikipedia' };
   }
 
   render() {
@@ -406,19 +407,6 @@ class MediaSearch extends Component {
             role="tablist"
           >
             <button
-              type="button"
-              className="btn"
-              onClick={updState('overview')}
-              style={btnStyle(selected, 'overview')}
-              id="overview"
-            >
-              <i
-                className={`fa fa-link fa-1x col-1`}
-                style={{ fontSize: '19px' }}
-                aria-hidden="true"
-              />
-            </button>
-            <button
               className="btn"
               type="button"
               onClick={updState('wikipedia')}
@@ -460,6 +448,19 @@ class MediaSearch extends Component {
               >
                 GIF
               </small>
+            </button>
+            <button
+              type="button"
+              className="btn"
+              onClick={updState('overview')}
+              style={btnStyle(selected, 'overview')}
+              id="overview"
+            >
+              <i
+                className={`fa fa-link fa-1x col-1`}
+                style={{ fontSize: '19px' }}
+                aria-hidden="true"
+              />
             </button>
           </div>
           <div className="tab-content">
@@ -517,6 +518,14 @@ class MetaSearch extends Component {
     if (this.state.selected !== null) this.scrollTo(this.state.selected);
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.defaultData.length > 0) {
+      this.setState({
+        selected: nextProps.selected,
+        results: nextProps.search === null ? nextProps.defaultData : []
+      });
+    }
+  }
   // componentWillReceiveProps(nextProps) {
   //   nextProps.search().then(results => {
   //     this.setState({ results });
@@ -676,11 +685,13 @@ class MediaOverview extends Component {
         <ScrollView ref={scroller => (this._scroller = scroller)}>
           <div className={fullDim} style={{ overflowY: 'scroll' }}>
             {data.length === 0 && <h3>{'No media added to this Card!'} </h3>}
-            <div style={{ paddingRight: '5%', height: `${data.length * 30}%` }}>
+            <div
+              style={{ paddingRight: '5%', height: `${data.length * 40}vh` }}
+            >
               {data.map(d => (
                 <div
                   className="mb-3"
-                  style={{ height: d.thumbnail ? '40%' : null }}
+                  style={{ height: d.thumbnail ? '40vh' : null }}
                 >
                   <ScrollElement name={d.url}>
                     <ThumbCell
@@ -703,20 +714,84 @@ class MediaOverview extends Component {
   }
 }
 
-const ChallengeSearch = ({ data, selected, uiColor, onSubmit }) => (
-  <MetaSearch
-    onSelect={([ch]) => onSubmit(ch)}
-    selected={selected}
-    uiColor={uiColor}
-    type="Challenge"
-    defaultData={data.map(d => ({
-      url: d.url,
-      title: d.url,
-      descr: '',
-      thumbnail: d.url,
-      type: 'hangman'
-    }))}
-  />
-);
+class ChallengeSearch extends Component {
+  static propTypes = {
+    data: PropTypes.array,
+    selected: PropTypes.string,
+    uiColor: PropTypes.string,
+    onSubmit: PropTypes.func
+  };
+
+  static defaultProps = {
+    data: [],
+    selected: '',
+    uiColor: 'black',
+    onSubmit: d => d
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = { defaultData: [] };
+  }
+
+  componentDidMount() {
+    const { data } = this.props;
+
+    // TODO: fetch thumbnails
+    setTimeout(() => {
+      const defaultData = data.map(d => ({
+        url: d.url,
+        title: d.url,
+        descr: '',
+        thumbnail: null,
+        type: 'hangman'
+      }));
+      this.setState({ defaultData });
+    }, 1);
+    // Promise.all(
+    //   data.map(d =>
+    //     fetchJsonp(
+    //       `https://guteurls.de/api?u=${
+    //         d.url
+    //       }&r=http://your-homepage.com/computer-news.php&e=7jnoaudset42xsp5s&t=json`
+    //     )
+    //   )
+    // )
+    //   .then(results => {
+    //     const defaultData = data.map((d, i) => ({
+    //       url: d.url,
+    //       title: results[i].title,
+    //       descr: '',
+    //       thumbnail: results[i].img,
+    //       type: 'hangman'
+    //     }));
+    //     this.setState({ defaultData });
+    //   })
+    //   .catch(() => {
+    //     const defaultData = data.map(d => ({
+    //       url: d.url,
+    //       title: d.url,
+    //       descr: '',
+    //       thumbnail: null,
+    //       type: 'hangman'
+    //     }));
+    //     this.setState({ defaultData });
+    //   });
+  }
+
+  render() {
+    const { selected, uiColor, onSubmit } = this.props;
+    const { defaultData } = this.state;
+    return (
+      <MetaSearch
+        onSelect={([ch]) => onSubmit(ch)}
+        selected={selected}
+        uiColor={uiColor}
+        type="Challenge"
+        defaultData={defaultData}
+      />
+    );
+  }
+}
 
 export { MediaSearch, MediaOverview, ChallengeSearch };
