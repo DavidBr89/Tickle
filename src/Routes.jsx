@@ -52,6 +52,7 @@ const defaultState = {
   height,
   mapZoom,
   centerLocation: defaultLocation,
+  defaultZoom: mapZoom,
   user: {
     name: 'jan',
     email: 'jmaushag@gmail.com',
@@ -65,18 +66,16 @@ const defaultState = {
     challenges: []
   },
   MapView: {
+    // TODO: calc value
+    latOffset: 0.0028,
+    defaultZoom: mapZoom,
     cards: dummyCards,
-    mapZoom,
-    centerLocation: defaultLocation,
+    zoom: mapZoom,
+    direction: null,
+    ...defaultLocation,
     userLocation: defaultLocation,
     height: 100,
     width: 100,
-    defaultHeight: 100,
-    gridWidth: 100,
-    maxHeight: 100,
-    minHeight: 100,
-    mapHeight: 100,
-    gridHeight: 100,
     cardChallengeOpen: false,
     extCardId: false,
     AppOpenFirstTime: true,
@@ -96,14 +95,29 @@ const defaultState = {
   }
 };
 
-const store = createStore(
-  rootReducer,
-  defaultState,
-  applyMiddleware(
-    thunkMiddleware, // lets us dispatch() functions
-    loggerMiddleware // neat middleware that logs actions
-  )
-);
+function configureStore(rootReducer, initialState) {
+  const store = createStore(
+    rootReducer,
+    initialState,
+    applyMiddleware(
+      thunkMiddleware, // lets us dispatch() functions
+      loggerMiddleware // neat middleware that logs actions
+    )
+  );
+
+  if (module.hot) {
+    // Enable Webpack hot module replacement for reducers
+    module.hot.accept('./rootReducer', () => {
+      console.log('hit');
+      const nextRootReducer = require('./rootReducer');
+      store.replaceReducer(nextRootReducer);
+    });
+  }
+
+  return store;
+}
+
+const store = configureStore(rootReducer, defaultState);
 
 // window.addEventListener('load', () => {
 //   store.dispatch(

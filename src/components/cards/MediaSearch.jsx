@@ -358,6 +358,7 @@ class MediaSearch extends Component {
     const updState = sel => () => this.setState({ selected: sel });
 
     const activeTab = sel => {
+      console.log('sel', sel);
       switch (sel) {
         case 'overview':
           return (
@@ -519,13 +520,23 @@ class MetaSearch extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.defaultData.length > 0) {
+    const { search } = nextProps;
+    if (search !== null) {
+      search().then(results => {
+        this.setState({ results });
+      });
+    } else {
       this.setState({
         selected: nextProps.selected,
-        results: nextProps.search === null ? nextProps.defaultData : []
+        results: nextProps.defaultData
       });
     }
+    // }
   }
+
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return true;
+  // }
   // componentWillReceiveProps(nextProps) {
   //   nextProps.search().then(results => {
   //     this.setState({ results });

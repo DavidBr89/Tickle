@@ -125,3 +125,8 @@ fieldset {
   margin: 0 !important;
 }
 
+.fixed-bottom-right {
+  @extend .fixed-bottom;
+  left: unset;
+  zIndex: 4000;
+}

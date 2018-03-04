@@ -32,6 +32,7 @@ class CardMarker extends Component {
         style={{
           border: edit ? '2px dashed black' : null,
           // padding: '15%',
+          transition: 'opacity 1s',
           width: '9vw',
           height: '6vh',
           ...style

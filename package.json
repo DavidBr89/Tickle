@@ -43,6 +43,7 @@
     "jquery": "^3.2.1",
     "labella": "^1.1.2",
     "lodash": "^4.17.4",
+    "mapbox": "^1.0.0-beta9",
     "mapbox-gl": "^0.43.0",
     "materialize-css": "^0.100.2",
     "mygrid": "git+https://github.com/DinoJay/MyGrid.git",

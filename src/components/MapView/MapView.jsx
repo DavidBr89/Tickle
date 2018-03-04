@@ -9,12 +9,14 @@ import PropTypes from 'prop-types';
 // TODO: { LinearInterpolator, FlyToInterpolator }
 import MapGL, { FlyToInterpolator } from 'react-map-gl';
 import { easeCubic } from 'd3';
+import * as d3 from 'd3';
 
 // import ReactTimeout from 'react-timeout';
 // import rasterTileStyle from 'raster-tile-style';
 // import ngeohash from 'ngeohash';,
 // import cx from './MapView.scss';
 import { Card, CardMarker } from '../cards';
+import SvgOverlay from '../utils/map-layers/SvgOverlay';
 import CardGrid from './CardGrid';
 // import StartNav from './StartNav';
 // import { VisibleView, VisibleElement } from '../utils/MySensor.jsx';
@@ -35,6 +37,7 @@ import MapAreaRadius from '../utils/map-layers/MapAreaRadius';
 // import cardIconSrc from '../utils/map-layers/cardIcon.svg';
 import { Modal } from '../utils/modal';
 
+const line = d3.line();
 // const TimoutGrid = ReactTimeout(CardGrid);
 
 // import { dummyCards } from '../../dummyData';
@@ -52,11 +55,18 @@ class MapView extends PureComponent {
     selectedCardId: PropTypes.string.isRequired,
     selectedCard: PropTypes.object.isRequired,
     extCardId: PropTypes.string.isRequired,
-    centerLocation: PropTypes.object.isRequired,
+    // centerLocation: PropTypes.object.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
     cardChallengeOpen: PropTypes.bool.isRequired,
     AppOpenFirstTime: PropTypes.bool.isRequired,
+    mapViewport: PropTypes.shape({
+      width: PropTypes.number,
+      height: PropTypes.number,
+      zoom: PropTypes.number,
+      latitude: PropTypes.number,
+      longitude: PropTypes.number
+    }).isRequired,
 
     userMoveAction: PropTypes.func.isRequired,
     changeMapViewportAction: PropTypes.func.isRequired,
@@ -132,14 +142,18 @@ class MapView extends PureComponent {
   render() {
     const {
       cards,
-      mapZoom,
+      zoom,
       userLocation,
       selectedCardId,
-      centerLocation,
+      latitude,
+      longitude,
       width,
       height,
       extCardId,
       selectedCard,
+      direction,
+      mapViewport,
+      setCardOpacity,
       // AppOpenFirstTime,
       // headerPad,
 
@@ -148,25 +162,11 @@ class MapView extends PureComponent {
       selectCardAction,
       extCardAction,
       cardChallengeOpen,
-      toggleCardChallengeAction
+      toggleCardChallengeAction,
+      fetchDirectionAction
+
       // navigateFirstTimeAction
     } = this.props;
-
-    // console.log('width', mapDim);
-    const mapDim = { width, height };
-    // console.log('userLocation', userLocation, 'centerLocation', centerLocation);
-    // const trans = {
-    //   transitionDuration: 199,
-    //   transitionInterpolator: new FlyToInterpolator(),
-    //   transitionEasing: easeCubic
-    // };
-    const mapViewport = {
-      ...mapDim,
-      ...centerLocation,
-      zoom: mapZoom
-      // ...trans
-    };
-    // const gridConfig = this.gridSpan();
 
     const cardPadding = 15;
     return (
@@ -219,7 +219,14 @@ class MapView extends PureComponent {
                     x={x + 5}
                     y={y + 3}
                     node={this.node}
-                    preview={<CardMarker {...c} />}
+                    preview={
+                      <CardMarker
+                        {...c}
+                        style={{
+                          opacity: setCardOpacity(c)
+                        }}
+                      />
+                    }
                   >
                     <Card
                       {...c}
@@ -232,6 +239,24 @@ class MapView extends PureComponent {
                 )}
               </DivOverlay>
               <UserOverlay {...mapViewport} location={userLocation} />
+              <SvgOverlay
+                {...mapViewport}
+                data={
+                  direction !== null
+                    ? direction.routes[0].geometry.coordinates
+                    : []
+                }
+              >
+                {([x, y], [nx, ny]) =>
+                  nx !== null &&
+                  ny !== null && (
+                      <g>
+                      <circle r={5} cx={x} cy={y} />{' '}
+                      <path d={line([[x, y], [nx, ny]])} stroke="green" />
+                      </g>
+                  )
+                }
+              </SvgOverlay>
             </MapGL>
           </div>
 
@@ -242,6 +267,7 @@ class MapView extends PureComponent {
               selected={selectedCardId}
               onExtend={extCardAction}
               offset={0}
+              setCardOpacity={setCardOpacity}
               style={{
                 height: '26vh',
                 paddingTop: '16px',
@@ -253,6 +279,18 @@ class MapView extends PureComponent {
               }}
             />
           </div>
+          <button
+            className="btn fixed-bottom-right m-3 p-3"
+            onClick={() =>
+              fetchDirectionAction({
+                startCoords: userLocation,
+                destCoords: selectedCard.loc
+              })
+            }
+            style={{ background: 'whitesmoke', fontWeight: 'bold' }}
+          >
+            Me
+          </button>
         </div>
       </div>
     );

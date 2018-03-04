@@ -9,8 +9,7 @@ class CardGrid extends Component {
     cards: PropTypes.array.isRequired,
     onSelect: PropTypes.func.isRequired,
     onExtend: PropTypes.func.isRequired,
-    setTimeout: PropTypes.func.isRequired,
-    clearTimeout: PropTypes.func.isRequired,
+    setCardOpacity: PropTypes.func.isRequired,
     offset: PropTypes.number.isRequired,
     style: PropTypes.object,
     selected: PropTypes.number
@@ -18,7 +17,10 @@ class CardGrid extends Component {
 
   static defaultProps = {
     style: {},
-    selected: null
+    selected: null,
+    setCardOpacity(d) {
+      return d;
+    }
   };
 
   constructor(props) {
@@ -34,13 +36,20 @@ class CardGrid extends Component {
   }
 
   render() {
-    const { cards, onSelect, onExtend, style, selected } = this.props;
+    const {
+      cards,
+      onSelect,
+      onExtend,
+      style,
+      selected,
+      setCardOpacity
+    } = this.props;
     const { visibleCardId } = this.state;
 
     const onChange = d => visible => {
-      clearTimeout(this.id);
+      // clearTimeout(this.id);
       if (visible) {
-        this.id = setTimeout(() => onSelect(d.id), 10);
+        onSelect(d.id);
         this.setState({ visibleCardId: d.id });
       }
     };
@@ -52,7 +61,7 @@ class CardGrid extends Component {
           style={{
             position: 'absolute',
             left: '30vw',
-            width: '45vw',
+            width: '55vw',
             height: '30vh'
           }}
         />
@@ -85,7 +94,7 @@ class CardGrid extends Component {
                     onClick={() => visibleCardId === d.id && onExtend(d.id)}
                     selected={visibleCardId === d.id}
                     style={{
-                      opacity: visibleCardId === d.id ? null : 0.56,
+                      opacity: setCardOpacity(d),
                       transform: visibleCardId === d.id ? 'scale(1.2)' : null,
                       transition: 'transform 1s',
                       height: '100%',

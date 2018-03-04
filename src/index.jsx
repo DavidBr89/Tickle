@@ -4,10 +4,10 @@ import ReactDOM from 'react-dom';
 import 'font-awesome/css/font-awesome.css';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 import './bootstrap.scss';
 import './index.scss';
-import 'mapbox-gl/dist/mapbox-gl.css';
 import { AppContainer } from 'react-hot-loader';
 
 import Routes from './Routes';

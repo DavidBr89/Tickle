@@ -62,14 +62,12 @@ export function screenResize(options) {
   return { type: SCREEN_RESIZE, options };
 }
 
-//TODO: remove
+// TODO: remove
 export function navigateAppFirstTime(options) {
   return { type: NAVIGATE_APP_FIRST_TIME, options };
 }
-// export function toggleTodo(index) {
-//   return { type: TOGGLE_TODO, index };
-// }
-//
-// export function setVisibilityFilter(filter) {
-//   return { type: SET_VISIBILITY_FILTER, filter };
-// }
+
+export const FLY_TO_USER = 'FLY_TO_USER';
+export function flyToUser(options) {
+  return { type: FLY_TO_USER, options };
+}

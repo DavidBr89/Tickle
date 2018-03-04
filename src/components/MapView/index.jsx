@@ -10,22 +10,47 @@ import {
   playCardChallenge,
   toggleCardChallenge,
   extendSelectedCard,
-  navigateAppFirstTime
+  navigateAppFirstTime,
+  flyToUser
 } from './actions';
+
+import { fetchDirection } from './async_actions';
 
 import MapView from './MapView';
 
 // import mapViewReducer from './reducer';
 
 // Container
-const mapStateToProps = state => ({
-  ...state.MapView,
-  selectedCard:
-    //TODO: clean uo
-    state.MapView.selectedCardId !== null
-      ? state.MapView.cards.find(d => d.id === state.MapView.selectedCardId)
-      : null
-});
+const mapStateToProps = state => {
+  const {
+    selectedCardId,
+    cards,
+    width,
+    height,
+    latitude,
+    longitude,
+    zoom,
+    direction
+  } = state.MapView;
+
+  return {
+    ...state.MapView,
+    selectedCard:
+      selectedCardId !== null ? cards.find(d => d.id === selectedCardId) : null,
+    mapViewport: {
+      width,
+      height,
+      zoom,
+      latitude,
+      longitude
+    },
+    setCardOpacity(c) {
+      if (selectedCardId === c.id) return 1;
+      if (direction === null) return 0.56;
+      return 0.0;
+    }
+  };
+};
 
 const mapDispatchToProps = dispatch => ({
   cardClick: card => {
@@ -62,6 +87,14 @@ const mapDispatchToProps = dispatch => ({
   navigateFirstTimeAction: options => {
     console.log('dispatch options', options);
     dispatch(navigateAppFirstTime(options));
+  },
+  flyToUserAction: options => {
+    console.log('dispatch options', options);
+    dispatch(flyToUser(options));
+  },
+  fetchDirectionAction: options => {
+    console.log('dispatch options', options);
+    dispatch(fetchDirection(options));
   }
 });
 
