@@ -6,7 +6,7 @@ import {
   PerspectiveMercatorViewport
 } from 'viewport-mercator-project';
 
-import setBBox from './fitbounds';
+// import setBBox from './fitbounds';
 import mapboxgl from 'mapbox-gl';
 
 import {
@@ -85,39 +85,53 @@ function reducer(state = {}, action) {
     case RETRIEVE_DIRECTION: {
       const direction = action.options;
       const bbox = getBoundingBox(direction.routes[0].geometry);
-      // bbox.forEach(a => (a[1] += state.latOffset));
+      // bbox.forEach(a => (a[1] += state.latCenterOffset));
 
-      const { latitude, longitude, zoom } = new PerspectiveMercatorViewport({
-        width: state.width,
-        height: state.height
-        // latitude: state.latitude,
-        // longitude: state.longitude
+      const { width, height, latitude, longitude, zoom } = state;
+      const vp = new PerspectiveMercatorViewport({
+        width,
+        height,
+        zoom,
+        latitude,
+        longitude
       }).fitBounds(bbox, {
-        padding: 20,
-        offset: [-100, 200]
+        padding: 50,
+        offset: [0, 130]
       });
 
-      // const { latitude, longitude, zoom } = setBBox(
-      //   { width: state.width, height: state.height },
-      //   bbox,
-      //   { padding: 40 }
-      // );
+      const [bottomLng, bottomLat] = vp.unproject([width / 2, height / 3]);
+
+      const { zoom: newZoom } = vp;
 
       return {
         ...state,
         direction,
-        latitude,
-        longitude,
-        zoom
+        latitude: bottomLat, // latitude + 0.0135,
+        longitude: bottomLng,
+        zoom: newZoom,
+        // height: state.height - 200
       };
     }
-    // case FLY_TO_USER: {
-    //   return {
-    //     ...state
-    //     // centerLocation: state.userLocation,
-    //     // mapZoom: 12 // state.defaultZoom
-    //   };
-    // }
+    case FLY_TO_USER: {
+      const { width, height, latitude, longitude, zoom, userLocation } = state;
+      const vp = new PerspectiveMercatorViewport({
+        width,
+        height,
+        zoom: 18,
+        ...userLocation
+      });
+
+      const [bottomLng, bottomLat] = vp.unproject([width / 2, height / 3]);
+
+      return {
+        ...state,
+        latitude: bottomLat,
+        longitude: bottomLng,
+        zoom: vp.zoom,
+        userSelected: true
+        // mapZoom: 12 // state.defaultZoom
+      };
+    }
     case RESIZE_CARD_WINDOW: {
       return { ...state, ...action };
     }
@@ -127,12 +141,12 @@ function reducer(state = {}, action) {
       console.log('viewport', viewport);
       // const mapHeight = viewport.height;
       // const width = viewport.width;
-      const zoom = viewport.zoom;
+      const { zoom, latitude, longitude } = viewport;
 
       return {
         ...state,
-        // mapHeight,
-        // width,
+        latitude,
+        longitude,
         zoom
       };
     }
@@ -149,19 +163,35 @@ function reducer(state = {}, action) {
     case SELECT_CARD: {
       const selectedCardId = action.options;
       const selectedCard = state.cards.find(d => d.id === selectedCardId);
+      const { width, height } = state;
 
       const { longitude, latitude } =
         selectedCardId !== null
           ? { ...selectedCard.loc }
           : { ...state.userLocation };
-      // console.log('selectedCard', selectedCard);
+
+      const vp = new PerspectiveMercatorViewport({
+        width,
+        height,
+        zoom: 15,
+        latitude,
+        longitude
+      });
+      const [bottomLng, bottomLat] = vp.unproject([width / 2, height / 3]);
 
       const mapViewport = {
-        zoom: selectedCardId ? 15 : state.zoom,
-        latitude: latitude + state.latOffset,
-        longitude
+        zoom: vp.zoom,
+        latitude: bottomLat,
+        longitude: bottomLng
       };
-      return { ...state, ...mapViewport, direction: null, selectedCardId };
+
+      return {
+        ...state,
+        ...mapViewport,
+        direction: null,
+        selectedCardId,
+        userSelected: false
+      };
     }
 
     case EXTEND_SELECTED_CARD: {

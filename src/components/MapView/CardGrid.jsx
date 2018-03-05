@@ -9,6 +9,7 @@ class CardGrid extends Component {
     cards: PropTypes.array.isRequired,
     onSelect: PropTypes.func.isRequired,
     onExtend: PropTypes.func.isRequired,
+    controls: PropTypes.node.isRequired,
     setCardOpacity: PropTypes.func.isRequired,
     offset: PropTypes.number.isRequired,
     style: PropTypes.object,
@@ -31,7 +32,10 @@ class CardGrid extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return this.state.visibleCardId !== nextState.visibleCardId; // nextProps.selected !== this.props.selected;
+    return (
+      this.state.visibleCardId !== nextState.visibleCardId ||
+      this.props.controls.key !== nextProps.controls.key
+    ); // nextProps.selected !== this.props.selected;
     // return true;
   }
 
@@ -41,16 +45,17 @@ class CardGrid extends Component {
       onSelect,
       onExtend,
       style,
-      selected,
-      setCardOpacity
+      setCardOpacity,
+      controls
     } = this.props;
     const { visibleCardId } = this.state;
 
     const onChange = d => visible => {
-      // clearTimeout(this.id);
+      clearTimeout(this.id);
       if (visible) {
         onSelect(d.id);
-        this.setState({ visibleCardId: d.id });
+        // TODO: fix
+        this.id = setTimeout(() => this.setState({ visibleCardId: d.id }), 0);
       }
     };
 
@@ -60,17 +65,19 @@ class CardGrid extends Component {
           ref={node => (this.node = node)}
           style={{
             position: 'absolute',
-            left: '30vw',
-            width: '55vw',
-            height: '30vh'
+            left: '25vw',
+            width: '40vw',
+            height: '48vh'
+            // border: '1px grey dashed'
           }}
         />
         <div
           style={{
             position: 'absolute',
             overflowX: 'scroll',
+            overflowY: 'visible',
             width: '100%',
-            height: '30vh',
+            height: '38vh',
             zIndex: 2000
           }}
         >
@@ -83,7 +90,12 @@ class CardGrid extends Component {
             style={style}
           >
             {cards.map(d => (
-              <div key={d.id}>
+              <div className="w-100" key={d.id}>
+                <div className="w-100">
+                  <div style={{ opacity: visibleCardId === d.id ? 1 : 0 }}>
+                    {controls}
+                  </div>
+                </div>
                 <VisibilitySensor
                   onChange={onChange(d)}
                   scrollCheck
@@ -102,6 +114,14 @@ class CardGrid extends Component {
                     }}
                   />
                 </VisibilitySensor>
+                {
+                  // <button
+                  // className="btn ml-3"
+                  // style={{ background: 'whitesmoke' }}
+                  // >
+                  // Go
+                  // </button>
+                }
               </div>
             ))}
           </Grid>

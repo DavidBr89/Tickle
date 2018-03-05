@@ -67,7 +67,8 @@ const defaultState = {
   },
   MapView: {
     // TODO: calc value
-    latOffset: 0.0028,
+    latCenterOffset: 0.0018,
+    latBottom: 0.003,
     defaultZoom: mapZoom,
     cards: dummyCards,
     zoom: mapZoom,

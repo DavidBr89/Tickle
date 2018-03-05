@@ -52,41 +52,35 @@ const ArthurDeGreefCard = {
   linkedCards: ['Frank Liszt', 'Music school Arthur de Greef', 'next tag, yeah']
 };
 
-const ArthurDeGreefCard2 = {
-  title: 'The peculiar story of Arthur De Greef',
+const GrandPlace = {
+  title: 'The mystery of the town hall',
   challenge: { type: 'gap text' },
   date: '28/04/2012 00:00:00',
-  tags: ['Art', 'Culture', 'Music'],
+  tags: ['History', 'Culture', 'Civics', 'Brussels'],
   img:
-    'https://drive.google.com/uc?export=view&id=1N9Ed6a_CDa8SEMZeLaxULF4FtkHBQf4Feg',
+    'https://www.askideas.com/media/47/Upper-Facade-Of-The-Grand-Place-In-Brussels.jpg',
   xpPoints: 100,
   // TODO: remove in future to component
   description:
-    'Pianist Arthur De Greef born in Louvain. He was a pupil of Frank Liszt. I do not why there is statue is placed here. There is music school with the same name not far.',
-  loc: { latitude: 50.82608, longitude: 4.378944 },
-  place: 'Park next to my Home',
+    'discover the marvelous mystery of the statue high up in the town hall of the Grand Place',
+  loc: { latitude: 50.846723, longitude: 4.352411 },
   author: 'Jan',
   media: [
     {
-      type: 'photo',
-      title: 'franz-liszt---the-first-rock-star',
-      url: ''
+      type: 'Article',
+      title: 'Grand Place description',
+      url: 'https://www.brussels.info/grand-place/'
     },
     {
       type: 'hyperlink',
-      title: 'franz-liszt---the-first-rock-star',
-      url: ''
-    },
-    {
-      type: 'game',
-      title: 'franz-liszt---the-first-rock-star',
-      url: ''
+      title: 'Wikipedia',
+      url: 'https://en.wikipedia.org/wiki/Grand_Place'
     }
   ],
   comments: [
     {
       user: 'Nils',
-      comment: 'I did not know that he was such a famous composer'
+      comment: 'Woah what great insight'
     },
     {
       user: 'Babba',
@@ -103,19 +97,21 @@ const ArthurDeGreefCard2 = {
   linkedCards: ['Frank Liszt', 'Music school Arthur de Greef']
 };
 
-const ArthurDeGreefCard3 = {
-  title: 'The peculiar story of Arthur De Greef',
+const RoyalLibrary = {
+  title: 'Royal Library',
   challenge: { type: 'gap text' },
   date: '28/04/2012 00:00:00',
   tags: ['Art', 'Culture', 'Music'],
   img:
-    'https://drive.google.com/uc?export=view&id=1N9Ed6a_CDa8SEMZeLaxULF4FtkHBQf4Feg',
+    'https://c1.staticflickr.com/3/2772/4393358060_794599aafa_z.jpg',
   xpPoints: 100,
   // TODO: remove in future to component
   description:
-    'Pianist Arthur De Greef born in Louvain. He was a pupil of Frank Liszt. I do not why there is statue is placed here. There is music school with the same name not far.',
-  loc: { latitude: 50.828797, longitude: 4.352191 },
-  place: 'Park next to my Home',
+    'The place where you not only find boring books but also movies, music and computer free to use',
+  loc: {
+    latitude: 50.843506,
+    longitude: 4.356786
+  },
   author: 'Jan',
   media: [
     {
@@ -216,7 +212,6 @@ const FranzLisztCard = {
     'HardRock Cafe Brussels'
   ]
 };
-
 const jimiHendrixCard = {
   title: 'James Hendrix Father in Belgium',
   challenge: {
@@ -650,8 +645,8 @@ const rawDummyCards = [
   jimiHendrixCard,
   jimiHendrixCard2,
   ArthurDeGreefCard,
-  ArthurDeGreefCard2,
-  ArthurDeGreefCard3,
+  GrandPlace,
+  RoyalLibrary,
   FranzLisztCard,
   VUBcard,
   VUBSports,

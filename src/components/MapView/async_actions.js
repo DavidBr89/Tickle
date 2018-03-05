@@ -1,4 +1,4 @@
-import { flyToUser } from './actions';
+// import { flyToUser } from './actions';
 import fetchJsonp from 'fetch-jsonp';
 import Mapbox from 'mapbox';
 
@@ -24,14 +24,14 @@ export function retrieveDirection(options) {
 export function fetchDirection({ startCoords, destCoords }) {
   console.log('test', startCoords, destCoords);
   return function(dispatch) {
-    dispatch(flyToUser());
+    // dispatch(flyToUser());
     client.getDirections(
       [
         { latitude: startCoords.latitude, longitude: startCoords.longitude },
         { latitude: destCoords.latitude, longitude: destCoords.longitude }
       ],
       {
-        profile: 'driving-traffic',
+        profile: 'walking',
         instructions: 'html',
         alternatives: false,
         geometries: 'geojson'

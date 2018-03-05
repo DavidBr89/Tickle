@@ -34,6 +34,8 @@
 @import "~bootstrap/scss/carousel";
 @import "~bootstrap/scss/utilities";
 
+@import url(https://fonts.googleapis.com/css?family=Material+Icons);
+
 // .slick-center {
 //   transform: scale(1.08);
 // }
@@ -129,4 +131,11 @@ fieldset {
   @extend .fixed-bottom;
   left: unset;
   zIndex: 4000;
+}
+
+.fixed-top-center{
+  @extend .fixed-top;
+  left: 50%;
+  z-index: 4000;
+  transform: translateX(-50%);
 }

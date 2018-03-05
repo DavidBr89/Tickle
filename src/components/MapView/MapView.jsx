@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import MapGL, { FlyToInterpolator } from 'react-map-gl';
 import { easeCubic } from 'd3';
 import * as d3 from 'd3';
+import { colorScale } from '../cards/styles';
 
 // import ReactTimeout from 'react-timeout';
 // import rasterTileStyle from 'raster-tile-style';
@@ -40,12 +41,16 @@ import { Modal } from '../utils/modal';
 const line = d3.line();
 // const TimoutGrid = ReactTimeout(CardGrid);
 
-// import { dummyCards } from '../../dummyData';
-//
-// // TODO:  change
-// dummyCards.forEach((d, i) => {
-//   d.id = i;
-// });
+const nextContextAction = ({ direction, userSelected }) => {
+  console.log(direction, userSelected);
+  if (userSelected && direction !== null) {
+    return 'selectCard';
+  }
+  if (direction === null) {
+    return 'direction';
+  }
+  return 'flyToUserAction';
+};
 
 class MapView extends PureComponent {
   static propTypes = {
@@ -73,6 +78,7 @@ class MapView extends PureComponent {
     selectCardAction: PropTypes.func.isRequired,
     extCardAction: PropTypes.func.isRequired,
     toggleCardChallengeAction: PropTypes.func.isRequired,
+    flyToUserAction: PropTypes.func.isRequired,
     screenResizeAction: PropTypes.func.isRequired
   };
 
@@ -154,6 +160,7 @@ class MapView extends PureComponent {
       direction,
       mapViewport,
       setCardOpacity,
+      userSelected,
       // AppOpenFirstTime,
       // headerPad,
 
@@ -163,7 +170,8 @@ class MapView extends PureComponent {
       extCardAction,
       cardChallengeOpen,
       toggleCardChallengeAction,
-      fetchDirectionAction
+      fetchDirectionAction,
+      flyToUserAction
 
       // navigateFirstTimeAction
     } = this.props;
@@ -250,17 +258,31 @@ class MapView extends PureComponent {
                 {([x, y], [nx, ny]) =>
                   nx !== null &&
                   ny !== null && (
-                      <g>
-                      <circle r={5} cx={x} cy={y} />{' '}
-                      <path d={line([[x, y], [nx, ny]])} stroke="green" />
-                      </g>
-                  )
+                  <g>
+                        <circle
+                        r={3}
+                        cx={x}
+                        cy={y}
+                        fill={colorScale(
+                            selectedCard.challenge
+                              ? selectedCard.challenge.type
+                              : 'quiz'
+                          )}
+                      />
+                      <path
+                        d={line([[x, y], [nx, ny]])}
+                        style={{
+                            stroke: colorScale(selectedCard.challenge.type),
+                            strokeWidth: 8
+                          }}
+                        />
+                    </g>
+                    )
                 }
               </SvgOverlay>
             </MapGL>
           </div>
-
-          <div style={{ paddingTop: 60 }}>
+          <div style={{ paddingBottom: 40 }}>
             <CardGrid
               cards={cards}
               onSelect={selectCardAction}
@@ -268,6 +290,50 @@ class MapView extends PureComponent {
               onExtend={extCardAction}
               offset={0}
               setCardOpacity={setCardOpacity}
+              controls={
+                <div
+                  key={nextContextAction({ direction, userSelected })}
+                  style={{ display: 'flex', marginBottom: 30 }}
+                >
+                  <button
+                    className="btn w-100"
+                    style={{
+                      background: 'whitesmoke',
+                      fontWeight: 'bold',
+                      transition: 'opacity 1s'
+                      // position: 'absolute',
+                      // top: -100
+                    }}
+                    onClick={() => {
+                      const action = nextContextAction({
+                        direction,
+                        userSelected
+                      });
+                      if (action === 'direction') {
+                        fetchDirectionAction({
+                          startCoords: userLocation,
+                          destCoords: selectedCard.loc
+                        });
+                      }
+                      if (action === 'selectCard') {
+                        selectCardAction(selectedCardId);
+                      } else flyToUserAction();
+                    }}
+                  >
+                    {direction === null ? (
+                      <i
+                        className="mi mi-directions-run"
+                        style={{ fontSize: 25 }}
+                      />
+                    ) : (
+                      <i
+                        className="mi mi-location-on"
+                        style={{ fontSize: 25 }}
+                      />
+                    )}
+                  </button>
+                </div>
+              }
               style={{
                 height: '26vh',
                 paddingTop: '16px',
@@ -279,18 +345,6 @@ class MapView extends PureComponent {
               }}
             />
           </div>
-          <button
-            className="btn fixed-bottom-right m-3 p-3"
-            onClick={() =>
-              fetchDirectionAction({
-                startCoords: userLocation,
-                destCoords: selectedCard.loc
-              })
-            }
-            style={{ background: 'whitesmoke', fontWeight: 'bold' }}
-          >
-            Me
-          </button>
         </div>
       </div>
     );

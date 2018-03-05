@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import 'font-awesome/css/font-awesome.css';
+import 'material-icons/css/material-icons.css';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 import 'mapbox-gl/dist/mapbox-gl.css';

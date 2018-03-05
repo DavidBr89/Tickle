@@ -4448,6 +4448,10 @@ mapbox@^1.0.0-beta9:
     es6-promise "^4.0.5"
     rest "^2.0.0"
 
+material-icons@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/material-icons/-/material-icons-0.1.0.tgz#af3d9117767bd7cefd1f29493fdd7ab4a931cbc8"
+
 materialize-css@^0.100.2:
   version "0.100.2"
   resolved "https://registry.yarnpkg.com/materialize-css/-/materialize-css-0.100.2.tgz#9ca32b24904c9a04491fc7d0a2e9402e7b1dae07"

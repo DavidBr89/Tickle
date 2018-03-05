@@ -71,3 +71,8 @@ export const FLY_TO_USER = 'FLY_TO_USER';
 export function flyToUser(options) {
   return { type: FLY_TO_USER, options };
 }
+
+export const ROUTING = 'ROUTING';
+export function routing(options) {
+  return { type: ROUTING, options };
+}

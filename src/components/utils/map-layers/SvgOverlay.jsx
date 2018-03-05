@@ -29,12 +29,15 @@ class SvgOverlay extends Component {
     const { data, children } = this.props;
     return data.map(([latitude, longitude], i) => {
       const loc = [latitude, longitude];
-      const [latitude1, longitude1] =
-        i < data.length - 1 ? data[i + 1] : [null, null];
       const pixel = opt.project(loc);
-      const pixel2 = opt.project([latitude1, longitude1]);
+      let [nx, ny] = [null, null];
+      if (i < data.length - 1) {
+        const [latitude1, longitude1] = data[i + 1];
+        const pixel2 = opt.project([latitude1, longitude1]);
+        [nx, ny] = [round(pixel2[0], 1), round(pixel2[1], 1)];
+        console.log('nx', nx, 'ny', ny);
+      }
       const [x, y] = [round(pixel[0], 1), round(pixel[1], 1)];
-      const [nx, ny] = [round(pixel2[0], 1), round(pixel2[1], 1)];
       return children([x, y], [nx, ny]);
     });
   }
