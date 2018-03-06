@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import VisibilitySensor from 'react-visibility-sensor';
+import VisibilitySensor from 'react-visibility-sensor/visibility-sensor.js';
 import Grid from 'mygrid/dist';
+import { ScrollView, ScrollElement } from '../utils/ScrollView';
 import { PreviewCard } from '../cards';
 
 class CardGrid extends Component {
@@ -38,24 +39,26 @@ class CardGrid extends Component {
     ); // nextProps.selected !== this.props.selected;
     // return true;
   }
+  componentDidUpdate(prevProps, prevState) {
+    // const { onSelect } = this.props;
+    const { visibleCardId } = this.state;
+    if (prevState.visibleCardId !== visibleCardId) {
+      this._scroller.scrollTo(visibleCardId);
+    }
+  }
 
   render() {
-    const {
-      cards,
-      onSelect,
-      onExtend,
-      style,
-      setCardOpacity,
-      controls
-    } = this.props;
+    const { cards, onExtend, style, controls, onSelect } = this.props;
     const { visibleCardId } = this.state;
 
     const onChange = d => visible => {
-      clearTimeout(this.id);
+      // clearTimeout(this.id);
       if (visible) {
-        onSelect(d.id);
-        // TODO: fix
-        this.id = setTimeout(() => this.setState({ visibleCardId: d.id }), 0);
+        clearTimeout(this.id);
+        this.id = setTimeout(() => {
+          this.setState({ visibleCardId: d.id, lastScroll: new Date() });
+          onSelect(d.id);
+        }, 750);
       }
     };
 
@@ -65,67 +68,68 @@ class CardGrid extends Component {
           ref={node => (this.node = node)}
           style={{
             position: 'absolute',
-            left: '25vw',
-            width: '40vw',
-            height: '48vh'
-            // border: '1px grey dashed'
+            left: '5vw',
+            width: '70vw',
+            height: '48vh',
+            border: '1px grey dashed'
           }}
         />
-        <div
-          style={{
-            position: 'absolute',
-            overflowX: 'scroll',
-            overflowY: 'visible',
-            width: '100%',
-            height: '38vh',
-            zIndex: 2000
-          }}
-        >
-          <Grid
-            rows={1}
-            cols={Math.floor(cards.length) * 2}
-            colSpan={2}
-            rowSpan={1}
-            gap={2}
-            style={style}
+
+        <ScrollView ref={scroller => (this._scroller = scroller)}>
+          <div
+            style={{
+              position: 'absolute',
+              overflowX: 'scroll',
+              overflowY: 'visible',
+              width: '100%',
+              height: '38vh',
+              zIndex: 2000
+            }}
           >
-            {cards.map(d => (
-              <div className="w-100" key={d.id}>
-                <div className="w-100">
-                  <div style={{ opacity: visibleCardId === d.id ? 1 : 0 }}>
-                    {controls}
-                  </div>
-                </div>
-                <VisibilitySensor
-                  onChange={onChange(d)}
-                  scrollCheck
-                  containment={this.node}
+            <div style={{ ...style, display: 'flex' }}>
+              {cards.map(d => (
+                <div
+                  key={d.id}
+                  style={{
+                    width: '28vw',
+                    marginLeft: '5vw',
+                    marginRight: '6vw'
+                  }}
                 >
-                  <PreviewCard
-                    {...d}
-                    onClick={() => visibleCardId === d.id && onExtend(d.id)}
-                    selected={visibleCardId === d.id}
-                    style={{
-                      opacity: setCardOpacity(d),
-                      transform: visibleCardId === d.id ? 'scale(1.2)' : null,
-                      transition: 'transform 1s',
-                      height: '100%',
-                      padding: '10px'
-                    }}
-                  />
-                </VisibilitySensor>
-                {
-                  // <button
-                  // className="btn ml-3"
-                  // style={{ background: 'whitesmoke' }}
-                  // >
-                  // Go
-                  // </button>
-                }
-              </div>
-            ))}
-          </Grid>
-        </div>
+                  <ScrollElement name={d.id}>
+                    <div>
+                      <div style={{ opacity: visibleCardId === d.id ? 1 : 0 }}>
+                        {controls}
+                      </div>
+                    </div>
+                    <VisibilitySensor
+                      onChange={onChange(d)}
+                      containment={this.node}
+                    >
+                      <PreviewCard
+                        {...d}
+                        onClick={() =>
+                          visibleCardId === d.id
+                            ? onExtend(d.id)
+                            : this.setState({ visibleCardId: d.id })
+                        }
+                        selected={visibleCardId === d.id}
+                        style={{
+                          opacity: visibleCardId === d.id ? 1 : 0.56,
+                          transform:
+                            visibleCardId === d.id ? 'scale(1.2)' : null,
+                          transition: 'transform 1s',
+                          height: '100%',
+                          padding: '10px'
+                        }}
+                      />
+                    </VisibilitySensor>
+                  </ScrollElement>
+                </div>
+              ))}
+            </div>
+          </div>
+        </ScrollView>
       </div>
     );
   }

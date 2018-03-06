@@ -2,9 +2,10 @@ import React, { PureComponent } from 'react';
 // import * as d3 from 'd3';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
-
 // import { Motion, spring } from 'react-motion';
 import PropTypes from 'prop-types';
+import * as Icon from 'react-feather';
+import Spinner from 'react-loader-spinner';
 
 // TODO: { LinearInterpolator, FlyToInterpolator }
 import MapGL, { FlyToInterpolator } from 'react-map-gl';
@@ -41,15 +42,42 @@ import { Modal } from '../utils/modal';
 const line = d3.line();
 // const TimoutGrid = ReactTimeout(CardGrid);
 
-const nextContextAction = ({ direction, userSelected }) => {
-  console.log(direction, userSelected);
-  if (userSelected && direction !== null) {
-    return 'selectCard';
-  }
-  if (direction === null) {
-    return 'direction';
-  }
-  return 'flyToUserAction';
+const CardMetaControl = ({ action }) => (
+  <div
+    key={action.key}
+    className="w-100"
+    style={{ display: 'flex', alignContent: 'center', marginBottom: 30 }}
+  >
+    <button
+      className="btn w-100"
+      style={{
+        background: 'whitesmoke',
+        fontWeight: 'bold',
+        transition: 'opacity 1s'
+        // position: 'absolute',
+        // top: -100
+      }}
+      onClick={action.func}
+    >
+      {(() => {
+        switch (action.key) {
+          case 'route':
+            return <Icon.Map />;
+          case 'selectCard':
+            return <Icon.MapPin />;
+          case 'flyToUser':
+            return <Icon.User />;
+          default:
+            return <Spinner type="ThreeDots" color="grey" height={24} />;
+        }
+      })()}
+    </button>
+  </div>
+);
+
+CardMetaControl.propTypes = {
+  action: PropTypes.shape({ key: PropTypes.string, func: PropTypes.func })
+    .isRequired
 };
 
 class MapView extends PureComponent {
@@ -171,12 +199,15 @@ class MapView extends PureComponent {
       cardChallengeOpen,
       toggleCardChallengeAction,
       fetchDirectionAction,
-      flyToUserAction
-
+      flyToUserAction,
+      nextCardControlAction
       // navigateFirstTimeAction
     } = this.props;
 
+    console.log('nextCardControlAction', nextCardControlAction);
+
     const cardPadding = 15;
+
     return (
       <div>
         <Modal
@@ -258,26 +289,26 @@ class MapView extends PureComponent {
                 {([x, y], [nx, ny]) =>
                   nx !== null &&
                   ny !== null && (
-                  <g>
-                        <circle
-                        r={3}
-                        cx={x}
-                        cy={y}
-                        fill={colorScale(
-                            selectedCard.challenge
-                              ? selectedCard.challenge.type
-                              : 'quiz'
-                          )}
-                      />
-                      <path
-                        d={line([[x, y], [nx, ny]])}
-                        style={{
-                            stroke: colorScale(selectedCard.challenge.type),
-                            strokeWidth: 8
-                          }}
+                      <g>
+                      <circle
+                          r={3}
+                          cx={x}
+                          cy={y}
+                          fill={colorScale(
+                          selectedCard.challenge
+                            ? selectedCard.challenge.type
+                            : 'quiz'
+                        )}
                         />
-                    </g>
-                    )
+                        <path
+                          d={line([[x, y], [nx, ny]])}
+                          style={{
+                          stroke: colorScale(selectedCard.challenge.type),
+                          strokeWidth: 8
+                        }}
+                      />
+                      </g>
+                  )
                 }
               </SvgOverlay>
             </MapGL>
@@ -291,56 +322,18 @@ class MapView extends PureComponent {
               offset={0}
               setCardOpacity={setCardOpacity}
               controls={
-                <div
-                  key={nextContextAction({ direction, userSelected })}
-                  style={{ display: 'flex', marginBottom: 30 }}
-                >
-                  <button
-                    className="btn w-100"
-                    style={{
-                      background: 'whitesmoke',
-                      fontWeight: 'bold',
-                      transition: 'opacity 1s'
-                      // position: 'absolute',
-                      // top: -100
-                    }}
-                    onClick={() => {
-                      const action = nextContextAction({
-                        direction,
-                        userSelected
-                      });
-                      if (action === 'direction') {
-                        fetchDirectionAction({
-                          startCoords: userLocation,
-                          destCoords: selectedCard.loc
-                        });
-                      }
-                      if (action === 'selectCard') {
-                        selectCardAction(selectedCardId);
-                      } else flyToUserAction();
-                    }}
-                  >
-                    {direction === null ? (
-                      <i
-                        className="mi mi-directions-run"
-                        style={{ fontSize: 25 }}
-                      />
-                    ) : (
-                      <i
-                        className="mi mi-location-on"
-                        style={{ fontSize: 25 }}
-                      />
-                    )}
-                  </button>
-                </div>
+                <CardMetaControl
+                  key={nextCardControlAction.key}
+                  action={nextCardControlAction}
+                />
               }
               style={{
                 height: '26vh',
                 paddingTop: '16px',
-                paddingLeft: '35vw',
-                paddingRight: '35vw',
+                paddingLeft: '100px',
+                paddingRight: '100px',
                 paddingBottom: '15px',
-                width: `${cards.length * 40}vw`,
+                // width: `${cards.length * 40}vw`,
                 zIndex: 8000
               }}
             />

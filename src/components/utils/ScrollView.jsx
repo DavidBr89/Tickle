@@ -34,8 +34,25 @@ class ScrollView extends Component {
       // }
     });
   };
+
+  componentDidMount() {
+    // const domNode = ReactDOM.findDOMNode(this.props.children);
+    console.log('ref node', this.node);
+    // console.log('domNode', domNode);
+    this.node.addEventListener('scroll', this.props.onScroll);
+  }
+
+  // componentDidUpdate() {
+  //   // const domNode = ReactDOM.findDOMNode(this.props.children);
+  //   console.log('ref node', this.node);
+  //   // console.log('domNode', domNode);
+  //   // domNode.addEventListener('scroll', () => console.log('scroll'));
+  // }
+
   render() {
-    return React.Children.only(this.props.children);
+    return React.cloneElement(this.props.children, {
+      ref: e => (this.node = e)
+    });
   }
 }
 

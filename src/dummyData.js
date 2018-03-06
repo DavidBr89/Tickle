@@ -102,8 +102,7 @@ const RoyalLibrary = {
   challenge: { type: 'gap text' },
   date: '28/04/2012 00:00:00',
   tags: ['Art', 'Culture', 'Music'],
-  img:
-    'https://c1.staticflickr.com/3/2772/4393358060_794599aafa_z.jpg',
+  img: 'https://c1.staticflickr.com/3/2772/4393358060_794599aafa_z.jpg',
   xpPoints: 100,
   // TODO: remove in future to component
   description:
@@ -662,7 +661,8 @@ const dummyCards = rawDummyCards
     d.id = i + 1;
     d.date = tip(d.date);
     return d;
-  });
+  })
+  .sort((a, b) => b.date - a.date);
 
 const mediaTypes = ['game', 'hyperlink', 'photo', 'video'];
 

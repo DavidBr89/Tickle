@@ -17,14 +17,19 @@ export function retrieveDirection(options) {
   // }
 }
 
+export const LOAD_DIRECTION = 'LOAD_DIRECTION';
+export function loadDirection() {
+  return { type: LOAD_DIRECTION };
+}
+
 // const url = `https://api.mapbox.com/directions/v5/mapbox/driving/13.4301,52.5109;13.4265,52.5080;13.4194,52.5072?radiuses=40;;100&geometries=polyline&access_token=${
 //   process.env.MapboxAccessToken
 // }`;
 
 export function fetchDirection({ startCoords, destCoords }) {
-  console.log('test', startCoords, destCoords);
   return function(dispatch) {
-    // dispatch(flyToUser());
+    dispatch(loadDirection());
+    console.log('test', startCoords, destCoords);
     client.getDirections(
       [
         { latitude: startCoords.latitude, longitude: startCoords.longitude },

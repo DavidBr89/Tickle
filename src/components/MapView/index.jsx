@@ -31,12 +31,17 @@ const mapStateToProps = state => {
     longitude,
     zoom,
     direction
+    // userSelected,
+    // userLocation,
+    // directionLoading
   } = state.MapView;
+
+  const selectedCard =
+    selectedCardId !== null ? cards.find(d => d.id === selectedCardId) : null;
 
   return {
     ...state.MapView,
-    selectedCard:
-      selectedCardId !== null ? cards.find(d => d.id === selectedCardId) : null,
+    selectedCard,
     mapViewport: {
       width,
       height,
@@ -44,6 +49,7 @@ const mapStateToProps = state => {
       latitude,
       longitude
     },
+    // TODO: remove
     setCardOpacity(c) {
       if (selectedCardId === c.id) return 1;
       if (direction === null) return 0.56;
@@ -70,34 +76,69 @@ const mapDispatchToProps = dispatch => ({
     dispatch(selectCard(options));
   },
   screenResizeAction: options => {
-    console.log('before dispatch screenResize');
     dispatch(screenResize(options));
   },
   playCardChallengeAction: options => {
     dispatch(playCardChallenge(options));
   },
   toggleCardChallengeAction: options => {
-    console.log('dispatch options', options);
     dispatch(toggleCardChallenge(options));
   },
   extCardAction: options => {
-    console.log('dispatch options', options);
     dispatch(extendSelectedCard(options));
   },
   navigateFirstTimeAction: options => {
-    console.log('dispatch options', options);
     dispatch(navigateAppFirstTime(options));
   },
   flyToUserAction: options => {
-    console.log('dispatch options', options);
     dispatch(flyToUser(options));
   },
   fetchDirectionAction: options => {
-    console.log('dispatch options', options);
     dispatch(fetchDirection(options));
   }
 });
 
-const MapViewCont = connect(mapStateToProps, mapDispatchToProps)(MapView);
+const mergeProps = (state, dispatcherProps) => {
+  const {
+    selectedCard,
+    userLocation,
+    selectedCardId,
+    direction,
+    directionLoading,
+    userSelected
+  } = state;
+  const {
+    fetchDirectionAction,
+    selectCardAction,
+    flyToUserAction
+  } = dispatcherProps;
+
+  const nextCardControlAction = (() => {
+    if (userSelected && direction !== null) {
+      return {
+        key: 'selectCard',
+        func: () => selectCardAction(selectedCardId)
+      };
+    }
+    if (directionLoading) return { key: 'directionLoading', func: d => d };
+    if (direction === null) {
+      return {
+        key: 'route',
+        func: () =>
+          fetchDirectionAction({
+            startCoords: userLocation,
+            destCoords: selectedCard.loc
+          })
+      };
+    }
+
+    return { key: 'flyToUser', func: flyToUserAction };
+  })();
+  return { ...state, nextCardControlAction, ...dispatcherProps };
+};
+
+const MapViewCont = connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  MapView
+);
 
 export default MapViewCont;

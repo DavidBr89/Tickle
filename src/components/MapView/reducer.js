@@ -2,12 +2,12 @@
 // import cards from './cards';
 // import visibilityFilter from './visibilityFilter';
 import {
-  WebMercatorViewport,
+  // WebMercatorViewport,
   PerspectiveMercatorViewport
 } from 'viewport-mercator-project';
 
 // import setBBox from './fitbounds';
-import mapboxgl from 'mapbox-gl';
+// import mapboxgl from 'mapbox-gl';
 
 import {
   SELECT_CARD,
@@ -21,7 +21,25 @@ import {
   FLY_TO_USER
 } from './actions';
 
-import { RETRIEVE_DIRECTION } from './async_actions';
+import { RETRIEVE_DIRECTION, LOAD_DIRECTION } from './async_actions';
+
+const focusLoc = ({ width, height, zoom, latitude, longitude }) => {
+  const vp = new PerspectiveMercatorViewport({
+    width,
+    height,
+    zoom,
+    latitude,
+    longitude
+  });
+  const [bottomLng, bottomLat] = vp.unproject([width / 2, height / 3]);
+
+  const mapViewport = {
+    zoom: vp.zoom,
+    latitude: bottomLat,
+    longitude: bottomLng
+  };
+  return mapViewport;
+};
 
 function getBoundingBox(data) {
   const bounds = {};
@@ -43,45 +61,12 @@ function getBoundingBox(data) {
   return [[bounds.lngMin, bounds.latMin], [bounds.lngMax, bounds.latMax]];
 }
 
-// function getPolygonBoundingBox(feature) {
-//   // bounds [xMin, yMin][xMax, yMax]
-//   const bounds = [[], []];
-//   let polygon;
-//   let latitude;
-//   let longitude;
-//
-//   for (let i = 0; i < feature.geometry.coordinates.length; i++) {
-//     if (feature.geometry.coordinates.length === 1) {
-//       // Polygon coordinates[0][nodes]
-//       polygon = feature.geometry.coordinates[0];
-//     } else {
-//       // Polygon coordinates[poly][0][nodes]
-//       polygon = feature.geometry.coordinates[i][0];
-//     }
-//
-//     for (let j = 0; j < polygon.length; j++) {
-//       longitude = polygon[j][0];
-//       latitude = polygon[j][1];
-//
-//       bounds[0][0] = bounds[0][0] < longitude ? bounds[0][0] : longitude;
-//       bounds[1][0] = bounds[1][0] > longitude ? bounds[1][0] : longitude;
-//       bounds[0][1] = bounds[0][1] < latitude ? bounds[0][1] : latitude;
-//       bounds[1][1] = bounds[1][1] > latitude ? bounds[1][1] : latitude;
-//     }
-//   }
-//
-//   return bounds;
-// }
-// const mapViewApp = combineReducers({
-//   cards,
-//   visibilityFilter
-// });
-//
-// export default mapViewApp;
-
 function reducer(state = {}, action) {
   // console.log('action', action);
   switch (action.type) {
+    case LOAD_DIRECTION: {
+      return { ...state, directionLoading: true };
+    }
     case RETRIEVE_DIRECTION: {
       const direction = action.options;
       const bbox = getBoundingBox(direction.routes[0].geometry);
@@ -109,25 +94,22 @@ function reducer(state = {}, action) {
         latitude: bottomLat, // latitude + 0.0135,
         longitude: bottomLng,
         zoom: newZoom,
+        directionLoading: false
         // height: state.height - 200
       };
     }
     case FLY_TO_USER: {
-      const { width, height, latitude, longitude, zoom, userLocation } = state;
-      const vp = new PerspectiveMercatorViewport({
+      const { width, height, zoom, userLocation } = state;
+      const mapViewport = focusLoc({
         width,
         height,
         zoom: 18,
         ...userLocation
       });
 
-      const [bottomLng, bottomLat] = vp.unproject([width / 2, height / 3]);
-
       return {
         ...state,
-        latitude: bottomLat,
-        longitude: bottomLng,
-        zoom: vp.zoom,
+        ...mapViewport,
         userSelected: true
         // mapZoom: 12 // state.defaultZoom
       };
@@ -170,20 +152,13 @@ function reducer(state = {}, action) {
           ? { ...selectedCard.loc }
           : { ...state.userLocation };
 
-      const vp = new PerspectiveMercatorViewport({
+      const mapViewport = focusLoc({
         width,
         height,
-        zoom: 15,
+        longitude,
         latitude,
-        longitude
+        zoom: 15
       });
-      const [bottomLng, bottomLat] = vp.unproject([width / 2, height / 3]);
-
-      const mapViewport = {
-        zoom: vp.zoom,
-        latitude: bottomLat,
-        longitude: bottomLng
-      };
 
       return {
         ...state,
