@@ -20,6 +20,7 @@ import { colorScale } from '../cards/styles';
 import { Card, CardMarker } from '../cards';
 import SvgOverlay from '../utils/map-layers/SvgOverlay';
 import CardGrid from './CardGrid';
+import ContextView from './ContextView';
 // import StartNav from './StartNav';
 // import { VisibleView, VisibleElement } from '../utils/MySensor.jsx';
 
@@ -241,11 +242,6 @@ class MapView extends PureComponent {
                 deltaTime > 30 && userMoveAction({ lngLat })
               }
             >
-              <MapAreaRadius
-                userLocation={userLocation}
-                mapViewport={mapViewport}
-                cardPosition={{ ...selectedCard.loc }}
-              />
               <DivOverlay {...mapViewport} data={cards}>
                 {(c, [x, y]) => (
                   <AnimMarker
@@ -259,12 +255,37 @@ class MapView extends PureComponent {
                     y={y + 3}
                     node={this.node}
                     preview={
-                      <CardMarker
-                        {...c}
-                        style={{
-                          opacity: setCardOpacity(c)
-                        }}
-                      />
+                      <div style={{ position: 'relative' }}>
+                        <CardMarker
+                          {...c}
+                          style={{
+                            opacity: setCardOpacity(c),
+                            position: 'absolute'
+                          }}
+                        />
+                        {selectedCardId === c.id && (
+                          <ContextView
+                            radius={70}
+                            style={{ position: 'absolute' }}
+                            width={12}
+                            mapViewport={mapViewport}
+                            node={this.node}
+                          >
+                            {cards
+                              .slice(0, 4)
+                              .map(cc => (
+                                <CardMarker
+                                  {...cc}
+                                  center={false}
+                                  shadow={false}
+                                  width={5}
+                                  height={6}
+                                  node={this.node}
+                                />
+                              ))}
+                          </ContextView>
+                        )}
+                      </div>
                     }
                   >
                     <Card
@@ -289,26 +310,26 @@ class MapView extends PureComponent {
                 {([x, y], [nx, ny]) =>
                   nx !== null &&
                   ny !== null && (
-                      <g>
-                      <circle
-                          r={3}
-                          cx={x}
-                          cy={y}
-                          fill={colorScale(
-                          selectedCard.challenge
-                            ? selectedCard.challenge.type
-                            : 'quiz'
-                        )}
-                        />
-                        <path
-                          d={line([[x, y], [nx, ny]])}
-                          style={{
-                          stroke: colorScale(selectedCard.challenge.type),
-                          strokeWidth: 8
-                        }}
+                  <g>
+                        <circle
+                        r={3}
+                        cx={x}
+                        cy={y}
+                        fill={colorScale(
+                            selectedCard.challenge
+                              ? selectedCard.challenge.type
+                              : 'quiz'
+                          )}
                       />
-                      </g>
-                  )
+                      <path
+                        d={line([[x, y], [nx, ny]])}
+                        style={{
+                            stroke: colorScale(selectedCard.challenge.type),
+                            strokeWidth: 8
+                          }}
+                        />
+                    </g>
+                    )
                 }
               </SvgOverlay>
             </MapGL>

@@ -14,7 +14,8 @@ class CardGrid extends Component {
     setCardOpacity: PropTypes.func.isRequired,
     offset: PropTypes.number.isRequired,
     style: PropTypes.object,
-    selected: PropTypes.number
+    selected: PropTypes.number,
+    style: PropTypes.object
   };
 
   static defaultProps = {
@@ -40,10 +41,11 @@ class CardGrid extends Component {
     // return true;
   }
   componentDidUpdate(prevProps, prevState) {
-    // const { onSelect } = this.props;
+    const { onSelect } = this.props;
     const { visibleCardId } = this.state;
     if (prevState.visibleCardId !== visibleCardId) {
       this._scroller.scrollTo(visibleCardId);
+      onSelect(visibleCardId);
     }
   }
 
@@ -52,6 +54,7 @@ class CardGrid extends Component {
     const { visibleCardId } = this.state;
 
     const onChange = d => visible => {
+      // TODO: big hack make issue in react visibility-sensor
       // clearTimeout(this.id);
       if (visible) {
         clearTimeout(this.id);
@@ -70,8 +73,8 @@ class CardGrid extends Component {
             position: 'absolute',
             left: '5vw',
             width: '70vw',
-            height: '48vh',
-            border: '1px grey dashed'
+            height: '48vh'
+            // border: '1px grey dashed'
           }}
         />
 
@@ -82,7 +85,7 @@ class CardGrid extends Component {
               overflowX: 'scroll',
               overflowY: 'visible',
               width: '100%',
-              height: '38vh',
+              height: '48vh',
               zIndex: 2000
             }}
           >

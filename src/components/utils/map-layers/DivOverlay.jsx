@@ -175,12 +175,12 @@ UserOverlay.defaultProps = {
 // };
 
 // TODO: rename
-const CardMarker = ({ width, height }) => (
+const CardImg = ({ width, height }) => (
   <img src={cardIconSrc} alt="icon" width={width} height={height} />
 );
 
-CardMarker.propTypes = { width: PropTypes.number, height: PropTypes.number };
-CardMarker.defaultProps = { width: 30, height: 40 };
+CardImg.propTypes = { width: PropTypes.number, height: PropTypes.number };
+CardImg.defaultProps = { width: 30, height: 40 };
 
 class AnimMarker extends Component {
   static propTypes = {
@@ -329,7 +329,7 @@ AnimMarker.propTypes = {
 
 AnimMarker.defaultProps = {
   delay: 0.5,
-  preview: <CardMarker />,
+  preview: <CardImg />,
   node: null,
   offsetX: 0,
   offsetY: 0,
@@ -356,7 +356,7 @@ export {
   DivOverlay,
   UserOverlay,
   // CardOverlay,
-  CardMarker,
+  CardImg,
   AnimMarker,
   SvgOverlay,
   UserMarker

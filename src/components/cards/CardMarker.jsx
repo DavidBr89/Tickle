@@ -8,7 +8,13 @@ class CardMarker extends Component {
     challenge: PropTypes.func.isRequired,
     onClick: PropTypes.func.isRequired,
     style: PropTypes.object,
-    edit: PropTypes.bool
+    edit: PropTypes.bool,
+    width: PropTypes.number,
+    height: PropTypes.number,
+    center: PropTypes.bool,
+    marginTop: PropTypes.string,
+    shadow: PropTypes.bool,
+    barHeight: PropTypes.string
   };
 
   static defaultProps = {
@@ -18,7 +24,14 @@ class CardMarker extends Component {
     selected: false,
     // TODO: include only type
     challenge: { type: null },
-    edit: false
+    edit: false,
+    width: 6.5,
+    height: 8,
+    center: true,
+    marginTop: '6%',
+    background: 'black',
+    imgColor: 'gold',
+    shadow: true
   };
 
   // shouldComponentUpdate() {
@@ -26,15 +39,30 @@ class CardMarker extends Component {
   // }
 
   render() {
-    const { challenge, style, edit, onClick } = this.props;
+    const {
+      challenge,
+      center,
+      style,
+      edit,
+      onClick,
+      width,
+      height,
+      marginTop,
+      background,
+      imgColor,
+      shadow,
+      barHeight = '12%'
+    } = this.props;
     return (
       <div
         style={{
-          border: edit ? '2px dashed black' : null,
           // padding: '15%',
           transition: 'opacity 1s',
-          width: '9vw',
-          height: '6vh',
+          width: `${width}vw`,
+          height: `${height}vw`,
+          transform: center
+            ? `translate(${-width / 2}vw, ${-height / 2}vw)`
+            : null,
           ...style
         }}
       >
@@ -45,36 +73,44 @@ class CardMarker extends Component {
               : 'whitesmoke',
             width: '100%',
             height: '100%',
-            padding: '0.2rem',
-            border: '1px solid grey',
-            ...shadowStyle
+            padding: '7%',
+            boxShadow: shadow ? 'grey 0.3rem 0.3rem' : null,
+            border: '1px solid grey'
+            // border: '1px solid grey',
+            // border: edit ? '2px dashed black' : null,
           }}
         >
-          <div style={{ opacity: 0.5, width: '100%', height: '100%' }}>
+          <div
+            style={{
+              opacity: 0.5,
+              width: '100%',
+              height: '100%'
+            }}
+          >
             <div
               style={{
                 width: '100%',
-                height: '13%',
-                background: 'black',
-                marginTop: '0.23rem'
+                height: barHeight,
+                background,
+                marginTop
                 // borderRadius: '4px'
               }}
             />
             <div
               style={{
                 width: '100%',
-                height: '13%',
-                background: 'black',
-                marginTop: '0.23rem'
+                height: barHeight,
+                background,
+                marginTop
                 // borderRadius: '4px'
               }}
             />
             <div
               style={{
                 width: '100%',
-                height: '40%',
-                background: 'gold',
-                marginTop: '0.23rem'
+                height: '50%',
+                background: imgColor,
+                marginTop
                 // borderRadius: '4px'
               }}
             />

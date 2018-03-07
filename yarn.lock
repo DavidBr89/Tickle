@@ -1993,6 +1993,10 @@ d3-ease@1, d3-ease@1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/d3-ease/-/d3-ease-1.0.3.tgz#68bfbc349338a380c44d8acc4fbc3304aa2d8c0e"
 
+"d3-force-extent@https://github.com/DinoJay/d3-force-extent":
+  version "0.0.1"
+  resolved "https://github.com/DinoJay/d3-force-extent#f5cb93d06727c14fe7604283b13795fd25a46f10"
+
 d3-force-surface@^0.5.1:
   version "0.5.5"
   resolved "https://registry.yarnpkg.com/d3-force-surface/-/d3-force-surface-0.5.5.tgz#1afb450d561229034d566dc977f397c5a409e86e"
@@ -2045,6 +2049,10 @@ d3-quadtree@1.0.1:
 d3-queue@3.0.7:
   version "3.0.7"
   resolved "https://registry.yarnpkg.com/d3-queue/-/d3-queue-3.0.7.tgz#c93a2e54b417c0959129d7d73f6cf7d4292e7618"
+
+d3-radial@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/d3-radial/-/d3-radial-0.0.2.tgz#8c7f2c4a0ed1287343623dd18aa4886cef4fd089"
 
 d3-random@1.1.0, d3-random@^1.0.3:
   version "1.1.0"
