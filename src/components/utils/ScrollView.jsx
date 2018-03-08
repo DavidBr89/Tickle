@@ -39,7 +39,7 @@ class ScrollView extends Component {
     // const domNode = ReactDOM.findDOMNode(this.props.children);
     console.log('ref node', this.node);
     // console.log('domNode', domNode);
-    this.node.addEventListener('scroll', this.props.onScroll);
+    // this.node.addEventListener('scroll', this.props.onScroll);
   }
 
   // componentDidUpdate() {

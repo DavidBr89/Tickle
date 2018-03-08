@@ -31,7 +31,7 @@
     "d3": "^4.9.1",
     "d3-bboxCollide": "^1.0.3",
     "d3-force-extent": "https://github.com/DinoJay/d3-force-extent",
-    "d3-force-surface": "^0.5.1",
+    "d3-force-surface": "^0.5.5",
     "d3-radial": "^0.0.2",
     "d3-scale-chromatic": "^1.1.1",
     "dsv-loader": "^2.0.0",

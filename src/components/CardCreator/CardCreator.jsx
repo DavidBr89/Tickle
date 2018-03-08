@@ -206,7 +206,7 @@ class CardCreator extends Component {
                     <AnimMarker
                       key={c.id}
                       selected={extCardId === c.id}
-                      width={extCardId === c.id ? width - cardPadding : 150}
+                      width={extCardId === c.id ? width - cardPadding : 250}
                       height={extCardId === c.id ? height - cardPadding : 0}
                       offsetX={0}
                       offsetY={0}
@@ -218,11 +218,11 @@ class CardCreator extends Component {
                           <div
                             className="p-3 shadow rounded"
                             style={{
-                              border: '1px dashed var(--black)',
+                              border: '3px dashed var(--black)',
                               background: 'whitesmoke',
                               opacity: 0.7,
                               transition: 'opacity 1s',
-                              width: 150,
+                              width: 250,
                               textAlign: 'center',
                               pointerEvents: 'none'
                             }}

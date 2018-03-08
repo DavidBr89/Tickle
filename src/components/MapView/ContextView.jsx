@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { createPortal } from 'react-dom';
-import { radial } from 'd3-radial';
+// import { radial } from 'd3-radial';
 import { scaleLinear, extent } from 'd3';
 import * as d3 from 'd3';
+import { forceSurface } from 'd3-force-surface';
+import d3Radial from 'd3-radial';
+
+console.log('d3ForceSurface', forceSurface);
+
 // import forceExt from 'd3-force-extent';
 import {
   // WebMercatorViewport,
@@ -18,57 +23,6 @@ import {
 } from '../utils/map-layers/DivOverlay';
 
 import { Card, CardMarker } from '../cards';
-
-const forceExtent = function(extent, getBBox) {
-  let nodes;
-
-  function force(alpha) {
-    let i;
-    const n = nodes.length;
-    let node;
-
-    for (i = 0; i < n; ++i) {
-      node = nodes[i];
-
-      const bbox = getBBox(node);
-      const x = node.x;
-      const y = node.y;
-
-      const distLeft = x - bbox[0][0] - extent[0][0];
-      if (distLeft < 0) {
-        node.x = extent[0][0] + bbox[0][0];
-      }
-
-      const distBottom = y - bbox[0][1] - extent[0][0];
-      if (distBottom < 0) {
-        node.y = extent[0][1] + bbox[0][1];
-      }
-
-      const distRight = x + bbox[1][0] - extent[1][0];
-      if (distRight > 0) {
-        node.x = extent[1][0] - bbox[1][0];
-      }
-      const distTop = y + bbox[1][1] - extent[1][1];
-      if (distTop > 0) {
-        // node.vy += (extent[1][1] - (y + dist)) * (alpha * pow);
-        node.y = extent[1][1] - bbox[1][1];
-      }
-    }
-  }
-
-  force.initialize = function(_) {
-    nodes = _;
-  };
-
-  force.extent = function(_) {
-    return arguments.length ? ((extent = _), force) : extent;
-  };
-  force.bbox = function(_) {
-    return arguments.length ? ((getBBox = _), force) : extent;
-  };
-
-  return force;
-};
 
 class ContextView extends Component {
   static propTypes = {
@@ -86,7 +40,7 @@ class ContextView extends Component {
     style: {},
     children: [],
     height: 13,
-    width: 20,
+    width: 23,
     node: document.querySelector('body')
   };
 
@@ -106,51 +60,76 @@ class ContextView extends Component {
       mapViewport
     } = this.props;
     const { selected } = this.state;
-    const vp = new PerspectiveMercatorViewport(mapViewport);
+    // const vp = new PerspectiveMercatorViewport(mapViewport);
 
-    const radialPos = radial()
-      .center([0, 0])
-      .size([radius, radius]);
+    // const radialPos = radial()
+    //   .center([0, 0])
+    //   .size([radius, radius]);
+    const size = 70;
+    const r = size / 2;
+    const rr = 10;
+    const radial = d3Radial
+      .radial()
+      .center([r, r])
+      .size([r, r]);
 
-    const cw = 90;
-    const ch = 50;
-    const positions = children.map(
-      ({ props: { loc: { latitude, longitude } } }) => [longitude, latitude]
+    // const h = 100; // window.innerWidth - size;
+    // const w = 100; // window.innerHeight - size;
+    // const vw = 100;
+    // const vh = 100;
+    const data = children.map(
+      ({ props: { id, loc: { latitude, longitude } } }) => ({
+        id,
+        longitude,
+        latitude
+      })
     );
 
-    const xS = scaleLinear()
-      .domain(extent(positions, ([x, _]) => x))
-      .range([0, cw]);
+    const positions = radial(data);
 
-    const yS = scaleLinear()
-      .domain(extent(positions, ([_, y]) => y))
-      .range([0, ch]);
-
-    const normPos = positions.map(([x, y]) => ({
-      x: xS(x),
-      y: yS(y)
-    }));
-
+    // const normPos = positions.map(([x, y]) => {
+    //   const tx = Math.min(Math.max(x, size), w - size);
+    //   const ty = Math.min(Math.max(y, r), h - size);
+    //   return { tx, ty };
+    // });
+    //
     // console.log('pos', positions);
-    // console.log('normPos', normPos);
-    const pad = 10;
-    const simulation = d3
-      .forceSimulation([...normPos])
-      .force('x', d3.forceX((d, i) => normPos[i].x).strength(1))
-      .force('y', d3.forceY((d, i) => normPos[i].y).strength(1))
-      // .force('collide', d3.forceCollide(width / 2 + 1))
-      // .force(
-      //   'extent',
-      //   forceExtent()
-      //     .extent([[0, 0], [width, height]])
-      //     .bbox(() => [
-      //       [-width / 2 - pad, -height / 2 - pad],
-      //       [width / 2 + pad / 2, height / 2 + pad / 2]
-      //     ])
-      // )
-      .stop();
-
-    for (let i = 0; i < 120; ++i) simulation.tick();
+    // console.log('normPos', normPos.map(d => [d.tx, d.ty]));
+    // const simulation = d3
+    //   .forceSimulation([...normPos])
+    //   .force('rad', d3.forceRadial(20).strength(1))
+    //   // .force('x', d3.forceX((d, i) => normPos[i].tx).strength(0.1))
+    //   // .force('y', d3.forceY((d, i) => normPos[i].ty).strength(0.1))
+    //   // .force(
+    //   //   'cont',
+    //   //   forceSurface()
+    //   //     .surfaces([
+    //   //       { from: { x: 0, y: 0 }, to: { x: 0, y: h } },
+    //   //       { from: { x: 0, y: h }, to: { x: w, y: h } },
+    //   //       { from: { x: w, y: h }, to: { x: w, y: 0 } },
+    //   //       { from: { x: w, y: 0 }, to: { x: 0, y: 0 } }
+    //   //     ])
+    //   //     .oneWay(true)
+    //   //     .elasticity(1)
+    //   //     .radius(r)
+    //   // )
+    //   // .force(
+    //   //   'collide',
+    //   //   d3.forceCollide(r).strength(1)
+    //   //   // .iterations(10)
+    //   // )
+    //   // .force(
+    //   //   'extent',
+    //   //   forceExtent()
+    //   //     .extent([[0, 0], [width, height]])
+    //   //     .bbox(() => [
+    //   //       [-width / 2 - pad, -height / 2 - pad],
+    //   //       [width / 2 + pad / 2, height / 2 + pad / 2]
+    //   //     ])
+    //   // )
+    //   .stop();
+    //
+    // for (let i = 0; i < 120; ++i) simulation.tick();
     // radialPos(children.map(({ props: { id } }) => ({ id })));
 
     // const pad = 3;
@@ -158,42 +137,50 @@ class ContextView extends Component {
       <div
         style={{
           position: 'relative',
-          border: '1px dashed black',
+          // top: 0,
+          // left: 0,
+          // border: '1px dashed black',
           zIndex: 5000,
-          cursor: 'pointer',
-          transform: `translate(${-cw / 2}vw, ${-ch / 2}vw)`,
-          width: `${cw}vw`,
-          height: `${ch}vw`,
+          pointerEvents: 'none',
+          // cursor: 'pointer',
+          transform: `translate(${-r}vw, ${-r}vw)`,
+          width: `${size}px`,
+          height: `${size}px`,
           ...style
         }}
       >
-        {simulation.nodes().map(({ id, x, y }, i) => (
-          <div
-            style={{
-              position: 'absolute',
-              left: `${x}vw`,
-              top: `${y}vw`,
-              transform: `translate(${-width / 2}vw, ${-height / 2}vw)`,
-              width: `${width}vw`,
-              height: `${height}vw`,
-              border: '1px black solid',
-              background: selected === id ? 'wheat' : 'whitesmoke',
-              borderRadius: '50%'
-            }}
-          >
+        <div>
+          {positions.map(({ id, x, y }, i) => (
             <div
-              className="w-100 h-100"
-              onClick={() => this.setState({ selected: id })}
               style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
+                position: 'absolute',
+                left: `${x}vw`,
+                top: `${y}vw`,
+                transition: 'left 0.5s, top 0.5s',
+                transform: `translate(${-rr}vw, ${-rr}vw)`,
+                width: `${rr * 2}vw`,
+                height: `${rr * 2}vw`,
+                border: '1px black solid',
+                background: selected === id ? 'wheat' : 'whitesmoke',
+                borderRadius: '50%',
+                pointerEvents: 'all',
+                cursor: 'pointer'
               }}
             >
-              {children[i]}
+              <div
+                className="w-100 h-100"
+                onClick={() => this.setState({ selected: id })}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                {children[i]}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     );
   }

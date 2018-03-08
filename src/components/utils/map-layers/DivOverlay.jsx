@@ -56,8 +56,7 @@ class DivOverlay extends Component {
 
       return children(
         c,
-        [Math.min(x, width - padding), Math.min(y, height - padding)],
-        opt.unproject
+        [Math.min(x, width - padding), Math.min(y, height - padding)]
       );
     });
   }

@@ -266,13 +266,12 @@ class MapView extends PureComponent {
                         {selectedCardId === c.id && (
                           <ContextView
                             radius={70}
-                            style={{ position: 'absolute' }}
                             width={12}
                             mapViewport={mapViewport}
                             node={this.node}
                           >
                             {cards
-                              .slice(0, 4)
+                              .slice(-5)
                               .map(cc => (
                                 <CardMarker
                                   {...cc}
@@ -365,3 +364,4 @@ class MapView extends PureComponent {
   }
 }
 export default MapView;
+// export default MapView;

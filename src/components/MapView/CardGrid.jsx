@@ -13,7 +13,6 @@ class CardGrid extends Component {
     controls: PropTypes.node.isRequired,
     setCardOpacity: PropTypes.func.isRequired,
     offset: PropTypes.number.isRequired,
-    style: PropTypes.object,
     selected: PropTypes.number,
     style: PropTypes.object
   };
@@ -85,7 +84,7 @@ class CardGrid extends Component {
               overflowX: 'scroll',
               overflowY: 'visible',
               width: '100%',
-              height: '48vh',
+              height: '40vh',
               zIndex: 2000
             }}
           >
