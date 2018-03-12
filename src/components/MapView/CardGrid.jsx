@@ -13,13 +13,13 @@ class CardGrid extends Component {
     controls: PropTypes.node.isRequired,
     setCardOpacity: PropTypes.func.isRequired,
     offset: PropTypes.number.isRequired,
-    selected: PropTypes.number,
+    reset: PropTypes.bool,
     style: PropTypes.object
   };
 
   static defaultProps = {
     style: {},
-    selected: null,
+    selectedCard: null,
     setCardOpacity(d) {
       return d;
     }
@@ -29,20 +29,26 @@ class CardGrid extends Component {
     super(props);
     this.id = null;
     this.box = null;
-    this.state = { visibleCardId: props.selected };
+    this.state = { visibleCardId: props.selectedCard, reset: false };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.reset) this.setState({ visibleCardId: null });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     return (
       this.state.visibleCardId !== nextState.visibleCardId ||
-      this.props.controls.key !== nextProps.controls.key
+      this.props.controls.key !== nextProps.controls.key ||
+      this.props.reset !== nextProps.reset
     ); // nextProps.selected !== this.props.selected;
     // return true;
   }
+
   componentDidUpdate(prevProps, prevState) {
     const { onSelect } = this.props;
     const { visibleCardId } = this.state;
-    if (prevState.visibleCardId !== visibleCardId) {
+    if (visibleCardId !== null  && prevState.visibleCardId !== visibleCardId) {
       this._scroller.scrollTo(visibleCardId);
       onSelect(visibleCardId);
     }
@@ -95,7 +101,8 @@ class CardGrid extends Component {
                   style={{
                     width: '28vw',
                     marginLeft: '5vw',
-                    marginRight: '6vw'
+                    marginRight: '6vw',
+                    cursor: 'pointer'
                   }}
                 >
                   <ScrollElement name={d.id}>

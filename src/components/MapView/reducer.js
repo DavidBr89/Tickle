@@ -1,11 +1,14 @@
 // import { combineReducers } from 'redux';
 // import cards from './cards';
 // import visibilityFilter from './visibilityFilter';
+import turf from 'turf';
+// import booleanWithin from '@turf/boolean-within';
 import {
   // WebMercatorViewport,
   PerspectiveMercatorViewport
 } from 'viewport-mercator-project';
 
+import { scaleLinear, extent, geoMercator } from 'd3';
 // import setBBox from './fitbounds';
 // import mapboxgl from 'mapbox-gl';
 
@@ -18,10 +21,22 @@ import {
   PLAY_CARD_CHALLENGE,
   TOGGLE_CARD_CHALLENGE,
   EXTEND_SELECTED_CARD,
-  FLY_TO_USER
+  FLY_TO_USER,
+  ENABLE_COMPASS
 } from './actions';
 
 import { RETRIEVE_DIRECTION, LOAD_DIRECTION } from './async_actions';
+
+const toGeoJSON = points => ({
+  type: 'FeatureCollection',
+  features: points.map(p => ({
+    type: 'Feature',
+    geometry: {
+      type: 'Point',
+      coordinates: p
+    }
+  }))
+});
 
 const focusLoc = ({ width, height, zoom, latitude, longitude }) => {
   const vp = new PerspectiveMercatorViewport({
@@ -41,13 +56,10 @@ const focusLoc = ({ width, height, zoom, latitude, longitude }) => {
   return mapViewport;
 };
 
-function getBoundingBox(data) {
+function getBoundingBox(coords) {
   const bounds = {};
   let latitude;
   let longitude;
-
-  // for (var i = 0; i < data.features.length; i++) {
-  const coords = data.coordinates;
 
   for (let j = 0; j < coords.length; j++) {
     longitude = coords[j][0];
@@ -64,12 +76,15 @@ function getBoundingBox(data) {
 function reducer(state = {}, action) {
   // console.log('action', action);
   switch (action.type) {
+    case ENABLE_COMPASS: {
+      return { ...state, compass: !state.compass };
+    }
     case LOAD_DIRECTION: {
       return { ...state, directionLoading: true };
     }
     case RETRIEVE_DIRECTION: {
       const direction = action.options;
-      const bbox = getBoundingBox(direction.routes[0].geometry);
+      const bbox = getBoundingBox(direction.routes[0].geometry.coordinates);
       // bbox.forEach(a => (a[1] += state.latCenterOffset));
 
       const { width, height, latitude, longitude, zoom } = state;
@@ -118,19 +133,91 @@ function reducer(state = {}, action) {
       return { ...state, ...action };
     }
     case CHANGE_MAP_VIEWPORT: {
+      const { cards, width, height } = state;
       // if (state.extCardId !== null) return state;
-      const viewport = action.options;
-      console.log('viewport', viewport);
+      const { longitude, latitude, zoom } = action.options;
       // const mapHeight = viewport.height;
       // const width = viewport.width;
-      const { zoom, latitude, longitude } = viewport;
 
+      // zoom out;
+      // if (viewport.zoom < state.zoom) {
+      const bbox = getBoundingBox(
+        cards.map(({ loc }) => [loc.longitude, loc.latitude])
+      );
+
+      const {
+        latitude: newLat,
+        longitude: newLong,
+        zoom: newZoom
+      } = new PerspectiveMercatorViewport({
+          width,
+          height,
+          zoom,
+          latitude,
+          longitude
+        }).fitBounds(bbox, {
+          padding: 60
+        // offset: [0, 130]
+        });
+      const gJson = toGeoJSON(
+        cards.map(c => [c.loc.longitude, c.loc.latitude])
+      );
+      console.log('gJson', gJson);
+      const convertZoomLevelToMercator = zoomLevel =>
+        Math.pow(2, 8 + zoomLevel) / 2 / Math.PI;
+
+      const convertZoomLevelFromMercator = zoomLevelInMercator =>
+        Math.log(zoomLevelInMercator * 2 * Math.PI) / Math.LN2 - 8;
+
+      console.log('geoJson', gJson);
+      const scale = convertZoomLevelToMercator(zoom);
+      const d3Proj = geoMercator()
+        .scale(scale)
+        .center([longitude, latitude])
+        // .clipExtent(bbox)
+        .translate([width / 2, height / 2])
+        .fitSize([width, height], gJson);
+
+      // const z = Math.sqrt(d3Proj.scale()) / 162.975;
+      // const scale = 512 * 0.5 / Math.PI * Math.pow(2, zoom);
+      // const lngScale = scaleLinear()
+      //   .domain([zoom, 15])
+      //   .range(extent([viewport.longitude, longitude]));
+      //
+      // const latScale = scaleLinear()
+      //   .domain([15, zoom])
+      //   .range(extent([viewport.latitude, latitude]));
+
+      // console.log(lngScale(viewport.zoom));
+      // console.log(latScale(viewport.zoom));
+      // console.log('turf', turf);
+      // const line = turf.lineString(bbox);
+      // const point = turf.point([longitude, latitude]);
+      // const newLoc = d3Proj.center();
+      // console.log('newLoc', newLoc);
+      // // const z = convertZoomLevelFromMercator(d3Proj.scale()); //
+      //
+      // console.log('boolean-contains', booleanWithin);
       return {
         ...state,
-        latitude,
-        longitude,
-        zoom
+        longitude: newZoom >= zoom ? newLong : longitude,
+        latitude: newZoom >= zoom ? newLat : latitude,
+        // latitude: newLat, // latScale(viewport.zoom),
+        zoom: Math.max(newZoom, zoom),
+        // selectedCardId: zoom < 10 ? null : state.selectedCardId,
+        userChangedMapViewport: true
       };
+      // }
+
+      // const { latitude, longitude, zoom } = viewport;
+      // return {
+      //   ...state,
+      //   latitude,
+      //   longitude,
+      //   zoom,
+      //   // selectedCardId: zoom < 10 ? null : state.selectedCardId,
+      //   userChangedMapViewport: true
+      // };
     }
     // case PLAY_CARD_CHALLENGE:
     //   return Object.assign({}, state, {
@@ -157,7 +244,7 @@ function reducer(state = {}, action) {
         height,
         longitude,
         latitude,
-        zoom: 15
+        zoom: 20
       });
 
       return {
@@ -165,6 +252,7 @@ function reducer(state = {}, action) {
         ...mapViewport,
         direction: null,
         selectedCardId,
+        userChangedMapViewport: false,
         userSelected: false
       };
     }

@@ -11,7 +11,8 @@ import {
   toggleCardChallenge,
   extendSelectedCard,
   navigateAppFirstTime,
-  flyToUser
+  flyToUser,
+  enableCompass
 } from './actions';
 
 import { fetchDirection } from './async_actions';
@@ -52,8 +53,8 @@ const mapStateToProps = state => {
     // TODO: remove
     setCardOpacity(c) {
       if (selectedCardId === c.id) return 1;
-      if (direction === null) return 0.56;
-      return 0.0;
+      if (direction === null) return 1;
+      // return 0.0;
     }
   };
 };
@@ -95,6 +96,9 @@ const mapDispatchToProps = dispatch => ({
   },
   fetchDirectionAction: options => {
     dispatch(fetchDirection(options));
+  },
+  enableCompassAction: options => {
+    dispatch(enableCompass(options));
   }
 });
 

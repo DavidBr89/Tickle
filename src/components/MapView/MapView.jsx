@@ -11,7 +11,7 @@ import Spinner from 'react-loader-spinner';
 import MapGL, { FlyToInterpolator } from 'react-map-gl';
 import { easeCubic } from 'd3';
 import * as d3 from 'd3';
-import { colorScale } from '../cards/styles';
+import { colorScale, brighterColorScale } from '../cards/styles';
 
 // import ReactTimeout from 'react-timeout';
 // import rasterTileStyle from 'raster-tile-style';
@@ -190,6 +190,8 @@ class MapView extends PureComponent {
       mapViewport,
       setCardOpacity,
       userSelected,
+      userChangedMapViewport,
+      compass,
       // AppOpenFirstTime,
       // headerPad,
 
@@ -201,11 +203,13 @@ class MapView extends PureComponent {
       toggleCardChallengeAction,
       fetchDirectionAction,
       flyToUserAction,
-      nextCardControlAction
+      nextCardControlAction,
+      enableCompassAction
       // navigateFirstTimeAction
     } = this.props;
 
     console.log('nextCardControlAction', nextCardControlAction);
+    console.log('userLocation', userLocation);
 
     const cardPadding = 15;
 
@@ -232,6 +236,19 @@ class MapView extends PureComponent {
               right: 0
             }}
           >
+            <button
+              className="mt-3 ml-3 btn fixed-top-left"
+              style={{
+                position: 'absolute',
+                zIndex: 4000,
+                background: compass ? 'whitesmoke' : null
+              }}
+              onClick={enableCompassAction}
+            >
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Icon.Compass size={30} />
+              </div>
+            </button>
             <MapGL
               {...mapViewport}
               onViewportChange={changeMapViewportAction}
@@ -260,30 +277,39 @@ class MapView extends PureComponent {
                           {...c}
                           style={{
                             opacity: setCardOpacity(c),
-                            position: 'absolute'
+                            position: 'absolute',
+                            zIndex: -100
                           }}
                         />
-                        {selectedCardId === c.id && (
-                          <ContextView
-                            radius={70}
-                            width={12}
-                            mapViewport={mapViewport}
-                            node={this.node}
-                          >
-                            {cards
-                              .slice(-5)
-                              .map(cc => (
+                        {selectedCardId === c.id &&
+                          !direction && (
+                            <ContextView
+                              radius={70}
+                              width={12}
+                              delay={1000}
+                              background={brighterColorScale(
+                                selectedCard.challenge.type
+                              )}
+                              mapViewport={mapViewport}
+                              visible={compass}
+                              node={this.node}
+                            >
+                              {cards.slice(-5).map(cc => (
                                 <CardMarker
+                                  key={cc.id}
                                   {...cc}
                                   center={false}
                                   shadow={false}
                                   width={5}
                                   height={6}
                                   node={this.node}
+                                  onClick={() => {
+                                    selectCardAction(cc.id);
+                                  }}
                                 />
                               ))}
-                          </ContextView>
-                        )}
+                            </ContextView>
+                          )}
                       </div>
                     }
                   >
@@ -302,14 +328,17 @@ class MapView extends PureComponent {
                 {...mapViewport}
                 data={
                   direction !== null
-                    ? direction.routes[0].geometry.coordinates
+                    ? [
+                      Object.values(userLocation).reverse(),
+                      ...direction.routes[0].geometry.coordinates
+                    ]
                     : []
                 }
               >
                 {([x, y], [nx, ny]) =>
                   nx !== null &&
                   ny !== null && (
-                  <g>
+                      <g>
                         <circle
                         r={3}
                         cx={x}
@@ -340,6 +369,8 @@ class MapView extends PureComponent {
               selected={selectedCardId}
               onExtend={extCardAction}
               offset={0}
+              reset={selectedCardId === null}
+              selectedCard={selectedCardId}
               setCardOpacity={setCardOpacity}
               controls={
                 <CardMetaControl

@@ -130,7 +130,13 @@ fieldset {
 .fixed-bottom-right {
   @extend .fixed-bottom;
   left: unset;
-  zIndex: 4000;
+  zindex: 4000;
+}
+
+.fixed-bottom-left {
+  @extend .fixed-top;
+  left: 0;
+  zindex: 4000;
 }
 
 .fixed-top-center{

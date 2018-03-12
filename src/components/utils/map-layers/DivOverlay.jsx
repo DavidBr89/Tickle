@@ -54,10 +54,10 @@ class DivOverlay extends Component {
       // TODO: change later, make bounding box checj
       const padding = 50;
 
-      return children(
-        c,
-        [Math.min(x, width - padding), Math.min(y, height - padding)]
-      );
+      return children(c, [
+        Math.min(x, width - padding),
+        Math.min(y, height - padding)
+      ]);
     });
   }
 
@@ -248,7 +248,8 @@ class AnimMarker extends Component {
           top: selected ? offsetY : y - height / 2 + offsetY,
           width: `${width}px`,
           height: `${height}px`,
-          transition: `left ${delay}s, top ${delay}s, width ${delay}s, height ${delay}s`
+          transition: `left ${delay}s, top ${delay}s, width ${delay}s, height ${delay}s`,
+          pointerEvents: !selected ? 'none' : null
         }}
       >
         <div

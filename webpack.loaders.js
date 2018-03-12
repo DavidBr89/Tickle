@@ -2,12 +2,12 @@ const path = require('path');
 
 // console.log('path', path);
 // console.log('path', path.join(__dirname, 'node_modules/font-awesome'));
-const replace = path.join(__dirname, 'node_modules/font-awesome');
+// const replace = path.join(__dirname, 'node_modules/font-awesome');
 const src = path.join(__dirname, 'src');
 const p = `(node_modules/font-awesome|${src})`;
-const po = p.replace(/xxx/, replace);
+// const po = p.replace(/xxx/, replace);
 const re = new RegExp(p);
-console.log('po', re);
+// console.log('po', re);
 
 module.exports = [
   {
@@ -70,9 +70,4 @@ module.exports = [
     exclude: /(node_modules|bower_components)/,
     loader: 'dsv-loader'
   },
-  {
-    test: /\.json/,
-    exclude: /(node_modules|bower_components)/,
-    loader: 'json-loader'
-  }
 ];

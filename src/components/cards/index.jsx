@@ -118,7 +118,10 @@ class Card extends React.Component {
     // console.log('ToggleCard', ToggleCard);
 
     return (
-      <div className={`${cx.flipContainer} ${sideToggler}`} style={style}>
+      <div
+        className={`${cx.flipContainer} ${sideToggler}`}
+        style={{ ...style, maxWidth: '500px' }}
+      >
         <div
           className={`${cx.flipper} ${sideToggler}`}
           style={{

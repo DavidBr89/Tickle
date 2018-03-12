@@ -114,8 +114,8 @@ module.exports = {
   // TODO: change for production
   devtool: 'eval-source-map ',
   output: {
-    path: path.join(__dirname, 'public'),
-    filename: 'bundle.js'
+    path: path.join(__dirname, 'dist'),
+    filename: 'main.js'
   },
   resolve: {
     extensions: ['.js', '.jsx'],
@@ -126,8 +126,7 @@ module.exports = {
     }
   },
   module: {
-    loaders,
-    noParse: /jquery/
+    rules: loaders
   },
   devServer: {
     contentBase: './public',

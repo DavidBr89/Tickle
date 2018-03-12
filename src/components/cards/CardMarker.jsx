@@ -60,11 +60,16 @@ class CardMarker extends Component {
           transition: 'opacity 1s',
           width: `${width}vw`,
           height: `${height}vw`,
+          maxWidth: '30px',
+          maxHeight: '35px',
+          // TODO: does not work for widescreen
           transform: center
             ? `translate(${-width / 2}vw, ${-height / 2}vw)`
             : null,
+          pointerEvents: null,
           ...style
         }}
+        onClick={onClick}
       >
         <div
           style={{

@@ -15,7 +15,7 @@ import {
   PerspectiveMercatorViewport
 } from 'viewport-mercator-project';
 
-import cxs from 'cxs';
+// import cxs from 'cxs';
 
 import {
   DivOverlay,
@@ -49,6 +49,11 @@ const down = {
   transform: 'rotate(45deg)'
 };
 
+const radialLocation = (center, angle, width, height, taper = 0) => ({
+  x: center[0] + (width * Math.cos(angle * Math.PI / 180) - taper),
+  y: center[1] + (height * Math.sin(angle * Math.PI / 180) + taper)
+});
+
 class ContextView extends Component {
   static propTypes = {
     className: PropTypes.string,
@@ -57,7 +62,10 @@ class ContextView extends Component {
     style: PropTypes.object,
     width: PropTypes.number,
     height: PropTypes.number,
-    node: PropTypes.node
+    node: PropTypes.node,
+    selectedCard: PropTypes.number,
+    visible: PropTypes.bool,
+    background: PropTypes.string
   };
 
   static defaultProps = {
@@ -66,12 +74,25 @@ class ContextView extends Component {
     children: [],
     height: 13,
     width: 23,
-    node: document.querySelector('body')
+    node: document.querySelector('body'),
+    delay: 500,
+    background: 'blue'
   };
 
   constructor(props) {
     super(props);
-    this.state = { selected: null };
+    this.state = { selectedCard: this.props.selectedCard };
+  }
+
+  componentDidMount() {
+    setTimeout(
+      () => this.setState({ visible: this.props.visible }),
+      this.props.delay
+    );
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ visible: nextProps.visible });
   }
 
   render() {
@@ -82,9 +103,10 @@ class ContextView extends Component {
       height,
       style,
       node,
-      mapViewport
+      mapViewport,
+      background
     } = this.props;
-    const { selected } = this.state;
+    const { selected, visible } = this.state;
     const { zoom } = mapViewport;
     // const vp = new PerspectiveMercatorViewport(mapViewport);
 
@@ -93,28 +115,32 @@ class ContextView extends Component {
     //   .size([radius, radius]);
     const rScale = scaleLinear()
       .domain([15, 8])
-      .range([window.innerWidth * 2 / 3, 20]);
+      .range([window.innerWidth / 2, 10]);
+
     const size = rScale(zoom);
     const r = size / 2;
-    const rr = 30;
-    const radial = d3Radial
-      .radial()
-      .center([r, r])
-      .size([r, r]);
+    const rr = Math.min(Math.max(size / 7.5, 15), 25);
+    // const radial = d3Radial
+    //   .radial()
+    //   .center([r, r])
+    //   .size([r, r]);
 
     // const h = 100; // window.innerWidth - size;
     // const w = 100; // window.innerHeight - size;
     // const px = 100;
     // const vh = 100;
-    const data = children.map(
-      ({ props: { id, loc: { latitude, longitude } } }) => ({
-        id,
-        longitude,
-        latitude
-      })
-    );
+    // const data = children.map(
+    //   ({ props: { id, loc: { latitude, longitude } } }) => ({
+    //     id,
+    //     longitude,
+    //     latitude
+    //   })
+    // );
 
-    const positions = radial(data);
+    const increment = 360 / children.length;
+    const positions = children.map((_, i) =>
+      radialLocation([r, r], i * increment, r, r)
+    );
 
     // const normPos = positions.map(([x, y]) => {
     //   const tx = Math.min(Math.max(x, size), w - size);
@@ -169,16 +195,27 @@ class ContextView extends Component {
           // top: 0,
           // left: 0,
           border: '1px dashed black',
-          zIndex: 5000,
+          background,
+          borderRadius: '50%',
+          zIndex: -5000,
           pointerEvents: 'none',
           // cursor: 'pointer',
           transform: `translate(${-r}px, ${-r}px)`,
           width: `${size}px`,
           height: `${size}px`,
+          transition: 'left 0.5s, top 0.5s, opacity 0.8s',
+          opacity: visible ? 1 : 0,
           ...style
         }}
       >
-        <svg style={{ width: 2 * r, height: 2 * r }}>
+        <svg
+          style={{
+            width: 2 * r,
+            height: 2 * r,
+            opacity: visible ? 1 : 0,
+            zIndex: -5000
+          }}
+        >
           {positions.map(({ x, y }) => (
             <path d={line()([[x, y], [r, r]])} style={{ stroke: 'grey' }} />
           ))}
@@ -186,29 +223,31 @@ class ContextView extends Component {
         <div>
           {positions.map(({ id, x, y }, i) => (
             <div
+              className="btn"
               style={{
                 position: 'absolute',
                 left: `${x}px`,
                 top: `${y}px`,
-                transition: 'left 0.5s, top 0.5s',
+                transition: 'left 0.5s, top 0.5s, opacity 0.8s',
+                opacity: visible ? 1 : 0,
                 transform: `translate(${-rr}px, ${-rr}px)`,
                 width: `${rr * 2}px`,
                 height: `${rr * 2}px`,
                 border: '1px black solid',
-                background: selected === id ? 'wheat' : 'whitesmoke',
+                background: selected === id ? 'whitesmoke' : 'whitesmoke',
                 borderRadius: '50%',
                 pointerEvents: 'all',
                 cursor: 'pointer'
               }}
             >
-            {
+              {
               // <i
               // style={{ ...arrowWrapperStyle, ...up, position: 'absolute' }}
               // />
-            }
+              }
               <div
                 className="w-100 h-100"
-                onClick={() => this.setState({ selected: id })}
+                // onClick={() => this.setState({ selected: id })}
                 style={{
                   display: 'flex',
                   justifyContent: 'center',

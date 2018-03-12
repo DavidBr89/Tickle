@@ -72,6 +72,11 @@ export function flyToUser(options) {
   return { type: FLY_TO_USER, options };
 }
 
+export const ENABLE_COMPASS = 'ENABLE_COMPASS';
+export function enableCompass(options) {
+  return { type: ENABLE_COMPASS, options };
+}
+
 export const ROUTE = 'ROUTE';
 export function routing(options) {
   return { type: ROUTE, options };
