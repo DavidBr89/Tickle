@@ -52,7 +52,7 @@ class DivOverlay extends Component {
       const [x, y] = [round(pixel[0], 1), round(pixel[1], 1)];
 
       // TODO: change later, make bounding box checj
-      const padding = 50;
+      const padding = 20;
 
       return children(c, [
         Math.min(x, width - padding),

@@ -48,7 +48,7 @@ class CardGrid extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { onSelect } = this.props;
     const { visibleCardId } = this.state;
-    if (visibleCardId !== null  && prevState.visibleCardId !== visibleCardId) {
+    if (visibleCardId !== null && prevState.visibleCardId !== visibleCardId) {
       this._scroller.scrollTo(visibleCardId);
       onSelect(visibleCardId);
     }
@@ -59,11 +59,11 @@ class CardGrid extends Component {
     const { visibleCardId } = this.state;
 
     const onChange = d => visible => {
-      // TODO: big hack make issue in react visibility-sensor
       // clearTimeout(this.id);
       if (visible) {
         clearTimeout(this.id);
         this.id = setTimeout(() => {
+          // TODO: big hack make issue in react visibility-sensor
           this.setState({ visibleCardId: d.id, lastScroll: new Date() });
           onSelect(d.id);
         }, 750);

@@ -81,3 +81,19 @@ export const ROUTE = 'ROUTE';
 export function routing(options) {
   return { type: ROUTE, options };
 }
+
+export const TOGGLE_TSNE_VIEW = 'TSNE_VIEW';
+export function toggleTsneView(options) {
+  return { type: TOGGLE_TSNE_VIEW, options };
+}
+
+// TODO: remove
+export const GET_TOPIC_MAP = 'GET_TOPIC_MAP';
+export function getTopicMap(options) {
+  return { type: GET_TOPIC_MAP, options };
+}
+
+export const TOGGLE_GRID_VIEW = 'TOGGLE_GRID';
+export function toggleGrid(options) {
+  return { type: TOGGLE_GRID_VIEW, options };
+}

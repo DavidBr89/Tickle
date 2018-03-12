@@ -1,7 +1,7 @@
 // import { combineReducers } from 'redux';
 // import cards from './cards';
 // import visibilityFilter from './visibilityFilter';
-import turf from 'turf';
+// import turf from 'turf';
 // import booleanWithin from '@turf/boolean-within';
 import {
   // WebMercatorViewport,
@@ -22,10 +22,16 @@ import {
   TOGGLE_CARD_CHALLENGE,
   EXTEND_SELECTED_CARD,
   FLY_TO_USER,
-  ENABLE_COMPASS
+  ENABLE_COMPASS,
+  TOGGLE_GRID_VIEW,
+  TOGGLE_TSNE_VIEW
 } from './actions';
 
-import { RETRIEVE_DIRECTION, LOAD_DIRECTION } from './async_actions';
+import {
+  RETRIEVE_DIRECTION,
+  LOAD_DIRECTION
+  // GET_TOPIC_MAP
+} from './async_actions';
 
 const toGeoJSON = points => ({
   type: 'FeatureCollection',
@@ -76,8 +82,11 @@ function getBoundingBox(coords) {
 function reducer(state = {}, action) {
   // console.log('action', action);
   switch (action.type) {
-    case ENABLE_COMPASS: {
-      return { ...state, compass: !state.compass };
+    case TOGGLE_TSNE_VIEW: {
+      return { ...state, tsneView: !state.tsneView };
+    }
+    case TOGGLE_GRID_VIEW: {
+      return { ...state, gridView: !state.gridView };
     }
     case LOAD_DIRECTION: {
       return { ...state, directionLoading: true };
@@ -95,20 +104,20 @@ function reducer(state = {}, action) {
         latitude,
         longitude
       }).fitBounds(bbox, {
-        padding: 50,
-        offset: [0, 130]
+        padding: 20,
+        offset: [0, height / 4]
       });
 
       const [bottomLng, bottomLat] = vp.unproject([width / 2, height / 3]);
 
-      const { zoom: newZoom } = vp;
+      const { zoom: minZoom } = vp;
 
       return {
         ...state,
         direction,
         latitude: bottomLat, // latitude + 0.0135,
         longitude: bottomLng,
-        zoom: newZoom,
+        zoom: minZoom,
         directionLoading: false
         // height: state.height - 200
       };
@@ -133,7 +142,7 @@ function reducer(state = {}, action) {
       return { ...state, ...action };
     }
     case CHANGE_MAP_VIEWPORT: {
-      const { cards, width, height } = state;
+      const { cards, userLocation, width, height } = state;
       // if (state.extCardId !== null) return state;
       const { longitude, latitude, zoom } = action.options;
       // const mapHeight = viewport.height;
@@ -142,41 +151,43 @@ function reducer(state = {}, action) {
       // zoom out;
       // if (viewport.zoom < state.zoom) {
       const bbox = getBoundingBox(
-        cards.map(({ loc }) => [loc.longitude, loc.latitude])
+        cards
+          .map(({ loc }) => [loc.longitude, loc.latitude])
+          .concat([[userLocation.longitude, userLocation.latitude]])
       );
 
-      const {
-        latitude: newLat,
-        longitude: newLong,
-        zoom: newZoom
-      } = new PerspectiveMercatorViewport({
-          width,
-          height,
-          zoom,
-          latitude,
-          longitude
-        }).fitBounds(bbox, {
-          padding: 60
-        // offset: [0, 130]
-        });
-      const gJson = toGeoJSON(
-        cards.map(c => [c.loc.longitude, c.loc.latitude])
-      );
-      console.log('gJson', gJson);
-      const convertZoomLevelToMercator = zoomLevel =>
-        Math.pow(2, 8 + zoomLevel) / 2 / Math.PI;
+      const vp = new PerspectiveMercatorViewport({
+        width,
+        height,
+        zoom,
+        latitude,
+        longitude
+      }).fitBounds(bbox, {
+        padding: 10,
+        offset: [0, height / 4]
+      });
+      const { zoom: minZoom, longitude: centerLng, latitude: centerLat } = vp;
 
-      const convertZoomLevelFromMercator = zoomLevelInMercator =>
-        Math.log(zoomLevelInMercator * 2 * Math.PI) / Math.LN2 - 8;
+      const birdsEyeView = zoom <= minZoom;
+      // const [bottomLng, bottomLat] = vp.unproject([width / 2, height / 3]);
+      // const gJson = toGeoJSON(
+      //   cards.map(c => [c.loc.longitude, c.loc.latitude])
+      // );
+      // console.log('gJson', gJson);
+      // const convertZoomLevelToMercator = zoomLevel =>
+      //   Math.pow(2, 8 + zoomLevel) / 2 / Math.PI;
+      //
+      // const convertZoomLevelFromMercator = zoomLevelInMercator =>
+      //   Math.log(zoomLevelInMercator * 2 * Math.PI) / Math.LN2 - 8;
 
-      console.log('geoJson', gJson);
-      const scale = convertZoomLevelToMercator(zoom);
-      const d3Proj = geoMercator()
-        .scale(scale)
-        .center([longitude, latitude])
-        // .clipExtent(bbox)
-        .translate([width / 2, height / 2])
-        .fitSize([width, height], gJson);
+      // console.log('geoJson', gJson);
+      // const scale = convertZoomLevelToMercator(zoom);
+      // const d3Proj = geoMercator()
+      //   .scale(scale)
+      //   .center([longitude, latitude])
+      //   // .clipExtent(bbox)
+      //   .translate([width / 2, height / 2])
+      //   .fitSize([width, height], gJson);
 
       // const z = Math.sqrt(d3Proj.scale()) / 162.975;
       // const scale = 512 * 0.5 / Math.PI * Math.pow(2, zoom);
@@ -200,10 +211,12 @@ function reducer(state = {}, action) {
       // console.log('boolean-contains', booleanWithin);
       return {
         ...state,
-        longitude: newZoom >= zoom ? newLong : longitude,
-        latitude: newZoom >= zoom ? newLat : latitude,
+        longitude: birdsEyeView ? centerLng : longitude,
+        latitude: birdsEyeView ? centerLat : latitude,
+        birdsEyeView,
+
         // latitude: newLat, // latScale(viewport.zoom),
-        zoom: Math.max(newZoom, zoom),
+        zoom: Math.max(minZoom, zoom),
         // selectedCardId: zoom < 10 ? null : state.selectedCardId,
         userChangedMapViewport: true
       };

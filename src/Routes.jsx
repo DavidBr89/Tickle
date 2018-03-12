@@ -80,7 +80,8 @@ const defaultState = {
     cardChallengeOpen: false,
     extCardId: false,
     AppOpenFirstTime: true,
-    selectedCardId: dummyCards[0].id
+    selectedCardId: dummyCards[0].id,
+    birdsEyeView: false
   },
   CardCreator: {
     cards: dummyCards,

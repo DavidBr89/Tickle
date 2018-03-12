@@ -91,6 +91,7 @@
     "scroll-into-view": "^1.9.1",
     "shallow-equal-props": "^1.0.2",
     "slick-carousel": "^1.7.1",
+    "tsne": "^1.0.1",
     "turf": "^3.0.14",
     "viewport-mercator-project": "^5.0.0",
     "w3-css": "^4.0.4",

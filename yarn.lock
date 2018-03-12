@@ -9829,6 +9829,10 @@ trim-right@^1.0.1:
   dependencies:
     glob "^6.0.4"
 
+tsne@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/tsne/-/tsne-1.0.1.tgz#3dd936105bc19a1c022a8fcb0be9c26963446b82"
+
 tty-browserify@0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/tty-browserify/-/tty-browserify-0.0.0.tgz#a157ba402da24e9bf957f9aa69d524eed42901a6"

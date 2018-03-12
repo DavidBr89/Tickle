@@ -12,10 +12,12 @@ import {
   extendSelectedCard,
   navigateAppFirstTime,
   flyToUser,
-  enableCompass
+  enableCompass,
+  toggleTsneView,
+  toggleGrid
 } from './actions';
 
-import { fetchDirection } from './async_actions';
+import { fetchDirection, computeTopicMap } from './async_actions';
 
 import MapView from './MapView';
 
@@ -31,7 +33,7 @@ const mapStateToProps = state => {
     latitude,
     longitude,
     zoom,
-    direction
+    direction,
     // userSelected,
     // userLocation,
     // directionLoading
@@ -99,6 +101,15 @@ const mapDispatchToProps = dispatch => ({
   },
   enableCompassAction: options => {
     dispatch(enableCompass(options));
+  },
+  toggleTsneViewAction: options => {
+    dispatch(toggleTsneView(options));
+  },
+  computeTopicMapAction: options => {
+    dispatch(computeTopicMap(options));
+  },
+  toggleGridAction: options => {
+    dispatch(toggleGrid(options));
   }
 });
 
