@@ -51,6 +51,7 @@ class CardMarker extends Component {
       background,
       imgColor,
       shadow,
+      tags,
       barHeight = '12%'
     } = this.props;
     return (
@@ -71,6 +72,7 @@ class CardMarker extends Component {
         }}
         onClick={onClick}
       >
+        <div style={{position: 'absolute'}}>{tags.map(t => <small>{t + ', '}</small>)}</div>
         <div
           style={{
             background: challenge.type

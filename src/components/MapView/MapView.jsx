@@ -21,7 +21,7 @@ import { Card, CardMarker } from '../cards';
 import SvgOverlay from '../utils/map-layers/SvgOverlay';
 import CardGrid from './CardGrid';
 import ContextView from './ContextView';
-import TopicMap from './TopicMap';
+import ForceOverlay from './ForceOverlay';
 // import StartNav from './StartNav';
 // import { VisibleView, VisibleElement } from '../utils/MySensor.jsx';
 
@@ -376,14 +376,15 @@ class MapView extends PureComponent {
             />
           </div>
         </div>
-        <TopicMap
+        <ForceOverlay
           viewport={mapViewport}
           data={cards}
           force
+          mode={tsneView ? 'tsne' : 'location'}
           style={{
             background: tsneView ? 'wheat' : null,
-            width: tsneView ? width : null,
-            height: tsneView ? height : null
+            // width: tsneView ? width : null,
+            // height: tsneView ? height : null
           }}
         >
           {({ x, y, ...c }) => (
@@ -447,7 +448,7 @@ class MapView extends PureComponent {
               />
             </AnimMarker>
           )}
-        </TopicMap>
+        </ForceOverlay>
       </div>
     );
   }

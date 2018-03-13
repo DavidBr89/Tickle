@@ -86,7 +86,13 @@ function reducer(state = {}, action) {
       return { ...state, tsneView: !state.tsneView };
     }
     case TOGGLE_GRID_VIEW: {
-      return { ...state, gridView: !state.gridView };
+      const gridView = !state.gridView;
+      return {
+        ...state,
+        gridView,
+        // TODO: why not !gridView?
+        selectedCardId: gridView ? null : state.selectedCardId
+      };
     }
     case LOAD_DIRECTION: {
       return { ...state, directionLoading: true };
@@ -142,7 +148,7 @@ function reducer(state = {}, action) {
       return { ...state, ...action };
     }
     case CHANGE_MAP_VIEWPORT: {
-      const { cards, userLocation, width, height } = state;
+      const { cards, selectedCardId, userLocation, width, height } = state;
       // if (state.extCardId !== null) return state;
       const { longitude, latitude, zoom } = action.options;
       // const mapHeight = viewport.height;
@@ -169,50 +175,26 @@ function reducer(state = {}, action) {
       const { zoom: minZoom, longitude: centerLng, latitude: centerLat } = vp;
 
       const birdsEyeView = zoom <= minZoom;
-      // const [bottomLng, bottomLat] = vp.unproject([width / 2, height / 3]);
-      // const gJson = toGeoJSON(
-      //   cards.map(c => [c.loc.longitude, c.loc.latitude])
-      // );
-      // console.log('gJson', gJson);
-      // const convertZoomLevelToMercator = zoomLevel =>
-      //   Math.pow(2, 8 + zoomLevel) / 2 / Math.PI;
-      //
-      // const convertZoomLevelFromMercator = zoomLevelInMercator =>
-      //   Math.log(zoomLevelInMercator * 2 * Math.PI) / Math.LN2 - 8;
 
-      // console.log('geoJson', gJson);
-      // const scale = convertZoomLevelToMercator(zoom);
-      // const d3Proj = geoMercator()
-      //   .scale(scale)
-      //   .center([longitude, latitude])
-      //   // .clipExtent(bbox)
-      //   .translate([width / 2, height / 2])
-      //   .fitSize([width, height], gJson);
+      const { longitude: newLng, latitude: newLat } = (() => {
+        if (birdsEyeView)
+          return {
+            longitude: centerLng,
+            latitude: centerLat
+          };
+        if (selectedCardId !== null) {
+          const { loc: { longitude: cardLng, latitude: cardLat } } = cards.find(
+            d => d.id === selectedCardId
+          );
+          return { longitude: cardLng, latitude: cardLat };
+        }
+        return { longitude, latitude };
+      })();
 
-      // const z = Math.sqrt(d3Proj.scale()) / 162.975;
-      // const scale = 512 * 0.5 / Math.PI * Math.pow(2, zoom);
-      // const lngScale = scaleLinear()
-      //   .domain([zoom, 15])
-      //   .range(extent([viewport.longitude, longitude]));
-      //
-      // const latScale = scaleLinear()
-      //   .domain([15, zoom])
-      //   .range(extent([viewport.latitude, latitude]));
-
-      // console.log(lngScale(viewport.zoom));
-      // console.log(latScale(viewport.zoom));
-      // console.log('turf', turf);
-      // const line = turf.lineString(bbox);
-      // const point = turf.point([longitude, latitude]);
-      // const newLoc = d3Proj.center();
-      // console.log('newLoc', newLoc);
-      // // const z = convertZoomLevelFromMercator(d3Proj.scale()); //
-      //
-      // console.log('boolean-contains', booleanWithin);
       return {
         ...state,
-        longitude: birdsEyeView ? centerLng : longitude,
-        latitude: birdsEyeView ? centerLat : latitude,
+        longitude: newLng,
+        latitude: newLat,
         birdsEyeView,
 
         // latitude: newLat, // latScale(viewport.zoom),
