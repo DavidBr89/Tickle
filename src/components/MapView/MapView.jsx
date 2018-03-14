@@ -382,7 +382,7 @@ class MapView extends PureComponent {
           force
           mode={tsneView ? 'tsne' : 'location'}
           style={{
-            background: tsneView ? 'wheat' : null,
+            background: tsneView ? 'wheat' : null
             // width: tsneView ? width : null,
             // height: tsneView ? height : null
           }}

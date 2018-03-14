@@ -1,10 +1,29 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 import tsnejs from 'tsne';
-import { intersection, union } from 'lodash';
-
 import * as d3 from 'd3';
+import { intersection, union, flattenDeep, uniq, flatten } from 'lodash';
+import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
+import * as chromatic from 'd3-scale-chromatic';
+
+import Hull from './Hull';
+
+function setify(data) {
+  const spreadData = [...data].map(({ id, tags }) =>
+    tags.map(t => ({ id: t, ref: id }))
+  );
+  return d3
+    .nest()
+    .key(d => d.id)
+    .entries(flatten([...spreadData]))
+    .map(d => {
+      d.count = d.values.length;
+      d.tags = uniq(flatten(intersection(d.values.map(e => e.tags))));
+      // d.tags = i % 2 ? ['hallo'] : ['test'];
+      return d;
+    })
+    .sort((a, b) => b.count - a.count);
+}
 
 const jaccard = (a, b) =>
   a.length !== 0 && b.length !== 0
@@ -17,8 +36,8 @@ function runTsne(data, iter = 400) {
   // eslint-disable-next-line new-cap
   const model = new tsnejs.tSNE({
     dim: 2,
-    perplexity: 30
-    // epsilon: 10
+    perplexity: 10,
+    epsilon: 50
   });
 
   // initialize data with pairwise distances
@@ -28,6 +47,14 @@ function runTsne(data, iter = 400) {
 
   // Y is an array of 2-D points that you can plot
   return model.getSolution();
+}
+
+function transform(t) {
+  return function(d) {
+    const s = t.apply(d);
+    console.log('s', s);
+    return `translate(${t.apply(d)})`;
+  };
 }
 
 function forceTsne({ width, height, nodes }) {
@@ -99,7 +126,14 @@ class ForceOverlay extends Component {
   constructor(props) {
     super(props);
     const { width, height, data } = props;
-    this.state = { nodes: [], tsnePos: runTsne(data, 100), translate: null };
+    const sets = setify(data).filter(d => d.values.length > 2);
+    this.state = {
+      nodes: [],
+      tsnePos: runTsne(data, 400),
+      translate: transform(d3.zoomIdentity),
+      transEvent: d3.zoomIdentity,
+      sets
+    };
     this.layout = this.layout.bind(this);
     this.forceSim = d3.forceSimulation();
     // this.zoom = this.zoom.bind(this);
@@ -107,25 +141,6 @@ class ForceOverlay extends Component {
 
   componentDidMount() {
     this.layout();
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { width, height } = this.props.viewport;
-    d3.select(this.zoomCont).call(
-      d3
-        .zoom()
-        // .translateExtent([[0, width], [width, height]])
-        .on('zoom', () => {
-          console.log('zoom', d3.event);
-          // const { x, y } = d3.event.sourceEvent;
-          // const translate = `translate(${width / 2 - x * scale}px,${height / 2 -
-          //   y * scale}px)scale(${scale})`;
-          const { k: scale, x, y } = d3.event.transform;
-          const translate = `translate(${x}px,${y}px)scale(${scale})`;
-
-          this.setState({ transform: translate });
-        })
-    );
   }
 
   // shouldComponentUpdate(nextProps, nextState) {
@@ -146,7 +161,40 @@ class ForceOverlay extends Component {
     this.layout(nextProps);
   }
 
-  // componentDidUpdate(prevProps, prevState) {}
+  componentDidUpdate(prevProps) {
+    const { width, height } = this.props.viewport;
+
+    // TODO: simplify, too complicated
+    if (prevProps.mode !== this.props.mode && this.props.mode === 'tsne') {
+      const zoomFactory = d3
+        .zoom()
+        .wheelDelta(
+          () => -d3.event.deltaY * (d3.event.deltaMode ? 50 : 1) / 500
+        )
+        .scaleExtent([1, 3])
+        // .translateExtent([[-Infinity, -Infinity], [Infinity, Infinity]])
+        // .extent([[-Infinity, -Infinity], [Infinity, Infinity]])
+        .on('zoom', () => {
+          // const { x, y } = d3.event.sourceEvent;
+          // const translate = `translate(${width / 2 - x * scale}px,${height / 2 -
+          //   y * scale}px)scale(${scale})`;
+          const { k: scale, x, y } = d3.event.transform;
+          const translate = `translate(${x}px,${y}px)scale(${scale})`;
+          console.log('zoomFactory', translate);
+
+          this.setState(({ nodes }) => ({
+            transform: translate,
+            transEvent: d3.event.transform || d3.zoomIdentity
+            // nodes: nodes.map(d => {
+            //   const [x, y] = d3.event.transform.apply([d.x, d.y]);
+            //   return { x, y, id: d.id };
+            //   // return d;
+            // })
+          }));
+        });
+      d3.select(this.zoomCont).call(zoomFactory);
+    }
+  }
 
   layout(nextProps = null) {
     const data = (() => {
@@ -165,8 +213,8 @@ class ForceOverlay extends Component {
 
     const { viewport, force, mode, delay } = nextProps || this.props;
     const { width, height, zoom, latitude, longitude } = viewport;
-    const { tsnePos } = this.state;
-    // const tsnePos = runTsne(data, 100);
+    const { tsnePos, transEvent } = this.state;
+    // const tsnePos = runTsne(data, 300);
 
     // prevent stretching of similiarities
     const padY = height / 7;
@@ -211,7 +259,7 @@ class ForceOverlay extends Component {
         .nodes(nodes)
         .restart()
         .alpha(1)
-        .alphaMin(0.6)
+        // .alphaMin(0.6)
         .force('x', d3.forceX(d => (isTsne ? d.tx : d.lx)).strength(0.8))
         .force('y', d3.forceY(d => (isTsne ? d.ty : d.ly)).strength(0.8))
         // .force(
@@ -220,7 +268,7 @@ class ForceOverlay extends Component {
         // )
         .force(
           'collide',
-          d3.forceCollide(15).strength(1)
+          d3.forceCollide(10).strength(1)
           // .iterations(10)
         )
         .on('end', () => {
@@ -228,6 +276,11 @@ class ForceOverlay extends Component {
             () =>
               this.setState({
                 nodes: this.forceSim.nodes()
+
+                // .map(d => {
+                //   const [x, y] = transEvent.apply([d.x, d.y]);
+                //   return { x, y, id: d.id };
+                // })
               }),
             delay
           );
@@ -246,9 +299,19 @@ class ForceOverlay extends Component {
 
   render() {
     const { children, viewport, style, className, mode } = this.props;
-    const { transform } = this.state;
+    const { transEvent, sets } = this.state;
     const { width, height } = viewport;
     const { nodes } = this.state;
+    const bubbleRadius = 50;
+    const newPos = nodes.map(d => transEvent.apply([d.x, d.y]));
+
+    const color = d3
+      .scaleOrdinal()
+      .domain(sets.map(s => s.key))
+      .range(chromatic.schemeAccent);
+    // .interpolator(chromatic.interpolateYlGnBu)
+    // .clamp(true);
+
     if (mode === 'location') {
       return (
         <div
@@ -267,6 +330,32 @@ class ForceOverlay extends Component {
       );
     }
 
+    const Bubbles = sets.map(({ id, key, values }) => (
+      <g
+        key={id}
+        style={{
+          // filter: `url( "#gooeyCodeFilter-${key}")`,
+          filter: `url("#gooey2")`
+        }}
+      >
+        {values.map(d => {
+          const n = nodes.findIndex(e => e.id === d.ref) || 0;
+          console.log('n', n);
+          return (
+            <circle
+              fill={color(key)}
+              opacity={0.2}
+              r={bubbleRadius}
+              cx={newPos[n][0]}
+              cy={newPos[n][1]}
+            />
+          );
+        })}
+      </g>
+    ));
+
+    const blurFactor = 0;
+
     return (
       <div
         className={className}
@@ -275,7 +364,6 @@ class ForceOverlay extends Component {
           left: 0,
           top: 0,
           background: 'wheat',
-          // transform
           width,
           height,
           // pointerEvents: 'none',
@@ -283,19 +371,104 @@ class ForceOverlay extends Component {
           // zIndex: 2000
           ...style
         }}
+        ref={node => (this.zoomCont = node)}
       >
         <div
-          ref={node => (this.zoomCont = node)}
           style={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            transform
             // width,
             // height,
+            position: 'absolute'
+            // overflow: 'hidden',
+            // left: 0,
+            // top: 0
           }}
         >
-          {nodes.map(children)}
+          <svg
+            style={{
+              position: 'absolute',
+              // left: 0,
+              // top: 0,
+              // pointerEvents: 'none',
+              width,
+              height
+              // border: '1px black dashed'
+              // transform: transform(transEvent)
+              // transform
+            }}
+          >
+            <defs>
+              {sets.map(s => (
+                <filter id={`gooeyCodeFilter-${s.key}`}>
+                  <feGaussianBlur
+                    in="SourceGraphic"
+                    stdDeviation={blurFactor}
+                    colorInterpolationFilters="sRGB"
+                    result="blur"
+                  />
+                  <feColorMatrix
+                    in="blur"
+                    type="saturate"
+                    values={`1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${bubbleRadius} -6`}
+                    result="gooey"
+                  />
+                </filter>
+              ))}
+              <filter id="gooey2">
+                <feGaussianBlur
+                  in="SourceGraphic"
+                  stdDeviation="10"
+                  result="blur"
+                />
+                <feColorMatrix
+                  in="blur"
+                  mode="matrix"
+                  values={`1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${bubbleRadius} -7`}
+                  result="gooey"
+                />
+                <feBlend in="SourceGraphic" in2="gooey" />
+              </filter>
+
+              <filter id="gooey">
+                <feGaussianBlur
+                  in="SourceGraphic"
+                  stdDeviation={blurFactor}
+                  result="blur"
+                />
+                <feColorMatrix
+                  in="blur"
+                  mode="matrix"
+                  values={`1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${bubbleRadius} -7`}
+                  result="gooey"
+                />
+                <feBlend in="SourceGraphic" in2="gooey" />
+              </filter>
+            </defs>
+            <g>
+              {sets.map(s => (
+                <Hull
+                  data={s.values}
+                  tags={s.tags}
+                  offset={10}
+                  zoomHandler={d => d}
+                  onHighlight={d => d}
+                  onMouseEnter={d => d}
+                  onMouseLeave={d => d}
+                />
+              ))}
+            </g>
+            {Bubbles}
+          </svg>
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0
+              // width,
+              // height,
+            }}
+          >
+            {newPos.map(([x, y]) => children({ x, y }))}
+          </div>
         </div>
       </div>
     );
