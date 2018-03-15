@@ -239,7 +239,7 @@ function reducer(state = {}, action) {
         height,
         longitude,
         latitude,
-        zoom: 20
+        zoom: 15
       });
 
       return {

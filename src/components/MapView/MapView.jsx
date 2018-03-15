@@ -22,6 +22,7 @@ import SvgOverlay from '../utils/map-layers/SvgOverlay';
 import CardGrid from './CardGrid';
 import ContextView from './ContextView';
 import ForceOverlay from './ForceOverlay';
+import GeoOverlay from './GeoOverlay';
 // import StartNav from './StartNav';
 // import { VisibleView, VisibleElement } from '../utils/MySensor.jsx';
 
@@ -252,6 +253,67 @@ class MapView extends PureComponent {
 
     const cardPadding = 15;
 
+    const animatedMarker = ({ x, y, ...c }) => (
+      <AnimMarker
+        key={c.id}
+        selected={extCardId === c.id}
+        width={extCardId === c.id ? width - cardPadding : 40}
+        height={extCardId === c.id ? height - cardPadding : 50}
+        offsetX={extCardId === c.id ? 3 : 0}
+        offsetY={3}
+        x={x + 5}
+        y={y + 3}
+        preview={
+          <div style={{ position: 'relative' }}>
+            <CardMarker
+              {...c}
+              center={false}
+              style={{
+                opacity: setCardOpacity(c),
+                position: 'absolute',
+                zIndex: -100
+              }}
+            />
+            {selectedCardId === c.id &&
+              !direction && (
+                <ContextView
+                  radius={70}
+                  width={12}
+                  delay={1000}
+                  background={brighterColorScale(selectedCard.challenge.type)}
+                  mapViewport={mapViewport}
+                  visible={compass}
+                  node={this.node}
+                >
+                  {cards.slice(-5).map(cc => (
+                    <CardMarker
+                      key={cc.id}
+                      {...cc}
+                      center={false}
+                      shadow={false}
+                      width={5}
+                      height={6}
+                      node={this.node}
+                      onClick={() => {
+                        selectCardAction(cc.id);
+                      }}
+                    />
+                  ))}
+                </ContextView>
+              )}
+          </div>
+        }
+      >
+        <Card
+          {...c}
+          onClose={() => extCardAction(null)}
+          onCollect={() =>
+            toggleCardChallengeAction({ cardChallengeOpen: true })
+          }
+        />
+      </AnimMarker>
+    );
+
     return (
       <div className="w-100 h-100">
         <div style={{ display: 'flex', width: '200px', position: 'absolute' }}>
@@ -291,7 +353,8 @@ class MapView extends PureComponent {
             style={{
               position: 'absolute',
               left: 0,
-              right: 0
+              right: 0,
+              filter: tsneView && 'blur(4px)'
             }}
           >
             <MapGL
@@ -299,6 +362,7 @@ class MapView extends PureComponent {
               onViewportChange={changeMapViewportAction}
               isdragging={false}
               startdraglnglat={null}
+              mapStyle={'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l'}
               onClick={({ lngLat, deltaTime }) =>
                 // TODO: fix later
                 deltaTime > 30 && userMoveAction({ lngLat })
@@ -376,79 +440,40 @@ class MapView extends PureComponent {
             />
           </div>
         </div>
-        <ForceOverlay
-          viewport={mapViewport}
-          data={cards}
-          force
-          mode={tsneView ? 'tsne' : 'location'}
-          style={{
-            background: tsneView ? 'wheat' : null
-            // width: tsneView ? width : null,
-            // height: tsneView ? height : null
-          }}
-        >
-          {({ x, y, ...c }) => (
-            <AnimMarker
-              key={c.id}
-              selected={extCardId === c.id}
-              width={extCardId === c.id ? width - cardPadding : 40}
-              height={extCardId === c.id ? height - cardPadding : 50}
-              offsetX={extCardId === c.id ? 3 : 0}
-              offsetY={3}
-              x={x + 5}
-              y={y + 3}
-              preview={
-                <div style={{ position: 'relative' }}>
-                  <CardMarker
-                    {...c}
-                    style={{
-                      opacity: setCardOpacity(c),
-                      position: 'absolute',
-                      zIndex: -100
-                    }}
-                  />
-                  {selectedCardId === c.id &&
-                    !direction && (
-                      <ContextView
-                        radius={70}
-                        width={12}
-                        delay={1000}
-                        background={brighterColorScale(
-                          selectedCard.challenge.type
-                        )}
-                        mapViewport={mapViewport}
-                        visible={compass}
-                        node={this.node}
-                      >
-                        {cards.slice(-5).map(cc => (
-                          <CardMarker
-                            key={cc.id}
-                            {...cc}
-                            center={false}
-                            shadow={false}
-                            width={5}
-                            height={6}
-                            node={this.node}
-                            onClick={() => {
-                              selectCardAction(cc.id);
-                            }}
-                          />
-                        ))}
-                      </ContextView>
-                    )}
-                </div>
+        {!tsneView ? (
+          <GeoOverlay
+            viewport={mapViewport}
+            data={[...cards]}
+            force
+            mode={tsneView ? 'tsne' : 'location'}
+            selectedCardId={selectedCardId}
+            style={
+              {
+                // width: tsneView ? width : null,
+                // height: tsneView ? height : null
               }
-            >
-              <Card
-                {...c}
-                onClose={() => extCardAction(null)}
-                onCollect={() =>
-                  toggleCardChallengeAction({ cardChallengeOpen: true })
-                }
-              />
-            </AnimMarker>
-          )}
-        </ForceOverlay>
+            }
+          >
+            {animatedMarker}
+          </GeoOverlay>
+        ) : (
+          <ForceOverlay
+            {...mapViewport}
+            viewport={mapViewport}
+            data={[...cards]}
+            force
+            selectedCardId={selectedCardId}
+            mode={'tsne'}
+            style={
+              {
+                // width: tsneView ? width : null,
+                // height: tsneView ? height : null
+              }
+            }
+          >
+            {animatedMarker}
+          </ForceOverlay>
+        )}
       </div>
     );
   }

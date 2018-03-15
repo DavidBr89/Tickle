@@ -72,7 +72,6 @@ class CardMarker extends Component {
         }}
         onClick={onClick}
       >
-        <div style={{position: 'absolute'}}>{tags.map(t => <small>{t + ', '}</small>)}</div>
         <div
           style={{
             background: challenge.type

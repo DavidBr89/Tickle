@@ -139,10 +139,6 @@ class ForceOverlay extends Component {
     // this.zoom = this.zoom.bind(this);
   }
 
-  componentDidMount() {
-    this.layout();
-  }
-
   // shouldComponentUpdate(nextProps, nextState) {
   //   const { viewport: vp1 } = nextProps;
   //   const { viewport: vp2 } = this.props;
@@ -156,44 +152,64 @@ class ForceOverlay extends Component {
   // }
 
   componentWillReceiveProps(nextProps) {
+    const { selectedCardId, viewport } = nextProps;
+    const { height, width } = viewport;
+    const { nodes } = this.state;
     // this.forceSim.on('end', null);
     clearTimeout(this.id);
-    this.layout(nextProps);
-  }
+    // this.layout(nextProps);
 
-  componentDidUpdate(prevProps) {
-    const { width, height } = this.props.viewport;
-
-    // TODO: simplify, too complicated
-    if (prevProps.mode !== this.props.mode && this.props.mode === 'tsne') {
-      const zoomFactory = d3
-        .zoom()
-        .wheelDelta(
-          () => -d3.event.deltaY * (d3.event.deltaMode ? 50 : 1) / 500
-        )
-        .scaleExtent([1, 3])
-        // .translateExtent([[-Infinity, -Infinity], [Infinity, Infinity]])
-        // .extent([[-Infinity, -Infinity], [Infinity, Infinity]])
-        .on('zoom', () => {
-          // const { x, y } = d3.event.sourceEvent;
-          // const translate = `translate(${width / 2 - x * scale}px,${height / 2 -
-          //   y * scale}px)scale(${scale})`;
-          const { k: scale, x, y } = d3.event.transform;
-          const translate = `translate(${x}px,${y}px)scale(${scale})`;
-          console.log('zoomFactory', translate);
-
-          this.setState(({ nodes }) => ({
-            transform: translate,
-            transEvent: d3.event.transform || d3.zoomIdentity
-            // nodes: nodes.map(d => {
-            //   const [x, y] = d3.event.transform.apply([d.x, d.y]);
-            //   return { x, y, id: d.id };
-            //   // return d;
-            // })
-          }));
-        });
-      d3.select(this.zoomCont).call(zoomFactory);
+    if (selectedCardId !== null) {
+      const n = nodes.find(d => d.id === selectedCardId);
+      console.log('n', n.y, height);
+      this.setState({
+        transEvent: d3.zoomIdentity.translate(width / 2 - n.x, height / 2 - n.y)
+      });
     }
+  }
+  //
+  // componentDidUpdate() {
+  //   const { selectedCardId, width, height } = this.props;
+  //   const { nodes } = this.state;
+  //   // this.forceSim.on('end', null);
+  //   clearTimeout(this.id);
+  //   // this.layout(nextProps);
+  //
+  //   if (selectedCardId !== null) {
+  //     const n = nodes.find(d => d.id === selectedCardId);
+  //     this.setState({
+  //       transEvent: d3.zoomIdentity.translate(width / 2, height / 2)
+  //     });
+  //   }
+  // }
+
+  componentDidMount() {
+    const { width, height } = this.props.viewport;
+    const zoomFactory = d3
+      .zoom()
+      .wheelDelta(() => -d3.event.deltaY * (d3.event.deltaMode ? 50 : 1) / 500)
+      .scaleExtent([1, 3])
+      // .translateExtent([[-Infinity, -Infinity], [Infinity, Infinity]])
+      // .extent([[-Infinity, -Infinity], [Infinity, Infinity]])
+      .on('zoom', () => {
+        // const { x, y } = d3.event.sourceEvent;
+        // const translate = `translate(${width / 2 - x * scale}px,${height / 2 -
+        //   y * scale}px)scale(${scale})`;
+        // const { k: scale, x, y } = d3.event.transform;
+
+        this.setState({
+          transEvent: d3.event.transform || d3.zoomIdentity
+          // nodes: nodes.map(d => {
+          //   const [x, y] = d3.event.transform.apply([d.x, d.y]);
+          //   return { x, y, id: d.id };
+          //   // return d;
+          // })
+        });
+      });
+    d3.select(this.zoomCont).call(zoomFactory);
+
+    this.layout(this.props);
+    // }
   }
 
   layout(nextProps = null) {
@@ -211,9 +227,9 @@ class ForceOverlay extends Component {
       return this.props.data;
     })();
 
-    const { viewport, force, mode, delay } = nextProps || this.props;
+    const { viewport, force, mode, delay } = nextProps;
     const { width, height, zoom, latitude, longitude } = viewport;
-    const { tsnePos, transEvent } = this.state;
+    const { tsnePos } = this.state;
     // const tsnePos = runTsne(data, 300);
 
     // prevent stretching of similiarities
@@ -244,14 +260,14 @@ class ForceOverlay extends Component {
           id,
           lx,
           ly,
-          x: x || lx,
-          y: y || ly,
+          x: lx,
+          y: ly,
           tx: tsneX(tsnePos[i][0]),
           ty: tsneY(tsnePos[i][1]),
           tags
         };
       })
-      .filter(n => n.x > 0 && n.x < width && n.y > 0 && n.y < height);
+      // .filter(n => n.x > 0 && n.x < width && n.y > 0 && n.y < height);
 
     const isTsne = mode === 'tsne';
     if (force) {
@@ -303,7 +319,15 @@ class ForceOverlay extends Component {
     const { width, height } = viewport;
     const { nodes } = this.state;
     const bubbleRadius = 50;
-    const newPos = nodes.map(d => transEvent.apply([d.x, d.y]));
+
+    // need to run here to be always synchron, state updates asynchron
+    const zoomedNodes = nodes.map(d => {
+      const { x, y } = { ...d };
+      const [x1, y1] = transEvent.apply([x, y]);
+      return { id: d.id, x: x1, y: y1 };
+    });
+
+    const zoomedPos = nodes.map(d => transEvent.apply([d.x, d.y]));
 
     const color = d3
       .scaleOrdinal()
@@ -312,25 +336,7 @@ class ForceOverlay extends Component {
     // .interpolator(chromatic.interpolateYlGnBu)
     // .clamp(true);
 
-    if (mode === 'location') {
-      return (
-        <div
-          className={className}
-          style={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            // transform
-            pointerEvents: 'none',
-            ...style
-          }}
-        >
-          {nodes.map(children)}
-        </div>
-      );
-    }
-
-    const Bubbles = sets.map(({ id, key, values }) => (
+    const bubbles = sets.map(({ id, key, values }) => (
       <g
         key={id}
         style={{
@@ -339,15 +345,14 @@ class ForceOverlay extends Component {
         }}
       >
         {values.map(d => {
-          const n = nodes.findIndex(e => e.id === d.ref) || 0;
-          console.log('n', n);
+          const n = zoomedNodes.find(e => e.id === d.ref) || { x: 0, y: 0 };
           return (
             <circle
               fill={color(key)}
               opacity={0.2}
               r={bubbleRadius}
-              cx={newPos[n][0]}
-              cy={newPos[n][1]}
+              cx={n.x}
+              cy={n.y}
             />
           );
         })}
@@ -363,7 +368,7 @@ class ForceOverlay extends Component {
           position: 'absolute',
           left: 0,
           top: 0,
-          background: 'wheat',
+          // background: 'wheat',
           width,
           height,
           // pointerEvents: 'none',
@@ -456,7 +461,7 @@ class ForceOverlay extends Component {
                 />
               ))}
             </g>
-            {Bubbles}
+            {bubbles}
           </svg>
           <div
             style={{
@@ -467,7 +472,7 @@ class ForceOverlay extends Component {
               // height,
             }}
           >
-            {newPos.map(([x, y]) => children({ x, y }))}
+            {zoomedNodes.map(({ x, y }) => children({ x, y }))}
           </div>
         </div>
       </div>
