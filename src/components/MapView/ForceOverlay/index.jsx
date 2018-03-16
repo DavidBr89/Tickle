@@ -129,7 +129,6 @@ class ForceOverlay extends Component {
     const sets = setify(data).filter(d => d.values.length > 2);
     this.state = {
       nodes: [],
-      tsnePos: runTsne(data, 400),
       translate: transform(d3.zoomIdentity),
       transEvent: d3.zoomIdentity,
       sets
@@ -227,9 +226,8 @@ class ForceOverlay extends Component {
       return this.props.data;
     })();
 
-    const { viewport, force, mode, delay } = nextProps;
+    const { viewport, force, mode, delay, tsnePos } = nextProps;
     const { width, height, zoom, latitude, longitude } = viewport;
-    const { tsnePos } = this.state;
     // const tsnePos = runTsne(data, 300);
 
     // prevent stretching of similiarities
@@ -253,60 +251,56 @@ class ForceOverlay extends Component {
       longitude
     });
 
-    const nodes = data
-      .map(({ id, x, y, loc, tags }, i) => {
-        const [lx, ly] = vp.project([loc.longitude, loc.latitude]);
-        return {
-          id,
-          lx,
-          ly,
-          x: lx,
-          y: ly,
-          tx: tsneX(tsnePos[i][0]),
-          ty: tsneY(tsnePos[i][1]),
-          tags
-        };
-      })
-      // .filter(n => n.x > 0 && n.x < width && n.y > 0 && n.y < height);
+    const nodes = data.map(({ id, x, y, loc, tags }, i) => {
+      const [lx, ly] = vp.project([loc.longitude, loc.latitude]);
+      return {
+        id,
+        lx,
+        ly,
+        x: width / 2,
+        y: height / 2,
+        tx: tsneX(tsnePos[i][0]),
+        ty: tsneY(tsnePos[i][1]),
+        tags
+      };
+    });
+    // .filter(n => n.x > 0 && n.x < width && n.y > 0 && n.y < height);
 
-    const isTsne = mode === 'tsne';
-    if (force) {
-      this.forceSim = this.forceSim
-        .nodes(nodes)
-        .restart()
-        .alpha(1)
-        // .alphaMin(0.6)
-        .force('x', d3.forceX(d => (isTsne ? d.tx : d.lx)).strength(0.8))
-        .force('y', d3.forceY(d => (isTsne ? d.ty : d.ly)).strength(0.8))
-        // .force(
-        //   'tsne',
-        //    forceTsne({ width, height, nodes }) : null
-        // )
-        .force(
-          'collide',
-          d3.forceCollide(10).strength(1)
-          // .iterations(10)
-        )
-        .on('end', () => {
-          this.id = setTimeout(
-            () =>
-              this.setState({
-                nodes: this.forceSim.nodes()
+    this.forceSim = this.forceSim
+      .nodes(nodes)
+      .restart()
+      .alpha(1)
+      .alphaMin(0.6)
+      .force('x', d3.forceX(d => d.tx).strength(0.8))
+      .force('y', d3.forceY(d => d.ty).strength(0.8))
+      // .force(
+      //   'tsne',
+      //    forceTsne({ width, height, nodes }) : null
+      // )
+      .force(
+        'collide',
+        d3.forceCollide(10).strength(1)
+        // .iterations(10)
+      )
+      .on('end', () => {
+        this.id = setTimeout(
+          () =>
+            this.setState({
+              nodes: this.forceSim.nodes()
 
-                // .map(d => {
-                //   const [x, y] = transEvent.apply([d.x, d.y]);
-                //   return { x, y, id: d.id };
-                // })
-              }),
-            delay
-          );
+              // .map(d => {
+              //   const [x, y] = transEvent.apply([d.x, d.y]);
+              //   return { x, y, id: d.id };
+              // })
+            }),
+          delay
+        );
 
-          // this.setState({
-          //   nodes: this.forceSim.nodes()
-          // });
-          this.forceSim.on('end', null);
-        });
-    }
+        // this.setState({
+        //   nodes: this.forceSim.nodes()
+        // });
+        this.forceSim.on('end', null);
+      });
 
     this.setState({
       nodes
@@ -472,7 +466,7 @@ class ForceOverlay extends Component {
               // height,
             }}
           >
-            {zoomedNodes.map(({ x, y }) => children({ x, y }))}
+            {zoomedNodes.map(({ x, y, id }) => children({ id, x, y }))}
           </div>
         </div>
       </div>

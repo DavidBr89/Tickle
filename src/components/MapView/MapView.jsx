@@ -23,6 +23,7 @@ import CardGrid from './CardGrid';
 import ContextView from './ContextView';
 import ForceOverlay from './ForceOverlay';
 import GeoOverlay from './GeoOverlay';
+import Reparenting from './Teleporter';
 // import StartNav from './StartNav';
 // import { VisibleView, VisibleElement } from '../utils/MySensor.jsx';
 
@@ -230,6 +231,7 @@ class MapView extends PureComponent {
       birdsEyeView,
       gridView,
       tsneView,
+      tsnePos,
       // AppOpenFirstTime,
       // headerPad,
 
@@ -443,7 +445,7 @@ class MapView extends PureComponent {
         {!tsneView ? (
           <GeoOverlay
             viewport={mapViewport}
-            data={[...cards]}
+            data={cards}
             force
             mode={tsneView ? 'tsne' : 'location'}
             selectedCardId={selectedCardId}
@@ -460,7 +462,8 @@ class MapView extends PureComponent {
           <ForceOverlay
             {...mapViewport}
             viewport={mapViewport}
-            data={[...cards]}
+            data={cards}
+            tsnePos={tsnePos}
             force
             selectedCardId={selectedCardId}
             mode={'tsne'}

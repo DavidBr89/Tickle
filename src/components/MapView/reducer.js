@@ -87,9 +87,24 @@ function reducer(state = {}, action) {
     }
     case TOGGLE_GRID_VIEW: {
       const gridView = !state.gridView;
+
+      const { width, height, zoom, latitude, longitude } = state;
+      const vp = new PerspectiveMercatorViewport({
+        width,
+        height,
+        zoom,
+        latitude,
+        longitude
+      });
+      const [bottomLng, bottomLat] = !gridView
+        ? vp.unproject([width / 2, height / 3])
+        : vp.unproject([width / 2, height * 2 / 3]);
+
       return {
         ...state,
         gridView,
+        longitude: bottomLng,
+        latitude: bottomLat,
         // TODO: why not !gridView?
         selectedCardId: gridView ? null : state.selectedCardId
       };

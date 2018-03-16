@@ -1,6 +1,9 @@
 import React from 'react';
 import thunkMiddleware from 'redux-thunk';
 
+import { intersection, union, flattenDeep, uniq, flatten } from 'lodash';
+import tsnejs from 'tsne';
+
 import { createStore, applyMiddleware } from 'redux';
 import { createLogger } from 'redux-logger';
 import { Provider } from 'react-redux';
@@ -33,6 +36,30 @@ import { fetchChallenges } from './async_actions';
 const loggerMiddleware = createLogger();
 
 // import NotFound from './containers/NotFound/NotFound';
+
+const jaccard = (a, b) =>
+  a.length !== 0 && b.length !== 0
+    ? 1 - intersection(a, b).length / union(a, b).length
+    : 1;
+
+function runTsne(data, iter = 400) {
+  const dists = data.map(a => data.map(b => jaccard(a.tags, b.tags)));
+
+  // eslint-disable-next-line new-cap
+  const model = new tsnejs.tSNE({
+    dim: 2,
+    perplexity: 10,
+    epsilon: 50
+  });
+
+  // initialize data with pairwise distances
+  model.initDataDist(dists);
+
+  for (let i = 0; i < iter; ++i) model.step();
+
+  // Y is an array of 2-D points that you can plot
+  return model.getSolution();
+}
 
 function gravatar(email) {
   const base = 'http://www.gravatar.com/avatar/';
@@ -80,8 +107,9 @@ const defaultState = {
     cardChallengeOpen: false,
     extCardId: false,
     AppOpenFirstTime: true,
-    selectedCardId: dummyCards[0].id,
-    birdsEyeView: false
+    selectedCardId: null, // dummyCards[0].id,
+    birdsEyeView: false,
+    tsnePos: runTsne(dummyCards, 200)
   },
   CardCreator: {
     cards: dummyCards,
