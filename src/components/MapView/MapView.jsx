@@ -22,8 +22,6 @@ import SvgOverlay from '../utils/map-layers/SvgOverlay';
 import CardGrid from './CardGrid';
 import ContextView from './ContextView';
 import ForceOverlay from './ForceOverlay';
-import GeoOverlay from './GeoOverlay';
-import Reparenting from './Teleporter';
 // import StartNav from './StartNav';
 // import { VisibleView, VisibleElement } from '../utils/MySensor.jsx';
 
@@ -442,41 +440,16 @@ class MapView extends PureComponent {
             />
           </div>
         </div>
-        {!tsneView ? (
-          <GeoOverlay
-            viewport={mapViewport}
-            data={cards}
-            force
-            mode={tsneView ? 'tsne' : 'location'}
-            selectedCardId={selectedCardId}
-            style={
-              {
-                // width: tsneView ? width : null,
-                // height: tsneView ? height : null
-              }
-            }
-          >
-            {animatedMarker}
-          </GeoOverlay>
-        ) : (
-          <ForceOverlay
-            {...mapViewport}
-            viewport={mapViewport}
-            data={cards}
-            tsnePos={tsnePos}
-            force
-            selectedCardId={selectedCardId}
-            mode={'tsne'}
-            style={
-              {
-                // width: tsneView ? width : null,
-                // height: tsneView ? height : null
-              }
-            }
-          >
-            {animatedMarker}
-          </ForceOverlay>
-        )}
+        <ForceOverlay
+          {...mapViewport}
+          viewport={mapViewport}
+          data={cards}
+          mode={tsneView ? 'tsne' : 'geo'}
+          force
+          selectedCardId={selectedCardId}
+        >
+          {animatedMarker}
+        </ForceOverlay>
       </div>
     );
   }

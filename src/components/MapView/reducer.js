@@ -33,16 +33,16 @@ import {
   // GET_TOPIC_MAP
 } from './async_actions';
 
-const toGeoJSON = points => ({
-  type: 'FeatureCollection',
-  features: points.map(p => ({
-    type: 'Feature',
-    geometry: {
-      type: 'Point',
-      coordinates: p
-    }
-  }))
-});
+// const toGeoJSON = points => ({
+//   type: 'FeatureCollection',
+//   features: points.map(p => ({
+//     type: 'Feature',
+//     geometry: {
+//       type: 'Point',
+//       coordinates: p
+//     }
+//   }))
+// });
 
 const focusLoc = ({ width, height, zoom, latitude, longitude }) => {
   const vp = new PerspectiveMercatorViewport({
@@ -96,6 +96,8 @@ function reducer(state = {}, action) {
         latitude,
         longitude
       });
+
+      // TODO
       const [bottomLng, bottomLat] = !gridView
         ? vp.unproject([width / 2, height / 3])
         : vp.unproject([width / 2, height * 2 / 3]);
@@ -105,7 +107,6 @@ function reducer(state = {}, action) {
         gridView,
         longitude: bottomLng,
         latitude: bottomLat,
-        // TODO: why not !gridView?
         selectedCardId: gridView ? null : state.selectedCardId
       };
     }
@@ -163,7 +164,14 @@ function reducer(state = {}, action) {
       return { ...state, ...action };
     }
     case CHANGE_MAP_VIEWPORT: {
-      const { cards, selectedCardId, userLocation, width, height } = state;
+      const {
+        cards,
+        selectedCardId,
+        userLocation,
+        width,
+        height,
+        gridView
+      } = state;
       // if (state.extCardId !== null) return state;
       const { longitude, latitude, zoom } = action.options;
       // const mapHeight = viewport.height;
@@ -191,11 +199,14 @@ function reducer(state = {}, action) {
 
       const birdsEyeView = zoom <= minZoom;
 
+      // TODO
+      const [bottomLng, bottomLat] = vp.unproject([width / 2, height * 2]);
+
       const { longitude: newLng, latitude: newLat } = (() => {
         if (birdsEyeView)
           return {
-            longitude: centerLng,
-            latitude: centerLat
+            longitude: gridView ? centerLng : centerLng,
+            latitude: gridView ? centerLat : centerLat
           };
         if (selectedCardId !== null) {
           const { loc: { longitude: cardLng, latitude: cardLat } } = cards.find(
@@ -208,8 +219,8 @@ function reducer(state = {}, action) {
 
       return {
         ...state,
-        longitude: newLng,
-        latitude: newLat,
+        longitude: state.gridView ? bottomLng : newLng,
+        latitude: state.gridView ? bottomLat : newLat,
         birdsEyeView,
 
         // latitude: newLat, // latScale(viewport.zoom),
