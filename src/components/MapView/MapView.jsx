@@ -9,7 +9,6 @@ import Spinner from 'react-loader-spinner';
 
 // TODO: { LinearInterpolator, FlyToInterpolator }
 import MapGL, { FlyToInterpolator } from 'react-map-gl';
-import { easeCubic } from 'd3';
 import * as d3 from 'd3';
 import { colorScale, brighterColorScale } from '../cards/styles';
 
@@ -409,7 +408,7 @@ class MapView extends PureComponent {
           </div>
           <div
             style={{
-              opacity: gridView ? 0 : 1,
+              opacity: gridView ? 1 : 0,
               transition: 'opacity 1s'
             }}
           >

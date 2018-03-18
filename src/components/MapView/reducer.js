@@ -98,9 +98,9 @@ function reducer(state = {}, action) {
       });
 
       // TODO
-      const [bottomLng, bottomLat] = !gridView
-        ? vp.unproject([width / 2, height / 3])
-        : vp.unproject([width / 2, height * 2 / 3]);
+      const [bottomLng, bottomLat] = gridView
+        ? vp.unproject([width / 2, height * 1 / 4])
+        : vp.unproject([width / 2, height * 3 / 4]);
 
       return {
         ...state,
@@ -193,20 +193,22 @@ function reducer(state = {}, action) {
         longitude
       }).fitBounds(bbox, {
         padding: 10,
-        offset: [0, height / 4]
+        offset: [0, 200]
       });
       const { zoom: minZoom, longitude: centerLng, latitude: centerLat } = vp;
 
       const birdsEyeView = zoom <= minZoom;
 
-      // TODO
-      const [bottomLng, bottomLat] = vp.unproject([width / 2, height * 2]);
+      // TODO understand
+      const [bottomLng, bottomLat] = gridView
+        ? vp.unproject([width / 2, height * 1 / 4])
+        : vp.unproject([width / 2, height * 3 / 4]);
 
       const { longitude: newLng, latitude: newLat } = (() => {
         if (birdsEyeView)
           return {
-            longitude: gridView ? centerLng : centerLng,
-            latitude: gridView ? centerLat : centerLat
+            longitude: gridView ? bottomLng : centerLng,
+            latitude: gridView ? bottomLat : centerLat
           };
         if (selectedCardId !== null) {
           const { loc: { longitude: cardLng, latitude: cardLat } } = cards.find(
