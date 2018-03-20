@@ -7,7 +7,7 @@ import cx from './Card.scss';
 import colorClasses from '../utils/colorClasses';
 
 import { skillTypes } from '../../dummyData';
-import { CardMarker } from '../utils/map-layers/DivOverlay';
+import  CardMarker from './CardMarker';
 import { FieldSet } from './layout';
 
 const profileSrc = () => {
@@ -72,7 +72,7 @@ CardStack.propTypes = {
 
 CardStack.defaultProps = { number: 0 };
 
-const Author = ({ extended, onClose, color,  style, ...profile,}) => {
+const Author = ({ extended, onClose, color, style, ...profile }) => {
   const { name, skills, activity, interests } = profile;
   if (!extended) {
     return (
@@ -164,7 +164,7 @@ const Author = ({ extended, onClose, color,  style, ...profile,}) => {
 // };
 
 Author.defaultProps = {
-  //TODO: check
+  // TODO: check
   // profile: {
   name: 'jan',
   skills: [

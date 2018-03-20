@@ -2,20 +2,20 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 
-class ForceOverlay extends Component {
+class ZoomContainer extends Component {
   static propTypes = {
     children: PropTypes.func,
     className: PropTypes.oneOf([null, PropTypes.string]),
     style: PropTypes.object,
-    data: PropTypes.arrayOf(
+    width: PropTypes.number,
+    height: PropTypes.number,
+    nodes: PropTypes.arrayOf(
       PropTypes.shape({
-        loc: PropTypes.shape({
-          latitude: PropTypes.number,
-          longitude: PropTypes.number,
-          tags: PropTypes.arrayOf(PropTypes.string)
-        })
+        x: PropTypes.number,
+        y: PropTypes.number
       })
     ),
+    selectedId: PropTypes.oneOf([PropTypes.number, null]),
     delay: PropTypes.number
   };
 
@@ -23,10 +23,12 @@ class ForceOverlay extends Component {
     children: d => d,
     className: null,
     style: {},
-    viewport: { width: 100, height: 100, longitude: 0, latitude: 0 },
+    width: 100,
+    height: 100,
     force: false,
-    data: [],
-    delay: 200
+    nodes: [],
+    delay: 200,
+    selectedId: null
   };
 
   constructor(props) {
@@ -48,20 +50,6 @@ class ForceOverlay extends Component {
   //   );
   // }
 
-  // componentWillReceiveProps(nextProps) {
-  //   const { selectedCardId, viewport } = nextProps;
-  //   const { height, width } = viewport;
-  //   const { nodes } = this.state;
-  //   // this.forceSim.on('end', null);
-  //
-  //   // if (selectedCardId !== null) {
-  //   //   const n = nodes.find(d => d.id === selectedCardId);
-  //   //   console.log('n', n.y, height);
-  //   //   this.setState({
-  //   //     transEvent: d3.zoomIdentity.translate(width / 2 - n.x, height / 2 - n.y)
-  //   //   });
-  //   // }
-  // }
   // //
   // // componentDidUpdate() {
   // //   const { selectedCardId, width, height } = this.props;
@@ -79,10 +67,12 @@ class ForceOverlay extends Component {
   // // }
 
   componentDidMount() {
+    const { width, height } = this.props;
     const zoomFactory = d3
       .zoom()
       .wheelDelta(() => -d3.event.deltaY * (d3.event.deltaMode ? 50 : 1) / 500)
-      .scaleExtent([1, 3])
+      .scaleExtent([1, 4])
+      .extent([[0, 0], [width, height]])
       .on('zoom', () => {
         console.log('zoom');
         this.setState({
@@ -92,10 +82,26 @@ class ForceOverlay extends Component {
     d3.select(this.zoomCont).call(zoomFactory);
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { selectedId, width, height, nodes, center } = nextProps;
+    // this.forceSim.on('end', null);
+
+    if (selectedId !== null) {
+      const n = nodes.find(d => d.id === selectedId);
+      this.setState({
+        transEvent: d3.zoomIdentity.translate(width / 2 - n.x, center - n.y)
+      });
+    } else {
+      // TODO: zoom bounding box
+      this.setState({
+        transEvent: d3.zoomIdentity.translate(0, 0).scale(1)
+      });
+    }
+  }
+
   render() {
     const { children, width, height, style, className, nodes } = this.props;
     const { transEvent } = this.state;
-    const bubbleRadius = 50;
     const newNodes = nodes.map(d => {
       const [x, y] = transEvent.apply([d.x, d.y]);
       return { ...d, x, y };
@@ -135,4 +141,4 @@ class ForceOverlay extends Component {
   }
 }
 
-export default ForceOverlay;
+export default ZoomContainer;

@@ -31,11 +31,11 @@ import ForceOverlay from './ForceOverlay';
 
 // import CardOverlay from '../utils/map-layers/CardOverlay';
 import {
-  DivOverlay,
-  UserOverlay,
+  UserOverlay
   // UserMarker,
-  AnimMarker
 } from '../utils/map-layers/DivOverlay';
+
+import ExtendableMarker from '../utils/ExtendableMarker';
 import MapAreaRadius from '../utils/map-layers/MapAreaRadius';
 // import cardIconSrc from '../utils/map-layers/cardIcon.svg';
 import { Modal } from '../utils/modal';
@@ -247,13 +247,10 @@ class MapView extends PureComponent {
       // navigateFirstTimeAction
     } = this.props;
 
-    console.log('nextCardControlAction', nextCardControlAction);
-    console.log('userLocation', userLocation);
-
     const cardPadding = 15;
 
     const animatedMarker = ({ x, y, ...c }) => (
-      <AnimMarker
+      <ExtendableMarker
         key={c.id}
         selected={extCardId === c.id}
         width={extCardId === c.id ? width - cardPadding : 40}
@@ -310,11 +307,24 @@ class MapView extends PureComponent {
             toggleCardChallengeAction({ cardChallengeOpen: true })
           }
         />
-      </AnimMarker>
+      </ExtendableMarker>
     );
 
     return (
       <div className="w-100 h-100">
+        <Modal
+          visible={cardChallengeOpen}
+          onClose={() =>
+            toggleCardChallengeAction({ cardChallengeOpen: false })
+          }
+        >
+          {/* TODO: put in real challenge */}
+          <iframe
+            title="emperors"
+            src="http://thescalli.com/emperors/"
+            style={{ border: 'none', width: '100%', height: '90vh' }}
+          />
+        </Modal>
         <div style={{ display: 'flex', width: '200px', position: 'absolute' }}>
           <button
             className="mt-3 ml-3 btn"
@@ -409,7 +419,8 @@ class MapView extends PureComponent {
           <div
             style={{
               opacity: gridView ? 1 : 0,
-              transition: 'opacity 1s'
+              pointerEvents: !gridView ? 'none' : null,
+              transition: 'opacity 0.5s'
             }}
           >
             <CardGrid
@@ -440,12 +451,13 @@ class MapView extends PureComponent {
           </div>
         </div>
         <ForceOverlay
-          {...mapViewport}
           viewport={mapViewport}
           data={cards}
           mode={tsneView ? 'tsne' : 'geo'}
+          padY={gridView ? height / 3 : height / 2}
           force
           selectedCardId={selectedCardId}
+          center={gridView ? height * 2 / 3 : height / 2}
         >
           {animatedMarker}
         </ForceOverlay>

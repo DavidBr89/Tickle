@@ -62,7 +62,6 @@ class ContextView extends Component {
     style: PropTypes.object,
     width: PropTypes.number,
     height: PropTypes.number,
-    node: PropTypes.node,
     selectedCard: PropTypes.number,
     visible: PropTypes.bool,
     background: PropTypes.string
@@ -74,7 +73,6 @@ class ContextView extends Component {
     children: [],
     height: 13,
     width: 23,
-    node: document.querySelector('body'),
     delay: 500,
     background: 'blue'
   };

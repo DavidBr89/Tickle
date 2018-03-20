@@ -31,35 +31,9 @@ import DefaultLayout from './layouts/MainLayout';
 
 import { dummyCards } from './dummyData';
 
-import { fetchChallenges } from './async_actions';
+import { fetchChallenges, fetchNearByPlaces } from './async_actions';
 
 const loggerMiddleware = createLogger();
-
-// import NotFound from './containers/NotFound/NotFound';
-
-const jaccard = (a, b) =>
-  a.length !== 0 && b.length !== 0
-    ? 1 - intersection(a, b).length / union(a, b).length
-    : 1;
-
-function runTsne(data, iter = 400) {
-  const dists = data.map(a => data.map(b => jaccard(a.tags, b.tags)));
-
-  // eslint-disable-next-line new-cap
-  const model = new tsnejs.tSNE({
-    dim: 2,
-    perplexity: 10,
-    epsilon: 50
-  });
-
-  // initialize data with pairwise distances
-  model.initDataDist(dists);
-
-  for (let i = 0; i < iter; ++i) model.step();
-
-  // Y is an array of 2-D points that you can plot
-  return model.getSolution();
-}
 
 function gravatar(email) {
   const base = 'http://www.gravatar.com/avatar/';
@@ -109,7 +83,7 @@ const defaultState = {
     AppOpenFirstTime: true,
     selectedCardId: null, // dummyCards[0].id,
     birdsEyeView: false,
-    tsnePos: runTsne(dummyCards, 200)
+    gridView: true
   },
   CardCreator: {
     cards: dummyCards,
@@ -138,7 +112,6 @@ function configureStore(rootReducer, initialState) {
   if (module.hot) {
     // Enable Webpack hot module replacement for reducers
     module.hot.accept('./rootReducer', () => {
-      console.log('hit');
       const nextRootReducer = require('./rootReducer');
       store.replaceReducer(nextRootReducer);
     });
@@ -160,6 +133,7 @@ const store = configureStore(rootReducer, defaultState);
 //
 
 store.dispatch(fetchChallenges(0));
+store.dispatch(fetchNearByPlaces());
 
 const Routes = () => (
   <HashRouter>

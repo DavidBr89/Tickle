@@ -16,8 +16,8 @@ class BubbleOverlay extends Component {
   render() {
     const { data, width, height } = this.props;
 
-    const blurFactor = 0;
-    const bubbleRadius = 50;
+    const blurFactor = 5;
+    const bubbleRadius = 40;
 
     const color = scaleOrdinal()
       .domain(data.map(s => s.key))
@@ -28,16 +28,17 @@ class BubbleOverlay extends Component {
         key={id}
         style={{
           // filter: `url( "#gooeyCodeFilter-${key}")`,
-          filter: `url("#gooey2")`
+          filter: `url("#gooeyCodeFilter")`
         }}
       >
         {values.map(d => (
-          <circle
+          <rect
             fill={color(key)}
             opacity={0.2}
-            r={bubbleRadius}
-            cx={d.x}
-            cy={d.y}
+            width={bubbleRadius * 2}
+            height={bubbleRadius * 2}
+            x={d.x - bubbleRadius}
+            y={d.y - bubbleRadius}
           />
         ))}
       </g>
@@ -52,22 +53,34 @@ class BubbleOverlay extends Component {
         }}
       >
         <defs>
-          {data.map(s => (
-            <filter id={`gooeyCodeFilter-${s.key}`}>
-              <feGaussianBlur
-                in="SourceGraphic"
-                stdDeviation={blurFactor}
-                colorInterpolationFilters="sRGB"
-                result="blur"
-              />
-              <feColorMatrix
-                in="blur"
-                type="saturate"
-                values={`1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${bubbleRadius} -6`}
-                result="gooey"
-              />
-            </filter>
-          ))}
+          <filter id={'gooeyCodeFilter'}>
+            <feGaussianBlur
+              in="SourceGraphic"
+              stdDeviation={blurFactor}
+              colorInterpolationFilters="sRGB"
+              result="blur"
+            />
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0 0.15"
+              numOctaves="1"
+              in="blur"
+              result="warp"
+            />
+            <feColorMatrix
+              in="blur"
+              mode="matrix"
+              values={`1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${bubbleRadius} -6`}
+              result="gooey"
+            />
+
+            <feComposite
+              in="SourceGraphic"
+              in2="gooey"
+              operator="atop"
+              result="goo"
+            />
+          </filter>
           <filter id="gooey2">
             <feGaussianBlur
               in="SourceGraphic"

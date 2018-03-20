@@ -1,0 +1,801 @@
+{
+   "html_attributions" : [],
+   "next_page_token" : "CpQCDwEAAJQZeuFXnXcRKStmnj4jASTbejrpKZnE5TKYNVNCggtIfgm7mQ5qoGEQRYQi86Lxh4au80pxg9F4eCPjsd-xVo3Iefk0PuxGnMoJJzE5Gn3O8gu0NDyovev1dHHGVTxG7D1QD4aL3hUv61RVrEX7LyXRsBWqUMIqlzW9iawHEJOrHOckonNX_0BL3DDctyg_ny-sPs15YVEaDZ_aYF_XSxe25DGoAVNccaY2Q6hr2QK_3baP-VNbXotlZL3piKESMbA3eC6sJ0V3nq4J8Sl-10U35i-JyAqvRafOYt_HMP5ce2q95UGQwwFUVmh3dsRnMU_smM5kZRfMInAGqI7-DOQrDhXtcAxfEJkpHJBEV4v-EhA4zuPpfV_Ri_9UGh1GGccXGhR_4Kdg9UfXAeEJndWSp3EOP0Tjug",
+   "results" : [
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 50.8503396,
+               "lng" : 4.3517103
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.91370999999999,
+                  "lng" : 4.4369799
+               },
+               "southwest" : {
+                  "lat" : 50.7962401,
+                  "lng" : 4.3138
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/geocode-71.png",
+         "id" : "9893423fafa6e03cfa47844dfa21763f83b7d526",
+         "name" : "Brussels",
+         "photos" : [
+            {
+               "height" : 2112,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/115627312175720146192/photos\"\u003eGeorg Pawlowski\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAAdPCDr1yftpusaCE0SYDhvnnZoxsDHLBiMZxEqt5EkIy6q1z0QhglufnA6gKClDeekQtTmWQBVOm8T1bcR0Mu-ELVk9Io53iTw1aus5LZG8Q9Q34_7KhQEPGtdF_hG6uSEhCS8jzUAei89RQTHO1MJxSDGhSDrZhw058MU0WGoi54F-h8CKthhA",
+               "width" : 2816
+            }
+         ],
+         "place_id" : "ChIJZ2jHc-2kw0cRpwJzeGY6i8E",
+         "reference" : "CmRbAAAA47LjTpEEIvmpt4fdxLdpYqq851fxyIaLnHjXjszo_zVPCMcYdtPQIaZGUR6aL_b9kmJxDNw2b-1lGaOvvghPVFx0HEgFVuc56BB4cT4R8Dx9qLq6ooe-e4Xs5cadpoMNEhAaMh-HMPjhziMF8B7yjJkpGhSa4uMwnudx-N1OgxcRxcSXYYesiA",
+         "scope" : "GOOGLE",
+         "types" : [ "locality", "political" ],
+         "vicinity" : "Brussels"
+      },
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 50.84635,
+               "lng" : 4.35295
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.8476980302915,
+                  "lng" : 4.354300380291503
+               },
+               "southwest" : {
+                  "lat" : 50.8450000697085,
+                  "lng" : 4.351602419708498
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png",
+         "id" : "c706079591a8f8ca650cdaab1feadc92ad440288",
+         "name" : "Hotel Résidence Le Quinze",
+         "opening_hours" : {
+            "open_now" : true,
+            "weekday_text" : []
+         },
+         "photos" : [
+            {
+               "height" : 598,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/117690379555460738678/photos\"\u003eHotel Résidence Le Quinze\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAAx3-qMAyPkVeolfQB8uRp6227ct0gC98CtwxfBD53jlFwO-abCKm3CzmHjTnfAVFacdnxXzg1aVdRhZQyXXgEfsfMuwQApey_6kl23Otm9nCKcjowH-rb95Csa4W3rtscEhCwFnKb0UgNGB463_n52EeOGhTxg6rqMm5eZu31MgRk4zbqrwrz7g",
+               "width" : 900
+            }
+         ],
+         "place_id" : "ChIJgZsQTX_Ew0cRDxiA_Wr1Sf4",
+         "rating" : 4,
+         "reference" : "CmRSAAAAIY1StrGGBJlEFVq5wFEjyBfto7fR49bl7TgP1l04CQuHmpQIWCzn2QpdFMBvLAEDGracKChPhy89oYCUk_G9DQ583yDrQ2IbOcwZjP3GD903ALaxz3aYFnmrx9Zr8coKEhBduqZ4ZcWs1t_qyfvuoGliGhRVqHeo3Yf8Z9s2n_kEG8xCwUyccQ",
+         "scope" : "GOOGLE",
+         "types" : [ "lodging", "point_of_interest", "establishment" ],
+         "vicinity" : "Grand Place 15, Bruxelles"
+      },
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 50.8471491,
+               "lng" : 4.353867599999999
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.8484535302915,
+                  "lng" : 4.355163080291502
+               },
+               "southwest" : {
+                  "lat" : 50.8457555697085,
+                  "lng" : 4.352465119708498
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png",
+         "id" : "056be75329656379acdc0587f4cd7190f097f75f",
+         "name" : "Aris Grand Place",
+         "photos" : [
+            {
+               "height" : 2592,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/100327294990801100606/photos\"\u003eChristiane Lena\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAAPPuaGN0TCQ-g002ngBYuPDSuXKulsqZjT8JaMov2c2cGL3pGWj4aAKobo6-NMJczzNX8o3CmEe2GT_yiDGR_vP1XlUAozaqpocD2tb9qcXU6KPlFiuukbaUFW8hwVdfEEhCgj6K-qkw-zeElvpdtdArtGhRAyBpqaVPlKY62yiUat7i8sFXYRw",
+               "width" : 1944
+            }
+         ],
+         "place_id" : "ChIJa4waQn_Ew0cRBr9qGWdEpo4",
+         "rating" : 3.5,
+         "reference" : "CmRSAAAAqgtXJ02rFMa_ZooezMRvEKwd5hHKonXnWcJmGX6Rp9zJmccGsdRTurUdlJYfLseU0Uyu1la4bEBThAz6XlcK2GAATj1t2HIZjm0bzI5qGjZ7n2YxtTPEHMpbUpkyuqBMEhACZN_vQ2iY7rDXJQxOLNLCGhRKtURcNSJolF6iXuX0t5tBcutfTQ",
+         "scope" : "GOOGLE",
+         "types" : [ "lodging", "point_of_interest", "establishment" ],
+         "vicinity" : "Rue du Marché aux Herbes 80, Bruxelles"
+      },
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 50.84808079999999,
+               "lng" : 4.353067999999999
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.84947013029149,
+                  "lng" : 4.354389730291502
+               },
+               "southwest" : {
+                  "lat" : 50.84677216970849,
+                  "lng" : 4.351691769708498
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png",
+         "id" : "8b4a2dae675cd2c8a6cff9f69e3c260955a37da4",
+         "name" : "Hotel Floris Arlequin Grand Place",
+         "opening_hours" : {
+            "open_now" : true,
+            "weekday_text" : []
+         },
+         "photos" : [
+            {
+               "height" : 1836,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/116061543418013050725/photos\"\u003eShashank Dangi\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAA0YMCuKe9zxCHOOQlwzs9BNKygLljMjsDRmuxzyB3xy_WZqsJHZ3Gr41DwXSviAgAtre5bkk9cpYsQ1Ks98VlwVBEsiXymS6h0t3vwO-0JQg2rhufjTmkHWLSRfJ7frqoEhAE0dE946HkFI6KfWyQsRkUGhTvuWqzvcJGYRgTM1vFTr76ejCESA",
+               "width" : 3264
+            }
+         ],
+         "place_id" : "ChIJaeKKqIDDw0cRPHsrdUp26hc",
+         "rating" : 3.8,
+         "reference" : "CmRRAAAA3aopaiA--wEynfPcLBcRtQTQUNzr6wrNBqpQvHvjkRVrUhKyMV5WmPBngP3wj4DI142UH6ljccF-peXuqziID2cCYVIkWTNgNh7xwthhS4KDGrk_CxbOw8mFgI_eDZVBEhBzSnSkvoQUugQTEEMMsA_CGhRd0yj63H3k5tL_W6-E7i1dDZt7sQ",
+         "scope" : "GOOGLE",
+         "types" : [ "lodging", "point_of_interest", "establishment" ],
+         "vicinity" : "Rue de la Fourche 17-19, Bruxelles"
+      },
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 50.8461918,
+               "lng" : 4.3512914
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.8475789302915,
+                  "lng" : 4.352744580291501
+               },
+               "southwest" : {
+                  "lat" : 50.8448809697085,
+                  "lng" : 4.350046619708498
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png",
+         "id" : "323de5b634b04e87143f9d6af326c7218a9775d1",
+         "name" : "Hotel Amigo",
+         "opening_hours" : {
+            "open_now" : true,
+            "weekday_text" : []
+         },
+         "photos" : [
+            {
+               "height" : 3024,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/107881677004588651254/photos\"\u003eSoumeya Benghanem\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAAuu60wojrcxmGK8PRr4U63MLdYRSR2RMpxtDpHQ1hOe--8kMMqTpILdWJODuAn2H_q1PsHeRXs06k3QnT0VBIaYEhumq3MI7newqCp2CPxbofLxJPGJn3cYu9ndSTQUfUEhDYeJAuLDaR7mO728mJwMgwGhQW082WcgkjCJ_3WGDdVPQ4ukkWsw",
+               "width" : 4032
+            }
+         ],
+         "place_id" : "ChIJMRLWzXjEw0cRMdSqrABkTwY",
+         "rating" : 4.6,
+         "reference" : "CmRRAAAAxeObJXKU2cVcP8DMOrvPGPODjyX0KkfoTSwQqhfAV19Ym0iV2Lb6kYBbLTqcd-5aH0E8a_NKTvrM6IdZNWEiAga3FOmev7G78XtSdLbKo-Bv5q7eug6DnsuUHIPbBIPDEhClNfwctG6tcd3Q3M-db40qGhR3LjO4VF0h16yAmXpIFocJ6PLgow",
+         "scope" : "GOOGLE",
+         "types" : [ "lodging", "point_of_interest", "establishment" ],
+         "vicinity" : "Rue de l'Amigo 1-3, Bruxelles"
+      },
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 50.84563299999999,
+               "lng" : 4.3531337
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.84700863029149,
+                  "lng" : 4.354526630291502
+               },
+               "southwest" : {
+                  "lat" : 50.8443106697085,
+                  "lng" : 4.351828669708497
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png",
+         "id" : "45315637a4d537c36857fa98a17ebaa8b5d98792",
+         "name" : "Hotel Mozart",
+         "photos" : [
+            {
+               "height" : 3024,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/101057141439288163610/photos\"\u003eSilvina Cataldi\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAAQ6sUOkdNItOyq16vHYETZyhjkGSytJ87uVBDtpxp9oK36BU2_OiHmiN9iVwwtsKjGylDcgxpaxDWe_QMLnDFVGqKbhjczroNRf9OCSzGmhKKsI0PHxH3U7F9zunp7pPhEhAYbuo6-syG_MPqSINV6A1BGhQx4lzOhlQOMxnXhfFVLmItJJkKlg",
+               "width" : 4032
+            }
+         ],
+         "place_id" : "ChIJYX7nI3_Ew0cRcfG5trAuEtI",
+         "rating" : 3.3,
+         "reference" : "CmRSAAAA4Khv1VXhTllzsDFaPdf1zyFQMsXs4qaUrM9BSYe_aKWfRSmYzYrhftSr1GiZeVeinPq0j8NacMcAiZ5zpp6G1UE-8NkWnOCbY4JM1Ny1E0diiMD6thA9qJZS5NfSHVJpEhD90HgFHobOBrCplY5LtHKcGhTjPB9WJ0i5oUzbe3FDOS7BjyqjPw",
+         "scope" : "GOOGLE",
+         "types" : [ "lodging", "restaurant", "food", "point_of_interest", "establishment" ],
+         "vicinity" : "Rue du Marché aux Fromages 23, Bruxelles"
+      },
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 50.847011,
+               "lng" : 4.355148
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.84830163029149,
+                  "lng" : 4.356553180291502
+               },
+               "southwest" : {
+                  "lat" : 50.8456036697085,
+                  "lng" : 4.353855219708497
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png",
+         "id" : "a4e22f5189795a5ac3b02460ed0de2bedfe5a439",
+         "name" : "Hotel La Madeleine",
+         "opening_hours" : {
+            "open_now" : true,
+            "weekday_text" : []
+         },
+         "photos" : [
+            {
+               "height" : 1726,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/105597958728952081912/photos\"\u003eDaniel Kupper\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAA-pEf92o2R2HMhgX-5d1ANfWF2malHWZYVQdKEtKl_OneN-ocq1_0YslyFa3Ws2q3IM89o7JudMYOi5sLWNGXtODAlKor6w7YwEU-sPOQoplG2axlStUUktqx8_zkKavvEhAWGfcFmeV5QEy2AQRQJNlWGhSFHNO9pws0J3vvFxijnIPQv74OxA",
+               "width" : 2863
+            }
+         ],
+         "place_id" : "ChIJyaL8dn_Ew0cRtQP7ykK-Zjk",
+         "rating" : 2.9,
+         "reference" : "CmRRAAAAVu-bSlfAjeVVuKiRe9153g6mdqVRdStwFqXnvOVpa7wLcpArMvynyXb-f2hrL7r1Iu-ZfjooVmJa7RE-qXgIwG6S4Q5yfJCldTUkH4f1Q1M23Iv0kgrx04LIHRQ2CALfEhBOLqMq9iAxlUgd5TvU28DqGhSlUt4WR6hFrxks3SqHgBz-u5QGKQ",
+         "scope" : "GOOGLE",
+         "types" : [ "lodging", "point_of_interest", "establishment" ],
+         "vicinity" : "Rue de la Montagne 22, Bruxelles"
+      },
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 50.8462499,
+               "lng" : 4.355032899999999
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.84765168029149,
+                  "lng" : 4.356321030291502
+               },
+               "southwest" : {
+                  "lat" : 50.84495371970849,
+                  "lng" : 4.353623069708497
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png",
+         "id" : "cd325cf13f4a4bb63cc121aec8a0cd0fd97c097a",
+         "name" : "Hotel Novotel Brussels off Grand Place",
+         "opening_hours" : {
+            "open_now" : true,
+            "weekday_text" : []
+         },
+         "photos" : [
+            {
+               "height" : 768,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/116330491588207303680/photos\"\u003eHotel Novotel Brussels off Grand Place\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAA_HyZtMmpsnJjUQ75fWPGMSiPzkVbsJ6izhPMji7uHjhkq__0848Vrimw7C1TZTTtakGMhlr717MG1PmRnngXXfRr7-gBXjsbJ-75OCkMfPwz6gZhR_z28--rfpMpO8uGEhAZpJ5xcddQYB-hWrcFH8xzGhRbCXNW9W_PJSbvrWgcOyJ9naVCIg",
+               "width" : 1024
+            }
+         ],
+         "place_id" : "ChIJC-qRC3_Ew0cRWVWIukhlcxk",
+         "rating" : 4.3,
+         "reference" : "CmRRAAAAJtEzJp8_s2bBfdU38UB4u91bCGkJBKeydAM_A18yVfTQCQxOCMt0N0BrlYkhZUoIlKMz6tr243GQIQk4c68FbRfsIJr1jrq1sdTdGn9_6bfAYLf1Voj4Y1QjRS01UuKkEhBeBsVIUXmUIKPaXr0UQ8G9GhTOOBe5HtYsNA1A5hv02P6oTnYCMg",
+         "scope" : "GOOGLE",
+         "types" : [ "lodging", "restaurant", "food", "point_of_interest", "establishment" ],
+         "vicinity" : "Rue du Marché aux Herbes 120, Bruxelles"
+      },
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 50.8468319,
+               "lng" : 4.355416200000001
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.8481737802915,
+                  "lng" : 4.356588630291502
+               },
+               "southwest" : {
+                  "lat" : 50.8454758197085,
+                  "lng" : 4.353890669708498
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png",
+         "id" : "d20c8780f76fcb9bf37afe9f2155db3674f78101",
+         "name" : "ibis Brussels off Grand Place",
+         "photos" : [
+            {
+               "height" : 1152,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/102934309436444504518/photos\"\u003eNoemi Eshet-Rosenzweig\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAALDMcwR1o56GRj42-XmxbX9-AtyqKoUNO7Wy4ieRnRWEaTMGj9nJixCFdhFJlDxC1rVIbHBtgN3QBz5rrkvOP6BFHQBImws27WneqnfiAjL7tRdb6AG3VLw_8JafQI4cSEhAFTJa65rom1-qNEhAbAsH4GhSw2NhRp_VHZpamij2DoY6o_yAaJw",
+               "width" : 2048
+            }
+         ],
+         "place_id" : "ChIJ15kRnn_Ew0cR8ooloRrIkFI",
+         "rating" : 4.2,
+         "reference" : "CmRRAAAA042XtW25fRKdmyyxkYWogC1S3cwq-OFmR39f9KuSmlL4TKvqQolMdxbx5ARWccdV8ZU3jo0ydVDz13UwqmbegHtDTBHbtek1QvVnm-TCURnc-zYydwWS3TEgfccll_ooEhDHvX6PnfrkbBdEluMM71fJGhQOj-n0Z6rQhs-v-jCnU2tzL9CDKQ",
+         "scope" : "GOOGLE",
+         "types" : [ "lodging", "point_of_interest", "establishment" ],
+         "vicinity" : "Rue du Marché aux Herbes 100, Bruxelles"
+      },
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 50.84526140000001,
+               "lng" : 4.3534652
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.84662753029151,
+                  "lng" : 4.354758580291501
+               },
+               "southwest" : {
+                  "lat" : 50.84392956970851,
+                  "lng" : 4.352060619708498
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png",
+         "id" : "618862f45e266dea0a2f10626e33467ea57bd90f",
+         "name" : "Hotel Alma",
+         "photos" : [
+            {
+               "height" : 4160,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/106359135861417849811/photos\"\u003eSimSimD\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAAf8fP6Kj46L8e_wODfkzc3vN1LaurIFsDyoeHyQutkpGqPhyu6PzgrJLTaoHNNQVE9A5txzFnA1AnbFtobCh4KInYXWb-72Yy2GXyjFUND2T4z8oXZ3sJ8D-r25B5zztVEhC0u8keRVEQUTgYqaGgf28RGhT6jds97-A12q0sY9CIcKfkkbgPBA",
+               "width" : 3120
+            }
+         ],
+         "place_id" : "ChIJJzL6337Ew0cRdpSi6WuWMo8",
+         "rating" : 3.6,
+         "reference" : "CmRSAAAA_imEt8j1ZfcMGlOikmabJ2iI1oYg2iYbx_ut4JwtnLaGVfVGg6wwoRi8eoDcbGjWK8Y1v8NDZAlAisd49xHfqcgr6Wylc8VYhxeA33HsyBpJe1ZDvVwK6HTC32u-9AYDEhBWfbLh0qs-FBuUJTL_HOyqGhTfdF64EDbSmi9i0Q86jFB2KjGmPA",
+         "scope" : "GOOGLE",
+         "types" : [ "lodging", "point_of_interest", "establishment" ],
+         "vicinity" : "Rue des Eperonniers 42, Bruxelles"
+      },
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 50.846497,
+               "lng" : 4.355487
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.84776753029151,
+                  "lng" : 4.356704430291502
+               },
+               "southwest" : {
+                  "lat" : 50.84506956970851,
+                  "lng" : 4.354006469708497
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png",
+         "id" : "0ca2f0595f794bddb220776bf2f6a880365c591d",
+         "name" : "Hotel NH Brussels Carrefour de l'Europe",
+         "opening_hours" : {
+            "open_now" : true,
+            "weekday_text" : []
+         },
+         "photos" : [
+            {
+               "height" : 2268,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/108321989263418057737/photos\"\u003eHardi\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAAikoasOS0EWiQ4AtJXnf8BAYXDth-WzpBljEJV1zu75cP3RRkbgo4jzOw2zenWDlQVVYPBK5asEzdPgq_vO2F1XReObD4EQ9U8MpGlZvd9dQZ2BCLmDlFnqxFnBHKBGWKEhDO5FWUBTUrOgqUEeA1fjyJGhTqp0mZHiJ9aXw2dZI5vN03exqFxw",
+               "width" : 4032
+            }
+         ],
+         "place_id" : "ChIJKVwdoH_Ew0cRG19BpvA7MwI",
+         "rating" : 4,
+         "reference" : "CmRRAAAAj6jeeiBt1OGR9wFpO0r9GlxZ04kBTQSfyivuOmswSp9lZFjKjfh7HhPkyPnNLO_YZv72-dxmJ61D4idS2HfiMEsmD-cMamxyF3sO7KXIicFvXfuTpzKzCoyVSp38luUxEhB_PwmqZZ1WI57DffJXLv5rGhSTVBc8Aameccv8xb_EQC70FVIX0g",
+         "scope" : "GOOGLE",
+         "types" : [ "lodging", "point_of_interest", "establishment" ],
+         "vicinity" : "Rue du Marché aux Herbes 110, Bruxelles"
+      },
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 50.848615,
+               "lng" : 4.354895
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.8499727302915,
+                  "lng" : 4.356223180291503
+               },
+               "southwest" : {
+                  "lat" : 50.8472747697085,
+                  "lng" : 4.353525219708498
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png",
+         "id" : "986aa46aa4106bb513042deeaf0ee92d37ee1ba0",
+         "name" : "B-aparthotel Grand Place Brussels",
+         "opening_hours" : {
+            "open_now" : true,
+            "weekday_text" : []
+         },
+         "photos" : [
+            {
+               "height" : 2848,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/115195713686188000567/photos\"\u003eB-aparthotel Grand Place Brussels\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAA3tbJeARWjtVs4KK4WZSrLLEOWNQow7PbV9OnJJrOTlJd2MU5xAYxNU8BvZUdFTkc3_kVlbv8hlqZsf80bWxJ-jbN2r30CHj_hgvehj0SKrNCwVmy0fwoVJFFu_otXqvgEhC7tzScvGoQG0NI5hN2PzaNGhQzUhUZ1SyParGNbAiqkewOwRPdGQ",
+               "width" : 4288
+            }
+         ],
+         "place_id" : "ChIJXX3RkYDDw0cRotgyqHDzbg8",
+         "rating" : 4.2,
+         "reference" : "CmRRAAAAUsuZlBMA1eBCY2WKEi2QPkUY5MWmZ3pXvMDcI4Kg2jlycvQjhdAAtwHiXTBmBhO4bD0m62sPQNZSlaQX47DU86Rodikr1EIxIkQKDHSUgLH0NQcJj4DlNUILcRveF-jOEhC8IbDuX4FQN_YPaXvmgW15GhTGQW6uaFapFqkj7NOuisGbGrc0pQ",
+         "scope" : "GOOGLE",
+         "types" : [ "real_estate_agency", "lodging", "point_of_interest", "establishment" ],
+         "vicinity" : "Rue des Dominicains 25, Bruxelles"
+      },
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 50.845215,
+               "lng" : 4.35433
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.8465102802915,
+                  "lng" : 4.355723080291502
+               },
+               "southwest" : {
+                  "lat" : 50.8438123197085,
+                  "lng" : 4.353025119708498
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png",
+         "id" : "6381ba0121a4e5ecb495c61ec0e21a7aaa29009d",
+         "name" : "Warwick Brussels",
+         "opening_hours" : {
+            "open_now" : true,
+            "weekday_text" : []
+         },
+         "photos" : [
+            {
+               "height" : 1365,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/118119265863052481073/photos\"\u003eWarwick Brussels\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAAEPa3d2VtlG4TQxVB1xj4ES7ac6x_mu0SHyEDf-JA8diFuuYjyLLEMJnwMD2X78JJznWIiZNZdjNPM5Y4DxrRjUAk3aApDXtQCi-2CH5apriZu1CAAgmVKyTkwv8x3QV3EhCpq21QV4r3OrME6WLR3D2zGhQ7fPCpGgz7e9yYELeHYxgkuAMnRQ",
+               "width" : 2048
+            }
+         ],
+         "place_id" : "ChIJXYWCAn_Ew0cRFOhcq-heq0s",
+         "rating" : 4.1,
+         "reference" : "CmRRAAAAkQfLmusmdiydyIvflr2lgOZkP5cYFITDXU_7tuQrUDIxodez0-z_X4N4s7bg3zqLKGaw5kORTfAJh3Tq83_n70vwt94ey5uR88tn8FT4yeHOZkKbWgmIViWoKINTBDK9EhCtk7R9f1usTHpYEJe1z8bFGhTJMV7dVd2hSdIKrfq0Rlak5UeSZw",
+         "scope" : "GOOGLE",
+         "types" : [ "lodging", "point_of_interest", "establishment" ],
+         "vicinity" : "Rue Duquesnoy 5, Bruxelles"
+      },
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 50.8492581,
+               "lng" : 4.3547629
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.8506433302915,
+                  "lng" : 4.356031430291502
+               },
+               "southwest" : {
+                  "lat" : 50.8479453697085,
+                  "lng" : 4.353333469708498
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png",
+         "id" : "7ad2bbc2a2f5535e24c1564bec49db199a40d008",
+         "name" : "The Dominican",
+         "photos" : [
+            {
+               "height" : 4032,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/114317605486938313854/photos\"\u003eThe Dominican\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAAuezTi0QD-JyFga6kFrW8QPTJQ0t4a2Ju1-3KbqtmmNZzueFjGFTX18XhDi6hkdQQv6E-8rsNkaqpaYSnMXIWLGw6BEUAyRGxkfq7x7KhzT23XVo1dH9tP6LEte-C-PeeEhCMTbdHW0brIhbjPjfxGNbfGhSbsKpP8FhPBtGEyqiRc9OFQx6qpg",
+               "width" : 6048
+            }
+         ],
+         "place_id" : "ChIJsXxX7IDDw0cRYzRU0IPZPBc",
+         "rating" : 4.5,
+         "reference" : "CmRRAAAASdlwiirPrp1keATyKYVHePYjyKsLqVHJXE5HCSODcF7TTpZvR1BY1381Uf9wcGsOCSdURP8xRNFvL5sbakpGk1njFpfNm_pvnXqvyFdsBI7Aw2dvVilqILT1b-WpHg7dEhCjIUNh6f2LtGs5hqm-WII2GhTneARx-CXKEFWPTTDtKTYcSPkRyQ",
+         "scope" : "GOOGLE",
+         "types" : [
+            "night_club",
+            "bar",
+            "lodging",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+         ],
+         "vicinity" : "Rue Léopold 9, Bruxelles"
+      },
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 50.8500641,
+               "lng" : 4.3518333
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.85146993029149,
+                  "lng" : 4.353046580291503
+               },
+               "southwest" : {
+                  "lat" : 50.84877196970849,
+                  "lng" : 4.350348619708498
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png",
+         "id" : "f4222378d8096888d61b1d0a0d3cc3f5178020c8",
+         "name" : "Aparthotel Adagio Brussels Grand Place",
+         "opening_hours" : {
+            "open_now" : true,
+            "weekday_text" : []
+         },
+         "photos" : [
+            {
+               "height" : 3000,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/106062282544284393439/photos\"\u003eludovic lanson\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAA_Qb3RZIRCwESyesnVHhJT1MU8DzfOdAh3sMS1kIkw_ZvhCHx7DCA8JrtoNIXJb0PDfyHUiGtFETprKR4QfJ9hkjjfWUPQQRyzNCJChBT770o_McqM53CGAw2Y9e30N4pEhBMA7N-qVYvewKjqQmfGstBGhQNDHN-sJzNQTc98l7WLEQt6okzvw",
+               "width" : 4000
+            }
+         ],
+         "place_id" : "ChIJrwWv1IDDw0cR51VWBPq7g0c",
+         "rating" : 4.1,
+         "reference" : "CmRRAAAAWnSIL3gm4laq4DdPMychxf5Q4cHNg1BMv_GFRLqsIFG6ZTBjcxj0Nd11MnI-8q3eRrjvsRGHpF8U77wrgZhv7f5MEtt6hy-txX2hXI0mvTunkXHW5kz2vVTW2e0tG6tZEhBPhpNdwuaRjzn-I3sw9SzPGhRyQaMcfzlzId86ngEemqslmDkhPw",
+         "scope" : "GOOGLE",
+         "types" : [ "lodging", "point_of_interest", "establishment" ],
+         "vicinity" : "Anspachlaan 20, Brussel"
+      },
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 50.8492162,
+               "lng" : 4.3489284
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.85034518029149,
+                  "lng" : 4.350048330291502
+               },
+               "southwest" : {
+                  "lat" : 50.84764721970849,
+                  "lng" : 4.347350369708497
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png",
+         "id" : "8e250b48fa201d8020bb8625f02eecef2b697596",
+         "name" : "Brussels Marriott Hotel Grand Place",
+         "opening_hours" : {
+            "open_now" : true,
+            "weekday_text" : []
+         },
+         "photos" : [
+            {
+               "height" : 423,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/111619956361570245135/photos\"\u003eBrussels Marriott Hotel Grand Place\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAAMSHbgaHW26DMDiV2QQk907wRRZ3ii2D5lKoV_bSTS6n26OTKeVnRrPLy6Z6SunPU4ZVM0UBjAbwf9PN0ldyX5b2VqgRGqdx_Y0PCVlGI94vxz_p-BuH0S3NTqvjawfqvEhDPHv1fAdeeWHlHuXCF_ShjGhSgVfupl0t2HpBlSWgSWYyqxmZG6Q",
+               "width" : 610
+            }
+         ],
+         "place_id" : "ChIJCeeonIfDw0cRYI7vF0rXk38",
+         "rating" : 4.3,
+         "reference" : "CmRRAAAAcD51CbA_kWLqRP0YroAvKeYfHIapHkXnnYlE5hdUVtI0sqY_TL3QCw-UH6VsO_zQrZTbli9fHx6dgJtTyDTA8ax-nhF8syV96aRQlSwLyZKT1_XIPCrLgwtUDrrKKNG1EhCtlvqnbEUv7uW7ROa-H0aAGhQPPpc5wJbcZWWK7TgY6M5_ovttFA",
+         "scope" : "GOOGLE",
+         "types" : [ "lodging", "point_of_interest", "establishment" ],
+         "vicinity" : "Auguste Ortsstraat 3-7, Brussel"
+      },
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 50.84846,
+               "lng" : 4.3573754
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.8498705802915,
+                  "lng" : 4.358792880291502
+               },
+               "southwest" : {
+                  "lat" : 50.8471726197085,
+                  "lng" : 4.356094919708498
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png",
+         "id" : "2ea728546d1c30892df67dfadcda32be278e6719",
+         "name" : "Hotel NH Brussels Grand Place Arenberg",
+         "opening_hours" : {
+            "open_now" : true,
+            "weekday_text" : []
+         },
+         "photos" : [
+            {
+               "height" : 1080,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/115475951613488018845/photos\"\u003emodesto fidalgo\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAAYUYv6N3B-zlNU63zXPPkrHeWgNX3RjYwnU_nw5jPjfCO3ZEZOqYBMVqhbe2wbnmlgzGbNzOIuQBUM4DnKr8FSdsAJOlptF1fjXlcmTqBgnpUtDf0hGmWFvIjQ9aTj99vEhBiGIeQguIWdxDwenp-S5WsGhTmAuwqItikk3MCHJrJiYF1K_aZ1g",
+               "width" : 1920
+            }
+         ],
+         "place_id" : "ChIJvTSZEYDDw0cRcaAJ03EGE7c",
+         "rating" : 3.9,
+         "reference" : "CmRSAAAAMevHNls3EoJVKkJ-eMIf0McgonI7cqsORd28JMWkG81jQE7le1ZGa9-RN5f2mUlEjFIWawjBpScmxgnI9Bs7HCzlQgvPa_izmScWinW_epFZKZG8kwSt2vOW5BTxdpllEhAjiEJIBlvUgvGrZQjpzf9aGhQsJDaoDuumpUSgsSLJDp6sDM4QGQ",
+         "scope" : "GOOGLE",
+         "types" : [ "lodging", "point_of_interest", "establishment" ],
+         "vicinity" : "Stormstraat 15, Brussel"
+      },
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 50.850724,
+               "lng" : 4.350099
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.8520522802915,
+                  "lng" : 4.351497730291503
+               },
+               "southwest" : {
+                  "lat" : 50.8493543197085,
+                  "lng" : 4.348799769708498
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png",
+         "id" : "af1183bcbb458ecf38dfec35a438d8ddcbb9ef35",
+         "name" : "Hotel Novotel Brussels City Centre",
+         "photos" : [
+            {
+               "height" : 768,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/104837635279229873793/photos\"\u003eHotel Novotel Brussels City Centre\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAAR_iscfInibsV0Npscpqfi29Ajo7iqmBmvFHsWeHvI1Q9v73-mwM6O-bR6SaIP0wWLn2cKsqcB9qEjjuF8mRSSW9wALJHHB3Olxl8UMW6zH9wFQL2Sqz6DUW9Jq9yZj6DEhCTUAnn2taf1rMTmfnLAST-GhTZTzFicUD-9jrOgqJoGmGVmnoYJQ",
+               "width" : 1024
+            }
+         ],
+         "place_id" : "ChIJtd6f_IbDw0cRRSEu3pVdiCk",
+         "rating" : 4.3,
+         "reference" : "CmRRAAAAzdhTWvKwqtURGHVT5NWy9jvO0PYgQcoZalJEDSF2wklvuKQ_qMiHyHh3XRF5p4ZnRmSWuAoA-ivunYrfbIlGwk62xJUiUb1xjZBx2g82h71mj7mpvltBeyTw59m4qtmoEhBuhNJNij4JWXSoU0pptydSGhT3RakImErQbzgKPglImG_wtPU-Pg",
+         "scope" : "GOOGLE",
+         "types" : [ "lodging", "restaurant", "food", "point_of_interest", "establishment" ],
+         "vicinity" : "Rue de la Vierge Noire 32, Bruxelles"
+      },
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 50.85053409999999,
+               "lng" : 4.3493311
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.85188308029149,
+                  "lng" : 4.350680080291502
+               },
+               "southwest" : {
+                  "lat" : 50.84918511970849,
+                  "lng" : 4.347982119708497
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/lodging-71.png",
+         "id" : "495d8cf3d74ff4c88df7927a6b2b00d8f29be213",
+         "name" : "Hotel ibis Brussels City Centre",
+         "opening_hours" : {
+            "open_now" : true,
+            "weekday_text" : []
+         },
+         "photos" : [
+            {
+               "height" : 2268,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/104945488438928143906/photos\"\u003eАндрей Фишман\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAAzWsXtAqzwlpTuDVf7WrU19BkGsnSePREy8kEeiOp72ZDdzS_5hCVdQk5fc5Qa0N3QkXGu-Jswxse-3NktLrAMT5IMVbrmdmy52A7VubNXX_lMqMPSqRb67k7ZoDuBq7lEhBytYLTHZ9mN4LOIQUHg1ysGhROHJeyAnHPGZzT0lBhQb9OtlBbiA",
+               "width" : 4032
+            }
+         ],
+         "place_id" : "ChIJU0ZsB4fDw0cRypIpWHumEzo",
+         "rating" : 3.9,
+         "reference" : "CmRRAAAARj3JOL7HZ1Mu59HHq9YS7woj10hbMRYckm8Y2QMaf34SYy27tGEBMV8poH-6sCia8ILROis4iTCZhjxpO2UTHPSaXdkblZIB1yjZ4id5kqKcJnfM5oH71LKd51S9Vqf4EhCapfEvKDxeuF7rxiNWC1wkGhT79DJwA7Bd_k4pCMm0zC3lk0nNrw",
+         "scope" : "GOOGLE",
+         "types" : [ "lodging", "point_of_interest", "establishment" ],
+         "vicinity" : "rue Joseph Plateau N°2, Bruxelles"
+      },
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 50.8674164,
+               "lng" : 4.3772981
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.88102000000001,
+                  "lng" : 4.4129399
+               },
+               "southwest" : {
+                  "lat" : 50.84338,
+                  "lng" : 4.35718
+               }
+            }
+         },
+         "icon" : "https://maps.gstatic.com/mapfiles/place_api/icons/geocode-71.png",
+         "id" : "40bacc0f6901496a17ded920e5a66d02a840743e",
+         "name" : "Schaerbeek",
+         "photos" : [
+            {
+               "height" : 3168,
+               "html_attributions" : [
+                  "\u003ca href=\"https://maps.google.com/maps/contrib/101556485420521203337/photos\"\u003eChristian Wonville\u003c/a\u003e"
+               ],
+               "photo_reference" : "CmRaAAAAw2FgYMmDMaN9B0tQTT2KoligiBvMXWWTDy_HCBfpWHNOzA0fUC2CmPEZAzBOUD8HPUcgmjgbiunA4ugL818rX1MDkMRo8Rq1StkxjeEFP_6Cd-e3QEbBOsXg2k4hRRkQEhDuljd89DV0UNiBo6TDTlQoGhTNSjuxmMDGF-CbrbF2apZSAeS01A",
+               "width" : 4752
+            }
+         ],
+         "place_id" : "ChIJ2wqwBJWkw0cRHvqgQdY8cqo",
+         "reference" : "CmRbAAAAdJrCOJmsXjXJmGfuSbtAR0TfryjwlzHCDxgmdLZVkZibxJa1w3_lN7-KeqFvu2dFPV5mgCCqENifuxBMiKmLAoc7A_5njkGagxLUxFa_YYfujdcUnsS1ATiiVmai0tVGEhBv3dmy4Gd-fPZC1HXzSfw9GhRyGhthg1ttT0LLOjofmas1kjAsLA",
+         "scope" : "GOOGLE",
+         "types" : [ "locality", "political" ],
+         "vicinity" : "Schaerbeek"
+      }
+   ],
+   "status" : "OK"
+}

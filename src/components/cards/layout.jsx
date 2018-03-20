@@ -450,7 +450,7 @@ const PreviewTags = ({ data, style, placeholder, small }) => (
 );
 
 PreviewTags.propTypes = {
-  data: PropTypes.oneOf([PropTypes.array, null]),
+  data: PropTypes.oneOfType([PropTypes.array, null]),
   style: PropTypes.object,
   placeholder: PropTypes.string,
   small: PropTypes.bool

@@ -265,7 +265,6 @@ class AnimMarker extends Component {
         </div>
       </div>
     );
-    if (node !== null) return ReactDOM.createPortal(marker, node);
     return marker;
   }
 }
@@ -328,7 +327,7 @@ AnimMarker.propTypes = {
 };
 
 AnimMarker.defaultProps = {
-  delay: 0.5,
+  delay: 0.3,
   preview: <CardImg />,
   node: null,
   offsetX: 0,

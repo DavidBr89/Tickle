@@ -97,3 +97,8 @@ export const TOGGLE_GRID_VIEW = 'TOGGLE_GRID';
 export function toggleGrid(options) {
   return { type: TOGGLE_GRID_VIEW, options };
 }
+
+export const RECEIVE_PLACES = 'RECEIVE_PLACES';
+export function receivePlaces(options) {
+  return { type: RECEIVE_PLACES, options };
+}

@@ -2,7 +2,7 @@ import React, { Fragment, Component } from 'react';
 import PropTypes from 'prop-types';
 import tsnejs from 'tsne';
 import * as d3 from 'd3';
-import { intersection, union, flattenDeep, uniq, flatten } from 'lodash';
+import { intersection, union, uniq, flatten } from 'lodash';
 import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 
 import ZoomContainer from './ZoomContainer';
@@ -29,20 +29,20 @@ const jaccard = (a, b) =>
     ? 1 - intersection(a, b).length / union(a, b).length
     : 1;
 
-function runTsne(data, iter = 400) {
-  const dists = data.map(a => data.map(b => jaccard(a.tags, b.tags)));
-
-  // eslint-disable-next-line new-cap
-  const model = new tsnejs.tSNE({
-    dim: 2,
-    perplexity: 10,
-    epsilon: 50
-  });
-
-  model.initDataDist(dists);
-  for (let i = 0; i < iter; ++i) model.step();
-  return model.getSolution();
-}
+// function runTsne(data, iter = 400) {
+//   const dists = data.map(a => data.map(b => jaccard(a.tags, b.tags)));
+//
+//   // eslint-disable-next-line new-cap
+//   const model = new tsnejs.tSNE({
+//     dim: 2,
+//     perplexity: 10,
+//     epsilon: 50
+//   });
+//
+//   model.initDataDist(dists);
+//   for (let i = 0; i < iter; ++i) model.step();
+//   return model.getSolution();
+// }
 
 // function forceTsne({ width, height, nodes }) {
 //   const centerX = d3.scaleLinear().range([0, width]);
@@ -91,12 +91,14 @@ class ForceOverlay extends Component {
       PropTypes.shape({
         loc: PropTypes.shape({
           latitude: PropTypes.number,
-          longitude: PropTypes.number,
-          tags: PropTypes.arrayOf(PropTypes.string)
-        })
+          longitude: PropTypes.number
+        }),
+        tags: PropTypes.arrayOf(PropTypes.string)
       })
     ),
     delay: PropTypes.number,
+    padY: PropTypes.number,
+    padX: PropTypes.number,
     mode: PropTypes.oneOf(['geo', 'tsne'])
   };
 
@@ -105,9 +107,12 @@ class ForceOverlay extends Component {
     className: null,
     style: {},
     viewport: { width: 100, height: 100, longitude: 0, latitude: 0 },
+    padY: 0,
+    padX: 100,
     force: false,
     data: [],
-    delay: 200
+    delay: 300,
+    mode: 'geo'
   };
 
   constructor(props) {
@@ -133,20 +138,35 @@ class ForceOverlay extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log('nextProps', nextProps);
     // this.forceSim.on('end', null);
     clearTimeout(this.id);
     this.layout(nextProps);
+    this.calcTsne(nextProps);
   }
 
-  calcTsne(iter = 400) {
-    const { data } = this.props;
-    const dists = data.map(a => data.map(b => jaccard(a.tags, b.tags)));
+  calcTsne(nextProps, iter = 400) {
+    const { data } = nextProps || this.props;
+    const sets = setify(data).reduce((acc, d) => {
+      acc[d.key] = d.count;
+      return acc;
+    }, {});
+
+    const dists = data.map(a =>
+      data.map(b =>
+        jaccard(
+          a.tags.filter(t => sets[t] > 1),
+          b.tags.filter(t => sets[t] > 1)
+        )
+      )
+    );
+    console.log('dists', dists);
 
     // eslint-disable-next-line new-cap
     const model = new tsnejs.tSNE({
       dim: 2,
-      perplexity: 10,
-      epsilon: 50
+      perplexity: 30, // 10,
+      epsilon: 13
     });
 
     // initialize data with pairwise distances
@@ -157,42 +177,30 @@ class ForceOverlay extends Component {
     }
 
     const tsnePos = model.getSolution();
+
     this.setState({ tsnePos });
     // Y is an array of 2-D points that you can plot
   }
 
   layout(nextProps = null) {
-    const data = (() => {
-      if (nextProps !== null) {
-        const { nodes } = this.state;
-        const { data: newData } = nextProps;
-        return newData.map(d => {
-          const oldNode = nodes.find(n => n.id === d.id);
-          d.x = oldNode && oldNode.x;
-          d.y = oldNode && oldNode.y;
-          return d;
-        });
-      }
-      return this.props.data;
-    })();
-
-    const { viewport, force, mode, delay } = nextProps || this.props;
+    const { viewport, force, mode, delay, data, padY, padX } =
+      nextProps || this.props;
     const { width, height, zoom, latitude, longitude } = viewport;
     const { tsnePos } = this.state;
     // const tsnePos = runTsne(data, 300);
 
     // prevent stretching of similiarities
-    const padY = height / 7;
-    const padX = 30;
+    // const padY = height / 7;
     const tsneX = d3
       .scaleLinear()
       .domain(d3.extent(tsnePos.map(d => d[0])))
-      .range([padX, width - padX]);
+      .range([padX / 2, width - padX / 2]);
 
     const tsneY = d3
       .scaleLinear()
       .domain(d3.extent(tsnePos.map(d => d[1])))
-      .range([padY, height - padY]);
+      // TODO: change height padding
+      .range([padY / 2, height - padY / 2]);
 
     const vp = new PerspectiveMercatorViewport({
       width,
@@ -205,6 +213,7 @@ class ForceOverlay extends Component {
     const nodes = data
       .map(({ id, x, y, loc, tags, ...c }, i) => {
         const [lx, ly] = vp.project([loc.longitude, loc.latitude]);
+        // console.log('id', id, 'x', x, 'y', 'loc', loc, 'tags', tags);
         return {
           id,
           lx,
@@ -218,6 +227,7 @@ class ForceOverlay extends Component {
         };
       })
       .filter(n => n.x > 0 && n.x < width && n.y > 0 && n.y < height);
+    console.log('nodes', nodes);
 
     const getTPos = d =>
       mode === 'tsne' ? { x: d.tx, y: d.ty } : { x: d.lx, y: d.ly };
@@ -226,10 +236,10 @@ class ForceOverlay extends Component {
         .nodes(nodes)
         .restart()
         .alpha(1)
-        .alphaMin(0.6)
-        .force('x', d3.forceX(d => getTPos(d).x).strength(0.8))
-        .force('y', d3.forceY(d => getTPos(d).y).strength(0.8))
-        .force('collide', d3.forceCollide(10).strength(1))
+        .alphaMin(0.8)
+        .force('x', d3.forceX(d => getTPos(d).x).strength(0.4))
+        .force('y', d3.forceY(d => getTPos(d).y).strength(0.4))
+        .force('collide', d3.forceCollide(25).strength(1))
         .on('end', () => {
           this.id = setTimeout(
             () =>
@@ -254,7 +264,8 @@ class ForceOverlay extends Component {
       style,
       className,
       mode,
-      selectedCardId
+      selectedCardId,
+      center
     } = this.props;
 
     const { sets } = this.state;
@@ -280,10 +291,11 @@ class ForceOverlay extends Component {
     }
     return (
       <ZoomContainer
-        {...this.props}
-        {...this.props.viewport}
+        width={width}
+        height={height}
         nodes={nodes}
-        selected={selectedCardId}
+        selectedId={null}
+        center={center}
       >
         {zoomedNodes => (
           <Fragment>
@@ -292,7 +304,9 @@ class ForceOverlay extends Component {
               width={width}
               height={height}
             />
-            {zoomedNodes.map(children)}
+            <div style={{ overflow: 'hidden', width, height }}>
+              {zoomedNodes.map(children)}
+            </div>
           </Fragment>
         )}
       </ZoomContainer>

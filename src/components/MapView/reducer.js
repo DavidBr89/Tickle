@@ -24,7 +24,8 @@ import {
   FLY_TO_USER,
   ENABLE_COMPASS,
   TOGGLE_GRID_VIEW,
-  TOGGLE_TSNE_VIEW
+  TOGGLE_TSNE_VIEW,
+  RECEIVE_PLACES
 } from './actions';
 
 import {
@@ -82,6 +83,26 @@ function getBoundingBox(coords) {
 function reducer(state = {}, action) {
   // console.log('action', action);
   switch (action.type) {
+    case RECEIVE_PLACES: {
+      const { results: places } = action.options;
+      console.log('places', places);
+      const placeCards = places.map(
+        ({
+          id,
+          geometry: { location: { lat: latitude, lng: longitude } },
+          types: tags,
+          name: title
+        }) => ({
+          id,
+          loc: { latitude, longitude },
+          tags,
+          title,
+          challenge: { type: null }
+        })
+      );
+      console.log('cardPlaces', placeCards);
+      return { ...state, cards: [...placeCards] };
+    }
     case TOGGLE_TSNE_VIEW: {
       return { ...state, tsneView: !state.tsneView };
     }
@@ -107,7 +128,7 @@ function reducer(state = {}, action) {
         gridView,
         longitude: bottomLng,
         latitude: bottomLat,
-        selectedCardId: gridView ? null : state.selectedCardId
+        selectedCardId: !gridView ? null : state.selectedCardId
       };
     }
     case LOAD_DIRECTION: {
@@ -185,37 +206,41 @@ function reducer(state = {}, action) {
           .concat([[userLocation.longitude, userLocation.latitude]])
       );
 
-      const vp = new PerspectiveMercatorViewport({
-        width,
-        height,
-        zoom,
-        latitude,
-        longitude
-      }).fitBounds(bbox, {
-        padding: 10,
-        offset: [0, 200]
-      });
-      const { zoom: minZoom, longitude: centerLng, latitude: centerLat } = vp;
+      const selCard = cards.find(d => d.id === selectedCardId);
+      const { longitude: centerLng, latitude: centerLat } = selCard
+        ? selCard.loc
+        : { longitude, latitude };
 
-      const birdsEyeView = zoom <= minZoom;
+      const vp = (() => {
+        const tmpVp = new PerspectiveMercatorViewport({
+          width,
+          height,
+          zoom,
+          latitude: centerLat,
+          longitude: centerLng
+        });
+        if (zoom <= 8) {
+          return tmpVp.fitBounds(bbox, {
+            padding: 10,
+            offset: [width / 8, height / 6]
+          });
+        }
+        return tmpVp;
+      })();
 
+      const { zoom: minZoom } = vp;
       // TODO understand
       const [bottomLng, bottomLat] = gridView
         ? vp.unproject([width / 2, height * 1 / 4])
         : vp.unproject([width / 2, height * 3 / 4]);
 
+      const birdsEyeView = zoom <= minZoom;
       const { longitude: newLng, latitude: newLat } = (() => {
         if (birdsEyeView)
           return {
             longitude: gridView ? bottomLng : centerLng,
             latitude: gridView ? bottomLat : centerLat
           };
-        if (selectedCardId !== null) {
-          const { loc: { longitude: cardLng, latitude: cardLat } } = cards.find(
-            d => d.id === selectedCardId
-          );
-          return { longitude: cardLng, latitude: cardLat };
-        }
         return { longitude, latitude };
       })();
 
@@ -267,7 +292,7 @@ function reducer(state = {}, action) {
         height,
         longitude,
         latitude,
-        zoom: 15
+        zoom: 19
       });
 
       return {
