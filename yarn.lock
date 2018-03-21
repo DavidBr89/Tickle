@@ -3539,6 +3539,12 @@ d3-geo@1.9.1:
   dependencies:
     d3-array "1"
 
+d3-geom-concavehull@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/d3-geom-concavehull/-/d3-geom-concavehull-1.0.0.tgz#e50079fb5b5b0996ba885d6309585fc0223db5dd"
+  dependencies:
+    d3 "^3.5.6"
+
 d3-hierarchy@1.1.5:
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/d3-hierarchy/-/d3-hierarchy-1.1.5.tgz#a1c845c42f84a206bcf1c01c01098ea4ddaa7a26"
@@ -3653,6 +3659,10 @@ d3-zoom@1.7.1:
     d3-interpolate "1"
     d3-selection "1"
     d3-transition "1"
+
+d3@^3.5.6:
+  version "3.5.17"
+  resolved "https://registry.yarnpkg.com/d3/-/d3-3.5.17.tgz#bc46748004378b21a360c9fc7cf5231790762fb8"
 
 d3@^4.12.2, d3@^4.13.0:
   version "4.13.0"
@@ -4571,6 +4581,10 @@ fast-json-stable-stringify@^2.0.0:
 fast-levenshtein@~2.0.4:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
+
+fast-stats@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/fast-stats/-/fast-stats-0.0.2.tgz#61c75de0d94f96f427659752d6541f1a6af9a0c1"
 
 fastparse@^1.1.1:
   version "1.1.1"
@@ -6233,6 +6247,10 @@ labella@^1.1.2:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/labella/-/labella-1.1.4.tgz#c6cc5a340e8df340eb335633683ea59b828c322d"
 
+"lap-jv@https://github.com/DinoJay/lap-jv/":
+  version "0.0.0"
+  resolved "https://github.com/DinoJay/lap-jv/#e98e29b4792ba678c6280affc9a1115918fd852f"
+
 lazy-cache@^0.2.3:
   version "0.2.7"
   resolved "https://registry.yarnpkg.com/lazy-cache/-/lazy-cache-0.2.7.tgz#7feddf2dcb6edb77d11ef1d117ab5ffdf0ab1b65"
@@ -7136,6 +7154,12 @@ node-sass@^4.5.0:
     sass-graph "^2.2.4"
     stdout-stream "^1.4.0"
     "true-case-path" "^1.0.2"
+
+node-som@^1.6.6:
+  version "1.6.6"
+  resolved "https://registry.yarnpkg.com/node-som/-/node-som-1.6.6.tgz#377edf8ad28eca37b2fe3a26b6430432e70395cd"
+  dependencies:
+    fast-stats "0.0.2"
 
 "nomnom@>= 1.5.x":
   version "2.0.0"

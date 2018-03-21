@@ -77,49 +77,6 @@ const jaccard = (a, b) =>
 //   };
 // }
 
-function calcLapPos(nodes) {
-  const m = 5; // Math.ceil(nodes.length / 4);
-  const n = m * m;
-  const lapData = d3.range(n).map(i => {
-    const node = nodes[i];
-    // console.log('node.tx', node && node.tx);
-    return node ? [node.tx || node.x, node.ty || node.y] : [0, 0];
-  });
-  // console.log('realLapData', realLapData);
-
-  // const randLapData = d3
-  //   .range(n)
-  //   .map(k => [m * Math.random(), m * Math.random()]);
-  // const w = Math.ceil(width / m);
-
-  const costs = lapData.map(d =>
-    d3.range(n).map(k => {
-      const i = k % m;
-      const j = (k - i) / m;
-      const dx = d[0] - i - 0.5;
-      const dy = d[1] - j - 0.5;
-      return dx * dx + dy * dy;
-    })
-  );
-
-  const la = lap(n, costs);
-  const resLa = [...la.col].map((c, k) => {
-    const i = k % m;
-    const j = (k - i) / m;
-    const cost = costs[c][k];
-    return { i, j, cost };
-  });
-  console.log('resLa', resLa);
-
-  const plotla = resLa.map(d => [50 * d.i, 80 * d.j]);
-
-  // nodes.forEach((d, i) => {
-  //   d.tx = plotla[i][0];
-  //   d.ty = plotla[i][1];
-  // });
-  return nodes.map((_, i) => ({ x: plotla[i][0], y: plotla[i][1] }));
-}
-
 class ForceOverlay extends Component {
   static propTypes = {
     children: PropTypes.func,
@@ -210,8 +167,8 @@ class ForceOverlay extends Component {
     // eslint-disable-next-line new-cap
     const model = new tsnejs.tSNE({
       dim: 2,
-      perplexity: 10, // 10,
-      epsilon: 40
+      perplexity: 30, // 10,
+      epsilon: 13
     });
 
     // initialize data with pairwise distances
@@ -241,13 +198,13 @@ class ForceOverlay extends Component {
     const tsneX = d3
       .scaleLinear()
       .domain(d3.extent(tsnePos.map(d => d[0])))
-      .range([padX / 2, width - padX / 2]);
+      .range([0, width]);
 
     const tsneY = d3
       .scaleLinear()
       .domain(d3.extent(tsnePos.map(d => d[1])))
       // TODO: change height padding
-      .range([padY / 2, height - padY / 2]);
+      .range([0, width]);
 
     const vp = new PerspectiveMercatorViewport({
       width,
@@ -274,20 +231,41 @@ class ForceOverlay extends Component {
     });
     // .filter(n => n.x > 0 && n.x < width && n.y > 0 && n.y < height);
 
-    const lapPos = calcLapPos(nodes);
-    const getTPos = (d, i) =>
-      mode !== 'tsne'
-        ? { x: d.tx, y: d.ty }
-        : { x: lapPos[i].x, y: lapPos[i].y };
+    const m = 7;
+    const n = m * m;
+    const realLapData = nodes.map(({ x, y }) => [x / m, y / m]);
+    console.log('realLapData', nodes);
 
+    const lapData = d3
+      .range(n)
+      .map(k => [m * Math.random(), m * Math.random()]);
+    // const w = Math.ceil(width / m);
+
+    const costs = realLapData.map(d =>
+      d3.range(n).map(k => {
+        const i = k % m;
+        const j = (k - i) / m;
+        const dx = d[0] - i - 0.5;
+        const dy = d[1] - j - 0.5;
+        return dx * dx + dy * dy;
+      })
+    );
+
+    const la = lap(n, costs);
+    console.log('la', la);
+
+    console.log('nodes', nodes);
+
+    const getTPos = d =>
+      mode === 'tsne' ? { x: d.tx, y: d.ty } : { x: d.lx, y: d.ly };
     if (force) {
       this.forceSim = this.forceSim
         .nodes(nodes)
         .restart()
         .alpha(1)
         .alphaMin(0.8)
-        .force('x', d3.forceX((d, i) => getTPos(d, i).x).strength(0.6))
-        .force('y', d3.forceY((d, i) => getTPos(d, i).y).strength(0.6))
+        .force('x', d3.forceX(d => getTPos(d).x).strength(0.4))
+        .force('y', d3.forceY(d => getTPos(d).y).strength(0.4))
         .force('collide', d3.forceCollide(25).strength(1))
         .on('end', () => {
           this.id = setTimeout(

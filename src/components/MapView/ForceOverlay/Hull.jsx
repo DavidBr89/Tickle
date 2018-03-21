@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import chroma from 'chroma-js';
 
+import lap from 'lap-jv/lap.js';
+
 const pathStr = points => d3.line().curve(d3.curveBasisClosed)(points);
 
 function groupPath(nodes, offset = 1) {
