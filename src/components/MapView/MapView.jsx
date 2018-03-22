@@ -247,6 +247,15 @@ class MapView extends PureComponent {
       // navigateFirstTimeAction
     } = this.props;
 
+
+    // const vp = new PerspectiveMercatorViewport({
+    //   width,
+    //   height,
+    //   zoom,
+    //   latitude,
+    //   longitude
+    // });
+
     const cardPadding = 15;
 
     const animatedMarker = ({ x, y, ...c }) => (
@@ -453,9 +462,8 @@ class MapView extends PureComponent {
         <ForceOverlay
           viewport={mapViewport}
           data={cards}
-          mode={tsneView ? 'tsne' : 'geo'}
+          mode={!tsneView ? 'geo' : 'som'}
           padY={gridView ? height / 3 : height / 2}
-          force
           selectedCardId={selectedCardId}
           center={gridView ? height * 2 / 3 : height / 2}
         >

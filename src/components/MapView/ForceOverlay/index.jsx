@@ -1,14 +1,72 @@
 import React, { Fragment, Component } from 'react';
 import PropTypes from 'prop-types';
+import * as d3 from 'd3';
+
 import tsnejs from 'tsne';
 import lap from 'lap-jv/lap.js';
-import * as d3 from 'd3';
+import SOM from 'ml-som';
 
 import { intersection, union, uniq, flatten } from 'lodash';
 import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 
 import ZoomContainer from './ZoomContainer';
 import BubbleOverlay from './BubbleOverlay';
+
+function jaccard(a, b) {
+  return a.length !== 0 && b.length !== 0
+    ? 1 - intersection(a, b).length / union(a, b).length
+    : 1;
+}
+
+function somFy(data, callback = d => d) {
+  const options = {
+    fields: data.length,
+    torus: true,
+    gridType: 'rect',
+    learningRate: 0.1
+  };
+  const dists = data.map(a => data.map(b => jaccard(a.tags, b.tags)));
+  const m = 6;
+
+  const som = new SOM(m, m, options);
+  som.setTraining(dists);
+  while (som.trainOne()) {
+    const somPos = som.predict(dists);
+    callback(somPos);
+  }
+  const somPos = som.predict(dists);
+  return somPos;
+}
+
+function tsneFy(data, callback = d => d, iter = 400) {
+  const sets = setify(data).reduce((acc, d) => {
+    acc[d.key] = d.count;
+    return acc;
+  }, {});
+
+  const dists = data.map(a =>
+    data.map(b =>
+      jaccard(a.tags.filter(t => sets[t] > 1), b.tags.filter(t => sets[t] > 1))
+    )
+  );
+
+  // eslint-disable-next-line new-cap
+  const model = new tsnejs.tSNE({
+    dim: 2,
+    perplexity: 10, // 10,
+    epsilon: 40
+  });
+
+  // initialize data with pairwise distances
+  model.initDataDist(dists);
+
+  for (let i = 0; i < iter; ++i) {
+    model.step();
+    callback(model.getSolution());
+  }
+
+  return model.getSolution();
+}
 
 function setify(data) {
   const spreadData = [...data].map(({ id, tags, ...rest }) =>
@@ -25,11 +83,6 @@ function setify(data) {
     })
     .sort((a, b) => b.count - a.count);
 }
-
-const jaccard = (a, b) =>
-  a.length !== 0 && b.length !== 0
-    ? 1 - intersection(a, b).length / union(a, b).length
-    : 1;
 
 // function runTsne(data, iter = 400) {
 //   const dists = data.map(a => data.map(b => jaccard(a.tags, b.tags)));
@@ -77,23 +130,12 @@ const jaccard = (a, b) =>
 //   };
 // }
 
-function calcLapPos(nodes) {
-  const m = 5; // Math.ceil(nodes.length / 4);
-  const n = m * m;
-  const lapData = d3.range(n).map(i => {
-    const node = nodes[i];
-    // console.log('node.tx', node && node.tx);
-    return node ? [node.tx || node.x, node.ty || node.y] : [0, 0];
-  });
-  // console.log('realLapData', realLapData);
+function lapFy(data) {
+  const n = data.length;
+  const m = Math.ceil(Math.sqrt(n));
 
-  // const randLapData = d3
-  //   .range(n)
-  //   .map(k => [m * Math.random(), m * Math.random()]);
-  // const w = Math.ceil(width / m);
-
-  const costs = lapData.map(d =>
-    d3.range(n).map(k => {
+  const costs = data.map(d =>
+    data.map((_, k) => {
       const i = k % m;
       const j = (k - i) / m;
       const dx = d[0] - i - 0.5;
@@ -101,23 +143,19 @@ function calcLapPos(nodes) {
       return dx * dx + dy * dy;
     })
   );
+  const x = d3
+    .scaleLinear()
+    .domain([0, m - 1])
+    .range([0, 300]);
 
   const la = lap(n, costs);
   const resLa = [...la.col].map((c, k) => {
     const i = k % m;
     const j = (k - i) / m;
-    const cost = costs[c][k];
-    return { i, j, cost };
+    return { i, j };
   });
-  console.log('resLa', resLa);
 
-  const plotla = resLa.map(d => [50 * d.i, 80 * d.j]);
-
-  // nodes.forEach((d, i) => {
-  //   d.tx = plotla[i][0];
-  //   d.ty = plotla[i][1];
-  // });
-  return nodes.map((_, i) => ({ x: plotla[i][0], y: plotla[i][1] }));
+  return resLa.map(d => [x(d.i), x(d.j)]);
 }
 
 class ForceOverlay extends Component {
@@ -144,7 +182,7 @@ class ForceOverlay extends Component {
     delay: PropTypes.number,
     padY: PropTypes.number,
     padX: PropTypes.number,
-    mode: PropTypes.oneOf(['geo', 'tsne'])
+    mode: PropTypes.oneOf(['geo', 'tsne', 'som', 'grid'])
   };
 
   static defaultProps = {
@@ -156,98 +194,61 @@ class ForceOverlay extends Component {
     padX: 100,
     force: false,
     data: [],
-    delay: 300,
+    delay: 400,
     mode: 'geo'
   };
 
   constructor(props) {
     super(props);
-    const { width, height, data } = props;
+    const { data, width, height } = props;
 
+    const initPos = data.map(() => [width / 2, height / 2]);
+    const somPos = somFy(data);
     this.state = {
       nodes: data.map(d => ({ ...d, x: width / 2, y: height / 2 })),
-      tsnePos: data.map(() => [width / 2, height / 2]),
-      transEvent: d3.zoomIdentity
+      tsnePos: initPos,
+      somPos,
+      gridPos: lapFy(somPos)
     };
 
     this.layout = this.layout.bind(this);
-    this.calcTsne = this.calcTsne.bind(this);
 
     this.forceSim = d3.forceSimulation();
     // this.zoom = this.zoom.bind(this);
   }
 
   componentDidMount() {
-    this.calcTsne();
     this.layout();
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('nextProps', nextProps);
-    // this.forceSim.on('end', null);
     clearTimeout(this.id);
-    this.layout(nextProps);
-    this.calcTsne(nextProps);
-  }
+    const { data: oldData } = this.props;
+    const { data: nextData } = nextProps;
 
-  calcTsne(nextProps, iter = 400) {
-    const { data, width } = nextProps || this.props;
-    const sets = setify(data).reduce((acc, d) => {
-      acc[d.key] = d.count;
-      return acc;
-    }, {});
+    if (oldData.length !== nextData.length) {
+      const somPos = somFy(nextData);
+      const gridPos = lapFy(somPos);
 
-    const dists = data.map(a =>
-      data.map(b =>
-        jaccard(
-          a.tags.filter(t => sets[t] > 1),
-          b.tags.filter(t => sets[t] > 1)
-        )
-      )
-    );
-    console.log('dists', dists);
+      this.forceSim.force('x', null).force('y', null);
 
-    // eslint-disable-next-line new-cap
-    const model = new tsnejs.tSNE({
-      dim: 2,
-      perplexity: 10, // 10,
-      epsilon: 40
-    });
-
-    // initialize data with pairwise distances
-    model.initDataDist(dists);
-
-    for (let i = 0; i < iter; ++i) {
-      model.step();
+      this.layout(nextProps, {
+        ...this.state,
+        somPos,
+        gridPos
+      });
+    } else {
+      this.layout(nextProps);
     }
-
-    const tsnePos = model.getSolution();
-
-    // const n = width / 6;
-
-    this.setState({ tsnePos });
-    // Y is an array of 2-D points that you can plot
   }
 
-  layout(nextProps = null) {
-    const { viewport, force, mode, delay, data, padY, padX } =
-      nextProps || this.props;
+  layout(nextProps = null, nextState = null) {
+    const { viewport, mode, delay, data, padY, padX } = nextProps || this.props;
     const { width, height, zoom, latitude, longitude } = viewport;
-    const { tsnePos } = this.state;
-    // const tsnePos = runTsne(data, 300);
+    const { tsnePos, somPos, gridPos, nodes: oldNodes } =
+      nextState || this.state;
 
-    // prevent stretching of similiarities
-    // const padY = height / 7;
-    const tsneX = d3
-      .scaleLinear()
-      .domain(d3.extent(tsnePos.map(d => d[0])))
-      .range([padX / 2, width - padX / 2]);
-
-    const tsneY = d3
-      .scaleLinear()
-      .domain(d3.extent(tsnePos.map(d => d[1])))
-      // TODO: change height padding
-      .range([padY / 2, height - padY / 2]);
+    // console.log('oldNodes', nextState, oldNodes);
 
     const vp = new PerspectiveMercatorViewport({
       width,
@@ -257,49 +258,77 @@ class ForceOverlay extends Component {
       longitude
     });
 
-    const nodes = data.map(({ id, x, y, loc, tags, ...c }, i) => {
-      const [lx, ly] = vp.project([loc.longitude, loc.latitude]);
-      // console.log('id', id, 'x', x, 'y', 'loc', loc, 'tags', tags);
-      return {
-        id,
-        lx,
-        ly,
-        x: x || lx,
-        y: y || ly,
-        tx: tsneX(tsnePos[i][0]),
-        ty: tsneY(tsnePos[i][1]),
-        tags,
-        ...c
-      };
-    });
+    const geoPos = data.map(({ loc }) =>
+      vp.project([loc.longitude, loc.latitude])
+    );
+
+    const pos = (() => {
+      switch (mode) {
+        case 'tsne':
+          return tsnePos;
+        case 'som':
+          return somPos;
+        case 'grid':
+          return gridPos;
+        default:
+          return geoPos;
+      }
+    })();
+
+    const xScale =
+      mode !== 'geo'
+        ? d3
+          .scaleLinear()
+          .domain(d3.extent(pos.map(d => d[0])))
+          .range([padX / 2, width - padX / 2])
+        : d => d;
+
+    const yScale =
+      mode !== 'geo'
+        ? d3
+          .scaleLinear()
+          .domain(d3.extent(pos.map(d => d[1])))
+          .range([padY / 2, height - padY / 2])
+        : d => d;
+    // const tsnePos = runTsne(data, 300);
+
+    // prevent stretching of similiarities
+    // const padY = height / 7;
+
+    const nodes = data.map(({ id, x, y, tags, ...c }, i) => ({
+      id,
+      x: x || geoPos[i][0],
+      y: y || geoPos[i][1],
+      tags,
+      ...c
+    }));
     // .filter(n => n.x > 0 && n.x < width && n.y > 0 && n.y < height);
-
-    const lapPos = calcLapPos(nodes);
-    const getTPos = (d, i) =>
-      mode !== 'tsne'
-        ? { x: d.tx, y: d.ty }
-        : { x: lapPos[i].x, y: lapPos[i].y };
-
-    if (force) {
-      this.forceSim = this.forceSim
-        .nodes(nodes)
-        .restart()
-        .alpha(1)
-        .alphaMin(0.8)
-        .force('x', d3.forceX((d, i) => getTPos(d, i).x).strength(0.6))
-        .force('y', d3.forceY((d, i) => getTPos(d, i).y).strength(0.6))
-        .force('collide', d3.forceCollide(25).strength(1))
-        .on('end', () => {
-          this.id = setTimeout(
-            () =>
-              this.setState({
-                nodes: this.forceSim.nodes()
-              }),
-            delay
-          );
-          this.forceSim.on('end', null);
-        });
-    }
+    //
+    console.log('nodes', nodes, geoPos, pos);
+    this.forceSim = this.forceSim
+      .nodes(nodes)
+      .restart()
+      .alpha(1)
+      .alphaMin(0.6)
+      .force(
+        'x',
+        d3.forceX((d, i) => xScale( pos[i][0])).strength(0.5)
+      )
+      .force(
+        'y',
+        d3.forceY((d, i) => yScale(pos[i][1])).strength(0.5)
+      )
+      .force('coll', d3.forceCollide(25))
+      .on('end', () => {
+        this.id = setTimeout(
+          () =>
+            this.setState({
+              nodes: this.forceSim.nodes()
+            }),
+          delay
+        );
+        this.forceSim.on('end', null);
+      });
 
     this.setState({
       nodes

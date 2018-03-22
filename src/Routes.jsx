@@ -72,6 +72,7 @@ const defaultState = {
     latBottom: 0.003,
     defaultZoom: mapZoom,
     cards: dummyCards,
+    defaultCards: dummyCards,
     zoom: mapZoom,
     direction: null,
     ...defaultLocation,

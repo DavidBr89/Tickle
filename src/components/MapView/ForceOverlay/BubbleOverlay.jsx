@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as chromatic from 'd3-scale-chromatic';
 import { scaleOrdinal } from 'd3';
-import { layout } from 'd3-geom-concavehull/';
+import hull from 'hull.js';
 import * as d3 from 'd3';
 import chroma from 'chroma-js';
 
-const groupPoints = function(nodes, offset = 5) {
+const groupPoints = function(nodes, offset = 0) {
   let fakePoints = [];
   nodes.forEach(element => {
     fakePoints = fakePoints.concat([
@@ -38,35 +38,32 @@ class BubbleOverlay extends Component {
   render() {
     const { data, width, height } = this.props;
 
-    const blurFactor = 5;
+    const blurFactor = 2;
     const bubbleRadius = 25;
 
-    const color = scaleOrdinal()
+    const colorScale = scaleOrdinal()
       .domain(data.map(s => s.key))
       .range(chromatic.schemeAccent);
 
     const Bubbles = data.map(({ id, key, values }) => {
-      const hull = layout
-        .concaveHull()
-        .distance(1000)
-        .padding(50);
+      const hPoints = hull(groupPoints(values, 13), 50); // d3.polygonHull(groupPoints(values));
 
-      const vals = values.map(({ x, y }) => [x, y]);
-      const hPoints = d3.polygonHull(groupPoints(values));
-      const p = d3.line().curve(d3.curveBasis)(hPoints);
-      // console.log('hPoints', hPoints, 'p', p);
+      const p = d3.line()(hPoints);
+      const color = chroma(colorScale(key)).alpha(0.1);
       return (
         <g
           key={id}
-          style={{
-            filter: `url("#gooeyCodeFilter")`
-          }}
+          style={
+            {
+              filter: `url("#gooeyCodeFilter")`
+            }
+          }
         >
-          <path d={p} fill={chroma(color(key)).alpha(1)} />
+          <path d={p} fill={color} opacity={0.5} />
           {values.map(d => (
             <rect
-              fill={chroma(color(key)).alpha(1)}
-              opacity={1}
+              fill={color}
+              opacity={0.5}
               width={bubbleRadius * 2}
               height={bubbleRadius * 2}
               x={d.x - bubbleRadius}

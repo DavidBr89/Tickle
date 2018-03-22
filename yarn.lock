@@ -5533,6 +5533,10 @@ https-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/https-browserify/-/https-browserify-1.0.0.tgz#ec06c10e0a34c0f2faf199f7fd7fc78fffd03c73"
 
+hull.js@^0.2.10:
+  version "0.2.10"
+  resolved "https://registry.yarnpkg.com/hull.js/-/hull.js-0.2.10.tgz#2d3e383f6e8793d4ec74355a92b7da2eb8ade35b"
+
 iconv-lite@0.4, iconv-lite@0.4.19, iconv-lite@^0.4.17, iconv-lite@^0.4.5, iconv-lite@~0.4.13:
   version "0.4.19"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.19.tgz#f7468f60135f5e5dad3399c0a81be9a1603a082b"
@@ -6926,6 +6930,10 @@ mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0, mkd
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.1.tgz#30057438eac6cf7f8c4767f38648d6697d75c903"
   dependencies:
     minimist "0.0.8"
+
+ml-som@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/ml-som/-/ml-som-0.0.6.tgz#1602051c4b8a3ca6b91fd6c18517aa3b0c566815"
 
 monotone-convex-hull-2d@^1.0.1:
   version "1.0.1"

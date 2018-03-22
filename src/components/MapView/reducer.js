@@ -101,7 +101,8 @@ function reducer(state = {}, action) {
         })
       );
       console.log('cardPlaces', placeCards);
-      return { ...state, cards: [...placeCards] };
+      const newCards = [...state.cards];
+      return { ...state, cards: newCards, defaultCards: newCards };
     }
     case TOGGLE_TSNE_VIEW: {
       return { ...state, tsneView: !state.tsneView };
@@ -244,11 +245,17 @@ function reducer(state = {}, action) {
         return { longitude, latitude };
       })();
 
+      const newCards = state.defaultCards.filter(({ loc: { longitude, latitude } }) => {
+        const [x, y] = vp.project([longitude, latitude]);
+        return x > 0 && x < width && y > 0 && y < height;
+      });
+
       return {
         ...state,
         longitude: state.gridView ? bottomLng : newLng,
         latitude: state.gridView ? bottomLat : newLat,
         birdsEyeView,
+        cards: newCards,
 
         // latitude: newLat, // latScale(viewport.zoom),
         zoom: Math.max(minZoom, zoom),
