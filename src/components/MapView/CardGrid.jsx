@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import VisibilitySensor from 'react-visibility-sensor/visibility-sensor.js';
-import Grid from 'mygrid/dist';
+
+import { TransitionGroup, Transition } from 'react-transition-group/';
 import { ScrollView, ScrollElement } from '../utils/ScrollView';
 import { PreviewCard } from '../cards';
 
@@ -29,16 +30,16 @@ class CardGrid extends Component {
     super(props);
     this.id = null;
     this.box = null;
-    this.state = { visibleCardId: props.selectedCard, reset: false };
+    this.state = { selectedCardId: props.selectedCard, reset: false };
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.reset) this.setState({ visibleCardId: null });
+    if (nextProps.reset) this.setState({ selectedCardId: null });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     return (
-      this.state.visibleCardId !== nextState.visibleCardId ||
+      this.state.selectedCardId !== nextState.selectedCardId ||
       this.props.controls.key !== nextProps.controls.key ||
       this.props.reset !== nextProps.reset
     ); // nextProps.selected !== this.props.selected;
@@ -47,98 +48,153 @@ class CardGrid extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { onSelect } = this.props;
-    const { visibleCardId } = this.state;
-    if (visibleCardId !== null && prevState.visibleCardId !== visibleCardId) {
-      this._scroller.scrollTo(visibleCardId);
-      onSelect(visibleCardId);
+    const { selectedCardId } = this.state;
+    if (
+      selectedCardId !== null &&
+      prevState.selectedCardId !== selectedCardId
+    ) {
+      onSelect(selectedCardId);
+      // console.log('scroll', this.scrollCont)
+      // this.scrollCont.scrollLeft = this.scrollCont.scrollWidth;
+      // // this._scroller.scrollTo(selectedCardId);
     }
+    // this.scrollCont.scrollWidth = this.scrollCont.scrollWidth * 2;
   }
+
+  // componentWillUpdate(nextProps, nextState) {
+  //   const { selectedCardId } = this.state;
+  //   if (
+  //     selectedCardId !== null &&
+  //     nextState.selectedCardId !== selectedCardId
+  //   ) {
+  //     this._scroller.scrollTo(selectedCardId);
+  //   }
+  // }
 
   render() {
     const { cards, onExtend, style, controls, onSelect } = this.props;
-    const { visibleCardId } = this.state;
+    const { selectedCardId } = this.state;
 
-    const onChange = d => visible => {
-      // clearTimeout(this.id);
-      if (visible) {
-        clearTimeout(this.id);
-        this.id = setTimeout(() => {
-          // TODO: big hack make issue in react visibility-sensor
-          this.setState({ visibleCardId: d.id, lastScroll: new Date() });
-          onSelect(d.id);
-        }, 750);
-      }
+    // const onChange = d => visible => {
+    //   // clearTimeout(this.id);
+    //   if (visible) {
+    //     clearTimeout(this.id);
+    //     this.id = setTimeout(() => {
+    //       // TODO: big hack make issue in react visibility-sensor
+    //       this.setState({ selectedCardId: d.id, lastScroll: new Date() });
+    //       onSelect(d.id);
+    //     }, 750);
+    //   }
+    // };
+
+    const selectedCards = (() => {
+      if (selectedCardId === null) return cards.slice(0, 3);
+
+      const selectedCardIndex = cards.findIndex(d => d.id === selectedCardId);
+      if (selectedCardIndex === cards.length - 1) return cards.slice(-3);
+
+      return [
+        cards[selectedCardIndex - 1],
+        cards[selectedCardIndex],
+        cards[selectedCardIndex + 1]
+        // cards[selectedCardIndex + 2]
+      ];
+    })();
+
+    console.log('selectedCards', selectedCards);
+
+    const duration = 0.5;
+    const defaultStyle = {
+      transition: `left ${0.6}s`
+    };
+
+    const slotSize = 100 / selectedCards.length;
+    console.log('slotSize', slotSize);
+    const transitionStyles = i => {
+      const left = (() => {
+        if (i === 2) return `${selectedCards.length * slotSize}vw`;
+        if (i === 0) return `${0}vw`;
+        return `${slotSize * i}vw`;
+      })();
+
+      return {
+        entering: { left },
+        entered: { left: `${i * slotSize}vw` },
+        exiting: { left },
+        exited: { left }
+      };
     };
 
     return (
       <div>
         <div
-          ref={node => (this.node = node)}
           style={{
             position: 'absolute',
-            left: '5vw',
-            width: '70vw',
-            height: '48vh'
-            // border: '1px grey dashed'
+            overflowX: 'hidden',
+            width: '100%',
+            height: '40vh',
+            // paddingLeft: '50vw',
+            // paddingRight: '50vw',
+            zIndex: 2000
           }}
-        />
-
-        <ScrollView ref={scroller => (this._scroller = scroller)}>
-          <div
+        >
+          <TransitionGroup
             style={{
-              position: 'absolute',
-              overflowX: 'scroll',
-              overflowY: 'visible',
-              width: '100%',
-              height: '40vh',
-              zIndex: 2000
+              ...style
             }}
           >
-            <div style={{ ...style, display: 'flex' }}>
-              {cards.map(d => (
-                <div
-                  key={d.id}
-                  style={{
-                    width: '28vw',
-                    marginLeft: '5vw',
-                    marginRight: '6vw',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <ScrollElement name={d.id}>
+            <div style={{ width: '40vw' }} />
+            {selectedCards.map((d, i) => (
+              <Transition key={d.id} timeout={10}>
+                {state => (
+                  <div
+                    style={{
+                      width: '28vw',
+                      marginLeft: '3vw',
+                      marginRight: '3vw',
+                      cursor: 'pointer',
+                      position: 'absolute',
+                      // left: `${i * 33}vw`,
+                      ...transitionStyles(i)[state],
+                      transition: 'left 0.3s',
+                      transitionTimingFunction:
+                        state === 'entering' ? 'ease-in' : 'ease-out'
+                    }}
+                  >
+                    {console.log(
+                      'transitionStyles',
+                      i,
+                      state,
+                      transitionStyles(i)[state]
+                    )}
                     <div>
-                      <div style={{ opacity: visibleCardId === d.id ? 1 : 0 }}>
+                      <div style={{ opacity: selectedCardId === d.id ? 1 : 0 }}>
                         {controls}
                       </div>
                     </div>
-                    <VisibilitySensor
-                      onChange={onChange(d)}
-                      containment={this.node}
-                    >
-                      <PreviewCard
-                        {...d}
-                        onClick={() =>
-                          visibleCardId === d.id
-                            ? onExtend(d.id)
-                            : this.setState({ visibleCardId: d.id })
-                        }
-                        selected={visibleCardId === d.id}
-                        style={{
-                          opacity: visibleCardId === d.id ? 1 : 0.56,
-                          transform:
-                            visibleCardId === d.id ? 'scale(1.2)' : null,
-                          transition: 'transform 1s',
-                          height: '100%',
-                          padding: '10px'
-                        }}
-                      />
-                    </VisibilitySensor>
-                  </ScrollElement>
-                </div>
-              ))}
-            </div>
-          </div>
-        </ScrollView>
+                    <PreviewCard
+                      {...d}
+                      onClick={() =>
+                        selectedCardId === d.id
+                          ? onExtend(d.id)
+                          : this.setState({ selectedCardId: d.id })
+                      }
+                      selected={selectedCardId === d.id}
+                      style={{
+                        opacity: selectedCardId === d.id ? 1 : 0.56,
+                        // transform:
+                        // selectedCardId === d.id ? 'scale(1.2)' : null,
+                        transition: 'transform 1s',
+                        height: '100%',
+                        padding: '10px'
+                      }}
+                    />
+                  </div>
+                )}
+              </Transition>
+            ))}
+          </TransitionGroup>
+        </div>
       </div>
     );
   }

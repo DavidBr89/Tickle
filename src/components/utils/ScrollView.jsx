@@ -25,13 +25,16 @@ class ScrollView extends Component {
     };
   }
   elements = {};
-  scrollTo = name => {
+  scrollTo = (name, time = 500) => {
     const node = ReactDOM.findDOMNode(this.elements[name]);
+    node.scrollLeft = 20000;
+    // node.scrollIntoView(false);
     scrollIntoView(node, {
-      time: 500
-      // align: {
-      //   top: 0
-      // }
+      time,
+      align: {
+        // left: 0.5,
+        // leftOffset: 0
+      }
     });
   };
 

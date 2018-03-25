@@ -21,6 +21,7 @@ import SvgOverlay from '../utils/map-layers/SvgOverlay';
 import CardGrid from './CardGrid';
 import ContextView from './ContextView';
 import ForceOverlay from './ForceOverlay';
+import Title from './Title';
 // import StartNav from './StartNav';
 // import { VisibleView, VisibleElement } from '../utils/MySensor.jsx';
 
@@ -247,7 +248,6 @@ class MapView extends PureComponent {
       // navigateFirstTimeAction
     } = this.props;
 
-
     // const vp = new PerspectiveMercatorViewport({
     //   width,
     //   height,
@@ -438,8 +438,7 @@ class MapView extends PureComponent {
               selected={selectedCardId}
               onExtend={extCardAction}
               offset={0}
-              reset={selectedCardId === null}
-              selectedCard={selectedCardId}
+              selectedCardId={selectedCardId}
               setCardOpacity={setCardOpacity}
               controls={
                 <CardMetaControl
@@ -450,8 +449,8 @@ class MapView extends PureComponent {
               style={{
                 height: '26vh',
                 paddingTop: '16px',
-                paddingLeft: '100px',
-                paddingRight: '100px',
+                // paddingLeft: '100px',
+                // paddingRight: '100px',
                 paddingBottom: '15px',
                 // width: `${cards.length * 40}vw`,
                 zIndex: 8000
@@ -459,6 +458,7 @@ class MapView extends PureComponent {
             />
           </div>
         </div>
+        <Title />
         <ForceOverlay
           viewport={mapViewport}
           data={cards}
