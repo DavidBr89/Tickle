@@ -30,13 +30,13 @@ class CardMarker extends Component {
     center: true,
     marginTop: '6%',
     background: 'black',
-    imgColor: 'gold',
+    imgColor: 'yellow',
     shadow: true
   };
 
-  // shouldComponentUpdate() {
-  //   return false;
-  // }
+  shouldComponentUpdate() {
+    return false;
+  }
 
   render() {
     const {
@@ -57,6 +57,7 @@ class CardMarker extends Component {
     return (
       <div
         style={{
+          pointerEvents: 'none',
           // padding: '15%',
           transition: 'opacity 1s',
           width: `${width}vw`,
@@ -80,7 +81,7 @@ class CardMarker extends Component {
             width: '100%',
             height: '100%',
             padding: '7%',
-            boxShadow: shadow ? 'grey 0.3rem 0.3rem' : null,
+            // boxShadow: shadow ? 'grey 0.3rem 0.3rem' : null,
             border: '1px solid grey'
             // border: '1px solid grey',
             // border: edit ? '2px dashed black' : null,

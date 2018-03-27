@@ -169,7 +169,7 @@ const MapEvent = {
 
 const FranzLisztCard = {
   title: 'The life of Frank Liszt',
-  challenge: { type: 'gap text' },
+  challenge: { type: 'gap text', url: '' },
   date: '24/04/2012 00:00:00',
   type: 'card',
   tags: ['Art', 'Culture', 'classic', 'music'],
@@ -211,19 +211,18 @@ const FranzLisztCard = {
     'HardRock Cafe Brussels'
   ]
 };
-const jimiHendrixCard = {
-  title: 'James Hendrix Father in Belgium',
+const PaulMccartneyCard = {
+  title: 'Paul Mccartney in Belgium',
   challenge: {
     type: 'hangman'
   },
   date: '01/04/2012 00:00:00',
   tags: ["Rock 'n ' Roll", 'Culture', 'music'],
   img:
-    'http://www.memoire60-70.be/Images/Chronique_1966_1972/Jimi_Hendrix_Belgium_67.jpg',
+    'https://www.gannett-cdn.com/-mm-/0ff69998822d0834f00c5aac7af82d14658497b7/c=0-352-1500-1200&r=x803&c=1600x800/local/-/media/Phoenix/Phoenix/2014/08/12/1407866201000-10338459-10152594446008313-1133326890939021056-o.jpg',
   xpPoints: 50,
   // TODO: remove in future to component
-  description:
-    'The first pop star of classical music. He made girls cry with his virtuosic piano play. Much like Jimi hendrix he redefined the way to play his instrument',
+  description: 'Only Paul Mccartney played in Belgium but never the Beatles',
   loc: { latitude: 50.893, longitude: 4.352083 },
   place: 'Amerikaans Theater',
   author: 'Jan',
@@ -267,10 +266,61 @@ const jimiHendrixCard = {
   cardSets: ['european_composers', 'Music challenge'],
   linkedCards: ['Frank Liszt', 'Music school Arthur de Greef']
 };
+
+const RomanTraces = {
+  title: 'Roman Traces in Brussels',
+  challenge: {
+    type: 'hangman'
+  },
+  date: '01/04/2012 00:00:00',
+  tags: ["Rock 'n ' Roll", 'Culture', 'music'],
+  img: 'http://www.bbc.co.uk/scotland/history/img/articles/mosaic_xl.jpg',
+  xpPoints: 50,
+  // TODO: remove in future to component
+  description: 'Visit the hidden ruins!',
+  loc: { latitude: 50.893, longitude: 4.352083 },
+  place: 'Amerikaans Theater',
+  author: 'Jan',
+  media: [
+    {
+      type: 'hyperlink',
+      title: 'Romans in Brussels',
+      url: 'http://www.bbc.co.uk/scotland/history/articles/the_romans/'
+    }
+  ],
+  comments: [
+    {
+      user: 'Nils',
+      comment: 'jimi yeah'
+    },
+    {
+      user: 'Kiran',
+      comment: 'My hero, I want to have his haircut'
+    },
+    {
+      user: 'babba',
+      comment: 'all along the watch tower!'
+    },
+    {
+      user: 'gab',
+      comment: 'BEER'
+    }
+  ],
+  rating: [
+    {
+      user: 'Nils',
+      value: 4
+    }
+  ],
+  cardSets: ['european_composers', 'Music challenge'],
+  linkedCards: ['Frank Liszt', 'Music school Arthur de Greef']
+};
+
 const jimiHendrixCard2 = {
   title: 'Jimi Hendrix in Belgium',
   challenge: {
-    type: 'hangman'
+    type: 'hangman',
+    url: 'https://www.quiz-maker.com/QH4UEDU'
   },
   date: '01/04/2012 00:00:00',
   tags: ["Rock 'n ' Roll", 'Culture', 'music'],
@@ -598,8 +648,7 @@ const VUBSports2 = {
   date: '04/04/2012 00:00:00',
   // TODO; rename topics
   tags: ['Uni', 'sports'],
-  img:
-    'http://uabsport.be/wp-content/uploads/2015/10/817SOap_binnenzicht_01.jpg',
+  img: 'https://hookedoneverything.com/wp-content/uploads/2016/01/3-2.jpg',
   xpPoints: 100,
   // TODO: remove in future to component
   description:
@@ -610,8 +659,8 @@ const VUBSports2 = {
   media: [
     {
       type: 'hyperlink',
-      title: 'Website',
-      url: 'http://www.vub.ac.be/en/sport'
+      title: 'Belgian Beatles Society',
+      url: 'http://belgian-beatles-society.com/the-beatles-and-belgium'
     }
   ],
   comments: [
@@ -641,7 +690,7 @@ const rawDummyCards = [
   notification,
   notification2,
   MapEvent,
-  jimiHendrixCard,
+  PaulMccartneyCard,
   jimiHendrixCard2,
   ArthurDeGreefCard,
   GrandPlace,
@@ -650,7 +699,8 @@ const rawDummyCards = [
   VUBcard,
   VUBSports,
   VUBSports2,
-  VubCard2
+  VubCard2,
+  RomanTraces
 ];
 const tip = timeParse('%d/%m/%Y');
 // console.log('dummyCards', dummyCards.map(d => tip(d.date)));

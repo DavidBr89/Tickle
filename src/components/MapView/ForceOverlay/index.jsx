@@ -242,6 +242,14 @@ class ForceOverlay extends Component {
     }
   }
 
+  componentDidUpdate() {
+    clearTimeout(this.id);
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.id);
+  }
+
   layout(nextProps = null, nextState = null) {
     const { viewport, mode, delay, data, padY, padX } = nextProps || this.props;
     const { width, height, zoom, latitude, longitude } = viewport;
@@ -288,7 +296,7 @@ class ForceOverlay extends Component {
         ? d3
           .scaleLinear()
           .domain(d3.extent(pos.map(d => d[1])))
-          .range([padY / 2, height - padY / 2])
+          .range([padY, height])
         : d => d;
     // const tsnePos = runTsne(data, 300);
 
@@ -304,21 +312,14 @@ class ForceOverlay extends Component {
     }));
     // .filter(n => n.x > 0 && n.x < width && n.y > 0 && n.y < height);
     //
-    console.log('nodes', nodes, geoPos, pos);
     this.forceSim = this.forceSim
       .nodes(nodes)
       .restart()
       .alpha(1)
       .alphaMin(0.6)
-      .force(
-        'x',
-        d3.forceX((d, i) => xScale( pos[i][0])).strength(0.5)
-      )
-      .force(
-        'y',
-        d3.forceY((d, i) => yScale(pos[i][1])).strength(0.5)
-      )
-      .force('coll', d3.forceCollide(25))
+      .force('x', d3.forceX((d, i) => xScale(pos[i][0])).strength(0.5))
+      .force('y', d3.forceY((d, i) => yScale(pos[i][1])).strength(0.5))
+      .force('coll', d3.forceCollide(15))
       .on('end', () => {
         this.id = setTimeout(
           () =>
@@ -336,7 +337,6 @@ class ForceOverlay extends Component {
   }
 
   render() {
-    console.log('lap', lap);
     const {
       children,
       viewport,
@@ -358,6 +358,9 @@ class ForceOverlay extends Component {
           className={className}
           style={{
             position: 'absolute',
+            width: '100%',
+            height: '100%',
+            overflow: 'hidden',
             left: 0,
             top: 0,
             pointerEvents: 'none',

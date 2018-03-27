@@ -85,7 +85,7 @@ function reducer(state = {}, action) {
   switch (action.type) {
     case RECEIVE_PLACES: {
       const { results: places } = action.options;
-      console.log('places', places);
+      // console.log('places', places);
       const placeCards = places.map(
         ({
           id,
@@ -100,7 +100,7 @@ function reducer(state = {}, action) {
           challenge: { type: null }
         })
       );
-      console.log('cardPlaces', placeCards);
+      // console.log('cardPlaces', placeCards);
       const newCards = [...state.cards];
       return { ...state, cards: newCards, defaultCards: newCards };
     }
@@ -222,7 +222,7 @@ function reducer(state = {}, action) {
             longitude: centerLng
           }).fitBounds(bbox, {
             padding: 10,
-            offset: [width / 8, height / 6]
+            offset: [width / 8, height / 3]
           });
         }
         return new PerspectiveMercatorViewport({
@@ -235,10 +235,11 @@ function reducer(state = {}, action) {
       })();
 
       const { zoom: minZoom } = vp;
+
       // TODO understand
       const [bottomLng, bottomLat] = gridView
         ? vp.unproject([width / 2, height * 1 / 3])
-        : vp.unproject([width / 2, height * 2 / 3]);
+        : vp.unproject([width / 2, height * 1 / 2]);
 
       const birdsEyeView = zoom <= minZoom;
       const { longitude: newLng, latitude: newLat } = (() => {
@@ -250,7 +251,8 @@ function reducer(state = {}, action) {
         return { longitude, latitude };
       })();
 
-      const newCards = state.defaultCards.filter(({ loc }) => {
+      const filterCards = zoom > state.zoom ? state.cards : state.defaultCards;
+      const newCards = filterCards.filter(({ loc }) => {
         const [x, y] = vp.project([loc.longitude, loc.latitude]);
         return x > 0 && x < width && y > 0 && y < height;
       });
@@ -311,10 +313,10 @@ function reducer(state = {}, action) {
         mapViewport
       });
 
-      const newCards = state.defaultCards.filter(({ loc }) => {
-        const [x, y] = vp.project([loc.longitude, loc.latitude]);
-        return x > 0 && x < width && y > 0 && y < height;
-      });
+      // const newCards = state.defaultCards.filter(({ loc }) => {
+      //   const [x, y] = vp.project([loc.longitude, loc.latitude]);
+      //   return x > 0 && x < width && y > 0 && y < height;
+      // });
 
       return {
         ...state,

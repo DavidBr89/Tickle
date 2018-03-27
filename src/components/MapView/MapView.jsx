@@ -143,6 +143,10 @@ class MapView extends PureComponent {
   }
 
   componentDidMount() {
+    const map = this.map.getMap();
+    // map._refreshExpiredTiles = false;
+    console.log('mapREF', map);
+
     // const {
     //   computeTopicMapAction,
     //   width,
@@ -269,44 +273,15 @@ class MapView extends PureComponent {
         x={x + 5}
         y={y + 3}
         preview={
-          <div style={{ position: 'relative' }}>
-            <CardMarker
-              {...c}
-              center={false}
-              style={{
-                opacity: setCardOpacity(c),
-                position: 'absolute',
-                zIndex: -100
-              }}
-            />
-            {selectedCardId === c.id &&
-              !direction && (
-                <ContextView
-                  radius={70}
-                  width={12}
-                  delay={1000}
-                  background={brighterColorScale(selectedCard.challenge.type)}
-                  mapViewport={mapViewport}
-                  visible={compass}
-                  node={this.node}
-                >
-                  {cards.slice(-5).map(cc => (
-                    <CardMarker
-                      key={cc.id}
-                      {...cc}
-                      center={false}
-                      shadow={false}
-                      width={5}
-                      height={6}
-                      node={this.node}
-                      onClick={() => {
-                        selectCardAction(cc.id);
-                      }}
-                    />
-                  ))}
-                </ContextView>
-              )}
-          </div>
+          <CardMarker
+            {...c}
+            center={false}
+            style={{
+              opacity: setCardOpacity(c),
+              position: 'absolute',
+              zIndex: -100
+            }}
+          />
         }
       >
         <Card
@@ -334,6 +309,7 @@ class MapView extends PureComponent {
             style={{ border: 'none', width: '100%', height: '90vh' }}
           />
         </Modal>
+
         <div style={{ display: 'flex', width: '200px', position: 'absolute' }}>
           <button
             className="mt-3 ml-3 btn"
@@ -345,11 +321,7 @@ class MapView extends PureComponent {
             onClick={birdsEyeView ? toggleTsneViewAction : enableCompassAction}
           >
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-              {birdsEyeView ? (
-                <Icon.Eye size={30} />
-              ) : (
-                <Icon.Compass size={30} />
-              )}
+              <Icon.Compass size={30} />
             </div>
           </button>
           <button
@@ -376,11 +348,9 @@ class MapView extends PureComponent {
             }}
           >
             <MapGL
+              ref={m => (this.map = m)}
               {...mapViewport}
-              onViewportChange={changeMapViewportAction}
-              isdragging={false}
-              startdraglnglat={null}
-              mapStyle={'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l'}
+               mapStyle={'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l'}onViewportChange={changeMapViewportAction}
               onClick={({ lngLat, deltaTime }) =>
                 // TODO: fix later
                 deltaTime > 30 && userMoveAction({ lngLat })
@@ -435,6 +405,7 @@ class MapView extends PureComponent {
             <CardGrid
               cards={cards}
               onSelect={selectCardAction}
+              visible={gridView}
               selected={selectedCardId}
               onExtend={extCardAction}
               offset={0}
@@ -447,11 +418,11 @@ class MapView extends PureComponent {
                 />
               }
               style={{
-                height: '26vh',
+                height: '20vh',
                 paddingTop: '16px',
                 // paddingLeft: '100px',
                 // paddingRight: '100px',
-                paddingBottom: '15px',
+                // paddingBottom: '15px',
                 // width: `${cards.length * 40}vw`,
                 zIndex: 8000
               }}
@@ -463,12 +434,25 @@ class MapView extends PureComponent {
           viewport={mapViewport}
           data={cards}
           mode={!tsneView ? 'geo' : 'som'}
-          padY={gridView ? height / 3 : height / 2}
+          padY={height / 2}
           selectedCardId={selectedCardId}
           center={gridView ? height * 2 / 3 : height / 2}
         >
           {animatedMarker}
         </ForceOverlay>
+        <button
+          className="fixed-bottom-right btn m-3"
+          style={{
+            // position: 'absolute',
+            zIndex: 1000,
+            background: compass || birdsEyeView ? 'whitesmoke' : null
+          }}
+          onClick={birdsEyeView ? toggleTsneViewAction : enableCompassAction}
+        >
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            {birdsEyeView ? <Icon.Eye size={30} /> : <Icon.Compass size={30} />}
+          </div>
+        </button>
       </div>
     );
   }

@@ -34,7 +34,7 @@ export const cardLayout = cxs({
 });
 
 export const shadowStyle = {
-  boxShadow: '0.4rem 0.4rem grey',
+  // boxShadow: '0.4rem 0.4rem grey',
   border: '1px solid grey'
 };
 const colors = [...chromatic.schemePastel1, 'wheat'];

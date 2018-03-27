@@ -1,10 +1,29 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import VisibilitySensor from 'react-visibility-sensor/visibility-sensor.js';
+import throttle from 'react-throttle-render';
+// import VisibilitySensor from 'react-visibility-sensor/visibility-sensor.js';
 
 import { TransitionGroup, Transition } from 'react-transition-group/';
-import { ScrollView, ScrollElement } from '../utils/ScrollView';
+// import { ScrollView, ScrollElement } from '../utils/ScrollView';
 import { PreviewCard } from '../cards';
+
+function createCardSets(cards, selectedCardId) {
+  const selectedCardIndex = cards.findIndex(d => d.id === selectedCardId);
+  return [
+    {
+      position: 'left',
+      cards: cards.slice(0, selectedCardIndex)
+    },
+    {
+      position: 'center',
+      cards: [cards[selectedCardIndex]]
+    },
+    {
+      position: 'right',
+      cards: cards.slice(selectedCardIndex + 1, cards.length).reverse()
+    }
+  ];
+}
 
 class CardGrid extends Component {
   static propTypes = {
@@ -12,38 +31,46 @@ class CardGrid extends Component {
     onSelect: PropTypes.func.isRequired,
     onExtend: PropTypes.func.isRequired,
     controls: PropTypes.node.isRequired,
-    setCardOpacity: PropTypes.func.isRequired,
     offset: PropTypes.number.isRequired,
-    reset: PropTypes.bool,
-    style: PropTypes.object
+    selectedCardId: PropTypes.any,
+    style: PropTypes.object,
+    visible: PropTypes.bool
   };
 
   static defaultProps = {
     style: {},
-    selectedCard: null,
+    selectedCardId: null,
     setCardOpacity(d) {
       return d;
-    }
+    },
+    visible: true
   };
 
   constructor(props) {
     super(props);
     this.id = null;
     this.box = null;
-    this.state = { selectedCardId: props.selectedCard, reset: false };
+    // TODO: remove later when cards is empty
+    const selectedCardId = props.cards[0].id;
+    this.state = {
+      selectedCardId,
+      reset: false,
+      cardSets: createCardSets(props.cards, selectedCardId)
+    };
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.reset) this.setState({ selectedCardId: null });
+    const { cards, selectedCardId } = nextProps;
+    const cardSets = createCardSets(cards, selectedCardId);
+    this.setState({ cardSets });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     return (
       this.state.selectedCardId !== nextState.selectedCardId ||
-      this.props.controls.key !== nextProps.controls.key ||
-      this.props.reset !== nextProps.reset
+      this.props.cards.length !== nextProps.cards.length
     ); // nextProps.selected !== this.props.selected;
-    // return true;
+    // return false;
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -54,11 +81,7 @@ class CardGrid extends Component {
       prevState.selectedCardId !== selectedCardId
     ) {
       onSelect(selectedCardId);
-      // console.log('scroll', this.scrollCont)
-      // this.scrollCont.scrollLeft = this.scrollCont.scrollWidth;
-      // // this._scroller.scrollTo(selectedCardId);
     }
-    // this.scrollCont.scrollWidth = this.scrollCont.scrollWidth * 2;
   }
 
   // componentWillUpdate(nextProps, nextState) {
@@ -72,9 +95,11 @@ class CardGrid extends Component {
   // }
 
   render() {
-    const { cards, onExtend, style, controls, onSelect } = this.props;
-    const { selectedCardId } = this.state;
+    const { cards, onExtend, style, controls, onSelect, visible } = this.props;
+    const { selectedCardId, cardSets } = this.state;
+    if (cards.length === 0 || !visible) return null;
 
+    const selectedCardIndex = cards.findIndex(d => d.id === selectedCardId);
     // const onChange = d => visible => {
     //   // clearTimeout(this.id);
     //   if (visible) {
@@ -87,116 +112,125 @@ class CardGrid extends Component {
     //   }
     // };
 
-    const selectedCards = (() => {
-      if (selectedCardId === null) return cards.slice(0, 3);
+    const duration = 300;
+    const margin = 4;
+    const slotSize = 100 / cardSets.length;
 
-      const selectedCardIndex = cards.findIndex(d => d.id === selectedCardId);
-      if (selectedCardIndex === cards.length - 1) return cards.slice(-3);
+    const transitionStyles = ({ position, cards }, i, j) =>
+      // const transitionTimingFunction = state === 'entering' ? 'ease-in' : 'ease-out';
+      ({
+        entering: {
+          left: `${slotSize * (i + 1)}vw`,
+          transitiontimingfunction: 'ease-in'
+          // transform: `translate3d(0,0,${j * 10}px) scale(1)`
+          // zIndex: 200 * j
+        },
+        entered: {
+          left: `${i * slotSize}vw`,
+          // transform: position === 'center' ? 'scale(1.2)' : 'scale(1)',
+          transform: `translate3d(0,0,${j * 10}px) scale(1)`
+          // zIndex: 10 * j
+        },
+        exiting: {
+          left: `${slotSize * (i - 1)}vw`,
+          // transform: 'scale(1)',
+          transitionTimingFunction: 'ease-out',
+          transform: `translate3d(0,0,${j * 10}px) scale(1)`
+        }
+        // exited: { left, transitionTimingFunction: 'ease-out' }
+      });
 
-      return [
-        cards[selectedCardIndex - 1],
-        cards[selectedCardIndex],
-        cards[selectedCardIndex + 1]
-        // cards[selectedCardIndex + 2]
-      ];
-    })();
+    // console.log('cardSets', cardSets);
 
-    console.log('selectedCards', selectedCards);
-
-    const duration = 0.5;
-    const defaultStyle = {
-      transition: `left ${0.6}s`
-    };
-
-    const slotSize = 100 / selectedCards.length;
-    console.log('slotSize', slotSize);
-    const transitionStyles = i => {
-      const left = (() => {
-        if (i === 2) return `${selectedCards.length * slotSize}vw`;
-        if (i === 0) return `${0}vw`;
-        return `${slotSize * i}vw`;
-      })();
-
-      return {
-        entering: { left },
-        entered: { left: `${i * slotSize}vw` },
-        exiting: { left },
-        exited: { left }
-      };
-    };
-
+    const dotOpacity = { entering: 0, entered: 1, exiting: 0, exited: 0 };
     return (
-      <div>
-        <div
+      <div style={style}>
+        <TransitionGroup
+          className="h-100"
           style={{
-            position: 'absolute',
-            overflowX: 'hidden',
-            width: '100%',
-            height: '40vh',
-            // paddingLeft: '50vw',
-            // paddingRight: '50vw',
-            zIndex: 2000
+            perspective: '1400px',
+            perspectiveOrigin: '50% -50%'
           }}
         >
-          <TransitionGroup
-            style={{
-              ...style
-            }}
-          >
-            <div style={{ width: '40vw' }} />
-            {selectedCards.map((d, i) => (
-              <Transition key={d.id} timeout={10}>
+          {cardSets.map((s, i) =>
+            s.cards.map((d, j) => (
+              <Transition
+                key={d.id}
+                timeout={{ enter: duration, exit: duration  * 2}}
+                className="h-100"
+              >
                 {state => (
                   <div
+                    className="h-100"
                     style={{
-                      width: '28vw',
-                      marginLeft: '3vw',
-                      marginRight: '3vw',
-                      cursor: 'pointer',
                       position: 'absolute',
-                      // left: `${i * 33}vw`,
-                      ...transitionStyles(i)[state],
-                      transition: 'left 0.3s',
-                      transitionTimingFunction:
-                        state === 'entering' ? 'ease-in' : 'ease-out'
+                      width: `${slotSize - 2 * margin}vw`,
+                      marginLeft: `${margin}vw`,
+                      marginRight: `${margin}vw`,
+                      cursor: 'pointer',
+                      ...transitionStyles(s, i, j)[state],
+                      transition: `left ${duration /
+                        1000}s, transform ${duration / 1000}s`,
+                      maxWidth: '30vw'
                     }}
                   >
-                    {console.log(
-                      'transitionStyles',
-                      i,
-                      state,
-                      transitionStyles(i)[state]
-                    )}
-                    <div>
-                      <div style={{ opacity: selectedCardId === d.id ? 1 : 0 }}>
-                        {controls}
-                      </div>
+                    <div style={{ opacity: selectedCardId === d.id ? 1 : 0 }}>
+                      {controls}
                     </div>
                     <PreviewCard
                       {...d}
                       onClick={() =>
                         selectedCardId === d.id
                           ? onExtend(d.id)
-                          : this.setState({ selectedCardId: d.id })
+                          : this.setState({
+                            selectedCardId: d.id,
+                            cardSets: createCardSets(cards, d.id)
+                          })
                       }
                       selected={selectedCardId === d.id}
                       style={{
-                        opacity: selectedCardId === d.id ? 1 : 0.56,
-                        // transform:
-                        // selectedCardId === d.id ? 'scale(1.2)' : null,
-                        transition: 'transform 1s',
-                        height: '100%',
-                        padding: '10px'
+                        boxShadow:
+                          selectedCardId === d.id ? '0.4rem 0.4rem grey' : null
                       }}
                     />
                   </div>
                 )}
               </Transition>
-            ))}
-          </TransitionGroup>
-        </div>
+            ))
+          )}
+        </TransitionGroup>
+        <TransitionGroup
+          className="ml-3 mr-3"
+          style={{
+            marginTop: 120,
+            display: 'flex',
+            justifyContent: 'center',
+            // border: 'solid 5px rosybrown',
+            zIndex: 2000
+          }}
+        >
+          {cards.map((c, i) => (
+            <Transition key={c.id} timeout={duration}>
+              {state => (
+                <div
+                  className="ml-1 mr-1"
+                  style={{
+                    width: '4vw',
+                    height: '4vw',
+                    border: 'solid 2px rosybrown',
+                    borderRadius: '50%',
+                    background: selectedCardIndex === i ? 'rosybrown' : 'white',
+                    opacity: dotOpacity[state],
+                    transition: 'opacity 0.3s',
+                    zIndex: 2000
+                  }}
+                />
+              )}
+            </Transition>
+          ))}
+        </TransitionGroup>
       </div>
     );
   }
 }
-export default CardGrid;
+export default throttle(1000)(CardGrid);

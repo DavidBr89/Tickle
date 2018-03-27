@@ -22,7 +22,7 @@ const Modal = ({
         background: 'rgba(0, 0, 0, 0.5)',
         opacity: visible ? 1 : 0,
         transition: 'opacity 1s',
-        zIndex: visible ? '6000' : '-10',
+        zIndex: visible ? '100000' : '-10',
         left: 0,
         top: 0,
         position: 'absolute'

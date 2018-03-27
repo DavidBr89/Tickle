@@ -4,6 +4,6 @@ import CardCreator from './components/CardCreator/reducer';
 import Login from './components/Login/reducer';
 
 //TODO: write my own combineReducer
-export default combineReducers({ MapView, CardCreator, Login});
+export default combineReducers({ MapView});
 // export default MapView;
 // export default CardCreator;
