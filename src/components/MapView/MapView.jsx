@@ -310,7 +310,7 @@ class MapView extends PureComponent {
           />
         </Modal>
 
-        <div style={{ display: 'flex', width: '200px', position: 'absolute' }}>
+        <div style={{ display: 'flex', width: '200px' }}>
           <button
             className="mt-3 ml-3 btn"
             style={{
@@ -338,96 +338,95 @@ class MapView extends PureComponent {
             </div>
           </button>
         </div>
-        <div ref={node => (this.node = node)} style={{ position: 'relative' }}>
-          <div
-            style={{
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              filter: tsneView && 'blur(4px)'
-            }}
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            filter: tsneView && 'blur(4px)'
+          }}
+        >
+          <MapGL
+            ref={m => (this.map = m)}
+            {...mapViewport}
+            mapStyle={'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l'}
+            onViewportChange={changeMapViewportAction}
+            onClick={({ lngLat, deltaTime }) =>
+              // TODO: fix later
+              deltaTime > 30 && userMoveAction({ lngLat })
+            }
           >
-            <MapGL
-              ref={m => (this.map = m)}
+            <UserOverlay {...mapViewport} location={userLocation} />
+            <SvgOverlay
               {...mapViewport}
-               mapStyle={'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l'}onViewportChange={changeMapViewportAction}
-              onClick={({ lngLat, deltaTime }) =>
-                // TODO: fix later
-                deltaTime > 30 && userMoveAction({ lngLat })
-              }
-            >
-              <UserOverlay {...mapViewport} location={userLocation} />
-              <SvgOverlay
-                {...mapViewport}
-                data={
-                  direction !== null
-                    ? [
+              data={
+                direction !== null
+                  ? [
                       Object.values(userLocation).reverse(),
                       ...direction.routes[0].geometry.coordinates
                     ]
-                    : []
-                }
-              >
-                {([x, y], [nx, ny]) =>
-                  nx !== null &&
-                  ny !== null && (
-                      <g>
-                        <circle
-                        r={3}
+                  : []
+              }
+            >
+              {([x, y], [nx, ny]) =>
+                nx !== null &&
+                ny !== null && (
+                  <g>
+                      <circle
+                      r={3}
                         cx={x}
                         cy={y}
-                        fill={colorScale(
-                            selectedCard.challenge
-                              ? selectedCard.challenge.type
-                              : 'quiz'
-                          )}
-                      />
-                        <path
-                        d={line([[x, y], [nx, ny]])}
-                        style={{
-                            stroke: colorScale(selectedCard.challenge.type),
-                            strokeWidth: 8
-                          }}
-                      />
+                      fill={colorScale(
+                          selectedCard.challenge
+                          ? selectedCard.challenge.type
+                          : 'quiz'
+                        )}
+                    />
+                      <path
+                      d={line([[x, y], [nx, ny]])}
+                      style={{
+                          stroke: colorScale(selectedCard.challenge.type),
+                        strokeWidth: 8
+                      }}
+                    />
                     </g>
-                    )
-                }
-              </SvgOverlay>
-            </MapGL>
-          </div>
-          <div
-            style={{
-              opacity: gridView ? 1 : 0,
-              pointerEvents: !gridView ? 'none' : null,
-              transition: 'opacity 0.5s'
-            }}
-          >
-            <CardGrid
-              cards={cards}
-              onSelect={selectCardAction}
-              visible={gridView}
-              selected={selectedCardId}
-              onExtend={extCardAction}
-              offset={0}
-              selectedCardId={selectedCardId}
-              setCardOpacity={setCardOpacity}
-              controls={
-                <CardMetaControl
-                  key={nextCardControlAction.key}
-                  action={nextCardControlAction}
-                />
+                )
               }
-              style={{
-                height: '20vh',
-                paddingTop: '16px',
-                // paddingLeft: '100px',
-                // paddingRight: '100px',
-                // paddingBottom: '15px',
-                // width: `${cards.length * 40}vw`,
-                zIndex: 8000
-              }}
-            />
-          </div>
+            </SvgOverlay>
+          </MapGL>
+        </div>
+        <div
+          style={{
+            opacity: gridView ? 1 : 0,
+            pointerEvents: !gridView ? 'none' : null,
+            transition: 'opacity 0.5s'
+          }}
+        >
+          <CardGrid
+            cards={cards}
+            onSelect={selectCardAction}
+            visible={gridView}
+            selected={selectedCardId}
+            onExtend={extCardAction}
+            offset={0}
+            selectedCardId={selectedCardId}
+            setCardOpacity={setCardOpacity}
+            controls={
+              <CardMetaControl
+                key={nextCardControlAction.key}
+                action={nextCardControlAction}
+              />
+            }
+            style={{
+              height: '24vh',
+              paddingTop: '16px',
+              // paddingLeft: '100px',
+              // paddingRight: '100px',
+              // paddingBottom: '15px',
+              // width: `${cards.length * 40}vw`,
+              zIndex: 8000
+            }}
+          />
         </div>
         <Title />
         <ForceOverlay

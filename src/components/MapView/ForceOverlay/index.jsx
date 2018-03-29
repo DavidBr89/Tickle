@@ -6,11 +6,12 @@ import tsnejs from 'tsne';
 import lap from 'lap-jv/lap.js';
 import SOM from 'ml-som';
 
-import { intersection, union, uniq, flatten } from 'lodash';
+import { intersection, union } from 'lodash';
 import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 
 import ZoomContainer from './ZoomContainer';
 import BubbleOverlay from './BubbleOverlay';
+import { setify } from '../utils';
 
 function jaccard(a, b) {
   return a.length !== 0 && b.length !== 0
@@ -66,22 +67,6 @@ function tsneFy(data, callback = d => d, iter = 400) {
   }
 
   return model.getSolution();
-}
-
-function setify(data) {
-  const spreadData = [...data].map(({ id, tags, ...rest }) =>
-    tags.map(t => ({ id: t, ref: id, ...rest }))
-  );
-  return d3
-    .nest()
-    .key(d => d.id)
-    .entries(flatten([...spreadData]))
-    .map(d => {
-      const count = d.values.length;
-      const tags = uniq(flatten(intersection(d.values.map(e => e.tags))));
-      return { count, tags, ...d };
-    })
-    .sort((a, b) => b.count - a.count);
 }
 
 // function runTsne(data, iter = 400) {
@@ -319,7 +304,7 @@ class ForceOverlay extends Component {
       .alphaMin(0.6)
       .force('x', d3.forceX((d, i) => xScale(pos[i][0])).strength(0.5))
       .force('y', d3.forceY((d, i) => yScale(pos[i][1])).strength(0.5))
-      .force('coll', d3.forceCollide(15))
+      .force('coll', d3.forceCollide(24))
       .on('end', () => {
         this.id = setTimeout(
           () =>

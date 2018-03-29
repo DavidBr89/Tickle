@@ -6,6 +6,7 @@ import throttle from 'react-throttle-render';
 import { TransitionGroup, Transition } from 'react-transition-group/';
 // import { ScrollView, ScrollElement } from '../utils/ScrollView';
 import { PreviewCard } from '../cards';
+import { setify } from './utils';
 
 function createStacks(cards, selectedCardId) {
   const selectedCardIndex = cards.findIndex(d => d.id === selectedCardId);
@@ -23,6 +24,75 @@ function createStacks(cards, selectedCardId) {
       cards: cards.slice(selectedCardIndex + 1, cards.length).reverse()
     }
   ];
+}
+
+class TagBar extends Component {
+  static propTypes = {
+    data: PropTypes.array,
+    style: PropTypes.object,
+    className: PropTypes.string
+  };
+
+  static defaultProps = {
+    data: [],
+    style: {},
+    className: ''
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = { sets: setify(this.props.data) };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      sets: setify(nextProps.data)
+    });
+  }
+
+  render() {
+    const { selected, style, className } = this.props;
+    const { sets } = this.state;
+    const dotOpacity = { entering: 0, entered: 1, exiting: 0, exited: 0 };
+    return (
+      <TransitionGroup
+        className={className}
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          overflowX: 'scroll',
+          overflowY: 'visible',
+          ...style
+          // border: 'solid 5px rosybrown',
+        }}
+      >
+        {sets.map(c => (
+          <Transition key={c.id} timeout={{ enter: 400, exit: 400 }}>
+            {state => (
+              <div
+                className="p-1"
+                style={{
+                  width: `${100 / sets.length}vw`,
+                  margin: '0.4rem',
+                  minWidth: '14vw',
+                  height: '4vh',
+                  // borderRadius: '50%',
+                  background: 'white', // selectedCardIndex === i ? 'rosybrown' : 'white',
+                  opacity: dotOpacity[state],
+                  transition: 'opacity 0.3s',
+                  zIndex: 2000,
+                  boxShadow: '0.4rem 0.4rem grey',
+                  border: '1px solid grey'
+                }}
+              >
+                {c.key}
+              </div>
+            )}
+          </Transition>
+        ))}
+      </TransitionGroup>
+    );
+  }
 }
 
 class CardGrid extends Component {
@@ -64,7 +134,7 @@ class CardGrid extends Component {
   componentWillReceiveProps(nextProps) {
     const { cards, selectedCardId } = nextProps;
     const cardStacks = createStacks(cards, selectedCardId);
-    // this.setState({ cardStacks });
+    this.setState({ cardStacks });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -99,11 +169,18 @@ class CardGrid extends Component {
       left: `${i * slotSize}vw`,
       transform: `translateZ(${j * 10}px) scale(1)`
     };
+
+    const exitPos = (() => {
+      if (selectedCardStack === 'right') return i - 1;
+      if (selectedCardStack === 'left') return i + 1;
+      if (i === 0) return -1;
+      return 3;
+    })();
     return {
       entered,
       entering: { display: 'none' },
       exiting: {
-        left: `${slotSize * (selectedCardStack === 'right' ? i - 1 : i + 1)}vw`,
+        left: `${slotSize * exitPos}vw`,
         transitionTimingFunction: 'ease-in',
         transform: `translate3d(0,0,${zIndex * zStep}px) scale(1)`,
         zIndex: 2000
@@ -131,15 +208,25 @@ class CardGrid extends Component {
     const margin = 5;
     const slotSize = 100 / cardStacks.length;
 
-    const dotOpacity = { entering: 0, entered: 1, exiting: 0, exited: 0 };
-
     return (
-      <div style={{ ...style, height: '30vh' }}>
+      <div style={{ ...style, position: 'relative' }}>
+        <div
+          className="w-100"
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            position: 'absolute',
+            top: -50
+            // height: '40%'
+          }}
+        >
+          <div style={{ width: '20%' }}>{controls}</div>
+        </div>
         <TransitionGroup
           style={{
             perspective: '2400px',
             perspectiveOrigin: '50% -50%',
-            height: '20vh'
+            height: '90%'
           }}
         >
           {cardStacks.map((s, i) =>
@@ -174,46 +261,24 @@ class CardGrid extends Component {
                         })
                     }
                   >
-                    <div style={{ opacity: selectedCardId === d.id ? 1 : 0 }}>
-                      {controls}
-                    </div>
-                    <PreviewCard {...d} selected={selectedCardId === d.id} />
+                    <PreviewCard
+                      {...d}
+                      selected={selectedCardId === d.id}
+                      style={{
+                        // height: '80%',
+                        transform: selectedCardId === d.id && 'scale(1.2)',
+                        transition: `transform ${duration / 1000}s`,
+                        boxShadow:
+                          selectedCardId === d.id && '0.4rem 0.4rem grey'
+                      }}
+                    />
                   </div>
                 )}
               </Transition>
             ))
           )}
         </TransitionGroup>
-        <TransitionGroup
-          className="ml-3 mr-3"
-          style={{
-            marginTop: 120,
-            display: 'flex',
-            justifyContent: 'center',
-            // border: 'solid 5px rosybrown',
-            zIndex: 2000
-          }}
-        >
-          {cards.map((c, i) => (
-            <Transition key={c.id} timeout={{ enter: 400, exit: 400 }}>
-              {state => (
-                <div
-                  className="ml-1 mr-1"
-                  style={{
-                    width: '4vw',
-                    height: '4vw',
-                    border: 'solid 2px rosybrown',
-                    borderRadius: '50%',
-                    background: selectedCardIndex === i ? 'rosybrown' : 'white',
-                    opacity: dotOpacity[state],
-                    transition: 'opacity 0.3s',
-                    zIndex: 2000
-                  }}
-                />
-              )}
-            </Transition>
-          ))}
-        </TransitionGroup>
+        <TagBar data={cards} className="m-3" />
       </div>
     );
   }
