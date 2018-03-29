@@ -134,7 +134,7 @@ const store = configureStore(rootReducer, defaultState);
 //
 
 store.dispatch(fetchChallenges(0));
-store.dispatch(fetchNearByPlaces());
+// store.dispatch(fetchNearByPlaces());
 
 const Routes = () => (
   <HashRouter>

@@ -101,7 +101,7 @@ function reducer(state = {}, action) {
         })
       );
       // console.log('cardPlaces', placeCards);
-      const newCards = [...state.cards];
+      const newCards = [...state.cards, ...placeCards];
       return { ...state, cards: newCards, defaultCards: newCards };
     }
     case TOGGLE_TSNE_VIEW: {

@@ -7,7 +7,7 @@ import { TransitionGroup, Transition } from 'react-transition-group/';
 // import { ScrollView, ScrollElement } from '../utils/ScrollView';
 import { PreviewCard } from '../cards';
 
-function createStacks(cards, selectedCardId) {
+function createCardStacks(cards, selectedCardId) {
   const selectedCardIndex = cards.findIndex(d => d.id === selectedCardId);
   return [
     {
@@ -55,16 +55,14 @@ class CardGrid extends Component {
     this.state = {
       selectedCardId,
       selectedCardStack: null,
-      cardStacks: createStacks(props.cards, selectedCardId)
+      cardStacks: createCardStacks(props.cards, selectedCardId)
     };
-
-    this.transitionStyles = this.transitionStyles.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
     const { cards, selectedCardId } = nextProps;
-    const cardStacks = createStacks(cards, selectedCardId);
-    // this.setState({ cardStacks });
+    const cardStacks = createCardStacks(cards, selectedCardId);
+    this.setState({ cardStacks, selectedCardStack: null });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -72,7 +70,7 @@ class CardGrid extends Component {
       this.state.selectedCardId !== nextState.selectedCardId ||
       this.props.cards.length !== nextProps.cards.length
     ); // nextProps.selected !== this.props.selected;
-    // return true;
+    // return false;
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -86,30 +84,6 @@ class CardGrid extends Component {
     }
   }
 
-  transitionStyles = (i, j, slotSize) => {
-    const { selectedCardStack, cardStacks } = this.state;
-    const [leftCards, rightCards] = [cardStacks[0].cards, cardStacks[2].cards];
-    const zStep = 10;
-    const zIndex =
-      selectedCardStack === 'right'
-        ? leftCards.length + 1
-        : rightCards.length + 1;
-
-    const entered = {
-      left: `${i * slotSize}vw`,
-      transform: `translateZ(${j * 10}px) scale(1)`
-    };
-    return {
-      entered,
-      entering: { display: 'none' },
-      exiting: {
-        left: `${slotSize * (selectedCardStack === 'right' ? i - 1 : i + 1)}vw`,
-        transitionTimingFunction: 'ease-in',
-        transform: `translate3d(0,0,${zIndex * zStep}px) scale(1)`,
-        zIndex: 2000
-      }
-    };
-  };
   // componentWillUpdate(nextProps, nextState) {
   //   const { selectedCardId } = this.state;
   //   if (
@@ -122,24 +96,82 @@ class CardGrid extends Component {
 
   render() {
     const { cards, onExtend, style, controls, onSelect, visible } = this.props;
-    const { selectedCardId, cardStacks } = this.state;
-
+    const { selectedCardId, selectedCardStack, cardStacks } = this.state;
     if (cards.length === 0 || !visible) return null;
     const selectedCardIndex = cards.findIndex(d => d.id === selectedCardId);
+    // const onChange = d => visible => {
+    //   // clearTimeout(this.id);
+    //   if (visible) {
+    //     clearTimeout(this.id);
+    //     this.id = setTimeout(() => {
+    //       // TODO: big hack make issue in react visibility-sensor
+    //       this.setState({ selectedCardId: d.id, lastScroll: new Date() });
+    //       onSelect(d.id);
+    //     }, 750);
+    //   }
+    // };
 
     const duration = 500;
-    const margin = 5;
+    const margin = 4;
     const slotSize = 100 / cardStacks.length;
 
-    const dotOpacity = { entering: 0, entered: 1, exiting: 0, exited: 0 };
+    const transitionStyles = (i, j) => {
+      const entered = {
+        left: `${i * slotSize}vw`,
+        // transform: position === 'center' ? 'scale(1.2)' : 'scale(1)',
+        transform: `translate3d(0,0,${j * 10}px) scale(1)`
+        // zIndex: 10 * j
+      };
 
+      if (selectedCardStack === 'right') {
+        return {
+          entering: {
+            display: 'none'
+          },
+          entered,
+          exiting: {
+            left: `${slotSize * (i - 1)}vw`,
+            // transform: 'scale(1)',
+            transitionTimingFunction: 'ease-out',
+            transform: `translate3d(0,0,${j * 10}px) scale(1)`
+          }
+        };
+      }
+
+      if (selectedCardStack === 'left') {
+        return {
+          entering: {
+            left: `${slotSize * (i - 1)}vw`,
+            // transform: 'scale(1)',
+            transitionTimingFunction: 'ease-out',
+            transform: `translate3d(0,0,${cardStacks[2].length *
+              10}px) scale(1)`
+          },
+          entered,
+          exiting: {
+            display: 'none',
+            left: `${slotSize * (i + 1)}vw`,
+            // transform: 'scale(1)',
+            transitionTimingFunction: 'ease-out',
+            transform: `translate3d(0,0,${cardStacks[2].length *
+              10}px) scale(1)`
+          }
+          // exited: { left, transitionTimingFunction: 'ease-out' }
+        };
+      }
+      return { entered };
+    };
+
+    // console.log('cardStacks', cardStacks);
+
+    const dotOpacity = { entering: 0, entered: 1, exiting: 0, exited: 0 };
     return (
-      <div style={{ ...style, height: '30vh' }}>
+      <div style={style}>
         <TransitionGroup
+          className="h-100"
           style={{
-            perspective: '2400px',
-            perspectiveOrigin: '50% -50%',
-            height: '20vh'
+            perspective: '1400px',
+            perspectiveOrigin: '50% -50%'
           }}
         >
           {cardStacks.map((s, i) =>
@@ -147,7 +179,7 @@ class CardGrid extends Component {
               <Transition
                 key={d.id}
                 in={false}
-                timeout={duration}
+                timeout={{ enter: selectedCardStack === 'left' duration: 0, exit: selectedCardStack === 'right' ? duration : 0}}
                 className="h-100"
               >
                 {state => (
@@ -159,25 +191,39 @@ class CardGrid extends Component {
                       marginLeft: `${margin}vw`,
                       marginRight: `${margin}vw`,
                       cursor: 'pointer',
-                      maxWidth: '30vw',
+                      ...transitionStyles(i, j, s.selected)[state],
                       transition: `left ${duration /
                         1000}s, transform ${duration / 1000}s`,
-                      ...this.transitionStyles(i, j, slotSize)[state]
+                      maxWidth: '30vw'
                     }}
-                    onClick={() =>
-                      selectedCardId === d.id
-                        ? onExtend(d.id)
-                        : this.setState({
-                            selectedCardId: d.id,
-                          selectedCardStack: s.position,
-                          cardStacks: createStacks(cards, d.id)
-                        })
-                    }
                   >
+                    {console.log(
+                      'state',
+                      state,
+                      i,
+                      i === 1 && state === 'exiting'
+                    )}
+
                     <div style={{ opacity: selectedCardId === d.id ? 1 : 0 }}>
                       {controls}
                     </div>
-                    <PreviewCard {...d} selected={selectedCardId === d.id} />
+                    <PreviewCard
+                      {...d}
+                      onClick={() =>
+                        selectedCardId === d.id
+                          ? onExtend(d.id)
+                          : this.setState({
+                            selectedCardId: d.id,
+                            selectedCardStack: s.position,
+                            cardStacks: createCardStacks(cards, d.id)
+                          })
+                      }
+                      selected={selectedCardId === d.id}
+                      style={{
+                        boxShadow:
+                          selectedCardId === d.id ? '0.4rem 0.4rem grey' : null
+                      }}
+                    />
                   </div>
                 )}
               </Transition>
