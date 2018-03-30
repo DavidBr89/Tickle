@@ -14,7 +14,7 @@ const PlaceholderAttr = ({ text, style, fullHeight }) => (
       border: 'grey 1px dashed',
       justifyContent: 'center',
       alignItems: 'center',
-      height: fullHeight ? '100%' : null,
+      height: fullHeight ? '100%' : null
     }}
   >
     <div

@@ -315,7 +315,7 @@ class MapView extends PureComponent {
             className="mt-3 ml-3 btn"
             style={{
               // position: 'absolute',
-              zIndex: 4000,
+              zIndex: 3000,
               background: compass || birdsEyeView ? 'whitesmoke' : null
             }}
             onClick={birdsEyeView ? toggleTsneViewAction : enableCompassAction}
@@ -328,7 +328,7 @@ class MapView extends PureComponent {
             className="mt-3 ml-3 btn"
             style={{
               // position: 'absolute',
-              zIndex: 4000,
+              zIndex: 3000,
               background: selectedCardId ? 'whitesmoke' : null
             }}
             onClick={toggleGridAction}
@@ -424,7 +424,7 @@ class MapView extends PureComponent {
               // paddingRight: '100px',
               // paddingBottom: '15px',
               // width: `${cards.length * 40}vw`,
-              zIndex: 8000
+              zIndex: 2000
             }}
           />
         </div>

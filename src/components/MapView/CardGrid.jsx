@@ -7,6 +7,7 @@ import { TransitionGroup, Transition } from 'react-transition-group/';
 // import { ScrollView, ScrollElement } from '../utils/ScrollView';
 import { PreviewCard } from '../cards';
 import { setify } from './utils';
+import { colorScale } from '../cards/styles';
 
 function createStacks(cards, selectedCardId) {
   const selectedCardIndex = cards.findIndex(d => d.id === selectedCardId);
@@ -30,13 +31,15 @@ class TagBar extends Component {
   static propTypes = {
     data: PropTypes.array,
     style: PropTypes.object,
-    className: PropTypes.string
+    className: PropTypes.string,
+    selectedTags: PropTypes.array
   };
 
   static defaultProps = {
     data: [],
     style: {},
-    className: ''
+    className: '',
+    selectedTags: []
   };
 
   constructor(props) {
@@ -51,41 +54,42 @@ class TagBar extends Component {
   }
 
   render() {
-    const { selected, style, className } = this.props;
+    const { selectedTags, style, className } = this.props;
     const { sets } = this.state;
     const dotOpacity = { entering: 0, entered: 1, exiting: 0, exited: 0 };
     return (
       <TransitionGroup
         className={className}
         style={{
-          display: 'flex',
           justifyContent: 'center',
           overflowX: 'scroll',
           overflowY: 'visible',
-          ...style
+          width: '100%',
+          // height: '100%',
+          ...style,
+          display: 'grid',
+          gridTemplateRows: '50% 50%',
+          gridTemplateColumns: 'auto',
+          gridAutoFlow: 'column'
           // border: 'solid 5px rosybrown',
         }}
       >
-        {sets.map(c => (
-          <Transition key={c.id} timeout={{ enter: 400, exit: 400 }}>
+        {sets.map(s => (
+          <Transition key={s.id} timeout={{ enter: 400, exit: 400 }}>
             {state => (
               <div
-                className="p-1"
+                className="mr-1 mt-1 p-1"
                 style={{
-                  width: `${100 / sets.length}vw`,
-                  margin: '0.4rem',
-                  minWidth: '14vw',
-                  height: '4vh',
-                  // borderRadius: '50%',
-                  background: 'white', // selectedCardIndex === i ? 'rosybrown' : 'white',
+                  borderLeft: 'grey 4px solid',
                   opacity: dotOpacity[state],
                   transition: 'opacity 0.3s',
-                  zIndex: 2000,
-                  boxShadow: '0.4rem 0.4rem grey',
-                  border: '1px solid grey'
+                  background: selectedTags.includes(s.key)
+                    ? colorScale(s.key)
+                    : 'white',
+                  whiteSpace: 'nowrap'
                 }}
               >
-                {c.key}
+                {s.key}
               </div>
             )}
           </Transition>
@@ -198,7 +202,15 @@ class CardGrid extends Component {
   // }
 
   render() {
-    const { cards, onExtend, style, controls, onSelect, visible } = this.props;
+    const {
+      cards,
+      onExtend,
+      style,
+      controls,
+      onSelect,
+      visible,
+      selectedTags
+    } = this.props;
     const { selectedCardId, cardStacks } = this.state;
 
     if (cards.length === 0 || !visible) return null;
@@ -207,6 +219,7 @@ class CardGrid extends Component {
     const duration = 500;
     const margin = 5;
     const slotSize = 100 / cardStacks.length;
+    const selectedCard = cardStacks[1].cards[0];
 
     return (
       <div style={{ ...style, position: 'relative' }}>
@@ -266,7 +279,7 @@ class CardGrid extends Component {
                       selected={selectedCardId === d.id}
                       style={{
                         // height: '80%',
-                        transform: selectedCardId === d.id && 'scale(1.2)',
+                        transform: selectedCardId === d.id && 'scale(1.1)',
                         transition: `transform ${duration / 1000}s`,
                         boxShadow:
                           selectedCardId === d.id && '0.4rem 0.4rem grey'
@@ -278,7 +291,14 @@ class CardGrid extends Component {
             ))
           )}
         </TransitionGroup>
-        <TagBar data={cards} className="m-3" />
+        {
+          <TagBar
+            data={cardStacks[1].cards}
+            selectedTags={selectedCard.tags}
+            className="ml-3 mr-3"
+            style={{ marginTop: '4vh' }}
+          />
+        }
       </div>
     );
   }
