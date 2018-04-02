@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import throttle from 'react-throttle-render';
+import * as d3 from 'd3';
 // import VisibilitySensor from 'react-visibility-sensor/visibility-sensor.js';
 
 import { TransitionGroup, Transition } from 'react-transition-group/';
@@ -161,8 +162,26 @@ class CardGrid extends Component {
   }
 
   transitionStyles = (i, j, slotSize) => {
+    const { cards } = this.props;
     const { selectedCardStack, cardStacks } = this.state;
     const [leftCards, rightCards] = [cardStacks[0].cards, cardStacks[2].cards];
+    const stacks = ['left', 'center', 'right'];
+    const direction = stacks[i];
+    const multi = direction === 'left' ? 10 : -10;
+    const index = i === 1 ? 1 / leftCards.length : i;
+    const centerI = i + 0.5;
+    // direction === 'left' ? 20 : direction === 'right' ? -20 : 0;
+
+    const scaleLeft = d3
+      .scaleLinear()
+      .domain(d3.range(0, leftCards.length))
+      .range([0, slotSize]);
+
+    const scaleRight = d3
+      .scaleOrdinal()
+      .domain(d3.range(0, rightCards.length))
+      .range([0, slotSize]);
+
     const zStep = 10;
     const zIndex =
       selectedCardStack === 'right'
@@ -171,7 +190,7 @@ class CardGrid extends Component {
 
     const entered = {
       left: `${i * slotSize}vw`,
-      transform: `translateZ(${j * 10}px) scale(1)`
+      transform: `translate3d(${j * multi}px,0,${j * multi / 2}px) scale(1)`
     };
 
     const exitPos = (() => {
@@ -180,6 +199,7 @@ class CardGrid extends Component {
       if (i === 0) return -1;
       return 3;
     })();
+
     return {
       entered,
       entering: { display: 'none' },
@@ -216,8 +236,8 @@ class CardGrid extends Component {
     if (cards.length === 0 || !visible) return null;
     const selectedCardIndex = cards.findIndex(d => d.id === selectedCardId);
 
-    const duration = 500;
-    const margin = 5;
+    const duration = 200;
+    const margin = 1;
     const slotSize = 100 / cardStacks.length;
     const selectedCard = cardStacks[1].cards[0];
 
@@ -262,7 +282,8 @@ class CardGrid extends Component {
                       maxWidth: '30vw',
                       transition: `left ${duration /
                         1000}s, transform ${duration / 1000}s`,
-                      ...this.transitionStyles(i, j, slotSize)[state]
+                      ...this.transitionStyles(i, j, slotSize)[state],
+                      zIndex: i === 1 ? 5000 : 0
                     }}
                     onClick={() =>
                       selectedCardId === d.id
@@ -280,9 +301,9 @@ class CardGrid extends Component {
                       style={{
                         // height: '80%',
                         transform: selectedCardId === d.id && 'scale(1.1)',
-                        transition: `transform ${duration / 1000}s`,
-                        boxShadow:
-                          selectedCardId === d.id && '0.4rem 0.4rem grey'
+                        transition: `transform ${duration / 1000}s`
+                        // boxShadow:
+                        //   selectedCardId === d.id && '0.4rem 0.4rem grey'
                       }}
                     />
                   </div>
