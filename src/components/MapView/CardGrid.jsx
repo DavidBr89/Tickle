@@ -69,7 +69,7 @@ class TagBar extends Component {
           // height: '100%',
           ...style,
           display: 'grid',
-          gridTemplateRows: '50% 50%',
+          gridTemplateRows: '50%',
           gridTemplateColumns: 'auto',
           gridAutoFlow: 'column'
           // border: 'solid 5px rosybrown',
@@ -109,7 +109,8 @@ class CardGrid extends Component {
     offset: PropTypes.number.isRequired,
     selectedCardId: PropTypes.any,
     style: PropTypes.object,
-    visible: PropTypes.bool
+    visible: PropTypes.bool,
+    duration: PropTypes.number
   };
 
   static defaultProps = {
@@ -118,7 +119,8 @@ class CardGrid extends Component {
     setCardOpacity(d) {
       return d;
     },
-    visible: true
+    visible: true,
+    duration: 200
   };
 
   constructor(props) {
@@ -161,9 +163,9 @@ class CardGrid extends Component {
     }
   }
 
-  transitionStyles = (i, j, slotSize) => {
-    // const { cards } = this.props;
-    const { selectedCardStack, cardStacks } = this.state;
+  transitionStyles = (i, j, d, slotSize) => {
+    const { duration } = this.props;
+    const { selectedCardStack, selectedCardId, cardStacks } = this.state;
     const slot = ['left', 'center', 'right'][i];
     const [leftCards, rightCards] = [cardStacks[0].cards, cardStacks[2].cards];
     const scale = d3
@@ -174,14 +176,21 @@ class CardGrid extends Component {
     // .clamp(true);
 
     let entered;
+    let exiting;
     const posX = scale(j); // (50 - w) / leftCards.length * scaleLeft(j);
     if (slot === 'left') {
       entered = {
         left: `${i * slotSize + posX}vw`
       };
+      exiting = {
+        left: `${i * slotSize - posX}vw`
+      };
     }
     if (slot === 'right') {
       entered = {
+        left: `${i * slotSize - posX}vw`
+      };
+      exiting = {
         left: `${i * slotSize - posX}vw`
       };
     }
@@ -200,22 +209,16 @@ class CardGrid extends Component {
       };
     }
 
-    // direction === 'left' ? 20 : direction === 'right' ? -20 : 0;
-
-    const exitPos = (() => {
-      if (selectedCardStack === 'right') return i - 1;
-      if (selectedCardStack === 'left') return i + 1;
-      if (i === 0) return -1;
-      return 3;
-    })();
-
     return {
       entered,
       entering: { display: 'none' },
       exiting: {
-        left: `${slotSize * exitPos}vw`,
-        transitionTimingFunction: 'ease-in',
-        zIndex: 2000
+        ...exiting,
+        // transitionTimingFunction: 'ease-in',
+        //
+        transform: selectedCardId === d.id ? 'scale(1.2)' : 'scale(1)',
+        transition: `left ${duration / 1000}s, transform ${duration / 2000}`,
+        zIndex: 0
       }
     };
   };
@@ -237,14 +240,14 @@ class CardGrid extends Component {
       controls,
       onSelect,
       visible,
-      selectedTags
+      selectedTags,
+      duration
     } = this.props;
     const { selectedCardId, cardStacks } = this.state;
 
     if (cards.length === 0 || !visible) return null;
     const selectedCardIndex = cards.findIndex(d => d.id === selectedCardId);
 
-    const duration = 200;
     const margin = 1;
     const slotSize = 100 / cardStacks.length;
     const selectedCard = cardStacks[1].cards[0];
@@ -288,19 +291,21 @@ class CardGrid extends Component {
                       marginRight: `${margin}vw`,
                       cursor: 'pointer',
                       maxWidth: '30vw',
+                      transform:
+                        selectedCardId === d.id ? 'scale(1.2)' : 'scale(1)',
+                      ...this.transitionStyles(i, j, d, slotSize)[state],
+                      zIndex: i === 1 && 1000,
                       transition: `left ${duration /
-                        1000}s, transform ${duration / 1000}s`,
-                      ...this.transitionStyles(i, j, slotSize)[state],
-                      zIndex: i === 1 ? 5000 : 0
+                        1000}s, transform ${duration / 1000}s`
                     }}
                     onClick={() =>
                       selectedCardId === d.id
                         ? onExtend(d.id)
                         : this.setState({
-                            selectedCardId: d.id,
-                          selectedCardStack: s.position,
-                          cardStacks: createStacks(cards, d.id)
-                        })
+                          selectedCardId: d.id,
+                            selectedCardStack: s.position,
+                            cardStacks: createStacks(cards, d.id)
+                          })
                     }
                   >
                     <PreviewCard
@@ -308,10 +313,10 @@ class CardGrid extends Component {
                       selected={selectedCardId === d.id}
                       style={{
                         // height: '80%',
-                        transform: selectedCardId === d.id && 'scale(1.1)',
-                        transition: `transform ${duration / 1000}s`
-                        // boxShadow:
-                        //   selectedCardId === d.id && '0.4rem 0.4rem grey'
+                        transition: `transform 1s`,
+                        boxShadow:
+                          selectedCardId === d.id &&
+                          '1px 1px 7px rgba(0,0,0,0.4)'
                       }}
                     />
                   </div>
