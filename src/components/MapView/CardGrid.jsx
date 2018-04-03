@@ -162,36 +162,45 @@ class CardGrid extends Component {
   }
 
   transitionStyles = (i, j, slotSize) => {
-    const { cards } = this.props;
+    // const { cards } = this.props;
     const { selectedCardStack, cardStacks } = this.state;
+    const slot = ['left', 'center', 'right'][i];
     const [leftCards, rightCards] = [cardStacks[0].cards, cardStacks[2].cards];
-    const stacks = ['left', 'center', 'right'];
-    const direction = stacks[i];
-    const multi = direction === 'left' ? 10 : -10;
-    const index = i === 1 ? 1 / leftCards.length : i;
-    const centerI = i + 0.5;
+    const scale = d3
+      .scalePow()
+      .exponent(2)
+      .domain([0, slot === 'left' ? leftCards.length : rightCards.length])
+      .range([0, 50 - slotSize * 4 / 5]);
+    // .clamp(true);
+
+    let entered;
+    const posX = scale(j); // (50 - w) / leftCards.length * scaleLeft(j);
+    if (slot === 'left') {
+      entered = {
+        left: `${i * slotSize + posX}vw`
+      };
+    }
+    if (slot === 'right') {
+      entered = {
+        left: `${i * slotSize - posX}vw`
+      };
+    }
+
+    // if (slot === 'right') {
+    //   const multi = -(50 + w) / rightCards.length; // 8 * rightCards.length / leftCards.length;
+    //
+    //   entered = {
+    //     left: `${i * slotSize}vw`,
+    //     transform: `translate3d(${j * multi}px,0,${0}vw) scale(1)`
+    //   };
+    // }
+    if (slot === 'center') {
+      entered = {
+        left: `${slotSize}vw`
+      };
+    }
+
     // direction === 'left' ? 20 : direction === 'right' ? -20 : 0;
-
-    const scaleLeft = d3
-      .scaleLinear()
-      .domain(d3.range(0, leftCards.length))
-      .range([0, slotSize]);
-
-    const scaleRight = d3
-      .scaleOrdinal()
-      .domain(d3.range(0, rightCards.length))
-      .range([0, slotSize]);
-
-    const zStep = 10;
-    const zIndex =
-      selectedCardStack === 'right'
-        ? leftCards.length + 1
-        : rightCards.length + 1;
-
-    const entered = {
-      left: `${i * slotSize}vw`,
-      transform: `translate3d(${j * multi}px,0,${j * multi / 2}px) scale(1)`
-    };
 
     const exitPos = (() => {
       if (selectedCardStack === 'right') return i - 1;
@@ -206,7 +215,6 @@ class CardGrid extends Component {
       exiting: {
         left: `${slotSize * exitPos}vw`,
         transitionTimingFunction: 'ease-in',
-        transform: `translate3d(0,0,${zIndex * zStep}px) scale(1)`,
         zIndex: 2000
       }
     };
