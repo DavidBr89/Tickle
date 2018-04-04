@@ -28,6 +28,69 @@ function createStacks(cards, selectedCardId) {
   ];
 }
 
+function transitionStyles(i, j, d) {
+  const { duration, slotSize } = this.props;
+  const { selectedCardStack, selectedCardId, cardStacks } = this.state;
+  const slot = ['left', 'center', 'right'][i];
+  const [leftCards, rightCards] = [cardStacks[0].cards, cardStacks[2].cards];
+  const domain = [
+    0,
+    slot === 'left' ? leftCards.length - 1 : rightCards.length - 1
+  ];
+
+  const width = 100;
+  const center = width / 2;
+  const ms = 'vw';
+
+  const scale = d3
+    .scalePow()
+    .exponent(2)
+    .domain(domain)
+    .range([0, center - slotSize]);
+
+  const transScale = scale.copy().domain([0, domain[1] + 1]);
+
+  const defaultStyles = {
+    zIndex: i === 1 && 1000,
+    transition: `left ${duration / 1000}s, transform ${duration / 1000}s`,
+    transform: selectedCardId === d.id ? 'scale(1.2)' : 'scale(1)'
+  };
+
+  const entered = {
+    left: `${i * slotSize + (slot === 'left' ? scale(j) : -scale(j))}${ms}`,
+    ...defaultStyles
+  };
+
+  const exiting = (() => {
+    if (selectedCardStack === 'left') {
+      return {
+        left: `${
+          i === 0 ? slotSize : slotSize + transScale(rightCards.length)
+        }${ms}`,
+        ...defaultStyles,
+        zIndex: i === 0 ? 10000 : 5000
+        // top: '40vh'
+      };
+    }
+    if (selectedCardStack === 'right') {
+      console.log('trans', transScale(rightCards.length));
+      return {
+        // top: '40vh',
+        left: `${i === 2 ? slotSize : transScale(rightCards.length)}${ms}`,
+        ...defaultStyles,
+        zIndex: slot === 'left' ? 10000 : 0
+        // top: '40vh'
+      };
+    }
+  })();
+
+  return {
+    entered,
+    entering: { display: 'none' },
+    exiting
+  };
+}
+
 class TagBar extends Component {
   static propTypes = {
     data: PropTypes.array,
@@ -110,7 +173,8 @@ class CardGrid extends Component {
     selectedCardId: PropTypes.any,
     style: PropTypes.object,
     visible: PropTypes.bool,
-    duration: PropTypes.number
+    duration: PropTypes.number,
+    slotSize: PropTypes.number
   };
 
   static defaultProps = {
@@ -120,7 +184,8 @@ class CardGrid extends Component {
       return d;
     },
     visible: true,
-    duration: 200
+    duration: 800,
+    slotSize: 100 / 3
   };
 
   constructor(props) {
@@ -135,7 +200,8 @@ class CardGrid extends Component {
       cardStacks: createStacks(props.cards, selectedCardId)
     };
 
-    this.transitionStyles = this.transitionStyles.bind(this);
+    // TODO: check later
+    this.transitionStyles = transitionStyles.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -163,65 +229,6 @@ class CardGrid extends Component {
     }
   }
 
-  transitionStyles = (i, j, d, slotSize) => {
-    const { duration } = this.props;
-    const { selectedCardStack, selectedCardId, cardStacks } = this.state;
-    const slot = ['left', 'center', 'right'][i];
-    const [leftCards, rightCards] = [cardStacks[0].cards, cardStacks[2].cards];
-    const scale = d3
-      .scalePow()
-      .exponent(2)
-      .domain([0, slot === 'left' ? leftCards.length : rightCards.length])
-      .range([0, 50 - slotSize * 4 / 5]);
-    // .clamp(true);
-
-    let entered;
-    let exiting;
-    const posX = scale(j); // (50 - w) / leftCards.length * scaleLeft(j);
-    if (slot === 'left') {
-      entered = {
-        left: `${i * slotSize + posX}vw`
-      };
-      exiting = {
-        left: `${i * slotSize - posX}vw`
-      };
-    }
-    if (slot === 'right') {
-      entered = {
-        left: `${i * slotSize - posX}vw`
-      };
-      exiting = {
-        left: `${i * slotSize - posX}vw`
-      };
-    }
-
-    // if (slot === 'right') {
-    //   const multi = -(50 + w) / rightCards.length; // 8 * rightCards.length / leftCards.length;
-    //
-    //   entered = {
-    //     left: `${i * slotSize}vw`,
-    //     transform: `translate3d(${j * multi}px,0,${0}vw) scale(1)`
-    //   };
-    // }
-    if (slot === 'center') {
-      entered = {
-        left: `${slotSize}vw`
-      };
-    }
-
-    return {
-      entered,
-      entering: { display: 'none' },
-      exiting: {
-        ...exiting,
-        // transitionTimingFunction: 'ease-in',
-        //
-        transform: selectedCardId === d.id ? 'scale(1.2)' : 'scale(1)',
-        transition: `left ${duration / 1000}s, transform ${duration / 2000}`,
-        zIndex: 0
-      }
-    };
-  };
   // componentWillUpdate(nextProps, nextState) {
   //   const { selectedCardId } = this.state;
   //   if (
@@ -248,7 +255,7 @@ class CardGrid extends Component {
     if (cards.length === 0 || !visible) return null;
     const selectedCardIndex = cards.findIndex(d => d.id === selectedCardId);
 
-    const margin = 1;
+    const margin = 0;
     const slotSize = 100 / cardStacks.length;
     const selectedCard = cardStacks[1].cards[0];
 
@@ -291,12 +298,7 @@ class CardGrid extends Component {
                       marginRight: `${margin}vw`,
                       cursor: 'pointer',
                       maxWidth: '30vw',
-                      transform:
-                        selectedCardId === d.id ? 'scale(1.2)' : 'scale(1)',
-                      ...this.transitionStyles(i, j, d, slotSize)[state],
-                      zIndex: i === 1 && 1000,
-                      transition: `left ${duration /
-                        1000}s, transform ${duration / 1000}s`
+                      ...transitionStyles.bind(this)(i, j, d)[state]
                     }}
                     onClick={() =>
                       selectedCardId === d.id
@@ -313,10 +315,10 @@ class CardGrid extends Component {
                       selected={selectedCardId === d.id}
                       style={{
                         // height: '80%',
-                        transition: `transform 1s`,
-                        boxShadow:
-                          selectedCardId === d.id &&
-                          '1px 1px 7px rgba(0,0,0,0.4)'
+                        transition: `transform 1s`
+                        // boxShadow:
+                        //   selectedCardId === d.id &&
+                        //   '1px 1px 7px rgba(0,0,0,0.4)'
                       }}
                     />
                   </div>
