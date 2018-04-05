@@ -12,85 +12,82 @@ import { colorScale } from '../cards/styles';
 
 function createStacks(cards, selectedCardId) {
   const selectedCardIndex = cards.findIndex(d => d.id === selectedCardId);
-  return [
-    {
-      position: 'left',
-      cards: cards.slice(0, selectedCardIndex)
-    },
-    {
-      position: 'center',
-      cards: [cards[selectedCardIndex]]
-    },
-    {
-      position: 'right',
-      cards: cards.slice(selectedCardIndex + 1, cards.length).reverse()
-    }
-  ];
+
+  const left = cards
+    .slice(0, selectedCardIndex)
+    .map((c, j) => ({ ...c, position: 'left', i: 0, j }));
+
+  const center = { ...cards[selectedCardIndex], position: 'left', i: 1, j: 0 };
+  const right = cards
+    .slice(selectedCardIndex + 1, cards.length)
+    .map((c, j) => ({ ...c, position: 'right', i: 2, j }));
+
+  return [...left, center, ...right];
+  // return [
+  //   {
+  //     position: 'left',
+  //     cards: cards.slice(0, selectedCardIndex)
+  //   },
+  //   {
+  //     position: 'center',
+  //     cards: [cards[selectedCardIndex]]
+  //   },
+  //   {
+  //     position: 'right',
+  //     cards: cards.slice(selectedCardIndex + 1, cards.length).reverse()
+  //   }
+  // ];
 }
 
 function transitionStyles(i, j, d) {
   const { duration, width, unit } = this.props;
-  const { selectedCardStack, selectedCardId, cardStacks } = this.state;
+  const { selectedSlot, selectedCardId, cardStacks } = this.state;
   const slot = ['left', 'center', 'right'][i];
-  const [leftCards, rightCards] = [cardStacks[0].cards, cardStacks[2].cards];
-
-  const domain = [
-    0,
-    slot === 'left' ? leftCards.length - 1 : rightCards.length - 1
+  const [leftCards, rightCards] = [
+    cardStacks.filter(c => c.position === 'left'),
+    cardStacks.filter(c => c.position === 'right')
   ];
 
   const center = width / 2;
   const slotSize = width / 3;
 
-  const scale = d3
+  const leftScale = d3
     .scalePow()
-    .exponent(2)
-    .domain(domain)
+    .exponent(1)
+    .domain([0, leftCards.length - 1])
     .range([0, center - slotSize])
     .clamp(true);
 
-  const transScale = scale.copy().domain([0, domain[1] + 1]);
+  const rightScale = d3
+    .scalePow()
+    .exponent(1)
+    .domain([0, rightCards.length - 1])
+    .range([center, width - slotSize])
+    .clamp(true);
+
+  // const transScale = scale.copy().domain([0, domain[1] + 1]);
+
+  const zIndex = (() => {
+    if (slot === 'left') return j;
+    if (slot === 'right') return rightCards.length - j;
+    return 1000;
+  })();
 
   const defaultStyles = {
-    zIndex: i === 1 && 1000,
+    zIndex,
     transition: `left ${duration / 1000}s, transform ${duration / 1000}s`,
     transform: selectedCardId === d.id ? 'scale(1.2)' : 'scale(1)'
   };
 
-  const entered = {
-    left: `${i * slotSize + (slot === 'left' ? scale(j) : -scale(j))}${unit}`,
-    ...defaultStyles
-  };
-
-  // TODO: fix this function
-  const exiting = (() => {
-    if (selectedCardStack === 'left') {
-      return {
-        left: `${
-          i === 0
-            ? slotSize - transScale(0)
-            : slotSize + transScale(rightCards.length)
-        }${unit}`,
-        ...defaultStyles,
-        zIndex: i === 0 ? 10000 : 5000
-        // top: '40vh'
-      };
-    }
-    if (selectedCardStack === 'right') {
-      return {
-        // top: '40vh',
-        left: `${i === 2 ? slotSize : transScale(rightCards.length)}${unit}`,
-        ...defaultStyles,
-        zIndex: slot === 'left' ? 10000 : 0
-        // top: '40vh'
-      };
-    }
+  const left = (() => {
+    if (slot === 'left') return leftScale(j);
+    if (slot === 'right') return rightScale(j);
+    return center - slotSize / 2;
   })();
 
   return {
-    entered,
-    entering: { display: 'none' },
-    exiting
+    left: `${left}${unit}`,
+    ...defaultStyles
   };
 }
 
@@ -111,18 +108,18 @@ class TagBar extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { sets: setify(this.props.data) };
+    // this.state = { sets: setify(this.props.data) };
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      sets: setify(nextProps.data)
-    });
+    // this.setState({
+    //   sets: setify(nextProps.data)
+    // });
   }
 
   render() {
-    const { selectedTags, style, className } = this.props;
-    const { sets } = this.state;
+    const { selectedTags, tags, style, className } = this.props;
+    // const { sets } = this.state;
     const dotOpacity = { entering: 0, entered: 1, exiting: 0, exited: 0 };
     return (
       <TransitionGroup
@@ -141,8 +138,8 @@ class TagBar extends Component {
           // border: 'solid 5px rosybrown',
         }}
       >
-        {sets.map(s => (
-          <Transition key={s.id} timeout={{ enter: 400, exit: 400 }}>
+        {tags.map(s => (
+          <Transition key={s} timeout={{ enter: 400, exit: 400 }}>
             {state => (
               <div
                 className="mr-1 mt-1 p-1"
@@ -150,13 +147,11 @@ class TagBar extends Component {
                   borderLeft: 'grey 4px solid',
                   opacity: dotOpacity[state],
                   transition: 'opacity 0.3s',
-                  background: selectedTags.includes(s.key)
-                    ? colorScale(s.key)
-                    : 'white',
+                  background: colorScale(s),
                   whiteSpace: 'nowrap'
                 }}
               >
-                {s.key}
+                {s}
               </div>
             )}
           </Transition>
@@ -201,11 +196,12 @@ class CardGrid extends Component {
     this.id = null;
     this.box = null;
     // TODO: remove later when cards is empty
-    const selectedCardId = props.cards[0].id;
+    const selectedCardId = props.cards[Math.floor(props.cards.length/2)].id;
+    const cardStacks = createStacks(props.cards, selectedCardId);
     this.state = {
       selectedCardId,
-      selectedCardStack: null,
-      cardStacks: createStacks(props.cards, selectedCardId)
+      selectedSlot: null,
+      cardStacks
     };
 
     // TODO: check later
@@ -220,6 +216,7 @@ class CardGrid extends Component {
     // if (nextProps.cards.length !== cards.length)
     this.setState({
       cardStacks
+      // selectedSlot: null
     });
   }
 
@@ -267,11 +264,11 @@ class CardGrid extends Component {
       width
     } = this.props;
     const { selectedCardId, cardStacks } = this.state;
+    const selectedCard = cardStacks.find(c => c.id === selectedCardId);
+    console.log('selectedCard', selectedCard.tags);
+    const slotSize = width / 3;
 
     if (cards.length === 0 || !visible) return null;
-
-    const slotSize = width / 3;
-    const selectedCard = cardStacks[1].cards[0];
 
     return (
       <div className={className} style={{ ...style, position: 'relative' }}>
@@ -287,64 +284,55 @@ class CardGrid extends Component {
         >
           <div style={{ width: '20%' }}>{controls}</div>
         </div>
-        <TransitionGroup
+        <div
           style={{
             perspective: '2400px',
             perspectiveOrigin: '50% -50%',
             height: '90%'
           }}
         >
-          {cardStacks.map((s, i) =>
-            s.cards.map((d, j) => (
-              <Transition
+          {cardStacks.map(({ i, j, position, ...d }) => (
+            <div
+              key={d.id}
+              className="h-100"
+              style={{
+                position: 'absolute',
+                width: `${slotSize - 2 * innerMargin}vw`,
+                paddingLeft: `${innerMargin}vw`,
+                paddingRight: `${innerMargin}vw`,
+                cursor: 'pointer',
+                maxWidth: '30vw',
+                ...transitionStyles.bind(this)(i, j, d)
+              }}
+              onClick={() =>
+                selectedCardId === d.id
+                  ? onExtend(d.id)
+                  : this.setState({
+                      selectedCardId: d.id,
+                      selectedSlot: position,
+                      cardStacks: createStacks(cardStacks, d.id)
+                    })
+              }
+            >
+              <PreviewCard
+                {...d}
                 key={d.id}
-                in={false}
-                timeout={duration}
-                className="h-100"
-              >
-                {state => (
-                  <div
-                    className="h-100"
-                    style={{
-                      position: 'absolute',
-                      width: `${slotSize - 2 * innerMargin}vw`,
-                      paddingLeft: `${innerMargin}vw`,
-                      paddingRight: `${innerMargin}vw`,
-                      cursor: 'pointer',
-                      maxWidth: '30vw',
-                      ...transitionStyles.bind(this)(i, j, d)[state]
-                    }}
-                    onClick={() =>
-                      selectedCardId === d.id
-                        ? onExtend(d.id)
-                        : this.setState({
-                          selectedCardId: d.id,
-                            selectedCardStack: s.position,
-                            cardStacks: createStacks(cards, d.id)
-                          })
-                    }
-                  >
-                    <PreviewCard
-                      {...d}
-                      selected={selectedCardId === d.id}
-                      style={{
-                        // height: '80%',
-                        transition: `transform 1s`
-                        // boxShadow:
-                        //   selectedCardId === d.id &&
-                        //   '1px 1px 7px rgba(0,0,0,0.4)'
-                      }}
-                    />
-                  </div>
-                )}
-              </Transition>
-            ))
-          )}
-        </TransitionGroup>
+                selected={selectedCardId === d.id}
+                style={{
+                  // height: '80%',
+                  transition: `transform 1s`
+                  // boxShadow:
+                  //   selectedCardId === d.id &&
+                  //   '1px 1px 7px rgba(0,0,0,0.4)'
+                }}
+              />
+            </div>
+          ))}
+        </div>
         {
           <TagBar
-            data={cardStacks[1].cards}
-            selectedTags={selectedCard.tags}
+            tags={selectedCard.tags}
+            selectedTags={selectedCard}
             className="ml-3 mr-3"
             style={{ marginTop: '4vh' }}
           />
