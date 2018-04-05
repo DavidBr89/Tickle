@@ -411,6 +411,8 @@ class MapView extends PureComponent {
             offset={0}
             selectedCardId={selectedCardId}
             setCardOpacity={setCardOpacity}
+            width={98}
+            unit={'vw'}
             controls={
               <CardMetaControl
                 key={nextCardControlAction.key}
@@ -420,6 +422,8 @@ class MapView extends PureComponent {
             style={{
               height: '24vh',
               paddingTop: '16px',
+              marginLeft: '2vw',
+              marginRight: '2vw',
               // paddingLeft: '100px',
               // paddingRight: '100px',
               // paddingBottom: '15px',

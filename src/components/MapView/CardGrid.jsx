@@ -29,24 +29,25 @@ function createStacks(cards, selectedCardId) {
 }
 
 function transitionStyles(i, j, d) {
-  const { duration, slotSize } = this.props;
+  const { duration, width, unit } = this.props;
   const { selectedCardStack, selectedCardId, cardStacks } = this.state;
   const slot = ['left', 'center', 'right'][i];
   const [leftCards, rightCards] = [cardStacks[0].cards, cardStacks[2].cards];
+
   const domain = [
     0,
     slot === 'left' ? leftCards.length - 1 : rightCards.length - 1
   ];
 
-  const width = 100;
   const center = width / 2;
-  const ms = 'vw';
+  const slotSize = width / 3;
 
   const scale = d3
     .scalePow()
     .exponent(2)
     .domain(domain)
-    .range([0, center - slotSize]);
+    .range([0, center - slotSize])
+    .clamp(true);
 
   const transScale = scale.copy().domain([0, domain[1] + 1]);
 
@@ -57,26 +58,28 @@ function transitionStyles(i, j, d) {
   };
 
   const entered = {
-    left: `${i * slotSize + (slot === 'left' ? scale(j) : -scale(j))}${ms}`,
+    left: `${i * slotSize + (slot === 'left' ? scale(j) : -scale(j))}${unit}`,
     ...defaultStyles
   };
 
+  // TODO: fix this function
   const exiting = (() => {
     if (selectedCardStack === 'left') {
       return {
         left: `${
-          i === 0 ? slotSize : slotSize + transScale(rightCards.length)
-        }${ms}`,
+          i === 0
+            ? slotSize - transScale(0)
+            : slotSize + transScale(rightCards.length)
+        }${unit}`,
         ...defaultStyles,
         zIndex: i === 0 ? 10000 : 5000
         // top: '40vh'
       };
     }
     if (selectedCardStack === 'right') {
-      console.log('trans', transScale(rightCards.length));
       return {
         // top: '40vh',
-        left: `${i === 2 ? slotSize : transScale(rightCards.length)}${ms}`,
+        left: `${i === 2 ? slotSize : transScale(rightCards.length)}${unit}`,
         ...defaultStyles,
         zIndex: slot === 'left' ? 10000 : 0
         // top: '40vh'
@@ -172,9 +175,11 @@ class CardGrid extends Component {
     offset: PropTypes.number.isRequired,
     selectedCardId: PropTypes.any,
     style: PropTypes.object,
+    className: PropTypes.string,
     visible: PropTypes.bool,
     duration: PropTypes.number,
-    slotSize: PropTypes.number
+    width: PropTypes.number,
+    innerMargin: PropTypes.number
   };
 
   static defaultProps = {
@@ -185,7 +190,10 @@ class CardGrid extends Component {
     },
     visible: true,
     duration: 800,
-    slotSize: 100 / 3
+    width: 100,
+
+    innerMargin: 1,
+    unit: 'vw'
   };
 
   constructor(props) {
@@ -207,7 +215,12 @@ class CardGrid extends Component {
   componentWillReceiveProps(nextProps) {
     const { cards, selectedCardId } = nextProps;
     const cardStacks = createStacks(cards, selectedCardId);
-    this.setState({ cardStacks });
+    console.log('newProps');
+
+    // if (nextProps.cards.length !== cards.length)
+    this.setState({
+      cardStacks
+    });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -244,23 +257,24 @@ class CardGrid extends Component {
       cards,
       onExtend,
       style,
+      className,
       controls,
-      onSelect,
+      // onSelect,
       visible,
-      selectedTags,
-      duration
+      // selectedTags,
+      innerMargin,
+      duration,
+      width
     } = this.props;
     const { selectedCardId, cardStacks } = this.state;
 
     if (cards.length === 0 || !visible) return null;
-    const selectedCardIndex = cards.findIndex(d => d.id === selectedCardId);
 
-    const margin = 0;
-    const slotSize = 100 / cardStacks.length;
+    const slotSize = width / 3;
     const selectedCard = cardStacks[1].cards[0];
 
     return (
-      <div style={{ ...style, position: 'relative' }}>
+      <div className={className} style={{ ...style, position: 'relative' }}>
         <div
           className="w-100"
           style={{
@@ -293,9 +307,9 @@ class CardGrid extends Component {
                     className="h-100"
                     style={{
                       position: 'absolute',
-                      width: `${slotSize - 2 * margin}vw`,
-                      marginLeft: `${margin}vw`,
-                      marginRight: `${margin}vw`,
+                      width: `${slotSize - 2 * innerMargin}vw`,
+                      paddingLeft: `${innerMargin}vw`,
+                      paddingRight: `${innerMargin}vw`,
                       cursor: 'pointer',
                       maxWidth: '30vw',
                       ...transitionStyles.bind(this)(i, j, d)[state]
