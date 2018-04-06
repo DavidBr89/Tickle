@@ -22,6 +22,7 @@ import CardGrid from './CardGrid';
 import ContextView from './ContextView';
 import ForceOverlay from './ForceOverlay';
 import Title from './Title';
+import TagBar from './TagBar';
 // import StartNav from './StartNav';
 // import { VisibleView, VisibleElement } from '../utils/MySensor.jsx';
 
@@ -226,7 +227,7 @@ class MapView extends PureComponent {
       selectedCard,
       direction,
       mapViewport,
-      setCardOpacity,
+      // setCardOpacity,
       userSelected,
       userChangedMapViewport,
       compass,
@@ -244,7 +245,8 @@ class MapView extends PureComponent {
       cardChallengeOpen,
       toggleCardChallengeAction,
       fetchDirectionAction,
-      flyToUserAction,
+      filterCardsAction,
+      // flyToUserAction,
       nextCardControlAction,
       enableCompassAction,
       toggleTsneViewAction,
@@ -277,7 +279,7 @@ class MapView extends PureComponent {
             {...c}
             center={false}
             style={{
-              opacity: setCardOpacity(c),
+              opacity: 1,
               position: 'absolute',
               zIndex: -100
             }}
@@ -406,11 +408,7 @@ class MapView extends PureComponent {
             cards={cards}
             onSelect={selectCardAction}
             visible={gridView}
-            selected={selectedCardId}
             onExtend={extCardAction}
-            offset={0}
-            selectedCardId={selectedCardId}
-            setCardOpacity={setCardOpacity}
             width={98}
             unit={'vw'}
             controls={
@@ -430,6 +428,12 @@ class MapView extends PureComponent {
               // width: `${cards.length * 40}vw`,
               zIndex: 2000
             }}
+          />
+          <TagBar
+            tags={selectedCard.tags}
+            onClick={filterCardsAction}
+            className="ml-3 mr-3"
+            style={{ marginTop: '4vh', zIndex: 5000 }}
           />
         </div>
         <Title />

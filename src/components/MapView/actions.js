@@ -87,10 +87,9 @@ export function toggleTsneView(options) {
   return { type: TOGGLE_TSNE_VIEW, options };
 }
 
-// TODO: remove
-export const GET_TOPIC_MAP = 'GET_TOPIC_MAP';
-export function getTopicMap(options) {
-  return { type: GET_TOPIC_MAP, options };
+export const FILTER_CARDS = 'FILTER_CARDS';
+export function filterCards(options) {
+  return { type: FILTER_CARDS, options };
 }
 
 export const TOGGLE_GRID_VIEW = 'TOGGLE_GRID';

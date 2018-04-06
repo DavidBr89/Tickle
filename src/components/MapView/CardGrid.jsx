@@ -4,44 +4,28 @@ import throttle from 'react-throttle-render';
 import * as d3 from 'd3';
 // import VisibilitySensor from 'react-visibility-sensor/visibility-sensor.js';
 
-import { TransitionGroup, Transition } from 'react-transition-group/';
-// import { ScrollView, ScrollElement } from '../utils/ScrollView';
 import { PreviewCard } from '../cards';
-import { setify } from './utils';
-import { colorScale } from '../cards/styles';
+import TagBar from './TagBar';
 
-function createStacks(cards, selectedCardId) {
-  const selectedCardIndex = cards.findIndex(d => d.id === selectedCardId);
+function createStacks(cards, selectedId) {
+  const selectedCardIndex = cards.findIndex(d => d.id === selectedId);
 
   const left = cards
     .slice(0, selectedCardIndex)
     .map((c, j) => ({ ...c, position: 'left', i: 0, j }));
 
   const center = { ...cards[selectedCardIndex], position: 'left', i: 1, j: 0 };
+
   const right = cards
     .slice(selectedCardIndex + 1, cards.length)
     .map((c, j) => ({ ...c, position: 'right', i: 2, j }));
 
   return [...left, center, ...right];
-  // return [
-  //   {
-  //     position: 'left',
-  //     cards: cards.slice(0, selectedCardIndex)
-  //   },
-  //   {
-  //     position: 'center',
-  //     cards: [cards[selectedCardIndex]]
-  //   },
-  //   {
-  //     position: 'right',
-  //     cards: cards.slice(selectedCardIndex + 1, cards.length).reverse()
-  //   }
-  // ];
 }
 
 function transitionStyles(i, j, d) {
   const { duration, width, unit } = this.props;
-  const { selectedSlot, selectedCardId, cardStacks } = this.state;
+  const { selectedSlot, selectedId, cardStacks } = this.state;
   const slot = ['left', 'center', 'right'][i];
   const [leftCards, rightCards] = [
     cardStacks.filter(c => c.position === 'left'),
@@ -76,7 +60,7 @@ function transitionStyles(i, j, d) {
   const defaultStyles = {
     zIndex,
     transition: `left ${duration / 1000}s, transform ${duration / 1000}s`,
-    transform: selectedCardId === d.id ? 'scale(1.2)' : 'scale(1)'
+    transform: selectedId === d.id ? 'scale(1.2)' : 'scale(1)'
   };
 
   const left = (() => {
@@ -91,86 +75,17 @@ function transitionStyles(i, j, d) {
   };
 }
 
-class TagBar extends Component {
-  static propTypes = {
-    data: PropTypes.array,
-    style: PropTypes.object,
-    className: PropTypes.string,
-    selectedTags: PropTypes.array
-  };
-
-  static defaultProps = {
-    data: [],
-    style: {},
-    className: '',
-    selectedTags: []
-  };
-
-  constructor(props) {
-    super(props);
-    // this.state = { sets: setify(this.props.data) };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // this.setState({
-    //   sets: setify(nextProps.data)
-    // });
-  }
-
-  render() {
-    const { selectedTags, tags, style, className } = this.props;
-    // const { sets } = this.state;
-    const dotOpacity = { entering: 0, entered: 1, exiting: 0, exited: 0 };
-    return (
-      <TransitionGroup
-        className={className}
-        style={{
-          justifyContent: 'center',
-          overflowX: 'scroll',
-          overflowY: 'visible',
-          width: '100%',
-          // height: '100%',
-          ...style,
-          display: 'grid',
-          gridTemplateRows: '50%',
-          gridTemplateColumns: 'auto',
-          gridAutoFlow: 'column'
-          // border: 'solid 5px rosybrown',
-        }}
-      >
-        {tags.map(s => (
-          <Transition key={s} timeout={{ enter: 400, exit: 400 }}>
-            {state => (
-              <div
-                className="mr-1 mt-1 p-1"
-                style={{
-                  borderLeft: 'grey 4px solid',
-                  opacity: dotOpacity[state],
-                  transition: 'opacity 0.3s',
-                  background: colorScale(s),
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                {s}
-              </div>
-            )}
-          </Transition>
-        ))}
-      </TransitionGroup>
-    );
-  }
-}
-
 class CardGrid extends Component {
   static propTypes = {
     cards: PropTypes.array.isRequired,
-    onSelect: PropTypes.func.isRequired,
-    onExtend: PropTypes.func.isRequired,
+    onSelect: PropTypes.func,
+    onExtend: PropTypes.func,
+    onFilter: PropTypes.func,
     controls: PropTypes.node.isRequired,
-    offset: PropTypes.number.isRequired,
-    selectedCardId: PropTypes.any,
+    // selectedId: PropTypes.any,
     style: PropTypes.object,
     className: PropTypes.string,
+    unit: PropTypes.string,
     visible: PropTypes.bool,
     duration: PropTypes.number,
     width: PropTypes.number,
@@ -179,27 +94,23 @@ class CardGrid extends Component {
 
   static defaultProps = {
     style: {},
-    selectedCardId: null,
-    setCardOpacity(d) {
-      return d;
-    },
+    className: '',
+    onSelect: d => d,
+    onExtend: d => d,
+    onFilter: d => d,
     visible: true,
     duration: 800,
     width: 100,
-
     innerMargin: 1,
     unit: 'vw'
   };
 
   constructor(props) {
     super(props);
-    this.id = null;
-    this.box = null;
-    // TODO: remove later when cards is empty
-    const selectedCardId = props.cards[Math.floor(props.cards.length/2)].id;
-    const cardStacks = createStacks(props.cards, selectedCardId);
+    const selectedId = props.cards[Math.floor(props.cards.length / 2)].id;
+    const cardStacks = createStacks(props.cards, selectedId);
     this.state = {
-      selectedCardId,
+      selectedId,
       selectedSlot: null,
       cardStacks
     };
@@ -209,9 +120,9 @@ class CardGrid extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { cards, selectedCardId } = nextProps;
-    const cardStacks = createStacks(cards, selectedCardId);
-    console.log('newProps');
+    const { cards } = nextProps;
+    const cardStacks = createStacks(cards, this.state.selectedId);
+    console.log('newCards', cards);
 
     // if (nextProps.cards.length !== cards.length)
     this.setState({
@@ -222,7 +133,7 @@ class CardGrid extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     return (
-      this.state.selectedCardId !== nextState.selectedCardId ||
+      this.state.selectedId !== nextState.selectedId ||
       this.props.cards.length !== nextProps.cards.length
     ); // nextProps.selected !== this.props.selected;
     // return true;
@@ -230,22 +141,19 @@ class CardGrid extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { onSelect } = this.props;
-    const { selectedCardId } = this.state;
-    if (
-      selectedCardId !== null &&
-      prevState.selectedCardId !== selectedCardId
-    ) {
-      onSelect(selectedCardId);
+    const { selectedId } = this.state;
+    if (selectedId !== null && prevState.selectedId !== selectedId) {
+      onSelect(selectedId);
     }
   }
 
   // componentWillUpdate(nextProps, nextState) {
-  //   const { selectedCardId } = this.state;
+  //   const { selectedId } = this.state;
   //   if (
-  //     selectedCardId !== null &&
-  //     nextState.selectedCardId !== selectedCardId
+  //     selectedId !== null &&
+  //     nextState.selectedId !== selectedId
   //   ) {
-  //     this._scroller.scrollTo(selectedCardId);
+  //     this._scroller.scrollTo(selectedId);
   //   }
   // }
 
@@ -253,19 +161,15 @@ class CardGrid extends Component {
     const {
       cards,
       onExtend,
-      style,
-      className,
       controls,
-      // onSelect,
+      onFilter,
       visible,
-      // selectedTags,
       innerMargin,
-      duration,
-      width
+      width,
+      style,
+      className
     } = this.props;
-    const { selectedCardId, cardStacks } = this.state;
-    const selectedCard = cardStacks.find(c => c.id === selectedCardId);
-    console.log('selectedCard', selectedCard.tags);
+    const { selectedId, cardStacks } = this.state;
     const slotSize = width / 3;
 
     if (cards.length === 0 || !visible) return null;
@@ -305,10 +209,10 @@ class CardGrid extends Component {
                 ...transitionStyles.bind(this)(i, j, d)
               }}
               onClick={() =>
-                selectedCardId === d.id
+                selectedId === d.id
                   ? onExtend(d.id)
                   : this.setState({
-                      selectedCardId: d.id,
+                      selectedId: d.id,
                       selectedSlot: position,
                       cardStacks: createStacks(cardStacks, d.id)
                     })
@@ -317,28 +221,21 @@ class CardGrid extends Component {
               <PreviewCard
                 {...d}
                 key={d.id}
-                selected={selectedCardId === d.id}
+                selected={selectedId === d.id}
                 style={{
                   // height: '80%',
                   transition: `transform 1s`
                   // boxShadow:
-                  //   selectedCardId === d.id &&
+                  //   selectedId === d.id &&
                   //   '1px 1px 7px rgba(0,0,0,0.4)'
                 }}
               />
             </div>
           ))}
         </div>
-        {
-          <TagBar
-            tags={selectedCard.tags}
-            selectedTags={selectedCard}
-            className="ml-3 mr-3"
-            style={{ marginTop: '4vh' }}
-          />
-        }
       </div>
     );
   }
 }
-export default throttle(1000)(CardGrid);
+
+export default CardGrid;

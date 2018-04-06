@@ -25,7 +25,8 @@ import {
   ENABLE_COMPASS,
   TOGGLE_GRID_VIEW,
   TOGGLE_TSNE_VIEW,
-  RECEIVE_PLACES
+  RECEIVE_PLACES,
+  FILTER_CARDS
 } from './actions';
 
 import {
@@ -83,6 +84,16 @@ function getBoundingBox(coords) {
 function reducer(state = {}, action) {
   // console.log('action', action);
   switch (action.type) {
+    case FILTER_CARDS: {
+      console.log('action', action);
+      const tags = action.options;
+      if (tags.length === 0) return { ...state, cards: state.defaultCards };
+      const cards = state.defaultCards.filter(
+        c => tags.filter(t => c.tags.includes(t)).length === tags.length
+      );
+      console.log('cards', cards);
+      return { ...state, cards };
+    }
     case RECEIVE_PLACES: {
       const { results: places } = action.options;
       // console.log('places', places);
@@ -251,18 +262,25 @@ function reducer(state = {}, action) {
         return { longitude, latitude };
       })();
 
-      const filterCards = zoom > state.zoom ? state.cards : state.defaultCards;
-      const newCards = filterCards.filter(({ loc }) => {
+      // const filterCards = zoom > state.zoom ? state.cards : state.defaultCards;
+      const newCards = state.defaultCards.filter(({ loc, id, ...rest }) => {
         const [x, y] = vp.project([loc.longitude, loc.latitude]);
-        return x > 0 && x < width && y > 0 && y < height;
+
+        const retVal = x > 0 && x < width && y > 0 && y < height;
+        if (selectedCardId === id) {
+          console.log('selectedCard', id, retVal, rest, x, y);
+        }
+
+        return retVal;
       });
+      console.log('newCards', newCards);
 
       return {
         ...state,
         longitude: state.gridView ? bottomLng : newLng,
         latitude: state.gridView ? bottomLat : newLat,
         birdsEyeView,
-        cards: newCards,
+        // cards: newCards,
 
         // latitude: newLat, // latScale(viewport.zoom),
         zoom: Math.max(minZoom, zoom),

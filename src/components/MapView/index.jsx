@@ -14,7 +14,8 @@ import {
   flyToUser,
   enableCompass,
   toggleTsneView,
-  toggleGrid
+  toggleGrid,
+  filterCards
 } from './actions';
 
 import { fetchDirection, computeTopicMap } from './async_actions';
@@ -33,7 +34,7 @@ const mapStateToProps = state => {
     latitude,
     longitude,
     zoom,
-    direction,
+    direction
     // userSelected,
     // userLocation,
     // directionLoading
@@ -51,12 +52,6 @@ const mapStateToProps = state => {
       zoom,
       latitude,
       longitude
-    },
-    // TODO: remove
-    setCardOpacity(c) {
-      if (selectedCardId === c.id) return 1;
-      if (direction === null) return 1;
-      // return 0.0;
     }
   };
 };
@@ -110,6 +105,9 @@ const mapDispatchToProps = dispatch => ({
   },
   toggleGridAction: options => {
     dispatch(toggleGrid(options));
+  },
+  filterCardsAction: options => {
+    dispatch(filterCards(options));
   }
 });
 

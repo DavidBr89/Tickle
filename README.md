@@ -3,11 +3,10 @@
 TICKLE playground for our Project
 
 ### Todo
-* CardCreator everything
+* integrate CardCreator into mapview
+* fix powerscale in cardgrid
 * Server side
-* Card components
-* fix mapgl css
-* weird map click event handlers (works right now by filtering the events in reducer)
+* add selectedCard Marker
 
 
 * Fork and clone the project:
