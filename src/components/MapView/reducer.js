@@ -22,7 +22,7 @@ import {
   TOGGLE_CARD_CHALLENGE,
   EXTEND_SELECTED_CARD,
   FLY_TO_USER,
-  ENABLE_COMPASS,
+  TOGGLE_TAG_LIST,
   TOGGLE_GRID_VIEW,
   TOGGLE_TSNE_VIEW,
   RECEIVE_PLACES,
@@ -83,12 +83,17 @@ function getBoundingBox(coords) {
 
 function reducer(state = {}, action) {
   // console.log('action', action);
+  const { selectedCardId } = state;
+
   switch (action.type) {
+    case TOGGLE_TAG_LIST: {
+      return { ...state, tagListView: !state.tagListView, gridView: false };
+    }
     case FILTER_CARDS: {
       console.log('action', action);
       const tags = action.options;
       if (tags.length === 0) return { ...state, cards: state.defaultCards };
-      const cards = state.defaultCards.filter(
+      const cards = state.cards.filter(
         c => tags.filter(t => c.tags.includes(t)).length === tags.length
       );
       console.log('cards', cards);
@@ -140,7 +145,10 @@ function reducer(state = {}, action) {
         gridView,
         longitude: bottomLng,
         latitude: bottomLat,
-        selectedCardId: !gridView ? null : state.selectedCardId
+        selectedCardId: !gridView
+          ? null
+          : selectedCardId || state.cacheSelectedCardId,
+        cacheSelectedCardId: selectedCardId
       };
     }
     case LOAD_DIRECTION: {
@@ -203,15 +211,14 @@ function reducer(state = {}, action) {
         userLocation,
         width,
         height,
-        gridView
+        gridView,
+        defaultZoom
       } = state;
       // if (state.extCardId !== null) return state;
       const { longitude, latitude, zoom } = action.options;
-      // const mapHeight = viewport.height;
-      // const width = viewport.width;
 
-      // zoom out;
-      // if (viewport.zoom < state.zoom) {
+      if (zoom <= defaultZoom) return { ...state };
+
       const bbox = getBoundingBox(
         cards
           .map(({ loc }) => [loc.longitude, loc.latitude])
@@ -224,7 +231,7 @@ function reducer(state = {}, action) {
         : { longitude, latitude };
 
       const vp = (() => {
-        if (zoom <= 8) {
+        if (zoom <= defaultZoom) {
           return new PerspectiveMercatorViewport({
             width,
             height,
@@ -263,16 +270,12 @@ function reducer(state = {}, action) {
       })();
 
       // const filterCards = zoom > state.zoom ? state.cards : state.defaultCards;
-      const newCards = state.defaultCards.filter(({ loc, id, ...rest }) => {
+      const newCards = state.defaultCards.filter(({ loc }) => {
         const [x, y] = vp.project([loc.longitude, loc.latitude]);
-
-        const retVal = x > 0 && x < width && y > 0 && y < height;
-        if (selectedCardId === id) {
-          console.log('selectedCard', id, retVal, rest, x, y);
-        }
-
+        const retVal = y > 0 && y < height && x > 0 && x < width;
         return retVal;
       });
+
       console.log('newCards', newCards);
 
       return {
@@ -280,7 +283,7 @@ function reducer(state = {}, action) {
         longitude: state.gridView ? bottomLng : newLng,
         latitude: state.gridView ? bottomLat : newLat,
         birdsEyeView,
-        // cards: newCards,
+        cards: newCards,
 
         // latitude: newLat, // latScale(viewport.zoom),
         zoom: Math.max(minZoom, zoom),

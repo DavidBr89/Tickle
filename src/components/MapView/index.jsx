@@ -12,7 +12,7 @@ import {
   extendSelectedCard,
   navigateAppFirstTime,
   flyToUser,
-  enableCompass,
+  toggleTagList,
   toggleTsneView,
   toggleGrid,
   filterCards
@@ -94,8 +94,8 @@ const mapDispatchToProps = dispatch => ({
   fetchDirectionAction: options => {
     dispatch(fetchDirection(options));
   },
-  enableCompassAction: options => {
-    dispatch(enableCompass(options));
+  toggleTagListAction: options => {
+    dispatch(toggleTagList(options));
   },
   toggleTsneViewAction: options => {
     dispatch(toggleTsneView(options));

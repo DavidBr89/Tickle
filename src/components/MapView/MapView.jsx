@@ -23,6 +23,8 @@ import ContextView from './ContextView';
 import ForceOverlay from './ForceOverlay';
 import Title from './Title';
 import TagBar from './TagBar';
+import TagList from './TagList';
+import { setify } from './utils';
 // import StartNav from './StartNav';
 // import { VisibleView, VisibleElement } from '../utils/MySensor.jsx';
 
@@ -91,6 +93,8 @@ class MapView extends PureComponent {
     selectedCardId: PropTypes.string.isRequired,
     selectedCard: PropTypes.object.isRequired,
     extCardId: PropTypes.string.isRequired,
+    tagListView: PropTypes.bool.isRequired,
+    tsneView: PropTypes.bool.isRequired,
     // centerLocation: PropTypes.object.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
@@ -234,6 +238,7 @@ class MapView extends PureComponent {
       birdsEyeView,
       gridView,
       tsneView,
+      tagListView,
       tsnePos,
       // AppOpenFirstTime,
       // headerPad,
@@ -248,7 +253,7 @@ class MapView extends PureComponent {
       filterCardsAction,
       // flyToUserAction,
       nextCardControlAction,
-      enableCompassAction,
+      toggleTagListAction,
       toggleTsneViewAction,
       toggleGridAction
       // navigateFirstTimeAction
@@ -270,10 +275,10 @@ class MapView extends PureComponent {
         selected={extCardId === c.id}
         width={extCardId === c.id ? width - cardPadding : 40}
         height={extCardId === c.id ? height - cardPadding : 50}
-        offsetX={extCardId === c.id ? 3 : 0}
-        offsetY={3}
         x={x + 5}
         y={y + 3}
+        offsetX={extCardId === c.id ? 3 : 0}
+        offsetY={3}
         preview={
           <CardMarker
             {...c}
@@ -318,12 +323,18 @@ class MapView extends PureComponent {
             style={{
               // position: 'absolute',
               zIndex: 3000,
-              background: compass || birdsEyeView ? 'whitesmoke' : null
+              background: tagListView ? 'whitesmoke' : null
             }}
-            onClick={birdsEyeView ? toggleTsneViewAction : enableCompassAction}
+            onClick={toggleTagListAction}
           >
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <Icon.Compass size={30} />
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                transform: 'rotate(90deg)'
+              }}
+            >
+              <Icon.BarChart size={30} />
             </div>
           </button>
           <button
@@ -331,7 +342,7 @@ class MapView extends PureComponent {
             style={{
               // position: 'absolute',
               zIndex: 3000,
-              background: selectedCardId ? 'whitesmoke' : null
+              background: gridView ? 'whitesmoke' : null
             }}
             onClick={toggleGridAction}
           >
@@ -408,6 +419,7 @@ class MapView extends PureComponent {
             cards={cards}
             onSelect={selectCardAction}
             visible={gridView}
+            selectedCardId={selectedCardId}
             onExtend={extCardAction}
             width={98}
             unit={'vw'}
@@ -422,19 +434,24 @@ class MapView extends PureComponent {
               paddingTop: '16px',
               marginLeft: '2vw',
               marginRight: '2vw',
-              // paddingLeft: '100px',
-              // paddingRight: '100px',
-              // paddingBottom: '15px',
-              // width: `${cards.length * 40}vw`,
               zIndex: 2000
             }}
           />
           <TagBar
-            tags={selectedCard.tags}
+            tags={selectedCard ? selectedCard.tags : []}
             onClick={filterCardsAction}
             className="ml-3 mr-3"
-            style={{ marginTop: '4vh', zIndex: 5000 }}
+            style={{ marginTop: '2vh', zIndex: 5000 }}
           />
+        </div>
+        <div
+          style={{
+            opacity: tagListView ? 1 : 0,
+            transition: 'opacity 0.5s',
+            zIndex: tagListView ? 5000 : null
+          }}
+        >
+          <TagList data={setify(cards)} />
         </div>
         <Title />
         <ForceOverlay
@@ -454,7 +471,7 @@ class MapView extends PureComponent {
             zIndex: 1000,
             background: compass || birdsEyeView ? 'whitesmoke' : null
           }}
-          onClick={birdsEyeView ? toggleTsneViewAction : enableCompassAction}
+          onClick={birdsEyeView ? toggleTsneViewAction : toggleTagListAction}
         >
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             {birdsEyeView ? <Icon.Eye size={30} /> : <Icon.Compass size={30} />}

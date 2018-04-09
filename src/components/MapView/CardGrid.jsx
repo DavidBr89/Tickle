@@ -82,7 +82,7 @@ class CardGrid extends Component {
     onExtend: PropTypes.func,
     onFilter: PropTypes.func,
     controls: PropTypes.node.isRequired,
-    // selectedId: PropTypes.any,
+    selectedCardId: PropTypes.string,
     style: PropTypes.object,
     className: PropTypes.string,
     unit: PropTypes.string,
@@ -107,7 +107,7 @@ class CardGrid extends Component {
 
   constructor(props) {
     super(props);
-    const selectedId = props.cards[Math.floor(props.cards.length / 2)].id;
+    const selectedId = props.selectedCardId; // cards[Math.floor(props.cards.length / 2)].id;
     const cardStacks = createStacks(props.cards, selectedId);
     this.state = {
       selectedId,

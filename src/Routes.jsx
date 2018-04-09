@@ -84,7 +84,9 @@ const defaultState = {
     AppOpenFirstTime: true,
     selectedCardId: dummyCards[0].id, // dummyCards[0].id,
     birdsEyeView: false,
-    gridView: true
+    gridView: true,
+    tsneView: false,
+    tagListView: false
   },
   CardCreator: {
     cards: dummyCards,
