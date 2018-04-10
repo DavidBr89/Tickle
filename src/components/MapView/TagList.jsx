@@ -3,19 +3,22 @@ import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 
 import { colorScale, shadowStyle } from '../cards/styles';
+import Tag from './Tag';
 
 class TagList extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
     style: PropTypes.object,
-    data: PropTypes.array
+    data: PropTypes.array,
+    scale: PropTypes.func
   };
 
   static defaultProps = {
     className: '',
     style: {},
-    data: []
+    data: [],
+    scale: () => 0
   };
 
   constructor(props) {
@@ -23,14 +26,7 @@ class TagList extends Component {
   }
 
   render() {
-    const { style, className, data } = this.props;
-    if (data.length === 0) return null;
-    const max = d3.max(data, d => d.count);
-    const min = d3.min(data, d => d.count);
-    const scale = d3
-      .scaleLinear()
-      .domain([min, max])
-      .range([10, 100]);
+    const { style, className, data, scale } = this.props;
 
     return (
       <div
@@ -43,32 +39,13 @@ class TagList extends Component {
         }}
       >
         {data.map(d => (
-          <div
-            className="m-2"
-            style={{
-              borderRadius: '10%',
-              zIndex: 2000,
-              minWidth: '20vw',
-              background: 'white',
-              position: 'relative',
-              boxShadow: '0.4rem 0.4rem grey',
-              border: 'black 2px solid'
-            }}
+          <Tag
+            className="ml-2 mr-2 mb-2"
+            innerClassName="p-1"
+            barWidth={`${scale(d.count)}%`}
           >
-            <div
-              style={{
-                position: 'absolute',
-                background: colorScale(d.key),
-                width: `${scale(d.count)}%`,
-                height: '100%',
-                zIndex: -1
-              }}
-            />
-
-            <div className="p-2" style={{ zIndex: 2000 }}>
-              {d.key}
-            </div>
-          </div>
+            {d.key}
+          </Tag>
         ))}
       </div>
     );

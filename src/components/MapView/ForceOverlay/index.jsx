@@ -352,7 +352,7 @@ class ForceOverlay extends Component {
             ...style
           }}
         >
-          {nodes.map(children)}
+          {nodes.map(attr => children({ ...attr, selectedCardId }))}
         </div>
       );
     }

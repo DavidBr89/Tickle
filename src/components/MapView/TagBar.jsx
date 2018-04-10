@@ -5,6 +5,8 @@ import { TransitionGroup, Transition } from 'react-transition-group/';
 
 import { colorScale } from '../cards/styles';
 
+import Tag from './Tag';
+
 class TagBar extends Component {
   static propTypes = {
     data: PropTypes.array,
@@ -34,55 +36,48 @@ class TagBar extends Component {
   // }
 
   render() {
-    const { selectedTags, tags, style, className, onClick } = this.props;
+    const { selectedTags, tags, style, className, onClick, scale } = this.props;
     const { selected } = this.state;
-    const dotOpacity = { entering: 0, entered: 1, exiting: 0, exited: 0 };
+    const opacity = { entering: 0, entered: 1, exiting: 0, exited: 0 };
     const selectedStyle = id =>
-      selected.includes(id) ? { border: 'black solid 1px' } : {};
+      selected.includes(id) ? { transform: 'scale(1.3)' } : {};
 
     return (
       <TransitionGroup
         className={className}
+        appear
         style={{
           ...style,
           justifyContent: 'center',
-          overflowX: 'scroll',
-          overflowY: 'visible',
-          width: '100%',
-          // height: '100%',
-          display: 'grid',
-          gridTemplateRows: '50%',
-          gridTemplateColumns: 'auto',
-          gridAutoFlow: 'column'
-          // border: 'solid 5px rosybrown',
+          flexWrap: 'wrap',
+          display: 'flex'
         }}
       >
         {tags.map(s => (
-          <Transition key={s} timeout={{ enter: 400, exit: 400 }}>
+          <Transition appear key={s.key} timeout={500}>
             {state => (
-              <div
+              <Tag
+                className="mr-2 mb-2"
+                key={s.key}
+                barWidth={`${scale(s.count)}%`}
                 onClick={() => {
                   this.setState(({ selected: oldSelected }) => {
-                    const newSelected = oldSelected.includes(s)
-                      ? oldSelected.filter(t => t !== s)
-                      : [s, ...oldSelected];
+                    const newSelected = oldSelected.includes(s.key)
+                      ? oldSelected.filter(d => d !== s.key)
+                      : [s.key, ...oldSelected];
+                    // console.log('newSelected', newSelected);
                     onClick(newSelected);
                     return { selected: newSelected };
                   });
                 }}
-                className="mr-1 mt-1 p-1"
                 style={{
-                  borderLeft: 'grey 4px solid',
-                  opacity: dotOpacity[state],
-                  transition: 'opacity 0.3s',
-                  background: colorScale(s),
-                  whiteSpace: 'nowrap',
-                  zIndex: 1000,
-                  ...selectedStyle(s)
+                  opacity: opacity[state],
+                  transition: 'opacity 0.5s transform 0.5s',
+                  ...selectedStyle(s.key)
                 }}
               >
-                {s}
-              </div>
+                {s.key}
+              </Tag>
             )}
           </Transition>
         ))}

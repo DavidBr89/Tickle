@@ -86,7 +86,8 @@ const defaultState = {
     birdsEyeView: false,
     gridView: true,
     tsneView: false,
-    tagListView: false
+    tagListView: false,
+    selectedTags: []
   },
   CardCreator: {
     cards: dummyCards,

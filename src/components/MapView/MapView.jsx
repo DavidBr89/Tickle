@@ -239,7 +239,6 @@ class MapView extends PureComponent {
       gridView,
       tsneView,
       tagListView,
-      tsnePos,
       // AppOpenFirstTime,
       // headerPad,
 
@@ -268,8 +267,17 @@ class MapView extends PureComponent {
     // });
 
     const cardPadding = 15;
+    const paddingTop = 16;
 
-    const animatedMarker = ({ x, y, ...c }) => (
+    const cardSets = setify(cards);
+    const selectedTags = selectedCard ? selectedCard.tags : [];
+
+    const barScale = d3
+      .scaleLinear()
+      .domain(d3.extent(cardSets, d => d.count))
+      .range([20, 100]);
+
+    const animatedMarker = ({ x, y, selectedCardId, ...c }) => (
       <ExtendableMarker
         key={c.id}
         selected={extCardId === c.id}
@@ -280,15 +288,37 @@ class MapView extends PureComponent {
         offsetX={extCardId === c.id ? 3 : 0}
         offsetY={3}
         preview={
-          <CardMarker
-            {...c}
-            center={false}
+          <div
             style={{
-              opacity: 1,
-              position: 'absolute',
-              zIndex: -100
+              position: 'relative'
             }}
-          />
+          >
+            {selectedCardId === c.id && (
+              <div
+                className="m-3"
+                style={{
+                  position: 'absolute',
+                  // background: 'grey',
+                  border: '2px solid black',
+                  borderRadius: '50%',
+                  width: '13vw',
+                  height: '13vw',
+                  transform: 'translate(-7vw,-6vw)',
+                  opacity: 0.5,
+                  zIndex: -1000
+                }}
+              />
+            )}
+            <CardMarker
+              {...c}
+              center={false}
+              style={{
+                opacity: 1,
+                position: 'absolute',
+                zIndex: -100
+              }}
+            />
+          </div>
         }
       >
         <Card
@@ -375,35 +405,35 @@ class MapView extends PureComponent {
               data={
                 direction !== null
                   ? [
-                      Object.values(userLocation).reverse(),
-                      ...direction.routes[0].geometry.coordinates
-                    ]
+                    Object.values(userLocation).reverse(),
+                    ...direction.routes[0].geometry.coordinates
+                  ]
                   : []
               }
             >
               {([x, y], [nx, ny]) =>
                 nx !== null &&
                 ny !== null && (
-                  <g>
-                      <circle
-                      r={3}
-                        cx={x}
-                        cy={y}
-                      fill={colorScale(
-                          selectedCard.challenge
-                          ? selectedCard.challenge.type
-                          : 'quiz'
-                        )}
-                    />
-                      <path
-                      d={line([[x, y], [nx, ny]])}
-                      style={{
-                          stroke: colorScale(selectedCard.challenge.type),
-                        strokeWidth: 8
-                      }}
-                    />
-                    </g>
-                )
+                    <g>
+                    <circle
+                        r={3}
+                      cx={x}
+                      cy={y}
+                        fill={colorScale(
+                        selectedCard.challenge
+                            ? selectedCard.challenge.type
+                            : 'quiz'
+                      )}
+                      />
+                    <path
+                        d={line([[x, y], [nx, ny]])}
+                        style={{
+                        stroke: colorScale(selectedCard.challenge.type),
+                          strokeWidth: 8
+                        }}
+                      />
+                  </g>
+                  )
               }
             </SvgOverlay>
           </MapGL>
@@ -411,14 +441,13 @@ class MapView extends PureComponent {
         <div
           style={{
             opacity: gridView ? 1 : 0,
-            pointerEvents: !gridView ? 'none' : null,
+            display: !gridView ? 'none' : null,
             transition: 'opacity 0.5s'
           }}
         >
           <CardGrid
             cards={cards}
             onSelect={selectCardAction}
-            visible={gridView}
             selectedCardId={selectedCardId}
             onExtend={extCardAction}
             width={98}
@@ -431,27 +460,30 @@ class MapView extends PureComponent {
             }
             style={{
               height: '24vh',
-              paddingTop: '16px',
               marginLeft: '2vw',
               marginRight: '2vw',
-              zIndex: 2000
+              zIndex: 2000,
+              paddingTop
             }}
           />
           <TagBar
-            tags={selectedCard ? selectedCard.tags : []}
+            tags={cardSets.filter(d => selectedTags.includes(d.key))}
+            scale={barScale}
             onClick={filterCardsAction}
-            className="ml-3 mr-3"
-            style={{ marginTop: '2vh', zIndex: 5000 }}
+            className="mt-3"
+            style={{ zIndex: 5000 }}
           />
         </div>
         <div
           style={{
+            paddingTop,
             opacity: tagListView ? 1 : 0,
             transition: 'opacity 0.5s',
+            display: !tagListView ? 'none' : null,
             zIndex: tagListView ? 5000 : null
           }}
         >
-          <TagList data={setify(cards)} />
+          <TagList data={cardSets} scale={barScale} />
         </div>
         <Title />
         <ForceOverlay
@@ -469,12 +501,12 @@ class MapView extends PureComponent {
           style={{
             // position: 'absolute',
             zIndex: 1000,
-            background: compass || birdsEyeView ? 'whitesmoke' : null
+            background: tsneView && 'whitesmoke'
           }}
-          onClick={birdsEyeView ? toggleTsneViewAction : toggleTagListAction}
+          onClick={toggleTsneViewAction}
         >
           <div style={{ display: 'flex', justifyContent: 'center' }}>
-            {birdsEyeView ? <Icon.Eye size={30} /> : <Icon.Compass size={30} />}
+            <Icon.Eye size={30} />
           </div>
         </button>
       </div>

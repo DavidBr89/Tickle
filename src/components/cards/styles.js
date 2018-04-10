@@ -34,22 +34,33 @@ export const cardLayout = cxs({
 });
 
 export const shadowStyle = {
-  boxShadow: '0.4rem 0.4rem 0.1rem grey'
+  boxShadow: '0.2rem 0.2rem 0.1rem grey'
   // border: '1px solid black'
 };
+
 const colors = [...chromatic.schemePastel1, 'wheat'];
+const otherColors = [
+  '#ffd700',
+  '#ffb14e',
+  '#fa8775',
+  '#ea5f94',
+  '#cd34b5',
+  '#9d02d7',
+  '#0000ff'
+];
+
 export const colorScale = scaleOrdinal()
   .domain(challengeTypes)
   .range(colors);
 
 export const darkerColorScale = scaleOrdinal()
   .domain(challengeTypes)
-  .range(colors.map(c => chroma(c).darker()));
+  .range(colorScale.range().map(c => chroma(c).darker()));
 
 // TODO: chroma alpha does not seem to work
 export const brighterColorScale = scaleOrdinal()
   .domain(challengeTypes)
-  .range(colors.map(c => chroma(c).alpha(0.5)));
+  .range(colorScale.range().map(c => chroma(c).alpha(0.5)));
 // export {
 //   cardLayout,
 //   shadowStyle,

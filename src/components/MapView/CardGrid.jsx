@@ -51,6 +51,7 @@ function transitionStyles(i, j, d) {
 
   // const transScale = scale.copy().domain([0, domain[1] + 1]);
 
+  // TODO: fix alignment for only <=3 cards
   const zIndex = (() => {
     if (slot === 'left') return j;
     if (slot === 'right') return rightCards.length - j;

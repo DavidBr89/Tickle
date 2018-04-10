@@ -9,6 +9,7 @@ import {
 } from 'viewport-mercator-project';
 
 import { scaleLinear, extent, geoMercator } from 'd3';
+import { intersection } from 'lodash';
 // import setBBox from './fitbounds';
 // import mapboxgl from 'mapbox-gl';
 
@@ -91,13 +92,17 @@ function reducer(state = {}, action) {
     }
     case FILTER_CARDS: {
       console.log('action', action);
-      const tags = action.options;
-      if (tags.length === 0) return { ...state, cards: state.defaultCards };
+      const selectedTags = action.options;
+      // if (selectedTags.length === 0)
+      //   return { ...state, cards: state.defaultCards };
+      // TODO: fix filtering
       const cards = state.cards.filter(
-        c => tags.filter(t => c.tags.includes(t)).length === tags.length
+        c =>
+          selectedTags.length === 0 ||
+          intersection(c.tags, selectedTags).length > 0
       );
       console.log('cards', cards);
-      return { ...state, cards };
+      return { ...state, cards, selectedTags };
     }
     case RECEIVE_PLACES: {
       const { results: places } = action.options;
@@ -143,6 +148,7 @@ function reducer(state = {}, action) {
       return {
         ...state,
         gridView,
+        tagListView: false,
         longitude: bottomLng,
         latitude: bottomLat,
         selectedCardId: !gridView
@@ -185,22 +191,22 @@ function reducer(state = {}, action) {
         // height: state.height - 200
       };
     }
-    case FLY_TO_USER: {
-      const { width, height, zoom, userLocation } = state;
-      const mapViewport = focusLoc({
-        width,
-        height,
-        zoom: 18,
-        ...userLocation
-      });
-
-      return {
-        ...state,
-        ...mapViewport,
-        userSelected: true
-        // mapZoom: 12 // state.defaultZoom
-      };
-    }
+    // case FLY_TO_USER: {
+    //   const { width, height, zoom, userLocation } = state;
+    //   const mapViewport = focusLoc({
+    //     width,
+    //     height,
+    //     zoom: 18,
+    //     ...userLocation
+    //   });
+    //
+    //   return {
+    //     ...state,
+    //     ...mapViewport,
+    //     userSelected: true
+    //     // mapZoom: 12 // state.defaultZoom
+    //   };
+    // }
     case RESIZE_CARD_WINDOW: {
       return { ...state, ...action };
     }
@@ -212,7 +218,8 @@ function reducer(state = {}, action) {
         width,
         height,
         gridView,
-        defaultZoom
+        defaultZoom,
+        selectedTags
       } = state;
       // if (state.extCardId !== null) return state;
       const { longitude, latitude, zoom } = action.options;
@@ -270,10 +277,12 @@ function reducer(state = {}, action) {
       })();
 
       // const filterCards = zoom > state.zoom ? state.cards : state.defaultCards;
-      const newCards = state.defaultCards.filter(({ loc }) => {
+      const newCards = state.defaultCards.filter(({ loc, tags }) => {
         const [x, y] = vp.project([loc.longitude, loc.latitude]);
-        const retVal = y > 0 && y < height && x > 0 && x < width;
-        return retVal;
+        const tagBool =
+          selectedTags.length === 0 ||
+          intersection(selectedTags, tags).length > 0;
+        return tagBool && y > 0 && y < height && x > 0 && x < width;
       });
 
       console.log('newCards', newCards);
