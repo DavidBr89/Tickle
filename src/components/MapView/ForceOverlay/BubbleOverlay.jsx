@@ -38,7 +38,7 @@ class BubbleOverlay extends Component {
   render() {
     const { data, width, height } = this.props;
 
-    const blurFactor = 2;
+    const blurFactor = 12;
     const bubbleRadius = 25;
 
     const colorScale = scaleOrdinal()
@@ -53,19 +53,18 @@ class BubbleOverlay extends Component {
       return (
         <g
           key={id}
-          style={
-            {
-              filter: `url("#gooeyCodeFilter")`
-            }
-          }
+          xlinkHref={`#p${id}`}
+          style={{
+            filter: `url("#gooeyCodeFilter")`
+          }}
         >
-          <path d={p} fill={color} opacity={0.5} />
+          <path d={p} id={`p${id}`} fill={color} opacity={0.5} />
           {values.map(d => (
             <rect
               fill={color}
               opacity={0.5}
-              width={bubbleRadius * 2}
-              height={bubbleRadius * 2}
+              width={bubbleRadius }
+              height={bubbleRadius }
               x={d.x - bubbleRadius}
               y={d.y - bubbleRadius}
             />
@@ -87,8 +86,12 @@ class BubbleOverlay extends Component {
             <feGaussianBlur
               in="SourceGraphic"
               stdDeviation={blurFactor}
+              colorInterpolationFilters="sRGB"
               result="blur"
             />
+            <feComponentTransfer>
+              <feFuncA type="linear" slope="0.2" />
+            </feComponentTransfer>
             <feColorMatrix
               in="blur"
               mode="matrix"

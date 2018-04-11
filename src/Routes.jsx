@@ -45,7 +45,7 @@ const defaultLocation = {
   latitude: 50.85146,
   longitude: 4.315483
 };
-const mapZoom = 8;
+const mapZoom = 9;
 const [width, height] = [100, 100];
 // debug('lego:routes');
 const defaultState = {
