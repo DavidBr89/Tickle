@@ -19,7 +19,7 @@ function jaccard(a, b) {
     : 1;
 }
 
-function somFy(data, callback = d => d) {
+function somFy(data, width, height, callback = d => d) {
   const options = {
     fields: data.length,
     torus: true,
@@ -27,9 +27,9 @@ function somFy(data, callback = d => d) {
     learningRate: 0.1
   };
   const dists = data.map(a => data.map(b => jaccard(a.tags, b.tags)));
-  const m = 6;
 
-  const som = new SOM(m, m, options);
+  // TODO: verify with different data sets
+  const som = new SOM(Math.floor(width / 10), Math.floor(height / 10), options);
   som.setTraining(dists);
   while (som.trainOne()) {
     const somPos = som.predict(dists);
@@ -165,8 +165,10 @@ class ForceOverlay extends Component {
       })
     ),
     delay: PropTypes.number,
-    padY: PropTypes.number,
-    padX: PropTypes.number,
+    padRight: PropTypes.number,
+    padLeft: PropTypes.number,
+    padTop: PropTypes.number,
+    padBottom: PropTypes.number,
     mode: PropTypes.oneOf(['geo', 'tsne', 'som', 'grid'])
   };
 
@@ -175,8 +177,10 @@ class ForceOverlay extends Component {
     className: null,
     style: {},
     viewport: { width: 100, height: 100, longitude: 0, latitude: 0 },
-    padY: 0,
-    padX: 100,
+    padRight: 0,
+    padLeft: 0,
+    padBottom: 0,
+    padTop: 0,
     force: false,
     data: [],
     delay: 400,
@@ -185,10 +189,11 @@ class ForceOverlay extends Component {
 
   constructor(props) {
     super(props);
-    const { data, width, height } = props;
+    const { data, viewport } = props;
+    const { width, height } = viewport;
 
     const initPos = data.map(() => [width / 2, height / 2]);
-    const somPos = somFy(data);
+    const somPos = somFy(data, width, height);
     this.state = {
       nodes: data.map(d => ({ ...d, x: width / 2, y: height / 2 })),
       tsnePos: initPos,
@@ -209,10 +214,11 @@ class ForceOverlay extends Component {
   componentWillReceiveProps(nextProps) {
     clearTimeout(this.id);
     const { data: oldData } = this.props;
-    const { data: nextData } = nextProps;
+    const { data: nextData, viewport } = nextProps;
+    const { width, height } = viewport;
 
     if (oldData.length !== nextData.length) {
-      const somPos = somFy(nextData);
+      const somPos = somFy(nextData, width, height);
       const gridPos = lapFy(somPos);
 
       this.forceSim.force('x', null).force('y', null);
@@ -236,7 +242,17 @@ class ForceOverlay extends Component {
   }
 
   layout(nextProps = null, nextState = null) {
-    const { viewport, mode, delay, data, padY, padX } = nextProps || this.props;
+    const {
+      viewport,
+      mode,
+      delay,
+      data,
+      padLeft,
+      padRight,
+      padBottom,
+      padTop
+    } =
+      nextProps || this.props;
     const { width, height, zoom, latitude, longitude } = viewport;
     const { tsnePos, somPos, gridPos, nodes: oldNodes } =
       nextState || this.state;
@@ -273,7 +289,7 @@ class ForceOverlay extends Component {
         ? d3
           .scaleLinear()
           .domain(d3.extent(pos.map(d => d[0])))
-          .range([padX / 2, width - padX / 2])
+          .range([padLeft, width - padRight])
         : d => d;
 
     const yScale =
@@ -281,7 +297,7 @@ class ForceOverlay extends Component {
         ? d3
           .scaleLinear()
           .domain(d3.extent(pos.map(d => d[1])))
-          .range([padY, height])
+          .range([padTop, height - padBottom])
         : d => d;
     // const tsnePos = runTsne(data, 300);
 

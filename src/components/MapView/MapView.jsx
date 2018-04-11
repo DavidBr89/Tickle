@@ -277,14 +277,16 @@ class MapView extends PureComponent {
       .domain(d3.extent(cardSets, d => d.count))
       .range([20, 100]);
 
+    const [w, h] = [20, 20];
+    const r = 30;
     const animatedMarker = ({ x, y, selectedCardId, ...c }) => (
       <ExtendableMarker
         key={c.id}
         selected={extCardId === c.id}
         width={extCardId === c.id ? width - cardPadding : 40}
         height={extCardId === c.id ? height - cardPadding : 50}
-        x={x + 5}
-        y={y + 3}
+        x={x}
+        y={y}
         offsetX={extCardId === c.id ? 3 : 0}
         offsetY={3}
         preview={
@@ -301,21 +303,23 @@ class MapView extends PureComponent {
                   // background: 'grey',
                   border: '2px solid black',
                   borderRadius: '50%',
-                  width: '13vw',
-                  height: '13vw',
-                  transform: 'translate(-7vw,-6vw)',
+                  width: r * 2, // '13vw',
+                  height: r * 2, // '13vw',
+                  transform: `translate(${-r}px,${-r}px)`,
                   opacity: 0.5,
                   zIndex: -1000
                 }}
               />
             )}
             <CardMarker
+              center
               {...c}
-              center={false}
               style={{
                 opacity: 1,
                 position: 'absolute',
                 zIndex: -100
+                // width: w,
+                // height: h
               }}
             />
           </div>
@@ -490,9 +494,11 @@ class MapView extends PureComponent {
           viewport={mapViewport}
           data={cards}
           mode={!tsneView ? 'geo' : 'som'}
-          padY={height / 2}
+          padBottom={!gridView && !tagListView ? height * 1 / 6 : 50}
+          padTop={gridView || tagListView ? height * 1 / 2 : height * 1 / 6}
+          padLeft={70}
+          padRight={70}
           selectedCardId={selectedCardId}
-          center={gridView ? height * 2 / 3 : height / 2}
         >
           {animatedMarker}
         </ForceOverlay>

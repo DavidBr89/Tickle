@@ -3165,7 +3165,7 @@ concat-stream@~1.6.0:
     readable-stream "^2.2.2"
     typedarray "^0.0.6"
 
-concaveman@*:
+concaveman@*, concaveman@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/concaveman/-/concaveman-1.1.1.tgz#6c2482580b2523cef82fc2bec00a0415e6e68162"
   dependencies:
