@@ -9,8 +9,8 @@ class CardMarker extends Component {
     onClick: PropTypes.func.isRequired,
     style: PropTypes.object,
     edit: PropTypes.bool,
-    width: PropTypes.number,
-    height: PropTypes.number,
+    width: PropTypes.oneOf([PropTypes.number, null]),
+    height: PropTypes.oneOf([PropTypes.number, null]),
     center: PropTypes.bool,
     marginTop: PropTypes.string,
     shadow: PropTypes.bool,
@@ -25,8 +25,8 @@ class CardMarker extends Component {
     // TODO: include only type
     challenge: { type: null },
     edit: false,
-    width: 6.5,
-    height: 8,
+    width: null,
+    height: null,
     center: true,
     marginTop: '6%',
     background: 'black',
@@ -56,19 +56,13 @@ class CardMarker extends Component {
     } = this.props;
     return (
       <div
+        className="cardmarker"
         style={{
           pointerEvents: 'none',
           // padding: '15%',
           transition: 'opacity 1s',
-          width: `${width}vw`,
-          height: `${height}vw`,
-          maxWidth: '30px',
-          maxHeight: '35px',
-          // TODO: does not work for widescreen
-          transform: center
-            ? `translate(${-width / 2}vw, ${-height / 2}vw)`
-            : null,
-          pointerEvents: null,
+          width: '100%',
+          height: '100%',
           ...style
         }}
         onClick={onClick}

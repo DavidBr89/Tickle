@@ -283,14 +283,15 @@ class MapView extends PureComponent {
       <ExtendableMarker
         key={c.id}
         selected={extCardId === c.id}
-        width={extCardId === c.id ? width - cardPadding : 40}
-        height={extCardId === c.id ? height - cardPadding : 50}
+        width={extCardId === c.id ? width - cardPadding : 25}
+        height={extCardId === c.id ? height - cardPadding : 30}
         x={x}
         y={y}
         offsetX={extCardId === c.id ? 3 : 0}
         offsetY={3}
         preview={
           <div
+            className="w-100 h-100"
             style={{
               position: 'relative'
             }}
@@ -300,7 +301,7 @@ class MapView extends PureComponent {
                 className="m-3"
                 style={{
                   position: 'absolute',
-                  // background: 'grey',
+                  background: 'grey',
                   border: '2px solid black',
                   borderRadius: '50%',
                   width: r * 2, // '13vw',
@@ -312,7 +313,6 @@ class MapView extends PureComponent {
               />
             )}
             <CardMarker
-              center
               {...c}
               style={{
                 opacity: 1,
@@ -493,12 +493,13 @@ class MapView extends PureComponent {
         <ForceOverlay
           viewport={mapViewport}
           data={cards}
+          sets={cardSets}
+          selectedCardId={selectedCardId}
           mode={!tsneView ? 'geo' : 'som'}
           padBottom={!gridView && !tagListView ? height * 1 / 6 : 50}
           padTop={gridView || tagListView ? height * 1 / 2 : height * 1 / 6}
           padLeft={70}
           padRight={70}
-          selectedCardId={selectedCardId}
         >
           {animatedMarker}
         </ForceOverlay>

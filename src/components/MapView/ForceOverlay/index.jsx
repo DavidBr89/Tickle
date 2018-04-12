@@ -214,7 +214,7 @@ class ForceOverlay extends Component {
   componentWillReceiveProps(nextProps) {
     clearTimeout(this.id);
     const { data: oldData } = this.props;
-    const { data: nextData, viewport } = nextProps;
+    const { data: nextData, viewport, mode } = nextProps;
     const { width, height } = viewport;
 
     if (oldData.length !== nextData.length) {
@@ -228,9 +228,7 @@ class ForceOverlay extends Component {
         somPos,
         gridPos
       });
-    } else {
-      this.layout(nextProps);
-    }
+    } else this.layout(nextProps);
   }
 
   componentDidUpdate() {
@@ -287,30 +285,33 @@ class ForceOverlay extends Component {
     const xScale =
       mode !== 'geo'
         ? d3
-          .scaleLinear()
-          .domain(d3.extent(pos.map(d => d[0])))
-          .range([padLeft, width - padRight])
+            .scaleLinear()
+            .domain(d3.extent(pos.map(d => d[0])))
+            .range([padLeft, width - padRight])
         : d => d;
 
     const yScale =
       mode !== 'geo'
         ? d3
-          .scaleLinear()
-          .domain(d3.extent(pos.map(d => d[1])))
-          .range([padTop, height - padBottom])
+            .scaleLinear()
+            .domain(d3.extent(pos.map(d => d[1])))
+            .range([padTop, height - padBottom])
         : d => d;
     // const tsnePos = runTsne(data, 300);
 
     // prevent stretching of similiarities
     // const padY = height / 7;
 
-    const nodes = data.map(({ id, x, y, tags, ...c }, i) => ({
-      id,
-      x: x || geoPos[i][0],
-      y: y || geoPos[i][1],
-      tags,
-      ...c
-    }));
+    const nodes = data.map(({ id, x, y, tags, ...c }, i) => {
+      const oldNode = oldNodes.find(n => n.id == id) || {};
+      return {
+        id,
+        x: oldNode.x || geoPos[i][0],
+        y: oldNode.y || geoPos[i][1],
+        tags,
+        ...c
+      };
+    });
     // .filter(n => n.x > 0 && n.x < width && n.y > 0 && n.y < height);
     //
     this.forceSim = this.forceSim
@@ -320,7 +321,8 @@ class ForceOverlay extends Component {
       .alphaMin(0.6)
       .force('x', d3.forceX((d, i) => xScale(pos[i][0])).strength(0.5))
       .force('y', d3.forceY((d, i) => yScale(pos[i][1])).strength(0.5))
-      .force('coll', d3.forceCollide(24))
+      .force('coll', d3.forceCollide(25))
+      // .force('center', d3.forceCenter(width / 2, height / 2))
       .on('end', () => {
         this.id = setTimeout(
           () =>
@@ -345,14 +347,14 @@ class ForceOverlay extends Component {
       className,
       mode,
       selectedCardId,
-      center
+      center,
+      sets
     } = this.props;
 
-    const { sets } = this.state;
     const { width, height } = viewport;
     const { nodes } = this.state;
     // const newPos = nodes.map(d => transEvent.apply([d.x, d.y]));
-
+    const selectedTags = selectedCardId ? nodes.find(n => n.id === selectedCardId).tags : []
     if (mode === 'geo') {
       return (
         <div
@@ -372,18 +374,26 @@ class ForceOverlay extends Component {
         </div>
       );
     }
+    // TODO: get
     return (
       <ZoomContainer
         width={width}
         height={height}
+        center={[width / 2, height * 2 / 3]}
         nodes={nodes}
-        selectedId={null}
-        center={center}
+        selectedId={selectedCardId}
       >
-        {zoomedNodes => (
+        {(zoomedNodes, transform) => (
           <Fragment>
             <BubbleOverlay
-              data={setify(zoomedNodes)}
+              data={sets.map(s => {
+                s.values = s.values.map(n =>
+                  zoomedNodes.find(d => d.id === n.id)
+                );
+                return s;
+              })}
+              selectedTags={selectedTags}
+              zoom={transform.k}
               width={width}
               height={height}
             />

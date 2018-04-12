@@ -2,11 +2,11 @@ import { nest } from 'd3';
 import { intersection, uniq, flatten } from 'lodash';
 
 export function setify(data) {
-  const spreadData = [...data].map(({ id, tags, ...rest }) =>
-    tags.map(t => ({ id: t, ref: id, ...rest }))
+  const spreadData = [...data].map(({  tags, ...rest }) =>
+    tags.map(t => ({ tag: t, ...rest }))
   );
   return nest()
-    .key(d => d.id)
+    .key(d => d.tag)
     .entries(flatten([...spreadData]))
     .map(d => {
       const count = d.values.length;

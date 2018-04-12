@@ -84,12 +84,15 @@ class ZoomContainer extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { selectedId, width, height, nodes, center } = nextProps;
+    const zoomScale = 1.5;
     // this.forceSim.on('end', null);
 
     if (selectedId !== null) {
       const n = nodes.find(d => d.id === selectedId);
       this.setState({
-        transEvent: d3.zoomIdentity.translate(width / 2 - n.x, center - n.y)
+        transEvent: d3.zoomIdentity
+          .translate(center[0] - n.x * zoomScale, center[1] - n.y * zoomScale)
+          .scale(zoomScale)
       });
     } else {
       // TODO: zoom bounding box
@@ -106,6 +109,8 @@ class ZoomContainer extends Component {
       const [x, y] = transEvent.apply([d.x, d.y]);
       return { ...d, x, y };
     });
+
+    console.log('transevent', transEvent);
 
     return (
       <div
@@ -134,7 +139,7 @@ class ZoomContainer extends Component {
             // top: 0
           }}
         >
-          {children(newNodes)}
+          {children(newNodes, transEvent)}
         </div>
       </div>
     );

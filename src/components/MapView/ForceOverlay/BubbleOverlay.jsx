@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as chromatic from 'd3-scale-chromatic';
-import { scaleOrdinal } from 'd3';
 // import hull from 'hull.js';
 import hull from 'concaveman';
 import * as d3 from 'd3';
 import chroma from 'chroma-js';
+import points from 'point-at-length';
 
 function hexagon(x, y, w, h) {
   const x1 = x;
@@ -45,6 +45,106 @@ const groupPoints = function(nodes, offsetX = 0, offsetY = 0) {
   return fakePoints.reverse();
 };
 
+function Step(context) {
+  this._context = context;
+  this._t = 0;
+}
+
+Step.prototype = {
+  areaStart() {
+    this._line = 0;
+  },
+  areaEnd() {
+    this._line = NaN;
+  },
+  lineStart() {
+    this._x = this._y = NaN;
+    this._point = 0;
+  },
+  lineEnd() {
+    if (this._line || (this._line !== 0 && this._point === 1))
+      this._context.closePath();
+    if (this._line >= 0) (this._t = 1 - this._t), (this._line = 1 - this._line);
+  },
+  point(x, y) {
+    (x = +x), (y = +y);
+    switch (this._point) {
+      case 0: {
+        this._point = 1;
+        this._context.moveTo(x, y);
+        break;
+      }
+      case 1:
+        this._point = 2; // proceed
+      default: {
+        if (this._t <= 0) {
+          console.log(this._y);
+
+          let xN = Math.abs(x - this._x) * 0.25,
+            yN = Math.abs(y - this._y) * 0.25,
+            mYb = this._y < y ? this._y + yN : this._y - yN,
+            mYa = this._y > y ? y + yN : y - yN;
+
+          this._context.quadraticCurveTo(this._x, this._y, this._x, mYb);
+          this._context.lineTo(this._x, mYa);
+          this._context.quadraticCurveTo(this._x, y, this._x + xN, y);
+          this._context.lineTo(x - xN, y);
+          // this._context.quadraticCurveTo(x, y, x, mY);
+        } else {
+          const x1 = this._x * (1 - this._t) + x * this._t;
+          this._context.moveTo(x1, this._y);
+          this._context.lineTo(x1, y);
+        }
+        break;
+      }
+    }
+    (this._x = x), (this._y = y);
+  }
+};
+
+const stepRound = function(context) {
+  return new Step(context);
+};
+
+// function cheapSketchyOutline(path) {
+//   const j = 2;
+//   let i = 0;
+//   const pointsArray = [];
+//
+//   const ps = points(path)._path.map(d => [d[1], d[2]]);
+//   let newPoint;
+//   while (i < ps.length) {
+//     newPoint = ps[i];
+//     console.log('ps', ps, newPoint);
+//     pointsArray.push({
+//       x: newPoint.x + (j / 2 - Math.random() * j),
+//       y: newPoint.y + (j / 2 - Math.random() * j)
+//     });
+//     i += j + Math.random() * j;
+//   }
+//   // Make sure to get the last point
+//   const line = d3
+//     .line()
+//     .x(d => d.x)
+//     .y(d => d.y)
+//     .curve(d3.curveBasis);
+//   return line(pointsArray);
+// }
+function curveStepOutside(context) {
+  let y0, i;
+  return {
+    lineStart() {
+      (y0 = NaN), (i = 0);
+    },
+    lineEnd() {},
+    point(x, y) {
+      (x -= y0 > y ? +0.5 : -0.5), (y -= 0.5);
+      if (++i === 1) context.moveTo(x, (y0 = y));
+      else context.lineTo(x, y0), context.lineTo(x, (y0 = y));
+    }
+  };
+}
+
 class BubbleOverlay extends Component {
   static propTypes = {
     children: PropTypes.node,
@@ -56,50 +156,61 @@ class BubbleOverlay extends Component {
   }
 
   render() {
-    const { data, width, height } = this.props;
+    const { data, width, height, zoom, selectedTags } = this.props;
+    console.log('selectedTags', selectedTags);
 
     const blurFactor = 2;
     const bubbleRadius = 25;
 
-    const colorScale = scaleOrdinal()
+    const colorScale = d3
+      .scaleOrdinal()
       .domain(data.map(s => s.key))
       .range(chromatic.schemeAccent);
 
-    const scale = d3
-      .scaleLinear()
+    const offsetScale = d3
+      .scaleQuantize()
+      .domain([10, 1])
+      .range(d3.range(30, 60, 10))
+      .nice();
+
+    const dashScale = d3
+      .scaleQuantize()
       .domain(d3.extent(data, d => d.values.length))
-      .range([20, 50])
+      .range([7, 4, 3, 2])
       .nice();
 
     const Bubbles = data
       .filter(d => d.values.length > 1)
       .sort((a, b) => b.values.length - a.values.length)
       .map(({ id, key, values }) => {
-        const size = scale(values.length);
-        const hPoints = hull(groupPoints(values, 25, 25), 1.8); // d3.polygonHull(groupPoints(values));
+        const size = offsetScale(values.length);
+        const hPoints = hull(groupPoints(values, size, size), 1); // d3.polygonHull(groupPoints(values));
+        const pp = d3.line().curve(d3.curveBasis)(hPoints);
+        // const pps = cheapSketchyOutline(pp);
 
-        const p = d3.line().curve(d3.curveBasis)(hPoints);
         const color = chroma(colorScale(key)).alpha(0.1);
         return (
-          <g
-            key={id}
-            style={
-              {
-                // filter: `url("#gooeyCodeFilter")`
-              }
-            }
-          >
+          <g key={id}>
             <path
-              stroke="black"
-              d={p}
+              style={{
+                stroke: color,
+                strokeDasharray: dashScale(zoom),
+                strokeDashoffset: 30,
+                strokeWidth: dashScale(zoom)
+              }}
+              d={pp}
               id={`p${id}`}
               fill={color}
-              opacity={0.4}
+              opacity={selectedTags.includes(key) ? 1 : 0.1}
             />
           </g>
         );
       });
 
+    const circles = data.map(b =>
+      b.values.map(d => <circle cx={d.x} cy={d.y} fill="black" r="15" />)
+    );
+    console.log('circles', circles);
     return (
       <svg
         style={{
@@ -108,54 +219,6 @@ class BubbleOverlay extends Component {
           height
         }}
       >
-        <defs>
-          <filter id={'gooeyCodeFilter'}>
-            <feGaussianBlur
-              in="SourceGraphic"
-              stdDeviation={blurFactor}
-              colorInterpolationFilters="sRGB"
-              result="blur"
-            />
-            <feComponentTransfer>
-              <feFuncA type="linear" slope="0.2" />
-            </feComponentTransfer>
-            <feColorMatrix
-              in="blur"
-              mode="matrix"
-              values={`1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${bubbleRadius} -6`}
-              result="gooey"
-            />
-          </filter>
-          <filter id="gooey2">
-            <feGaussianBlur
-              in="SourceGraphic"
-              stdDeviation="10"
-              result="blur"
-            />
-            <feColorMatrix
-              in="blur"
-              mode="matrix"
-              values={`1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${bubbleRadius} -7`}
-              result="gooey"
-            />
-            <feBlend in="SourceGraphic" in2="gooey" />
-          </filter>
-
-          <filter id="gooey">
-            <feGaussianBlur
-              in="SourceGraphic"
-              stdDeviation={blurFactor}
-              result="blur"
-            />
-            <feColorMatrix
-              in="blur"
-              mode="matrix"
-              values={`1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${bubbleRadius} -7`}
-              result="gooey"
-            />
-            <feBlend in="SourceGraphic" in2="gooey" />
-          </filter>
-        </defs>
         {Bubbles}
       </svg>
     );
