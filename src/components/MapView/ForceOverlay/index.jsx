@@ -169,7 +169,8 @@ class ForceOverlay extends Component {
     padLeft: PropTypes.number,
     padTop: PropTypes.number,
     padBottom: PropTypes.number,
-    mode: PropTypes.oneOf(['geo', 'tsne', 'som', 'grid'])
+    mode: PropTypes.oneOf(['geo', 'tsne', 'som', 'grid']),
+    colorScale: PropTypes.func
   };
 
   static defaultProps = {
@@ -184,7 +185,8 @@ class ForceOverlay extends Component {
     force: false,
     data: [],
     delay: 400,
-    mode: 'geo'
+    mode: 'geo',
+    colorScale: () => 'green'
   };
 
   constructor(props) {
@@ -317,6 +319,7 @@ class ForceOverlay extends Component {
     this.forceSim = this.forceSim
       .nodes(nodes)
       .restart()
+      // TODO: proper rehear
       .alpha(1)
       .alphaMin(0.6)
       .force('x', d3.forceX((d, i) => xScale(pos[i][0])).strength(0.5))
@@ -348,13 +351,16 @@ class ForceOverlay extends Component {
       mode,
       selectedCardId,
       center,
-      sets
+      sets,
+      colorScale
     } = this.props;
 
     const { width, height } = viewport;
     const { nodes } = this.state;
     // const newPos = nodes.map(d => transEvent.apply([d.x, d.y]));
-    const selectedTags = selectedCardId ? nodes.find(n => n.id === selectedCardId).tags : []
+    const selectedTags = selectedCardId
+      ? nodes.find(n => n.id === selectedCardId).tags
+      : [];
     if (mode === 'geo') {
       return (
         <div
@@ -386,16 +392,19 @@ class ForceOverlay extends Component {
         {(zoomedNodes, transform) => (
           <Fragment>
             <BubbleOverlay
-              data={sets.map(s => {
-                s.values = s.values.map(n =>
+              data={[...sets].map(({ values, ...rest }) => {
+                const newValues = values.map(n =>
                   zoomedNodes.find(d => d.id === n.id)
                 );
-                return s;
+                // .filter(d => d.x > 0 && d.x < width);
+                // .filter(n => n);
+                return { values: newValues, ...rest };
               })}
               selectedTags={selectedTags}
               zoom={transform.k}
               width={width}
               height={height}
+              colorScale={colorScale}
             />
             <div style={{ overflow: 'hidden', width, height }}>
               {zoomedNodes.map(children)}

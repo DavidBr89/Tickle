@@ -6,6 +6,28 @@ import hull from 'concaveman';
 import * as d3 from 'd3';
 import chroma from 'chroma-js';
 import points from 'point-at-length';
+import km from 'ml-kmeans';
+
+// import { colorScale, shadowStyle } from '../cards/styles';
+
+function kmeans(values) {
+  const euclDist = (x1, y1, x2, y2) =>
+    Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+  const dists = values.map(({ x: x1, y: y1 }) =>
+    values.map(({ x: x2, y: y2 }) => [
+      euclDist(x1, y1, x2, y2) > 200 ? euclDist(x1, y1, x2, y2) : 0
+    ])
+  );
+  const clustered = km(dists, 2).clusters.map((c, i) => ({
+    ...values[i],
+    cluster: c
+  }));
+
+  return d3
+    .nest()
+    .key(d => d.cluster)
+    .entries(clustered);
+}
 
 function hexagon(x, y, w, h) {
   const x1 = x;
@@ -24,25 +46,21 @@ function hexagon(x, y, w, h) {
 }
 
 const groupPoints = function(nodes, offsetX = 0, offsetY = 0) {
-  let fakePoints = [];
-  nodes.forEach(element => {
-    fakePoints = fakePoints.concat([
-      // "0.7071" scale the sine and cosine of 45 degree for corner points.
-      [element.x, element.y + offsetY],
-      [element.x + 0.7071 * offsetX, element.y + 0.7071 * offsetY],
-      [element.x + offsetX, element.y],
-      [element.x + 0.7071 * offsetX, element.y - 0.7071 * offsetY],
-      [element.x, element.y - offsetX],
-      [element.x - 0.7071 * offsetX, element.y - 0.7071 * offsetY],
-      [element.x - offsetX, element.y],
-      [element.x - 0.7071 * offsetX, element.y + 0.7071 * offsetY]
-    ]);
-    // fakePoints = fakePoints.concat(
-    //   hexagon(element.x, element.y, offsetX, offsetY)
-    // );
-  });
-
-  return fakePoints.reverse();
+  return nodes.reduce(
+    (acc, element) =>
+      acc.concat([
+        // "0.7071" scale the sine and cosine of 45 degree for corner points.
+        [element.x, element.y + offsetY],
+        [element.x + 0.7071 * offsetX, element.y + 0.7071 * offsetY],
+        [element.x + offsetX, element.y],
+        [element.x + 0.7071 * offsetX, element.y - 0.7071 * offsetY],
+        [element.x, element.y - offsetX],
+        [element.x - 0.7071 * offsetX, element.y - 0.7071 * offsetY],
+        [element.x - offsetX, element.y],
+        [element.x - 0.7071 * offsetX, element.y + 0.7071 * offsetY]
+      ]),
+    []
+  );
 };
 
 function Step(context) {
@@ -156,21 +174,21 @@ class BubbleOverlay extends Component {
   }
 
   render() {
-    const { data, width, height, zoom, selectedTags } = this.props;
+    const { data, width, height, zoom, selectedTags, colorScale } = this.props;
     console.log('selectedTags', selectedTags);
 
     const blurFactor = 2;
     const bubbleRadius = 25;
 
-    const colorScale = d3
-      .scaleOrdinal()
-      .domain(data.map(s => s.key))
-      .range(chromatic.schemeAccent);
+    // const colorScale = d3
+    //   .scaleOrdinal()
+    //   .domain(data.map(s => s.key))
+    //   .range(chromatic.schemeAccent);
 
     const offsetScale = d3
       .scaleQuantize()
       .domain([10, 1])
-      .range(d3.range(30, 60, 10))
+      .range(d3.range(30, 60, 5))
       .nice();
 
     const dashScale = d3
@@ -184,25 +202,30 @@ class BubbleOverlay extends Component {
       .sort((a, b) => b.values.length - a.values.length)
       .map(({ id, key, values }) => {
         const size = offsetScale(values.length);
-        const hPoints = hull(groupPoints(values, size, size), 1); // d3.polygonHull(groupPoints(values));
-        const pp = d3.line().curve(d3.curveBasis)(hPoints);
-        // const pps = cheapSketchyOutline(pp);
+        const clusters = kmeans(values);
+        console.log('clusters', clusters);
+
+        const hulls = clusters.map(c =>
+          hull(groupPoints(c.values, size, size), 1, 100)
+        ); // d3.polygonHalues));
 
         const color = chroma(colorScale(key)).alpha(0.1);
         return (
           <g key={id}>
-            <path
-              style={{
-                stroke: color,
-                strokeDasharray: dashScale(zoom),
-                strokeDashoffset: 30,
-                strokeWidth: dashScale(zoom)
-              }}
-              d={pp}
-              id={`p${id}`}
-              fill={color}
-              opacity={selectedTags.includes(key) ? 1 : 0.1}
-            />
+            {hulls.map(h => (
+              <path
+                style={{
+                  stroke: color,
+                  strokeDasharray: dashScale(zoom),
+                  strokeDashoffset: 30,
+                  strokeWidth: dashScale(zoom)
+                }}
+                d={d3.line().curve(d3.curveStep)(h)}
+                id={`p${id}`}
+                fill={color}
+                opacity={selectedTags.includes(key) ? 1 : 0.4}
+              />
+            ))}
           </g>
         );
       });

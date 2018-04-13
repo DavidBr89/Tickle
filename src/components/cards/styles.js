@@ -39,15 +39,6 @@ export const shadowStyle = {
 };
 
 const colors = [...chromatic.schemePastel1, 'wheat'];
-const otherColors = [
-  '#ffd700',
-  '#ffb14e',
-  '#fa8775',
-  '#ea5f94',
-  '#cd34b5',
-  '#9d02d7',
-  '#0000ff'
-];
 
 export const colorScale = scaleOrdinal()
   .domain(challengeTypes)

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { colorScale, shadowStyle } from '../cards/styles';
+// import { colorScale, shadowStyle } from '../cards/styles';
 
 function Tag({
   children,
@@ -9,7 +9,8 @@ function Tag({
   barWidth,
   style,
   innerStyle,
-  innerClassName
+  innerClassName,
+  color
 }) {
   return (
     <div
@@ -36,7 +37,7 @@ function Tag({
           width: barWidth,
           transition: 'width 0.5s',
           height: '100%',
-          background: colorScale(children),
+          background: color,
           zIndex: -1
         }}
       />
@@ -61,7 +62,8 @@ Tag.defaultProps = {
   innerClassName: '',
   barWidth: 0,
   onClick: d => d,
-  innerStyle: {}
+  innerStyle: {},
+  color: 'green'
 };
 
 Tag.propTypes = {
@@ -70,6 +72,7 @@ Tag.propTypes = {
   className: PropTypes.string,
   innerClassName: PropTypes.string,
   children: PropTypes.string,
+  color: PropTypes.string,
   onClick: PropTypes.func,
   barWidth: PropTypes.number
 };

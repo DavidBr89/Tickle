@@ -1228,6 +1228,10 @@
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/JSV/-/JSV-4.0.2.tgz#d077f6825571f82132f9dffaed587b4029feff57"
 
+RandomSelection@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/RandomSelection/-/RandomSelection-1.0.1.tgz#68fc8f7a4ec2ae7153049349e44f8fa1393311bb"
+
 abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
@@ -2985,6 +2989,10 @@ cloneable-readable@^1.0.0:
     inherits "^2.0.1"
     process-nextick-args "^2.0.0"
     readable-stream "^2.3.5"
+
+clusterfck@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/clusterfck/-/clusterfck-1.0.0.tgz#6402bd84f272be171a1daafd1d0fca245561fdc4"
 
 co@^4.6.0:
   version "4.6.0"
@@ -6096,6 +6104,10 @@ jest-docblock@^21.0.0:
   version "21.2.0"
   resolved "https://registry.yarnpkg.com/jest-docblock/-/jest-docblock-21.2.0.tgz#51529c3b30d5fd159da60c27ceedc195faf8d414"
 
+jlouvain@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/jlouvain/-/jlouvain-2.0.0.tgz#2718f0e58911cb337ae981b9e65253c3c0606019"
+
 "jquery@^3.0.0 || ^2.1.4", jquery@^3.2.1:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"
@@ -6926,6 +6938,24 @@ mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0, mkd
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.1.tgz#30057438eac6cf7f8c4767f38648d6697d75c903"
   dependencies:
     minimist "0.0.8"
+
+ml-distance-euclidean@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/ml-distance-euclidean/-/ml-distance-euclidean-1.0.0.tgz#08447c2233641a2b2a9b4c29e5f792d28f1d5b95"
+
+ml-kmeans@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/ml-kmeans/-/ml-kmeans-3.0.0.tgz#582aab53dd852f1f618bff92d8baa0f84d844ab2"
+  dependencies:
+    RandomSelection "^1.0.1"
+    ml-distance-euclidean "^1.0.0"
+    ml-nearest-vector "^1.0.0"
+
+ml-nearest-vector@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/ml-nearest-vector/-/ml-nearest-vector-1.0.1.tgz#8a6d00177a1f20ab0cdfcc672a9dea3dd995c880"
+  dependencies:
+    ml-distance-euclidean "^1.0.0"
 
 ml-som@^0.0.6:
   version "0.0.6"

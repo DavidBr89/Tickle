@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { TransitionGroup, Transition } from 'react-transition-group/';
 
-import { colorScale } from '../cards/styles';
+// import { colorScale } from '../cards/styles';
 
 import Tag from './Tag';
 
@@ -13,7 +13,8 @@ class TagBar extends Component {
     style: PropTypes.object,
     className: PropTypes.string,
     selectedTags: PropTypes.array,
-    onClick: PropTypes.func
+    onClick: PropTypes.func,
+    colorScale: PropTypes.func
   };
 
   static defaultProps = {
@@ -21,7 +22,8 @@ class TagBar extends Component {
     style: {},
     className: '',
     selectedTags: [],
-    onClick: d => d
+    onClick: d => d,
+    colorScale: () => 'green'
   };
 
   constructor(props) {
@@ -36,9 +38,18 @@ class TagBar extends Component {
   // }
 
   render() {
-    const { selectedTags, tags, style, className, onClick, scale } = this.props;
+    const {
+      selectedTags,
+      tags,
+      style,
+      className,
+      onClick,
+      scale,
+      colorScale
+    } = this.props;
     const { selected } = this.state;
     const opacity = { entering: 0, entered: 1, exiting: 0, exited: 0 };
+    // TODO: update
     const selectedStyle = id =>
       selected.includes(id) ? { transform: 'scale(1.3)' } : {};
 
@@ -60,6 +71,7 @@ class TagBar extends Component {
                 className="mr-2 mb-2"
                 key={s.key}
                 barWidth={`${scale(s.count)}%`}
+                color={colorScale(s.key)}
                 onClick={() => {
                   this.setState(({ selected: oldSelected }) => {
                     const newSelected = oldSelected.includes(s.key)

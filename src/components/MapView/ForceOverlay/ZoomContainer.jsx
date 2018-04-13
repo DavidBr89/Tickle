@@ -34,8 +34,10 @@ class ZoomContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      transEvent: d3.zoomIdentity
+      zoomHandler: d3.zoomIdentity
     };
+
+    this.zoomFactory = this.zoomFactory.bind(this);
   }
 
   // shouldComponentUpdate(nextProps, nextState) {
@@ -61,56 +63,66 @@ class ZoomContainer extends Component {
   // //   if (selectedCardId !== null) {
   // //     const n = nodes.find(d => d.id === selectedCardId);
   // //     this.setState({
-  // //       transEvent: d3.zoomIdentity.translate(width / 2, height / 2)
+  // //       zoomHandler: d3.zoomIdentity.translate(width / 2, height / 2)
   // //     });
   // //   }
   // // }
 
   componentDidMount() {
+    d3.select(this.zoomCont).call(this.zoomFactory());
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { selectedId, width, height, nodes, center } = nextProps;
+    // const { zoomHandler: oldZoomHandler } = this.state;
+    const zoomScale = 1.5;
+    // this.forceSim.on('end', null);
+
+    const zoomFactoryCont = this.zoomFactory();
+
+    if (selectedId !== null) {
+      const n = nodes.find(d => d.id === selectedId);
+      const zoomHandler = d3.zoomIdentity
+        .translate(center[0] - n.x * zoomScale, center[1] - n.y * zoomScale)
+        .scale(zoomScale);
+
+      // recalibrate zoomCont
+      d3.select(this.zoomCont).call(zoomFactoryCont.transform, zoomHandler);
+
+      this.setState({ zoomHandler });
+    }
+
+    // else {
+    //   // TODO: zoom bounding box
+    //   this.setState({
+    //     zoomHandler: d3.zoomIdentity.translate(0, 0).scale(1)
+    //   });
+    // }
+  }
+
+  zoomFactory() {
     const { width, height } = this.props;
-    const zoomFactory = d3
+    return d3
       .zoom()
       .wheelDelta(() => -d3.event.deltaY * (d3.event.deltaMode ? 50 : 1) / 500)
       .scaleExtent([1, 4])
       .extent([[0, 0], [width, height]])
       .on('zoom', () => {
-        console.log('zoom');
         this.setState({
-          transEvent: d3.event.transform || d3.zoomIdentity
+          zoomHandler: d3.event.transform || d3.zoomIdentity
         });
       });
-    d3.select(this.zoomCont).call(zoomFactory);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { selectedId, width, height, nodes, center } = nextProps;
-    const zoomScale = 1.5;
-    // this.forceSim.on('end', null);
-
-    if (selectedId !== null) {
-      const n = nodes.find(d => d.id === selectedId);
-      this.setState({
-        transEvent: d3.zoomIdentity
-          .translate(center[0] - n.x * zoomScale, center[1] - n.y * zoomScale)
-          .scale(zoomScale)
-      });
-    } else {
-      // TODO: zoom bounding box
-      this.setState({
-        transEvent: d3.zoomIdentity.translate(0, 0).scale(1)
-      });
-    }
   }
 
   render() {
     const { children, width, height, style, className, nodes } = this.props;
-    const { transEvent } = this.state;
-    const newNodes = nodes.map(d => {
-      const [x, y] = transEvent.apply([d.x, d.y]);
-      return { ...d, x, y };
-    });
-
-    console.log('transevent', transEvent);
+    const { zoomHandler } = this.state;
+    const newNodes = nodes
+      .map(d => {
+        const [x, y] = zoomHandler.apply([d.x, d.y]);
+        return { ...d, x, y };
+      })
+      // .filter(({ x, y }) => x > 0 && x < width && y > 0 && y < height);
 
     return (
       <div
@@ -139,7 +151,7 @@ class ZoomContainer extends Component {
             // top: 0
           }}
         >
-          {children(newNodes, transEvent)}
+          {children(newNodes, zoomHandler)}
         </div>
       </div>
     );

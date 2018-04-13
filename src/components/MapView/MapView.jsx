@@ -41,10 +41,23 @@ import {
 
 import ExtendableMarker from '../utils/ExtendableMarker';
 import MapAreaRadius from '../utils/map-layers/MapAreaRadius';
+import chroma from 'chroma-js';
 // import cardIconSrc from '../utils/map-layers/cardIcon.svg';
 import { Modal } from '../utils/modal';
 
 const line = d3.line();
+
+//TODO: adapt colors
+const tagColors = [
+  '#ffd700',
+  '#ffb14e',
+  '#fa8775',
+  '#ea5f94',
+  '#cd34b5',
+  '#9d02d7',
+  '#0000ff'
+].map(c => chroma(c).alpha(0.1));
+
 // const TimoutGrid = ReactTimeout(CardGrid);
 
 const CardMetaControl = ({ action }) => (
@@ -270,6 +283,12 @@ class MapView extends PureComponent {
     const paddingTop = 16;
 
     const cardSets = setify(cards);
+
+    const tagColorScale = d3
+      .scaleOrdinal()
+      .domain(cardSets.map(s => s.key))
+      .range(tagColors);
+
     const selectedTags = selectedCard ? selectedCard.tags : [];
 
     const barScale = d3
@@ -472,6 +491,7 @@ class MapView extends PureComponent {
           />
           <TagBar
             tags={cardSets.filter(d => selectedTags.includes(d.key))}
+            colorScale={tagColorScale}
             scale={barScale}
             onClick={filterCardsAction}
             className="mt-3"
@@ -500,6 +520,7 @@ class MapView extends PureComponent {
           padTop={gridView || tagListView ? height * 1 / 2 : height * 1 / 6}
           padLeft={70}
           padRight={70}
+          colorScale={tagColorScale}
         >
           {animatedMarker}
         </ForceOverlay>

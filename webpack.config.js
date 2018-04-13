@@ -123,6 +123,9 @@ module.exports = {
       // 'mapbox-gl$': path.resolve('./node_modules/mapbox-gl/dist/mapbox-gl.js')
       src$: './src',
       DummyData: path.resolve(__dirname, './src/DummyData.js')
+    },
+    alias: {
+      Cards: path.resolve(__dirname, 'src/components/cards')
     }
   },
   module: {
