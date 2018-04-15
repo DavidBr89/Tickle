@@ -130,7 +130,7 @@ class ZoomContainer extends Component {
     return d3
       .zoom()
       .wheelDelta(() => -d3.event.deltaY * (d3.event.deltaMode ? 50 : 1) / 500)
-      .scaleExtent([0.4, 4])
+      .scaleExtent([0, 4])
       .extent([[0, 0], [width, height]])
       .on('zoom', () => {
         this.setState({

@@ -14,6 +14,7 @@ export default function() {
   let original_graph_edges;
   let original_graph = {};
   let partition_init;
+  let edge_index = {};
 
   // Helpers
   function make_set(array) {
@@ -78,14 +79,12 @@ export default function() {
   function add_edge_to_graph(graph, edge) {
     update_assoc_mat(graph, edge);
 
-    const edge_index = graph.edges
-      .map(d => `${d.source}_${d.target}`)
-      .indexOf(`${edge.source}_${edge.target}`);
-
-    if (edge_index !== -1) {
-      graph.edges[edge_index].weight = edge.weight;
+    if (edge_index[`${edge.source}_${edge.target}`]) {
+      graph.edges[edge_index[`${edge.source}_${edge.target}`]].weight =
+        edge.weight;
     } else {
       graph.edges.push(edge);
+      edge_index[`${edge.source}_${edge.target}`] = graph.edges.length - 1;
     }
   }
 
@@ -306,6 +305,8 @@ export default function() {
         weight: new_weight
       });
     });
+
+    edge_index = {};
 
     return ret;
   }

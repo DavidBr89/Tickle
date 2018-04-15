@@ -151,19 +151,23 @@ function getLinks(nodes, width, height) {
     nodes.forEach(t => {
       const interSet = intersection(s.tags, t.tags);
 
-      const euclDist = (x1, y1, x2, y2) =>
-        Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+      // const euclDist = (x1, y1, x2, y2) =>
+      //   Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
       const distX = Math.abs(t.x - s.x);
       const distY = Math.abs(t.y - s.y);
-      const weight = euclDist(t.x, t.y, s.x, s.y);
+      // const weight = euclDist(t.x, t.y, s.x, s.y);
 
-      console.log('height', height, 'width', width);
-      if (s.id !== t.id && interSet.length> 0 && distY < 100 && distX < 100) {
+      if (
+        s.id !== t.id &&
+        interSet.length > 0 &&
+        distY < height / 8 &&
+        distX < width / 3
+      ) {
         links.push({
           source: s.id,
           target: t.id,
-          interSet,
-          weight
+          interSet
+          // weight
         });
       }
     });
@@ -171,21 +175,34 @@ function getLinks(nodes, width, height) {
   return links;
 }
 
-const compCom = (nodes, width, height) => {
-  const coms = louvain()
-    .nodes(nodes.map(d => d.id))
-    .edges(getLinks(nodes, width, height))();
+const connectedComponents = (nodes, width, height) => {
+  // const coms = louvain()
+  //   .nodes(nodes.map(d => d.id))
+  //   .edges(getLinks(nodes, width, height))();
+  //
+  const adjList = nodes.map(n =>
+    uniq(
+      getLinks(nodes, width, height)
+        .reduce((acc, { source, target }) => {
+          if (n.id === source) return [...acc, target];
+          if (n.id === target) return [...acc, source];
+          return acc;
+        }, [])
+        .map(id => nodes.findIndex(d => d.id === id))
+    )
+  );
+  const comps = scc(adjList).components;
+  return comps.map((d, i) => ({ key: i, values: d.map(e => nodes[e]) }));
 
-  const communities = d3
-    .nest()
-    .key(d => d.cluster)
-    .entries(
-      Object.values(coms).map((cluster, i) => ({
-        ...nodes[i],
-        cluster
-      }))
-    );
-  return communities;
+  // const communities = d3
+  //   .nest()
+  //   .key(d => d.cluster)
+  //   .entries(
+  //     Object.values(coms).map((cluster, i) => ({
+  //       ...nodes[i],
+  //       cluster
+  //     }))
+  //   );
 };
 
 class ForceOverlay extends Component {
@@ -474,11 +491,8 @@ class ForceOverlay extends Component {
           <Fragment>
             <BubbleOverlay
               nodes={nodes}
-              comps={compCom(zoomedNodes, width, height).map(({ values }) =>
-                // TODO: remove filter
-                values
-                  .map(({ id }) => zoomedNodes.find(n => n.id === id))
-                  .filter(d => d)
+              comps={connectedComponents(zoomedNodes, width, height).map(
+                ({ values }) => values
               )}
               data={[...sets].map(({ values, ...rest }) => {
                 const newValues = values.map(n => {

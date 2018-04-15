@@ -155,10 +155,20 @@ class BubbleOverlay extends Component {
         const distX = bbox[1][0] - bbox[0][0];
 
         const clusters =
-          distY > height / 4 || distX > width / 2
+          distY > height * 4 / 6 || distX > width * 4 / 6
             ? kmeans(values)
             : [{ values }];
         [{ values }];
+        // const clusters =
+        //   distY > 0 || distX > 0
+        //     ? [
+        //       { values: values.filter(d => d.y >= cutY) },
+        //       { values: values.filter(d => d.y < cutY) },
+        //         { values: values.filter(d => d.x >= cutX) },
+        //         { values: values.filter(d => d.x < cutX) }
+        //     ]
+        //     : [{ values }];
+        // console.log('clusters', clusters);
 
         const hulls = clusters.map(c =>
           hull(groupPoints(c.values, size, size), 1, 100)
@@ -195,14 +205,14 @@ class BubbleOverlay extends Component {
       });
 
     const Bubbles2 = comps.map((values, i) => {
-      const h = hull(groupPoints(values, 20, 20), 1, 100);
+      const h = hull(groupPoints(values, 20, 20), 10, 100);
       return (
         <g key={`${i}comp`}>
           <path
             style={{
               stroke: 'black'
             }}
-            d={d3.line().curve(d3.curveBasis)(h)}
+            d={d3.line().curve(d3.curveStep)(h)}
             fill={'none'}
           />
         </g>
