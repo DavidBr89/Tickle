@@ -9,6 +9,7 @@ import {
 } from 'viewport-mercator-project';
 
 import { scaleLinear, extent, geoMercator } from 'd3';
+import { getBoundingBox } from './utils';
 import { intersection } from 'lodash';
 // import setBBox from './fitbounds';
 // import mapboxgl from 'mapbox-gl';
@@ -78,23 +79,6 @@ const offsetMapViewport = ({
   console.log('return', longitude, latitude, offsetLng, offsetLat);
   return ret;
 };
-
-function getBoundingBox(coords) {
-  const bounds = {};
-  let latitude;
-  let longitude;
-
-  for (let j = 0; j < coords.length; j++) {
-    longitude = coords[j][0];
-    latitude = coords[j][1];
-    bounds.lngMin = bounds.lngMin < longitude ? bounds.lngMin : longitude;
-    bounds.lngMax = bounds.lngMax > longitude ? bounds.lngMax : longitude;
-    bounds.latMin = bounds.latMin < latitude ? bounds.latMin : latitude;
-    bounds.latMax = bounds.latMax > latitude ? bounds.latMax : latitude;
-  }
-  // }
-  return [[bounds.lngMin, bounds.latMin], [bounds.lngMax, bounds.latMax]];
-}
 
 function reducer(state = {}, action) {
   // console.log('action', action);

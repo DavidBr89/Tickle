@@ -2,7 +2,7 @@ import { nest } from 'd3';
 import { intersection, uniq, flatten } from 'lodash';
 
 export function setify(data) {
-  const spreadData = [...data].map(({  tags, ...rest }) =>
+  const spreadData = [...data].map(({ tags, ...rest }) =>
     tags.map(t => ({ tag: t, ...rest }))
   );
   return nest()
@@ -25,4 +25,18 @@ export function setify(data) {
       // names must be equal
       return 0;
     });
+}
+
+export function getBoundingBox(coords, acc = d => [d[0], d[1]]) {
+  const bounds = {};
+
+  for (let j = 0; j < coords.length; j++) {
+    const [x, y] = acc(coords[j]);
+    bounds.minX = bounds.minX < x ? bounds.minX : x;
+    bounds.maxX = bounds.maxX > x ? bounds.maxX : x;
+    bounds.minY = bounds.minY < y ? bounds.minY : y;
+    bounds.maxY = bounds.maxY > y ? bounds.maxY : y;
+  }
+  // }
+  return [[bounds.minX, bounds.minY], [bounds.maxX, bounds.maxY]];
 }

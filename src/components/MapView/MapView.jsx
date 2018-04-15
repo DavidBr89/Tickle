@@ -47,15 +47,36 @@ import { Modal } from '../utils/modal';
 
 const line = d3.line();
 
-//TODO: adapt colors
+// TODO: adapt colors
 const tagColors = [
-  '#ffd700',
-  '#ffb14e',
-  '#fa8775',
-  '#ea5f94',
-  '#cd34b5',
-  '#9d02d7',
-  '#0000ff'
+  '#7fcdbb',
+  '#a1dab4',
+  '#41b6c4',
+  '#a1dab4',
+  '#41b6c4',
+  '#2c7fb8',
+  '#c7e9b4',
+  '#7fcdbb',
+  '#41b6c4',
+  '#2c7fb8',
+  '#c7e9b4',
+  '#7fcdbb',
+  '#41b6c4',
+  '#1d91c0',
+  '#225ea8',
+  '#edf8b1',
+  '#c7e9b4',
+  '#7fcdbb',
+  '#41b6c4',
+  '#1d91c0',
+  '#225ea8',
+  '#edf8b1',
+  '#c7e9b4',
+  '#7fcdbb',
+  '#41b6c4',
+  '#1d91c0',
+  '#225ea8',
+  '#253494'
 ].map(c => chroma(c).alpha(0.1));
 
 // const TimoutGrid = ReactTimeout(CardGrid);
@@ -286,7 +307,7 @@ class MapView extends PureComponent {
 
     const tagColorScale = d3
       .scaleOrdinal()
-      .domain(cardSets.map(s => s.key))
+      .domain(cardSets.sort((a,b) => a.values.length - b.values.length).map(s => s.key))
       .range(tagColors);
 
     const selectedTags = selectedCard ? selectedCard.tags : [];

@@ -10,7 +10,7 @@ const apiTokens = require('./api_keys.json');
 // const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 // const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-const HOST = process.env.HOST || '0.0.0.0';
+const HOST = process.env.HOST || 'localhost';
 const PORT = process.env.PORT || '3000';
 
 // TODO: exclude css
@@ -139,14 +139,15 @@ module.exports = {
     historyApiFallback: true,
     port: PORT,
     host: HOST,
+    // disableHostCheck: true,
     // TODO: change back later
-    https: false,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-      'Access-Control-Allow-Headers':
-        'X-Requested-With, content-type, Authorization'
-    }
+    https: false
+    // headers: {
+    //   'Access-Control-Allow-Origin': '*',
+    //   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+    //   'Access-Control-Allow-Headers':
+    //     'X-Requested-With, content-type, Authorization'
+    // }
     // proxy: {
     //   '**': {
     //     target: 'http://localhost:8000/',

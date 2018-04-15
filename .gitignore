@@ -32,3 +32,6 @@ public
 
 # Ignore api keys
 api_keys.json
+
+#ignore http tunnel
+ngrok

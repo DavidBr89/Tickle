@@ -5,8 +5,11 @@ import * as chromatic from 'd3-scale-chromatic';
 import hull from 'concaveman';
 import * as d3 from 'd3';
 import chroma from 'chroma-js';
-import points from 'point-at-length';
 import km from 'ml-kmeans';
+import { intersection } from 'lodash';
+
+import { getBoundingBox } from '../utils';
+import polyOffset from './polyOffset';
 
 // import { colorScale, shadowStyle } from '../cards/styles';
 
@@ -14,9 +17,7 @@ function kmeans(values) {
   const euclDist = (x1, y1, x2, y2) =>
     Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
   const dists = values.map(({ x: x1, y: y1 }) =>
-    values.map(({ x: x2, y: y2 }) => [
-      euclDist(x1, y1, x2, y2) > 200 ? euclDist(x1, y1, x2, y2) : 0
-    ])
+    values.map(({ x: x2, y: y2 }) => [euclDist(x1, y1, x2, y2)])
   );
   const clustered = km(dists, 2).clusters.map((c, i) => ({
     ...values[i],
@@ -63,67 +64,6 @@ const groupPoints = function(nodes, offsetX = 0, offsetY = 0) {
   );
 };
 
-function Step(context) {
-  this._context = context;
-  this._t = 0;
-}
-
-Step.prototype = {
-  areaStart() {
-    this._line = 0;
-  },
-  areaEnd() {
-    this._line = NaN;
-  },
-  lineStart() {
-    this._x = this._y = NaN;
-    this._point = 0;
-  },
-  lineEnd() {
-    if (this._line || (this._line !== 0 && this._point === 1))
-      this._context.closePath();
-    if (this._line >= 0) (this._t = 1 - this._t), (this._line = 1 - this._line);
-  },
-  point(x, y) {
-    (x = +x), (y = +y);
-    switch (this._point) {
-      case 0: {
-        this._point = 1;
-        this._context.moveTo(x, y);
-        break;
-      }
-      case 1:
-        this._point = 2; // proceed
-      default: {
-        if (this._t <= 0) {
-          console.log(this._y);
-
-          let xN = Math.abs(x - this._x) * 0.25,
-            yN = Math.abs(y - this._y) * 0.25,
-            mYb = this._y < y ? this._y + yN : this._y - yN,
-            mYa = this._y > y ? y + yN : y - yN;
-
-          this._context.quadraticCurveTo(this._x, this._y, this._x, mYb);
-          this._context.lineTo(this._x, mYa);
-          this._context.quadraticCurveTo(this._x, y, this._x + xN, y);
-          this._context.lineTo(x - xN, y);
-          // this._context.quadraticCurveTo(x, y, x, mY);
-        } else {
-          const x1 = this._x * (1 - this._t) + x * this._t;
-          this._context.moveTo(x1, this._y);
-          this._context.lineTo(x1, y);
-        }
-        break;
-      }
-    }
-    (this._x = x), (this._y = y);
-  }
-};
-
-const stepRound = function(context) {
-  return new Step(context);
-};
-
 // function cheapSketchyOutline(path) {
 //   const j = 2;
 //   let i = 0;
@@ -148,6 +88,7 @@ const stepRound = function(context) {
 //     .curve(d3.curveBasis);
 //   return line(pointsArray);
 // }
+//
 function curveStepOutside(context) {
   let y0, i;
   return {
@@ -174,8 +115,15 @@ class BubbleOverlay extends Component {
   }
 
   render() {
-    const { data, width, height, zoom, selectedTags, colorScale } = this.props;
-    console.log('selectedTags', selectedTags);
+    const {
+      data,
+      width,
+      height,
+      zoom,
+      selectedTags,
+      colorScale,
+      comps
+    } = this.props;
 
     const blurFactor = 2;
     const bubbleRadius = 25;
@@ -202,8 +150,15 @@ class BubbleOverlay extends Component {
       .sort((a, b) => b.values.length - a.values.length)
       .map(({ id, key, values }) => {
         const size = offsetScale(values.length);
-        const clusters = kmeans(values);
-        console.log('clusters', clusters);
+        const bbox = getBoundingBox(values, d => [d.x, d.y]);
+        const distY = bbox[1][1] - bbox[0][1];
+        const distX = bbox[1][0] - bbox[0][0];
+
+        const clusters =
+          distY > height / 4 || distX > width / 2
+            ? kmeans(values)
+            : [{ values }];
+        [{ values }];
 
         const hulls = clusters.map(c =>
           hull(groupPoints(c.values, size, size), 1, 100)
@@ -213,27 +168,46 @@ class BubbleOverlay extends Component {
         return (
           <g key={id}>
             {hulls.map(h => (
-              <path
-                style={{
-                  stroke: color,
-                  strokeDasharray: dashScale(zoom),
-                  strokeDashoffset: 30,
-                  strokeWidth: dashScale(zoom)
-                }}
-                d={d3.line().curve(d3.curveStep)(h)}
-                id={`p${id}`}
-                fill={color}
-                opacity={selectedTags.includes(key) ? 1 : 0.4}
-              />
+              <g>
+                <path
+                  style={{
+                    stroke: 'black'
+                  }}
+                  fill="none"
+                  opacity={selectedTags.includes(key) ? 1 : 0.4}
+                />
+                <path
+                  style={{
+                    stroke: color,
+                    strokeDasharray: dashScale(zoom),
+                    strokeDashoffset: 30,
+                    strokeWidth: dashScale(zoom)
+                  }}
+                  d={d3.line().curve(d3.curveStep)(h)}
+                  id={`p${id}`}
+                  fill={color}
+                  opacity={selectedTags.includes(key) ? 1 : 0.4}
+                />
+              </g>
             ))}
           </g>
         );
       });
 
-    const circles = data.map(b =>
-      b.values.map(d => <circle cx={d.x} cy={d.y} fill="black" r="15" />)
-    );
-    console.log('circles', circles);
+    const Bubbles2 = comps.map((values, i) => {
+      const h = hull(groupPoints(values, 20, 20), 1, 100);
+      return (
+        <g key={`${i}comp`}>
+          <path
+            style={{
+              stroke: 'black'
+            }}
+            d={d3.line().curve(d3.curveBasis)(h)}
+            fill={'none'}
+          />
+        </g>
+      );
+    });
     return (
       <svg
         style={{
@@ -243,6 +217,7 @@ class BubbleOverlay extends Component {
         }}
       >
         {Bubbles}
+        {Bubbles2}
       </svg>
     );
   }

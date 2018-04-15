@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 
+import { getBoundingBox } from '../utils';
+
 class ZoomContainer extends Component {
   static propTypes = {
     children: PropTypes.func,
@@ -69,7 +71,8 @@ class ZoomContainer extends Component {
   // // }
 
   componentDidMount() {
-    d3.select(this.zoomCont).call(this.zoomFactory());
+    const zoomFactoryCont = this.zoomFactory();
+    d3.select(this.zoomCont).call(zoomFactoryCont);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -90,6 +93,28 @@ class ZoomContainer extends Component {
       d3.select(this.zoomCont).call(zoomFactoryCont.transform, zoomHandler);
 
       this.setState({ zoomHandler });
+    } else {
+      const bounds = getBoundingBox(nodes, d => [d.x, d.y]);
+
+      const offsetX = 50;
+      const offsetY = 200;
+      const dx = bounds[1][0] - bounds[0][0] + offsetX;
+      const dy = bounds[1][1] - bounds[0][1] + offsetY;
+      const x = (bounds[0][0] + bounds[1][0]) / 2;
+      const y = (bounds[0][1] + bounds[1][1]) / 2;
+      const scale = Math.max(
+        1,
+        Math.min(8, 0.9 / Math.max(dx / width, dy / height))
+      );
+      // const translate = [width / 2 - scale * x, height / 2 - scale * y];
+
+      const zoomHandler = d3.zoomIdentity
+        .translate(width / 2 - x * scale, height / 2 - y * scale)
+        .scale(scale);
+
+      d3.select(this.zoomCont).call(zoomFactoryCont.transform, zoomHandler);
+
+      this.setState({ zoomHandler });
     }
 
     // else {
@@ -105,7 +130,7 @@ class ZoomContainer extends Component {
     return d3
       .zoom()
       .wheelDelta(() => -d3.event.deltaY * (d3.event.deltaMode ? 50 : 1) / 500)
-      .scaleExtent([1, 4])
+      .scaleExtent([0.4, 4])
       .extent([[0, 0], [width, height]])
       .on('zoom', () => {
         this.setState({
@@ -117,12 +142,11 @@ class ZoomContainer extends Component {
   render() {
     const { children, width, height, style, className, nodes } = this.props;
     const { zoomHandler } = this.state;
-    const newNodes = nodes
-      .map(d => {
-        const [x, y] = zoomHandler.apply([d.x, d.y]);
-        return { ...d, x, y };
-      })
-      // .filter(({ x, y }) => x > 0 && x < width && y > 0 && y < height);
+    const newNodes = nodes.map(d => {
+      const [x, y] = zoomHandler.apply([d.x, d.y]);
+      return { ...d, x, y };
+    });
+    // .filter(({ x, y }) => x > 0 && x < width && y > 0 && y < height);
 
     return (
       <div
