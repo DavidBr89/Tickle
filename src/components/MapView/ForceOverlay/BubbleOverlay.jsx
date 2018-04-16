@@ -6,7 +6,13 @@ import hull from 'concaveman';
 import * as d3 from 'd3';
 import chroma from 'chroma-js';
 import km from 'ml-kmeans';
-import { intersection } from 'lodash';
+
+import {
+  Annotation,
+  SubjectThreshold,
+  ConnectorElbow,
+  Note
+} from 'react-annotation';
 
 import { getBoundingBox } from '../utils';
 import polyOffset from './polyOffset';
@@ -155,10 +161,10 @@ class BubbleOverlay extends Component {
         const distX = bbox[1][0] - bbox[0][0];
 
         const clusters =
-          distY > height * 4 / 6 || distX > width * 4 / 6
-            ? kmeans(values)
-            : [{ values }];
-        [{ values }];
+          // distY > height * 4 / 6 || distX > width * 4 / 6
+          //   ? kmeans(values)
+          //   : [{ values }];
+          [{ values }];
         // const clusters =
         //   distY > 0 || distX > 0
         //     ? [
@@ -204,15 +210,16 @@ class BubbleOverlay extends Component {
         );
       });
 
-    const Bubbles2 = comps.map((values, i) => {
-      const h = hull(groupPoints(values, 20, 20), 10, 100);
+    const Bubbles2 = comps.map(({ key, values }, i) => {
+      const h = hull(groupPoints(values, 20, 30), 10, 100);
       return (
-        <g key={`${i}comp`}>
+        <g key={`${key}comp1`}>
           <path
             style={{
               stroke: 'black'
             }}
-            d={d3.line().curve(d3.curveStep)(h)}
+            strokeWidth="1"
+            d={d3.line().curve(d3.curveBasis)(h)}
             fill={'none'}
           />
         </g>
@@ -228,6 +235,54 @@ class BubbleOverlay extends Component {
       >
         {Bubbles}
         {Bubbles2}
+        {comps.map(({ values, key, tags }, i) => {
+          const h = hull(groupPoints(values, 20, 30), 10, 100);
+          const center = d3.polygonCentroid(h);
+          const bbox = getBoundingBox(h);
+          const distY = bbox[1][1] - bbox[0][1];
+          const distX = bbox[1][0] - bbox[0][0];
+
+          // return (
+          //   <AnnotationCalloutElbow
+          //     key={key}
+          //     x={bbox[0][0] + distX / 2}
+          //     y={bbox[0][1]}
+          //     dy={-40}
+          //     dx={10}
+          //     color={'black'}
+          //     note={{
+          //       title: `#${i}`,
+          //       label: tags.slice(0, 3).join(','),
+          //       lineType: 'horizontal'
+          //     }}
+          //   />
+          // );
+          return (
+            <Annotation
+              key={key}
+              x={bbox[0][0] + distX / 2}
+              y={bbox[0][1]}
+              dy={-30}
+              dx={10}
+              color={'black'}
+              title={`#${i}`}
+              label={tags
+                .map(d => d.key)
+                .slice(0, 4)
+                .join(', ')}
+            >
+              <SubjectThreshold />
+              <ConnectorElbow />
+              <Note
+                style={{ background: 'green' }}
+                lineType="horizontal"
+                align="middle"
+                wrap="120"
+                key={key}
+              />
+            </Annotation>
+          );
+        })}
       </svg>
     );
   }

@@ -168,7 +168,8 @@ class CardGrid extends Component {
       innerMargin,
       width,
       style,
-      className
+      className,
+      children
     } = this.props;
     const { selectedId, cardStacks } = this.state;
     const slotSize = width / 3;
@@ -219,18 +220,7 @@ class CardGrid extends Component {
                     })
               }
             >
-              <PreviewCard
-                {...d}
-                key={d.id}
-                selected={selectedId === d.id}
-                style={{
-                  // height: '80%',
-                  transition: `transform 1s`
-                  // boxShadow:
-                  //   selectedId === d.id &&
-                  //   '1px 1px 7px rgba(0,0,0,0.4)'
-                }}
-              />
+              {children(d)}
             </div>
           ))}
         </div>

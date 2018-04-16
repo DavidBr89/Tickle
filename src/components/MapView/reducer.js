@@ -274,13 +274,14 @@ function reducer(state = {}, action) {
         longitude: centerLng
       });
 
-      const newCards = state.defaultCards.filter(({ loc, tags }) => {
-        const [x, y] = screenVp.project([loc.longitude, loc.latitude]);
-        const tagBool =
-          selectedTags.length === 0 ||
-          intersection(selectedTags, tags).length > 0;
-        return tagBool && y > 0 && y < height && x > 0 && x < width;
-      });
+      // // TODO: this is too slow
+      // const newCards = state.defaultCards.filter(({ loc, tags }) => {
+      //   const [x, y] = screenVp.project([loc.longitude, loc.latitude]);
+      //   const tagBool =
+      //     selectedTags.length === 0 ||
+      //     intersection(selectedTags, tags).length > 0;
+      //   return tagBool && y > 0 && y < height && x > 0 && x < width;
+      // });
 
       // console.log('newCards', newCards);
 
@@ -289,7 +290,7 @@ function reducer(state = {}, action) {
         longitude: newLng,
         latitude: newLat,
         // birdsEyeView,
-        cards: newCards,
+        // cards: newCards,
 
         // latitude: newLat, // latScale(viewport.zoom),
         zoom: Math.max(minZoom, zoom),

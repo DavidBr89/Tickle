@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
+import corners from './corners.scss';
 // import { colorScale, shadowStyle } from '../cards/styles';
 
 function Tag({
@@ -15,7 +17,7 @@ function Tag({
   return (
     <div
       onClick={onClick}
-      className={className}
+      className={corners.other}
       style={{
         // padding: '0.25rem',
         borderRadius: '10%',

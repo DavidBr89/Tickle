@@ -139,7 +139,7 @@ module.exports = {
     historyApiFallback: true,
     port: PORT,
     host: HOST,
-    // disableHostCheck: true,
+    disableHostCheck: true,
     // TODO: change back later
     https: false
     // headers: {

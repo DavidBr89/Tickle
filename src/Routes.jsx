@@ -45,6 +45,11 @@ const defaultLocation = {
   latitude: 50.85146,
   longitude: 4.315483
 };
+
+const defaultCards = [
+  ...dummyCards,
+  { id: 'template', template: true, tags: [], loc: defaultLocation }
+];
 const mapZoom = 9;
 const [width, height] = [100, 100];
 // debug('lego:routes');
@@ -71,8 +76,8 @@ const defaultState = {
     latCenterOffset: 0.0018,
     latBottom: 0.003,
     defaultZoom: mapZoom,
-    cards: dummyCards,
-    defaultCards: dummyCards,
+    cards: defaultCards,
+    defaultCards,
     zoom: mapZoom,
     direction: null,
     ...defaultLocation,

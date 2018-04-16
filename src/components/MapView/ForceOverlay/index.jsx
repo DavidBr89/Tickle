@@ -6,7 +6,7 @@ import tsnejs from 'tsne';
 import lap from 'lap-jv/lap.js';
 import SOM from 'ml-som';
 import scc from 'strongly-connected-components';
-import louvain from './jlouvain';
+// import louvain from './jlouvain';
 
 import { intersection, union, uniq } from 'lodash';
 import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
@@ -145,7 +145,7 @@ function lapFy(data) {
   return resLa.map(d => [x(d.i), x(d.j)]);
 }
 
-function getLinks(nodes, width, height) {
+function splitLinks(nodes, width, height) {
   const links = [];
   nodes.forEach(s => {
     nodes.forEach(t => {
@@ -160,7 +160,7 @@ function getLinks(nodes, width, height) {
       if (
         s.id !== t.id &&
         interSet.length > 0 &&
-        distY < height / 8 &&
+        distY < height / 7 &&
         distX < width / 3
       ) {
         links.push({
@@ -178,11 +178,11 @@ function getLinks(nodes, width, height) {
 const connectedComponents = (nodes, width, height) => {
   // const coms = louvain()
   //   .nodes(nodes.map(d => d.id))
-  //   .edges(getLinks(nodes, width, height))();
+  //   .edges(splitLinks(nodes, width, height))();
   //
   const adjList = nodes.map(n =>
     uniq(
-      getLinks(nodes, width, height)
+      splitLinks(nodes, width, height)
         .reduce((acc, { source, target }) => {
           if (n.id === source) return [...acc, target];
           if (n.id === target) return [...acc, source];
@@ -192,7 +192,20 @@ const connectedComponents = (nodes, width, height) => {
     )
   );
   const comps = scc(adjList).components;
-  return comps.map((d, i) => ({ key: i, values: d.map(e => nodes[e]) }));
+  return comps.map((d, i) => {
+    const values = d.map(e => nodes[e]);
+    const tags = d3
+      .nest()
+      .key(e => e)
+      .entries(values.reduce((acc, v) => [...acc, ...v.tags], []))
+      .sort((a, b) => b.values.length - a.values.length);
+
+    return {
+      key: i,
+      values,
+      tags
+    };
+  });
 
   // const communities = d3
   //   .nest()
@@ -246,7 +259,7 @@ class ForceOverlay extends Component {
     padTop: 0,
     force: false,
     data: [],
-    delay: 400,
+    delay: 700,
     mode: 'geo',
     colorScale: () => 'green'
   };
@@ -260,46 +273,16 @@ class ForceOverlay extends Component {
     const somPos = somFy(data, width, height);
 
     const nodes = data.map(d => ({ ...d, x: width / 2, y: height / 2 }));
-    const links = getLinks(nodes, width, height);
-
-    const adjList = nodes.map(n =>
-      uniq(
-        links
-          .reduce((acc, { source, target }) => {
-            if (n.id === source) return [...acc, target];
-            if (n.id === target) return [...acc, source];
-            return acc;
-          }, [])
-          .map(id => nodes.findIndex(d => d.id === id))
-      )
-    );
-    console.log('adjList', adjList, 'links', links);
-    const comps = scc(adjList).components;
-    const coms = louvain()
-      .nodes(nodes.map(d => d.id))
-      .edges(links)();
-
-    const communities = d3
-      .nest()
-      .key(d => d.cluster)
-      .entries(
-        Object.values(coms).map((cluster, i) => ({
-          ...nodes[i],
-          cluster
-        }))
-      );
 
     this.state = {
       nodes,
-      links,
-      comps,
       tsnePos: initPos,
       somPos,
-      gridPos: lapFy(somPos),
-      communities
+      gridPos: lapFy(somPos)
     };
 
     this.layout = this.layout.bind(this);
+    this.ids = [];
 
     this.forceSim = d3.forceSimulation();
     // this.zoom = this.zoom.bind(this);
@@ -310,7 +293,8 @@ class ForceOverlay extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    clearTimeout(this.id);
+    // clearTimeout(this.id);
+    // this.ids.map(clearTimeout);
     const { data: oldData } = this.props;
     const { data: nextData, viewport, mode } = nextProps;
     const { width, height } = viewport;
@@ -330,11 +314,13 @@ class ForceOverlay extends Component {
   }
 
   componentDidUpdate() {
-    clearTimeout(this.id);
+    // clearTimeout(this.id);
+    // this.ids.map(clearTimeout);
   }
 
   componentWillUnmount() {
-    clearTimeout(this.id);
+    // clearTimeout(this.id);
+    // this.ids.map(clearTimeout);
   }
 
   layout(nextProps = null, nextState = null) {
@@ -405,35 +391,44 @@ class ForceOverlay extends Component {
       const oldNode = oldNodes.find(n => n.id == id) || {};
       return {
         id,
-        x: oldNode.x || geoPos[i][0],
-        y: oldNode.y || geoPos[i][1],
+        x: geoPos[i][0],
+        y:  geoPos[i][1],
         tags,
         ...c
       };
     });
 
     // .filter(n => n.x > 0 && n.x < width && n.y > 0 && n.y < height);
-    //
+    this.ids.map(clearTimeout);
+    // this.id = setTimeout(() => {
     this.forceSim = this.forceSim
       .nodes(nodes)
       .restart()
-      // TODO: proper rehear
+      // TODO: proper reheat
       .alpha(1)
-      .alphaMin(0.6)
+      .alphaMin(0.8)
       .force('x', d3.forceX((d, i) => xScale(pos[i][0])).strength(0.5))
       .force('y', d3.forceY((d, i) => yScale(pos[i][1])).strength(0.5))
-      .force('coll', d3.forceCollide(25))
+      .force('coll', d3.forceCollide(15))
       // .force('center', d3.forceCenter(width / 2, height / 2))
       .on('end', () => {
-        this.id = setTimeout(
-          () =>
-            this.setState({
-              nodes: this.forceSim.nodes()
-            }),
-          delay
-        );
-        this.forceSim.on('end', null);
+        this.ids.map(clearTimeout);
+        this.ids = this.ids.concat([
+          setTimeout(
+            () =>
+              this.setState({
+                nodes: this.forceSim.nodes()
+              }),
+            delay
+          )
+        ]);
       });
+    // }, delay);
+
+    this.forceSim.on('end', null);
+
+    this.ids = [...this.ids, this.id];
+    // if (mode === 'geo') this.forceSim.stop();
 
     this.setState({
       nodes
@@ -459,6 +454,7 @@ class ForceOverlay extends Component {
     const selectedTags = selectedCardId
       ? nodes.find(n => n.id === selectedCardId).tags
       : [];
+
     if (mode === 'geo') {
       return (
         <div
@@ -491,9 +487,7 @@ class ForceOverlay extends Component {
           <Fragment>
             <BubbleOverlay
               nodes={nodes}
-              comps={connectedComponents(zoomedNodes, width, height).map(
-                ({ values }) => values
-              )}
+              comps={connectedComponents(zoomedNodes, width, height)}
               data={[...sets].map(({ values, ...rest }) => {
                 const newValues = values.map(n => {
                   const { x, y } = zoomedNodes.find(d => n.id === d.id);

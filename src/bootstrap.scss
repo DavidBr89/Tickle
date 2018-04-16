@@ -36,6 +36,15 @@
 
 @import url(https://fonts.googleapis.com/css?family=Material+Icons);
 
+@import url(https://fonts.googleapis.com/css?family=Press+Start+2P);
+// body {
+//   // text-align: center;
+//   // margin: 1em;
+//   font: 0.8em "Press start 2P";
+//   // font-weight: 700;
+// }
+
+
 // .slick-center {
 //   transform: scale(1.08);
 // }
@@ -145,3 +154,10 @@ fieldset {
   z-index: 4000;
   transform: translateX(-50%);
 }
+
+
+.annotation-note-bg {
+  fill: white;
+  background: white;
+}
+

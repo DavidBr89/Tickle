@@ -78,7 +78,6 @@ const boxTarget = {
 
     const left = Math.round(delta.x);
     const top = Math.round(delta.y);
-    console.log('item', item);
 
     component.drop(item.id, left, top, props.dragged);
   }

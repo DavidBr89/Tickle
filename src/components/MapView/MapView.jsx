@@ -8,6 +8,8 @@ import * as Icon from 'react-feather';
 import Spinner from 'react-loader-spinner';
 
 // TODO: { LinearInterpolator, FlyToInterpolator }
+import { default as TouchBackend } from 'react-dnd-touch-backend';
+import { DragDropContextProvider } from 'react-dnd';
 import MapGL, { FlyToInterpolator } from 'react-map-gl';
 import * as d3 from 'd3';
 import { colorScale, brighterColorScale } from '../cards/styles';
@@ -16,7 +18,7 @@ import { colorScale, brighterColorScale } from '../cards/styles';
 // import rasterTileStyle from 'raster-tile-style';
 // import ngeohash from 'ngeohash';,
 // import cx from './MapView.scss';
-import { Card, CardMarker } from '../cards';
+import { Card, CardMarker, PreviewCard } from '../cards';
 import SvgOverlay from '../utils/map-layers/SvgOverlay';
 import CardGrid from './CardGrid';
 import ContextView from './ContextView';
@@ -44,6 +46,13 @@ import MapAreaRadius from '../utils/map-layers/MapAreaRadius';
 import chroma from 'chroma-js';
 // import cardIconSrc from '../utils/map-layers/cardIcon.svg';
 import { Modal } from '../utils/modal';
+
+import {
+  DragSourceCont,
+  DropTargetCont
+} from '../CardCreator/DragLayer/SourceTargetCont';
+
+import DragLayer from '../CardCreator/DragLayer/DragLayer';
 
 const line = d3.line();
 
@@ -122,6 +131,7 @@ CardMetaControl.propTypes = {
 class MapView extends PureComponent {
   static propTypes = {
     cards: PropTypes.array.isRequired,
+    defaultCards: PropTypes.array.isRequired,
     mapZoom: PropTypes.number.isRequired,
     userLocation: PropTypes.array.isRequired,
     selectedCardId: PropTypes.string.isRequired,
@@ -184,7 +194,6 @@ class MapView extends PureComponent {
   componentDidMount() {
     const map = this.map.getMap();
     // map._refreshExpiredTiles = false;
-    console.log('mapREF', map);
 
     // const {
     //   computeTopicMapAction,
@@ -254,6 +263,7 @@ class MapView extends PureComponent {
   render() {
     const {
       cards,
+      defaultCards,
       zoom,
       userLocation,
       selectedCardId,
@@ -304,10 +314,21 @@ class MapView extends PureComponent {
     const paddingTop = 16;
 
     const cardSets = setify(cards);
+    const barScales = setify(defaultCards).map(d => ({
+      key: d.key,
+      scale: d3
+        .scaleLinear()
+        .domain([0, d.count])
+        .range([10, 100])
+    }));
 
     const tagColorScale = d3
       .scaleOrdinal()
-      .domain(cardSets.sort((a,b) => a.values.length - b.values.length).map(s => s.key))
+      .domain(
+        cardSets
+          .sort((a, b) => a.values.length - b.values.length)
+          .map(s => s.key)
+      )
       .range(tagColors);
 
     const selectedTags = selectedCard ? selectedCard.tags : [];
@@ -367,6 +388,7 @@ class MapView extends PureComponent {
       >
         <Card
           {...c}
+          edit={c.template}
           onClose={() => extCardAction(null)}
           onCollect={() =>
             toggleCardChallengeAction({ cardChallengeOpen: true })
@@ -376,189 +398,225 @@ class MapView extends PureComponent {
     );
 
     return (
-      <div className="w-100 h-100">
-        <Modal
-          visible={cardChallengeOpen}
-          onClose={() =>
-            toggleCardChallengeAction({ cardChallengeOpen: false })
-          }
-        >
-          {/* TODO: put in real challenge */}
-          <iframe
-            title="emperors"
-            src="http://thescalli.com/emperors/"
-            style={{ border: 'none', width: '100%', height: '90vh' }}
-          />
-        </Modal>
-
-        <div style={{ display: 'flex', width: '200px' }}>
-          <button
-            className="mt-3 ml-3 btn"
-            style={{
-              // position: 'absolute',
-              zIndex: 3000,
-              background: tagListView ? 'whitesmoke' : null
-            }}
-            onClick={toggleTagListAction}
+      <DragDropContextProvider backend={TouchBackend}>
+        <div className="w-100 h-100">
+          <DragLayer />
+          <Modal
+            visible={cardChallengeOpen}
+            onClose={() =>
+              toggleCardChallengeAction({ cardChallengeOpen: false })
+            }
           >
-            <div
+            {/* TODO: put in real challenge */}
+            <iframe
+              title="emperors"
+              src="http://thescalli.com/emperors/"
+              style={{ border: 'none', width: '100%', height: '90vh' }}
+            />
+          </Modal>
+
+          <div style={{ display: 'flex', width: '200px' }}>
+            <button
+              className="mt-3 ml-3 btn"
               style={{
-                display: 'flex',
-                justifyContent: 'center',
-                transform: 'rotate(90deg)'
+                // position: 'absolute',
+                zIndex: 3000,
+                background: tagListView ? 'whitesmoke' : null
+              }}
+              onClick={toggleTagListAction}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  transform: 'rotate(90deg)'
+                }}
+              >
+                <Icon.BarChart size={30} />
+              </div>
+            </button>
+            <button
+              className="mt-3 ml-3 btn"
+              style={{
+                // position: 'absolute',
+                zIndex: 3000,
+                background: gridView ? 'whitesmoke' : null
+              }}
+              onClick={toggleGridAction}
+            >
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Icon.Grid size={30} />
+              </div>
+            </button>
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              filter: tsneView && 'blur(4px)'
+            }}
+          >
+            <DropTargetCont
+              dropHandler={({ left, top, ...c }) =>
+                console.log('c', left, top, c)
+              }
+              dragged={false}
+            >
+              <MapGL
+                ref={m => (this.map = m)}
+                {...mapViewport}
+                mapStyle={'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l'}
+                onViewportChange={changeMapViewportAction}
+                onClick={({ lngLat, deltaTime }) =>
+                  // TODO: fix later
+                  deltaTime > 30 && userMoveAction({ lngLat })
+                }
+              >
+                <UserOverlay {...mapViewport} location={userLocation} />
+                <SvgOverlay
+                  {...mapViewport}
+                  data={
+                    direction !== null
+                      ? [
+                          Object.values(userLocation).reverse(),
+                        ...direction.routes[0].geometry.coordinates
+                      ]
+                      : []
+                  }
+                >
+                  {([x, y], [nx, ny]) =>
+                    nx !== null &&
+                    ny !== null && (
+                    <g>
+                        <circle
+                          r={3}
+                            cx={x}
+                          cy={y}
+                            fill={colorScale(
+                            selectedCard.challenge
+                              ? selectedCard.challenge.type
+                                : 'quiz'
+                          )}
+                          />
+                        <path
+                            d={line([[x, y], [nx, ny]])}
+                          style={{
+                              stroke: colorScale(selectedCard.challenge.type),
+                            strokeWidth: 8
+                          }}
+                          />
+                      </g>
+                    )
+                  }
+                </SvgOverlay>
+              </MapGL>
+            </DropTargetCont>
+          </div>
+          <div
+            style={{
+              opacity: gridView ? 1 : 0,
+              display: !gridView ? 'none' : null,
+              transition: 'opacity 0.5s'
+            }}
+          >
+            <CardGrid
+              cards={[...cards]}
+              onSelect={selectCardAction}
+              selectedCardId={selectedCardId}
+              onExtend={extCardAction}
+              width={98}
+              unit={'vw'}
+              controls={
+                <CardMetaControl
+                  key={nextCardControlAction.key}
+                  action={nextCardControlAction}
+                />
+              }
+              style={{
+                height: '24vh',
+                marginLeft: '2vw',
+                marginRight: '2vw',
+                zIndex: 2000,
+                paddingTop
               }}
             >
-              <Icon.BarChart size={30} />
-            </div>
-          </button>
+              {d => (
+                <DragSourceCont
+                  dragHandler={isDragging =>
+                    console.log('isDragging', isDragging)
+                  }
+                  id={d.id}
+                >
+                  <PreviewCard
+                    {...d}
+                    key={d.id}
+                    edit={d.template}
+                    selected={selectedCardId === d.id}
+                    style={{
+                      transition: `transform 1s`
+                    }}
+                  />
+                </DragSourceCont>
+              )}
+            </CardGrid>
+
+            <TagBar
+              tags={cardSets.filter(d => selectedTags.includes(d.key))}
+              colorScale={tagColorScale}
+              scale={barScale}
+              onClick={filterCardsAction}
+              className="mt-3"
+              style={{ zIndex: 5000 }}
+            />
+          </div>
+          <div
+            style={{
+              paddingTop,
+              opacity: tagListView ? 1 : 0,
+              transition: 'opacity 0.5s',
+              display: !tagListView ? 'none' : null,
+              zIndex: tagListView ? 5000 : null
+            }}
+          >
+            <TagList
+              data={cardSets}
+              scale={barScale}
+              barScales={barScales}
+              colorScale={tagColorScale}
+            />
+          </div>
+          <Title />
+          <ForceOverlay
+            delay={400}
+            viewport={mapViewport}
+            data={cards}
+            sets={cardSets}
+            selectedCardId={selectedCardId}
+            mode={!tsneView ? 'geo' : 'som'}
+            padBottom={!gridView && !tagListView ? height * 1 / 6 : 50}
+            padTop={gridView || tagListView ? height * 1 / 2 : height * 1 / 6}
+            padLeft={70}
+            padRight={70}
+            colorScale={tagColorScale}
+          >
+            {animatedMarker}
+          </ForceOverlay>
           <button
-            className="mt-3 ml-3 btn"
+            className="fixed-bottom-right btn m-3"
             style={{
               // position: 'absolute',
-              zIndex: 3000,
-              background: gridView ? 'whitesmoke' : null
+              zIndex: 1000,
+              background: tsneView && 'whitesmoke'
             }}
-            onClick={toggleGridAction}
+            onClick={toggleTsneViewAction}
           >
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <Icon.Grid size={30} />
+              <Icon.Eye size={30} />
             </div>
           </button>
         </div>
-        <div
-          style={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            filter: tsneView && 'blur(4px)'
-          }}
-        >
-          <MapGL
-            ref={m => (this.map = m)}
-            {...mapViewport}
-            mapStyle={'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l'}
-            onViewportChange={changeMapViewportAction}
-            onClick={({ lngLat, deltaTime }) =>
-              // TODO: fix later
-              deltaTime > 30 && userMoveAction({ lngLat })
-            }
-          >
-            <UserOverlay {...mapViewport} location={userLocation} />
-            <SvgOverlay
-              {...mapViewport}
-              data={
-                direction !== null
-                  ? [
-                    Object.values(userLocation).reverse(),
-                    ...direction.routes[0].geometry.coordinates
-                  ]
-                  : []
-              }
-            >
-              {([x, y], [nx, ny]) =>
-                nx !== null &&
-                ny !== null && (
-                    <g>
-                    <circle
-                        r={3}
-                      cx={x}
-                      cy={y}
-                        fill={colorScale(
-                        selectedCard.challenge
-                            ? selectedCard.challenge.type
-                            : 'quiz'
-                      )}
-                      />
-                    <path
-                        d={line([[x, y], [nx, ny]])}
-                        style={{
-                        stroke: colorScale(selectedCard.challenge.type),
-                          strokeWidth: 8
-                        }}
-                      />
-                  </g>
-                  )
-              }
-            </SvgOverlay>
-          </MapGL>
-        </div>
-        <div
-          style={{
-            opacity: gridView ? 1 : 0,
-            display: !gridView ? 'none' : null,
-            transition: 'opacity 0.5s'
-          }}
-        >
-          <CardGrid
-            cards={cards}
-            onSelect={selectCardAction}
-            selectedCardId={selectedCardId}
-            onExtend={extCardAction}
-            width={98}
-            unit={'vw'}
-            controls={
-              <CardMetaControl
-                key={nextCardControlAction.key}
-                action={nextCardControlAction}
-              />
-            }
-            style={{
-              height: '24vh',
-              marginLeft: '2vw',
-              marginRight: '2vw',
-              zIndex: 2000,
-              paddingTop
-            }}
-          />
-          <TagBar
-            tags={cardSets.filter(d => selectedTags.includes(d.key))}
-            colorScale={tagColorScale}
-            scale={barScale}
-            onClick={filterCardsAction}
-            className="mt-3"
-            style={{ zIndex: 5000 }}
-          />
-        </div>
-        <div
-          style={{
-            paddingTop,
-            opacity: tagListView ? 1 : 0,
-            transition: 'opacity 0.5s',
-            display: !tagListView ? 'none' : null,
-            zIndex: tagListView ? 5000 : null
-          }}
-        >
-          <TagList data={cardSets} scale={barScale} />
-        </div>
-        <Title />
-        <ForceOverlay
-          viewport={mapViewport}
-          data={cards}
-          sets={cardSets}
-          selectedCardId={selectedCardId}
-          mode={!tsneView ? 'geo' : 'som'}
-          padBottom={!gridView && !tagListView ? height * 1 / 6 : 50}
-          padTop={gridView || tagListView ? height * 1 / 2 : height * 1 / 6}
-          padLeft={70}
-          padRight={70}
-          colorScale={tagColorScale}
-        >
-          {animatedMarker}
-        </ForceOverlay>
-        <button
-          className="fixed-bottom-right btn m-3"
-          style={{
-            // position: 'absolute',
-            zIndex: 1000,
-            background: tsneView && 'whitesmoke'
-          }}
-          onClick={toggleTsneViewAction}
-        >
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Icon.Eye size={30} />
-          </div>
-        </button>
-      </div>
+      </DragDropContextProvider>
     );
   }
 }
