@@ -13,6 +13,9 @@ import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 
 import ZoomContainer from './ZoomContainer';
 import BubbleOverlay from './BubbleOverlay';
+import TopicAnnotationOverlay from './TopicAnnotationOverlay';
+import AmbientOverlay from './AmbientOverlay';
+
 import { setify } from '../utils';
 
 function jaccard(a, b) {
@@ -41,35 +44,35 @@ function somFy(data, width, height, callback = d => d) {
   return somPos;
 }
 
-function tsneFy(data, callback = d => d, iter = 400) {
-  const sets = setify(data).reduce((acc, d) => {
-    acc[d.key] = d.count;
-    return acc;
-  }, {});
-
-  const dists = data.map(a =>
-    data.map(b =>
-      jaccard(a.tags.filter(t => sets[t] > 1), b.tags.filter(t => sets[t] > 1))
-    )
-  );
-
-  // eslint-disable-next-line new-cap
-  const model = new tsnejs.tSNE({
-    dim: 2,
-    perplexity: 10, // 10,
-    epsilon: 40
-  });
-
-  // initialize data with pairwise distances
-  model.initDataDist(dists);
-
-  for (let i = 0; i < iter; ++i) {
-    model.step();
-    callback(model.getSolution());
-  }
-
-  return model.getSolution();
-}
+// function tsneFy(data, callback = d => d, iter = 400) {
+//   const sets = setify(data).reduce((acc, d) => {
+//     acc[d.key] = d.count;
+//     return acc;
+//   }, {});
+//
+//   const dists = data.map(a =>
+//     data.map(b =>
+//       jaccard(a.tags.filter(t => sets[t] > 1), b.tags.filter(t => sets[t] > 1))
+//     )
+//   );
+//
+//   // eslint-disable-next-line new-cap
+//   const model = new tsnejs.tSNE({
+//     dim: 2,
+//     perplexity: 10, // 10,
+//     epsilon: 40
+//   });
+//
+//   // initialize data with pairwise distances
+//   model.initDataDist(dists);
+//
+//   for (let i = 0; i < iter; ++i) {
+//     model.step();
+//     callback(model.getSolution());
+//   }
+//
+//   return model.getSolution();
+// }
 
 // function runTsne(data, iter = 400) {
 //   const dists = data.map(a => data.map(b => jaccard(a.tags, b.tags)));
@@ -145,7 +148,7 @@ function lapFy(data) {
   return resLa.map(d => [x(d.i), x(d.j)]);
 }
 
-function splitLinks(nodes, width, height) {
+function splitLinks(nodes, width = Infinity, height = Infinity) {
   const links = [];
   nodes.forEach(s => {
     nodes.forEach(t => {
@@ -162,6 +165,14 @@ function splitLinks(nodes, width, height) {
         interSet.length > 0 &&
         distY < height / 7 &&
         distX < width / 3
+          // &&
+        // s.x > 0 && s.x < width &&
+        // t.x > 0 &&
+        // t.x < width &&
+        // s.y > 0 &&
+        // s.y < height &&
+        // t.y > 0 &&
+        // t.y < height
       ) {
         links.push({
           source: s.id,
@@ -175,7 +186,7 @@ function splitLinks(nodes, width, height) {
   return links;
 }
 
-const connectedComponents = (nodes, width, height) => {
+function connectedComponents(nodes, width = Infinity, height = Infinity) {
   // const coms = louvain()
   //   .nodes(nodes.map(d => d.id))
   //   .edges(splitLinks(nodes, width, height))();
@@ -216,7 +227,7 @@ const connectedComponents = (nodes, width, height) => {
   //       cluster
   //     }))
   //   );
-};
+}
 
 class ForceOverlay extends Component {
   static propTypes = {
@@ -240,12 +251,15 @@ class ForceOverlay extends Component {
       })
     ),
     delay: PropTypes.number,
-    padRight: PropTypes.number,
-    padLeft: PropTypes.number,
-    padTop: PropTypes.number,
-    padBottom: PropTypes.number,
+    padding: PropTypes.shape({
+      right: PropTypes.number,
+      left: PropTypes.number,
+      top: PropTypes.number,
+      bottom: PropTypes.number
+    }),
     mode: PropTypes.oneOf(['geo', 'tsne', 'som', 'grid']),
-    colorScale: PropTypes.func
+    colorScale: PropTypes.func,
+    labels: PropTypes.bool
   };
 
   static defaultProps = {
@@ -253,15 +267,18 @@ class ForceOverlay extends Component {
     className: null,
     style: {},
     viewport: { width: 100, height: 100, longitude: 0, latitude: 0 },
-    padRight: 0,
-    padLeft: 0,
-    padBottom: 0,
-    padTop: 0,
+    padding: {
+      right: 0,
+      left: 0,
+      bottom: 0,
+      top: 0
+    },
     force: false,
     data: [],
     delay: 700,
     mode: 'geo',
-    colorScale: () => 'green'
+    colorScale: () => 'green',
+    labels: false
   };
 
   constructor(props) {
@@ -278,7 +295,8 @@ class ForceOverlay extends Component {
       nodes,
       tsnePos: initPos,
       somPos,
-      gridPos: lapFy(somPos)
+      gridPos: lapFy(somPos),
+      comps: connectedComponents(nodes)
     };
 
     this.layout = this.layout.bind(this);
@@ -324,17 +342,7 @@ class ForceOverlay extends Component {
   }
 
   layout(nextProps = null, nextState = null) {
-    const {
-      viewport,
-      mode,
-      delay,
-      data,
-      padLeft,
-      padRight,
-      padBottom,
-      padTop,
-      sets
-    } =
+    const { viewport, mode, delay, data, padding, sets } =
       nextProps || this.props;
     const { width, height, zoom, latitude, longitude } = viewport;
     const { tsnePos, somPos, gridPos, nodes: oldNodes, comps } =
@@ -372,16 +380,16 @@ class ForceOverlay extends Component {
         ? d3
           .scaleLinear()
           .domain(d3.extent(pos.map(d => d[0])))
-          .range([padLeft, width - padRight])
-        : d => d;
+          .range([padding.left, width - padding.right])
+        : x => x;
 
     const yScale =
       mode !== 'geo'
         ? d3
           .scaleLinear()
           .domain(d3.extent(pos.map(d => d[1])))
-          .range([padTop, height - padBottom])
-        : d => d;
+          .range([padding.top, height - padding.bottom])
+        : y => y;
     // const tsnePos = runTsne(data, 300);
 
     // prevent stretching of similiarities
@@ -391,8 +399,8 @@ class ForceOverlay extends Component {
       const oldNode = oldNodes.find(n => n.id == id) || {};
       return {
         id,
-        x: geoPos[i][0],
-        y:  geoPos[i][1],
+        x: xScale(pos[i][0]),
+        y: yScale(pos[i][1]),
         tags,
         ...c
       };
@@ -445,7 +453,8 @@ class ForceOverlay extends Component {
       selectedCardId,
       center,
       sets,
-      colorScale
+      colorScale,
+      labels
     } = this.props;
 
     const { width, height } = viewport;
@@ -483,29 +492,43 @@ class ForceOverlay extends Component {
         nodes={nodes}
         selectedId={selectedCardId}
       >
-        {(zoomedNodes, transform) => (
-          <Fragment>
-            <BubbleOverlay
-              nodes={nodes}
-              comps={connectedComponents(zoomedNodes, width, height)}
-              data={[...sets].map(({ values, ...rest }) => {
-                const newValues = values.map(n => {
-                  const { x, y } = zoomedNodes.find(d => n.id === d.id);
-                  return { ...n, x, y };
-                });
-                return { values: newValues, ...rest };
-              })}
-              selectedTags={selectedTags}
-              zoom={transform.k}
-              width={width}
-              height={height}
-              colorScale={colorScale}
-            />
-            <div style={{ overflow: 'hidden', width, height }}>
-              {zoomedNodes.map(children)}
-            </div>
-          </Fragment>
-        )}
+        {(zoomedNodes, transform) => {
+          const tmpComps = connectedComponents(zoomedNodes, width, height);
+          const setData = [...sets].map(({ values, ...rest }) => {
+            const newValues = values.map(n => {
+              const { x, y } = zoomedNodes.find(d => n.id === d.id);
+              return { ...n, x, y };
+            });
+            return { values: newValues, ...rest };
+          });
+          return (
+            <Fragment>
+              <BubbleOverlay
+                comps={comps}
+                data={setData}
+                selectedTags={selectedTags}
+                zoom={transform.k}
+                width={width}
+                height={height}
+                colorScale={colorScale}
+              />
+              {labels && (
+                <TopicAnnotationOverlay
+                  comps={tmpComps}
+                  data={setData}
+                  selectedTags={selectedTags}
+                  zoom={transform.k}
+                  width={width}
+                  height={height}
+                  colorScale={colorScale}
+                />
+              )}
+              <div style={{ overflow: 'hidden', width, height }}>
+                {zoomedNodes.map(children)}
+              </div>
+            </Fragment>
+          );
+        }}
       </ZoomContainer>
     );
   }

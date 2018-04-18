@@ -266,13 +266,14 @@ function reducer(state = {}, action) {
         //   offset: [0, 0]
         // });
       })();
-      const screenVp = new PerspectiveMercatorViewport({
-        width,
-        height: height - 50,
-        zoom,
-        latitude: centerLat,
-        longitude: centerLng
-      });
+
+      // const screenVp = new PerspectiveMercatorViewport({
+      //   width,
+      //   height: height - 50,
+      //   zoom,
+      //   latitude: centerLat,
+      //   longitude: centerLng
+      // });
 
       // // TODO: this is too slow
       // const newCards = state.defaultCards.filter(({ loc, tags }) => {

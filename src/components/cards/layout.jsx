@@ -52,7 +52,7 @@ Legend.propTypes = {
 Legend.defaultProps = { style: {}, children: null };
 
 const FieldSet = ({ children, legend, style, edit, borderColor, onClick }) => (
-  <div style={style} onClick={onClick}>
+  <div style={{ ...style, pointerEvents: 'all' }} onClick={onClick}>
     <fieldset
       style={{
         border: `1px solid ${borderColor}`,

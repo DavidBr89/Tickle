@@ -6,6 +6,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import PropTypes from 'prop-types';
 import * as Icon from 'react-feather';
 import Spinner from 'react-loader-spinner';
+import * as chromatic from 'd3-scale-chromatic';
 
 // TODO: { LinearInterpolator, FlyToInterpolator }
 import { default as TouchBackend } from 'react-dnd-touch-backend';
@@ -27,6 +28,7 @@ import Title from './Title';
 import TagBar from './TagBar';
 import TagList from './TagList';
 import { setify } from './utils';
+
 // import StartNav from './StartNav';
 // import { VisibleView, VisibleElement } from '../utils/MySensor.jsx';
 
@@ -57,36 +59,40 @@ import DragLayer from '../CardCreator/DragLayer/DragLayer';
 const line = d3.line();
 
 // TODO: adapt colors
-const tagColors = [
-  '#7fcdbb',
-  '#a1dab4',
-  '#41b6c4',
-  '#a1dab4',
-  '#41b6c4',
-  '#2c7fb8',
-  '#c7e9b4',
-  '#7fcdbb',
-  '#41b6c4',
-  '#2c7fb8',
-  '#c7e9b4',
-  '#7fcdbb',
-  '#41b6c4',
-  '#1d91c0',
-  '#225ea8',
-  '#edf8b1',
-  '#c7e9b4',
-  '#7fcdbb',
-  '#41b6c4',
-  '#1d91c0',
-  '#225ea8',
-  '#edf8b1',
-  '#c7e9b4',
-  '#7fcdbb',
-  '#41b6c4',
-  '#1d91c0',
-  '#225ea8',
-  '#253494'
-].map(c => chroma(c).alpha(0.1));
+const tagColors = chromatic.schemeAccent
+  .reverse()
+  .map(c => chroma(c).alpha(0.04));
+
+//   [
+//   '#7fcdbb',
+//   '#a1dab4',
+//   '#41b6c4',
+//   '#a1dab4',
+//   '#41b6c4',
+//   '#2c7fb8',
+//   '#c7e9b4',
+//   '#7fcdbb',
+//   '#41b6c4',
+//   '#2c7fb8',
+//   '#c7e9b4',
+//   '#7fcdbb',
+//   '#41b6c4',
+//   '#1d91c0',
+//   '#225ea8',
+//   '#edf8b1',
+//   '#c7e9b4',
+//   '#7fcdbb',
+//   '#41b6c4',
+//   '#1d91c0',
+//   '#225ea8',
+//   '#edf8b1',
+//   '#c7e9b4',
+//   '#7fcdbb',
+//   '#41b6c4',
+//   '#1d91c0',
+//   '#225ea8',
+//   '#253494'
+// ].map(c => chroma(c).alpha(0.1));
 
 // const TimoutGrid = ReactTimeout(CardGrid);
 
@@ -313,7 +319,7 @@ class MapView extends PureComponent {
     const cardPadding = 15;
     const paddingTop = 16;
 
-    const cardSets = setify(cards);
+    const cardSets = setify(cards).filter(d => d.count > 0);
     const barScales = setify(defaultCards).map(d => ({
       key: d.key,
       scale: d3
@@ -340,7 +346,7 @@ class MapView extends PureComponent {
 
     const [w, h] = [20, 20];
     const r = 30;
-    const animatedMarker = ({ x, y, selectedCardId, ...c }) => (
+    const animatedMarker = ({ x, y, ...c }) => (
       <ExtendableMarker
         key={c.id}
         selected={extCardId === c.id}
@@ -362,14 +368,14 @@ class MapView extends PureComponent {
                 className="m-3"
                 style={{
                   position: 'absolute',
-                  background: 'grey',
-                  border: '2px solid black',
+                  // background: 'grey',
+                  border: '5px solid black',
                   borderRadius: '50%',
-                  width: r * 2, // '13vw',
-                  height: r * 2, // '13vw',
+                  width: `${r * 2}px`, // '13vw',
+                  height: `${r * 2}px`, // '13vw',
                   transform: `translate(${-r}px,${-r}px)`,
                   opacity: 0.5,
-                  zIndex: -1000
+                  zIndex: 1000
                 }}
               />
             )}
@@ -378,6 +384,7 @@ class MapView extends PureComponent {
               style={{
                 opacity: 1,
                 position: 'absolute',
+                transform: `translateX(3px)`,
                 zIndex: -100
                 // width: w,
                 // height: h
@@ -488,7 +495,7 @@ class MapView extends PureComponent {
                   {([x, y], [nx, ny]) =>
                     nx !== null &&
                     ny !== null && (
-                    <g>
+                        <g>
                         <circle
                           r={3}
                             cx={x}
@@ -506,7 +513,7 @@ class MapView extends PureComponent {
                             strokeWidth: 8
                           }}
                           />
-                      </g>
+                        </g>
                     )
                   }
                 </SvgOverlay>
@@ -514,52 +521,93 @@ class MapView extends PureComponent {
             </DropTargetCont>
           </div>
           <div
+            className="h-100 w-100"
             style={{
               opacity: gridView ? 1 : 0,
               display: !gridView ? 'none' : null,
               transition: 'opacity 0.5s'
             }}
           >
-            <CardGrid
-              cards={[...cards]}
-              onSelect={selectCardAction}
-              selectedCardId={selectedCardId}
-              onExtend={extCardAction}
-              width={98}
-              unit={'vw'}
-              controls={
-                <CardMetaControl
-                  key={nextCardControlAction.key}
-                  action={nextCardControlAction}
-                />
-              }
+            <div
+              className="h-100 w-100"
               style={{
-                height: '24vh',
-                marginLeft: '2vw',
-                marginRight: '2vw',
-                zIndex: 2000,
-                paddingTop
+                display: 'flex',
+                justifyContent: 'center'
               }}
             >
-              {d => (
-                <DragSourceCont
-                  dragHandler={isDragging =>
-                    console.log('isDragging', isDragging)
+              <div
+                style={{
+                  maxWidth: 1000,
+                  width: '100%',
+                  height: '100%',
+                  border: 'black 5px solid'
+                }}
+              >
+                <CardGrid
+                  cards={[...cards]}
+                  duration={100}
+                  onSelect={selectCardAction}
+                  selectedId={selectedCardId}
+                  onExtend={extCardAction}
+                  width={100}
+                  slotSize={100 / 5}
+                  innerMargin={0}
+                  unit={'%'}
+                  controls={
+                    <CardMetaControl
+                      key={nextCardControlAction.key}
+                      action={nextCardControlAction}
+                    />
                   }
-                  id={d.id}
+                  style={{
+                    height: '24vh',
+                    // width: '100vw',
+                    width: '100%',
+                    maxWidth: '1600px',
+                    zIndex: 2000,
+                    paddingTop
+                  }}
                 >
-                  <PreviewCard
-                    {...d}
-                    key={d.id}
-                    edit={d.template}
-                    selected={selectedCardId === d.id}
-                    style={{
-                      transition: `transform 1s`
-                    }}
-                  />
-                </DragSourceCont>
-              )}
-            </CardGrid>
+                  {d => (
+                    <div
+                      className="w-100 h-100"
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center'
+                        // border: 'black 5px solid'
+                        // pointerEvents: 'none'
+                      }}
+                    >
+                      <DragSourceCont
+                        dragHandler={isDragging =>
+                          console.log('isDragging', isDragging)
+                        }
+                        id={d.id}
+                      >
+                        <PreviewCard
+                          {...d}
+                          onClick={() =>
+                            selectedCardId === d.id
+                              ? extCardAction(d.id)
+                              : selectCardAction(d.id)
+                          }
+                          key={d.id}
+                          edit={d.template}
+                          selected={selectedCardId === d.id}
+                          style={{
+                            transition: `transform 1s`
+                            // width: '100%',
+                            // height: '100%',
+                            // width: '100%'
+                            // maxWidth: '200px'
+                          }}
+                        />
+                      </DragSourceCont>
+                    </div>
+                  )}
+                </CardGrid>
+              </div>
+            </div>
 
             <TagBar
               tags={cardSets.filter(d => selectedTags.includes(d.key))}
@@ -580,7 +628,7 @@ class MapView extends PureComponent {
             }}
           >
             <TagList
-              data={cardSets}
+              data={cardSets.filter(d => d.count > 1)}
               scale={barScale}
               barScales={barScales}
               colorScale={tagColorScale}
@@ -594,10 +642,13 @@ class MapView extends PureComponent {
             sets={cardSets}
             selectedCardId={selectedCardId}
             mode={!tsneView ? 'geo' : 'som'}
-            padBottom={!gridView && !tagListView ? height * 1 / 6 : 50}
-            padTop={gridView || tagListView ? height * 1 / 2 : height * 1 / 6}
-            padLeft={70}
-            padRight={70}
+            labels={!gridView}
+            padding={{
+              bottom: !gridView && !tagListView ? height * 1 / 6 : 50,
+              top: gridView || tagListView ? height * 1 / 1.7 : height * 1 / 6,
+              left: 70,
+              right: 70
+            }}
             colorScale={tagColorScale}
           >
             {animatedMarker}

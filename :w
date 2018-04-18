@@ -70,7 +70,7 @@ class BubbleOverlay extends Component {
       .scaleLinear()
       .domain(d3.extent(data, d => d.values.length))
       // .range(d3.range(30, 90, 15))
-      .range([15, 70])
+      .range([15, 30])
       .nice();
 
     const dashScale = d3
@@ -89,10 +89,10 @@ class BubbleOverlay extends Component {
         const distX = bbox[1][0] - bbox[0][0];
 
         const clusters =
-          distY > height * 4 / 6 || distX > width * 4 / 6
-            ? kmeans(values)
-            : [{ values }];
-        // [{ values }];
+          // distY > height * 4 / 6 || distX > width * 4 / 6
+          //   ? kmeans(values)
+          //   : [{ values }];
+          [{ values }];
         // const clusters =
         //   distY > 0 || distX > 0
         //     ? [
@@ -105,7 +105,7 @@ class BubbleOverlay extends Component {
         // console.log('clusters', clusters);
 
         const hulls = clusters.map(c =>
-          hull(groupPoints(values, size, size), 1, 100)
+          hull(groupPoints(c.values, size, size), 1, 100)
         ); // d3.polygonHalues));
 
         const color = chroma(colorScale(key)).alpha(0.1);
@@ -118,7 +118,7 @@ class BubbleOverlay extends Component {
                     stroke: 'black'
                   }}
                   fill="none"
-                  opacity={0.5}
+                  opacity={1}
                 />
                 <path
                   style={{
@@ -127,10 +127,10 @@ class BubbleOverlay extends Component {
                     strokeDashoffset: 30,
                     strokeWidth: dashScale(zoom)
                   }}
-                  d={d3.line().curve(d3.curveBasis)(h)}
+                  d={d3.line().curve(d3.curveLinear)(h)}
                   id={`p${id}`}
                   fill={color}
-                  opacity={0.6}
+                  opacity={1}
                 />
               </g>
             ))}

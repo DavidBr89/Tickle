@@ -10,9 +10,13 @@ import TagBar from './TagBar';
 function createStacks(cards, selectedId) {
   const selectedCardIndex = cards.findIndex(d => d.id === selectedId);
 
-  const left = cards
-    .slice(0, selectedCardIndex)
-    .map((c, j) => ({ ...c, position: 'left', i: 0, j }));
+  const left = cards.slice(0, selectedCardIndex).map((c, j) => ({
+    ...c,
+    position: 'left',
+    i: 0,
+    j: selectedCardIndex - 1 - j
+  }));
+  // .reverse();
 
   const center = { ...cards[selectedCardIndex], position: 'left', i: 1, j: 0 };
 
@@ -23,56 +27,55 @@ function createStacks(cards, selectedId) {
   return [...left, center, ...right];
 }
 
-function transitionStyles(i, j, d) {
-  const { duration, width, unit } = this.props;
-  const { selectedSlot, selectedId, cardStacks } = this.state;
-  const slot = ['left', 'center', 'right'][i];
+function transition() {
+  const { duration, width, unit, slotSize } = this.props;
+  const { selectedId, cardStacks } = this.state;
   const [leftCards, rightCards] = [
     cardStacks.filter(c => c.position === 'left'),
     cardStacks.filter(c => c.position === 'right')
   ];
 
   const center = width / 2;
-  const slotSize = width / 3;
 
   const leftScale = d3
-    .scalePow()
-    .exponent(1)
+    .scaleLinear()
     .domain([0, leftCards.length - 1])
-    .range([0, center - slotSize])
-    .clamp(true);
+    .range([center - slotSize, 0])
+    // .clamp(true);
 
   const rightScale = d3
-    .scalePow()
-    .exponent(1)
+    .scaleLinear()
     .domain([0, rightCards.length - 1])
     .range([center, width - slotSize])
-    .clamp(true);
+    // .clamp(true);
 
   // const transScale = scale.copy().domain([0, domain[1] + 1]);
 
-  // TODO: fix alignment for only <=3 cards
-  const zIndex = (() => {
-    if (slot === 'left') return j;
-    if (slot === 'right') return rightCards.length - j;
-    return 1000;
-  })();
+  return (i, j, d) => {
+    const slot = ['left', 'center', 'right'][i];
+    // TODO: fix alignment for only <=3 cards
+    const zIndex = (() => {
+      if (slot === 'left') return leftCards.length - j;
+      if (slot === 'right') return rightCards.length - j;
+      return 1000;
+    })();
 
-  const defaultStyles = {
-    zIndex,
-    transition: `left ${duration / 1000}s, transform ${duration / 1000}s`,
-    transform: selectedId === d.id ? 'scale(1.2)' : 'scale(1)'
-  };
+    const defaultStyles = {
+      zIndex,
+      transition: `left ${duration / 1000}s, transform ${duration / 1000}s`,
+      transform: selectedId === d.id ? 'scale(1.2)' : 'scale(1)'
+    };
 
-  const left = (() => {
-    if (slot === 'left') return leftScale(j);
-    if (slot === 'right') return rightScale(j);
-    return center - slotSize / 2;
-  })();
+    const left = (() => {
+      if (slot === 'left') return leftScale(j);
+      if (slot === 'right') return rightScale(j);
+      return center - slotSize / 2;
+    })();
 
-  return {
-    left: `${left}${unit}`,
-    ...defaultStyles
+    return {
+      left: `${left}${unit}`,
+      ...defaultStyles
+    };
   };
 }
 
@@ -103,7 +106,8 @@ class CardGrid extends Component {
     duration: 800,
     width: 100,
     innerMargin: 1,
-    unit: 'vw'
+    unit: 'vw',
+    slotSize: 100 / 3
   };
 
   constructor(props) {
@@ -111,30 +115,27 @@ class CardGrid extends Component {
     const selectedId = props.selectedCardId; // cards[Math.floor(props.cards.length / 2)].id;
     const cardStacks = createStacks(props.cards, selectedId);
     this.state = {
-      selectedId,
-      selectedSlot: null,
       cardStacks
     };
 
     // TODO: check later
-    this.transitionStyles = transitionStyles.bind(this);
+    // this.transitionStyles = transition.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
     const { cards } = nextProps;
-    const cardStacks = createStacks(cards, this.state.selectedId);
+    const cardStacks = createStacks(cards, nextProps.selectedId);
     console.log('newCards', cards);
 
     // if (nextProps.cards.length !== cards.length)
     this.setState({
       cardStacks
-      // selectedSlot: null
     });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     return (
-      this.state.selectedId !== nextState.selectedId ||
+      this.props.selectedId !== nextProps.selectedId ||
       this.props.cards.length !== nextProps.cards.length
     ); // nextProps.selected !== this.props.selected;
     // return true;
@@ -143,9 +144,9 @@ class CardGrid extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { onSelect } = this.props;
     const { selectedId } = this.state;
-    if (selectedId !== null && prevState.selectedId !== selectedId) {
-      onSelect(selectedId);
-    }
+    // if (selectedId !== null && prevState.selectedId !== selectedId) {
+    //   onSelect(selectedId);
+    // }
   }
 
   // componentWillUpdate(nextProps, nextState) {
@@ -163,18 +164,22 @@ class CardGrid extends Component {
       cards,
       onExtend,
       controls,
-      onFilter,
+      onSelect,
       visible,
       innerMargin,
       width,
       style,
       className,
-      children
+      children,
+      unit,
+      selectedId,
+      slotSize
     } = this.props;
-    const { selectedId, cardStacks } = this.state;
-    const slotSize = width / 3;
+
+    const { cardStacks } = this.state;
 
     if (cards.length === 0 || !visible) return null;
+    const transitionStyles = transition.bind(this)();
 
     return (
       <div className={className} style={{ ...style, position: 'relative' }}>
@@ -191,11 +196,13 @@ class CardGrid extends Component {
           <div style={{ width: '20%' }}>{controls}</div>
         </div>
         <div
-          style={{
-            perspective: '2400px',
-            perspectiveOrigin: '50% -50%',
-            height: '90%'
-          }}
+          style={
+            {
+              // perspective: '2400px',
+              // perspectiveOrigin: '50% -50%',
+              // height: '100%'
+            }
+          }
         >
           {cardStacks.map(({ i, j, position, ...d }) => (
             <div
@@ -203,22 +210,14 @@ class CardGrid extends Component {
               className="h-100"
               style={{
                 position: 'absolute',
-                width: `${slotSize - 2 * innerMargin}vw`,
-                paddingLeft: `${innerMargin}vw`,
-                paddingRight: `${innerMargin}vw`,
+                width: `${slotSize - innerMargin}${unit}`,
+                // maxWidth: '200px',
+                paddingLeft: `${innerMargin / 2}${unit}`,
+                paddingRight: `${innerMargin / 2}${unit}`,
                 cursor: 'pointer',
-                maxWidth: '30vw',
-                ...transitionStyles.bind(this)(i, j, d)
+                // maxWidth: '200px',
+                ...transitionStyles(i, j, d)
               }}
-              onClick={() =>
-                selectedId === d.id
-                  ? onExtend(d.id)
-                  : this.setState({
-                      selectedId: d.id,
-                      selectedSlot: position,
-                      cardStacks: createStacks(cardStacks, d.id)
-                    })
-              }
             >
               {children(d)}
             </div>
