@@ -120,7 +120,7 @@ class Card extends React.Component {
     return (
       <div
         className={`${cx.flipContainer} ${sideToggler}`}
-        style={{ ...style, maxWidth: '500px' }}
+        style={{ ...style, maxWidth: '500px', maxHeight: '800px' }}
       >
         <div
           className={`${cx.flipper} ${sideToggler}`}

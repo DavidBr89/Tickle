@@ -8,11 +8,9 @@ import PropTypes from 'prop-types';
 // import cx from './MainLayout.scss';
 
 export default class MainLayout extends Component {
-  static propTypes() {
-    return {
-      children: PropTypes.Array.isRequired
-    };
-  }
+  static propTypes = {
+    children: PropTypes.node.isRequired
+  };
 
   constructor(props) {
     super(props);
@@ -32,39 +30,9 @@ export default class MainLayout extends Component {
     const { children } = this.props;
 
     return (
-      <div>
-        <div className="layout layout--main">
-          <nav
-            className="navbar navbar-expand-lg navbar-dark "
-            style={{
-              width: '100%',
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              zIndex: 2000,
-              display: 'flex',
-              justifyContent: 'flex-end'
-            }}
-          >
-            <button
-              style={{ border: 'grey 1px solid' }}
-              className="navbar-toggler"
-              type="button"
-              data-toggle="collapse"
-              data-target="#navbarNav"
-              aria-controls="navbarNav"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-            >
-              <i
-                className="fa fa-1x fa-bars"
-                style={{ fontSize: '25px', color: 'grey', padding: '2px' }}
-              />
-            </button>
-            <div className="collapse navbar-collapse" id="navbarNav">
-            </div>
-          </nav>
-          <div id="content" className="layout__content">{children}</div>
+      <div id="main">
+        <div className="layout__content">
+          <div id="content-container">{children}</div>
         </div>
       </div>
     );

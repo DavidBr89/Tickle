@@ -53,7 +53,7 @@
 
 $sw:4px;
 
-$black:#3c3c3c;
+$black: #24292e;//#3c3c3c;
 
 
 :root {
@@ -137,8 +137,9 @@ fieldset {
 }
 
 .fixed-bottom-right {
-  @extend .fixed-bottom;
-  left: unset;
+  position: absolute;
+  right: 0;
+  bottom: 0;
   zindex: 4000;
 }
 
@@ -162,4 +163,49 @@ fieldset {
   opacity: 1;
   fill-opacity: 0.5;
 }
+
+body {
+  background: lightyellow;
+}
+
+#content-container {
+  @extend .container;
+  padding: 0;
+  overflow: hidden;
+}
+
+@mixin border-radius {
+  border: grey 2px solid;
+  border-radius: .25rem;
+}
+
+
+@media only screen and (min-width: 1200px) {
+    #content-container {
+        margin-top: 40px;
+        height: 1200px;
+    }
+}
+
+
+@media only screen and (min-width: 992px) {
+    #content-container {
+        height: 1200px;
+        margin-top: 40px;
+        @include border-radius;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    #content-container {
+        height: 100vh;
+    }
+}
+
+// @media only screen and (min-width: 568px) {
+//     #content-container {
+//         height: 100vh;
+//     }
+// }
+
 

@@ -21,8 +21,8 @@ import { colorScale, brighterColorScale } from '../cards/styles';
 // import cx from './MapView.scss';
 import { Card, CardMarker, PreviewCard } from '../cards';
 import SvgOverlay from '../utils/map-layers/SvgOverlay';
-import CardGrid from './CardGrid';
-import ContextView from './ContextView';
+import Accordion from './CardGrid';
+// import ContextView from './ContextView';
 import ForceOverlay from './ForceOverlay';
 import Title from './Title';
 import TagBar from './TagBar';
@@ -55,8 +55,6 @@ import {
 } from '../CardCreator/DragLayer/SourceTargetCont';
 
 import DragLayer from '../CardCreator/DragLayer/DragLayer';
-
-const line = d3.line();
 
 // TODO: adapt colors
 const tagColors = chromatic.schemeAccent
@@ -94,7 +92,7 @@ const tagColors = chromatic.schemeAccent
 //   '#253494'
 // ].map(c => chroma(c).alpha(0.1));
 
-// const TimoutGrid = ReactTimeout(CardGrid);
+// const TimoutGrid = ReactTimeout(Accordion);
 
 const CardMetaControl = ({ action }) => (
   <div
@@ -182,8 +180,8 @@ class MapView extends PureComponent {
 
     window.addEventListener('resize', () => {
       screenResizeAction({
-        width: window.innerWidth,
-        height: window.innerHeight
+        width: this.cont.offsetWidth || window.innerWidth,
+        height: this.cont.offsetHeight || window.innerHeight
       });
     });
 
@@ -198,7 +196,13 @@ class MapView extends PureComponent {
   }
 
   componentDidMount() {
-    const map = this.map.getMap();
+    // const map = this.map.getMap();
+
+    const { screenResizeAction } = this.props;
+    screenResizeAction({
+      width: this.cont.offsetWidth,
+      height: this.cont.offsetHeight
+    });
     // map._refreshExpiredTiles = false;
 
     // const {
@@ -316,7 +320,6 @@ class MapView extends PureComponent {
     //   longitude
     // });
 
-    const cardPadding = 15;
     const paddingTop = 16;
 
     const cardSets = setify(cards).filter(d => d.count > 0);
@@ -344,18 +347,15 @@ class MapView extends PureComponent {
       .domain(d3.extent(cardSets, d => d.count))
       .range([20, 100]);
 
-    const [w, h] = [20, 20];
     const r = 30;
     const animatedMarker = ({ x, y, ...c }) => (
       <ExtendableMarker
         key={c.id}
-        selected={extCardId === c.id}
-        width={extCardId === c.id ? width - cardPadding : 25}
-        height={extCardId === c.id ? height - cardPadding : 30}
-        x={x}
-        y={y}
-        offsetX={extCardId === c.id ? 3 : 0}
-        offsetY={3}
+        width={extCardId === c.id ? width : 25}
+        height={extCardId === c.id ? height : 30}
+        x={extCardId === c.id ? width / 2 : x}
+        y={extCardId === c.id ? height / 2 : y}
+        extended={extCardId === c.id}
         preview={
           <div
             className="w-100 h-100"
@@ -368,9 +368,6 @@ class MapView extends PureComponent {
                 className="m-3"
                 style={{
                   position: 'absolute',
-                  // background: 'grey',
-                  border: '5px solid black',
-                  borderRadius: '50%',
                   width: `${r * 2}px`, // '13vw',
                   height: `${r * 2}px`, // '13vw',
                   transform: `translate(${-r}px,${-r}px)`,
@@ -386,8 +383,6 @@ class MapView extends PureComponent {
                 position: 'absolute',
                 transform: `translateX(3px)`,
                 zIndex: -100
-                // width: w,
-                // height: h
               }}
             />
           </div>
@@ -400,172 +395,145 @@ class MapView extends PureComponent {
           onCollect={() =>
             toggleCardChallengeAction({ cardChallengeOpen: true })
           }
+          style={{ zIndex: 4000 }}
         />
       </ExtendableMarker>
     );
 
     return (
-      <DragDropContextProvider backend={TouchBackend}>
-        <div className="w-100 h-100">
-          <DragLayer />
-          <Modal
-            visible={cardChallengeOpen}
-            onClose={() =>
-              toggleCardChallengeAction({ cardChallengeOpen: false })
-            }
-          >
-            {/* TODO: put in real challenge */}
-            <iframe
-              title="emperors"
-              src="http://thescalli.com/emperors/"
-              style={{ border: 'none', width: '100%', height: '90vh' }}
-            />
-          </Modal>
-
-          <div style={{ display: 'flex', width: '200px' }}>
-            <button
-              className="mt-3 ml-3 btn"
-              style={{
-                // position: 'absolute',
-                zIndex: 3000,
-                background: tagListView ? 'whitesmoke' : null
-              }}
-              onClick={toggleTagListAction}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  transform: 'rotate(90deg)'
-                }}
-              >
-                <Icon.BarChart size={30} />
-              </div>
-            </button>
-            <button
-              className="mt-3 ml-3 btn"
-              style={{
-                // position: 'absolute',
-                zIndex: 3000,
-                background: gridView ? 'whitesmoke' : null
-              }}
-              onClick={toggleGridAction}
-            >
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Icon.Grid size={30} />
-              </div>
-            </button>
-          </div>
+      <div className="w-100 h-100">
+        <DragDropContextProvider backend={TouchBackend}>
           <div
+            className="w-100 h-100"
+            ref={cont => (this.cont = cont)}
             style={{
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              filter: tsneView && 'blur(4px)'
+              position: 'relative',
+              zIndex: 2000
             }}
           >
-            <DropTargetCont
-              dropHandler={({ left, top, ...c }) =>
-                console.log('c', left, top, c)
-              }
-              dragged={false}
-            >
-              <MapGL
-                ref={m => (this.map = m)}
-                {...mapViewport}
-                mapStyle={'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l'}
-                onViewportChange={changeMapViewportAction}
-                onClick={({ lngLat, deltaTime }) =>
-                  // TODO: fix later
-                  deltaTime > 30 && userMoveAction({ lngLat })
+            <div>
+              <div
+                className="w-100 pb-3"
+                style={{
+                  // background: 'var(--black)',
+                  zIndex: 4000,
+                  // filter: 'blur(10px)',
+
+                  display: 'flex'
+                }}
+              >
+                <button
+                  className="mt-3 ml-3 btn"
+                  style={{
+                    zIndex: 3000,
+                    background: tagListView ? 'whitesmoke' : null
+                  }}
+                  onClick={toggleTagListAction}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      zIndex: 3000,
+                      transform: 'rotate(90deg)'
+                    }}
+                  >
+                    <Icon.BarChart size={30} />
+                  </div>
+                </button>
+                <button
+                  className="mt-3 ml-3 btn"
+                  style={{
+                    // position: 'absolute',
+                    zIndex: 3000,
+                    background: gridView ? 'whitesmoke' : null
+                  }}
+                  onClick={toggleGridAction}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Icon.Grid size={30} />
+                  </div>
+                </button>
+                <input
+                  className="mt-3 ml-3 btn"
+                  placeholder="Search Cards"
+                  type="text"
+                  style={{
+                    zIndex: 2000,
+                    background: 'whitesmoke',
+                    textAlign: 'left'
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="w-100 h-100">
+              <DragLayer />
+              <Modal
+                visible={cardChallengeOpen}
+                onClose={() =>
+                  toggleCardChallengeAction({ cardChallengeOpen: false })
                 }
               >
-                <UserOverlay {...mapViewport} location={userLocation} />
-                <SvgOverlay
-                  {...mapViewport}
-                  data={
-                    direction !== null
-                      ? [
-                          Object.values(userLocation).reverse(),
-                        ...direction.routes[0].geometry.coordinates
-                      ]
-                      : []
-                  }
-                >
-                  {([x, y], [nx, ny]) =>
-                    nx !== null &&
-                    ny !== null && (
-                        <g>
-                        <circle
-                          r={3}
-                            cx={x}
-                          cy={y}
-                            fill={colorScale(
-                            selectedCard.challenge
-                              ? selectedCard.challenge.type
-                                : 'quiz'
-                          )}
-                          />
-                        <path
-                            d={line([[x, y], [nx, ny]])}
-                          style={{
-                              stroke: colorScale(selectedCard.challenge.type),
-                            strokeWidth: 8
-                          }}
-                          />
-                        </g>
-                    )
-                  }
-                </SvgOverlay>
-              </MapGL>
-            </DropTargetCont>
-          </div>
-          <div
-            className="h-100 w-100"
-            style={{
-              opacity: gridView ? 1 : 0,
-              display: !gridView ? 'none' : null,
-              transition: 'opacity 0.5s'
-            }}
-          >
-            <div
-              className="h-100 w-100"
-              style={{
-                display: 'flex',
-                justifyContent: 'center'
-              }}
-            >
+                {/* TODO: put in real challenge */}
+                <iframe
+                  title="emperors"
+                  src="http://thescalli.com/emperors/"
+                  style={{ border: 'none', width: '100%', height: '90vh' }}
+                />
+              </Modal>
+
               <div
                 style={{
-                  maxWidth: 1000,
-                  width: '100%',
-                  height: '100%',
-                  border: 'black 5px solid'
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  filter: tsneView && 'blur(4px)'
                 }}
               >
-                <CardGrid
-                  cards={[...cards]}
-                  duration={100}
-                  onSelect={selectCardAction}
+                <DropTargetCont
+                  dropHandler={({ left, top, ...c }) =>
+                    console.log('c', left, top, c)
+                  }
+                  dragged={false}
+                >
+                  <MapGL
+                    ref={m => (this.map = m)}
+                    {...mapViewport}
+                    mapStyle={
+                      'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l'
+                    }
+                    onViewportChange={changeMapViewportAction}
+                    onClick={({ lngLat, deltaTime }) =>
+                      // TODO: fix later
+                      deltaTime > 30 && userMoveAction({ lngLat })
+                    }
+                  >
+                    <UserOverlay {...mapViewport} location={userLocation} />
+                  </MapGL>
+                </DropTargetCont>
+              </div>
+              <div
+                className="w-100"
+                style={{
+                  opacity: gridView ? 1 : 0,
+                  display: !gridView ? 'none' : null,
+                  transition: 'opacity 0.5s'
+                }}
+              >
+                <Accordion
+                  data={[...cards]}
+                  duration={600}
+                  centered={true}
                   selectedId={selectedCardId}
-                  onExtend={extCardAction}
                   width={100}
                   slotSize={100 / 5}
-                  innerMargin={0}
                   unit={'%'}
-                  controls={
-                    <CardMetaControl
-                      key={nextCardControlAction.key}
-                      action={nextCardControlAction}
-                    />
-                  }
                   style={{
                     height: '24vh',
-                    // width: '100vw',
                     width: '100%',
-                    maxWidth: '1600px',
                     zIndex: 2000,
-                    paddingTop
+                    marginTop: 30
                   }}
                 >
                   {d => (
@@ -595,7 +563,8 @@ class MapView extends PureComponent {
                           edit={d.template}
                           selected={selectedCardId === d.id}
                           style={{
-                            transition: `transform 1s`
+                            transition: `transform 1s`,
+                            transform: selectedCardId === d.id && 'scale(1.2)'
                             // width: '100%',
                             // height: '100%',
                             // width: '100%'
@@ -605,69 +574,68 @@ class MapView extends PureComponent {
                       </DragSourceCont>
                     </div>
                   )}
-                </CardGrid>
-              </div>
-            </div>
+                </Accordion>
 
-            <TagBar
-              tags={cardSets.filter(d => selectedTags.includes(d.key))}
-              colorScale={tagColorScale}
-              scale={barScale}
-              onClick={filterCardsAction}
-              className="mt-3"
-              style={{ zIndex: 5000 }}
-            />
-          </div>
-          <div
-            style={{
-              paddingTop,
-              opacity: tagListView ? 1 : 0,
-              transition: 'opacity 0.5s',
-              display: !tagListView ? 'none' : null,
-              zIndex: tagListView ? 5000 : null
-            }}
-          >
-            <TagList
-              data={cardSets.filter(d => d.count > 1)}
-              scale={barScale}
-              barScales={barScales}
-              colorScale={tagColorScale}
-            />
-          </div>
-          <Title />
-          <ForceOverlay
-            delay={400}
-            viewport={mapViewport}
-            data={cards}
-            sets={cardSets}
-            selectedCardId={selectedCardId}
-            mode={!tsneView ? 'geo' : 'som'}
-            labels={!gridView}
-            padding={{
-              bottom: !gridView && !tagListView ? height * 1 / 6 : 50,
-              top: gridView || tagListView ? height * 1 / 1.7 : height * 1 / 6,
-              left: 70,
-              right: 70
-            }}
-            colorScale={tagColorScale}
-          >
-            {animatedMarker}
-          </ForceOverlay>
-          <button
-            className="fixed-bottom-right btn m-3"
-            style={{
-              // position: 'absolute',
-              zIndex: 1000,
-              background: tsneView && 'whitesmoke'
-            }}
-            onClick={toggleTsneViewAction}
-          >
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <Icon.Eye size={30} />
+                <TagBar
+                  tags={cardSets.filter(d => selectedTags.includes(d.key))}
+                  colorScale={tagColorScale}
+                  scale={barScale}
+                  onClick={filterCardsAction}
+                  style={{ zIndex: 5000, marginTop: 40 }}
+                />
+              </div>
+              <div
+                style={{
+                  opacity: tagListView ? 1 : 0,
+                  transition: 'opacity 0.5s',
+                  display: !tagListView ? 'none' : null,
+                  zIndex: tagListView ? 5000 : null
+                }}
+              >
+                <TagList
+                  data={cardSets.filter(d => d.count > 1)}
+                  scale={barScale}
+                  barScales={barScales}
+                  colorScale={tagColorScale}
+                />
+              </div>
+              <Title />
+              <ForceOverlay
+                delay={400}
+                viewport={mapViewport}
+                data={cards}
+                sets={cardSets}
+                selectedCardId={selectedCardId}
+                mode={!tsneView ? 'geo' : 'som'}
+                labels={!gridView}
+                padding={{
+                  bottom: !gridView && !tagListView ? height * 1 / 6 : 50,
+                  top:
+                    gridView || tagListView ? height * 1 / 1.7 : height * 1 / 6,
+                  left: 70,
+                  right: 70
+                }}
+                colorScale={tagColorScale}
+              >
+                {animatedMarker}
+              </ForceOverlay>
+              <button
+                className="fixed-bottom-right btn m-3"
+                style={{
+                  // position: 'absolute',
+                  zIndex: 1000,
+                  background: tsneView && 'whitesmoke'
+                }}
+                onClick={toggleTsneViewAction}
+              >
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <Icon.Eye size={30} />
+                </div>
+              </button>
             </div>
-          </button>
-        </div>
-      </DragDropContextProvider>
+          </div>
+        </DragDropContextProvider>
+      </div>
     );
   }
 }

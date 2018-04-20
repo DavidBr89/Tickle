@@ -5,7 +5,10 @@ const CardImg = ({ width, height }) => (
   <img src={null} alt="icon" width={width} height={height} />
 );
 
-CardImg.propTypes = { width: PropTypes.number, height: PropTypes.number };
+CardImg.propTypes = {
+  width: PropTypes.number,
+  height: PropTypes.number
+};
 CardImg.defaultProps = { width: 30, height: 40 };
 
 class ExtendableMarker extends Component {
@@ -13,11 +16,11 @@ class ExtendableMarker extends Component {
     delay: PropTypes.number,
     width: PropTypes.number,
     height: PropTypes.number,
-    selected: PropTypes.bool,
+    markerWidth: PropTypes.number,
+    markerHeight: PropTypes.number,
+    extended: PropTypes.bool,
     x: PropTypes.number,
     y: PropTypes.number,
-    offsetX: PropTypes.number,
-    offsetY: PropTypes.number,
     children: PropTypes.node,
     preview: PropTypes.node,
     node: PropTypes.object
@@ -27,13 +30,13 @@ class ExtendableMarker extends Component {
     delay: 0.3,
     preview: <CardImg />,
     node: null,
-    offsetX: 0,
-    offsetY: 0,
-    selected: false,
+    extended: false,
     x: 0,
     y: 0,
-    width: 40,
-    height: 50,
+    width: 500,
+    height: 800,
+    markerWidth: 30,
+    markerHeight: 50,
     children: <div style={{ background: 'blue' }} />
   };
 
@@ -52,8 +55,8 @@ class ExtendableMarker extends Component {
   //   const timediff = Math.abs(newTimeStamp - this.timeStamp);
   //   return (
   //     throttle === null || (throttle !== null && timediff >= throttle)
-  //     // nextProps.selected ||
-  //     // this.props.selected !== nextProps.selected ||
+  //     // nextProps.extended ||
+  //     // this.props.extended !== nextProps.extended ||
   //     // !nextProps.throttle
   // //   );
   // // }
@@ -66,9 +69,7 @@ class ExtendableMarker extends Component {
     const {
       width,
       height,
-      selected,
-      offsetX,
-      offsetY,
+      extended,
       delay,
       x,
       y,
@@ -83,24 +84,26 @@ class ExtendableMarker extends Component {
         onClick={onClick}
         style={{
           position: 'absolute',
-          left: selected ? offsetX : x - width / 2 + offsetX,
-          top: selected ? offsetY : y - height / 2 + offsetY,
+          maxWidth: 500,
+          left: x,
+          top: y,
+          transform: 'translate(-50%, -50%)',
+          right: extended && 0,
+          bottom: extended && 0,
           width: `${width}px`,
           height: `${height}px`,
-          transition: `left ${delay}s, top ${delay}s, width ${delay}s, height ${delay}s`,
-          pointerEvents: !selected ? 'none' : null
+          zIndex: extended ? 10000 : 0,
+          transition: `transform ${delay}s, left ${delay}s, top ${delay}s, width ${delay}s, height ${delay}s`
         }}
       >
         <div
-          className={selected ? 'selectedCard' : null}
           style={{
             position: 'absolute',
             width: '100%',
-            height: '100%',
-            zIndex: selected ? 10000 : 0
+            height: '100%'
           }}
         >
-          {selected ? children : preview}
+          {extended ? children : preview}
         </div>
       </div>
     );

@@ -37,17 +37,24 @@ function transition() {
 
   const center = width / 2;
 
-  const leftScale = d3
-    .scaleLinear()
-    .domain([0, leftCards.length - 1])
-    .range([center - slotSize, 0])
-    // .clamp(true);
+  // TODO: why minus 2 and 1 ???
+  const leftScale = j =>
+    (leftCards.length - j) * (center - slotSize) / leftCards.length - 2;
 
-  const rightScale = d3
-    .scaleLinear()
-    .domain([0, rightCards.length - 1])
-    .range([center, width - slotSize])
-    // .clamp(true);
+  const rightScale = j =>
+    center + j * (width - slotSize - center) / rightCards.length + 1;
+
+  // const leftScale = d3
+  //   .scalePow()
+  //   .domain([0, leftCards.length])
+  //   .range([center - slotSize, 0]);
+  // // .clamp(true);
+  //
+  // const rightScale = d3
+  //   .scalePow()
+  //   .domain([0, rightCards.length])
+  //   .range([center, width - slotSize]);
+  // // .clamp(true);
 
   // const transScale = scale.copy().domain([0, domain[1] + 1]);
 
@@ -81,39 +88,33 @@ function transition() {
 
 class CardGrid extends Component {
   static propTypes = {
-    cards: PropTypes.array.isRequired,
-    onSelect: PropTypes.func,
-    onExtend: PropTypes.func,
-    onFilter: PropTypes.func,
+    data: PropTypes.array,
     controls: PropTypes.node.isRequired,
-    selectedCardId: PropTypes.string,
+    selectedId: PropTypes.string,
     style: PropTypes.object,
     className: PropTypes.string,
     unit: PropTypes.string,
-    visible: PropTypes.bool,
-    duration: PropTypes.number,
-    width: PropTypes.number,
-    innerMargin: PropTypes.number
+    innerMargin: PropTypes.number,
+    centered: PropTypes.bool
   };
 
   static defaultProps = {
     style: {},
     className: '',
-    onSelect: d => d,
-    onExtend: d => d,
-    onFilter: d => d,
-    visible: true,
+    data: [],
     duration: 800,
     width: 100,
     innerMargin: 1,
     unit: 'vw',
-    slotSize: 100 / 3
+    slotSize: 100 / 3,
+    selectedId: 0,
+    centered: true
   };
 
   constructor(props) {
     super(props);
-    const selectedId = props.selectedCardId; // cards[Math.floor(props.cards.length / 2)].id;
-    const cardStacks = createStacks(props.cards, selectedId);
+    const selectedId = props.selectedId; // cards[Math.floor(props.cards.length / 2)].id;
+    const cardStacks = createStacks(props.data, selectedId);
     this.state = {
       cardStacks
     };
@@ -123,11 +124,8 @@ class CardGrid extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { cards } = nextProps;
-    const cardStacks = createStacks(cards, nextProps.selectedId);
-    console.log('newCards', cards);
-
-    // if (nextProps.cards.length !== cards.length)
+    const { data } = nextProps;
+    const cardStacks = createStacks(data, nextProps.selectedId);
     this.setState({
       cardStacks
     });
@@ -136,17 +134,9 @@ class CardGrid extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     return (
       this.props.selectedId !== nextProps.selectedId ||
-      this.props.cards.length !== nextProps.cards.length
+      this.props.data.length !== nextProps.data.length
     ); // nextProps.selected !== this.props.selected;
     // return true;
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { onSelect } = this.props;
-    const { selectedId } = this.state;
-    // if (selectedId !== null && prevState.selectedId !== selectedId) {
-    //   onSelect(selectedId);
-    // }
   }
 
   // componentWillUpdate(nextProps, nextState) {
@@ -161,48 +151,93 @@ class CardGrid extends Component {
 
   render() {
     const {
-      cards,
-      onExtend,
-      controls,
-      onSelect,
-      visible,
+      data,
       innerMargin,
-      width,
       style,
       className,
       children,
       unit,
-      selectedId,
-      slotSize
+      slotSize,
+      width,
+      centered
     } = this.props;
 
     const { cardStacks } = this.state;
 
-    if (cards.length === 0 || !visible) return null;
     const transitionStyles = transition.bind(this)();
+
+    if (!centered) {
+      const scale = i => i * (100 - slotSize) / data.length;
+      return (
+        <div className={className} style={{ ...style, position: 'relative' }}>
+          <div
+            style={{
+              perspective: '2400px',
+              perspectiveOrigin: '50% -50%',
+              height: '100%'
+            }}
+          >
+            {data.map((d, i) => (
+              <div
+                key={d.id}
+                className="h-100"
+                style={{
+                  position: 'absolute',
+                  width: `${slotSize - innerMargin}${unit}`,
+                  // maxWidth: '200px',
+                  paddingLeft: `${innerMargin / 2}${unit}`,
+                  paddingRight: `${innerMargin / 2}${unit}`,
+                  cursor: 'pointer',
+                  left: `${scale(i)}${unit}`
+                }}
+              >
+                {children(d)}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div className={className} style={{ ...style, position: 'relative' }}>
         <div
-          className="w-100"
           style={{
-            display: 'flex',
-            justifyContent: 'center',
-            position: 'absolute',
-            top: -50
-            // height: '40%'
+            perspective: '2400px',
+            perspectiveOrigin: '50% -50%',
+            height: '100%'
           }}
         >
-          <div style={{ width: '20%' }}>{controls}</div>
+          {cardStacks.map(({ i, j, position, ...d }) => (
+            <div
+              key={d.id}
+              className="h-100"
+              style={{
+                position: 'absolute',
+                width: `${slotSize - innerMargin}${unit}`,
+                // maxWidth: '200px',
+                paddingLeft: `${innerMargin / 2}${unit}`,
+                paddingRight: `${innerMargin / 2}${unit}`,
+                cursor: 'pointer',
+                // maxWidth: '200px',
+                ...transitionStyles(i, j, d)
+              }}
+            >
+              {children(d)}
+            </div>
+          ))}
         </div>
+      </div>
+    );
+
+    return (
+      <div className={className} style={{ ...style, position: 'relative' }}>
         <div
-          style={
-            {
-              // perspective: '2400px',
-              // perspectiveOrigin: '50% -50%',
-              // height: '100%'
-            }
-          }
+          style={{
+            perspective: '2400px',
+            perspectiveOrigin: '50% -50%',
+            height: '100%'
+          }}
         >
           {cardStacks.map(({ i, j, position, ...d }) => (
             <div

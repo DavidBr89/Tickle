@@ -69,6 +69,7 @@
     "node-ddg-api": "^0.1.4",
     "node-sass": "^4.5.0",
     "node-som": "^1.6.6",
+    "papercss": "https://github.com/DinoJay/papercss/",
     "point-at-length": "^1.1.0",
     "popper.js": "^1.12.5",
     "prop-types": "^15.6.0",
