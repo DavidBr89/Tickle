@@ -7,9 +7,7 @@ import * as d3 from 'd3';
 import { PreviewCard } from '../cards';
 import TagBar from './TagBar';
 
-function createStacks(cards, selectedId) {
-  const selectedCardIndex = cards.findIndex(d => d.id === selectedId);
-
+function createStacks(cards, selectedCardIndex) {
   const left = cards.slice(0, selectedCardIndex).map((c, j) => ({
     ...c,
     position: 'left',
@@ -60,6 +58,7 @@ function transition() {
 
   return (i, j, d) => {
     const slot = ['left', 'center', 'right'][i];
+
     // TODO: fix alignment for only <=3 cards
     const zIndex = (() => {
       if (slot === 'left') return leftCards.length - j;
@@ -89,13 +88,15 @@ function transition() {
 class CardGrid extends Component {
   static propTypes = {
     data: PropTypes.array,
-    controls: PropTypes.node.isRequired,
-    selectedId: PropTypes.string,
     style: PropTypes.object,
     className: PropTypes.string,
     unit: PropTypes.string,
+    width: PropTypes.number,
     innerMargin: PropTypes.number,
-    centered: PropTypes.bool
+    centered: PropTypes.bool,
+    children: PropTypes.func,
+    slotSize: PropTypes.number,
+    selectedIndex: PropTypes.number
   };
 
   static defaultProps = {
@@ -107,14 +108,14 @@ class CardGrid extends Component {
     innerMargin: 1,
     unit: 'vw',
     slotSize: 100 / 3,
-    selectedId: 0,
-    centered: true
+    centered: true,
+    children: d => d,
+    selectedIndex: 0
   };
 
   constructor(props) {
     super(props);
-    const selectedId = props.selectedId; // cards[Math.floor(props.cards.length / 2)].id;
-    const cardStacks = createStacks(props.data, selectedId);
+    const cardStacks = createStacks(props.data, props.selectedIndex);
     this.state = {
       cardStacks
     };
@@ -125,18 +126,20 @@ class CardGrid extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { data } = nextProps;
-    const cardStacks = createStacks(data, nextProps.selectedId);
+
+    const cardStacks = createStacks(data, nextProps.selectedIndex);
     this.setState({
       cardStacks
     });
   }
 
+  // TODO: change later
   shouldComponentUpdate(nextProps, nextState) {
-    return (
-      this.props.selectedId !== nextProps.selectedId ||
-      this.props.data.length !== nextProps.data.length
-    ); // nextProps.selected !== this.props.selected;
-    // return true;
+    // return (
+    //   this.props.data.length !== nextProps.data.length ||
+    //   this.props.centered !== nextProps.centered
+    // ); // nextProps.selected !== this.props.selected;
+    return true;
   }
 
   // componentWillUpdate(nextProps, nextState) {
@@ -188,7 +191,8 @@ class CardGrid extends Component {
                   paddingLeft: `${innerMargin / 2}${unit}`,
                   paddingRight: `${innerMargin / 2}${unit}`,
                   cursor: 'pointer',
-                  left: `${scale(i)}${unit}`
+                  left: `${scale(i)}${unit}`,
+                  transition: 'all 1s'
                 }}
               >
                 {children(d)}

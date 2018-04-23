@@ -1,8 +1,7 @@
 import React from 'react';
 import thunkMiddleware from 'redux-thunk';
 
-import { intersection, union, flattenDeep, uniq, flatten } from 'lodash';
-import tsnejs from 'tsne';
+// import tsnejs from 'tsne';
 
 import { createStore, applyMiddleware } from 'redux';
 import { createLogger } from 'redux-logger';
@@ -31,7 +30,7 @@ import DefaultLayout from './layouts/MainLayout';
 
 import { dummyCards } from './dummyData';
 
-import { fetchChallenges, fetchNearByPlaces } from './async_actions';
+import { fetchCards } from './async_actions';
 
 const loggerMiddleware = createLogger();
 
@@ -73,10 +72,11 @@ const defaultState = {
   },
   MapView: {
     // TODO: calc value
+    isCardDragging: false,
     latCenterOffset: 0.0018,
     latBottom: 0.003,
     defaultZoom: mapZoom,
-    cards: defaultCards,
+    cards: [],
     defaultCards,
     zoom: mapZoom,
     direction: null,
@@ -87,12 +87,13 @@ const defaultState = {
     cardChallengeOpen: false,
     extCardId: false,
     AppOpenFirstTime: true,
-    selectedCardId: dummyCards[0].id, // dummyCards[0].id,
+    selectedCardId: null, // dummyCards[0].id,
     birdsEyeView: false,
     gridView: true,
     tsneView: false,
     tagListView: false,
-    selectedTags: []
+    selectedTags: [],
+    isSearching: false
   },
   CardCreator: {
     cards: dummyCards,
@@ -141,8 +142,8 @@ const store = configureStore(rootReducer, defaultState);
 // });
 //
 
-store.dispatch(fetchChallenges(0));
-store.dispatch(fetchNearByPlaces());
+// store.dispatch(fetchChallenges(0));
+store.dispatch(fetchCards());
 
 const Routes = () => (
   <HashRouter>

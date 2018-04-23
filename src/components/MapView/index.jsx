@@ -15,7 +15,10 @@ import {
   toggleTagList,
   toggleTsneView,
   toggleGrid,
-  filterCards
+  filterCards,
+  toggleSearch,
+  dragCard,
+  createOrUpdateCard
 } from './actions';
 
 import { fetchDirection, computeTopicMap } from './async_actions';
@@ -108,6 +111,15 @@ const mapDispatchToProps = dispatch => ({
   },
   filterCardsAction: options => {
     dispatch(filterCards(options));
+  },
+  toggleSearchAction: options => {
+    dispatch(toggleSearch(options));
+  },
+  dragCardAction: options => {
+    dispatch(dragCard(options));
+  },
+  createOrUpdateCardAction: options => {
+    dispatch(createOrUpdateCard(options));
   }
 });
 

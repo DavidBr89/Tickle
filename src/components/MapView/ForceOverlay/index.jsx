@@ -2,7 +2,7 @@ import React, { Fragment, Component } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 
-import tsnejs from 'tsne';
+// import tsnejs from 'tsne';
 import lap from 'lap-jv/lap.js';
 import SOM from 'ml-som';
 import scc from 'strongly-connected-components';
@@ -165,7 +165,7 @@ function splitLinks(nodes, width = Infinity, height = Infinity) {
         interSet.length > 0 &&
         distY < height / 7 &&
         distX < width / 3
-          // &&
+        // &&
         // s.x > 0 && s.x < width &&
         // t.x > 0 &&
         // t.x < width &&
@@ -460,9 +460,9 @@ class ForceOverlay extends Component {
     const { width, height } = viewport;
     const { nodes, comps } = this.state;
     // const newPos = nodes.map(d => transEvent.apply([d.x, d.y]));
-    const selectedTags = selectedCardId
-      ? nodes.find(n => n.id === selectedCardId).tags
-      : [];
+    const tagNode = nodes.find(n => n.id === selectedCardId);
+    //TODO: change later
+    const selectedTags = selectedCardId ? tagNode && tagNode.tags : [];
 
     if (mode === 'geo') {
       return (

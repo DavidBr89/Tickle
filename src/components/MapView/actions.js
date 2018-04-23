@@ -10,7 +10,10 @@ export const SCREEN_RESIZE = 'SCREEN_RESIZE';
 export const PLAY_CARD_CHALLENGE = 'PLAY_CARD_CHALLENGE ';
 export const TOGGLE_CARD_CHALLENGE = 'TOGGLE_CARD_CHALLENGE';
 export const EXTEND_SELECTED_CARD = 'EXTEND_SELECTED_CARD';
+
+// TODO: not used
 export const NAVIGATE_APP_FIRST_TIME = 'NAVIGATE_APP_FIRST_TIME';
+
 // export const SET_VISIBILITY_FILTER = 'SET_VISIBILITY_FILTER'
 
 /*
@@ -100,4 +103,24 @@ export function toggleGrid(options) {
 export const RECEIVE_PLACES = 'RECEIVE_PLACES';
 export function receivePlaces(options) {
   return { type: RECEIVE_PLACES, options };
+}
+
+export const RECEIVE_CARDS = 'RECEIVE_CARDS';
+export function receiveCards(options) {
+  return { type: RECEIVE_CARDS, options };
+}
+
+export const TOGGLE_SEARCH = 'TOGGLE_SEARCH';
+export function toggleSearch(options) {
+  return { type: TOGGLE_SEARCH, options };
+}
+
+export const DRAG_CARD = 'DRAG_CARD';
+export function dragCard(options) {
+  return { type: DRAG_CARD, options };
+}
+
+export const CREATE_OR_UPDATE_CARD = 'CREATE_OR_UPDATE_CARD';
+export function createOrUpdateCard(options) {
+  return { type: CREATE_OR_UPDATE_CARD, options };
 }

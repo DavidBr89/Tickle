@@ -11,6 +11,9 @@ import {
 import { scaleLinear, extent, geoMercator } from 'd3';
 import { getBoundingBox } from './utils';
 import { intersection } from 'lodash';
+
+import firestore from 'DB';
+
 // import setBBox from './fitbounds';
 // import mapboxgl from 'mapbox-gl';
 
@@ -27,8 +30,12 @@ import {
   TOGGLE_TAG_LIST,
   TOGGLE_GRID_VIEW,
   TOGGLE_TSNE_VIEW,
+  TOGGLE_SEARCH,
   RECEIVE_PLACES,
-  FILTER_CARDS
+  FILTER_CARDS,
+  DRAG_CARD,
+  CREATE_OR_UPDATE_CARD,
+  RECEIVE_CARDS
 } from './actions';
 
 import {
@@ -54,7 +61,7 @@ const offsetMapViewport = ({
   zoom,
   latitude,
   longitude,
-  offset: [offsetX, offsetY]
+  offset: [offsetX = 0, offsetY = 0]
 }) => {
   const vp = new PerspectiveMercatorViewport({
     width,
@@ -85,6 +92,67 @@ function reducer(state = {}, action) {
   // const { selectedCardId } = state;
 
   switch (action.type) {
+    case RECEIVE_CARDS: {
+      const cards = action.options;
+      console.log('RECEIVE_CARDS', cards);
+
+      return {
+        ...state,
+        cards,
+        defaultCards: cards
+        // isCardDragging
+      };
+    }
+
+    case CREATE_OR_UPDATE_CARD: {
+      const {
+        width,
+        height,
+        zoom,
+        latitude: centerLat,
+        longitude: centerLng,
+        cards
+      } = state;
+
+      const { x, y, id } = action.options;
+      const vp = new PerspectiveMercatorViewport({
+        width,
+        height,
+        zoom,
+        latitude: centerLat,
+        longitude: centerLng
+      });
+
+      const [longitude, latitude] = vp.unproject([x, y]);
+
+      const newCard = {
+        ...cards.find(c => c.id === id),
+        loc: { longitude, latitude }
+      };
+
+      firestore.collection('cards').add(newCard);
+
+      return {
+        ...state
+        // isCardDragging
+      };
+    }
+    case DRAG_CARD: {
+      const isCardDragging = action.options;
+      return {
+        ...state,
+        isCardDragging
+      };
+    }
+    case TOGGLE_SEARCH: {
+      const isSearching = action.options;
+      return {
+        ...state,
+        isSearching,
+        selectedCardId: !isSearching ? state.selectedCardId : null,
+        selectedCardIdCache: state.selectedCardId
+      };
+    }
     case TOGGLE_TAG_LIST: {
       return { ...state, tagListView: !state.tagListView, gridView: false };
     }

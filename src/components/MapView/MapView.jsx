@@ -10,9 +10,11 @@ import * as chromatic from 'd3-scale-chromatic';
 
 // TODO: { LinearInterpolator, FlyToInterpolator }
 import { default as TouchBackend } from 'react-dnd-touch-backend';
+import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContextProvider } from 'react-dnd';
 import MapGL, { FlyToInterpolator } from 'react-map-gl';
 import * as d3 from 'd3';
+
 import { colorScale, brighterColorScale } from '../cards/styles';
 
 // import ReactTimeout from 'react-timeout';
@@ -293,6 +295,8 @@ class MapView extends PureComponent {
       gridView,
       tsneView,
       tagListView,
+      isSearching,
+      isCardDragging,
       // AppOpenFirstTime,
       // headerPad,
 
@@ -308,7 +312,10 @@ class MapView extends PureComponent {
       nextCardControlAction,
       toggleTagListAction,
       toggleTsneViewAction,
-      toggleGridAction
+      toggleGridAction,
+      toggleSearchAction,
+      dragCardAction,
+      createOrUpdateCardAction
       // navigateFirstTimeAction
     } = this.props;
 
@@ -402,7 +409,7 @@ class MapView extends PureComponent {
 
     return (
       <div className="w-100 h-100">
-        <DragDropContextProvider backend={TouchBackend}>
+        <DragDropContextProvider backend={HTML5Backend}>
           <div
             className="w-100 h-100"
             ref={cont => (this.cont = cont)}
@@ -458,6 +465,9 @@ class MapView extends PureComponent {
                   className="mt-3 ml-3 btn"
                   placeholder="Search Cards"
                   type="text"
+                  onChange={evt => filterCardsAction(evt.target.value)}
+                  onFocus={() => toggleSearchAction(true)}
+                  onBlur={() => toggleSearchAction(false)}
                   style={{
                     zIndex: 2000,
                     background: 'whitesmoke',
@@ -492,10 +502,8 @@ class MapView extends PureComponent {
                 }}
               >
                 <DropTargetCont
-                  dropHandler={({ left, top, ...c }) =>
-                    console.log('c', left, top, c)
-                  }
-                  dragged={false}
+                  dropHandler={createOrUpdateCardAction}
+                  dragged={isCardDragging}
                 >
                   <MapGL
                     ref={m => (this.map = m)}
@@ -522,10 +530,10 @@ class MapView extends PureComponent {
                 }}
               >
                 <Accordion
-                  data={[...cards]}
+                  data={cards}
                   duration={600}
-                  centered={true}
-                  selectedId={selectedCardId}
+                  centered={selectedCardId !== null}
+                  selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
                   width={100}
                   slotSize={100 / 5}
                   unit={'%'}
@@ -546,12 +554,7 @@ class MapView extends PureComponent {
                         // pointerEvents: 'none'
                       }}
                     >
-                      <DragSourceCont
-                        dragHandler={isDragging =>
-                          console.log('isDragging', isDragging)
-                        }
-                        id={d.id}
-                      >
+                      <DragSourceCont dragHandler={dragCardAction} id={d.id}>
                         <PreviewCard
                           {...d}
                           onClick={() =>
@@ -580,7 +583,6 @@ class MapView extends PureComponent {
                   tags={cardSets.filter(d => selectedTags.includes(d.key))}
                   colorScale={tagColorScale}
                   scale={barScale}
-                  onClick={filterCardsAction}
                   style={{ zIndex: 5000, marginTop: 40 }}
                 />
               </div>

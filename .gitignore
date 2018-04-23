@@ -35,3 +35,6 @@ api_keys.json
 
 #ignore http tunnel
 ngrok
+
+#ignore firebase credentials
+firebase_api_keys.json

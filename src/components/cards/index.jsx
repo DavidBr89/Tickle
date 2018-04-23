@@ -42,21 +42,48 @@ import { colorScale } from './styles';
 
 class Card extends React.Component {
   static propTypes = {
+    title: PropTypes.string.isRequired,
+    tags: PropTypes.oneOf([null, PropTypes.array]),
+    description: PropTypes.string.isRequired,
+    img: PropTypes.string.isRequired,
     onClose: PropTypes.oneOf([null, PropTypes.func]),
     collectHandler: PropTypes.oneOf([null, PropTypes.func]),
     style: PropTypes.object,
     edit: PropTypes.bool,
-    challenge: PropTypes.object,
     onCollect: PropTypes.func,
-    onAttrUpdate: PropTypes.func.isRequired
+    onAttrUpdate: PropTypes.func.isRequired,
+    challenge: PropTypes.oneOf([
+      null,
+      PropTypes.shape({
+        type: PropTypes.string,
+        url: PropTypes.string,
+        title: PropTypes.string
+      })
+    ]),
+    loc: PropTypes.oneOf([
+      null,
+      PropTypes.shape({
+        longitude: PropTypes.number,
+        latitude: PropTypes.number,
+        radius: PropTypes.number
+      })
+    ])
   };
 
   static defaultProps = {
+    title: 'testcard',
+    tags: [],
+    description: 'example radius',
+    challenge: { type: 'hangman' },
+    loc: {
+      longitude: 0,
+      latitude: 0,
+      radius: 10
+    },
     onClose: d => d,
     collectHandler: null,
     style: {},
     edit: false,
-    challenge: { type: null },
     onCollect: d => d,
     onAttrUpdate: d => d
   };
