@@ -111,7 +111,7 @@ export function fetchCards(userid) {
       .then(querySnapshot => {
         const data = [];
         querySnapshot.forEach(doc => data.push(doc.data()));
-        console.log('data', data);
+        console.log('card data', data);
         dispatch(receiveCards(data));
       });
   };

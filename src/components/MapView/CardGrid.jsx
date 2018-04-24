@@ -8,15 +8,25 @@ import { PreviewCard } from '../cards';
 import TagBar from './TagBar';
 
 function createStacks(cards, selectedCardIndex) {
-  const left = cards.slice(0, selectedCardIndex).map((c, j) => ({
-    ...c,
-    position: 'left',
-    i: 0,
-    j: selectedCardIndex - 1 - j
-  }));
+  const left = cards
+    .slice(0, selectedCardIndex)
+    // TODO
+    // .reverse()
+    .map((c, j) => ({
+      ...c,
+      position: 'left',
+      i: 0,
+      j
+      // j
+    }));
   // .reverse();
 
-  const center = { ...cards[selectedCardIndex], position: 'left', i: 1, j: 0 };
+  const center = {
+    ...cards[selectedCardIndex],
+    position: 'center',
+    i: 1,
+    j: 0
+  };
 
   const right = cards
     .slice(selectedCardIndex + 1, cards.length)
@@ -27,32 +37,39 @@ function createStacks(cards, selectedCardIndex) {
 
 function transition() {
   const { duration, width, unit, slotSize } = this.props;
-  const { selectedId, cardStacks } = this.state;
+  const { cardStacks } = this.state;
   const [leftCards, rightCards] = [
     cardStacks.filter(c => c.position === 'left'),
     cardStacks.filter(c => c.position === 'right')
   ];
 
   const center = width / 2;
+  const leftOffset = rightCards.length / ( leftCards.length || 1 ) * 100 / center / 2;
+  const rightOffset = leftCards.length / ( rightCards.length || 1) * 100 / center / 2;
 
-  // TODO: why minus 2 and 1 ???
+  console.log('leftOffset', leftOffset, 'rightOffset', rightOffset);
+
   const leftScale = j =>
-    (leftCards.length - j) * (center - slotSize) / leftCards.length - 2;
-
+    j * (center - slotSize) / leftCards.length + leftOffset;
+  //
   const rightScale = j =>
-    center + j * (width - slotSize - center) / rightCards.length + 1;
+    center + j * (width - slotSize - center) / rightCards.length + rightOffset;
 
   // const leftScale = d3
-  //   .scalePow()
-  //   .domain([0, leftCards.length])
-  //   .range([center - slotSize, 0]);
+  //   .scaleBand()
+  //   .domain(d3.range(0, leftCards.length + 1))
+  //   .padding(1)
+  //   .align(0.5)
+  //   .range([0, center - slotSize]);
   // // .clamp(true);
-  //
+  // //
   // const rightScale = d3
-  //   .scalePow()
-  //   .domain([0, rightCards.length])
-  //   .range([center, width - slotSize]);
-  // // .clamp(true);
+  //   .scaleBand()
+  //   .padding(1)
+  //   .align(1)
+  //   .domain(d3.range(0, rightCards.length + 1))
+  //   .range([center + slotSize / 2, width - slotSize]);
+  // .clamp(true);
 
   // const transScale = scale.copy().domain([0, domain[1] + 1]);
 
@@ -61,15 +78,14 @@ function transition() {
 
     // TODO: fix alignment for only <=3 cards
     const zIndex = (() => {
-      if (slot === 'left') return leftCards.length - j;
+      if (slot === 'left') j;
       if (slot === 'right') return rightCards.length - j;
       return 1000;
     })();
 
     const defaultStyles = {
       zIndex,
-      transition: `left ${duration / 1000}s, transform ${duration / 1000}s`,
-      transform: selectedId === d.id ? 'scale(1.2)' : 'scale(1)'
+      transition: `left ${duration / 1000}s, transform ${duration / 1000}s`
     };
 
     const left = (() => {
@@ -105,7 +121,7 @@ class CardGrid extends Component {
     data: [],
     duration: 800,
     width: 100,
-    innerMargin: 1,
+    innerMargin: 0,
     unit: 'vw',
     slotSize: 100 / 3,
     centered: true,
@@ -128,6 +144,7 @@ class CardGrid extends Component {
     const { data } = nextProps;
 
     const cardStacks = createStacks(data, nextProps.selectedIndex);
+    console.log('selectedCardIndex', nextProps.selectedIndex);
     this.setState({
       cardStacks
     });
@@ -170,7 +187,13 @@ class CardGrid extends Component {
     const transitionStyles = transition.bind(this)();
 
     if (!centered) {
-      const scale = i => i * (100 - slotSize) / data.length;
+      const scale = d3
+        .scaleBand()
+        .domain(d3.range(0, data.length))
+        .paddingInner(1)
+        // .align(0.5)
+        .range([0, width - slotSize]);
+      // i => i * (100 - slotSize * 3 / 4) / data.length;
       return (
         <div className={className} style={{ ...style, position: 'relative' }}>
           <div

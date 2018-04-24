@@ -3,10 +3,12 @@
 TICKLE playground for our Project
 
 ### Todo
-* integrate CardCreator into mapview
-* fix powerscale in cardgrid
-* Server side
-* add selectedCard Marker
+* ~~integrate CardCreator into mapview~~
+* fix powerscale in accordion
+* ~~Server side~~
+* Server CRUD Operations
+* ~~add selectedCard Marker~~
+* user k-means for topic map
 
 
 * Fork and clone the project:
