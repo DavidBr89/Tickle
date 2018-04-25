@@ -531,6 +531,7 @@ class MapView extends PureComponent {
               >
                 <Accordion
                   data={cards}
+                  className="ml-1 mr-2"
                   duration={600}
                   centered={selectedCardId !== null}
                   selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
@@ -538,8 +539,8 @@ class MapView extends PureComponent {
                   unit={'%'}
                   slotSize={100 / 5}
                   style={{
-                    height: '24vh',
-                    width: '100%',
+                    height: height / 4,
+                    // width: '100%',
                     zIndex: 2000,
                     marginTop: 30
                   }}
@@ -547,6 +548,7 @@ class MapView extends PureComponent {
                   {d => (
                     <div
                       className="w-100 h-100"
+                      key={d.id}
                       style={{
                         display: 'flex',
                         justifyContent: 'center'
@@ -567,7 +569,7 @@ class MapView extends PureComponent {
                           selected={selectedCardId === d.id}
                           style={{
                             transition: `transform 1s`,
-                            transform: selectedCardId === d.id && 'scale(1)'
+                            transform: selectedCardId === d.id && 'scale(1.2)'
                             // width: '100%',
                             // height: '100%',
                             // width: '100%'

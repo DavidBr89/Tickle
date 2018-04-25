@@ -99,7 +99,7 @@ class PreviewCard extends Component {
             ? colorScale(challenge.type)
             : 'whitesmoke',
           ...shadowStyle,
-          minWidth: '100px'
+          // minWidth: '100px'
           // maxHeight: '120px'
         }}
         onClick={onClick}

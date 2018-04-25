@@ -3,8 +3,6 @@ const path = require('path');
 const loaders = require('./webpack.loaders');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
-
 const apiTokens = require('./api_keys.json');
 
 // const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
@@ -112,7 +110,7 @@ module.exports = {
     './src/index.jsx' // your app's entry point
   ],
   // TODO: change for production
-  devtool: 'eval-source-map ',
+  mode: 'development',
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'main.js'
@@ -140,7 +138,9 @@ module.exports = {
     host: HOST,
     disableHostCheck: true,
     // TODO: change back later
-    https: false
+    https: false,
+    progress: true
+
     // headers: {
     //   'Access-Control-Allow-Origin': '*',
     //   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
@@ -161,37 +161,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/template.html'
     }),
-    // new HardSourceWebpackPlugin(),
-    new webpack.ProvidePlugin({
-      $: 'jquery',
-      jQuery: 'jquery',
-      'window.jQuery': 'jquery',
-      Popper: ['popper.js', 'default'],
-      // In case you imported plugins individually, you must also require them here:
-      Util: 'exports-loader?Util!bootstrap/js/dist/util',
-      Dropdown: 'exports-loader?Dropdown!bootstrap/js/dist/dropdown'
-    }),
     new webpack.EnvironmentPlugin(apiTokens)
-    // new webpack.optimize.ModuleConcatenationPlugin()
-    // new HardSourceWebpackPlugin()
-    // new ExtractTextPlugin('style.css')
-    // new webpack.ProvidePlugin({
-    // $: 'jquery',
-    // jQuery: 'jquery',
-    // 'window.jQuery': 'jquery',
-    // Tether: 'tether',
-    // 'window.Tether': 'tether'
-    // Tooltip: 'exports-loader?Tooltip!bootstrap/js/dist/tooltip',
-    // Alert: 'exports-loader?Alert!bootstrap/js/dist/alert',
-    // Button: 'exports-loader?Button!bootstrap/js/dist/button',
-    // Carousel: 'exports-loader?Carousel!bootstrap/js/dist/carousel',
-    // Collapse: 'exports-loader?Collapse!bootstrap/js/dist/collapse',
-    // Dropdown: 'exports-loader?Dropdown!bootstrap/js/dist/dropdown',
-    // Modal: 'exports-loader?Modal!bootstrap/js/dist/modal',
-    // Popover: 'exports-loader?Popover!bootstrap/js/dist/popover',
-    // Scrollspy: 'exports-loader?Scrollspy!bootstrap/js/dist/scrollspy',
-    // Tab: 'exports-loader?Tab!bootstrap/js/dist/tab',
-    // Util: 'exports-loader?Util!bootstrap/js/dist/util'
-    // })
   ]
 };
