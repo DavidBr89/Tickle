@@ -11,7 +11,11 @@ export function setify(data) {
     .map(d => {
       const count = d.values.length;
       const tags = uniq(flatten(intersection(d.values.map(e => e.tags))));
-      return { count, tags, ...d };
+      const values = d.values.map(e => {
+        e.tagId = `${d.key}${e.id}`;
+        return e;
+      });
+      return { count, tags, ...d, values };
     })
     .sort((a, b) => {
       const nameA = a.key.toUpperCase(); // ignore upper and lowercase

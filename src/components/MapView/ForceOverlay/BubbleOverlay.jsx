@@ -79,33 +79,30 @@ function contouring({ data, width, height }) {
   return areas;
 }
 
-// import { colorScale, shadowStyle } from '../cards/styles';
+function recenterVoronoi(nodes, width, height) {
+  const shapes = [];
+  const voronoi = d3
+    .voronoi()
+    .x(d => d.x)
+    .y(d => d.y)
+    .extent([[-1, -1], [width + 1, height + 1]]);
 
-// function cheapSketchyOutline(path) {
-//   const j = 2;
-//   let i = 0;
-//   const pointsArray = [];
-//
-//   const ps = points(path)._path.map(d => [d[1], d[2]]);
-//   let newPoint;
-//   while (i < ps.length) {
-//     newPoint = ps[i];
-//     console.log('ps', ps, newPoint);
-//     pointsArray.push({
-//       x: newPoint.x + (j / 2 - Math.random() * j),
-//       y: newPoint.y + (j / 2 - Math.random() * j)
-//     });
-//     i += j + Math.random() * j;
-//   }
-//   // Make sure to get the last point
-//   const line = d3
-//     .line()
-//     .x(d => d.x)
-//     .y(d => d.y)
-//     .curve(d3.curveBasis);
-//   return line(pointsArray);
-// }
-//
+  const vs = voronoi.polygons(nodes);
+  console.log('vs', vs);
+
+  vs.forEach(d => {
+    if (!d.length) return;
+    const n = [];
+    d.forEach(c => {
+      console.log('c', c, 'd', d);
+      n.push([c[0] - d[0], c[1] - d[1]]);
+    });
+    n.point = d;
+    shapes.push(n);
+  });
+  console.log('shapes', shapes);
+  return shapes;
+}
 
 class BubbleOverlay extends Component {
   static propTypes = {
@@ -151,76 +148,73 @@ class BubbleOverlay extends Component {
 
     // TODO: make contour
 
-    const Bubbles = data
-      .filter(d => d.values.length > 2)
-      .sort((a, b) => b.values.length - a.values.length)
-      .map(({ id, key, values }) => {
-        const size = offsetScale(values.length);
-        const bbox = getBoundingBox(values, d => [d.x, d.y]);
-        const distY = bbox[1][1] - bbox[0][1];
-        const distX = bbox[1][0] - bbox[0][0];
+    const bubbleData = data
+      .filter(d => d.values.length > 1)
+      .sort((a, b) => b.values.length - a.values.length);
 
-        // const clusters =
-        //   distY > height * 4 / 6 || distX > width * 4 / 6
-        //     ? kmeans(values)
-        //     : [{ values }];
+    const bubbleNodes = bubbleData.reduce(
+      (acc, d) => [...d.values, ...acc],
+      []
+    );
+    console.log('bubbleNodes', bubbleNodes);
 
-        const projectedValues = contouring({
-          data: values.map(d => [d.x, d.y]),
-          width,
-          height
-        });
+    const vors = d3
+      .voronoi()
+      .x(d => d.x)
+      .y(d => d.y)
+      .extent([[-1, -1], [width + 1, height + 1]])
+      .polygons(bubbleNodes);
 
-        // console.log('projected values', projectedValues);
+    console.log('vors', vors);
 
-        // [{ values }];
-        // const clusters =
-        //   distY > 0 || distX > 0
-        //     ? [
-        //       { values: values.filter(d => d.y >= cutY) },
-        //       { values: values.filter(d => d.y < cutY) },
-        //         { values: values.filter(d => d.x >= cutX) },
-        //         { values: values.filter(d => d.x < cutX) }
-        //     ]
-        //     : [{ values }];
-        // console.log('clusters', clusters);
+    const Cells = vors.map(v => (
+      <path
+        id={`cell${v.data.id}`}
+        d={v == null ? null : `M${v.join('L')}Z`}
+        stroke={'none'}
+        fill="none"
+      />
+    ));
 
-        // const hulls = clusters.map(c =>
-        //   hull(groupPoints(values, size, size), 1, 100)
-        // ); // d3.polygonHalues));
+    const size = d3
+      .scaleLinear()
+      .domain(d3.extent(data, d => d.values.length))
+      .range([50, 200]);
 
-        const color = chroma(colorScale(key)).alpha(0.1);
-        return (
-          <g key={id}>
-            {projectedValues.map(b =>
-              b.coordinates.map(p => (
-                <g>
-                  <path
-                    style={{
-                      stroke: 'black'
-                    }}
-                    fill="none"
-                    opacity={0.5}
-                  />
-                  <path
-                    style={{
-                      stroke: color,
-                      strokeDasharray: dashScale(zoom),
-                      strokeDashoffset: 30,
-                      strokeWidth: dashScale(zoom)
-                    }}
-                    d={d3.line().curve(d3.curveStep)(p[0])}
-                    id={`p${id}`}
-                    fill={color}
-                    opacity={0.6}
-                  />
-                </g>
-              ))
-            )}
-          </g>
-        );
-      });
+    const Bubbles = bubbleData.map(({ id, key, values }) => {
+      // const size = offsetScale(values.length);
+      // const bbox = getBoundingBox(values, d => [d.x, d.y]);
+      // const distY = bbox[1][1] - bbox[0][1];
+      // const distX = bbox[1][0] - bbox[0][0];
 
+      const [w, h] = [200, 200];
+      const color = chroma(colorScale(key)).alpha(0.1);
+      return (
+        <g key={id} style={{ filter: 'url(#fancy-goo)' }}>
+          {values.map(v => {
+            const s = size(values.length);
+            return (
+              <g>
+                <clipPath id={`clip-${v.id}`}>
+                  <use xlinkHref={`#cell${v.id}`} />
+                </clipPath>
+                <rect
+                  width={s}
+                  height={s}
+                  x={v.x - s / 2}
+                  y={v.y - s / 2}
+                  fill={color}
+                  clipPath={`url(#clip-${v.id})`}
+                />
+              </g>
+            );
+          })}
+        </g>
+      );
+    });
+
+    const blurfactor = 1.9;
+    const radius = 20;
     return (
       <svg
         style={{
@@ -229,7 +223,38 @@ class BubbleOverlay extends Component {
           height
         }}
       >
+        <defs>
+          <filter id="goo">
+            <feGaussianBlur
+              in="SourceGraphic"
+              stdDeviation={blurfactor * radius}
+              result="blur"
+            />
+            <feColorMatrix
+              in="blur"
+              mode="matrix"
+              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
+              result="goo"
+            />
+            <feBlend in="SourceGraphic" in2="goo" />
+          </filter>
+          <filter id="fancy-goo">
+            <feGaussianBlur
+              in="SourceGraphic"
+              stdDeviation="10"
+              result="blur"
+            />
+            <feColorMatrix
+              in="blur"
+              mode="matrix"
+              values={`1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${radius} -9`}
+              result="goo"
+            />
+            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+          </filter>
+        </defs>
         {Bubbles}
+        {Cells}
       </svg>
     );
   }
