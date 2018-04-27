@@ -49,8 +49,7 @@ export function circle([x, y], offsetX, offsetY) {
 
 export function groupPoints(nodes, offsetX = 0, offsetY = 0) {
   return nodes.reduce(
-    (acc, element) =>
-      acc.concat(circle([element.x, element.y], offsetX, offsetY)),
+    (acc, [x, y]) => acc.concat(circle([x, y], offsetX, offsetY)),
     []
   );
 }

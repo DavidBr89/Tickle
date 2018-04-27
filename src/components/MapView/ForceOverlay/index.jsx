@@ -288,6 +288,7 @@ class ForceOverlay extends Component {
 
     const initPos = data.map(() => [width / 2, height / 2]);
     const somPos = somFy(data, width, height);
+    console.log('somPos start', somPos);
 
     const nodes = data.map(d => ({ ...d, x: width / 2, y: height / 2 }));
 
@@ -318,6 +319,7 @@ class ForceOverlay extends Component {
     const { width, height } = viewport;
 
     if (oldData.length !== nextData.length) {
+      console.log('new Data', nextData);
       const somPos = somFy(nextData, width, height);
       const gridPos = lapFy(somPos);
 
@@ -328,6 +330,8 @@ class ForceOverlay extends Component {
         somPos,
         gridPos
       });
+      // TODO: remvoe later
+      this.setState({ somPos });
     } else this.layout(nextProps);
   }
 
@@ -374,6 +378,8 @@ class ForceOverlay extends Component {
           return geoPos;
       }
     })();
+
+    console.log('pos', mode, pos);
 
     const xScale =
       mode !== 'geo'
@@ -461,7 +467,7 @@ class ForceOverlay extends Component {
     const { nodes, comps } = this.state;
     // const newPos = nodes.map(d => transEvent.apply([d.x, d.y]));
     const tagNode = nodes.find(n => n.id === selectedCardId);
-    //TODO: change later
+    // TODO: change later
     const selectedTags = selectedCardId ? tagNode && tagNode.tags : [];
 
     if (mode === 'geo') {

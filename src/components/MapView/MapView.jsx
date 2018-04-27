@@ -58,6 +58,28 @@ import {
 
 import DragLayer from '../CardCreator/DragLayer/DragLayer';
 
+function launchIntoFullscreen(element) {
+  if (element.requestFullscreen) {
+    element.requestFullscreen();
+  } else if (element.mozRequestFullScreen) {
+    element.mozRequestFullScreen();
+  } else if (element.webkitRequestFullscreen) {
+    element.webkitRequestFullscreen();
+  } else if (element.msRequestFullscreen) {
+    element.msRequestFullscreen();
+  }
+}
+
+function exitFullscreen() {
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.mozCancelFullScreen) {
+    document.mozCancelFullScreen();
+  } else if (document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
+  }
+}
+
 // TODO: adapt colors
 const tagColors = chromatic.schemeAccent
   .reverse()
@@ -195,6 +217,7 @@ class MapView extends PureComponent {
 
     this.scrollTo = scrollTo.bind(this);
     this.node = null;
+    this.fullscreen = false;
   }
 
   componentDidMount() {
@@ -461,6 +484,24 @@ class MapView extends PureComponent {
                     <Icon.Grid size={30} />
                   </div>
                 </button>
+                <button
+                  className="mt-3 ml-3 btn"
+                  style={{
+                    // position: 'absolute',
+                    zIndex: 3000,
+                    background: gridView ? 'whitesmoke' : null
+                  }}
+                  onClick={() => {
+                    !this.fullscreen
+                      ? launchIntoFullscreen(this.cont)
+                      : exitFullscreen(this.cont);
+                    this.fullscreen = !this.fullscreen;
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Icon.Monitor size={20} />
+                  </div>
+                </button>
                 <input
                   className="mt-3 ml-3 btn"
                   placeholder="Search Cards"
@@ -537,7 +578,7 @@ class MapView extends PureComponent {
                   selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
                   width={100}
                   unit={'%'}
-                  slotSize={100 / 5}
+                  slotSize={100 / 3.5}
                   style={{
                     height: height / 4,
                     // width: '100%',

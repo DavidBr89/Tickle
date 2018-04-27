@@ -118,8 +118,6 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin(['public/*.*']),
-    new webpack.NamedModulesPlugin(),
-    new webpack.NoEmitOnErrorsPlugin(),
     new HtmlWebpackPlugin({
       template: './src/template.html'
     }),

@@ -292,48 +292,48 @@ function reducer(state = {}, action) {
       // if (state.extCardId !== null) return state;
       const { longitude, latitude, zoom } = action.options;
 
-      if (zoom <= defaultZoom) return { ...state };
-
-      const bbox = getBoundingBox(
-        cards
-          .map(({ loc }) => [loc.longitude, loc.latitude])
-          .concat([[userLocation.longitude, userLocation.latitude]])
-      );
-
-      const selCard = cards.find(d => d.id === selectedCardId);
-      const { longitude: centerLng, latitude: centerLat } = selCard
-        ? selCard.loc
-        : { longitude, latitude };
-
-      const { zoom: minZoom, longitude: newLng, latitude: newLat } = (() => {
-        const offset = [0, gridView ? -height / 4 : 0];
-        if (zoom <= defaultZoom) {
-          return offsetMapViewport({
-            width,
-            height,
-            zoom: 8,
-            latitude: centerLat,
-            longitude: centerLng,
-            offset
-          }).fitBounds(bbox, {
-            padding: 10,
-            // offset
-            offset: [0, height / 2]
-          });
-        }
-        return offsetMapViewport({
-          width,
-          height,
-          zoom,
-          latitude: centerLat,
-          longitude: centerLng,
-          offset
-        });
-        // .fitBounds(bbox, {
-        //   // padding: 10,
-        //   offset: [0, 0]
-        // });
-      })();
+      // if (zoom <= defaultZoom) return { ...state };
+      //
+      // const bbox = getBoundingBox(
+      //   cards
+      //     .map(({ loc }) => [loc.longitude, loc.latitude])
+      //     .concat([[userLocation.longitude, userLocation.latitude]])
+      // );
+      //
+      // const selCard = cards.find(d => d.id === selectedCardId);
+      // const { longitude: centerLng, latitude: centerLat } = selCard
+      //   ? selCard.loc
+      //   : { longitude, latitude };
+      //
+      // const { zoom: minZoom, longitude: newLng, latitude: newLat } = (() => {
+      //   const offset = [0, gridView ? -height / 4 : 0];
+      //   if (zoom <= defaultZoom) {
+      //     return offsetMapViewport({
+      //       width,
+      //       height,
+      //       zoom: 8,
+      //       latitude: centerLat,
+      //       longitude: centerLng,
+      //       offset
+      //     }).fitBounds(bbox, {
+      //       padding: 10,
+      //       // offset
+      //       offset: [0, height / 2]
+      //     });
+      //   }
+      //   return offsetMapViewport({
+      //     width,
+      //     height,
+      //     zoom,
+      //     latitude: centerLat,
+      //     longitude: centerLng,
+      //     offset
+      //   });
+      //   // .fitBounds(bbox, {
+      //   //   // padding: 10,
+      //   //   offset: [0, 0]
+      //   // });
+      // })();
 
       // const screenVp = new PerspectiveMercatorViewport({
       //   width,
@@ -356,13 +356,13 @@ function reducer(state = {}, action) {
 
       return {
         ...state,
-        longitude: newLng,
-        latitude: newLat,
+        longitude,//: newLng,
+        latitude,//: newLat,
         // birdsEyeView,
         // cards: newCards,
 
         // latitude: newLat, // latScale(viewport.zoom),
-        zoom: Math.max(minZoom, zoom),
+        zoom,//: Math.max(minZoom, zoom),
         // selectedCardId: zoom < 10 ? null : state.selectedCardId,
         userChangedMapViewport: true
       };

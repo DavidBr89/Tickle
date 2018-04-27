@@ -122,7 +122,7 @@ class ReadCardFront extends Component {
         </Modal>
         <PreviewTags data={tags} />
 
-        <Img src={img} />
+        <Img src={img} style={{height: '45%'}}/>
         <DescriptionField
           style={{ height: '20%' }}
           text={description}

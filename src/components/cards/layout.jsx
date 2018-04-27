@@ -242,17 +242,21 @@ EditButton.propTypes = {
 
 EditButton.defaultProps = { style: {}, onClick: () => null, className: '' };
 
-const Img = ({ src }) => (
-  <div className="mt-1 mb-1" style={{ border: '1px solid var(--black)' }}>
+const Img = ({ src, style }) => (
+  <div
+    className="mt-1 mb-1"
+    style={{ border: '1px solid var(--black)', ...style }}
+  >
     <img src={src} alt="Card img" style={{ width: '100%', height: '100%' }} />
   </div>
 );
 
 Img.propTypes = {
-  src: PropTypes.string
+  src: PropTypes.string,
+  style: {}
 };
 
-Img.defaultProps = { src: '' };
+Img.defaultProps = { src: '', style: {} };
 
 class MyTags extends Component {
   static propTypes = {
@@ -435,7 +439,9 @@ const PreviewTags = ({ data, style, placeholder, small }) => (
   <div
     style={{
       display: 'flex',
+      // position: 'absolute',
       ...style
+      // overflowY: 'visible'
       // flexWrap: 'no-wrap'
       // alignItems: 'center'
     }}
