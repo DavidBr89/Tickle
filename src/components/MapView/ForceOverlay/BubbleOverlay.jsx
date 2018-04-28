@@ -8,7 +8,7 @@ import chroma from 'chroma-js';
 import polylabel from '@mapbox/polylabel';
 
 import { getBoundingBox } from '../utils';
-import { kmeans, groupPoints } from './utils';
+import { kmeans, hexagon, groupPoints } from './utils';
 
 import throttle from 'react-throttle-render';
 
@@ -170,8 +170,8 @@ class BubbleOverlay extends Component {
     const Cells = vors.map(v => (
       <path
         id={`cell${v.data.id}`}
-        d={v == null ? null : `M${v.join('L')}Z`}
-        stroke={'none'}
+        d={d3.line().curve(d3.curveStep)(v)}
+        stroke={'black'}
         fill="none"
       />
     ));
@@ -179,7 +179,7 @@ class BubbleOverlay extends Component {
     const size = d3
       .scaleLinear()
       .domain(d3.extent(data, d => d.values.length))
-      .range([50, 200]);
+      .range([50, 100]);
 
     const Bubbles = bubbleData.map(({ id, key, values }) => {
       // const size = offsetScale(values.length);
@@ -189,6 +189,13 @@ class BubbleOverlay extends Component {
 
       const [w, h] = [200, 200];
       const color = chroma(colorScale(key)).alpha(0.1);
+
+      // <path
+      //   d={d3.line()(hexagon([v.x, v.y], s, s))}
+      //   stroke={color}
+      //   fill="none"
+      //   clipPath={`url(#clip-${v.id})`}
+      // />
       return (
         <g key={id} style={{ filter: 'url(#fancy-goo)' }}>
           {values.map(v => {
@@ -198,11 +205,11 @@ class BubbleOverlay extends Component {
                 <clipPath id={`clip-${v.id}`}>
                   <use xlinkHref={`#cell${v.id}`} />
                 </clipPath>
-                <rect
-                  width={s}
+                <circle
+                  r={s}
                   height={s}
-                  x={v.x - s / 2}
-                  y={v.y - s / 2}
+                  cx={v.x}
+                  cy={v.y}
                   fill={color}
                   clipPath={`url(#clip-${v.id})`}
                 />
@@ -213,8 +220,8 @@ class BubbleOverlay extends Component {
       );
     });
 
-    const blurfactor = 1.9;
-    const radius = 20;
+    const blurfactor = 1.1;
+    const radius = 5;
     return (
       <svg
         style={{
