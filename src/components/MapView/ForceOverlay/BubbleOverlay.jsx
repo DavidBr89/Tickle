@@ -170,8 +170,8 @@ class BubbleOverlay extends Component {
     const Cells = vors.map(v => (
       <path
         id={`cell${v.data.id}`}
-        d={d3.line().curve(d3.curveStep)(v)}
-        stroke={'black'}
+        d={d3.line().curve(d3.curveLinear)(v)}
+        stroke={'none'}
         fill="none"
       />
     ));
@@ -179,7 +179,7 @@ class BubbleOverlay extends Component {
     const size = d3
       .scaleLinear()
       .domain(d3.extent(data, d => d.values.length))
-      .range([50, 100]);
+      .range([50, 200]);
 
     const Bubbles = bubbleData.map(({ id, key, values }) => {
       // const size = offsetScale(values.length);
@@ -205,11 +205,11 @@ class BubbleOverlay extends Component {
                 <clipPath id={`clip-${v.id}`}>
                   <use xlinkHref={`#cell${v.id}`} />
                 </clipPath>
-                <circle
-                  r={s}
+                <rect
+                  width={s}
                   height={s}
-                  cx={v.x}
-                  cy={v.y}
+                  x={v.x - s / 2}
+                  y={v.y - s / 2}
                   fill={color}
                   clipPath={`url(#clip-${v.id})`}
                 />
@@ -220,8 +220,8 @@ class BubbleOverlay extends Component {
       );
     });
 
-    const blurfactor = 1.1;
-    const radius = 5;
+    const blurfactor = 1.9;
+    const radius = 20;
     return (
       <svg
         style={{

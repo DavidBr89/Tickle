@@ -511,6 +511,7 @@ class ForceOverlay extends Component {
             <Fragment>
               <BubbleOverlay
                 comps={comps}
+                nodes={zoomedNodes}
                 data={setData}
                 selectedTags={selectedTags}
                 zoom={transform.k}
