@@ -105,7 +105,6 @@ class CardGrid extends Component {
     const { data } = nextProps;
 
     const cardStacks = centerLayout.bind(this)(data, nextProps.selectedIndex);
-    console.log('selectedCardIndex', nextProps.selectedIndex);
     this.setState({
       cardStacks
     });

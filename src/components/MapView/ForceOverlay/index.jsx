@@ -5,7 +5,6 @@ import * as d3 from 'd3';
 // import tsnejs from 'tsne';
 import lap from 'lap-jv/lap.js';
 import SOM from 'ml-som';
-import scc from 'strongly-connected-components';
 // import louvain from './jlouvain';
 
 import { intersection, union, uniq } from 'lodash';
@@ -13,7 +12,6 @@ import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 
 import ZoomContainer from './ZoomContainer';
 import BubbleOverlay from './BubbleOverlay';
-import TopicAnnotationOverlay from './TopicAnnotationOverlay';
 import AmbientOverlay from './AmbientOverlay';
 
 import { setify } from '../utils';
@@ -46,7 +44,7 @@ function somFy(data, width, height, callback = d => d) {
 
 // function tsneFy(data, callback = d => d, iter = 400) {
 //   const sets = setify(data).reduce((acc, d) => {
-//     acc[d.key] = d.count;
+//     acc[d.key] 0= d.count;
 //     return acc;
 //   }, {});
 //
@@ -148,87 +146,6 @@ function lapFy(data) {
   return resLa.map(d => [x(d.i), x(d.j)]);
 }
 
-function splitLinks(nodes, width = Infinity, height = Infinity) {
-  const links = [];
-  nodes.forEach(s => {
-    nodes.forEach(t => {
-      const interSet = intersection(s.tags, t.tags);
-
-      // const euclDist = (x1, y1, x2, y2) =>
-      //   Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-      const distX = Math.abs(t.x - s.x);
-      const distY = Math.abs(t.y - s.y);
-      // const weight = euclDist(t.x, t.y, s.x, s.y);
-
-      if (
-        s.id !== t.id &&
-        interSet.length > 0 &&
-        distY < height / 7 &&
-        distX < width / 3
-        // &&
-        // s.x > 0 && s.x < width &&
-        // t.x > 0 &&
-        // t.x < width &&
-        // s.y > 0 &&
-        // s.y < height &&
-        // t.y > 0 &&
-        // t.y < height
-      ) {
-        links.push({
-          source: s.id,
-          target: t.id,
-          interSet
-          // weight
-        });
-      }
-    });
-  });
-  return links;
-}
-
-function connectedComponents(nodes, width = Infinity, height = Infinity) {
-  // const coms = louvain()
-  //   .nodes(nodes.map(d => d.id))
-  //   .edges(splitLinks(nodes, width, height))();
-  //
-  const adjList = nodes.map(n =>
-    uniq(
-      splitLinks(nodes, width, height)
-        .reduce((acc, { source, target }) => {
-          if (n.id === source) return [...acc, target];
-          if (n.id === target) return [...acc, source];
-          return acc;
-        }, [])
-        .map(id => nodes.findIndex(d => d.id === id))
-    )
-  );
-  const comps = scc(adjList).components;
-  return comps.map((d, i) => {
-    const values = d.map(e => nodes[e]);
-    const tags = d3
-      .nest()
-      .key(e => e)
-      .entries(values.reduce((acc, v) => [...acc, ...v.tags], []))
-      .sort((a, b) => b.values.length - a.values.length);
-
-    return {
-      key: i,
-      values,
-      tags
-    };
-  });
-
-  // const communities = d3
-  //   .nest()
-  //   .key(d => d.cluster)
-  //   .entries(
-  //     Object.values(coms).map((cluster, i) => ({
-  //       ...nodes[i],
-  //       cluster
-  //     }))
-  //   );
-}
-
 class ForceOverlay extends Component {
   static propTypes = {
     children: PropTypes.func,
@@ -288,7 +205,6 @@ class ForceOverlay extends Component {
 
     const initPos = data.map(() => [width / 2, height / 2]);
     const somPos = somFy(data, width, height);
-    console.log('somPos start', somPos);
 
     const nodes = data.map(d => ({ ...d, x: width / 2, y: height / 2 }));
 
@@ -296,8 +212,7 @@ class ForceOverlay extends Component {
       nodes,
       tsnePos: initPos,
       somPos,
-      gridPos: lapFy(somPos),
-      comps: connectedComponents(nodes)
+      gridPos: lapFy(somPos)
     };
 
     this.layout = this.layout.bind(this);
@@ -305,6 +220,7 @@ class ForceOverlay extends Component {
 
     this.forceSim = d3.forceSimulation();
     // this.zoom = this.zoom.bind(this);
+    this.timeStamp = new Date().getMilliseconds();
   }
 
   componentDidMount() {
@@ -319,7 +235,6 @@ class ForceOverlay extends Component {
     const { width, height } = viewport;
 
     if (oldData.length !== nextData.length) {
-      console.log('new Data', nextData);
       const somPos = somFy(nextData, width, height);
       const gridPos = lapFy(somPos);
 
@@ -330,6 +245,7 @@ class ForceOverlay extends Component {
         somPos,
         gridPos
       });
+
       // TODO: remvoe later
       this.setState({ somPos });
     } else this.layout(nextProps);
@@ -379,8 +295,6 @@ class ForceOverlay extends Component {
       }
     })();
 
-    console.log('pos', mode, pos);
-
     const xScale =
       mode !== 'geo'
         ? d3
@@ -415,28 +329,28 @@ class ForceOverlay extends Component {
     // .filter(n => n.x > 0 && n.x < width && n.y > 0 && n.y < height);
     this.ids.map(clearTimeout);
     // this.id = setTimeout(() => {
-    this.forceSim = this.forceSim
-      .nodes(nodes)
-      .restart()
-      // TODO: proper reheat
-      .alpha(1)
-      .alphaMin(0.8)
-      .force('x', d3.forceX((d, i) => xScale(pos[i][0])).strength(0.5))
-      .force('y', d3.forceY((d, i) => yScale(pos[i][1])).strength(0.5))
-      .force('coll', d3.forceCollide(15))
-      // .force('center', d3.forceCenter(width / 2, height / 2))
-      .on('end', () => {
-        this.ids.map(clearTimeout);
-        this.ids = this.ids.concat([
-          setTimeout(
-            () =>
-              this.setState({
-                nodes: this.forceSim.nodes()
-              }),
-            delay
-          )
-        ]);
-      });
+    // this.forceSim = this.forceSim
+    //   .nodes(nodes)
+    //   .restart()
+    //   // TODO: proper reheat
+    //   .alpha(1)
+    //   .alphaMin(0.8)
+    //   .force('x', d3.forceX((d, i) => xScale(pos[i][0])).strength(0.5))
+    //   .force('y', d3.forceY((d, i) => yScale(pos[i][1])).strength(0.5))
+    //   .force('coll', d3.forceCollide(15))
+    //   // .force('center', d3.forceCenter(width / 2, height / 2))
+    //   .on('end', () => {
+    //     this.ids.map(clearTimeout);
+    //     this.ids = this.ids.concat([
+    //       setTimeout(
+    //         () =>
+    //           this.setState({
+    //             nodes: this.forceSim.nodes()
+    //           }),
+    //         delay
+    //       )
+    //     ]);
+    //   });
     // }, delay);
 
     this.forceSim.on('end', null);
@@ -468,7 +382,7 @@ class ForceOverlay extends Component {
     // const newPos = nodes.map(d => transEvent.apply([d.x, d.y]));
     const tagNode = nodes.find(n => n.id === selectedCardId);
     // TODO: change later
-    const selectedTags = selectedCardId ? tagNode && tagNode.tags : [];
+    // const selectedTags = selectedCardId ? tagNode && tagNode.tags : [];
 
     if (mode === 'geo') {
       return (
@@ -490,6 +404,7 @@ class ForceOverlay extends Component {
       );
     }
     // TODO: get
+    //
     return (
       <ZoomContainer
         width={width}
@@ -499,37 +414,19 @@ class ForceOverlay extends Component {
         selectedId={selectedCardId}
       >
         {(zoomedNodes, transform) => {
-          const tmpComps = connectedComponents(zoomedNodes, width, height);
-          const setData = [...sets].map(({ values, ...rest }) => {
-            const newValues = values.map(n => {
-              const { x, y } = zoomedNodes.find(d => n.id === d.id);
-              return { ...n, x, y };
-            });
-            return { values: newValues, ...rest };
-          });
+          const ts = new Date().getMilliseconds();
+
+          this.timeStamp = ts;
           return (
             <Fragment>
               <BubbleOverlay
-                comps={comps}
-                nodes={zoomedNodes}
-                data={setData}
-                selectedTags={selectedTags}
                 zoom={transform.k}
+                nodes={zoomedNodes}
                 width={width}
                 height={height}
                 colorScale={colorScale}
+                labels={labels}
               />
-              {labels && (
-                <TopicAnnotationOverlay
-                  comps={tmpComps}
-                  data={setData}
-                  selectedTags={selectedTags}
-                  zoom={transform.k}
-                  width={width}
-                  height={height}
-                  colorScale={colorScale}
-                />
-              )}
               <div style={{ overflow: 'hidden', width, height }}>
                 {zoomedNodes.map(children)}
               </div>

@@ -115,7 +115,7 @@ function configureStore(rootReducer, initialState) {
     initialState,
     applyMiddleware(
       thunkMiddleware, // lets us dispatch() functions
-      loggerMiddleware // neat middleware that logs actions
+      process.env.NODE_ENV === 'development' && loggerMiddleware // neat middleware that logs actions
     )
   );
 

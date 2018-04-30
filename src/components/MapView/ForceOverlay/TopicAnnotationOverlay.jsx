@@ -90,15 +90,7 @@ class TopicAnnotationOverlay extends Component {
   }
 
   render() {
-    const {
-      data,
-      width,
-      height,
-      zoom,
-      selectedTags,
-      colorScale,
-      comps
-    } = this.props;
+    const { data, selectedTags, colorScale, comps } = this.props;
 
     const TopicLabels = comps.map(({ key, values }, i) => {
       const h = hull(groupPoints(values, 20, 30), 10, 100);
@@ -116,13 +108,7 @@ class TopicAnnotationOverlay extends Component {
       );
     });
     return (
-      <svg
-        style={{
-          position: 'absolute',
-          width,
-          height
-        }}
-      >
+      <g>
         {TopicLabels}
         {comps.map(({ values, key, tags }, i) => {
           const h = hull(groupPoints(values, 20, 30), 10, 100);
@@ -173,7 +159,7 @@ class TopicAnnotationOverlay extends Component {
             </Annotation>
           );
         })}
-      </svg>
+      </g>
     );
   }
 }

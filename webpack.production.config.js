@@ -121,6 +121,9 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/template.html'
     }),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('production')
+    }),
     new webpack.EnvironmentPlugin(apiTokens)
   ]
 };
