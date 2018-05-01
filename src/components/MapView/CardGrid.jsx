@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 // import VisibilitySensor from 'react-visibility-sensor/visibility-sensor.js';
 
-function centerLayout() {
-  const { slotSize, width, data, selectedIndex } = this.props;
+function centerLayout(nextProps) {
+  const { slotSize, width, data, selectedIndex } = nextProps || this.props;
   const center = width / 2;
 
   const leftLen = selectedIndex + 1;
@@ -92,7 +92,8 @@ class CardGrid extends Component {
 
   constructor(props) {
     super(props);
-    const cardStacks = centerLayout.bind(this)();
+    const cardStacks = centerLayout.bind(this)(props);
+    console.log('cardStacks');
     this.state = {
       cardStacks
     };
@@ -104,7 +105,7 @@ class CardGrid extends Component {
   componentWillReceiveProps(nextProps) {
     const { data } = nextProps;
 
-    const cardStacks = centerLayout.bind(this)(data, nextProps.selectedIndex);
+    const cardStacks = centerLayout.bind(this)(nextProps);
     this.setState({
       cardStacks
     });
@@ -114,8 +115,10 @@ class CardGrid extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     // return (
     //   this.props.data.length !== nextProps.data.length ||
-    //   this.props.centered !== nextProps.centered
-    // ); // nextProps.selected !== this.props.selected;
+    //   this.props.centered !== nextProps.centered ||
+    //   nextProps.selected !== this.props.selected
+    // );
+    // return nextProps.selectedIndex !== this.props.selectedIndex;
     return true;
   }
 
@@ -144,7 +147,9 @@ class CardGrid extends Component {
       duration
     } = this.props;
 
-    const cardStacks = centerLayout.bind(this)(data, selectedIndex);
+    const { cardStacks } = this.state;
+
+    console.log('cardStacks', cardStacks);
     const { leftCards, centerCard, rightCards } = cardStacks;
     const allCards = [...leftCards, ...centerCard, ...rightCards];
 
@@ -226,6 +231,35 @@ class CardGrid extends Component {
           })}
         </div>
       </div>
+    );
+  }
+}
+
+class AccordionWrapper extends Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string,
+    onChange: PropTypes.func
+  };
+
+  static defaultProps = { onChange: d => d };
+
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log('change');
+    clearTimeout(this.id);
+    this.id = setTimeout(() => this.props.onChange(), 1000);
+  }
+
+  render() {
+    return (
+      <CardGrid
+        {...this.props}
+        onClick={selectedIndex => this.setState({ selectedIndex })}
+      />
     );
   }
 }

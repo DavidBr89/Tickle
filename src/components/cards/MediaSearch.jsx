@@ -4,7 +4,7 @@ import $ from 'jquery';
 // import MyGrid from 'mygrid/dist';
 import cxs from 'cxs';
 import giphyReq from 'giphy-api';
-import fetchJsonp from 'fetch-jsonp';
+// import fetchJsonp from 'fetch-jsonp';
 
 // import { DDG } from 'node-ddg-api';
 

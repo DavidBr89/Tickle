@@ -227,6 +227,10 @@ class ForceOverlay extends Component {
     this.layout();
   }
 
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return false;
+  // }
+
   componentWillReceiveProps(nextProps) {
     // clearTimeout(this.id);
     // this.ids.map(clearTimeout);
@@ -234,21 +238,27 @@ class ForceOverlay extends Component {
     const { data: nextData, viewport, mode } = nextProps;
     const { width, height } = viewport;
 
+    clearTimeout(this.id);
+
     if (oldData.length !== nextData.length) {
       const somPos = somFy(nextData, width, height);
-      const gridPos = lapFy(somPos);
+      // const gridPos = lapFy(somPos);
 
       this.forceSim.force('x', null).force('y', null);
 
       this.layout(nextProps, {
         ...this.state,
-        somPos,
-        gridPos
+        somPos
+        // gridPos
       });
 
       // TODO: remvoe later
       this.setState({ somPos });
-    } else this.layout(nextProps);
+    } else {
+      // this.id = setTimeout(() => {
+      this.layout(nextProps);
+      // }, 100);
+    }
   }
 
   componentDidUpdate() {
@@ -262,10 +272,10 @@ class ForceOverlay extends Component {
   }
 
   layout(nextProps = null, nextState = null) {
-    const { viewport, mode, delay, data, padding, sets } =
+    const { viewport, mode, delay, data, padding, force } =
       nextProps || this.props;
     const { width, height, zoom, latitude, longitude } = viewport;
-    const { tsnePos, somPos, gridPos, nodes: oldNodes, comps } =
+    const { tsnePos, somPos, gridPos, nodes: oldNodes } =
       nextState || this.state;
 
     // console.log('oldNodes', nextState, oldNodes);
@@ -328,32 +338,35 @@ class ForceOverlay extends Component {
 
     // .filter(n => n.x > 0 && n.x < width && n.y > 0 && n.y < height);
     this.ids.map(clearTimeout);
-    // this.id = setTimeout(() => {
-    // this.forceSim = this.forceSim
-    //   .nodes(nodes)
-    //   .restart()
-    //   // TODO: proper reheat
-    //   .alpha(1)
-    //   .alphaMin(0.8)
-    //   .force('x', d3.forceX((d, i) => xScale(pos[i][0])).strength(0.5))
-    //   .force('y', d3.forceY((d, i) => yScale(pos[i][1])).strength(0.5))
-    //   .force('coll', d3.forceCollide(15))
-    //   // .force('center', d3.forceCenter(width / 2, height / 2))
-    //   .on('end', () => {
-    //     this.ids.map(clearTimeout);
-    //     this.ids = this.ids.concat([
-    //       setTimeout(
-    //         () =>
-    //           this.setState({
-    //             nodes: this.forceSim.nodes()
-    //           }),
-    //         delay
-    //       )
-    //     ]);
-    //   });
-    // }, delay);
 
-    this.forceSim.on('end', null);
+    if (force) {
+      this.id = setTimeout(() => {
+        this.forceSim = this.forceSim
+          .nodes(nodes)
+          .restart()
+          // TODO: proper reheat
+          .alpha(1)
+          .alphaMin(0.8)
+          .force('x', d3.forceX((d, i) => xScale(pos[i][0])).strength(0.5))
+          .force('y', d3.forceY((d, i) => yScale(pos[i][1])).strength(0.5))
+          .force('coll', d3.forceCollide(15))
+          // .force('center', d3.forceCenter(width / 2, height / 2))
+          .on('end', () => {
+            this.ids.map(clearTimeout);
+            this.ids = this.ids.concat([
+              setTimeout(
+                () =>
+                  this.setState({
+                    nodes: this.forceSim.nodes()
+                  }),
+                delay
+              )
+            ]);
+          });
+      }, delay);
+
+      this.forceSim.on('end', null);
+    }
 
     this.ids = [...this.ids, this.id];
     // if (mode === 'geo') this.forceSim.stop();
@@ -374,7 +387,8 @@ class ForceOverlay extends Component {
       center,
       sets,
       colorScale,
-      labels
+      labels,
+      onViewportChange
     } = this.props;
 
     const { width, height } = viewport;
@@ -412,27 +426,23 @@ class ForceOverlay extends Component {
         center={[width / 2, height * 2 / 3]}
         nodes={nodes}
         selectedId={selectedCardId}
+        onZoom={onViewportChange}
       >
-        {(zoomedNodes, transform) => {
-          const ts = new Date().getMilliseconds();
-
-          this.timeStamp = ts;
-          return (
-            <Fragment>
-              <BubbleOverlay
-                zoom={transform.k}
-                nodes={zoomedNodes}
-                width={width}
-                height={height}
-                colorScale={colorScale}
-                labels={labels}
-              />
-              <div style={{ overflow: 'hidden', width, height }}>
-                {zoomedNodes.map(children)}
-              </div>
-            </Fragment>
-          );
-        }}
+        {(zoomedNodes, transform) => (
+          <Fragment>
+            <BubbleOverlay
+              zoom={transform.k}
+              nodes={zoomedNodes}
+              width={width}
+              height={height}
+              colorScale={colorScale}
+              labels={labels}
+            />
+            <div style={{ overflow: 'hidden', width, height }}>
+              {zoomedNodes.map(children)}
+            </div>
+          </Fragment>
+        )}
       </ZoomContainer>
     );
   }

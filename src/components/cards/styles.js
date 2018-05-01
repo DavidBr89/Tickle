@@ -8,17 +8,48 @@ import { challengeTypes, mediaTypes } from '../../dummyData';
 
 import colorClasses from '../utils/colorClasses';
 
+const colors0 = [
+  '#7fcdbb',
+  '#a1dab4',
+  '#41b6c4',
+  '#a1dab4',
+  '#41b6c4',
+  '#2c7fb8',
+  '#c7e9b4',
+  '#7fcdbb',
+  '#41b6c4',
+  '#2c7fb8',
+  '#c7e9b4',
+  '#7fcdbb',
+  '#41b6c4',
+  '#1d91c0',
+  '#225ea8',
+  '#edf8b1',
+  '#c7e9b4',
+  '#7fcdbb',
+  '#41b6c4',
+  '#1d91c0',
+  '#225ea8',
+  '#edf8b1',
+  '#c7e9b4',
+  '#7fcdbb',
+  '#41b6c4',
+  '#1d91c0',
+  '#225ea8',
+  '#253494'
+];
+
 export const mediaScale = scaleOrdinal()
   .domain(mediaTypes)
   .range(['fa-gamepad', 'fa-link', 'fa-camera', 'fa-video-camera']);
 
 export const colorScaleRandom = scaleLinear()
-  .domain(range(colorClasses.length))
+  .domain(range(colors0.length))
   .range(colorClasses)
   .clamp(true);
 
 export const colorClass = (title = 'title') =>
-  colorScaleRandom(title.length % colorClasses.length);
+  colorScaleRandom(title.length % colors0.length);
 
 export const profileSrc = () => {
   const gender = Math.random() < 0.5 ? 'men' : 'women';

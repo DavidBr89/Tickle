@@ -18,7 +18,8 @@ import {
   filterCards,
   toggleSearch,
   dragCard,
-  createOrUpdateCard
+  createOrUpdateCard,
+  changeViewport
 } from './actions';
 
 import { fetchDirection, computeTopicMap } from './async_actions';
@@ -120,6 +121,9 @@ const mapDispatchToProps = dispatch => ({
   },
   createOrUpdateCardAction: options => {
     dispatch(createOrUpdateCard(options));
+  },
+  changeViewportAction: options => {
+    dispatch(changeViewport(options));
   }
 });
 

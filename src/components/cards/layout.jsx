@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Grid from 'mygrid/dist';
+// import Grid from 'mygrid/dist';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { profileSrc, mediaScale, colorClass, colorScaleRandom } from './styles';
 // TODO: remove
@@ -199,7 +199,7 @@ MediaField.defaultProps = {
 
 const PreviewMedia = ({ data, style }) => (
   <div style={style}>
-    <Grid cols={data.length > 1 ? 2 : 0} rows={Math.min(data.length / 2, 1)}>
+    <div cols={data.length > 1 ? 2 : 0} rows={Math.min(data.length / 2, 1)}>
       {data.map(m => (
         <div key={m.url}>
           <div className="mr-1 row">
@@ -212,7 +212,7 @@ const PreviewMedia = ({ data, style }) => (
           </div>
         </div>
       ))}
-    </Grid>
+    </div>
   </div>
 );
 

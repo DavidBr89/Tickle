@@ -9,7 +9,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 import './bootstrap.scss';
 import './index.scss';
-import 'papercss/src/styles.scss';
+// import 'papercss/src/styles.scss';
 
 import { AppContainer } from 'react-hot-loader';
 

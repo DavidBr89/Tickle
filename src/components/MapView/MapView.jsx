@@ -12,7 +12,7 @@ import * as chromatic from 'd3-scale-chromatic';
 import { default as TouchBackend } from 'react-dnd-touch-backend';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContextProvider } from 'react-dnd';
-import MapGL, { FlyToInterpolator } from 'react-map-gl';
+import MapGL from 'react-map-gl';
 import * as d3 from 'd3';
 
 import { colorScale, brighterColorScale } from '../cards/styles';
@@ -22,7 +22,7 @@ import { colorScale, brighterColorScale } from '../cards/styles';
 // import ngeohash from 'ngeohash';,
 // import cx from './MapView.scss';
 import { Card, CardMarker, PreviewCard } from '../cards';
-import SvgOverlay from '../utils/map-layers/SvgOverlay';
+// import SvgOverlay from '../utils/map-layers/SvgOverlay';
 import Accordion from './CardGrid';
 // import ContextView from './ContextView';
 import ForceOverlay from './ForceOverlay';
@@ -46,17 +46,14 @@ import {
 } from '../utils/map-layers/DivOverlay';
 
 import ExtendableMarker from '../utils/ExtendableMarker';
-import MapAreaRadius from '../utils/map-layers/MapAreaRadius';
+// import MapAreaRadius from '../utils/map-layers/MapAreaRadius';
 import chroma from 'chroma-js';
 // import cardIconSrc from '../utils/map-layers/cardIcon.svg';
 import { Modal } from '../utils/modal';
 
-import {
-  DragSourceCont,
-  DropTargetCont
-} from '../CardCreator/DragLayer/SourceTargetCont';
+import { DragSourceCont, DropTargetCont } from './DragSourceTarget';
 
-import DragLayer from '../CardCreator/DragLayer/DragLayer';
+import DragLayer from './DragLayer';
 
 function launchIntoFullscreen(element) {
   if (element.requestFullscreen) {
@@ -338,7 +335,8 @@ class MapView extends PureComponent {
       toggleGridAction,
       toggleSearchAction,
       dragCardAction,
-      createOrUpdateCardAction
+      createOrUpdateCardAction,
+      changeViewportAction
       // navigateFirstTimeAction
     } = this.props;
 
@@ -638,7 +636,7 @@ class MapView extends PureComponent {
                 }}
               >
                 <TagList
-                  data={cardSets.filter(d => d.count > 1)}
+                  data={cardSets}
                   scale={barScale}
                   barScales={barScales}
                   colorScale={tagColorScale}
@@ -653,6 +651,13 @@ class MapView extends PureComponent {
                 selectedCardId={selectedCardId}
                 mode={!tsneView ? 'geo' : 'som'}
                 labels={!gridView}
+                onViewportChange={nodes =>
+                  console.log(
+                    nodes.filter(
+                      n => n.x < width && n.x > 0 && n.y < height && n.y > 0
+                    )
+                  )
+                }
                 padding={{
                   bottom: !gridView && !tagListView ? height * 1 / 6 : 50,
                   top:

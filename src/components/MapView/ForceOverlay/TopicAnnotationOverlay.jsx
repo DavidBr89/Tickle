@@ -9,8 +9,8 @@ import km from 'ml-kmeans';
 
 import {
   Annotation,
-  SubjectThreshold,
-  ConnectorElbow,
+  // SubjectThreshold,
+  // ConnectorElbow,
   Note
 } from 'react-annotation';
 
@@ -92,28 +92,26 @@ class TopicAnnotationOverlay extends Component {
   render() {
     const { data, selectedTags, colorScale, comps } = this.props;
 
-    const TopicLabels = comps.map(({ key, values }, i) => {
-      const h = hull(groupPoints(values, 20, 30), 10, 100);
-      return (
-        <g key={`${key}comp1`}>
-          <path
-            style={{
-              stroke: 'black'
-            }}
-            strokeWidth="1"
-            d={d3.line().curve(d3.curveStep)(h)}
-            fill={'none'}
-          />
-        </g>
-      );
-    });
+    // const TopicLabels = comps.map(({ key, values }, i) => {
+    //   const h = hull(groupPoints(values, 20, 30), 10, 100);
+    //   return (
+    //     <g key={`${key}comp1`}>
+    //       <path
+    //         style={{
+    //           stroke: 'black'
+    //         }}
+    //         strokeWidth="1"
+    //         d={d3.line().curve(d3.curveStep)(h)}
+    //         fill={'none'}
+    //       />
+    //     </g>
+    //   );
+    // });
     return (
       <g>
-        {TopicLabels}
         {comps.map(({ values, key, tags }, i) => {
-          const h = hull(groupPoints(values, 20, 30), 10, 100);
           // const center = d3.polygonCentroid(h);
-          const bbox = getBoundingBox(h);
+          const bbox = getBoundingBox(values, d => [d.x, d.y]);
           const distY = bbox[1][1] - bbox[0][1];
           const distX = bbox[1][0] - bbox[0][0];
 
@@ -136,7 +134,7 @@ class TopicAnnotationOverlay extends Component {
             <Annotation
               key={key}
               x={bbox[0][0] + distX / 2}
-              y={bbox[0][1]}
+              y={bbox[0][1] - distY / 4}
               dy={-30}
               dx={10}
               color={'black'}
@@ -146,8 +144,6 @@ class TopicAnnotationOverlay extends Component {
                 .slice(0, 4)
                 .join(', ')}
             >
-              <SubjectThreshold />
-              <ConnectorElbow />
               <Note
                 key={key}
                 fillOpacity={1}

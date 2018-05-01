@@ -22,8 +22,6 @@ import md5 from 'blueimp-md5';
 import rootReducer from './rootReducer';
 
 import MapView from './components/MapView';
-import CardCreator from './components/CardCreator';
-import Generator from './components/Generator';
 import Login from './components/Login';
 
 import DefaultLayout from './layouts/MainLayout';
@@ -155,28 +153,6 @@ const Routes = () => (
           <DefaultLayout>
             <Provider store={store}>
               <MapView />
-            </Provider>
-          </DefaultLayout>
-        )}
-      />
-      <Route
-        exact
-        path="/cardcreator"
-        render={() => (
-          <DefaultLayout>
-            <Provider store={store}>
-              <CardCreator />
-            </Provider>
-          </DefaultLayout>
-        )}
-      />
-      <Route
-        exact
-        path="/generator"
-        render={() => (
-          <DefaultLayout>
-            <Provider store={store}>
-              <Generator />
             </Provider>
           </DefaultLayout>
         )}

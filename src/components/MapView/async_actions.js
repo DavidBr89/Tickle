@@ -1,5 +1,4 @@
 // import { flyToUser } from './actions';
-import fetchJsonp from 'fetch-jsonp';
 import Mapbox from 'mapbox';
 
 import {

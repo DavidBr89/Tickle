@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { DragLayer } from 'react-dnd';
 // import ItemTypes from './ItemTypes'
-import CardDragPreview from './CardDragPreview';
+// import CardDragPreview from './CardDragPreview';
 
 const layerStyles = {
   position: 'fixed',
@@ -71,7 +71,6 @@ export default class CustomDragLayer extends Component {
     return (
       <div style={layerStyles}>
         <div style={getItemStyles(this.props)}>
-          <CardDragPreview {...this.props} />
         </div>
       </div>
     );

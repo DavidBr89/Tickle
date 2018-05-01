@@ -1,22 +1,21 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import * as chromatic from 'd3-scale-chromatic';
+// import * as chromatic from 'd3-scale-chromatic';
 // import hull from 'hull.js';
 import hull from 'concaveman';
 import * as d3 from 'd3';
-import chroma from 'chroma-js';
-import polylabel from '@mapbox/polylabel';
+// import chroma from 'chroma-js';
+// import polylabel from '@mapbox/polylabel';
 
 import { getBoundingBox, setify } from '../utils';
-import { kmeans, hexagon, groupPoints } from './utils';
+import { hexagon, groupPoints } from './utils';
 
-import throttle from 'react-throttle-render';
-
-import TopicAnnotationOverlay from './TopicAnnotationOverlay';
+// import throttle from 'react-throttle-render';
 
 import scc from 'connected-components';
 
 import { intersection, union, uniq } from 'lodash';
+import TopicAnnotationOverlay from './TopicAnnotationOverlay';
 
 function splitLinks(nodes, width = Infinity, height = Infinity) {
   const links = [];
@@ -55,19 +54,20 @@ function splitLinks(nodes, width = Infinity, height = Infinity) {
   return links;
 }
 
-function shapeBounds(coordinates) {
-  let left = [Infinity, 0];
-  let right = [-Infinity, 0];
-  let top = [0, Infinity];
-  let bottom = [0, -Infinity];
-  coordinates.forEach(d => {
-    left = d[0] < left[0] ? d : left;
-    right = d[0] > right[0] ? d : right;
-    bottom = d[1] > bottom[1] ? d : bottom;
-    top = d[1] < top[1] ? d : top;
-  });
-  return { center: polylabel([coordinates]), top, left, right, bottom };
-}
+// function shapeBounds(coordinates) {
+//   let left = [Infinity, 0];
+//   let right = [-Infinity, 0];
+//   let top = [0, Infinity];
+//   let bottom = [0, -Infinity];
+//   coordinates.forEach(d => {
+//     left = d[0] < left[0] ? d : left;
+//     right = d[0] > right[0] ? d : right;
+//     bottom = d[1] > bottom[1] ? d : bottom;
+//     top = d[1] < top[1] ? d : top;
+//   });
+//   return { center: polylabel([coordinates]), top, left, right, bottom };
+// }
+
 function generateLinks(nodes) {
   const links = [];
   nodes.forEach(s => {
@@ -159,21 +159,24 @@ function connectedComponents(
   //   );
 }
 
-function compComps(data) {
-  const links = generateLinks(data, links);
+function compComps(data, links, maxX = 100, maxY = 100) {
+  // const links = generateLinks(data);
   // console.log('links', links);
-  const comps = connectedComponents(data, links, 100, 100).map(d => {
-    const sets = setify(d.values).filter(s => d.values.length > 1);
+  const comps = connectedComponents(data, links, maxX, maxY).map(d => {
+    const sets = setify(d.values).sort(
+      (a, b) => b.values.length - a.values.length
+    ); // .filter(d => d.values.length > 1);
     const ext = d3.extent(sets, s => s.values.length);
     const sizeScale = d3
       .scaleLinear()
       .domain(ext)
-      .range([25, 35]);
+      .range([25, 55]);
 
     return { ...d, sets, sizeScale };
   });
   return comps;
 }
+
 class Cluster extends Component {
   static propTypes = {
     data: PropTypes.array,
@@ -196,15 +199,31 @@ class Cluster extends Component {
     const { data } = nextProps;
     const { links, comps: oldComps } = this.state;
 
-    const comps = compComps(data, links);
+    const bbox = getBoundingBox(data, d => [d.x, d.y]);
 
-    // const comps = oldComps.map(c => {
-    //   const sets = c.sets.map(s => {
-    //     const values = s.values.map(n => data.find(tn => tn.id === n.id));
-    //     return { ...s, values };
-    //   });
-    //   return { ...c, sets };
-    // });
+    const distY = bbox[1][1] - bbox[0][1];
+    const distX = bbox[1][0] - bbox[0][0];
+    // TODO:
+    const [maxX, maxY] = [200, 200];
+
+    clearTimeout(this.id);
+    this.id = setTimeout(() => {
+      let comps;
+      if (distY > maxY || distX > maxX) {
+        comps = compComps(data, links, maxX, maxY);
+        this.setState({ comps, links });
+      }
+    }, 50);
+
+    const comps = oldComps.map(c => {
+      const values = c.values.map(n => data.find(tn => tn.id === n.id));
+      // console.log('c', c.sets);
+      const sets = c.sets.map(s => {
+        const values = s.values.map(n => data.find(tn => tn.id === n.id));
+        return { ...s, values };
+      });
+      return { ...c, values, sets };
+    });
 
     this.setState({ comps, links });
   }
@@ -213,20 +232,44 @@ class Cluster extends Component {
     const { sets, comps } = this.state;
     // console.log('comps', comps);
     const { colorScale, id } = this.props;
+    // const s = 50;
     return (
       <g>
-        {comps.map(({ sets, sizeScale }) =>
-          sets.map(({ values, key }) => (
+        {comps.map(({ key, values, sets, sizeScale }) => (
+          <g key={key}>
+            <path
+              fill="none"
+              stroke={'grey'}
+              d={d3.line().curve(d3.curveBasis)(
+                hull(groupPoints(values.map(d => [d.x, d.y]), 20, 20), 100, 100)
+              )}
+            />
+
             <g
-              key={id}
               style={
                 {
-                  /*  filter: 'url(#fancy-goo)'  */
+                  // filter: 'url(#fancy-goo)'
                 }
               }
-            />
-          ))
-        )}
+            >
+              {sets.map(s => (
+                <g>
+                  <path
+                    fill={colorScale(s.key)}
+                    stroke={'grey'}
+                    d={d3.line().curve(d3.curveLinear)(
+                      hull(
+                        groupPoints(s.values.map(d => [d.x, d.y]), 30, 30),
+                        100,
+                        100
+                      )
+                    )}
+                  />
+                </g>
+              ))}
+            </g>
+          </g>
+        ))}
         <TopicAnnotationOverlay comps={comps} labels colorScale={colorScale} />
       </g>
     );
@@ -359,70 +402,6 @@ class BubbleOverlay extends Component {
       .range([40, 0.001])
       .clamp(true);
 
-    // const Bubbles = bubbleData
-    //   .filter(d => d.values.length > 1)
-    //   .map(({ id, key, values }) => {
-    //     const bbox = getBoundingBox(values, d => [d.x, d.y]);
-    //     const distY = bbox[1][1] - bbox[0][1];
-    //     const distX = bbox[1][0] - bbox[0][0];
-    //     const dist = Math.sqrt(distX ** 2 + distY ** 2);
-    //     const s = size(distY); // 3000 / distY; // values.length * 100 / dist;
-    //     // console.log('size', s);
-    //
-    //     // console.log('values', values);
-    //     // const clusters = setify(values);
-    //
-    //     // console.log('clusters', clusters);
-    //     // distY > 200 || distX > 200 ? kmeans(values) :
-    //     // [{ values }];
-    //
-    //     // const clusters =
-    //     //   distY > 0 || distX > 0
-    //     //     ? [
-    //     //       { values: values.filter(d => d.y >= cutY) },
-    //     //       { values: values.filter(d => d.y < cutY) },
-    //     //         { values: values.filter(d => d.x >= cutX) },
-    //     //         { values: values.filter(d => d.x < cutX) }
-    //     //     ]
-    //     //     : [{ values }];
-    //     // console.log('clusters', clusters);
-    //
-    //     // const hulls = clusters.map(c =>
-    //     //   hull(groupPoints(c.values.map(d => [d.x, d.y]), size, size), 1, 100)
-    //     // ); // d3.polygonHalues));
-    //
-    //     const color = chroma(colorScale(key)).alpha(0.1);
-    //     return (
-    //       <g key={id}>
-    //         <g>
-    //           <path
-    //             style={{
-    //               stroke: 'black'
-    //             }}
-    //             fill="none"
-    //             opacity={0.5}
-    //           />
-    //           <path
-    //             style={
-    //               {
-    //                 stroke: colorScale(c.key),
-    //                 strokeDasharray: dashScale(zoom),
-    //                 strokeDashoffset: 30,
-    //                 strokeWidth: dashScale(zoom)
-    //               }
-    //             }
-    //             d={d3.line().curve(d3.curveBasis)(
-    //               hull(groupPoints(values.map(d => [d.x, d.y]), s, s), 1, 100)
-    //             )}
-    //             id={`p${id}`}
-    //             fill={color}
-    //             opacity={0.6}
-    //           />
-    //         </g>
-    //       </g>
-    //     );
-    //   });
-
     const Hulls = connectedComps.map(({ id, key, values }) => (
       <Cluster data={values} id={id} colorScale={colorScale} />
     ));
@@ -439,17 +418,20 @@ class BubbleOverlay extends Component {
       >
         <defs>
           <filter id="fancy-goo">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="blur" />
+            <feGaussianBlur
+              in="SourceGraphic"
+              stdDeviation="10"
+              result="blur"
+            />
             <feColorMatrix
               in="blur"
               mode="matrix"
-              values={`1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${radius} -9`}
+              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9"
               result="goo"
             />
             <feComposite in="SourceGraphic" in2="goo" operator="atop" />
           </filter>
         </defs>
-
         <g>{Hulls}</g>
       </svg>
     );

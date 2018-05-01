@@ -69,6 +69,10 @@ class ZoomContainer extends Component {
   // //     });
   // //   }
   // // }
+  //
+  componentDidUpdate(prevProps, prevState) {
+    // this.props.onZoom(newNodes);
+  }
 
   componentDidMount() {
     const zoomFactoryCont = this.zoomFactory();
@@ -140,13 +144,22 @@ class ZoomContainer extends Component {
   }
 
   render() {
-    const { children, width, height, style, className, nodes } = this.props;
+    const {
+      children,
+      width,
+      height,
+      style,
+      className,
+      nodes,
+      onZoom
+    } = this.props;
     const { zoomHandler } = this.state;
     const newNodes = nodes.map(d => {
       const [x, y] = zoomHandler.apply([d.x, d.y]);
       return { ...d, x, y };
     });
     // .filter(({ x, y }) => x > 0 && x < width && y > 0 && y < height);
+    onZoom(newNodes);
 
     return (
       <div

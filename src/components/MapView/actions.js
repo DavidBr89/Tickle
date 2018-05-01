@@ -75,6 +75,11 @@ export function flyToUser(options) {
   return { type: FLY_TO_USER, options };
 }
 
+export const CHANGE_VIEWPORT = 'CHANGE_VIEWPORT';
+export function changeViewport(options) {
+  return { type: CHANGE_VIEWPORT, options };
+}
+
 export const TOGGLE_TAG_LIST = 'TOGGLE_TAG_LIST';
 export function toggleTagList(options) {
   return { type: TOGGLE_TAG_LIST, options };
