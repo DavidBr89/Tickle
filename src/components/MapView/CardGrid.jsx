@@ -118,7 +118,11 @@ class CardGrid extends Component {
     //   this.props.centered !== nextProps.centered ||
     //   nextProps.selected !== this.props.selected
     // );
-    // return nextProps.selectedIndex !== this.props.selectedIndex;
+    //TODO
+    return (
+      nextProps.selectedIndex !== this.props.selectedIndex ||
+      nextProps.data.length !== this.props.data.length
+    );
     return true;
   }
 
@@ -144,12 +148,12 @@ class CardGrid extends Component {
       width,
       centered,
       selectedIndex,
-      duration
+      duration,
+      onClick
     } = this.props;
 
     const { cardStacks } = this.state;
 
-    console.log('cardStacks', cardStacks);
     const { leftCards, centerCard, rightCards } = cardStacks;
     const allCards = [...leftCards, ...centerCard, ...rightCards];
 
@@ -246,19 +250,29 @@ class AccordionWrapper extends Component {
 
   constructor(props) {
     super(props);
+    this.state = { selectedIndex: null };
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log('change');
+    console.log('change', this.state);
+    const { selectedId } = this.state;
     clearTimeout(this.id);
-    this.id = setTimeout(() => this.props.onChange(), 1000);
+    this.id = setTimeout(() => this.props.onChange(selectedId), 1000);
   }
 
   render() {
+    const { data } = this.props;
+    const { selectedIndex } = this.state;
     return (
       <CardGrid
         {...this.props}
-        onClick={selectedIndex => this.setState({ selectedIndex })}
+        selectedIndex={this.state.selectedIndex}
+        onClick={selectedId =>
+          this.setState({
+            selectedIndex: data.findIndex(d => d.id === selectedId),
+            selectedId
+          })
+        }
       />
     );
   }

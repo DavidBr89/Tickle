@@ -59,7 +59,8 @@ const FieldSet = ({ children, legend, style, edit, borderColor, onClick }) => (
         marginTop: '4px',
         padding: '6px',
         width: '100%',
-        height: '100%'
+        height: '100%',
+        overflow: 'hidden'
       }}
     >
       <Legend>
@@ -115,7 +116,10 @@ const DescriptionField = ({
           height: '100%'
         }}
       >
-        <div className={cx.textClamp} style={{ height: '100%' }}>
+        <div
+          className={cx.textClamp}
+          style={{ height: '100%', overflow: 'hidden' }}
+        >
           {text !== null ? (
             text
           ) : (

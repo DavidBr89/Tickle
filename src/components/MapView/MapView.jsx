@@ -206,14 +206,13 @@ class MapView extends PureComponent {
       });
     });
 
-    // TODO: respect margins
     screenResizeAction({
       width,
       height
     });
 
     this.scrollTo = scrollTo.bind(this);
-    this.node = null;
+    // this.node = null;
     this.fullscreen = false;
   }
 
@@ -543,22 +542,7 @@ class MapView extends PureComponent {
                 <DropTargetCont
                   dropHandler={createOrUpdateCardAction}
                   dragged={isCardDragging}
-                >
-                  <MapGL
-                    ref={m => (this.map = m)}
-                    {...mapViewport}
-                    mapStyle={
-                      'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l'
-                    }
-                    onViewportChange={changeMapViewportAction}
-                    onClick={({ lngLat, deltaTime }) =>
-                      // TODO: fix later
-                      deltaTime > 30 && userMoveAction({ lngLat })
-                    }
-                  >
-                    <UserOverlay {...mapViewport} location={userLocation} />
-                  </MapGL>
-                </DropTargetCont>
+                />
               </div>
               <div
                 className="w-100"
@@ -645,12 +629,16 @@ class MapView extends PureComponent {
               <Title />
               <ForceOverlay
                 delay={400}
-                viewport={mapViewport}
+                width={width}
+                height={height}
                 data={cards}
                 sets={cardSets}
                 selectedCardId={selectedCardId}
+                extended={extCardId !== null}
+                userLocation={userLocation}
                 mode={!tsneView ? 'geo' : 'som'}
                 labels={!gridView}
+                onMapViewportChange={changeMapViewportAction}
                 onViewportChange={nodes =>
                   console.log(
                     nodes.filter(

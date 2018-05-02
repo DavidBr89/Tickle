@@ -49,21 +49,20 @@ class ExtendableMarker extends Component {
     this.timeStamp = 0;
   }
 
-  // shouldComponentUpdate(nextProps) {
-  //   const { throttle } = nextProps;
-  //   const newTimeStamp = new Date().getMilliseconds();
-  //   const timediff = Math.abs(newTimeStamp - this.timeStamp);
-  //   return (
-  //     throttle === null || (throttle !== null && timediff >= throttle)
-  //     // nextProps.extended ||
-  //     // this.props.extended !== nextProps.extended ||
-  //     // !nextProps.throttle
-  // //   );
-  // // }
+  shouldComponentUpdate(nextProps) {
+    const { x, y, extended } = nextProps;
 
-  // componentWillUpdate(nextProps, nextState) {
-  //   // this.timeStamp = new Date().getMilliseconds();
-  // }
+    return (
+      extended !== this.props.extended ||
+      (this.props.x !== x && this.props.y !== y)
+    ); // nextProps.extended ||
+    // this.props.extended !== nextProps.extended ||
+    // !nextProps.throttle
+    // }
+
+    // componentWillUpdate(nextProps, nextState) {
+    //   // this.timeStamp = new Date().getMilliseconds();
+  }
 
   render() {
     const {

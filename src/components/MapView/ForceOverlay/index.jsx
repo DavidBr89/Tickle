@@ -5,10 +5,18 @@ import * as d3 from 'd3';
 // import tsnejs from 'tsne';
 import lap from 'lap-jv/lap.js';
 import SOM from 'ml-som';
+import MapGL from 'react-map-gl';
+// import│ {shallowEqualProps} from'shallow-equal-props';
+
 // import louvain from './jlouvain';
 
 import { intersection, union, uniq } from 'lodash';
 import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
+
+import {
+  UserOverlay
+  // UserMarker,
+} from '../../utils/map-layers/DivOverlay';
 
 import ZoomContainer from './ZoomContainer';
 import BubbleOverlay from './BubbleOverlay';
@@ -183,7 +191,7 @@ class ForceOverlay extends Component {
     children: d => d,
     className: null,
     style: {},
-    viewport: { width: 100, height: 100, longitude: 0, latitude: 0 },
+    viewport: { width: 300, height: 400, longitude: 0, latitude: 0 },
     padding: {
       right: 0,
       left: 0,
@@ -208,11 +216,17 @@ class ForceOverlay extends Component {
 
     const nodes = data.map(d => ({ ...d, x: width / 2, y: height / 2 }));
 
+    const defaultLocation = {
+      latitude: 50.85146,
+      longitude: 4.315483
+    };
+
     this.state = {
       nodes,
       tsnePos: initPos,
       somPos,
-      gridPos: lapFy(somPos)
+      gridPos: lapFy(somPos),
+      viewport: { width, height, zoom: 10, ...defaultLocation }
     };
 
     this.layout = this.layout.bind(this);
@@ -224,41 +238,72 @@ class ForceOverlay extends Component {
   }
 
   componentDidMount() {
-    this.layout();
+    // this.layout();
   }
 
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   return false;
-  // }
+  shouldComponentUpdate(nextProps, nextState) {
+    const { viewport: oldVp } = this.state;
+    const { viewport, extended } = nextState;
+    const { width, height } = nextProps;
+
+    // return true;
+    console.log('extended', extended);
+    return (
+      viewport.latitude !== oldVp.latitude ||
+      viewport.longitude !== oldVp.longitude ||
+      width !== this.props.width ||
+      height !== this.props.height ||
+      true
+    );
+  }
 
   componentWillReceiveProps(nextProps) {
     // clearTimeout(this.id);
     // this.ids.map(clearTimeout);
-    const { data: oldData } = this.props;
-    const { data: nextData, viewport, mode } = nextProps;
-    const { width, height } = viewport;
+    // const { data: oldData } = this.props;
+    const { data: nextData, mode, selectedCardId, width, height } = nextProps;
+    const { viewport } = this.state;
+    // const { width, height } = viewport;
 
-    clearTimeout(this.id);
+    // clearTimeout(this.id);
 
-    if (oldData.length !== nextData.length) {
-      const somPos = somFy(nextData, width, height);
-      // const gridPos = lapFy(somPos);
-
-      this.forceSim.force('x', null).force('y', null);
-
-      this.layout(nextProps, {
-        ...this.state,
-        somPos
-        // gridPos
-      });
-
-      // TODO: remvoe later
-      this.setState({ somPos });
-    } else {
-      // this.id = setTimeout(() => {
-      this.layout(nextProps);
-      // }, 100);
+    if (
+      this.props.selectedCardId !== selectedCardId &&
+      selectedCardId !== null
+    ) {
+      const { loc } = nextData.find(n => n.id === selectedCardId);
+      const newVp = { ...viewport, ...loc };
+      console.log('select card', loc);
+      this.id = setTimeout(() => {
+        this.layout(newVp);
+        this.setState({ viewport: newVp });
+      }, 700);
+      // this.layout(newVp);
     }
+
+    if (this.props.width !== width || this.props.height !== height) {
+      this.setState({ viewport: { ...viewport, width, height } });
+    }
+
+    // if (oldData.length !== nextData.length) {
+    //   const somPos = somFy(nextData, width, height);
+    //   // const gridPos = lapFy(somPos);
+    //
+    //   this.forceSim.force('x', null).force('y', null);
+    //
+    //   this.layout(nextProps, {
+    //     ...this.state,
+    //     somPos
+    //     // gridPos
+    //   });
+    //
+    //   // TODO: remvoe later
+    //   this.setState({ somPos });
+    // } else {
+    // }
+    //
+
+    // this.setState({ viewport });
   }
 
   componentDidUpdate() {
@@ -271,13 +316,11 @@ class ForceOverlay extends Component {
     // this.ids.map(clearTimeout);
   }
 
-  layout(nextProps = null, nextState = null) {
-    const { viewport, mode, delay, data, padding, force } =
-      nextProps || this.props;
-    const { width, height, zoom, latitude, longitude } = viewport;
-    const { tsnePos, somPos, gridPos, nodes: oldNodes } =
-      nextState || this.state;
+  layout(viewport) {
+    const { mode, delay, data, padding, force } = this.props;
+    const { tsnePos, somPos, gridPos, nodes: oldNodes } = this.state;
 
+    const { width, height, zoom, latitude, longitude } = viewport;
     // console.log('oldNodes', nextState, oldNodes);
 
     const vp = new PerspectiveMercatorViewport({
@@ -325,16 +368,16 @@ class ForceOverlay extends Component {
     // prevent stretching of similiarities
     // const padY = height / 7;
 
-    const nodes = data.map(({ id, x, y, tags, ...c }, i) => {
-      const oldNode = oldNodes.find(n => n.id == id) || {};
-      return {
+    const nodes = data.map(({ id, x, y, tags, ...c }, i) =>
+      // const oldNode = oldNodes.find(n => n.id == id) || {};
+      ({
         id,
         x: xScale(pos[i][0]),
         y: yScale(pos[i][1]),
         tags,
         ...c
-      };
-    });
+      })
+    );
 
     // .filter(n => n.x > 0 && n.x < width && n.y > 0 && n.y < height);
     this.ids.map(clearTimeout);
@@ -379,22 +422,23 @@ class ForceOverlay extends Component {
   render() {
     const {
       children,
-      viewport,
       style,
       className,
       mode,
       selectedCardId,
-      center,
+      // center,
       sets,
       colorScale,
       labels,
-      onViewportChange
+      onViewportChange,
+      onMapViewportChange,
+      userLocation
     } = this.props;
 
+    const { viewport } = this.state;
     const { width, height } = viewport;
-    const { nodes, comps } = this.state;
+    const { nodes } = this.state;
     // const newPos = nodes.map(d => transEvent.apply([d.x, d.y]));
-    const tagNode = nodes.find(n => n.id === selectedCardId);
     // TODO: change later
     // const selectedTags = selectedCardId ? tagNode && tagNode.tags : [];
 
@@ -409,10 +453,23 @@ class ForceOverlay extends Component {
             overflow: 'hidden',
             left: 0,
             top: 0,
-            pointerEvents: 'none',
+            // pointerEvents: 'none',
             ...style
           }}
         >
+          <MapGL
+            mapStyle={'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l'}
+            onViewportChange={viewport => {
+              clearTimeout(this.id);
+              // TODO: check later
+              // this.id = setTimeout(() => this.layout(viewport), 50);
+              this.layout(viewport);
+              this.setState({ viewport });
+            }}
+            {...viewport}
+          >
+            <UserOverlay {...viewport} location={userLocation} />
+          </MapGL>
           {nodes.map(attr => children({ ...attr, selectedCardId }))}
         </div>
       );
