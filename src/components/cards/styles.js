@@ -41,7 +41,7 @@ const colors0 = [
 
 export const mediaScale = scaleOrdinal()
   .domain(mediaTypes)
-  .range(['fa-gamepad', 'fa-link', 'fa-camera', 'fa-video-camera']);
+  .range(['fa-link', 'fa-camera', 'fa-video-camera']);
 
 export const colorScaleRandom = scaleLinear()
   .domain(range(colors0.length))

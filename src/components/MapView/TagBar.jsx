@@ -70,7 +70,7 @@ class TagBar extends Component {
               <Tag
                 className="mr-2 mb-2"
                 key={s.key}
-                barWidth={`${scale(s.count)}%`}
+                barWidth={'100%'}
                 color={colorScale(s.key)}
                 onClick={() => {
                   this.setState(({ selected: oldSelected }) => {

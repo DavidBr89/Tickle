@@ -28,7 +28,7 @@ import DefaultLayout from './layouts/MainLayout';
 
 import { dummyCards } from './dummyData';
 
-import { fetchCards } from './async_actions';
+import { fetchCards, fetchNearByPlaces} from './async_actions';
 
 const loggerMiddleware = createLogger();
 
@@ -141,7 +141,7 @@ const store = configureStore(rootReducer, defaultState);
 //
 
 // store.dispatch(fetchChallenges(0));
-store.dispatch(fetchCards());
+store.dispatch(fetchNearByPlaces());
 
 const Routes = () => (
   <HashRouter>

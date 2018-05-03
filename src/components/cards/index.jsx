@@ -67,7 +67,8 @@ class Card extends React.Component {
         latitude: PropTypes.number,
         radius: PropTypes.number
       })
-    ])
+    ]),
+    author: PropTypes.object
   };
 
   static defaultProps = {

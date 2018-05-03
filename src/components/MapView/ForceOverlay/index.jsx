@@ -243,16 +243,16 @@ class ForceOverlay extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     const { viewport: oldVp } = this.state;
-    const { viewport, extended } = nextState;
+    const { viewport } = nextState;
     const { width, height } = nextProps;
 
     // return true;
-    console.log('extended', extended);
+    // console.log('extended', extended);
     return (
-      viewport.latitude !== oldVp.latitude ||
-      viewport.longitude !== oldVp.longitude ||
-      width !== this.props.width ||
-      height !== this.props.height ||
+      // viewport.latitude !== oldVp.latitude ||
+      // viewport.longitude !== oldVp.longitude ||
+      // width !== this.props.width ||
+      // height !== this.props.height ||
       true
     );
   }
@@ -282,7 +282,9 @@ class ForceOverlay extends Component {
     }
 
     if (this.props.width !== width || this.props.height !== height) {
-      this.setState({ viewport: { ...viewport, width, height } });
+      const newVp = { ...viewport, width, height };
+      this.layout(newVp);
+      // this.setState({ viewport: newVp });
     }
 
     // if (oldData.length !== nextData.length) {
@@ -390,9 +392,9 @@ class ForceOverlay extends Component {
           // TODO: proper reheat
           .alpha(1)
           .alphaMin(0.8)
-          .force('x', d3.forceX((d, i) => xScale(pos[i][0])).strength(0.5))
-          .force('y', d3.forceY((d, i) => yScale(pos[i][1])).strength(0.5))
-          .force('coll', d3.forceCollide(15))
+          .force('x', d3.forceX((d, i) => xScale(pos[i][0])).strength(1))
+          .force('y', d3.forceY((d, i) => yScale(pos[i][1])).strength(1))
+          .force('coll', d3.forceCollide(20))
           // .force('center', d3.forceCenter(width / 2, height / 2))
           .on('end', () => {
             this.ids.map(clearTimeout);
@@ -415,7 +417,8 @@ class ForceOverlay extends Component {
     // if (mode === 'geo') this.forceSim.stop();
 
     this.setState({
-      nodes
+      nodes,
+      viewport
     });
   }
 
@@ -488,7 +491,7 @@ class ForceOverlay extends Component {
         {(zoomedNodes, transform) => (
           <Fragment>
             <BubbleOverlay
-              zoom={transform.k}
+              scale={transform.k}
               nodes={zoomedNodes}
               width={width}
               height={height}
@@ -496,7 +499,7 @@ class ForceOverlay extends Component {
               labels={labels}
             />
             <div style={{ overflow: 'hidden', width, height }}>
-              {zoomedNodes.map(children)}
+              {zoomedNodes.map(attr => children({ ...attr, selectedCardId }))}
             </div>
           </Fragment>
         )}

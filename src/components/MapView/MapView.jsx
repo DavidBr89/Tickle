@@ -405,6 +405,7 @@ class MapView extends PureComponent {
             )}
             <CardMarker
               {...c}
+              tagColorScale={tagColorScale}
               style={{
                 opacity: 1,
                 position: 'absolute',
@@ -422,6 +423,7 @@ class MapView extends PureComponent {
           onCollect={() =>
             toggleCardChallengeAction({ cardChallengeOpen: true })
           }
+          tagColorScale={tagColorScale}
           style={{ zIndex: 4000 }}
         />
       </ExtendableMarker>
@@ -579,7 +581,7 @@ class MapView extends PureComponent {
                         // pointerEvents: 'none'
                       }}
                     >
-                      <DragSourceCont dragHandler={dragCardAction} id={d.id}>
+                      <div style={{ width: '100%', height: '100%' }}>
                         <PreviewCard
                           {...d}
                           onClick={() =>
@@ -587,6 +589,7 @@ class MapView extends PureComponent {
                               ? extCardAction(d.id)
                               : selectCardAction(d.id)
                           }
+                          tagColorScale={tagColorScale}
                           key={d.id}
                           edit={d.template}
                           selected={selectedCardId === d.id}
@@ -599,17 +602,10 @@ class MapView extends PureComponent {
                             // maxWidth: '200px'
                           }}
                         />
-                      </DragSourceCont>
+                      </div>
                     </div>
                   )}
                 </Accordion>
-
-                <TagBar
-                  tags={cardSets.filter(d => selectedTags.includes(d.key))}
-                  colorScale={tagColorScale}
-                  scale={barScale}
-                  style={{ zIndex: 5000, marginTop: 40 }}
-                />
               </div>
               <div
                 style={{
@@ -631,6 +627,7 @@ class MapView extends PureComponent {
                 delay={400}
                 width={width}
                 height={height}
+                force
                 data={cards}
                 sets={cardSets}
                 selectedCardId={selectedCardId}
@@ -639,12 +636,12 @@ class MapView extends PureComponent {
                 mode={!tsneView ? 'geo' : 'som'}
                 labels={!gridView}
                 onMapViewportChange={changeMapViewportAction}
-                onViewportChange={nodes =>
-                  console.log(
-                    nodes.filter(
-                      n => n.x < width && n.x > 0 && n.y < height && n.y > 0
-                    )
-                  )
+                onViewportChange={nodes => null
+                  // console.log(
+                  //   nodes.filter(
+                  //     n => n.x < width && n.x > 0 && n.y < height && n.y > 0
+                  //   )
+                  // )
                 }
                 padding={{
                   bottom: !gridView && !tagListView ? height * 1 / 6 : 50,

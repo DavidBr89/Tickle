@@ -141,7 +141,7 @@ function reducer(state = {}, action) {
         loc: { longitude, latitude }
       };
 
-      firestore.collection('cards').add(newCard);
+      // firestore.collection('cards').add(newCard);
 
       return {
         ...state

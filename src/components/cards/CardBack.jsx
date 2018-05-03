@@ -84,7 +84,8 @@ class CardBackSkeleton extends Component {
       setMapRadius,
       mapRadius,
       flipHandler,
-      deleteHandler
+      deleteHandler,
+      tagColorScale
     } = this.props;
 
     const { extended } = this.state;
@@ -119,10 +120,11 @@ class CardBackSkeleton extends Component {
           <Author
             {...author}
             extended={extended === 'author'}
+            tagColorScale={tagColorScale}
             onClose={() => {
               // TODO
               // console.log('onCLose');
-              // this.setState({ extended: null });
+              this.setState({ extended: null });
             }}
           />
         </FieldSet>
@@ -150,7 +152,11 @@ class CardBackSkeleton extends Component {
           style={display('comments')}
           borderColor={uiColor}
         >
-          <Comments data={comments} />
+          <Comments
+            extended={extended === 'comments'}
+            data={comments}
+            onClose={unSelectField('comments')}
+          />
         </FieldSet>
         <div
           className="mt-2"

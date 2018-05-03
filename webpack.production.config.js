@@ -100,7 +100,7 @@ module.exports = {
   ],
   mode: 'production',
   output: {
-    path: path.join(__dirname, 'public'),
+    path: path.join(__dirname, 'dist'),
     filename: 'index.js'
   },
   resolve: {
@@ -117,7 +117,7 @@ module.exports = {
     rules: loaders
   },
   plugins: [
-    new CleanWebpackPlugin(['public/*.*']),
+    new CleanWebpackPlugin(['dist/*.*']),
     new HtmlWebpackPlugin({
       template: './src/template.html'
     }),

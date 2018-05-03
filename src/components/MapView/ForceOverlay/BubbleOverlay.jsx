@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 import hull from 'concaveman';
 import * as d3 from 'd3';
 // import chroma from 'chroma-js';
-// import polylabel from '@mapbox/polylabel';
+import polylabel from '@mapbox/polylabel';
 
-import { getBoundingBox, setify } from '../utils';
+import { getBoundingBox, bounds, setify } from '../utils';
 import { hexagon, groupPoints } from './utils';
 
 // import throttle from 'react-throttle-render';
@@ -102,7 +102,8 @@ function connectedComponents(
   nodes,
   links,
   width = Infinity,
-  height = Infinity
+  height = Infinity,
+  scale = 2
 ) {
   // const coms = louvain()
   //   .nodes(nodes.map(d => d.id))
@@ -114,7 +115,7 @@ function connectedComponents(
     const distX = Math.abs(tgtNode.x - srcNode.x);
     const distY = Math.abs(tgtNode.y - srcNode.y);
 
-    if (distY < height && distX < width)
+    if (distY < height && distX < width && scale !== 1)
       return [...acc, { ...l, srcNode, tgtNode }];
     return acc;
   }, []);
@@ -159,10 +160,10 @@ function connectedComponents(
   //   );
 }
 
-function compComps(data, links, maxX = 100, maxY = 100) {
+function compComps(data, links, maxX = 100, maxY = 100, scale) {
   // const links = generateLinks(data);
   // console.log('links', links);
-  const comps = connectedComponents(data, links, maxX, maxY).map(d => {
+  const comps = connectedComponents(data, links, maxX, maxY, scale).map(d => {
     const sets = setify(d.values).sort(
       (a, b) => b.values.length - a.values.length
     ); // .filter(d => d.values.length > 1);
@@ -190,13 +191,13 @@ class Cluster extends Component {
 
     const data = props.data;
     const links = generateLinks(data);
-    const comps = compComps(data, links);
+    const comps = compComps(data, links, 100, 100, props.scale);
     const sets = setify(data);
     this.state = { comps, links, sets };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { data } = nextProps;
+    const { data, scale } = nextProps;
     const { links, comps: oldComps } = this.state;
 
     const bbox = getBoundingBox(data, d => [d.x, d.y]);
@@ -204,13 +205,13 @@ class Cluster extends Component {
     const distY = bbox[1][1] - bbox[0][1];
     const distX = bbox[1][0] - bbox[0][0];
     // TODO:
-    const [maxX, maxY] = [200, 200];
+    const [maxX, maxY] = [100, 100];
 
     clearTimeout(this.id);
     this.id = setTimeout(() => {
       let comps;
       if (distY > maxY || distX > maxX) {
-        comps = compComps(data, links, maxX, maxY);
+        comps = compComps(data, links, maxX, maxY, scale);
         this.setState({ comps, links });
       }
     }, 50);
@@ -231,45 +232,83 @@ class Cluster extends Component {
   render() {
     const { sets, comps } = this.state;
     // console.log('comps', comps);
-    const { colorScale, id } = this.props;
+    const { colorScale, width, height, nodes } = this.props;
     // const s = 50;
+    const baseSize = 20;
+
+    // const vors = d3
+    //   .voronoi()
+    //   .x(d => d.x)
+    //   .y(d => d.y)
+    //   .extent([[-1, -1], [width + 1, height + 1]])
+    //   .polygons(nodes);
+    //
+    // console.log('vors', vors);
+    //
+    // const Cells = vors.map(v => (
+    //   <path
+    //     id={`cell${v.data.id}`}
+    //     d={d3.line().curve(d3.curveLinear)(v)}
+    //     stroke={'none'}
+    //     fill="none"
+    //   />
+    // ));
     return (
       <g>
-        {comps.map(({ key, values, sets, sizeScale }) => (
-          <g key={key}>
-            <path
-              fill="none"
-              stroke={'grey'}
-              d={d3.line().curve(d3.curveBasis)(
-                hull(groupPoints(values.map(d => [d.x, d.y]), 20, 20), 100, 100)
-              )}
-            />
+        {comps.map(({ key, values, sets, sizeScale }) => {
+          const ps = values.map(d => [d.x, d.y]);
+          const bbox = getBoundingBox(values, d => [d.x, d.y]);
 
-            <g
-              style={
-                {
-                  // filter: 'url(#fancy-goo)'
+          // const bbs = bounds(values.map(d => [d.x, d.y]));
+          // console.log('bbs', bbs);
+
+          const distY = bbox[1][1] - bbox[0][1];
+          const distX = bbox[1][0] - bbox[0][0];
+          const offset = 0;
+          const r = Math.max(Math.min(distX, distY) / 2 - offset, 15);
+
+          // const circle = d3.packEnclose(
+          //   values.map(d => ({ x: d.x, y: d.y, r: baseSize }))
+          // );
+          const poly = hull(
+            groupPoints(
+              [
+                bbox[2].leftTop,
+                bbox[2].leftBottom,
+                bbox[2].rightTop,
+                bbox[2].rightBottom
+              ],
+              // values.map(d => [d.x, d.y]),
+              20,
+              20
+            ),
+            Infinity,
+            Infinity
+          );
+          const centroid = d3.polygonCentroid(poly);
+          // polylabel(poly, 1.0);
+          return (
+            <g key={key}>
+              <g
+                style={
+                  {
+                    // filter: 'url(#fancy-goo)'
+                  }
                 }
-              }
-            >
-              {sets.map(s => (
-                <g>
-                  <path
-                    fill={colorScale(s.key)}
-                    stroke={'grey'}
-                    d={d3.line().curve(d3.curveLinear)(
-                      hull(
-                        groupPoints(s.values.map(d => [d.x, d.y]), 30, 30),
-                        100,
-                        100
-                      )
-                    )}
-                  />
-                </g>
-              ))}
+              >
+                <path d={d3.line()(poly)} stroke={'green'} fill={'none'} />
+                <circle
+                  r={r}
+                  stroke={'red'}
+                  strokeWidth={1}
+                  cx={centroid[0]}
+                  cy={centroid[1]}
+                  fill="none"
+                />
+              </g>
             </g>
-          </g>
-        ))}
+          );
+        })}
         <TopicAnnotationOverlay comps={comps} labels colorScale={colorScale} />
       </g>
     );

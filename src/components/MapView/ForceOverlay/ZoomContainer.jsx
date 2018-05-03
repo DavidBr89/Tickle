@@ -99,7 +99,6 @@ class ZoomContainer extends Component {
       this.setState({ zoomHandler });
     } else {
       const bounds = getBoundingBox(nodes, d => [d.x, d.y]);
-
       const offsetX = 50;
       const offsetY = 200;
       const dx = bounds[1][0] - bounds[0][0] + offsetX;
@@ -134,7 +133,7 @@ class ZoomContainer extends Component {
     return d3
       .zoom()
       .wheelDelta(() => -d3.event.deltaY * (d3.event.deltaMode ? 50 : 1) / 500)
-      .scaleExtent([0, 4])
+      .scaleExtent([0, 10])
       .extent([[0, 0], [width, height]])
       .on('zoom', () => {
         this.setState({

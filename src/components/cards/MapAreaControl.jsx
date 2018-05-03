@@ -161,7 +161,7 @@ class MapAreaControl extends Component {
           <div
             style={{
               width: `${width}px`,
-              height: `${height}px`,
+              height: `${height - 50}px`,
               // transition: 'all 1s ease-out',
               position: 'relative'
             }}
@@ -175,11 +175,13 @@ class MapAreaControl extends Component {
                 }}
               >
                 <button
-                  className="btn mr-2 mt-1"
-                  style={{ float: 'right', padding: '2px 6px' }}
+                  type="button"
+                  className="close mr-2 mt-1"
+                  data-dismiss="modal"
+                  aria-label="Close"
                   onClick={onClose}
                 >
-                  <i className="fa fa-2x fa-minus" />
+                  <span aria-hidden="true">×</span>
                 </button>
 
                 {edit && (
@@ -207,15 +209,17 @@ class MapAreaControl extends Component {
               />
               <DivOverlay {...mapViewport(width, height)} data={[{ loc }]}>
                 {(_, [left, top]) => (
-                  <CardMarker
+                  <div
                     style={{
                       position: 'absolute',
                       left: left - markerWidth / 2,
                       top: top - markerHeight / 2,
                       width: markerWidth,
-                      height: markerHeight,
+                      height: markerHeight
                     }}
-                  />
+                  >
+                    <CardMarker />
+                  </div>
                 )}
               </DivOverlay>
             </MapGL>

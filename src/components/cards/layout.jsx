@@ -401,7 +401,7 @@ Tags.defaultProps = { data: ['tag1', 'exampleTag'] };
 //   </div>
 // );
 //
-const Tag = ({ title, onClick, edit, small }) => {
+const Tag = ({ title, onClick, edit, small, color }) => {
   const children = (
     <span style={{ whiteSpace: 'no-wrap' }}>
       {title}
@@ -412,8 +412,9 @@ const Tag = ({ title, onClick, edit, small }) => {
     return (
       <small
         key={title}
-        className={`${cx.tag} ${colorClass(title)}`}
+        className={cx.tag}
         onClick={onClick}
+        style={{ background: color }}
       >
         {/* TODO: put small out */}
         {children}
@@ -422,8 +423,9 @@ const Tag = ({ title, onClick, edit, small }) => {
   return (
     <div
       key={title}
-      className={`${cx.tag} ${colorClass(title)}`}
+      className={cx.tag}
       onClick={onClick}
+      style={{ background: color }}
     >
       {children}
     </div>
@@ -432,14 +434,21 @@ const Tag = ({ title, onClick, edit, small }) => {
 
 Tag.propTypes = {
   title: PropTypes.string,
+  color: PropTypes.string,
   onClick: PropTypes.func,
   edit: PropTypes.bool,
   small: PropTypes.bool
 };
 
-Tag.defaultProps = { title: '', onClick: d => d, edit: false, small: false };
+Tag.defaultProps = {
+  title: '',
+  onClick: d => d,
+  edit: false,
+  small: false,
+  color: 'red'
+};
 
-const PreviewTags = ({ data, style, placeholder, small }) => (
+const PreviewTags = ({ data, style, placeholder, small, colorScale }) => (
   <div
     style={{
       display: 'flex',
@@ -452,7 +461,7 @@ const PreviewTags = ({ data, style, placeholder, small }) => (
     className={`${cx.textTrunc} ${cx.tags}`}
   >
     {data !== null ? (
-      data.map(t => <Tag title={t} small={small} />)
+      data.map(t => <Tag title={t} color={colorScale(t)} small={small} />)
     ) : (
       <div style={{ fontStyle: 'italic' }}>{placeholder}</div>
     )}
@@ -463,14 +472,16 @@ PreviewTags.propTypes = {
   data: PropTypes.oneOfType([PropTypes.array, null]),
   style: PropTypes.object,
   placeholder: PropTypes.string,
-  small: PropTypes.bool
+  small: PropTypes.bool,
+  colorScale: PropTypes.func
 };
 
 PreviewTags.defaultProps = {
   data: null,
   style: {},
   placeholder: 'Please add a tag',
-  small: false
+  small: false,
+  colorScale: () => 'red'
 };
 
 const ChallengeButton = ({
@@ -567,33 +578,58 @@ FlipButton.defaultProps = {
   className: ''
 };
 
-const Comments = ({ data, extended }) => (
-  <div
-    style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-  >
-    {data.map(({ comment, user, date, imgSrc }) => (
+const randomComment = () =>
+  [
+    'woah, what a nice card',
+    'that was really a hidden and interesting place',
+    'A real piece of art',
+    'this is one of the best sights in Brussels',
+    'without this app I would have never found this place'
+  ][Math.floor(Math.random() * 4)];
+
+const Comments = ({ data, extended, onClose }) => (
+  <div>
+    {extended && (
+      <button
+        type="button"
+        className="close "
+        data-dismiss="modal"
+        aria-label="Close"
+        onClick={onClose}
+      >
+        <span aria-hidden="true">×</span>
+      </button>
+    )}
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center'
+      }}
+    >
       <div>
-        <img
-          className={`${cx.avatar}`}
-          width={'100%'}
-          height={'100%'}
-          src={imgSrc}
-          alt="alt"
-        />
-        {extended && (
-          <div className="media-body">
-            <div className={cx.textClamp}>
-              <small>{comment}</small>
-            </div>
-            <div>
-              <small className="font-italic">
-                - {user}, {date}
-              </small>
+        {data.map(({ comment, user, date, imgSrc }) => (
+          <div style={{ display: 'flex' }}>
+            <img
+              className={`${cx.avatar} mr-3`}
+              width={'20%'}
+              height={'20%'}
+              src={profileSrc()}
+              alt="alt"
+            />
+            <div className="media-body">
+              <div className={cx.textClamp}>
+                <small>{randomComment()}</small>
+              </div>
+              <div>
+                <small className="font-italic">
+                  - {user}, {date && date.toString()}
+                </small>
+              </div>
             </div>
           </div>
-        )}
+        ))}
       </div>
-    ))}
+    </div>
   </div>
 );
 

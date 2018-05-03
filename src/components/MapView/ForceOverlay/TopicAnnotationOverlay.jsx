@@ -141,7 +141,7 @@ class TopicAnnotationOverlay extends Component {
               title={`#${i}`}
               label={tags
                 .map(d => d.key)
-                .slice(0, 4)
+                // .slice(0, 4)
                 .join(', ')}
             >
               <Note

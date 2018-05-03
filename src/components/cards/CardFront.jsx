@@ -54,13 +54,15 @@ class ReadCardFront extends Component {
     onClose: PropTypes.func,
     flipHandler: PropTypes.func,
     style: PropTypes.object,
-    background: PropTypes.string
+    background: PropTypes.string,
+    tagColorScale: PropTypes.func
   };
 
   static defaultProps = {
     ...defaultProps,
     onCollect: null,
-    flipHandler: d => d
+    flipHandler: d => d,
+    tagColorScale: () => 'green'
   };
 
   constructor(props) {
@@ -101,7 +103,8 @@ class ReadCardFront extends Component {
       onCollect,
       uiColor,
       flipHandler,
-      background
+      background,
+      tagColorScale
     } = this.props;
 
     const { dialog } = this.state;
@@ -120,9 +123,9 @@ class ReadCardFront extends Component {
             {this.modalReadContent(dialogTitle)}
           </ModalBody>
         </Modal>
-        <PreviewTags data={tags} />
+        <PreviewTags colorScale={tagColorScale} data={tags} />
 
-        <Img src={img} style={{height: '45%'}}/>
+        <Img src={img} style={{ height: '45%' }} />
         <DescriptionField
           style={{ height: '20%' }}
           text={description}

@@ -88,7 +88,7 @@ class PreviewCard extends Component {
   }
 
   render() {
-    const { title, tags, img, challenge, style, onClick, edit } = this.props;
+    const { title, tags, img, challenge, style, onClick, edit, tagColorScale } = this.props;
     return (
       <div
         style={{
@@ -117,7 +117,7 @@ class PreviewCard extends Component {
           <PlaceholderAttr text={'Title'} style={{ fontSize: '18px' }} />
         )}
         {tags !== null ? (
-          <PreviewTags small data={tags} />
+          <PreviewTags small colorScale={tagColorScale} data={tags} />
         ) : (
           <PlaceholderAttr text={'Tags'} style={{ fontSize: '80%' }} />
         )}

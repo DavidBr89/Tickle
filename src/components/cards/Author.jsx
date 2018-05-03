@@ -7,7 +7,7 @@ import cx from './Card.scss';
 import colorClasses from '../utils/colorClasses';
 
 import { skillTypes } from '../../dummyData';
-import  CardMarker from './CardMarker';
+import CardMarker from './CardMarker';
 import { FieldSet } from './layout';
 
 const profileSrc = () => {
@@ -16,11 +16,7 @@ const profileSrc = () => {
   return `https://randomuser.me/api/portraits/thumb/${gender}/${i}.jpg`;
 };
 
-const skillColorScale = scaleOrdinal()
-  .domain(skillTypes)
-  .range(colorClasses);
-
-const SkillBar = ({ data }) => {
+const SkillBar = ({ data, tagColorScale }) => {
   const scale = scaleLinear()
     .domain(extent(data, d => d.level))
     .range([30, 100]);
@@ -31,13 +27,14 @@ const SkillBar = ({ data }) => {
     <div style={{ display: 'flex' }}>
       {data.map(d => (
         <div
-          className={`${skillColorScale(d.type)} ${cx.textTrunc}`}
+          className={cx.textTrunc}
           style={{
             width: `${scale(d.level)}%`,
             height: '30px',
             display: 'inline-flex',
             justifyContent: 'center',
-            alignItems: 'center'
+            alignItems: 'center',
+            background: tagColorScale(d.type)
           }}
         >
           <span>{d.type}</span>
@@ -47,9 +44,9 @@ const SkillBar = ({ data }) => {
   );
 };
 
-SkillBar.propTypes = { data: PropTypes.array };
+SkillBar.propTypes = { data: PropTypes.array, tagColorScale: PropTypes.func };
 
-SkillBar.defaultProps = { data: [] };
+SkillBar.defaultProps = { data: [], tagColorScale: () => 'purple' };
 
 const CardStack = ({ number }) => (
   // const scale = d3
@@ -60,7 +57,9 @@ const CardStack = ({ number }) => (
   <div style={{ display: 'flex' }}>
     {range(0, number).map(() => (
       <div style={{ width: `${2}%` }}>
-        <CardMarker width={30} />
+        <div style={{ width: 25, height: 30, opacity: 0.9 }}>
+          <CardMarker />
+        </div>
       </div>
     ))}
   </div>
@@ -72,15 +71,22 @@ CardStack.propTypes = {
 
 CardStack.defaultProps = { number: 0 };
 
-const Author = ({ extended, onClose, color, style, ...profile }) => {
-  const { name, skills, activity, interests } = profile;
+const Author = ({
+  extended,
+  onClose,
+  color,
+  style,
+  tagColorScale,
+  ...profile
+}) => {
+  const { name, skills, activity, interests, img } = profile;
   if (!extended) {
     return (
       <div
         style={{
           display: 'flex',
           justifyContent: 'center',
-          alignItems: 'center',
+          // alignItems: 'center',
           height: '100%',
           ...style
         }}
@@ -89,61 +95,61 @@ const Author = ({ extended, onClose, color, style, ...profile }) => {
           className={`${cx.avatar}`}
           width={'40%'}
           height={'80%'}
-          src={profileSrc()}
+          src={img || profileSrc()}
           alt="alt"
         />
       </div>
     );
   }
   return (
-    <div
-      style={{
-        display: 'flex',
-        position: 'relative',
-        justifyContent: 'center',
-        // alignItems: 'center',
-        flexDirection: 'column',
-        ...style
-      }}
-      className="mt-3"
-    >
+    <div>
       <button
         type="button"
         className="close "
-        style={{ position: 'absolute', top: 0 }}
         data-dismiss="modal"
         aria-label="Close"
         onClick={onClose}
       >
         <span aria-hidden="true">&times;</span>
       </button>
-      <img
-        className={`${cx.avatar}`}
-        style={{ alignSelf: 'center' }}
-        width={'40%'}
-        height={'40%'}
-        src={profileSrc()}
-        alt="alt"
-      />
+      <div
+        style={{
+          display: 'flex',
+          position: 'relative',
+          justifyContent: 'center',
+          // alignItems: 'center',
+          flexDirection: 'column',
+          ...style
+        }}
+      >
+        <img
+          className={`${cx.avatar}`}
+          style={{ alignSelf: 'center' }}
+          width={'40%'}
+          height={'40%'}
+          src={img || profileSrc()}
+          alt="alt"
+        />
 
-      <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
-        Personal
+        <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
+          Personal
+        </div>
+        <FieldSet legend={'Interests:'}>
+          <SkillBar data={interests} tagColorScale={tagColorScale} />
+        </FieldSet>
+        <FieldSet legend={'skills:'}>
+          <SkillBar data={skills} tagColorScale={tagColorScale} />
+        </FieldSet>
+        <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
+          Activity
+        </div>
+        <FieldSet legend={'Collected Cards'}>
+          <CardStack number={30} />
+        </FieldSet>
+        <FieldSet legend={'Created Cards'}>
+          <CardStack number={14} />
+        </FieldSet>
       </div>
-      <FieldSet legend={'Interests:'}>
-        <SkillBar data={interests} />
-      </FieldSet>
-      <FieldSet legend={'skills:'}>
-        <SkillBar data={skills} />
-      </FieldSet>
-      <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
-        Activity
-      </div>
-      <FieldSet legend={'Collected Cards'}>
-        <CardStack number={30} />
-      </FieldSet>
-      <FieldSet legend={'Created Cards'}>
-        <CardStack number={14} />
-      </FieldSet>
     </div>
   );
 };
