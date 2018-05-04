@@ -237,23 +237,24 @@ class ForceOverlay extends Component {
     this.timeStamp = new Date().getMilliseconds();
   }
 
-  componentDidMount() {
-    // this.layout();
-  }
-
   shouldComponentUpdate(nextProps, nextState) {
     const { viewport: oldVp } = this.state;
     const { viewport } = nextState;
-    const { width, height } = nextProps;
 
     // return true;
     // console.log('extended', extended);
     return (
-      // viewport.latitude !== oldVp.latitude ||
-      // viewport.longitude !== oldVp.longitude ||
+      viewport.latitude !== oldVp.latitude ||
+      viewport.longitude !== oldVp.longitude ||
+      viewport.zoom !== oldVp.zoom ||
+      this.props.height !== nextProps.height ||
+      this.props.width !== nextProps.width ||
+      this.props.mode !== nextProps.mode ||
+      this.props.data.length !== nextProps.data.length ||
+      this.props.extCardId !== nextProps.extCardId
       // width !== this.props.width ||
       // height !== this.props.height ||
-      true
+      // true
     );
   }
 
@@ -275,10 +276,9 @@ class ForceOverlay extends Component {
       const newVp = { ...viewport, ...loc };
       console.log('select card', loc);
       this.id = setTimeout(() => {
-        this.layout(newVp);
-        this.setState({ viewport: newVp });
+        this.layout({ props: nextProps, state: this.state, viewport: newVp });
       }, 700);
-      // this.layout(newVp);
+
     }
 
     if (this.props.width !== width || this.props.height !== height) {
@@ -318,9 +318,9 @@ class ForceOverlay extends Component {
     // this.ids.map(clearTimeout);
   }
 
-  layout(viewport) {
-    const { mode, delay, data, padding, force } = this.props;
-    const { tsnePos, somPos, gridPos, nodes: oldNodes } = this.state;
+  layout({ props, state, viewport }) {
+    const { mode, delay, data, padding, force } = props; // this.props;
+    const { tsnePos, somPos, gridPos } = state;
 
     const { width, height, zoom, latitude, longitude } = viewport;
     // console.log('oldNodes', nextState, oldNodes);
@@ -435,11 +435,12 @@ class ForceOverlay extends Component {
       labels,
       onViewportChange,
       onMapViewportChange,
-      userLocation
+      userLocation,
+      width,
+      height
     } = this.props;
 
     const { viewport } = this.state;
-    const { width, height } = viewport;
     const { nodes } = this.state;
     // const newPos = nodes.map(d => transEvent.apply([d.x, d.y]));
     // TODO: change later
@@ -466,10 +467,14 @@ class ForceOverlay extends Component {
               clearTimeout(this.id);
               // TODO: check later
               // this.id = setTimeout(() => this.layout(viewport), 50);
-              this.layout(viewport);
+              this.layout({ props: this.props, state: this.state, viewport });
               this.setState({ viewport });
             }}
-            {...viewport}
+            height={height}
+            width={width}
+            latitude={viewport.latitude}
+            longitude={viewport.longitude}
+            zoom={viewport.zoom}
           >
             <UserOverlay {...viewport} location={userLocation} />
           </MapGL>

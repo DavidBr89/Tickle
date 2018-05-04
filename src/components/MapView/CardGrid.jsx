@@ -118,12 +118,13 @@ class CardGrid extends Component {
     //   this.props.centered !== nextProps.centered ||
     //   nextProps.selected !== this.props.selected
     // );
-    //TODO
+    // TODO
     return (
       nextProps.selectedIndex !== this.props.selectedIndex ||
-      nextProps.data.length !== this.props.data.length
+      // TODO
+      nextProps.data.length !== this.props.data.length ||
+      nextProps.height !== this.props.height
     );
-    return true;
   }
 
   // componentWillUpdate(nextProps, nextState) {
@@ -149,6 +150,7 @@ class CardGrid extends Component {
       centered,
       selectedIndex,
       duration,
+      height,
       onClick
     } = this.props;
 
@@ -160,6 +162,7 @@ class CardGrid extends Component {
     const transition = `left ${duration / 1000}s, transform ${duration /
       1000}s`;
 
+    // TODO: reorder
     if (!centered) {
       const scale = d3
         .scaleBand()
@@ -169,22 +172,25 @@ class CardGrid extends Component {
         .range([0, width - slotSize]);
       // i => i * (100 - slotSize * 3 / 4) / data.length;
       return (
-        <div style={{ ...style, position: 'relative' }}>
+        <div
+          className={className}
+          style={{ ...style, height: `${height}${unit}`, position: 'relative' }}
+        >
           <div
-            className={className}
             style={{
               perspective: '2400px',
               perspectiveOrigin: '50% -50%',
+              width: '100%',
               height: '100%'
             }}
           >
             {data.map((d, i) => (
               <div
                 key={d.id}
-                className="h-100"
                 style={{
                   position: 'absolute',
                   width: `${slotSize - innerMargin}${unit}`,
+                  height: '100%',
                   // maxWidth: '200px',
                   paddingLeft: `${innerMargin / 2}${unit}`,
                   paddingRight: `${innerMargin / 2}${unit}`,
@@ -202,7 +208,10 @@ class CardGrid extends Component {
     }
 
     return (
-      <div className={className} style={{ ...style, position: 'relative' }}>
+      <div
+        className={className}
+        style={{ ...style, height: `${height}${unit}`, position: 'relative' }}
+      >
         <div
           style={{
             perspective: '2400px',
@@ -215,10 +224,10 @@ class CardGrid extends Component {
             return (
               <div
                 key={d.id}
-                className="h-100"
                 style={{
                   position: 'absolute',
                   width: `${slotSize - innerMargin}${unit}`,
+                  height: '100%',
                   // maxWidth: '200px',
                   paddingLeft: `${innerMargin / 2}${unit}`,
                   paddingRight: `${innerMargin / 2}${unit}`,

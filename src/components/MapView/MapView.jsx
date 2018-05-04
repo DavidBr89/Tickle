@@ -15,7 +15,7 @@ import { DragDropContextProvider } from 'react-dnd';
 import MapGL from 'react-map-gl';
 import * as d3 from 'd3';
 
-import { colorScale, brighterColorScale } from '../cards/styles';
+import { colorScale, cardTypeColorScale } from '../cards/styles';
 
 // import ReactTimeout from 'react-timeout';
 // import rasterTileStyle from 'raster-tile-style';
@@ -152,6 +152,42 @@ CardMetaControl.propTypes = {
   action: PropTypes.shape({ key: PropTypes.string, func: PropTypes.func })
     .isRequired
 };
+
+const PreviewMarker = ({ selected, color, r = 25 }) => (
+  <div
+    className="w-100 h-100"
+    style={{
+      position: 'relative'
+      // height: 2 * r,
+      // width: 2 * r
+    }}
+  >
+    {selected && (
+      <div
+        className="m-3"
+        style={{
+          position: 'absolute',
+          width: r * 2, // '13vw',
+          height: r * 2, // '13vw',
+          transform: `translate(${-r}px,${-r}px)`,
+          opacity: 0.5,
+          zIndex: 1000,
+          borderRadius: '50%',
+          border: '3px black solid'
+        }}
+      />
+    )}
+    <CardMarker
+      color={color}
+      style={{
+        opacity: 1,
+        position: 'absolute',
+        transform: `translateX(3px)`,
+        zIndex: -100
+      }}
+    />
+  </div>
+);
 
 class MapView extends PureComponent {
   static propTypes = {
@@ -374,61 +410,6 @@ class MapView extends PureComponent {
       .domain(d3.extent(cardSets, d => d.count))
       .range([20, 100]);
 
-    const r = 30;
-    const animatedMarker = ({ x, y, ...c }) => (
-      <ExtendableMarker
-        key={c.id}
-        width={extCardId === c.id ? width : 25}
-        height={extCardId === c.id ? height : 30}
-        x={extCardId === c.id ? width / 2 : x}
-        y={extCardId === c.id ? height / 2 : y}
-        extended={extCardId === c.id}
-        preview={
-          <div
-            className="w-100 h-100"
-            style={{
-              position: 'relative'
-            }}
-          >
-            {selectedCardId === c.id && (
-              <div
-                className="m-3"
-                style={{
-                  position: 'absolute',
-                  width: `${r * 2}px`, // '13vw',
-                  height: `${r * 2}px`, // '13vw',
-                  transform: `translate(${-r}px,${-r}px)`,
-                  opacity: 0.5,
-                  zIndex: 1000
-                }}
-              />
-            )}
-            <CardMarker
-              {...c}
-              tagColorScale={tagColorScale}
-              style={{
-                opacity: 1,
-                position: 'absolute',
-                transform: `translateX(3px)`,
-                zIndex: -100
-              }}
-            />
-          </div>
-        }
-      >
-        <Card
-          {...c}
-          edit={c.template}
-          onClose={() => extCardAction(null)}
-          onCollect={() =>
-            toggleCardChallengeAction({ cardChallengeOpen: true })
-          }
-          tagColorScale={tagColorScale}
-          style={{ zIndex: 4000 }}
-        />
-      </ExtendableMarker>
-    );
-
     return (
       <div className="w-100 h-100">
         <DragDropContextProvider backend={HTML5Backend}>
@@ -551,7 +532,8 @@ class MapView extends PureComponent {
                 style={{
                   opacity: gridView ? 1 : 0,
                   display: !gridView ? 'none' : null,
-                  transition: 'opacity 0.5s'
+                  transition: 'opacity 0.5s',
+                  height: '25%'
                 }}
               >
                 <Accordion
@@ -561,10 +543,10 @@ class MapView extends PureComponent {
                   centered={selectedCardId !== null}
                   selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
                   width={100}
+                  height={100}
                   unit={'%'}
                   slotSize={100 / 3.5}
                   style={{
-                    height: height / 4,
                     // width: '100%',
                     zIndex: 2000,
                     marginTop: 30
@@ -631,12 +613,13 @@ class MapView extends PureComponent {
                 data={cards}
                 sets={cardSets}
                 selectedCardId={selectedCardId}
-                extended={extCardId !== null}
+                extCardId={extCardId}
                 userLocation={userLocation}
                 mode={!tsneView ? 'geo' : 'som'}
                 labels={!gridView}
                 onMapViewportChange={changeMapViewportAction}
-                onViewportChange={nodes => null
+                onViewportChange={
+                  nodes => null
                   // console.log(
                   //   nodes.filter(
                   //     n => n.x < width && n.x > 0 && n.y < height && n.y > 0
@@ -652,7 +635,33 @@ class MapView extends PureComponent {
                 }}
                 colorScale={tagColorScale}
               >
-                {animatedMarker}
+                {({ x, y, ...c }) => (
+                  <ExtendableMarker
+                    key={c.id}
+                    width={extCardId === c.id ? width : 25}
+                    height={extCardId === c.id ? height : 30}
+                    x={extCardId === c.id ? width / 2 : x}
+                    y={extCardId === c.id ? height / 2 : y}
+                    extended={extCardId === c.id}
+                    preview={
+                      <PreviewMarker
+                        selected={selectedCardId === c.id}
+                        color={'whitesmoke'}
+                      />
+                    }
+                  >
+                    <Card
+                      {...c}
+                      edit={c.template}
+                      onClose={() => extCardAction(null)}
+                      onCollect={() =>
+                        toggleCardChallengeAction({ cardChallengeOpen: true })
+                      }
+                      tagColorScale={tagColorScale}
+                      style={{ zIndex: 4000 }}
+                    />
+                  </ExtendableMarker>
+                )}
               </ForceOverlay>
               <button
                 className="fixed-bottom-right btn m-3"

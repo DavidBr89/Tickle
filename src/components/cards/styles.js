@@ -83,6 +83,11 @@ export const darkerColorScale = scaleOrdinal()
 export const brighterColorScale = scaleOrdinal()
   .domain(challengeTypes)
   .range(colorScale.range().map(c => chroma(c).alpha(0.5)));
+
+//TODO: make meaningful
+export const cardTypeColorScale = scaleOrdinal()
+  .domain(challengeTypes)
+  .range(colorScale.range().map(c => chroma(c).alpha(0.5)));
 // export {
 //   cardLayout,
 //   shadowStyle,

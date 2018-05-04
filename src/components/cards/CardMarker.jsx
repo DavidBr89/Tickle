@@ -48,11 +48,12 @@ class CardMarker extends Component {
       width,
       height,
       marginTop,
-      background,
+      color,
       imgColor,
       shadow,
-      tags,
-      barHeight = '12%'
+      // tags,
+      barHeight = '12%',
+      barColor = 'black'
     } = this.props;
     return (
       <div
@@ -69,9 +70,7 @@ class CardMarker extends Component {
       >
         <div
           style={{
-            background: challenge.type
-              ? colorScale(challenge.type)
-              : 'whitesmoke',
+            background: color,
             width: '100%',
             height: '100%',
             padding: '7%',
@@ -92,7 +91,7 @@ class CardMarker extends Component {
               style={{
                 width: '100%',
                 height: barHeight,
-                background,
+                background: barColor,
                 marginTop
                 // borderRadius: '4px'
               }}
@@ -101,7 +100,7 @@ class CardMarker extends Component {
               style={{
                 width: '100%',
                 height: barHeight,
-                background,
+                background: barColor,
                 marginTop
                 // borderRadius: '4px'
               }}

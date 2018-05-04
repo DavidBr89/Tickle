@@ -4,7 +4,7 @@
   "description": "TickleClient",
   "main": "''",
   "scripts": {
-    "build": "webpack --mode production",
+    "build": "webpack --config webpack.production.config.js",
     "start": "webpack-dev-server",
     "analyze": "webpack --config webpack.production.config.js --json > stats.json"
   },
