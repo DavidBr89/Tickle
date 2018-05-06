@@ -123,7 +123,8 @@ class CardGrid extends Component {
       nextProps.selectedIndex !== this.props.selectedIndex ||
       // TODO
       nextProps.data.length !== this.props.data.length ||
-      nextProps.height !== this.props.height
+      nextProps.height !== this.props.height ||
+      true
     );
   }
 

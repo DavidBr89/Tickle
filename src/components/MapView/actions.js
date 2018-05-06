@@ -115,6 +115,11 @@ export function receiveCards(options) {
   return { type: RECEIVE_CARDS, options };
 }
 
+export const RECEIVE_AUTHORED_CARDS = 'RECEIVE_AUTHORED_CARDS';
+export function receiveAuthoredCards(options) {
+  return { type: RECEIVE_AUTHORED_CARDS, options };
+}
+
 export const TOGGLE_SEARCH = 'TOGGLE_SEARCH';
 export function toggleSearch(options) {
   return { type: TOGGLE_SEARCH, options };
@@ -128,4 +133,9 @@ export function dragCard(options) {
 export const CREATE_OR_UPDATE_CARD = 'CREATE_OR_UPDATE_CARD';
 export function createOrUpdateCard(options) {
   return { type: CREATE_OR_UPDATE_CARD, options };
+}
+
+export const TOGGLE_CARD_AUTHORING = 'TOGGLE_CARD_AUTHORING';
+export function toggleCardAuthoring() {
+  return { type: TOGGLE_CARD_AUTHORING };
 }

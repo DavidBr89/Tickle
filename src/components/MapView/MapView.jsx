@@ -352,6 +352,7 @@ class MapView extends PureComponent {
       tagListView,
       isSearching,
       isCardDragging,
+      authEnvCards,
       // AppOpenFirstTime,
       // headerPad,
 
@@ -371,7 +372,9 @@ class MapView extends PureComponent {
       toggleSearchAction,
       dragCardAction,
       createOrUpdateCardAction,
-      changeViewportAction
+      changeViewportAction,
+      toggleCardAuthoringAction,
+      cardAuthoring
       // navigateFirstTimeAction
     } = this.props;
 
@@ -382,8 +385,6 @@ class MapView extends PureComponent {
     //   latitude,
     //   longitude
     // });
-
-    const paddingTop = 16;
 
     const cardSets = setify(cards).filter(d => d.count > 0);
     const barScales = setify(defaultCards).map(d => ({
@@ -410,6 +411,9 @@ class MapView extends PureComponent {
       .domain(d3.extent(cardSets, d => d.count))
       .range([20, 100]);
 
+    //TODO: move to index.jsx
+    const viewCards = cardAuthoring ? authEnvCards : cards;
+
     return (
       <div className="w-100 h-100">
         <DragDropContextProvider backend={HTML5Backend}>
@@ -417,23 +421,55 @@ class MapView extends PureComponent {
             className="w-100 h-100"
             ref={cont => (this.cont = cont)}
             style={{
-              position: 'relative',
-              zIndex: 2000
+              position: 'relative'
             }}
           >
-            <div>
-              <div
-                className="w-100 pb-3"
-                style={{
-                  // background: 'var(--black)',
-                  zIndex: 4000,
-                  // filter: 'blur(10px)',
+            <nav
+              className="navbar navbar-light"
+              style={{
+                zIndex: 4000
+                // filter: 'blur(10px)',
 
-                  display: 'flex'
+                // display: 'flex'
+              }}
+            >
+              <button
+                style={{ background: 'whitesmoke' }}
+                className="navbar-toggler"
+                type="button"
+                data-toggle="collapse"
+                data-target="#submenu"
+                aria-controls="submenu"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+              >
+                <span className="navbar-toggler-icon" />
+              </button>
+              <input
+                className="btn"
+                placeholder="Search Cards"
+                type="text"
+                onChange={evt => filterCardsAction(evt.target.value)}
+                onFocus={() => toggleSearchAction(true)}
+                onBlur={() => toggleSearchAction(false)}
+                style={{
+                  background: 'whitesmoke',
+                  textAlign: 'left'
                 }}
+              />
+            </nav>
+
+            <div
+              className="collapse"
+              id="submenu"
+              style={{ position: 'relative', zIndex: 4000 }}
+            >
+              <div
+                className="p-3"
+                style={{ display: 'flex', flexDirection: 'column' }}
               >
                 <button
-                  className="mt-3 ml-3 btn"
+                  className="btn"
                   style={{
                     zIndex: 3000,
                     background: tagListView ? 'whitesmoke' : null
@@ -452,7 +488,7 @@ class MapView extends PureComponent {
                   </div>
                 </button>
                 <button
-                  className="mt-3 ml-3 btn"
+                  className="mt-3 btn"
                   style={{
                     // position: 'absolute',
                     zIndex: 3000,
@@ -465,7 +501,7 @@ class MapView extends PureComponent {
                   </div>
                 </button>
                 <button
-                  className="mt-3 ml-3 btn"
+                  className="mt-3 btn"
                   style={{
                     // position: 'absolute',
                     zIndex: 3000,
@@ -482,19 +518,22 @@ class MapView extends PureComponent {
                     <Icon.Monitor size={20} />
                   </div>
                 </button>
-                <input
-                  className="mt-3 ml-3 btn"
-                  placeholder="Search Cards"
-                  type="text"
-                  onChange={evt => filterCardsAction(evt.target.value)}
-                  onFocus={() => toggleSearchAction(true)}
-                  onBlur={() => toggleSearchAction(false)}
+                <button
+                  className="mt-3 btn"
                   style={{
-                    zIndex: 2000,
-                    background: 'whitesmoke',
-                    textAlign: 'left'
+                    // position: 'absolute',
+                    zIndex: 3000,
+                    background: gridView ? 'whitesmoke' : null
                   }}
-                />
+                  onClick={toggleCardAuthoringAction}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <div>{'New Card'}</div>
+                    <div className="ml-1">
+                      <Icon.Clipboard size={20} />
+                    </div>
+                  </div>
+                </button>
               </div>
             </div>
 
@@ -537,11 +576,13 @@ class MapView extends PureComponent {
                 }}
               >
                 <Accordion
-                  data={cards}
+                  data={viewCards}
                   className="ml-1 mr-2"
                   duration={600}
                   centered={selectedCardId !== null}
-                  selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
+                  selectedIndex={viewCards.findIndex(
+                    c => c.id === selectedCardId
+                  )}
                   width={100}
                   height={100}
                   unit={'%'}
@@ -610,7 +651,7 @@ class MapView extends PureComponent {
                 width={width}
                 height={height}
                 force
-                data={cards}
+                data={viewCards}
                 sets={cardSets}
                 selectedCardId={selectedCardId}
                 extCardId={extCardId}

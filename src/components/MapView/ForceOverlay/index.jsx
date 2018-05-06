@@ -30,6 +30,38 @@ function jaccard(a, b) {
     : 1;
 }
 
+const offsetMapViewport = ({
+  width,
+  height,
+  zoom,
+  latitude,
+  longitude,
+  offset: [offsetX = 0, offsetY = 0]
+}) => {
+  const vp = new PerspectiveMercatorViewport({
+    width,
+    height,
+    zoom,
+    latitude,
+    longitude
+  });
+
+  const [offsetLng, offsetLat] = vp.unproject([
+    offsetX ? width / 2 - offsetX : width / 2,
+    offsetY ? height / 2 - offsetY : height / 2
+  ]);
+
+  const ret = new PerspectiveMercatorViewport({
+    width,
+    height,
+    zoom,
+    latitude: offsetLat,
+    longitude: offsetLng
+  });
+  console.log('return', longitude, latitude, offsetLng, offsetLat);
+  return ret;
+};
+
 function somFy(data, width, height, callback = d => d) {
   const options = {
     fields: data.length,
@@ -251,7 +283,9 @@ class ForceOverlay extends Component {
       this.props.width !== nextProps.width ||
       this.props.mode !== nextProps.mode ||
       this.props.data.length !== nextProps.data.length ||
-      this.props.extCardId !== nextProps.extCardId
+      this.props.extCardId !== nextProps.extCardId ||
+      this.props.data.length !== nextProps.data.length ||
+      true
       // width !== this.props.width ||
       // height !== this.props.height ||
       // true
@@ -264,7 +298,6 @@ class ForceOverlay extends Component {
     // const { data: oldData } = this.props;
     const { data: nextData, mode, selectedCardId, width, height } = nextProps;
     const { viewport } = this.state;
-    // const { width, height } = viewport;
 
     // clearTimeout(this.id);
 
@@ -272,13 +305,28 @@ class ForceOverlay extends Component {
       this.props.selectedCardId !== selectedCardId &&
       selectedCardId !== null
     ) {
+      console.log(
+        'nextData',
+        nextData,
+        selectedCardId,
+        nextData.find(n => n.id === selectedCardId)
+      );
       const { loc } = nextData.find(n => n.id === selectedCardId);
-      const newVp = { ...viewport, ...loc };
+      const { zoom } = { ...viewport, ...loc };
       console.log('select card', loc);
       this.id = setTimeout(() => {
-        this.layout({ props: nextProps, state: this.state, viewport: newVp });
+        this.layout({
+          props: nextProps,
+          state: this.state,
+          viewport: offsetMapViewport({
+            width,
+            height,
+            zoom,
+            offset: [0, height / 4],
+            ...loc
+          })
+        });
       }, 700);
-
     }
 
     if (this.props.width !== width || this.props.height !== height) {

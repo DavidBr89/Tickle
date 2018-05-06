@@ -19,7 +19,8 @@ import {
   toggleSearch,
   dragCard,
   createOrUpdateCard,
-  changeViewport
+  changeViewport,
+  toggleCardAuthoring
 } from './actions';
 
 import { fetchDirection, computeTopicMap } from './async_actions';
@@ -124,6 +125,9 @@ const mapDispatchToProps = dispatch => ({
   },
   changeViewportAction: options => {
     dispatch(changeViewport(options));
+  },
+  toggleCardAuthoringAction: options => {
+    dispatch(toggleCardAuthoring(options));
   }
 });
 

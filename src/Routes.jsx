@@ -28,7 +28,11 @@ import DefaultLayout from './layouts/MainLayout';
 
 import { dummyCards } from './dummyData';
 
-import { fetchCards, fetchNearByPlaces} from './async_actions';
+import {
+  fetchCards,
+  fetchAuthoredCards,
+  fetchNearByPlaces
+} from './async_actions';
 
 const loggerMiddleware = createLogger();
 
@@ -91,7 +95,8 @@ const defaultState = {
     tsneView: false,
     tagListView: false,
     selectedTags: [],
-    isSearching: false
+    isSearching: false,
+    cardAuthoring: false
   },
   CardCreator: {
     cards: dummyCards,
@@ -140,7 +145,7 @@ const store = configureStore(rootReducer, defaultState);
 // });
 //
 
-// store.dispatch(fetchChallenges(0));
+store.dispatch(fetchAuthoredCards(0));
 store.dispatch(fetchNearByPlaces());
 
 const Routes = () => (

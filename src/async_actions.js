@@ -1,7 +1,7 @@
 import fetch from 'cross-fetch';
 import * as d3 from 'd3';
 
-import { receivePlaces, receiveCards } from './components/MapView/actions';
+import { receivePlaces, receiveCards, receiveAuthoredCards} from './components/MapView/actions';
 
 import NearbyPlaces from './places.json';
 
@@ -103,7 +103,6 @@ export function fetchCards(userid) {
   // Thunk middleware knows how to handle functions.
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
-  console.log('dispatch fetch challenges');
   return function(dispatch) {
     return firestore
       .collection('cards')
@@ -115,6 +114,23 @@ export function fetchCards(userid) {
       });
   };
 }
+
+export function fetchAuthoredCards(userid) {
+  // Thunk middleware knows how to handle functions.
+  // It passes the dispatch method as an argument to the function,
+  // thus making it able to dispatch actions itself.
+  return function(dispatch) {
+    return firestore
+      .collection('cards')
+      .get()
+      .then(querySnapshot => {
+        const data = [];
+        querySnapshot.forEach(doc => data.push(doc.data()));
+        dispatch(receiveAuthoredCards(data.slice(0, 5)));
+      });
+  };
+}
+
 // export function computeTSNE(userid) {
 //   // Thunk middleware knows how to handle functions.
 //   // It passes the dispatch method as an argument to the function,

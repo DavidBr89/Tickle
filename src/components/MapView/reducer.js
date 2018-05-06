@@ -21,7 +21,6 @@ import {
   SELECT_CARD,
   RESIZE_CARD_WINDOW,
   USER_MOVE,
-  CHANGE_MAP_VIEWPORT,
   SCREEN_RESIZE,
   PLAY_CARD_CHALLENGE,
   TOGGLE_CARD_CHALLENGE,
@@ -36,7 +35,9 @@ import {
   DRAG_CARD,
   CREATE_OR_UPDATE_CARD,
   RECEIVE_CARDS,
-  CHANGE_VIEWPORT
+  CHANGE_VIEWPORT,
+  TOGGLE_CARD_AUTHORING,
+  RECEIVE_AUTHORED_CARDS
 } from './actions';
 
 import {
@@ -56,48 +57,48 @@ import {
 //   }))
 // });
 
-const offsetMapViewport = ({
-  width,
-  height,
-  zoom,
-  latitude,
-  longitude,
-  offset: [offsetX = 0, offsetY = 0]
-}) => {
-  const vp = new PerspectiveMercatorViewport({
-    width,
-    height,
-    zoom,
-    latitude,
-    longitude
-  });
-
-  const [offsetLng, offsetLat] = vp.unproject([
-    offsetX ? width / 2 + offsetX : width / 2,
-    offsetY ? height / 2 + offsetY : height / 2
-  ]);
-
-  const ret = new PerspectiveMercatorViewport({
-    width,
-    height,
-    zoom,
-    latitude: offsetLat,
-    longitude: offsetLng
-  });
-  console.log('return', longitude, latitude, offsetLng, offsetLat);
-  return ret;
-};
-
 function reducer(state = {}, action) {
   // console.log('action', action);
   // const { selectedCardId } = state;
 
   switch (action.type) {
-    case CHANGE_VIEWPORT: {
-      const cards = action.options;
-
+    case RECEIVE_AUTHORED_CARDS: {
+      const authoredCards = action.options;
+      const cardTemplate = {
+        id: 'temp',
+        template: true,
+        loc: { latitude: 0, longitude: 0 },
+        tags: []
+      };
+      const authEnvCards = [...authoredCards, cardTemplate];
       return {
         ...state,
+        authEnvCards
+        // cards
+        // isCardDragging
+      };
+    }
+    case TOGGLE_CARD_AUTHORING: {
+      // const cardTemplate = {
+      //   id: 'temp',
+      //   template: true,
+      //   loc: { latitude: 0, longitude: 0 }
+      // };
+      // const { authoredCards } = state;
+      return {
+        ...state,
+        cardAuthoring: !state.cardAuthoring,
+        // authEnvCards: [...authoredCards, cardTemplate],
+        selectedCardId: 'temp'
+        // cards
+        // isCardDragging
+      };
+    }
+    case CHANGE_VIEWPORT: {
+      // const cards = action.options;
+
+      return {
+        ...state
         // cards
         // isCardDragging
       };
@@ -290,107 +291,107 @@ function reducer(state = {}, action) {
     case RESIZE_CARD_WINDOW: {
       return { ...state, ...action };
     }
-    case CHANGE_MAP_VIEWPORT: {
-      const {
-        cards,
-        selectedCardId,
-        userLocation,
-        width,
-        height,
-        gridView,
-        defaultZoom,
-        selectedTags,
-        tagListView
-      } = state;
-      // if (state.extCardId !== null) return state;
-      const { longitude, latitude, zoom } = action.options;
-
-      if (zoom <= defaultZoom) return { ...state };
-
-      const bbox = getBoundingBox(
-        cards
-          .map(({ loc }) => [loc.longitude, loc.latitude])
-          .concat([[userLocation.longitude, userLocation.latitude]])
-      );
-
-      const selCard = cards.find(d => d.id === selectedCardId);
-      const { longitude: centerLng, latitude: centerLat } = selCard
-        ? selCard.loc
-        : { longitude, latitude };
-
-      const { zoom: minZoom, longitude: newLng, latitude: newLat } = (() => {
-        const offset = [0, gridView ? -height / 4 : 0];
-        if (zoom <= defaultZoom) {
-          return offsetMapViewport({
-            width,
-            height,
-            zoom: 8,
-            latitude: centerLat,
-            longitude: centerLng,
-            offset
-          }).fitBounds(bbox, {
-            padding: 10,
-            // offset
-            offset: [0, height / 2]
-          });
-        }
-        return offsetMapViewport({
-          width,
-          height,
-          zoom,
-          latitude: centerLat,
-          longitude: centerLng,
-          offset
-        });
-        // .fitBounds(bbox, {
-        //   // padding: 10,
-        //   offset: [0, 0]
-        // });
-      })();
-
-      // const screenVp = new PerspectiveMercatorViewport({
-      //   width,
-      //   height: height - 50,
-      //   zoom,
-      //   latitude: centerLat,
-      //   longitude: centerLng
-      // });
-
-      // // TODO: this is too slow
-      // const newCards = state.defaultCards.filter(({ loc, tags }) => {
-      //   const [x, y] = screenVp.project([loc.longitude, loc.latitude]);
-      //   const tagBool =
-      //     selectedTags.length === 0 ||
-      //     intersection(selectedTags, tags).length > 0;
-      //   return tagBool && y > 0 && y < height && x > 0 && x < width;
-      // });
-
-      // console.log('newCards', newCards);
-
-      return {
-        ...state,
-        longitude, // : newLng,
-        latitude, // : newLat,
-        // birdsEyeView,
-        // cards: newCards,
-
-        // latitude: newLat, // latScale(viewport.zoom),
-        zoom, // : Math.max(minZoom, zoom),
-        // selectedCardId: zoom < 10 ? null : state.selectedCardId,
-        userChangedMapViewport: true
-      };
-      // }
-
-      // const { latitude, longitude, zoom } = viewport;
-      // return {
-      //   ...state,
-      //   latitude,
-      //   longitude,
-      //   zoom,
-      //   // selectedCardId: zoom < 10 ? null : state.selectedCardId,
-      //   userChangedMapViewport: true
-      // };
-    }
+    // case CHANGE_MAP_VIEWPORT: {
+    //   const {
+    //     cards,
+    //     selectedCardId,
+    //     userLocation,
+    //     width,
+    //     height,
+    //     gridView,
+    //     defaultZoom,
+    //     selectedTags,
+    //     tagListView
+    //   } = state;
+    //   // if (state.extCardId !== null) return state;
+    //   const { longitude, latitude, zoom } = action.options;
+    //
+    //   if (zoom <= defaultZoom) return { ...state };
+    //
+    //   const bbox = getBoundingBox(
+    //     cards
+    //       .map(({ loc }) => [loc.longitude, loc.latitude])
+    //       .concat([[userLocation.longitude, userLocation.latitude]])
+    //   );
+    //
+    //   const selCard = cards.find(d => d.id === selectedCardId);
+    //   const { longitude: centerLng, latitude: centerLat } = selCard
+    //     ? selCard.loc
+    //     : { longitude, latitude };
+    //
+    //   const { zoom: minZoom, longitude: newLng, latitude: newLat } = (() => {
+    //     const offset = [0, gridView ? -height / 4 : 0];
+    //     if (zoom <= defaultZoom) {
+    //       return offsetMapViewport({
+    //         width,
+    //         height,
+    //         zoom: 8,
+    //         latitude: centerLat,
+    //         longitude: centerLng,
+    //         offset
+    //       }).fitBounds(bbox, {
+    //         padding: 10,
+    //         // offset
+    //         offset: [0, height / 2]
+    //       });
+    //     }
+    //     return offsetMapViewport({
+    //       width,
+    //       height,
+    //       zoom,
+    //       latitude: centerLat,
+    //       longitude: centerLng,
+    //       offset
+    //     });
+    //     // .fitBounds(bbox, {
+    //     //   // padding: 10,
+    //     //   offset: [0, 0]
+    //     // });
+    //   })();
+    //
+    //   // const screenVp = new PerspectiveMercatorViewport({
+    //   //   width,
+    //   //   height: height - 50,
+    //   //   zoom,
+    //   //   latitude: centerLat,
+    //   //   longitude: centerLng
+    //   // });
+    //
+    //   // // TODO: this is too slow
+    //   // const newCards = state.defaultCards.filter(({ loc, tags }) => {
+    //   //   const [x, y] = screenVp.project([loc.longitude, loc.latitude]);
+    //   //   const tagBool =
+    //   //     selectedTags.length === 0 ||
+    //   //     intersection(selectedTags, tags).length > 0;
+    //   //   return tagBool && y > 0 && y < height && x > 0 && x < width;
+    //   // });
+    //
+    //   // console.log('newCards', newCards);
+    //
+    //   return {
+    //     ...state,
+    //     longitude, // : newLng,
+    //     latitude, // : newLat,
+    //     // birdsEyeView,
+    //     // cards: newCards,
+    //
+    //     // latitude: newLat, // latScale(viewport.zoom),
+    //     zoom, // : Math.max(minZoom, zoom),
+    //     // selectedCardId: zoom < 10 ? null : state.selectedCardId,
+    //     userChangedMapViewport: true
+    //   };
+    //   // }
+    //
+    //   // const { latitude, longitude, zoom } = viewport;
+    //   // return {
+    //   //   ...state,
+    //   //   latitude,
+    //   //   longitude,
+    //   //   zoom,
+    //   //   // selectedCardId: zoom < 10 ? null : state.selectedCardId,
+    //   //   userChangedMapViewport: true
+    //   // };
+    // }
     // case PLAY_CARD_CHALLENGE:
     //   return Object.assign({}, state, {
     //   todos: [
@@ -406,16 +407,16 @@ function reducer(state = {}, action) {
       const selectedCard = state.cards.find(d => d.id === selectedCardId);
       const { width, height } = state;
 
-      const mapViewport = offsetMapViewport({
-        width,
-        height,
-        ...selectedCard.loc,
-        zoom: 10,
-        offset: [0, -height / 4]
-      });
-
-      console.log('mapViewport', mapViewport);
-      const { latitude, longitude, zoom } = mapViewport;
+      // const mapViewport = offsetMapViewport({
+      //   width,
+      //   height,
+      //   ...selectedCard.loc,
+      //   zoom: 10,
+      //   offset: [0, -height / 4]
+      // });
+      //
+      // console.log('mapViewport', mapViewport);
+      // const { latitude, longitude, zoom } = mapViewport;
 
       // const vp = new PerspectiveMercatorViewport({
       //   mapViewport
@@ -428,10 +429,10 @@ function reducer(state = {}, action) {
 
       return {
         ...state,
-        ...mapViewport,
-        latitude,
-        longitude,
-        zoom,
+        // ...mapViewport,
+        // latitude,
+        // longitude,
+        // zoom,
         direction: null,
         selectedCardId,
         // cards: selectedCardId !== null ? newCards : state.cards,
