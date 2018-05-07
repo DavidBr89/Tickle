@@ -123,16 +123,31 @@ class ReadCardFront extends Component {
             {this.modalReadContent(dialogTitle)}
           </ModalBody>
         </Modal>
-        <PreviewTags colorScale={tagColorScale} data={tags} />
 
-        <Img src={img} style={{ height: '45%' }} />
+        <div style={{ position: 'relative' }}>
+          <Img src={img} />
+          <div
+            className="m-2 "
+            style={{ position: 'absolute', zIndex: 200, left: 0, top: 0 }}
+          >
+          {/*TODO: fix width */}
+            <div style={{ display: 'flex', width: '70%', maxWidth: '80%' }}>
+              <PreviewTags colorScale={tagColorScale} data={tags} />
+            </div>
+          </div>
+        </div>
         <DescriptionField
-          style={{ height: '20%' }}
+          style={{ maxHeight: '20%' }}
           text={description}
           borderColor={uiColor}
-          onClick={() =>
+          edit
+          onEdit={() =>
             this.setState({
-              dialog: { title: 'Description', data: description }
+              dialog: {
+                title: 'Description',
+                id: 'description',
+                data: description
+              }
             })
           }
         />
@@ -274,13 +289,15 @@ class EditCardFront extends PureComponent {
               selected={challenge.url}
               uiColor={uiColor}
               type="Challenge"
-              data={allChallenges.map(d => ({
-                url: d.url,
-                title: d.url,
-                descr: '',
-                thumbnail: d.url,
-                type: 'hangman'
-              }))}
+              data={allChallenges
+                // TODO: change
+                .map(d => ({
+                  url: d.url,
+                  title: d.url,
+                  descr: '',
+                  thumbnail: d.url,
+                  type: 'hangman'
+                }))}
             />
           </ModalBody>
         );
@@ -289,8 +306,19 @@ class EditCardFront extends PureComponent {
     }
   }
 
+  // TODO: join ReadCardFront with EditCardFront
+  // TODO: join ReadCardFront with EditCardFront
+  // TODO: join ReadCardFront with EditCardFront
+  // TODO: join ReadCardFront with EditCardFront
   render() {
-    const { onClose, flipHandler, style, background, uiColor } = this.props;
+    const {
+      onClose,
+      flipHandler,
+      style,
+      background,
+      uiColor,
+      tagColorScale
+    } = this.props;
     const { data } = this.state;
     const { title, tags, img, description, media, children, challenge } = data;
     const { dialog } = this.state;
@@ -305,7 +333,6 @@ class EditCardFront extends PureComponent {
         uiColor={uiColor}
         editButton={
           <EditButton
-            className="mr-2"
             onClick={() =>
               this.setState({
                 dialog: { title: 'Title', data: title }
@@ -327,9 +354,31 @@ class EditCardFront extends PureComponent {
             {this.modalWriteContent(dialogTitle)}
           </Modal>
           <div className={cardLayout}>
-            <div style={{ display: 'inline-flex' }}>
-              <PreviewTags data={tags} />
+            <div style={{ position: 'relative' }}>
+              <Img src={img} />
+              <div
+                className="m-2 "
+                style={{ position: 'absolute', zIndex: 200, left: 0, top: 0 }}
+              >
+                <div style={{ display: 'flex' }}>
+                  <PreviewTags colorScale={tagColorScale} data={tags} />
+                  <EditButton
+                    className="mr-3"
+                    onClick={() => {
+                      this.setState({
+                        dialog: { title: 'Tags', data: tags }
+                      });
+                    }}
+                  />
+                </div>
+              </div>
               <EditButton
+                style={{
+                  position: 'absolute',
+                  bottom: 5,
+                  right: 5,
+                  zIndex: 200
+                }}
                 onClick={() => {
                   this.setState({
                     dialog: { title: 'Tags', data: tags }
@@ -337,7 +386,6 @@ class EditCardFront extends PureComponent {
                 }}
               />
             </div>
-            <Img src={img} />
             <DescriptionField
               style={{ maxHeight: '20%' }}
               text={description}

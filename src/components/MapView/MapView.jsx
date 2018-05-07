@@ -51,9 +51,8 @@ import chroma from 'chroma-js';
 // import cardIconSrc from '../utils/map-layers/cardIcon.svg';
 import { Modal } from '../utils/modal';
 
-import { DragSourceCont, DropTargetCont } from './DragSourceTarget';
-
-import DragLayer from './DragLayer';
+import { DragSourceCont, DropTargetCont } from './DragAndDrop/DragSourceTarget';
+import DragLayer from './DragAndDrop/DragLayer';
 
 function launchIntoFullscreen(element) {
   if (element.requestFullscreen) {
@@ -411,8 +410,7 @@ class MapView extends PureComponent {
       .domain(d3.extent(cardSets, d => d.count))
       .range([20, 100]);
 
-    //TODO: move to index.jsx
-    const viewCards = cardAuthoring ? authEnvCards : cards;
+    // TODO: move to index.jsx
 
     return (
       <div className="w-100 h-100">
@@ -424,6 +422,7 @@ class MapView extends PureComponent {
               position: 'relative'
             }}
           >
+            <DragLayer />
             <nav
               className="navbar navbar-light"
               style={{
@@ -497,7 +496,8 @@ class MapView extends PureComponent {
                   onClick={toggleGridAction}
                 >
                   <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <Icon.Grid size={30} />
+                    <div>{'Card grid'}</div>
+                    <Icon.Grid className="ml-1" size={30} />
                   </div>
                 </button>
                 <button
@@ -515,7 +515,8 @@ class MapView extends PureComponent {
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <Icon.Monitor size={20} />
+                    <div>{'Full screen'}</div>
+                    <Icon.Monitor className="ml-1" size={20} />
                   </div>
                 </button>
                 <button
@@ -528,7 +529,7 @@ class MapView extends PureComponent {
                   onClick={toggleCardAuthoringAction}
                 >
                   <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <div>{'New Card'}</div>
+                    <div>{'Author Cards'}</div>
                     <div className="ml-1">
                       <Icon.Clipboard size={20} />
                     </div>
@@ -576,13 +577,11 @@ class MapView extends PureComponent {
                 }}
               >
                 <Accordion
-                  data={viewCards}
+                  data={cards}
                   className="ml-1 mr-2"
                   duration={600}
                   centered={selectedCardId !== null}
-                  selectedIndex={viewCards.findIndex(
-                    c => c.id === selectedCardId
-                  )}
+                  selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
                   width={100}
                   height={100}
                   unit={'%'}
@@ -594,6 +593,8 @@ class MapView extends PureComponent {
                   }}
                 >
                   {d => (
+
+                        <DragSourceCont dragHandler={dragCardAction} id={d.id}>
                     <div
                       className="w-100 h-100"
                       key={d.id}
@@ -605,28 +606,29 @@ class MapView extends PureComponent {
                       }}
                     >
                       <div style={{ width: '100%', height: '100%' }}>
-                        <PreviewCard
-                          {...d}
-                          onClick={() =>
-                            selectedCardId === d.id
-                              ? extCardAction(d.id)
-                              : selectCardAction(d.id)
-                          }
-                          tagColorScale={tagColorScale}
-                          key={d.id}
-                          edit={d.template}
-                          selected={selectedCardId === d.id}
-                          style={{
-                            transition: `transform 1s`,
-                            transform: selectedCardId === d.id && 'scale(1.2)'
-                            // width: '100%',
-                            // height: '100%',
-                            // width: '100%'
-                            // maxWidth: '200px'
-                          }}
-                        />
+                          <PreviewCard
+                            {...d}
+                            onClick={() =>
+                              selectedCardId === d.id
+                                ? extCardAction(d.id)
+                                : selectCardAction(d.id)
+                            }
+                            tagColorScale={tagColorScale}
+                            key={d.id}
+                            edit={d.template}
+                            selected={selectedCardId === d.id}
+                            style={{
+                              transition: `transform 1s`,
+                              transform: selectedCardId === d.id && 'scale(1.2)'
+                              // width: '100%',
+                              // height: '100%',
+                              // width: '100%'
+                              // maxWidth: '200px'
+                            }}
+                          />
                       </div>
                     </div>
+                        </DragSourceCont>
                   )}
                 </Accordion>
               </div>
@@ -638,72 +640,80 @@ class MapView extends PureComponent {
                   zIndex: tagListView ? 5000 : null
                 }}
               >
-                <TagList
-                  data={cardSets}
-                  scale={barScale}
-                  barScales={barScales}
-                  colorScale={tagColorScale}
-                />
+                {
+                // <TagList
+                // data={cardSets}
+                // scale={barScale}
+                // barScales={barScales}
+                // colorScale={tagColorScale}
+                // />
+                }
               </div>
               <Title />
-              <ForceOverlay
-                delay={400}
-                width={width}
-                height={height}
-                force
-                data={viewCards}
-                sets={cardSets}
-                selectedCardId={selectedCardId}
-                extCardId={extCardId}
-                userLocation={userLocation}
-                mode={!tsneView ? 'geo' : 'som'}
-                labels={!gridView}
-                onMapViewportChange={changeMapViewportAction}
-                onViewportChange={
-                  nodes => null
-                  // console.log(
-                  //   nodes.filter(
-                  //     n => n.x < width && n.x > 0 && n.y < height && n.y > 0
-                  //   )
-                  // )
-                }
-                padding={{
-                  bottom: !gridView && !tagListView ? height * 1 / 6 : 50,
-                  top:
-                    gridView || tagListView ? height * 1 / 1.7 : height * 1 / 6,
-                  left: 70,
-                  right: 70
-                }}
-                colorScale={tagColorScale}
+              <DropTargetCont
+                dropHandler={createOrUpdateCardAction}
+                dragged={isCardDragging}
               >
-                {({ x, y, ...c }) => (
-                  <ExtendableMarker
-                    key={c.id}
-                    width={extCardId === c.id ? width : 25}
-                    height={extCardId === c.id ? height : 30}
-                    x={extCardId === c.id ? width / 2 : x}
-                    y={extCardId === c.id ? height / 2 : y}
-                    extended={extCardId === c.id}
-                    preview={
-                      <PreviewMarker
-                        selected={selectedCardId === c.id}
-                        color={'whitesmoke'}
-                      />
-                    }
-                  >
-                    <Card
-                      {...c}
-                      edit={c.template}
-                      onClose={() => extCardAction(null)}
-                      onCollect={() =>
-                        toggleCardChallengeAction({ cardChallengeOpen: true })
+                <ForceOverlay
+                  delay={400}
+                  width={width}
+                  height={height}
+                  force
+                  data={cards}
+                  sets={cardSets}
+                  selectedCardId={selectedCardId}
+                  extCardId={extCardId}
+                  userLocation={userLocation}
+                  mode={!tsneView ? 'geo' : 'som'}
+                  labels={!gridView}
+                  onMapViewportChange={changeMapViewportAction}
+                  onViewportChange={
+                    nodes => null
+                    // console.log(
+                    //   nodes.filter(
+                    //     n => n.x < width && n.x > 0 && n.y < height && n.y > 0
+                    //   )
+                    // )
+                  }
+                  padding={{
+                    bottom: !gridView && !tagListView ? height * 1 / 6 : 50,
+                    top:
+                      gridView || tagListView
+                        ? height * 1 / 1.7
+                        : height * 1 / 6,
+                    left: 70,
+                    right: 70
+                  }}
+                  colorScale={tagColorScale}
+                >
+                  {({ x, y, ...c }) => (
+                    <ExtendableMarker
+                      key={c.id}
+                      width={extCardId === c.id ? width : 25}
+                      height={extCardId === c.id ? height : 30}
+                      x={extCardId === c.id ? width / 2 : x}
+                      y={extCardId === c.id ? height / 2 : y}
+                      extended={extCardId === c.id}
+                      preview={
+                        <PreviewMarker
+                          selected={selectedCardId === c.id}
+                          color={'whitesmoke'}
+                        />
                       }
-                      tagColorScale={tagColorScale}
-                      style={{ zIndex: 4000 }}
-                    />
-                  </ExtendableMarker>
-                )}
-              </ForceOverlay>
+                    >
+                      <Card
+                        {...c}
+                        onClose={() => extCardAction(null)}
+                        onCollect={() =>
+                          toggleCardChallengeAction({ cardChallengeOpen: true })
+                        }
+                        tagColorScale={tagColorScale}
+                        style={{ zIndex: 4000 }}
+                      />
+                    </ExtendableMarker>
+                  )}
+                </ForceOverlay>
+              </DropTargetCont>
               <button
                 className="fixed-bottom-right btn m-3"
                 style={{

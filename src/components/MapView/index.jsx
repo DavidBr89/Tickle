@@ -138,7 +138,10 @@ const mergeProps = (state, dispatcherProps) => {
     selectedCardId,
     direction,
     directionLoading,
-    userSelected
+    userSelected,
+    cards: collectibleCards,
+    authEnv,
+    authEnvCards
   } = state;
   const {
     fetchDirectionAction,
@@ -167,7 +170,10 @@ const mergeProps = (state, dispatcherProps) => {
 
     return { key: 'flyToUser', func: flyToUserAction };
   })();
-  return { ...state, nextCardControlAction, ...dispatcherProps };
+
+  const cards = authEnv ? authEnvCards : collectibleCards;
+
+  return { ...state, nextCardControlAction, ...dispatcherProps, cards };
 };
 
 const MapViewCont = connect(mapStateToProps, mapDispatchToProps, mergeProps)(

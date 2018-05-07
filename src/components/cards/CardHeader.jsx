@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import cx from './Card.scss';
 
 // import { EditButton } from './layout';
 
@@ -43,11 +42,13 @@ const CardHeader = ({
         className="mb-2 pr-2"
         style={{
           display: 'flex',
+          //TODO stick to left
           justifyContent: 'space-between',
           width: '100%'
         }}
       >
-        <div style={{ display: 'inline-flex', maxWidth: '85%' }}>
+        {editButton}
+        <div style={{ display: 'inline-flex', maxWidth: '65%' }}>
           <h3 className="text-truncate" style={{ marginBottom: '10px' }}>
             {title === null ? (
               <span style={{ fontStyle: editButton ? 'italic' : null }}>
@@ -57,10 +58,9 @@ const CardHeader = ({
               title
             )}
           </h3>
-          {editButton}
         </div>
         <button className="btn" style={btnStyle} onClick={onClose}>
-          {/*TODO: fix button height*/}
+          {/* TODO: fix button height */}
           <i className="fa fa-times fa-lg" aria-hidden="true" />
         </button>
       </div>

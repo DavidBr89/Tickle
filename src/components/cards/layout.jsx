@@ -22,7 +22,7 @@ SearchIcon.defaultProps = { style: {}, className: '' };
 const EditIcon = ({ style, className }) => (
   <i
     className={`fa fa-pencil-square-o ${className}`}
-    style={{ cursor: 'pointer', opacity: 0.75, fontSize: '1.2rem', ...style }}
+    style={{ cursor: 'pointer', fontSize: '1.2rem', ...style }}
   />
 );
 
@@ -52,15 +52,18 @@ Legend.propTypes = {
 Legend.defaultProps = { style: {}, children: null };
 
 const FieldSet = ({ children, legend, style, edit, borderColor, onClick }) => (
-  <div style={{ ...style, pointerEvents: 'all' }} onClick={onClick}>
+  <div
+    style={{ ...style, overflow: 'hidden', height: '100%' }}
+    onClick={onClick}
+  >
     <fieldset
       style={{
         border: `1px solid ${borderColor}`,
         marginTop: '4px',
         padding: '6px',
         width: '100%',
-        height: '100%',
-        overflow: 'hidden'
+        height: '100%'
+        // overflow: 'hidden'
       }}
     >
       <Legend>
@@ -103,16 +106,12 @@ const DescriptionField = ({
   edit
 }) => (
   <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
-    <FieldSet
-      style={{ height: '90%' }}
-      edit={edit}
-      borderColor={borderColor}
-      legend={'Description'}
-    >
+    <FieldSet edit={edit} borderColor={borderColor} legend={'Description'}>
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
+          alignItems: 'center',
           height: '100%'
         }}
       >
@@ -251,7 +250,11 @@ const Img = ({ src, style }) => (
     className="mt-1 mb-1"
     style={{ border: '1px solid var(--black)', ...style }}
   >
-    <img src={src} alt="Card img" style={{ width: '100%', height: '100%' }} />
+    <img
+      src={src}
+      alt="Card img"
+      style={{ width: '100%', height: '100%', maxHeight: '40vh' }}
+    />
   </div>
 );
 
@@ -437,7 +440,8 @@ Tag.propTypes = {
   color: PropTypes.string,
   onClick: PropTypes.func,
   edit: PropTypes.bool,
-  small: PropTypes.bool
+  small: PropTypes.bool,
+  extended: PropTypes.bool
 };
 
 Tag.defaultProps = {
@@ -445,14 +449,25 @@ Tag.defaultProps = {
   onClick: d => d,
   edit: false,
   small: false,
-  color: 'red'
+  color: 'red',
+  extended: false
 };
 
-const PreviewTags = ({ data, style, placeholder, small, colorScale }) => (
+const PreviewTags = ({
+  data,
+  style,
+  placeholder,
+  small,
+  colorScale,
+  extended
+}) => (
   <div
     style={{
       display: 'flex',
       // position: 'absolute',
+      // TODO: adapt
+      // maxWidth: '60%',
+      flexWrap: extended && 'wrap',
       ...style
       // overflowY: 'visible'
       // flexWrap: 'no-wrap'
@@ -460,11 +475,17 @@ const PreviewTags = ({ data, style, placeholder, small, colorScale }) => (
     }}
     className={`${cx.textTrunc} ${cx.tags}`}
   >
-    {data !== null ? (
-      data.map(t => <Tag title={t} color={colorScale(t)} small={small} />)
-    ) : (
-      <div style={{ fontStyle: 'italic' }}>{placeholder}</div>
-    )}
+    {data !== null &&
+      data.length > 0 &&
+      data.map(t => <Tag title={t} color={colorScale(t)} small={small} />)}
+
+    {data !== null &&
+      data.length === 0 && (
+        <div>
+          <Tag title={'No Tag'} color={'grey'} small={small} />
+        </div>
+      )}
+    {data === null && <div style={{ fontStyle: 'italic' }}>{placeholder}</div>}
   </div>
 );
 

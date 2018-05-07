@@ -57,39 +57,39 @@ import {
 //   }))
 // });
 
+const cardTemplateId = 'temp';
 function reducer(state = {}, action) {
   // console.log('action', action);
   // const { selectedCardId } = state;
 
   switch (action.type) {
     case RECEIVE_AUTHORED_CARDS: {
-      const authoredCards = action.options;
-      const cardTemplate = {
-        id: 'temp',
-        template: true,
-        loc: { latitude: 0, longitude: 0 },
-        tags: []
-      };
-      const authEnvCards = [...authoredCards, cardTemplate];
+      const cards = action.options;
+      const authoredCards = cards.map(c => ({ ...c, edit: true }));
+
       return {
         ...state,
-        authEnvCards
+        authoredCards
         // cards
         // isCardDragging
       };
     }
     case TOGGLE_CARD_AUTHORING: {
-      // const cardTemplate = {
-      //   id: 'temp',
-      //   template: true,
-      //   loc: { latitude: 0, longitude: 0 }
-      // };
-      // const { authoredCards } = state;
+      const { authoredCards, userLocation } = state;
+      const cardTemplate = {
+        id: cardTemplateId,
+        // template: true,
+        loc: userLocation,
+        edit: true,
+        tags: []
+      };
+      const authEnvCards = [...authoredCards, cardTemplate];
+      const enabled = !state.authEnv;
       return {
         ...state,
-        cardAuthoring: !state.cardAuthoring,
-        // authEnvCards: [...authoredCards, cardTemplate],
-        selectedCardId: 'temp'
+        authEnv: enabled,
+        authEnvCards,
+        selectedCardId: enabled ? cardTemplateId : null
         // cards
         // isCardDragging
       };
@@ -110,7 +110,7 @@ function reducer(state = {}, action) {
 
       return {
         ...state,
-        cards,
+        cards: cards.map(c => ({ ...c, edit: false })),
         defaultCards: cards
         // isCardDragging
       };

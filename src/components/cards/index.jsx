@@ -74,7 +74,7 @@ class Card extends React.Component {
   static defaultProps = {
     title: 'testcard',
     tags: [],
-    description: 'example radius',
+    description: 'This is the place to describe your card',
     challenge: { type: 'hangman' },
     loc: {
       longitude: 0,

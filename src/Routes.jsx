@@ -44,13 +44,11 @@ function gravatar(email) {
 
 const defaultLocation = {
   latitude: 50.85146,
-  longitude: 4.315483
+  longitude: 4.315483,
+  radius: 500
 };
 
-const defaultCards = [
-  ...dummyCards,
-  { id: 'template', template: true, tags: [], loc: defaultLocation }
-];
+const defaultCards = [...dummyCards];
 const mapZoom = 9;
 const [width, height] = [100, 100];
 // debug('lego:routes');
@@ -96,7 +94,7 @@ const defaultState = {
     tagListView: false,
     selectedTags: [],
     isSearching: false,
-    cardAuthoring: false
+    authEnv: false
   },
   CardCreator: {
     cards: dummyCards,
