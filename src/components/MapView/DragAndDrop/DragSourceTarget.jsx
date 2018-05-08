@@ -52,12 +52,12 @@ const style = {
 const boxSource = {
   beginDrag(props) {
     props.dragHandler(true);
-    return { id: props.id };
+    return { ...props };
   },
 
-  endDrag(props, monitor) {
+  endDrag(props) {
     props.dragHandler(false);
-    return { id: props.id };
+    return { ...props };
   }
 };
 
@@ -102,12 +102,15 @@ class DragSourceCont extends PureComponent {
 
 const boxTarget = {
   drop(props, monitor, component) {
-    const delta = monitor.getSourceClientOffset();
+    const delta = monitor.getDifferenceFromInitialOffset();
     // console.log('monitorXXXX', monitor);
     const item = monitor.getItem();
+    // TODO: reorganize
+    const x = item.x;
+    const y = item.y;
 
-    const left = Math.round(delta.x);
-    const top = Math.round(delta.y);
+    const left = Math.round(x + delta.x);
+    const top = Math.round(y + delta.y);
 
     component.drop(item.id, left, top, props.dragged);
   }
@@ -163,6 +166,7 @@ class DropTargetCont extends PureComponent {
   }
 
   drop(id, left, top, dropped) {
+    console.log('left', left, 'top', top);
     this.setState({ id, left, top, dropped });
   }
 
@@ -175,13 +179,18 @@ class DropTargetCont extends PureComponent {
       connectDropTarget,
       // clientOffset,
       style,
+      className,
       children
     } = this.props;
     // const { id, left, top, dropped } = this.state;
     // const { x, y } = clientOffset || { x: 0, y: 0 };
     // console.log('dropped', dropped);
 
-    return connectDropTarget(<div>{children}</div>);
+    return connectDropTarget(
+      <div style={style} className={className}>
+        {children}
+      </div>
+    );
   }
 }
 

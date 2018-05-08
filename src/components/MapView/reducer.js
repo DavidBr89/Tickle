@@ -37,7 +37,9 @@ import {
   RECEIVE_CARDS,
   CHANGE_VIEWPORT,
   TOGGLE_CARD_AUTHORING,
-  RECEIVE_AUTHORED_CARDS
+  RECEIVE_AUTHORED_CARDS,
+  CREATE_CARD,
+  CHANGE_MAP_VIEWPORT
 } from './actions';
 
 import {
@@ -56,6 +58,13 @@ import {
 //     }
 //   }))
 // });
+
+function createCard(obj) {
+  const copy = { ...obj };
+  if (!copy.tags) copy.tags = [];
+  copy.id = Math.random() * 100000;
+  return { ...copy };
+}
 
 const cardTemplateId = 'temp';
 function reducer(state = {}, action) {
@@ -78,17 +87,19 @@ function reducer(state = {}, action) {
       const { authoredCards, userLocation } = state;
       const cardTemplate = {
         id: cardTemplateId,
-        // template: true,
+        template: true,
         loc: userLocation,
         edit: true,
         tags: []
       };
-      const authEnvCards = [...authoredCards, cardTemplate];
+
+      const authEnvCards = [...authoredCards];
       const enabled = !state.authEnv;
       return {
         ...state,
         authEnv: enabled,
         authEnvCards,
+        cardTemplate,
         selectedCardId: enabled ? cardTemplateId : null
         // cards
         // isCardDragging
@@ -116,38 +127,43 @@ function reducer(state = {}, action) {
       };
     }
 
-    case CREATE_OR_UPDATE_CARD: {
-      const {
-        width,
-        height,
-        zoom,
-        latitude: centerLat,
-        longitude: centerLng,
-        cards
-      } = state;
-
-      const { x, y, id } = action.options;
-      const vp = new PerspectiveMercatorViewport({
-        width,
-        height,
-        zoom,
-        latitude: centerLat,
-        longitude: centerLng
-      });
-
-      const [longitude, latitude] = vp.unproject([x, y]);
-
+    case CREATE_CARD: {
+      const { authEnvCards, userLocation } = state;
       const newCard = {
-        ...cards.find(c => c.id === id),
-        loc: { longitude, latitude }
+        loc: userLocation,
+        id: Math.random() * 100000,
+        tags: []
       };
-
-      // firestore.collection('cards').add(newCard);
+      console.log('cardData', newCard);
+      const newCards = [...authEnvCards, newCard];
 
       return {
-        ...state
-        // isCardDragging
+        ...state,
+        authEnvCards: newCards,
+        selectedCardId: newCard.id
       };
+    }
+
+    case CREATE_OR_UPDATE_CARD: {
+      const { width, height, zoom, cards, authEnvCards, userLocation } = state;
+
+      const cardData = action.options;
+      console.log('action options', action.options);
+      const tmpCards = [...authEnvCards];
+
+      const cardIndex = tmpCards.findIndex(c => c.id === cardData.id);
+      console.log('cardIndex', cardIndex);
+      if (cardIndex !== -1) {
+        console.log('existAlready');
+        tmpCards[cardIndex] = { ...cards[cardIndex], ...cardData };
+        return {
+          ...state,
+          authEnvCards: tmpCards
+          // authoredCards
+
+          // isCardDragging
+        };
+      }
     }
     case DRAG_CARD: {
       const isCardDragging = action.options;
@@ -291,6 +307,12 @@ function reducer(state = {}, action) {
     case RESIZE_CARD_WINDOW: {
       return { ...state, ...action };
     }
+
+    case CHANGE_MAP_VIEWPORT: {
+      const mapViewport = action.options;
+      return { ...state, mapViewport };
+    }
+
     // case CHANGE_MAP_VIEWPORT: {
     //   const {
     //     cards,

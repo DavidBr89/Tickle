@@ -135,6 +135,11 @@ export function createOrUpdateCard(options) {
   return { type: CREATE_OR_UPDATE_CARD, options };
 }
 
+export const CREATE_CARD = 'CREATE_CARD';
+export function createCard(options) {
+  return { type: CREATE_CARD, options };
+}
+
 export const TOGGLE_CARD_AUTHORING = 'TOGGLE_CARD_AUTHORING';
 export function toggleCardAuthoring() {
   return { type: TOGGLE_CARD_AUTHORING };

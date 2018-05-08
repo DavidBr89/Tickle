@@ -121,12 +121,12 @@ export function fetchAuthoredCards(userid) {
   // thus making it able to dispatch actions itself.
   return function(dispatch) {
     return firestore
-      .collection('cards')
+      .collection('authoredCards')
       .get()
       .then(querySnapshot => {
         const data = [];
         querySnapshot.forEach(doc => data.push(doc.data()));
-        dispatch(receiveAuthoredCards(data.slice(0, 5)));
+        dispatch(receiveAuthoredCards(data));
       });
   };
 }

@@ -71,6 +71,7 @@ const defaultState = {
     challenges: []
   },
   MapView: {
+    mapViewport: {},
     // TODO: calc value
     isCardDragging: false,
     latCenterOffset: 0.0018,

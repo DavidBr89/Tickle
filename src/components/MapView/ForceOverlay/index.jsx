@@ -22,12 +22,19 @@ import ZoomContainer from './ZoomContainer';
 import BubbleOverlay from './BubbleOverlay';
 import AmbientOverlay from './AmbientOverlay';
 
-import { setify } from '../utils';
+// import { setify } from '../utils';
 
 function jaccard(a, b) {
   return a.length !== 0 && b.length !== 0
     ? 1 - intersection(a, b).length / union(a, b).length
     : 1;
+}
+
+function unproject(mapViewport, [x, y]) {
+  const vp = new PerspectiveMercatorViewport(mapViewport);
+
+  const [lng, lat] = vp.unproject([x, y]);
+  return [lng, lat];
 }
 
 const offsetMapViewport = ({
@@ -191,7 +198,7 @@ class ForceOverlay extends Component {
     children: PropTypes.func,
     className: PropTypes.oneOf([null, PropTypes.string]),
     style: PropTypes.object,
-    viewport: PropTypes.shape({
+    mapViewport: PropTypes.shape({
       width: PropTypes.number,
       height: PropTypes.number,
       longitude: PropTypes.number,
@@ -223,7 +230,7 @@ class ForceOverlay extends Component {
     children: d => d,
     className: null,
     style: {},
-    viewport: { width: 300, height: 400, longitude: 0, latitude: 0 },
+    mapViewport: { width: 300, height: 400, longitude: 0, latitude: 0 },
     padding: {
       right: 0,
       left: 0,
@@ -240,8 +247,8 @@ class ForceOverlay extends Component {
 
   constructor(props) {
     super(props);
-    const { data, viewport } = props;
-    const { width, height } = viewport;
+    const { data, mapViewport } = props;
+    const { width, height } = mapViewport;
 
     const initPos = data.map(() => [width / 2, height / 2]);
     const somPos = somFy(data, width, height);
@@ -258,7 +265,7 @@ class ForceOverlay extends Component {
       tsnePos: initPos,
       somPos,
       gridPos: lapFy(somPos),
-      viewport: { width, height, zoom: 10, ...defaultLocation }
+      mapViewport: { width, height, zoom: 10, ...defaultLocation }
     };
 
     this.layout = this.layout.bind(this);
@@ -270,21 +277,22 @@ class ForceOverlay extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    const { viewport: oldVp } = this.state;
-    const { viewport } = nextState;
+    const { mapViewport: oldVp } = this.state;
+    const { mapViewport } = nextState;
 
     // return true;
     // console.log('extended', extended);
     return (
-      viewport.latitude !== oldVp.latitude ||
-      viewport.longitude !== oldVp.longitude ||
-      viewport.zoom !== oldVp.zoom ||
+      mapViewport.latitude !== oldVp.latitude ||
+      mapViewport.longitude !== oldVp.longitude ||
+      mapViewport.zoom !== oldVp.zoom ||
       this.props.height !== nextProps.height ||
       this.props.width !== nextProps.width ||
       this.props.mode !== nextProps.mode ||
       this.props.data.length !== nextProps.data.length ||
       this.props.extCardId !== nextProps.extCardId ||
       this.props.data.length !== nextProps.data.length ||
+      // TODO: fix this later
       true
       // width !== this.props.width ||
       // height !== this.props.height ||
@@ -297,7 +305,7 @@ class ForceOverlay extends Component {
     // this.ids.map(clearTimeout);
     // const { data: oldData } = this.props;
     const { data: nextData, mode, selectedCardId, width, height } = nextProps;
-    const { viewport } = this.state;
+    const { mapViewport } = this.state;
 
     // clearTimeout(this.id);
 
@@ -312,13 +320,14 @@ class ForceOverlay extends Component {
         nextData.find(n => n.id === selectedCardId)
       );
       const { loc } = nextData.find(n => n.id === selectedCardId);
-      const { zoom } = { ...viewport, ...loc };
+      const { zoom } = { ...mapViewport, ...loc };
       console.log('select card', loc);
+
       this.id = setTimeout(() => {
         this.layout({
           props: nextProps,
           state: this.state,
-          viewport: offsetMapViewport({
+          mapViewport: offsetMapViewport({
             width,
             height,
             zoom,
@@ -329,31 +338,11 @@ class ForceOverlay extends Component {
       }, 700);
     }
 
-    if (this.props.width !== width || this.props.height !== height) {
-      const newVp = { ...viewport, width, height };
-      this.layout(newVp);
-      // this.setState({ viewport: newVp });
-    }
-
-    // if (oldData.length !== nextData.length) {
-    //   const somPos = somFy(nextData, width, height);
-    //   // const gridPos = lapFy(somPos);
-    //
-    //   this.forceSim.force('x', null).force('y', null);
-    //
-    //   this.layout(nextProps, {
-    //     ...this.state,
-    //     somPos
-    //     // gridPos
-    //   });
-    //
-    //   // TODO: remvoe later
-    //   this.setState({ somPos });
-    // } else {
-    // }
-    //
-
-    // this.setState({ viewport });
+    this.layout({
+      props: nextProps,
+      state: this.state,
+      mapViewport
+    });
   }
 
   componentDidUpdate() {
@@ -366,11 +355,11 @@ class ForceOverlay extends Component {
     // this.ids.map(clearTimeout);
   }
 
-  layout({ props, state, viewport }) {
+  layout({ props, state, mapViewport }) {
     const { mode, delay, data, padding, force } = props; // this.props;
     const { tsnePos, somPos, gridPos } = state;
 
-    const { width, height, zoom, latitude, longitude } = viewport;
+    const { width, height, zoom, latitude, longitude } = mapViewport;
     // console.log('oldNodes', nextState, oldNodes);
 
     const vp = new PerspectiveMercatorViewport({
@@ -466,7 +455,7 @@ class ForceOverlay extends Component {
 
     this.setState({
       nodes,
-      viewport
+      mapViewport
     });
   }
 
@@ -485,10 +474,14 @@ class ForceOverlay extends Component {
       onMapViewportChange,
       userLocation,
       width,
-      height
+      height,
+      onDrop,
+      // TODO: Remove this check
+      dragged,
+      data
     } = this.props;
 
-    const { viewport } = this.state;
+    const { mapViewport } = this.state;
     const { nodes } = this.state;
     // const newPos = nodes.map(d => transEvent.apply([d.x, d.y]));
     // TODO: change later
@@ -511,20 +504,28 @@ class ForceOverlay extends Component {
         >
           <MapGL
             mapStyle={'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l'}
-            onViewportChange={viewport => {
+            onViewportChange={mapViewport => {
+              onMapViewportChange(mapViewport);
               clearTimeout(this.id);
               // TODO: check later
-              // this.id = setTimeout(() => this.layout(viewport), 50);
-              this.layout({ props: this.props, state: this.state, viewport });
-              this.setState({ viewport });
+              this.id = setTimeout(
+                () =>
+                  this.layout({
+                    props: this.props,
+                    state: this.state,
+                    mapViewport
+                  }),
+                100
+              );
+              this.setState({ mapViewport });
             }}
             height={height}
             width={width}
-            latitude={viewport.latitude}
-            longitude={viewport.longitude}
-            zoom={viewport.zoom}
+            latitude={mapViewport.latitude}
+            longitude={mapViewport.longitude}
+            zoom={mapViewport.zoom}
           >
-            <UserOverlay {...viewport} location={userLocation} />
+            <UserOverlay {...mapViewport} location={userLocation} />
           </MapGL>
           {nodes.map(attr => children({ ...attr, selectedCardId }))}
         </div>

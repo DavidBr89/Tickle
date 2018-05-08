@@ -352,6 +352,8 @@ class MapView extends PureComponent {
       isSearching,
       isCardDragging,
       authEnvCards,
+      authEnv,
+      cardTemplate,
       // AppOpenFirstTime,
       // headerPad,
 
@@ -373,7 +375,8 @@ class MapView extends PureComponent {
       createOrUpdateCardAction,
       changeViewportAction,
       toggleCardAuthoringAction,
-      cardAuthoring
+      cardAuthoring,
+      createCardAction
       // navigateFirstTimeAction
     } = this.props;
 
@@ -561,12 +564,7 @@ class MapView extends PureComponent {
                   top: 0,
                   filter: tsneView && 'blur(4px)'
                 }}
-              >
-                <DropTargetCont
-                  dropHandler={createOrUpdateCardAction}
-                  dragged={isCardDragging}
-                />
-              </div>
+              />
               <div
                 className="w-100"
                 style={{
@@ -593,8 +591,6 @@ class MapView extends PureComponent {
                   }}
                 >
                   {d => (
-
-                        <DragSourceCont dragHandler={dragCardAction} id={d.id}>
                     <div
                       className="w-100 h-100"
                       key={d.id}
@@ -605,7 +601,13 @@ class MapView extends PureComponent {
                         // pointerEvents: 'none'
                       }}
                     >
-                      <div style={{ width: '100%', height: '100%' }}>
+                      <DragSourceCont
+                        dragHandler={dragCardAction}
+                        id={d.id}
+                        x={100}
+                        y={100}
+                      >
+                        <div style={{ width: '100%', height: '100%' }}>
                           <PreviewCard
                             {...d}
                             onClick={() =>
@@ -626,9 +628,9 @@ class MapView extends PureComponent {
                               // maxWidth: '200px'
                             }}
                           />
-                      </div>
+                        </div>
+                      </DragSourceCont>
                     </div>
-                        </DragSourceCont>
                   )}
                 </Accordion>
               </div>
@@ -641,21 +643,41 @@ class MapView extends PureComponent {
                 }}
               >
                 {
-                // <TagList
-                // data={cardSets}
-                // scale={barScale}
-                // barScales={barScales}
-                // colorScale={tagColorScale}
-                // />
+                  // <TagList
+                  // data={cardSets}
+                  // scale={barScale}
+                  // barScales={barScales}
+                  // colorScale={tagColorScale}
+                  // />
                 }
               </div>
-              <Title />
+
+              <div
+                style={{
+                  fontSize: 100,
+                  position: 'relative',
+                  zIndex: 3000,
+                }}
+              >
+                {'drag and drop'}
+              </div>
               <DropTargetCont
-                dropHandler={createOrUpdateCardAction}
+                dropHandler={
+                  selectedCardId === 'temp'
+                    ? createCardAction
+                    : createOrUpdateCardAction
+                }
                 dragged={isCardDragging}
+                style={{
+                  // width: '100%',
+                  // height: '100%',
+                  // position: 'relative',
+                  // background: 'white',
+                  zIndex: 1000
+                }}
               >
                 <ForceOverlay
-                  delay={400}
+                  delay={2000}
                   width={width}
                   height={height}
                   force
@@ -667,14 +689,6 @@ class MapView extends PureComponent {
                   mode={!tsneView ? 'geo' : 'som'}
                   labels={!gridView}
                   onMapViewportChange={changeMapViewportAction}
-                  onViewportChange={
-                    nodes => null
-                    // console.log(
-                    //   nodes.filter(
-                    //     n => n.x < width && n.x > 0 && n.y < height && n.y > 0
-                    //   )
-                    // )
-                  }
                   padding={{
                     bottom: !gridView && !tagListView ? height * 1 / 6 : 50,
                     top:
@@ -695,10 +709,17 @@ class MapView extends PureComponent {
                       y={extCardId === c.id ? height / 2 : y}
                       extended={extCardId === c.id}
                       preview={
-                        <PreviewMarker
-                          selected={selectedCardId === c.id}
-                          color={'whitesmoke'}
-                        />
+                        <DragSourceCont
+                          dragHandler={dragCardAction}
+                          id={c.id}
+                          x={x}
+                          y={y}
+                        >
+                          <PreviewMarker
+                            selected={selectedCardId === c.id}
+                            color={'whitesmoke'}
+                          />
+                        </DragSourceCont>
                       }
                     >
                       <Card

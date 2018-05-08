@@ -20,7 +20,8 @@ import {
   dragCard,
   createOrUpdateCard,
   changeViewport,
-  toggleCardAuthoring
+  toggleCardAuthoring,
+  createCard
 } from './actions';
 
 import { fetchDirection, computeTopicMap } from './async_actions';
@@ -50,14 +51,7 @@ const mapStateToProps = state => {
 
   return {
     ...state.MapView,
-    selectedCard,
-    mapViewport: {
-      width,
-      height,
-      zoom,
-      latitude,
-      longitude
-    }
+    selectedCard
   };
 };
 
@@ -128,6 +122,9 @@ const mapDispatchToProps = dispatch => ({
   },
   toggleCardAuthoringAction: options => {
     dispatch(toggleCardAuthoring(options));
+  },
+  createCardAction: options => {
+    dispatch(createCard(options));
   }
 });
 
@@ -141,7 +138,8 @@ const mergeProps = (state, dispatcherProps) => {
     userSelected,
     cards: collectibleCards,
     authEnv,
-    authEnvCards
+    authEnvCards,
+    cardTemplate
   } = state;
   const {
     fetchDirectionAction,
@@ -171,7 +169,7 @@ const mergeProps = (state, dispatcherProps) => {
     return { key: 'flyToUser', func: flyToUserAction };
   })();
 
-  const cards = authEnv ? authEnvCards : collectibleCards;
+  const cards = authEnv ? [...authEnvCards, cardTemplate] : collectibleCards;
 
   return { ...state, nextCardControlAction, ...dispatcherProps, cards };
 };
