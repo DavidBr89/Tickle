@@ -195,8 +195,11 @@ class EditCardFront extends PureComponent {
     const prevData = prevState.data;
     const { data } = this.state;
     // TODO: check the other attrs
-    if (!shallowEqualProps(prevData, data))
+    if (!shallowEqualProps(prevData, data)){
+      console.log('update data', data);
+
       this.props.onAttrUpdate({ ...data });
+    }
   }
 
   // shouldComponentUpdate(nextProps, nextState) {

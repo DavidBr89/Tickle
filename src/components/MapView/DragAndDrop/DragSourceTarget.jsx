@@ -103,16 +103,11 @@ class DragSourceCont extends PureComponent {
 const boxTarget = {
   drop(props, monitor, component) {
     const delta = monitor.getDifferenceFromInitialOffset();
-    // console.log('monitorXXXX', monitor);
     const item = monitor.getItem();
-    // TODO: reorganize
-    const x = item.x;
-    const y = item.y;
+    const left = Math.round(item.x + delta.x);
+    const top = Math.round(item.y + delta.y);
 
-    const left = Math.round(x + delta.x);
-    const top = Math.round(y + delta.y);
-
-    component.drop(item.id, left, top, props.dragged);
+    component.drop(item.data, left, top, props.dragged);
   }
   // },
   // canDrop(props, monitor, component) {
@@ -155,19 +150,27 @@ class DropTargetCont extends PureComponent {
 
   componentDidUpdate(prevProps) {
     const { dropHandler, children } = this.props;
-    const { left, top, id } = this.state;
+    const { left, top, data } = this.state;
     // console.log('this.state', this.state);
     // console.log('yeah dropHandler', this.props);
     // const newid = Math.random() * 100;
     // console.log('dropped', dropped, 'prevDropped', prevState.dropped);
     // console.log('this.props', this.props);
     if (prevProps.dragged && !this.props.dragged)
-      dropHandler({ id, x: left, y: top });
+      dropHandler({
+        ...data,
+        x: left,
+        y: top,
+        tx: left,
+        ty: top,
+        vx: left,
+        vy: top
+      });
   }
 
-  drop(id, left, top, dropped) {
+  drop(data, left, top, dropped) {
     console.log('left', left, 'top', top);
-    this.setState({ id, left, top, dropped });
+    this.setState({ data, left, top, dropped });
   }
 
   // }

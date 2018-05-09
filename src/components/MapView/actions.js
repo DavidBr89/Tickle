@@ -130,9 +130,9 @@ export function dragCard(options) {
   return { type: DRAG_CARD, options };
 }
 
-export const CREATE_OR_UPDATE_CARD = 'CREATE_OR_UPDATE_CARD';
-export function createOrUpdateCard(options) {
-  return { type: CREATE_OR_UPDATE_CARD, options };
+export const UPDATE_CARD = 'UPDATE_CARD';
+export function updateCard(options) {
+  return { type: UPDATE_CARD, options };
 }
 
 export const CREATE_CARD = 'CREATE_CARD';

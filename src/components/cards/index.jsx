@@ -51,7 +51,7 @@ class Card extends React.Component {
     style: PropTypes.object,
     edit: PropTypes.bool,
     onCollect: PropTypes.func,
-    onAttrUpdate: PropTypes.func.isRequired,
+    onUpdate: PropTypes.func.isRequired,
     challenge: PropTypes.oneOf([
       null,
       PropTypes.shape({
@@ -86,7 +86,7 @@ class Card extends React.Component {
     style: {},
     edit: false,
     onCollect: d => d,
-    onAttrUpdate: d => d
+    onUpdate: d => d
   };
 
   constructor(props) {
@@ -97,7 +97,7 @@ class Card extends React.Component {
   }
 
   render() {
-    const { style, edit, challenge, onAttrUpdate } = this.props;
+    const { style, edit, challenge, onUpdate } = this.props;
     const { frontView } = this.state;
     // const { onClose } = this.props;
     const sideToggler = frontView ? cx.flipAnim : null;
@@ -112,7 +112,7 @@ class Card extends React.Component {
       : 'whitesmoke';
     const uiColor = chroma(background).darken(1);
 
-    const updateAttrFunc = { onAttrUpdate: edit ? onAttrUpdate : null };
+    const updateAttrFunc = { onAttrUpdate: edit ? onUpdate : null };
 
     const togglecard = () => {
       if (frontView)
@@ -124,7 +124,6 @@ class Card extends React.Component {
             background={background}
             flipHandler={flipHandler}
             uiColor={uiColor}
-            onAttrUpdate={onAttrUpdate}
             {...updateAttrFunc}
           />
         );
@@ -137,7 +136,7 @@ class Card extends React.Component {
           onCollect={onCollect}
           flipHandler={flipHandler}
           setMapRadius={mapRadius => {
-            onAttrUpdate({ ...this.props, mapRadius });
+            onUpdate({ ...this.props, mapRadius });
           }}
         />
       );

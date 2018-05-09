@@ -27,7 +27,7 @@ class ExtendableMarker extends Component {
   };
 
   static defaultProps = {
-    delay: 0.3,
+    delay: 0.1,
     preview: <CardImg />,
     node: null,
     extended: false,

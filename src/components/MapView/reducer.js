@@ -33,7 +33,7 @@ import {
   RECEIVE_PLACES,
   FILTER_CARDS,
   DRAG_CARD,
-  CREATE_OR_UPDATE_CARD,
+  UPDATE_CARD,
   RECEIVE_CARDS,
   CHANGE_VIEWPORT,
   TOGGLE_CARD_AUTHORING,
@@ -85,6 +85,10 @@ function reducer(state = {}, action) {
     }
     case TOGGLE_CARD_AUTHORING: {
       const { authoredCards, userLocation } = state;
+
+      const authEnvCards = [...authoredCards];
+      const enabled = !state.authEnv;
+
       const cardTemplate = {
         id: cardTemplateId,
         template: true,
@@ -92,9 +96,6 @@ function reducer(state = {}, action) {
         edit: true,
         tags: []
       };
-
-      const authEnvCards = [...authoredCards];
-      const enabled = !state.authEnv;
       return {
         ...state,
         authEnv: enabled,
@@ -128,11 +129,11 @@ function reducer(state = {}, action) {
     }
 
     case CREATE_CARD: {
-      const { authEnvCards, userLocation } = state;
+      const { authEnvCards, userLocation, cardTemplate } = state;
       const newCard = {
         loc: userLocation,
-        id: Math.random() * 100000,
-        tags: []
+        ...cardTemplate,
+        id: Math.random() * 100000
       };
       console.log('cardData', newCard);
       const newCards = [...authEnvCards, newCard];
@@ -140,30 +141,53 @@ function reducer(state = {}, action) {
       return {
         ...state,
         authEnvCards: newCards,
-        selectedCardId: newCard.id
+        selectedCardId: newCard.id,
+        cardTemplate: {
+          id: cardTemplateId,
+          template: true,
+          loc: userLocation,
+          edit: true,
+          tags: []
+        }
       };
     }
 
-    case CREATE_OR_UPDATE_CARD: {
-      const { width, height, zoom, cards, authEnvCards, userLocation } = state;
+    case UPDATE_CARD: {
+      const { authEnvCards, mapViewport } = state;
 
       const cardData = action.options;
-      console.log('action options', action.options);
-      const tmpCards = [...authEnvCards];
+      const { x, y, tx, ty, vx, vy, ...restData } = cardData;
+      console.log('cardData', x, y);
+      console.log('mapViewport', mapViewport);
 
-      const cardIndex = tmpCards.findIndex(c => c.id === cardData.id);
-      console.log('cardIndex', cardIndex);
-      if (cardIndex !== -1) {
-        console.log('existAlready');
-        tmpCards[cardIndex] = { ...cards[cardIndex], ...cardData };
-        return {
-          ...state,
-          authEnvCards: tmpCards
-          // authoredCards
+      const vp = new PerspectiveMercatorViewport(mapViewport);
 
-          // isCardDragging
-        };
-      }
+      const [longitude, latitude] = vp.unproject([x, y]);
+      const updatedCard = {
+        ...restData,
+        loc: { latitude, longitude }
+      };
+
+      const updatedCards = authEnvCards.map(c => {
+        if (c.id === cardData.id) {
+          return { id: c.id, ...updatedCard };
+        }
+        return c;
+      });
+
+      return {
+        ...state,
+        authEnvCards: updatedCards
+        // authoredCards
+
+        // isCardDragging
+      };
+      // const tmpCards = [...authEnvCards];
+
+      // const cardIndex = tmpCards.findIndex(c => c.id === cardData.id);
+      // console.log('cardIndex', cardIndex);
+      // console.log('existAlready');
+      // tmpCards[cardIndex] = { ...cards[cardIndex], ...cardData };
     }
     case DRAG_CARD: {
       const isCardDragging = action.options;

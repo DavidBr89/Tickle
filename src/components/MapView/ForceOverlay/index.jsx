@@ -215,6 +215,7 @@ class ForceOverlay extends Component {
       })
     ),
     delay: PropTypes.number,
+    selectionDelay: PropTypes.number,
     padding: PropTypes.shape({
       right: PropTypes.number,
       left: PropTypes.number,
@@ -239,7 +240,8 @@ class ForceOverlay extends Component {
     },
     force: false,
     data: [],
-    delay: 700,
+    delay: 100,
+    selectionDelay: 900,
     mode: 'geo',
     colorScale: () => 'green',
     labels: false
@@ -304,7 +306,16 @@ class ForceOverlay extends Component {
     // clearTimeout(this.id);
     // this.ids.map(clearTimeout);
     // const { data: oldData } = this.props;
-    const { data: nextData, mode, selectedCardId, width, height } = nextProps;
+    const {
+      data: nextData,
+      mode,
+      selectedCardId,
+      width,
+      height,
+      delay,
+      selectionDelay,
+      onMapViewportChange
+    } = nextProps;
     const { mapViewport } = this.state;
 
     // clearTimeout(this.id);
@@ -324,18 +335,21 @@ class ForceOverlay extends Component {
       console.log('select card', loc);
 
       this.id = setTimeout(() => {
+        const newVp = offsetMapViewport({
+          width,
+          height,
+          zoom,
+          offset: [0, height / 4],
+          ...loc
+        });
         this.layout({
           props: nextProps,
           state: this.state,
-          mapViewport: offsetMapViewport({
-            width,
-            height,
-            zoom,
-            offset: [0, height / 4],
-            ...loc
-          })
+          mapViewport: newVp
         });
-      }, 700);
+
+        onMapViewportChange(mapViewport);
+      }, selectionDelay);
     }
 
     this.layout({
@@ -357,7 +371,7 @@ class ForceOverlay extends Component {
 
   layout({ props, state, mapViewport }) {
     const { mode, delay, data, padding, force } = props; // this.props;
-    const { tsnePos, somPos, gridPos } = state;
+    const { tsnePos, somPos, gridPos, nodes: oldNodes } = state;
 
     const { width, height, zoom, latitude, longitude } = mapViewport;
     // console.log('oldNodes', nextState, oldNodes);
@@ -407,17 +421,21 @@ class ForceOverlay extends Component {
     // prevent stretching of similiarities
     // const padY = height / 7;
 
-    const nodes = data.map(({ id, x, y, tags, ...c }, i) =>
-      // const oldNode = oldNodes.find(n => n.id == id) || {};
-      ({
+    const nodes = data.map(({ id, x, y, tags, ...c }, i) => {
+      const tx = xScale(pos[i][0]);
+      const ty = yScale(pos[i][1]);
+      const oldNode = oldNodes.find(n => n.id === id) || { x: tx, y: ty };
+      return {
         id,
-        x: xScale(pos[i][0]),
-        y: yScale(pos[i][1]),
+        ...oldNode,
+        tx,
+        ty,
         tags,
         ...c
-      })
-    );
+      };
+    });
 
+    // console.log('node', nodes);
     // .filter(n => n.x > 0 && n.x < width && n.y > 0 && n.y < height);
     this.ids.map(clearTimeout);
 
@@ -429,8 +447,8 @@ class ForceOverlay extends Component {
           // TODO: proper reheat
           .alpha(1)
           .alphaMin(0.8)
-          .force('x', d3.forceX((d, i) => xScale(pos[i][0])).strength(1))
-          .force('y', d3.forceY((d, i) => yScale(pos[i][1])).strength(1))
+          .force('x', d3.forceX(d => d.tx).strength(1))
+          .force('y', d3.forceY(d => d.ty).strength(1))
           .force('coll', d3.forceCollide(20))
           // .force('center', d3.forceCenter(width / 2, height / 2))
           .on('end', () => {
@@ -533,6 +551,7 @@ class ForceOverlay extends Component {
     }
     // TODO: get
     //
+    const zoomLevel =4;
     return (
       <ZoomContainer
         width={width}
@@ -540,7 +559,7 @@ class ForceOverlay extends Component {
         center={[width / 2, height * 2 / 3]}
         nodes={nodes}
         selectedId={selectedCardId}
-        onZoom={onViewportChange}
+        onZoom={() => null}
       >
         {(zoomedNodes, transform) => (
           <Fragment>
@@ -553,7 +572,7 @@ class ForceOverlay extends Component {
               labels={labels}
             />
             <div style={{ overflow: 'hidden', width, height }}>
-              {zoomedNodes.map(attr => children({ ...attr, selectedCardId }))}
+              {(zoomLevel === 1) &&zoomedNodes.map(attr => children({ ...attr, selectedCardId }))}
             </div>
           </Fragment>
         )}

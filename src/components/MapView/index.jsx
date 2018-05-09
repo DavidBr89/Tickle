@@ -18,7 +18,7 @@ import {
   filterCards,
   toggleSearch,
   dragCard,
-  createOrUpdateCard,
+  updateCard,
   changeViewport,
   toggleCardAuthoring,
   createCard
@@ -49,8 +49,10 @@ const mapStateToProps = state => {
   const selectedCard =
     selectedCardId !== null ? cards.find(d => d.id === selectedCardId) : null;
 
+  const { mapViewport, ...restState } = state.MapView;
+
   return {
-    ...state.MapView,
+    ...restState,
     selectedCard
   };
 };
@@ -114,8 +116,8 @@ const mapDispatchToProps = dispatch => ({
   dragCardAction: options => {
     dispatch(dragCard(options));
   },
-  createOrUpdateCardAction: options => {
-    dispatch(createOrUpdateCard(options));
+  updateCardAction: options => {
+    dispatch(updateCard(options));
   },
   changeViewportAction: options => {
     dispatch(changeViewport(options));

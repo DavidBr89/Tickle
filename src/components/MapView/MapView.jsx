@@ -54,6 +54,34 @@ import { Modal } from '../utils/modal';
 import { DragSourceCont, DropTargetCont } from './DragAndDrop/DragSourceTarget';
 import DragLayer from './DragAndDrop/DragLayer';
 
+function DragAndDropScreen() {
+  return (
+    <div
+      style={{
+        marginTop: '3vh',
+        height: '59%',
+        fontSize: 100,
+        position: 'relative',
+        zIndex: 3000,
+        padding: '3vw'
+      }}
+    >
+      <div
+        className="w-100 h-100"
+        style={{
+          border: '2px dashed grey',
+          display: 'flex',
+          justifyContent: 'center',
+          background: 'whitesmoke',
+          alignItems: 'center'
+        }}
+      >
+        <div>{'drag and drop'}</div>
+      </div>
+    </div>
+  );
+}
+
 function launchIntoFullscreen(element) {
   if (element.requestFullscreen) {
     element.requestFullscreen();
@@ -372,7 +400,7 @@ class MapView extends PureComponent {
       toggleGridAction,
       toggleSearchAction,
       dragCardAction,
-      createOrUpdateCardAction,
+      updateCardAction,
       changeViewportAction,
       toggleCardAuthoringAction,
       cardAuthoring,
@@ -601,12 +629,7 @@ class MapView extends PureComponent {
                         // pointerEvents: 'none'
                       }}
                     >
-                      <DragSourceCont
-                        dragHandler={dragCardAction}
-                        id={d.id}
-                        x={100}
-                        y={100}
-                      >
+                      <DragSourceCont dragHandler={dragCardAction} data={d}>
                         <div style={{ width: '100%', height: '100%' }}>
                           <PreviewCard
                             {...d}
@@ -634,38 +657,12 @@ class MapView extends PureComponent {
                   )}
                 </Accordion>
               </div>
-              <div
-                style={{
-                  opacity: tagListView ? 1 : 0,
-                  transition: 'opacity 0.5s',
-                  display: !tagListView ? 'none' : null,
-                  zIndex: tagListView ? 5000 : null
-                }}
-              >
-                {
-                  // <TagList
-                  // data={cardSets}
-                  // scale={barScale}
-                  // barScales={barScales}
-                  // colorScale={tagColorScale}
-                  // />
-                }
-              </div>
-
-              <div
-                style={{
-                  fontSize: 100,
-                  position: 'relative',
-                  zIndex: 3000,
-                }}
-              >
-                {'drag and drop'}
-              </div>
+              {selectedCardId === 'temp' && <DragAndDropScreen />}
               <DropTargetCont
                 dropHandler={
                   selectedCardId === 'temp'
                     ? createCardAction
-                    : createOrUpdateCardAction
+                    : updateCardAction
                 }
                 dragged={isCardDragging}
                 style={{
@@ -677,7 +674,7 @@ class MapView extends PureComponent {
                 }}
               >
                 <ForceOverlay
-                  delay={2000}
+                  delay={1}
                   width={width}
                   height={height}
                   force
@@ -711,7 +708,7 @@ class MapView extends PureComponent {
                       preview={
                         <DragSourceCont
                           dragHandler={dragCardAction}
-                          id={c.id}
+                          data={c}
                           x={x}
                           y={y}
                         >
@@ -725,10 +722,12 @@ class MapView extends PureComponent {
                       <Card
                         {...c}
                         onClose={() => extCardAction(null)}
+                        edit={authEnv}
                         onCollect={() =>
                           toggleCardChallengeAction({ cardChallengeOpen: true })
                         }
                         tagColorScale={tagColorScale}
+                        onUpdate={d => updateCardAction({ ...d, x, y })}
                         style={{ zIndex: 4000 }}
                       />
                     </ExtendableMarker>
