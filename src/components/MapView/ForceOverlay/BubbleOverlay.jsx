@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 // import * as chromatic from 'd3-scale-chromatic';
 // import hull from 'hull.js';
@@ -17,25 +17,10 @@ import scc from 'connected-components';
 import { intersection, union, uniq } from 'lodash';
 import TopicAnnotationOverlay from './TopicAnnotationOverlay';
 
-const AppContext = React.createContext();
+const euclDist = (x1, y1, x2, y2) => Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+
 function distance(a, b) {
   return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
-}
-
-function relax(points, width, height) {
-  const voronoi = d3.voronoi().extent([[-1, -1], [width + 1, height + 1]]);
-
-  const polygons = voronoi.polygons(points);
-  console.log('polygons', polygons);
-  const centroids = polygons.map(d3.polygonCentroid);
-  const converged = points.every(
-    (point, i) => distance(point, centroids[i]) < 1
-  );
-
-  if (converged) {
-    return points;
-  }
-  relax(centroids);
 }
 
 function rects(quadtree) {
@@ -101,14 +86,12 @@ function splitLinks(nodes, width = Infinity, height = Infinity) {
 //   return { center: polylabel([coordinates]), top, left, right, bottom };
 // }
 
-function generateLinks(nodes) {
+function generateLinks(nodes, maxDist = 100) {
   const links = [];
   nodes.forEach(s => {
     nodes.forEach(t => {
       const interSet = intersection(s.tags, t.tags);
-      // const euclDist = (x1, y1, x2, y2) =>
-      //   Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-      // const weight = euclDist(t.x, t.y, s.x, s.y);
+      const weight = euclDist(t.x, t.y, s.x, s.y);
       const notInserted = (src, tgt) =>
         links.find(
           l =>
@@ -116,7 +99,14 @@ function generateLinks(nodes) {
             (l.source === tgt.id && l.target === src.id)
         ) === undefined;
 
-      if (s.id !== t.id && interSet.length > 0 && notInserted(s, t)) {
+      if (
+        (s.id !== t.id &&
+          // TODO: check
+          // interSet.length > 0 &&
+          notInserted(s, t) &&
+          weight < maxDist) ||
+        (interSet.length === s.tags.length && interSet.length === t.tags.length)
+      ) {
         links.push({
           source: s.id,
           target: t.id,
@@ -131,13 +121,7 @@ function generateLinks(nodes) {
   return links;
 }
 
-function connectedComponents(
-  nodes,
-  links,
-  width = Infinity,
-  height = Infinity,
-  scale = 2
-) {
+function connectedComponents(nodes, links, maxDist = Infinity) {
   // const coms = louvain()
   //   .nodes(nodes.map(d => d.id))
   //   .edges(splitLinks(nodes, width, height))();
@@ -145,11 +129,13 @@ function connectedComponents(
   const splitedLinks = links.reduce((acc, l) => {
     const srcNode = nodes.find(n => l.source === n.id);
     const tgtNode = nodes.find(n => l.target === n.id);
-    const distX = Math.abs(tgtNode.x - srcNode.x);
-    const distY = Math.abs(tgtNode.y - srcNode.y);
+    // const distX = Math.abs(tgtNode.x - srcNode.x);
+    // const distY = Math.abs(tgtNode.y - srcNode.y);
 
-    if (distY < height && distX < width && scale !== 1)
-      return [...acc, { ...l, srcNode, tgtNode }];
+    const weight = euclDist(tgtNode.x, tgtNode.y, srcNode.x, srcNode.y);
+    // console.log('weight', weight);
+
+    if (weight < maxDist) return [...acc, { ...l, srcNode, tgtNode }];
     return acc;
   }, []);
 
@@ -193,10 +179,11 @@ function connectedComponents(
   //   );
 }
 
-function compComps(data, links, maxX = 100, maxY = 100, scale) {
+function compComps(data, maxDist = 100) {
   // const links = generateLinks(data);
   // console.log('links', links);
-  const comps = connectedComponents(data, links, maxX, maxY, scale).map(d => {
+  const links = generateLinks(data, maxDist);
+  const comps = connectedComponents(data, links).map(d => {
     const sets = setify(d.values).sort(
       (a, b) => b.values.length - a.values.length
     ); // .filter(d => d.values.length > 1);
@@ -206,7 +193,10 @@ function compComps(data, links, maxX = 100, maxY = 100, scale) {
       .domain(ext)
       .range([25, 55]);
 
-    return { ...d, sets, sizeScale };
+    const ids = d.values.map(e => e.id);
+    const tagKeys = d.tags.map(e => e.key);
+
+    return { ...d, sets, sizeScale, ids, tagKeys };
   });
   return comps;
 }
@@ -214,10 +204,11 @@ function compComps(data, links, maxX = 100, maxY = 100, scale) {
 class Cluster extends Component {
   static propTypes = {
     data: PropTypes.array,
-    className: PropTypes.string
+    className: PropTypes.string,
+    children: PropTypes.func
   };
 
-  static defaultProps = { data: [] };
+  static defaultProps = { data: [], children: d => d };
 
   constructor(props) {
     super(props);
@@ -261,109 +252,83 @@ class Cluster extends Component {
 
   render() {
     // console.log('comps', comps);
-    const { colorScale, width, height, data } = this.props;
-    // const s = 50;
-    const baseSize = 20;
+    const { centerPos, centroid, tags, values, children, r } = this.props;
 
-    // const vors = d3
-    //   .voronoi()
-    //   .x(d => d.x)
-    //   .y(d => d.y)
-    //   .extent([[-1, -1], [width + 1, height + 1]])
-    //   .polygons(nodes);
-    //
-    // console.log('vors', vors);
-    //
-    // const Cells = vors.map(v => (
-    //   <path
-    //     id={`cell${v.data.id}`}
-    //     d={d3.line().curve(d3.curveLinear)(v)}
-    //     stroke={'none'}
-    //     fill="none"
-    //   />
-    //
-    // ));
-    const bbox = getBoundingBox(data, d => [d.x, d.y]);
-
-    // const bbs = bounds(values.map(d => [d.x, d.y]));
-
-    const distY = bbox[1][1] - bbox[0][1];
-    const distX = bbox[1][0] - bbox[0][0];
-    const offset = 0;
-    const r = Math.max(Math.min(distX, distY) / 2 - offset, 15);
-
-    // const circle = d3.packEnclose(
-    //   values.map(d => ({ x: d.x, y: d.y, r: baseSize }))
-    // );
-    const poly = hull(
-      groupPoints(
-        [
-          bbox[2].leftTop,
-          bbox[2].leftBottom,
-          bbox[2].rightTop,
-          bbox[2].rightBottom
-        ],
-        // values.map(d => [d.x, d.y]),
-        20,
-        20
-      ),
-      Infinity,
-      Infinity
-    );
-    const centroid = d3.polygonCentroid(poly);
+    // <div style={{ position: 'relative' }}>
+    //   {values.map((d, i) => children({ ...d, x: r + i, y: r + i }))}
+    // </div>
     return (
-      <g>
-        <g
-          style={
-            {
-              // filter: 'url(#fancy-goo)'
-            }
-          }
+      <div>
+        <div
+          style={{
+            position: 'absolute',
+            width: r * 2,
+            height: r * 2,
+            left: centerPos[0] - r,
+            top: centerPos[1] - r,
+            border: 'black solid 2px',
+            borderRadius: '100%',
+            textAlign: 'center',
+            lineHeight: `${2 * r}px`
+            // overflow: 'hidden'
+          }}
         >
-          <path d={d3.line()(poly)} stroke={'green'} fill={'none'} />
-          <circle
-            r={r}
-            stroke={'red'}
-            strokeWidth={1}
-            cx={centroid[0]}
-            cy={centroid[1]}
-            fill="none"
-          />
-        </g>
-      </g>
+          <div
+            style={{
+              verticalAlign: 'middle',
+              lineHeight: 'normal',
+              display: 'inline-block'
+            }}
+          >
+            {tags.map(d => d.key).join(' ')}
+            {values.length === 1 && children({ ...values[0], x: r, y: r })}
+          </div>
+        </div>
+      </div>
     );
   }
+}
+function findCenterPos(values) {
+  const bbox = getBoundingBox(values, d => [d.x, d.y]);
+  const poly = hull(
+    groupPoints(
+      [
+        bbox[2].leftTop,
+        bbox[2].leftBottom,
+        bbox[2].rightTop,
+        bbox[2].rightBottom
+      ],
+      // values.map(d => [d.x, d.y]),
+      20,
+      20
+    ),
+    Infinity,
+    Infinity
+  );
+  const centerPos = d3.polygonCentroid(poly);
+  return centerPos;
 }
 
 class BubbleOverlay extends Component {
   static propTypes = {
     children: PropTypes.node,
-    className: PropTypes.string
+    className: PropTypes.string,
+    scale: PropTypes.number
   };
 
   constructor(props) {
     super(props);
     const { nodes, width, height } = props;
 
-    const links = generateLinks(nodes);
-    this.connectedComps = connectedComponents(
-      nodes,
-      links,
-      width / 4,
-      height / 4
-    );
+    const links = generateLinks(nodes, 100);
+    this.comps = compComps(nodes, 100);
 
-    // this.comps = connectedComps.reduce((acc, c) => {
-    //   acc[c.id] = [c];
-    //   return acc;
-    // }, {});
+    this.maxDist = width / 3;
 
-    const subComps = this.connectedComps.reduce((acc, c, i) => {
-      const subLinks = generateLinks(c.values);
-      return [...acc, ...compComps(c.values, subLinks, 100, 100, 3)];
-    }, []);
-    // console.log('this.comps', this.comps);
-
+    const subComps = this.comps
+      .reduce((acc, c) => [...acc, ...compComps(c.values, this.maxDist)], [])
+      .map(c => ({ ...c, centerPos: findCenterPos(c.values) }));
+    this.subComps = subComps;
     this.state = {
       subComps,
       links
@@ -371,64 +336,51 @@ class BubbleOverlay extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { nodes, width, height } = nextProps;
+    const { nodes, width, height, scale } = nextProps;
+    const oldSubComps = this.state.subComps;
 
-    // const ts = new Date().getMilliseconds();
-    // const diff = ts - this.timeStamp;
-    // clearTimeout(this.id);
-    // this.id = setTimeout(() => {
-    //   const cc = connectedComponents(nodes, width / 2, height / 2);
-    //   this.setState({ connectedComps: cc });
-    // }, 1000);
+    // const comps = compComps(nodes, 100);
 
-    // const links = generateLinks(nodes);
-    const comps = this.connectedComps.map(c => {
+    const comps = this.comps.map(c => {
       const values = c.values.map(v => nodes.find(n => n.id === v.id));
-      const bbox = getBoundingBox(c.values, d => [d.x, d.y]);
-      const distY = bbox[1][1] - bbox[0][1];
-      const distX = bbox[1][0] - bbox[0][0];
-      const offset = 0;
-      const poly = hull(
-        groupPoints(
-          [
-            bbox[2].leftTop,
-            bbox[2].leftBottom,
-            bbox[2].rightTop,
-            bbox[2].rightBottom
-          ],
-          // values.map(d => [d.x, d.y]),
-          20,
-          20
-        ),
-        Infinity,
-        Infinity
-      );
-      const centroid = d3.polygonCentroid(poly);
-      return { ...c, values, centroid };
+
+      return { ...c, values };
     });
 
     const subComps = comps.reduce((acc, c) => {
-      const subLinks = generateLinks(c.values);
-      return [...acc, ...compComps(c.values, subLinks, 100, 100, 3)];
+      const centerPos = findCenterPos(c.values);
+      // const dist = 100;
+      // const xScale = d3
+      //   .scaleLinear()
+      //   .domain(d3.extent(c.values, d => d.x))
+      //   .range([centerPos[0] - dist / 2, centerPos[0] + dist / 2]);
+      // const yScale = d3
+      //   .scaleLinear()
+      //   .domain(d3.extent(c.values, d => d.y))
+      //   .range([centerPos[1] - dist / 2, centerPos[1] + dist / 2]);
+
+      // TODO: compute real predecessor
+      const relatedComp = oldSubComps
+        .filter(oc => intersection(oc.tagKeys, c.tagKeys).length > 0)
+        .reduce(
+          (accu, d) => (accu.values.length < d.values.length ? d : accu),
+          { values: [] }
+        );
+      console.log('relatedComp', relatedComp);
+      const dist = Math.max(relatedComp.r, 12);
+      const values = c.values.map(v => ({
+        ...v,
+        x: Math.min(Math.max(v.x, centerPos[0] + dist), v.x),
+        y: Math.min(Math.max(v.y, centerPos[1] + dist), v.y)
+      }));
+
+      const tmpComps = compComps(values, dist).map(e => ({
+        ...e,
+        r: e.values.length * 7,
+        centerPos: findCenterPos(e.values)
+      }));
+      return [...acc, ...tmpComps];
     }, []);
-
-    const points = subComps.map(c => c.centroid);
-    console.log('points', points);
-
-    // this.forceSim = d3
-    //   .forceSimulation()
-    //   .nodes(subComps)
-    //   .restart()
-    //   // TODO: proper reheat
-    //   .alpha(1)
-    //   .alphaMin(0.8)
-    //   .force('coll', d3.forceCollide(20))
-    //   // .force('center', d3.forceCenter(width / 2, height / 2))
-    //   .on('end', () => {
-    //     this.setState({
-    //       compNodes: this.forceSim.nodes()
-    //     });
-    //   });
 
     this.setState({ subComps });
 
@@ -446,71 +398,20 @@ class BubbleOverlay extends Component {
       comps,
       links,
       nodes,
-      labels
+      labels,
+      children
     } = this.props;
 
     const { subComps } = this.state;
-    console.log('subComps', subComps);
 
     const blurFactor = 2;
     const bubbleRadius = 25;
 
-    // const colorScale = d3
-    //   .scaleOrdinal()
-    //   .domain(data.map(s => s.key))
-    //   .range(chromatic.schemeAccent);
-
-    // const offsetScale = d3
-    //   .scaleLinear()
-    //   .domain(d3.extent(data, d => d.values.length))
-    //   // .range(d3.range(30, 90, 15))
-    //   .range([15, 40])
-    //   .nice();
-    //
-    // const dashScale = d3
-    //   .scaleQuantize()
-    //   .domain(d3.extent(data, d => d.values.length))
-    //   .range([7, 4, 3, 2])
-    //   .nice();
-
-    // TODO: make contour
-
-    // const newLinks = [];
-    // const newNodes = [];
-    // links.forEach(link => {
-    //   const s = link.source;
-    //   const t = link.target;
-    //   const srcNode = nodes.find(n => n.id === link.source);
-    //   const tgtNode = nodes.find(n => n.id === link.target);
-    //
-    //   newNodes.push({
-    //     id: `${link.source}${link.target}`,
-    //     tags: link.interSet,
-    //     source: s,
-    //     target: t,
-    //     x: (srcNode.x + tgtNode.x) * 1 / 2,
-    //     y: (srcNode.y + tgtNode.y) * 1 / 2
-    //   });
-    //   // if (
-    //   //   links.find(
-    //   //     l =>
-    //   //       (l.source === link.source && l.target === link.target) ||
-    //   //       (l.source === link.target && l.target === link.source)
-    //   //   ) === undefined
-    //   // )
-    //   // newLinks.push({ source: s, target: i }, { source: i, target: t });
-    //   // bilinks.push([s, i, t]);
-    // });
-
-    // console.log('links', newLinks, newNodes);
-
-    // const bubbleData = data
-    //   .filter(d => d.values.length > 1)
-    //   .sort((a, b) => b.values.length - a.values.length);
-
-    const voronoi = d3.voronoi().extent([[-1, -1], [width + 1, height + 1]]);
-    // points.x(d => d.x)
-    // .y(d => d.y);
+    const voronoi = d3
+      .voronoi()
+      .extent([[-1, -1], [width + 1, height + 1]])
+      .x(d => d.centerPos[0])
+      .y(d => d.centerPos[1]);
 
     const size = d3
       .scaleLinear()
@@ -520,46 +421,15 @@ class BubbleOverlay extends Component {
 
     const baseSize = 20;
 
-    // const vors = d3
-    //   .voronoi()
-    //   .x(d => d.x)
-    //   .y(d => d.y)
-    //   .extent([[-1, -1], [width + 1, height + 1]])
-    //   .polygons(nodes);
-    //
-    // console.log('vors', vors);
-    //
-    // const Cells = vors.map(v => (
-    //   <path
-    //     id={`cell${v.data.id}`}
-    //     d={d3.line().curve(d3.curveLinear)(v)}
-    //     stroke={'none'}
-    //     fill="none"
-    //   />
-    //
-    // ));
-    const points = subComps.map(c => {
-      const bbox = getBoundingBox(c.values, d => [d.x, d.y]);
-      const distY = bbox[1][1] - bbox[0][1];
-      const distX = bbox[1][0] - bbox[0][0];
-      const offset = 0;
-      const poly = hull(
-        groupPoints(
-          [
-            bbox[2].leftTop,
-            bbox[2].leftBottom,
-            bbox[2].rightTop,
-            bbox[2].rightBottom
-          ],
-          // values.map(d => [d.x, d.y]),
-          20,
-          20
-        ),
-        Infinity,
-        Infinity
-      );
-      const centroid = d3.polygonCentroid(poly);
-      return centroid;
+    const polyData = voronoi.polygons(subComps).map(arrObj => {
+      const polygon = arrObj.slice(0, arrObj.length - 1);
+      const centroid = d3.polygonCentroid(polygon);
+      const { data } = arrObj;
+      return {
+        ...data,
+        centroid,
+        polygon
+      };
     });
 
     // const bbs = bounds(values.map(d => [d.x, d.y]));
@@ -568,67 +438,62 @@ class BubbleOverlay extends Component {
     //   values.map(d => ({ x: d.x, y: d.y, r: baseSize }))
     // );
 
-    const Clusters = subComps.map(({ key, values }) => (
-      <Cluster data={values} colorScale={colorScale} />
-    ));
-
-    const blurfactor = 1.9;
-    const radius = 20;
-    // const cs = Object.values(this.comps).reduce((acc, c) => [...acc, ...c], []);
-    // console.log('cs', cs);
-
-    const polyData = voronoi.polygons(points);
-      // relax(points, width, height);
-    // const tree = d3.quadtree().addAll(points);
-    // const rectPoints = rects(tree);
-    // console.log('polyData', polyData);
-
     return (
-      <svg
-        style={{
-          position: 'absolute',
-          width,
-          height
-        }}
-      >
-        <defs>
-          <filter id="fancy-goo">
-            <feGaussianBlur
-              in="SourceGraphic"
-              stdDeviation="10"
-              result="blur"
+      <Fragment>
+        <svg
+          style={{
+            position: 'absolute',
+            width,
+            height
+          }}
+        >
+          <defs>
+            <filter id="fancy-goo">
+              <feGaussianBlur
+                in="SourceGraphic"
+                stdDeviation="10"
+                result="blur"
+              />
+              <feColorMatrix
+                in="blur"
+                mode="matrix"
+                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9"
+                result="goo"
+              />
+              <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+            </filter>
+          </defs>
+          {
+            //   rectPoints.map(d => (
+            //   <rect
+          //     x={d.x0}
+            //     y={d.y0}
+          //     width={d.width}
+          //     height={d.height}
+          //     fill="none"
+          //     stroke="black"
+            //     d={d3.line().curve(d3.curveBasis)(d)}
+            //   />
+            // ))
+          }
+          {polyData.map(d => (
+            <path
+              fill="none"
+              stroke="grey"
+              d={d3.line().curve(d3.curveLinear)(d.polygon)}
             />
-            <feColorMatrix
-              in="blur"
-              mode="matrix"
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9"
-              result="goo"
+          ))}
+          {polyData.map(d => (
+            <path
+              fill="none"
+              stroke="black"
+              d={`M${d.centroid}L${d.centerPos}`}
             />
-            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-          </filter>
-        </defs>
-        {
-        //   rectPoints.map(d => (
-        //   <rect
-        //     x={d.x0}
-        //     y={d.y0}
-        //     width={d.width}
-        //     height={d.height}
-        //     fill="none"
-        //     stroke="black"
-        //     d={d3.line().curve(d3.curveBasis)(d)}
-        //   />
-        // ))
-        }
-        {polyData.map(d => (
-          <path
-            fill="none"
-            stroke="grey"
-            d={d3.line().curve(d3.curveLinear)(d)}
-          />
-        ))}
-        {Clusters}
-      </svg>
+          ))}
+        </svg>
+        {polyData.map(d => <Cluster {...d}>{children}</Cluster>)}
+        <TopicAnnotationOverlay comps={polyData} />
+      </Fragment>
     );
   }
 }

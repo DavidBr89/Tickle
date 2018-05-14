@@ -238,7 +238,8 @@ function reducer(state = {}, action) {
           loc: { latitude, longitude },
           tags,
           title,
-          challenge: { type: null }
+          challenge: { type: null },
+          media: []
         })
       );
       // console.log('cardPlaces', placeCards);

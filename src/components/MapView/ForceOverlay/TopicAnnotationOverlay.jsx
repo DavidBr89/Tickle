@@ -109,52 +109,18 @@ class TopicAnnotationOverlay extends Component {
     // });
     return (
       <g>
-        {comps.map(({ values, key, tags }, i) => {
-          // const center = d3.polygonCentroid(h);
-          const bbox = getBoundingBox(values, d => [d.x, d.y]);
-          const distY = bbox[1][1] - bbox[0][1];
-          const distX = bbox[1][0] - bbox[0][0];
-
-          // return (
-          //   <AnnotationCalloutElbow
-          //     key={key}
-          //     x={bbox[0][0] + distX / 2}
-          //     y={bbox[0][1]}
-          //     dy={-40}
-          //     dx={10}
-          //     color={'black'}
-          //     note={{
-          //       title: `#${i}`,
-          //       label: tags.slice(0, 3).join(','),
-          //       lineType: 'horizontal'
-          //     }}
-          //   />
-          // );
-          return (
-            <Annotation
-              key={key}
-              x={bbox[0][0] + distX / 2}
-              y={bbox[0][1] - distY / 4}
-              dy={-30}
-              dx={10}
-              color={'black'}
-              title={`#${i}`}
-              label={tags
-                .map(d => d.key)
-                // .slice(0, 4)
-                .join(', ')}
-            >
-              <Note
-                key={key}
-                fillOpacity={1}
-                style={{ background: 'green' }}
-                lineType="horizontal"
-                align="middle"
-                wrap="120"
-              />
-            </Annotation>
-          );
-        })}
+        {comps.map(({ values, key, tagKeys }, i) => (
+          <Annotation
+            key={key}
+            x={0}
+            y={0}
+            dy={-30}
+            dx={10}
+            color={'black'}
+            title={`#${i}`}
+            label={tagKeys.join(',')}
+          />
+        ))}
       </g>
     );
   }

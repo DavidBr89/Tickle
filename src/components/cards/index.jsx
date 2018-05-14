@@ -72,9 +72,10 @@ class Card extends React.Component {
   };
 
   static defaultProps = {
-    title: 'testcard',
-    tags: [],
-    description: 'This is the place to describe your card',
+    title: null,
+    tags: null,
+    description: null,
+    //TODO: remove
     challenge: { type: 'hangman' },
     loc: {
       longitude: 0,

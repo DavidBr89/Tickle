@@ -31,6 +31,8 @@ import TagBar from './TagBar';
 import TagList from './TagList';
 import { setify } from './utils';
 
+import PhotoChallenge from '../Challenges/PhotoChallenge';
+
 // import StartNav from './StartNav';
 // import { VisibleView, VisibleElement } from '../utils/MySensor.jsx';
 
@@ -49,7 +51,7 @@ import ExtendableMarker from '../utils/ExtendableMarker';
 // import MapAreaRadius from '../utils/map-layers/MapAreaRadius';
 import chroma from 'chroma-js';
 // import cardIconSrc from '../utils/map-layers/cardIcon.svg';
-import { Modal } from '../utils/modal';
+import { Modal, ModalBody } from '../utils/Modal';
 
 import { DragSourceCont, DropTargetCont } from './DragAndDrop/DragSourceTarget';
 import DragLayer from './DragAndDrop/DragLayer';
@@ -577,12 +579,9 @@ class MapView extends PureComponent {
                   toggleCardChallengeAction({ cardChallengeOpen: false })
                 }
               >
-                {/* TODO: put in real challenge */}
-                <iframe
-                  title="emperors"
-                  src="http://thescalli.com/emperors/"
-                  style={{ border: 'none', width: '100%', height: '90vh' }}
-                />
+                <ModalBody>
+                  <PhotoChallenge />
+                </ModalBody>
               </Modal>
 
               <div
@@ -699,6 +698,10 @@ class MapView extends PureComponent {
                 >
                   {({ x, y, ...c }) => (
                     <ExtendableMarker
+                      style={{
+                        //TODO
+                        // display: extCardId !== c.id && c.template && 'none'
+                      }}
                       key={c.id}
                       width={extCardId === c.id ? width : 25}
                       height={extCardId === c.id ? height : 30}

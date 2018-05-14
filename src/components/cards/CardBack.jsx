@@ -95,7 +95,10 @@ class CardBackSkeleton extends Component {
       extended === field && this.setState({ extended: null });
 
     const isHidden = field => extended !== null && extended !== field;
-    const isExtended = field => ({ extended: extended === field });
+    const isExtended = field => ({
+      extended: extended === field && extended !== null
+    });
+
     const display = field => ({
       display: isHidden(field) ? 'none' : null,
       height: extended === field ? '100%' : '29%'

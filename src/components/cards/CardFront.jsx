@@ -5,9 +5,11 @@ import PropTypes from 'prop-types';
 import { shallowEqualProps } from 'shallow-equal-props';
 
 import placeholderImg from './placeholder.png';
-import { Modal, ModalBody } from '../utils/modal';
+import { Modal, ModalBody } from '../utils/Modal';
 import { MediaSearch, MediaOverview, ChallengeSearch } from './MediaSearch';
 import { cardLayout } from './styles';
+
+import PhotoUpload from './PhotoUpload';
 
 import {
   // FieldSet,
@@ -46,7 +48,7 @@ class ReadCardFront extends Component {
     children: PropTypes.node,
     className: PropTypes.string,
     uiColor: PropTypes.string,
-    tags: PropTypes.oneOf([null, PropTypes.array]),
+    tags: PropTypes.any, // PropTypes.oneOf([null, PropTypes.array]),
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     img: PropTypes.string.isRequired,
@@ -89,6 +91,8 @@ class ReadCardFront extends Component {
         );
       case 'Challenge':
         return <div>challenge</div>;
+      case 'Photo':
+        return <div>Photo</div>;
       default:
         return <div>error</div>;
     }
@@ -130,7 +134,7 @@ class ReadCardFront extends Component {
             className="m-2 "
             style={{ position: 'absolute', zIndex: 200, left: 0, top: 0 }}
           >
-          {/*TODO: fix width */}
+            {/* TODO: fix width */}
             <div style={{ display: 'flex', width: '70%', maxWidth: '80%' }}>
               <PreviewTags colorScale={tagColorScale} data={tags} />
             </div>
@@ -195,7 +199,7 @@ class EditCardFront extends PureComponent {
     const prevData = prevState.data;
     const { data } = this.state;
     // TODO: check the other attrs
-    if (!shallowEqualProps(prevData, data)){
+    if (!shallowEqualProps(prevData, data)) {
       console.log('update data', data);
 
       this.props.onAttrUpdate({ ...data });
@@ -244,7 +248,22 @@ class EditCardFront extends PureComponent {
           />
         );
       case 'Photo':
-        return <div>photo</div>;
+        return (
+          <div>
+            <ModalBody
+              uiColor={uiColor}
+              background={background}
+              onSubmit={() =>
+                this.setFieldState({ title: this.nodeTitle.value })
+              }
+            >
+              <PhotoUpload
+                uiColor={uiColor}
+                onChange={imgFiles => this.setFieldState({ img: imgFiles })}
+              />
+            </ModalBody>
+          </div>
+        );
       case 'Description':
         return (
           <ModalBody
@@ -380,11 +399,13 @@ class EditCardFront extends PureComponent {
                   position: 'absolute',
                   bottom: 5,
                   right: 5,
-                  zIndex: 200
+                  width: 40,
+                  height: 40,
+                  zIndex: 1000
                 }}
                 onClick={() => {
                   this.setState({
-                    dialog: { title: 'Tags', data: tags }
+                    dialog: { title: 'Photo', data: tags }
                   });
                 }}
               />

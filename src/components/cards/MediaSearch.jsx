@@ -9,7 +9,7 @@ import giphyReq from 'giphy-api';
 // import { DDG } from 'node-ddg-api';
 
 import { ScrollView, ScrollElement } from '../utils/ScrollView';
-import { ModalBody } from '../utils/modal';
+import { ModalBody } from '../utils/Modal';
 import gapi from './gapi';
 
 const giphy = giphyReq({ https: true });
@@ -299,9 +299,9 @@ ThumbNailSwitchDetail.defaultProps = {
 
 const ThumbCell = props => (
   <div
-    className={`p-3 ${shadow(
-      props.selected ? 'var(--black)' : 'grey'
-    )} ${fullDim} ${props.className}`}
+    className={`p-3 ${shadow(props.selected ? 'black' : 'grey')} ${fullDim} ${
+      props.className
+    }`}
     style={{ ...props.style, cursor: 'pointer' }}
   >
     <ThumbNailSwitchDetail {...props} />
@@ -601,17 +601,17 @@ class MetaSearch extends Component {
               <div style={{ paddingRight: '5%', height: '400%' }}>
                 {results.map(d => (
                   <ScrollElement name={d.url}>
-                    <div className="mb-3" style={{ height: '40vh' }}>
-                      <ThumbCell
-                        {...d}
-                        selected={selected === d.url}
-                        onClick={() =>
-                          this.setState(oldState => ({
-                            selected: oldState.selected !== d.url ? d.url : null
-                          }))
-                        }
-                      />
-                    </div>
+                    <ThumbCell
+                      className="mb-3"
+                      style={{ height: '30vh', maxHeight: 300 }}
+                      {...d}
+                      selected={selected === d.url}
+                      onClick={() =>
+                        this.setState(oldState => ({
+                          selected: oldState.selected !== d.url ? d.url : null
+                        }))
+                      }
+                    />
                   </ScrollElement>
                 ))}
               </div>
@@ -702,7 +702,10 @@ class MediaOverview extends Component {
               {data.map(d => (
                 <div
                   className="mb-3"
-                  style={{ height: d.thumbnail ? '40vh' : null }}
+                  style={{
+                    height: '40vh',
+                    maxHeight: 300
+                  }}
                 >
                   <ScrollElement name={d.url}>
                     <ThumbCell

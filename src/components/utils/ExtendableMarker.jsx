@@ -23,7 +23,8 @@ class ExtendableMarker extends Component {
     y: PropTypes.number,
     children: PropTypes.node,
     preview: PropTypes.node,
-    node: PropTypes.object
+    node: PropTypes.object,
+    style: PropTypes.object
   };
 
   static defaultProps = {
@@ -37,7 +38,8 @@ class ExtendableMarker extends Component {
     height: 800,
     markerWidth: 30,
     markerHeight: 50,
-    children: <div style={{ background: 'blue' }} />
+    children: <div style={{ background: 'blue' }} />,
+    style: {}
   };
 
   // static defaultProps = {
@@ -75,7 +77,8 @@ class ExtendableMarker extends Component {
       children,
       onClick,
       preview,
-      node
+      node,
+      style
     } = this.props;
 
     const marker = (
@@ -92,7 +95,8 @@ class ExtendableMarker extends Component {
           width: `${width}px`,
           height: `${height}px`,
           zIndex: extended ? 10000 : 0,
-          transition: `transform ${delay}s, left ${delay}s, top ${delay}s, width ${delay}s, height ${delay}s`
+          transition: `transform ${delay}s, left ${delay}s, top ${delay}s, width ${delay}s, height ${delay}s`,
+          ...style
         }}
       >
         <div

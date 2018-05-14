@@ -30,7 +30,8 @@ class ZoomContainer extends Component {
     force: false,
     nodes: [],
     delay: 200,
-    selectedId: null
+    selectedId: null,
+    maxZoomScale: 5
   };
 
   constructor(props) {
@@ -129,11 +130,11 @@ class ZoomContainer extends Component {
   }
 
   zoomFactory() {
-    const { width, height } = this.props;
+    const { width, height, maxZoomScale } = this.props;
     return d3
       .zoom()
       .wheelDelta(() => -d3.event.deltaY * (d3.event.deltaMode ? 50 : 1) / 500)
-      .scaleExtent([0, 10])
+      .scaleExtent([0, maxZoomScale])
       .extent([[0, 0], [width, height]])
       .on('zoom', () => {
         this.setState({

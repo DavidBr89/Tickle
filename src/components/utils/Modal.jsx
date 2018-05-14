@@ -37,10 +37,12 @@ const Modal = ({
         style={{
           opacity: visible ? 1 : 0,
           display: visible ? 'block' : 'none',
+          width: '100%',
+          height: '100%',
           ...style
         }}
       >
-        <div className="modal-dialog modal-dialog-centered" role="document">
+        <div className="modal-dialog" role="document">
           <div
             className={`modal-content ${!title ? 'pb-2 pt-2' : null}`}
             style={{
@@ -119,9 +121,9 @@ Modal.defaultProps = {
 };
 
 // TODO: fix padding bottom
-const ModalBody = ({ children, onSubmit, submitText, uiColor }) => (
-  <div>
-    <div className="modal-body">{children}</div>
+const ModalBody = ({ children, onSubmit, submitText, uiColor, styles }) => (
+  <div style={{ width: '100%', height: '100%', ...styles }}>
+    <div className="modal-body w-100 h-100">{children}</div>
     <div
       className="modal-footer"
       style={{
@@ -147,14 +149,16 @@ ModalBody.propTypes = {
   children: PropTypes.node.isRequired,
   onSubmit: PropTypes.func,
   submitText: PropTypes.text,
-  uiColor: PropTypes.oneOf([PropTypes.string, null])
+  uiColor: PropTypes.oneOf([PropTypes.string, null]),
+  styles: PropTypes.object
   // background: PropTypes.string
 };
 
 ModalBody.defaultProps = {
   onSubmit: null,
   submitText: 'Save Changes',
-  uiColor: 'black'
+  uiColor: 'black',
+  styles: {}
 };
 
 export { Modal, ModalBody };

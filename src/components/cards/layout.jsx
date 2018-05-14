@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { profileSrc, mediaScale, colorClass, colorScaleRandom } from './styles';
 // TODO: remove
-import { ModalBody } from '../utils/modal';
+import { ModalBody } from '../utils/Modal';
 // import placeholderImg from './placeholder.png';
 
 import cx from './Card.scss';
@@ -52,10 +52,7 @@ Legend.propTypes = {
 Legend.defaultProps = { style: {}, children: null };
 
 const FieldSet = ({ children, legend, style, edit, borderColor, onClick }) => (
-  <div
-    style={{ ...style, overflow: 'hidden', height: '100%' }}
-    onClick={onClick}
-  >
+  <div style={{ overflow: 'hidden', ...style }} onClick={onClick}>
     <fieldset
       style={{
         border: `1px solid ${borderColor}`,
@@ -167,7 +164,7 @@ const MediaField = ({
   >
     <FieldSet edit={edit} legend={'Media'} borderColor={borderColor}>
       <div style={{ display: 'flex', alignContent: 'end' }}>
-        {Array.isArray(media) ? (
+        {Array.isArray(media) && media.length > 0 ? (
           <PreviewMedia
             data={media.slice(0, 4)}
             style={{ width: '100%', height: '100%' }}

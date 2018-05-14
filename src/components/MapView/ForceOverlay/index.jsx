@@ -449,7 +449,7 @@ class ForceOverlay extends Component {
           .alphaMin(0.8)
           .force('x', d3.forceX(d => d.tx).strength(1))
           .force('y', d3.forceY(d => d.ty).strength(1))
-          .force('coll', d3.forceCollide(20))
+          .force('coll', d3.forceCollide(50))
           // .force('center', d3.forceCenter(width / 2, height / 2))
           .on('end', () => {
             this.ids.map(clearTimeout);
@@ -551,32 +551,33 @@ class ForceOverlay extends Component {
     }
     // TODO: get
     //
-    const zoomLevel =4;
+    const zoomLevel = 4;
     return (
-      <ZoomContainer
-        width={width}
-        height={height}
-        center={[width / 2, height * 2 / 3]}
-        nodes={nodes}
-        selectedId={selectedCardId}
-        onZoom={() => null}
-      >
-        {(zoomedNodes, transform) => (
-          <Fragment>
-            <BubbleOverlay
-              scale={transform.k}
-              nodes={zoomedNodes}
-              width={width}
-              height={height}
-              colorScale={colorScale}
-              labels={labels}
-            />
-            <div style={{ overflow: 'hidden', width, height }}>
-              {(zoomLevel === 1) &&zoomedNodes.map(attr => children({ ...attr, selectedCardId }))}
-            </div>
-          </Fragment>
-        )}
-      </ZoomContainer>
+      <div style={{ overflow: 'hidden', width, height }}>
+        <ZoomContainer
+          width={width}
+          height={height}
+          center={[width / 2, height * 2 / 3]}
+          nodes={nodes}
+          selectedId={selectedCardId}
+          onZoom={() => null}
+        >
+          {(zoomedNodes, transform) => (
+            <Fragment>
+              <BubbleOverlay
+                scale={transform.k}
+                nodes={zoomedNodes}
+                width={width}
+                height={height}
+                colorScale={colorScale}
+                labels={labels}
+              >
+                {d => children(d)}
+              </BubbleOverlay>
+            </Fragment>
+          )}
+        </ZoomContainer>
+      </div>
     );
   }
 }
