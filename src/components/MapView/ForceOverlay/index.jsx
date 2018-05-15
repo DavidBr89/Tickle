@@ -449,7 +449,7 @@ class ForceOverlay extends Component {
           .alphaMin(0.8)
           .force('x', d3.forceX(d => d.tx).strength(1))
           .force('y', d3.forceY(d => d.ty).strength(1))
-          .force('coll', d3.forceCollide(50))
+          .force('coll', d3.forceCollide(10))
           // .force('center', d3.forceCenter(width / 2, height / 2))
           .on('end', () => {
             this.ids.map(clearTimeout);

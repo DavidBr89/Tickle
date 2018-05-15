@@ -75,8 +75,9 @@ class Card extends React.Component {
     title: null,
     tags: null,
     description: null,
-    //TODO: remove
+    // TODO: remove
     challenge: { type: 'hangman' },
+    type: null,
     loc: {
       longitude: 0,
       latitude: 0,
@@ -87,7 +88,8 @@ class Card extends React.Component {
     style: {},
     edit: false,
     onCollect: d => d,
-    onUpdate: d => d
+    onUpdate: d => d,
+    type: null
   };
 
   constructor(props) {
@@ -98,7 +100,7 @@ class Card extends React.Component {
   }
 
   render() {
-    const { style, edit, challenge, onUpdate } = this.props;
+    const { style, edit, challenge, onUpdate, type} = this.props;
     const { frontView } = this.state;
     // const { onClose } = this.props;
     const sideToggler = frontView ? cx.flipAnim : null;
@@ -108,9 +110,7 @@ class Card extends React.Component {
         frontView: !oldState.frontView
       }));
     };
-    const background = challenge.type
-      ? colorScale(challenge.type)
-      : 'whitesmoke';
+    const background = colorScale(type)
     const uiColor = chroma(background).darken(1);
 
     const updateAttrFunc = { onAttrUpdate: edit ? onUpdate : null };

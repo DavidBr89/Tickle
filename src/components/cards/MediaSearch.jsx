@@ -12,19 +12,11 @@ import { ScrollView, ScrollElement } from '../utils/ScrollView';
 import { ModalBody } from '../utils/Modal';
 import gapi from './gapi';
 
+import { shadowStyleSelect } from './styles';
+
 const giphy = giphyReq({ https: true });
 
 const fullDim = cxs({ width: '100%', height: '100%' });
-const shadow = (color = 'grey') =>
-  cxs({
-    border: `1px solid ${color}`,
-    boxShadow: `6px 6px ${color}`
-  });
-
-const shadowStyle = {
-  boxShadow: '4px 4px grey',
-  border: '1px solid grey'
-};
 
 gapi.load('client', () => {
   const discoveryUrl =
@@ -299,9 +291,9 @@ ThumbNailSwitchDetail.defaultProps = {
 
 const ThumbCell = props => (
   <div
-    className={`p-3 ${shadow(props.selected ? 'black' : 'grey')} ${fullDim} ${
-      props.className
-    }`}
+    className={`p-3 ${shadowStyleSelect(
+      props.selected ? 'black' : 'grey'
+    )} ${fullDim} ${props.className}`}
     style={{ ...props.style, cursor: 'pointer' }}
   >
     <ThumbNailSwitchDetail {...props} />

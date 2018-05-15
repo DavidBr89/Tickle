@@ -42,7 +42,7 @@ const CardHeader = ({
         className="mb-2 pr-2"
         style={{
           display: 'flex',
-          //TODO stick to left
+          // TODO stick to left
           justifyContent: 'space-between',
           width: '100%'
         }}

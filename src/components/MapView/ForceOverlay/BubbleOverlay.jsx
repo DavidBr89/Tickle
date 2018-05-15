@@ -280,7 +280,6 @@ class Cluster extends Component {
               display: 'inline-block'
             }}
           >
-            {tags.map(d => d.key).join(' ')}
             {values.length === 1 && children({ ...values[0], x: r, y: r })}
           </div>
         </div>
@@ -491,8 +490,27 @@ class BubbleOverlay extends Component {
             />
           ))}
         </svg>
+        {polyData.map(({ centroid: [cx, cy], centerPos: [x, y], ...d }) => {
+          const angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
+          // const trans = angle === 0 ? 100
+          //     : angle === -1 ? orient.top
+          //     : angle === 1 ? orient.bottom
+          //     : orient.left);
+          return (
+            <div
+              style={{
+                position: 'absolute',
+                left: x,
+                top: y,
+                transform: `translate(${angle === 0 ? -100 : 0}%, -50%)`,
+                background: 'white'
+              }}
+            >
+              {d.tagKeys.map(t => <div>{t}</div>)}
+            </div>
+          );
+        })}
         {polyData.map(d => <Cluster {...d}>{children}</Cluster>)}
-        <TopicAnnotationOverlay comps={polyData} />
       </Fragment>
     );
   }

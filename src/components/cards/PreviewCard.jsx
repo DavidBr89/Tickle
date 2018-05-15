@@ -56,12 +56,13 @@ class PreviewCard extends Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
     tags: PropTypes.oneOf([PropTypes.array.isRequired, null]),
+    tagColorScale: PropTypes.func,
     img: PropTypes.string,
     challenge: PropTypes.func.isRequired,
     onClick: PropTypes.func.isRequired,
     style: PropTypes.object,
-    selected: PropTypes.bool,
-    edit: PropTypes.bool
+    edit: PropTypes.bool,
+    type: PropTypes.string
   };
 
   static defaultProps = {
@@ -72,7 +73,8 @@ class PreviewCard extends Component {
     selected: false,
     // TODO: include only type
     challenge: { type: null },
-    edit: false
+    edit: false,
+    type: null
   };
 
   shouldComponentUpdate(nextProps) {
@@ -88,17 +90,24 @@ class PreviewCard extends Component {
   }
 
   render() {
-    const { title, tags, img, challenge, style, onClick, edit, tagColorScale } = this.props;
+    const {
+      title,
+      tags,
+      img,
+      style,
+      onClick,
+      edit,
+      tagColorScale,
+      type
+    } = this.props;
     return (
       <div
         style={{
           ...style,
           padding: '5px',
           height: '100%',
-          background: challenge.type
-            ? colorScale(challenge.type)
-            : 'whitesmoke',
-          ...shadowStyle,
+          background: colorScale(type),
+          ...shadowStyle
           // minWidth: '100px'
           // maxHeight: '120px'
         }}
@@ -116,7 +125,7 @@ class PreviewCard extends Component {
         ) : (
           <PlaceholderAttr text={'Title'} style={{ fontSize: '18px' }} />
         )}
-        {tags !== null ? (
+        {Array.isArray(tags) && tags.length > 0 ? (
           <PreviewTags small colorScale={tagColorScale} data={tags} />
         ) : (
           <PlaceholderAttr text={'Tags'} style={{ fontSize: '80%' }} />

@@ -173,6 +173,10 @@ const mergeProps = (state, dispatcherProps) => {
 
   const cards = authEnv ? [...authEnvCards, cardTemplate] : collectibleCards;
 
+  //TODO
+  // display: extCardId !== c.id && c.template && 'none'
+  // const templateId = extCardId !== c.id && c.template && 'none'
+
   return { ...state, nextCardControlAction, ...dispatcherProps, cards };
 };
 

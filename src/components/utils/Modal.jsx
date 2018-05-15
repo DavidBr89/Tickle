@@ -44,7 +44,7 @@ const Modal = ({
       >
         <div className="modal-dialog" role="document">
           <div
-            className={`modal-content ${!title ? 'pb-2 pt-2' : null}`}
+            className={`modal-content ${!title && 'pb-2 pt-2'}`}
             style={{
               // TODO: why to check
               background:
@@ -123,7 +123,7 @@ Modal.defaultProps = {
 // TODO: fix padding bottom
 const ModalBody = ({ children, onSubmit, submitText, uiColor, styles }) => (
   <div style={{ width: '100%', height: '100%', ...styles }}>
-    <div className="modal-body w-100 h-100">{children}</div>
+    <div className="modal-body">{children}</div>
     <div
       className="modal-footer"
       style={{

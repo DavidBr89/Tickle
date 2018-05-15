@@ -6,7 +6,8 @@ import { shallowEqualProps } from 'shallow-equal-props';
 
 import placeholderImg from './placeholder.png';
 import { Modal, ModalBody } from '../utils/Modal';
-import { MediaSearch, MediaOverview, ChallengeSearch } from './MediaSearch';
+import { MediaSearch, MediaOverview} from './MediaSearch';
+import ChallengeAuthor from './ChallengeAuthor';
 import { cardLayout } from './styles';
 
 import PhotoUpload from './PhotoUpload';
@@ -304,22 +305,12 @@ class EditCardFront extends PureComponent {
       case 'Challenge':
         return (
           <ModalBody uiColor={uiColor}>
-            <ChallengeSearch
+            <ChallengeAuthor
               onSubmit={ch => {
                 this.setFieldState({ challenge: ch });
               }}
-              selected={challenge.url}
               uiColor={uiColor}
-              type="Challenge"
-              data={allChallenges
-                // TODO: change
-                .map(d => ({
-                  url: d.url,
-                  title: d.url,
-                  descr: '',
-                  thumbnail: d.url,
-                  type: 'hangman'
-                }))}
+              data={[]}
             />
           </ModalBody>
         );
@@ -328,10 +319,6 @@ class EditCardFront extends PureComponent {
     }
   }
 
-  // TODO: join ReadCardFront with EditCardFront
-  // TODO: join ReadCardFront with EditCardFront
-  // TODO: join ReadCardFront with EditCardFront
-  // TODO: join ReadCardFront with EditCardFront
   render() {
     const {
       onClose,
@@ -401,7 +388,7 @@ class EditCardFront extends PureComponent {
                   right: 5,
                   width: 40,
                   height: 40,
-                  zIndex: 1000
+                  zIndex: 3000
                 }}
                 onClick={() => {
                   this.setState({

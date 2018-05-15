@@ -71,23 +71,29 @@ export const shadowStyle = {
 
 const colors = [...chromatic.schemePastel1, 'wheat'];
 
-export const colorScale = scaleOrdinal()
+const ordinalColScale = scaleOrdinal()
   .domain(challengeTypes)
   .range(colors);
 
+export function colorScale(type) {
+  if (type === null) return 'whitesmoke';
+
+  return ordinalColScale(type);
+}
+
 export const darkerColorScale = scaleOrdinal()
   .domain(challengeTypes)
-  .range(colorScale.range().map(c => chroma(c).darker()));
+  .range(ordinalColScale.range().map(c => chroma(c).darker()));
 
 // TODO: chroma alpha does not seem to work
 export const brighterColorScale = scaleOrdinal()
   .domain(challengeTypes)
-  .range(colorScale.range().map(c => chroma(c).alpha(0.5)));
+  .range(ordinalColScale.range().map(c => chroma(c).alpha(0.5)));
 
-//TODO: make meaningful
+// TODO: make meaningful
 export const cardTypeColorScale = scaleOrdinal()
   .domain(challengeTypes)
-  .range(colorScale.range().map(c => chroma(c).alpha(0.5)));
+  .range(ordinalColScale.range().map(c => chroma(c).alpha(0.5)));
 // export {
 //   cardLayout,
 //   shadowStyle,
@@ -97,3 +103,10 @@ export const cardTypeColorScale = scaleOrdinal()
 //   profileSrc,
 //   colorScaleRandom
 // };
+//
+//
+export const shadowStyleSelect = (color = 'grey') =>
+  cxs({
+    border: `1px solid ${color}`,
+    boxShadow: `6px 6px ${color}`
+  });

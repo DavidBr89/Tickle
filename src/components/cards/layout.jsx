@@ -229,8 +229,8 @@ PreviewMedia.defaultProps = {
 };
 
 const EditButton = ({ style, onClick, className }) => (
-  <button className={`close ml-1 ${className}`} onClick={onClick}>
-    <EditIcon style={{ ...style, fontSize: '2rem' }} />
+  <button className={`close ml-1 ${className}`} style={style} onClick={onClick}>
+    <EditIcon style={{ fontSize: '2rem' }} />
   </button>
 );
 

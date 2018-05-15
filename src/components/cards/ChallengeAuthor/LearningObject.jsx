@@ -17,25 +17,37 @@ function convertToImgSrc(fileList) {
   return null;
 }
 
-class PhotoChallenge extends Component {
+class PhotoUpload extends Component {
   static propTypes = {
     className: PropTypes.string,
-    description: PropTypes.string,
-    styles: PropTypes.object
+    styles: PropTypes.object,
+    onChange: PropTypes.func
   };
 
   static defaultProps = {
     className: '',
     description: 'Upload a phot to win the challenge',
-    styles: {}
+    styles: {},
+    onChange: d => d
   };
 
   state = {
-    imgSrc: null
+    imgSrc: null,
+    imgFiles: null
   };
 
+  componentDidUpdate(prevProps, prevState) {
+    const { imgSrc, imgFiles } = this.state.imgSrc;
+    const { onChange } = this.props;
+    if (prevState.imgSrc !== imgSrc) onChange(imgFiles);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.state.imgSrc !== nextState.imgSrc;
+  }
+
   render() {
-    const { className, description, styles } = this.props;
+    const { className, styles, uiColor } = this.props;
     const { imgSrc } = this.state;
     return (
       <div
@@ -43,7 +55,6 @@ class PhotoChallenge extends Component {
         style={{ width: '100%', height: '100%', ...styles }}
       >
         <div className="w-100 h-100">
-          <h2>{description}</h2>
           {imgSrc !== null ? (
             <img
               src={imgSrc}
@@ -55,18 +66,33 @@ class PhotoChallenge extends Component {
               style={{
                 minHeight: '40vh',
                 maxHeight: 300,
-                border: 'dashed 1px black'
+                border: `dashed 3px ${uiColor}`,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
               }}
-            />
+            >
+              <h1
+                className="pl-2 pr-2"
+                style={{ background: uiColor, color: 'whitesmoke' }}
+              >
+                {'Upload an Image'}
+              </h1>
+            </div>
           )}
         </div>
         <div>
           <input
+            className="btn btn-primary mt-3"
+            style={{ background: uiColor }}
             type="file"
             accept="image/*"
             capture="environment"
             onChange={e =>
-              this.setState({ imgSrc: convertToImgSrc(e.target.files) })
+              this.setState({
+                imgSrc: convertToImgSrc(e.target.files),
+                imgFiles: e.target.files
+              })
             }
           />
         </div>
@@ -75,4 +101,4 @@ class PhotoChallenge extends Component {
   }
 }
 
-export default PhotoChallenge;
+export default PhotoUpload;

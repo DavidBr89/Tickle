@@ -109,11 +109,11 @@ class TopicAnnotationOverlay extends Component {
     // });
     return (
       <g>
-        {comps.map(({ values, key, tagKeys }, i) => (
+        {comps.map(({ values, key, tagKeys, centroid, centerPos }, i) => (
           <Annotation
             key={key}
-            x={0}
-            y={0}
+            x={centerPos[0]}
+            y={centerPos[1]}
             dy={-30}
             dx={10}
             color={'black'}
