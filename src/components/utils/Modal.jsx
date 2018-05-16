@@ -5,99 +5,106 @@ import chroma from 'chroma-js';
 
 // const ddg = new DDG('tickle');
 
+import { UIthemeContext } from 'Cards/styles';
+
 const Modal = ({
   visible,
   title,
   children,
   onClose,
-  style,
+  style
   // background,
-  uiColor
 }) =>
   ReactDOM.createPortal(
-    <div
-      style={{
-        width: '100%',
-        height: '100%',
-        background: 'rgba(0, 0, 0, 0.5)',
-        opacity: visible ? 1 : 0,
-        transition: 'opacity 1s',
-        zIndex: visible ? '100000' : '-10',
-        left: 0,
-        top: 0,
-        position: 'absolute'
-      }}
-    >
-      <div
-        className="modal fade show"
-        tabIndex="-1"
-        role="dialog"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-        style={{
-          opacity: visible ? 1 : 0,
-          display: visible ? 'block' : 'none',
-          width: '100%',
-          height: '100%',
-          ...style
-        }}
-      >
-        <div className="modal-dialog" role="document">
+    <UIthemeContext.Consumer>
+      {({ uiColor }) => (
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            // height: '90vh',
+            // overflow: 'hidden',
+            background: 'rgba(0, 0, 0, 0.5)',
+            opacity: visible ? 1 : 0,
+            transition: 'opacity 1s',
+            zIndex: visible ? '100000' : '-10',
+            left: 0,
+            top: 0,
+            position: 'absolute'
+          }}
+        >
           <div
-            className={`modal-content ${!title && 'pb-2 pt-2'}`}
+            className="modal fade show"
+            tabIndex="-1"
+            role="dialog"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
             style={{
-              // TODO: why to check
-              background:
-                uiColor &&
-                chroma(uiColor)
-                  .brighten(1.6)
-                  .desaturate(0.6)
+              opacity: visible ? 1 : 0,
+              display: visible ? 'block' : 'none',
+              width: '100%',
+              height: '100%',
+              ...style
             }}
           >
-            {title ? (
+            <div className="modal-dialog" role="document">
               <div
-                className="modal-header"
-                style={{ borderBottom: `1px solid ${uiColor}` }}
-              >
-                <h3 className="modal-title" id="exampleModalLabel">
-                  {title}
-                </h3>
-                <button
-                  type="button"
-                  className="close"
-                  data-dismiss="modal"
-                  aria-label="Close"
-                  onClick={onClose}
-                >
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-            ) : (
-              <div
+                className={`modal-content ${!title && 'pb-2 pt-2'}`}
                 style={{
-                  position: 'absolute',
-                  zIndex: '8000',
-                  right: 10,
-                  top: 10
+                  // TODO: why to check
+                  background:
+                    uiColor &&
+                    chroma(uiColor)
+                      .brighten(1.6)
+                      .desaturate(0.6)
                 }}
               >
-                <button
-                  type="button"
-                  className="close "
-                  style={{ width: '20px', height: '20px' }}
-                  data-dismiss="modal"
-                  aria-label="Close"
-                  onClick={onClose}
-                >
-                  <span aria-hidden="true">&times;</span>
-                </button>
+                {title ? (
+                  <div
+                    className="modal-header"
+                    style={{ borderBottom: `1px solid ${uiColor}` }}
+                  >
+                    <h3 className="modal-title" id="exampleModalLabel">
+                      {title}
+                    </h3>
+                    <button
+                      type="button"
+                      className="close"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                      onClick={onClose}
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      zIndex: '8000',
+                      right: 10,
+                      top: 10
+                    }}
+                  >
+                    <button
+                      type="button"
+                      className="close "
+                      style={{ width: '20px', height: '20px' }}
+                      data-dismiss="modal"
+                      aria-label="Close"
+                      onClick={onClose}
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                )}
+                {children}
               </div>
-            )}
-            {children}
+            </div>
           </div>
         </div>
-      </div>
-    </div>,
+      )}
+    </UIthemeContext.Consumer>,
     document.querySelector('body')
   );
 
@@ -121,35 +128,48 @@ Modal.defaultProps = {
 };
 
 // TODO: fix padding bottom
-const ModalBody = ({ children, onSubmit, submitText, uiColor, styles }) => (
-  <div style={{ width: '100%', height: '100%', ...styles }}>
-    <div className="modal-body">{children}</div>
-    <div
-      className="modal-footer"
-      style={{
-        paddingBottom: !onSubmit ? '50px' : null,
-        borderTop: `1px solid ${uiColor}`
-      }}
-    >
-      {onSubmit && (
-        <button
-          type="button"
-          className="btn btn-primary"
-          style={{ background: uiColor }}
-          onClick={onSubmit}
+const ModalBody = ({ children, onSubmit, submitText, styles }) => (
+  <UIthemeContext.Consumer>
+    {({ uiColor }) => (
+      <div
+        style={{
+          width: '100%',
+          // height: '80vh',
+          // TODO: outsource
+          maxHeight: 800,
+          // height: '100%',
+          // height: '30vh',
+          overflow: 'hidden',
+
+          ...styles
+        }}
+      >
+        <div className="modal-body">{children}</div>
+
+        <div
+          className="modal-footer"
+          style={{
+            borderTop: `1px solid ${uiColor}`
+          }}
         >
-          {submitText}
-        </button>
-      )}
-    </div>
-  </div>
+          <button
+            type="button"
+            className="btn btn-primary"
+            style={{ background: uiColor }}
+            onClick={onSubmit}
+          >
+            {submitText}
+          </button>
+        </div>
+      </div>
+    )}
+  </UIthemeContext.Consumer>
 );
 
 ModalBody.propTypes = {
   children: PropTypes.node.isRequired,
   onSubmit: PropTypes.func,
   submitText: PropTypes.text,
-  uiColor: PropTypes.oneOf([PropTypes.string, null]),
   styles: PropTypes.object
   // background: PropTypes.string
 };

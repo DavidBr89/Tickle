@@ -19,7 +19,7 @@ import CardFront from './CardFront';
 import PreviewCard from './PreviewCard';
 import CardMarker from './CardMarker';
 
-import { colorScale } from './styles';
+import { colorScale, UIthemeContext } from './styles';
 
 // ReadCardBack.defaultProps = {
 //   key: 'asa',
@@ -100,7 +100,7 @@ class Card extends React.Component {
   }
 
   render() {
-    const { style, edit, challenge, onUpdate, type} = this.props;
+    const { style, edit, challenge, onUpdate, type } = this.props;
     const { frontView } = this.state;
     // const { onClose } = this.props;
     const sideToggler = frontView ? cx.flipAnim : null;
@@ -110,7 +110,7 @@ class Card extends React.Component {
         frontView: !oldState.frontView
       }));
     };
-    const background = colorScale(type)
+    const background = colorScale(type);
     const uiColor = chroma(background).darken(1);
 
     const updateAttrFunc = { onAttrUpdate: edit ? onUpdate : null };
@@ -156,7 +156,9 @@ class Card extends React.Component {
             background
           }}
         >
-          {togglecard()}
+          <UIthemeContext.Provider value={{ background, uiColor }}>
+            {togglecard()}
+          </UIthemeContext.Provider>
         </div>
       </div>
     );

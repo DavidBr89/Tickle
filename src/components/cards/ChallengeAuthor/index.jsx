@@ -1,20 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { shadowStyle } from '../styles';
-
+import { UIthemeContext, modalBorder, createShadowStyle } from 'Cards/styles'; // eslint-disable-line
 import PhotoUploadAuthor from './PhotoUploadAuthor';
 import LearningObject from './LearningObject';
-
-function BreadCrumbs() {
-  return <div>{'BreadCrumbs'}</div>;
-}
 
 class Nav extends Component {
   static propTypes = {
     children: PropTypes.func,
     className: PropTypes.string,
-    uiColor: PropTypes.string,
     data: PropTypes.array
   };
 
@@ -28,67 +22,99 @@ class Nav extends Component {
   state = { selected: this.props.data[0].key };
 
   render() {
-    const { data, uiColor, children } = this.props;
+    const { data, children } = this.props;
     const { selected } = this.state;
-    const btnStyle = (sel, context) => ({
-      background: sel === context ? uiColor : null,
+
+    const btnStyle = (sel, uiColor) => ({
+      background: sel ? uiColor : null,
       display: 'inline-flex',
-      color: sel === context ? 'white' : null
+      color: sel ? 'white' : null,
+      width: '30%',
+      overflow: 'hidden'
+      // textOverflow: 'ellipsis'
     });
 
     const updState = sel => () => this.setState({ selected: sel });
 
     return (
-      <div style={{ width: '100%' }}>
-        <div
-          className="mb-3 nav"
-          style={{ display: 'flex', justifyContent: 'space-between' }}
-          role="tablist"
-        >
-          {data.map(d => (
-            <button
-              className="btn"
-              type="button"
-              onClick={updState(d.key)}
-              style={btnStyle(selected, d.key)}
-              id={d.key}
+      <UIthemeContext.Consumer>
+        {({ uiColor }) => (
+          <div style={{ width: '100%' }}>
+            <div
+              className="mb-3 nav"
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                flexWrap: 'no-wrap'
+              }}
+              role="tablist"
             >
-              {d.key}
-            </button>
-          ))}
-        </div>
-        <div className="tab-content">
-          <div className={'w-100 h-100'} role="tabpanel">
-            {children(data.find(d => d.key === selected))}
+              {data.map(d => (
+                <button
+                  className="btn"
+                  type="button"
+                  onClick={updState(d.key)}
+                  style={btnStyle(selected, uiColor)}
+                  id={d.key}
+                >
+                  <div
+                    style={{
+                      // TODO: does not work
+                      textOverflow: 'ellipsis'
+                    }}
+                  >
+                    {d.key}
+                  </div>
+                </button>
+              ))}
+            </div>
+            <div className="tab-content">
+              <div className={'w-100 h-100'} role="tabpanel">
+                {children(data.find(d => d.key === selected))}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        )}
+      </UIthemeContext.Consumer>
     );
   }
 }
 
-class index extends Component {
+class ChallengeAuthor extends Component {
   static propTypes = {
     style: PropTypes.object,
     className: PropTypes.string,
-    uiColor: PropTypes.string
+    uiColor: PropTypes.string,
+    onChange: PropTypes.func
   };
 
   static defaultProps = {
     style: {},
     className: '',
-    uiColor: 'black'
+    uiColor: 'black',
+    onChange: d => d
   };
 
   state = { selected: null };
 
+  challenge = null;
+
   render() {
-    const { className, uiColor, style } = this.props;
+    const { className, style, onChange } = this.props;
 
     const challengeTypes = [
-      { key: 'Photo Upload', comp: <PhotoUploadAuthor /> },
+      {
+        key: 'Photo Upload',
+        comp: (
+          <PhotoUploadAuthor
+            onChange={challenge => {
+              this.challenge = challenge;
+            }}
+          />
+        )
+      },
       { key: 'Learning Object', comp: <div>{'yeah'}</div> },
-      { key: 'Mini Game', comp: <PhotoUploadAuthor /> }
+      { key: 'Mini Game', comp: <PhotoUploadAuthor onChange={onChange} /> }
     ];
 
     return (
@@ -96,25 +122,24 @@ class index extends Component {
         className={className}
         style={{ width: '100%', height: '100%', minHeight: 300, ...style }}
       >
-        <Nav uiColor={uiColor} data={challengeTypes}>
-          {({ key, comp }) => (
+        <Nav data={challengeTypes}>
+          {({ comp }) => (
             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
               <div
                 className="p-2"
                 style={{
                   // width: selected === t.name ? '100%' : '20vh',
                   width: '100%',
-                  height: '100%',
-                  maxHeight: 600,
-                  minHeight: 75
+                  // height: '100%',
+                  maxHeight: 600
+                  // minHeight: 400
                 }}
               >
                 <div
-                  className="w-100 h-100 p-2"
+                  className="w-100 p-2"
                   style={
                     {
                       // border: 'grey 1px solid',
-                      // ...shadowStyle
                     }
                   }
                 >
@@ -129,4 +154,4 @@ class index extends Component {
   }
 }
 
-export default index;
+export default ChallengeAuthor;

@@ -9,10 +9,10 @@ import giphyReq from 'giphy-api';
 // import { DDG } from 'node-ddg-api';
 
 import { ScrollView, ScrollElement } from '../utils/ScrollView';
-import { ModalBody } from '../utils/Modal';
 import gapi from './gapi';
 
 import { shadowStyleSelect } from './styles';
+import { UIthemeContext } from 'Cards/styles';
 
 const giphy = giphyReq({ https: true });
 
@@ -289,30 +289,24 @@ ThumbNailSwitchDetail.defaultProps = {
   className: ''
 };
 
-const ThumbCell = props => (
+const ThumbCell = ({ children, ...props }) => (
   <div
     className={`p-3 ${shadowStyleSelect(
       props.selected ? 'black' : 'grey'
     )} ${fullDim} ${props.className}`}
     style={{ ...props.style, cursor: 'pointer' }}
   >
+    {children}
     <ThumbNailSwitchDetail {...props} />
   </div>
 );
 
 ThumbCell.propTypes = {
-  url: PropTypes.string,
-  thumbnail: PropTypes.string,
-  title: PropTypes.string,
-  descr: PropTypes.string,
-  selected: PropTypes.bool,
-  onClick: PropTypes.func,
-  style: PropTypes.object,
-  className: PropTypes.string,
-  type: PropTypes.oneOf(['video', 'article', 'gif']).isRequired
+  children: PropTypes.node
 };
 
 ThumbCell.defaultProps = {
+  children: null,
   url: '',
   thumbnail: null,
   title: '',
@@ -326,11 +320,10 @@ ThumbCell.defaultProps = {
 class MediaSearch extends Component {
   static propTypes = {
     media: PropTypes.array.isRequired,
-    onSubmit: PropTypes.func,
-    uiColor: PropTypes.string
+    onChange: PropTypes.func
   };
 
-  static defaultProps = { onSubmit: () => null, media: [], uiColor: 'tomato' };
+  static defaultProps = { onChange: () => null, media: [] };
 
   constructor(props) {
     super(props);
@@ -338,30 +331,26 @@ class MediaSearch extends Component {
   }
 
   render() {
-    const { media, onSubmit, uiColor } = this.props;
+    const { media, onChange } = this.props;
     const { selected } = this.state;
 
-    const btnStyle = (sel, context) => ({
-      background: sel === context ? uiColor : null,
+    const btnStyle = (sel, uiColor) => ({
+      background: sel ? uiColor : null,
       display: 'inline-flex',
-      color: sel === context ? 'white' : null
+      color: sel ? 'white' : null
     });
 
     const updState = sel => () => this.setState({ selected: sel });
 
     const activeTab = sel => {
-      console.log('sel', sel);
       switch (sel) {
         case 'overview':
-          return (
-            <MediaOverview data={media} onSelect={onSubmit} uiColor={uiColor} />
-          );
+          return <MediaOverview data={media} onSelect={onChange} />;
         case 'wikipedia':
           return (
             <MetaSearch
               data={media}
-              onSelect={onSubmit}
-              uiColor={uiColor}
+              onSelect={onChange}
               search={searchWikipedia}
               type="Article"
             />
@@ -370,8 +359,7 @@ class MediaSearch extends Component {
           return (
             <MetaSearch
               data={media}
-              onSelect={onSubmit}
-              uiColor={uiColor}
+              onSelect={onChange}
               search={searchYoutube}
               type="Video"
             />
@@ -380,8 +368,7 @@ class MediaSearch extends Component {
           return (
             <MetaSearch
               data={media}
-              onSelect={onSubmit}
-              uiColor={uiColor}
+              onSelect={onChange}
               search={searchGiphy}
               type="GIF"
             />
@@ -392,78 +379,136 @@ class MediaSearch extends Component {
     };
 
     return (
-      <ModalBody uiColor={uiColor}>
-        <div style={{ width: '100%' }}>
-          <div
-            className="mb-3 nav"
-            style={{ display: 'flex', justifyContent: 'space-between' }}
-            role="tablist"
-          >
-            <button
-              className="btn"
-              type="button"
-              onClick={updState('wikipedia')}
-              style={btnStyle(selected, 'wikipedia')}
-              id="wikipedia"
+      <UIthemeContext.Consumer>
+        {({ uiColor }) => (
+          <div style={{ width: '100%' }}>
+            <div
+              className="mb-3 nav"
+              style={{ display: 'flex', justifyContent: 'space-between' }}
+              role="tablist"
             >
-              <i
-                className={`fa fa-wikipedia-w fa-1x col-1`}
-                style={{ fontSize: '19px' }}
-                aria-hidden="true"
-              />
-            </button>
-            <button
-              type="button"
-              className="btn"
-              onClick={updState('youtube')}
-              style={btnStyle(selected, 'youtube')}
-              id="youtube"
-            >
-              <i
-                className={`fa fa-youtube fa-1x col-1`}
-                style={{ fontSize: '19px' }}
-                aria-hidden="true"
-              />
-            </button>
-            <button
-              type="button"
-              className="btn"
-              onClick={updState('giphy')}
-              style={btnStyle(selected, 'giphy')}
-              id="giphy"
-            >
-              <small
-                style={{
-                  paddingLeft: '13px',
-                  paddingRight: '13px',
-                  fontWeight: 'bold'
-                }}
+              <button
+                className="btn"
+                type="button"
+                onClick={updState('wikipedia')}
+                style={btnStyle(selected === 'wikipedia', uiColor)}
+                id="wikipedia"
               >
-                GIF
-              </small>
-            </button>
-            <button
-              type="button"
-              className="btn"
-              onClick={updState('overview')}
-              style={btnStyle(selected, 'overview')}
-              id="overview"
-            >
-              <i
-                className={`fa fa-link fa-1x col-1`}
-                style={{ fontSize: '19px' }}
-                aria-hidden="true"
-              />
-            </button>
-          </div>
-          <div className="tab-content">
-            {/* TODO: check fade */}
-            <div className={` ${fullDim}`} role="tabpanel">
-              {activeTab(selected)}
+                <i
+                  className={`fa fa-wikipedia-w fa-1x col-1`}
+                  style={{ fontSize: '19px' }}
+                  aria-hidden="true"
+                />
+              </button>
+              <button
+                type="button"
+                className="btn"
+                onClick={updState('youtube')}
+                style={btnStyle(selected === 'youtube', uiColor)}
+                id="youtube"
+              >
+                <i
+                  className={`fa fa-youtube fa-1x col-1`}
+                  style={{ fontSize: '19px' }}
+                  aria-hidden="true"
+                />
+              </button>
+              <button
+                type="button"
+                className="btn"
+                onClick={updState('giphy')}
+                style={btnStyle(selected === 'giphy', uiColor)}
+                id="giphy"
+              >
+                <small
+                  style={{
+                    paddingLeft: '13px',
+                    paddingRight: '13px',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  GIF
+                </small>
+              </button>
+              <button
+                type="button"
+                className="btn"
+                onClick={updState('overview')}
+                style={btnStyle(selected === 'overview', uiColor)}
+                id="overview"
+              >
+                <i
+                  className={`fa fa-link fa-1x col-1`}
+                  style={{ fontSize: '19px' }}
+                  aria-hidden="true"
+                />
+              </button>
+            </div>
+            <div className="tab-content">
+              {/* TODO: check fade */}
+              <div className={` ${fullDim}`} role="tabpanel">
+                {activeTab(selected)}
+              </div>
             </div>
           </div>
-        </div>
-      </ModalBody>
+        )}
+      </UIthemeContext.Consumer>
+    );
+  }
+}
+
+class ScrollList extends Component {
+  static propTypes = {
+    data: PropTypes.array,
+    className: PropTypes.string,
+    children: d => d
+  };
+
+  static defaultProps = { data: [], style: {} };
+
+  componentDidUpdate() {
+    const { selected } = this.state;
+
+    this.scrollTo(selected);
+  }
+
+  state = { selected: null };
+
+  scrollTo = name => {
+    this._scroller.scrollTo(name);
+  };
+
+  render() {
+    const { data, children, style } = this.props;
+    const { selected } = this.state;
+    return (
+      <div
+        style={{
+          width: '100%',
+          height: '50vh',
+          maxHeight: 500,
+          overflowY: 'scroll',
+          ...style
+        }}
+      >
+        <ScrollView ref={scroller => (this._scroller = scroller)}>
+          <div style={{ paddingRight: '5%', height: '400%' }}>
+            {data.map(d => (
+              <ScrollElement name={d.url}>
+                <div
+                  onClick={() =>
+                    this.setState(oldState => ({
+                      selected: oldState.selected !== d.url ? d.url : null
+                    }))
+                  }
+                >
+                  {children(d, d.url === selected)}
+                </div>
+              </ScrollElement>
+            ))}
+          </div>
+        </ScrollView>
+      </div>
     );
   }
 }
@@ -473,7 +518,6 @@ class MetaSearch extends Component {
     search: PropTypes.oneOf(null, PropTypes.func),
     data: PropTypes.array,
     type: PropTypes.string,
-    uiColor: PropTypes.string,
     defaultData: PropTypes.array,
     onSelect: PropTypes.func,
     selected: PropTypes.oneOf([PropTypes.string, null])
@@ -483,7 +527,6 @@ class MetaSearch extends Component {
     search: null,
     data: [],
     defaultData: [],
-    uiColor: 'black',
     defaultResults: [],
     type: null,
     onSelect: d => d,
@@ -493,22 +536,20 @@ class MetaSearch extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      selected: props.selected,
-      results: props.search === null ? props.defaultData : []
-    };
     this._scroller = null;
     this.searchBar = null;
     this.mounted = true;
-    this.scrollTo = this.scrollTo.bind(this);
   }
+
+  state = {
+    selected: this.props.selected,
+    results: this.props.data // this.props.search === null ? this.props.defaultData : []
+  };
 
   componentDidMount() {
     const { search } = this.props;
     if (search !== null)
       search().then(results => this.mounted && this.setState({ results }));
-
-    if (this.state.selected !== null) this.scrollTo(this.state.selected);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -535,20 +576,22 @@ class MetaSearch extends Component {
   //   });
   // }
 
-  componentDidUpdate() {
-    this.scrollTo(this.state.selected);
+  componentDidUpdate(prevProps, prevState) {
+    const { data, type, onSelect } = this.props;
+    const { results, selected } = this.state;
+
+    if (selected) {
+      const newItem = results.find(d => d.url === selected);
+      onSelect([...data, { type, ...newItem }]);
+    }
   }
 
   componentWillUnmount() {
     this.mounted = false;
   }
 
-  scrollTo = name => {
-    this._scroller.scrollTo(name);
-  };
-
   render() {
-    const { onSelect, data, uiColor, search, type, defaultData } = this.props;
+    const { onSelect, search, type, defaultData } = this.props;
     const { results, selected } = this.state;
     // let GoogleAuth;
     // const SCOPE = 'https://www.googleapis.com/auth/youtube.force-ssl';
@@ -570,64 +613,36 @@ class MetaSearch extends Component {
     };
     // TODO: fix view height
     return (
-      <div style={{ width: '100%', height: '60vh' }}>
-        <div className="mb-3">
-          <form style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <input
-              ref={searchBar => (this.searchBar = searchBar)}
-              type="text"
-              placeholder={'Search...'}
-            />
-            <button
-              className="ml-3 btn btn-active pl-3 pr-3"
-              style={{ background: uiColor }}
-              onClick={onSearch}
-            >
-              <i className="fa fa-search" />
-            </button>
-          </form>
-        </div>
-        <div style={{ width: '100%', height: '90%', overflowY: 'scroll' }}>
-          <div>
-            <ScrollView ref={scroller => (this._scroller = scroller)}>
-              <div style={{ paddingRight: '5%', height: '400%' }}>
-                {results.map(d => (
-                  <ScrollElement name={d.url}>
-                    <ThumbCell
-                      className="mb-3"
-                      style={{ height: '30vh', maxHeight: 300 }}
-                      {...d}
-                      selected={selected === d.url}
-                      onClick={() =>
-                        this.setState(oldState => ({
-                          selected: oldState.selected !== d.url ? d.url : null
-                        }))
-                      }
-                    />
-                  </ScrollElement>
-                ))}
-              </div>
-            </ScrollView>
+      <div>
+        <div style={{ width: '100%' }}>
+          <div className="mb-3">
+            <form style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <input
+                ref={searchBar => (this.searchBar = searchBar)}
+                type="text"
+                placeholder={'Search...'}
+              />
+              <button
+                className="ml-3 btn btn-active pl-3 pr-3"
+                style={{ background: 'blue' }}
+                onClick={onSearch}
+              >
+                <i className="fa fa-search" />
+              </button>
+            </form>
           </div>
         </div>
-        <div
-          className="mt-3"
-          style={{ display: 'flex', alignItems: 'flex-end' }}
-        >
-          <button
-            type="button"
-            className="btn btn-active"
-            style={{ background: uiColor }}
-            onClick={() => {
-              if (selected) {
-                const newItem = results.find(d => d.url === selected);
-                onSelect([...data, { type, ...newItem }]);
-              }
-            }}
-          >
-            {selected ? `Add ${type}` : `Select ${type}`}
-          </button>
-        </div>
+        <ScrollList data={results}>
+          {(d, isSelected) => (
+            <ThumbCell
+              className="mb-3"
+              style={{ height: '30vh', maxHeight: 300 }}
+              {...d}
+            >
+              {isSelected && <div>{'Add'}</div>}
+            </ThumbCell>
+          )}
+        </ScrollList>
       </div>
     );
   }
@@ -689,7 +704,10 @@ class MediaOverview extends Component {
           <div className={fullDim} style={{ overflowY: 'scroll' }}>
             {data.length === 0 && <h3>{'No media added to this Card!'} </h3>}
             <div
-              style={{ paddingRight: '5%', height: `${data.length * 40}vh` }}
+              style={{
+                paddingRight: '5%',
+                height: `${data.length * 40}vh`
+              }}
             >
               {data.map(d => (
                 <div
@@ -708,7 +726,9 @@ class MediaOverview extends Component {
                           selected: oldState.selected !== d.url ? d.url : null
                         }))
                       }
-                    />
+                    >
+                      <button>{'Add'}</button>
+                    </ThumbCell>
                   </ScrollElement>
                 </div>
               ))}
@@ -724,15 +744,13 @@ class ChallengeSearch extends Component {
   static propTypes = {
     data: PropTypes.array,
     selected: PropTypes.string,
-    uiColor: PropTypes.string,
-    onSubmit: PropTypes.func
+    onChange: PropTypes.func
   };
 
   static defaultProps = {
     data: [],
     selected: '',
-    uiColor: 'black',
-    onSubmit: d => d
+    onChange: d => d
   };
 
   constructor(props) {
@@ -757,7 +775,6 @@ class ChallengeSearch extends Component {
     // Promise.all(
     //   data.map(d =>
     //     fetchJsonp(
-    //       `https://guteurls.de/api?u=${
     //         d.url
     //       }&r=http://your-homepage.com/computer-news.php&e=7jnoaudset42xsp5s&t=json`
     //     )
@@ -786,13 +803,12 @@ class ChallengeSearch extends Component {
   }
 
   render() {
-    const { selected, uiColor, onSubmit } = this.props;
+    const { selected, onChange } = this.props;
     const { defaultData } = this.state;
     return (
       <MetaSearch
-        onSelect={([ch]) => onSubmit(ch)}
+        onSelect={([ch]) => onChange(ch)}
         selected={selected}
-        uiColor={uiColor}
         type="Challenge"
         defaultData={defaultData}
       />

@@ -6,7 +6,7 @@ import { shallowEqualProps } from 'shallow-equal-props';
 
 import placeholderImg from './placeholder.png';
 import { Modal, ModalBody } from '../utils/Modal';
-import { MediaSearch, MediaOverview} from './MediaSearch';
+import { MediaSearch, MediaOverview } from './MediaSearch';
 import ChallengeAuthor from './ChallengeAuthor';
 import { cardLayout } from './styles';
 
@@ -212,107 +212,81 @@ class EditCardFront extends PureComponent {
   //   return false;
   // }
 
-  setFieldState(field) {
-    this.setState(oldState => ({
-      data: { ...oldState.data, ...field }
-    }));
+  setDataCache(field) {
+    const data = { ...this.data, ...field };
+    this.data = data;
+    // this.setState(oldState => ({ data }));
   }
+
+  data = {};
 
   modalWriteContent(modalTitle) {
     const { data } = this.state;
-    const { uiColor, background, allChallenges } = this.props;
+    const { allChallenges } = this.props;
     // TODO: img
     const { title, tags, img, description, media, challenge } = data;
     switch (modalTitle) {
       case 'Title':
         return (
-          <ModalBody
-            uiColor={uiColor}
-            background={background}
-            onSubmit={() => this.setFieldState({ title: this.nodeTitle.value })}
-          >
-            <div className="form-group">
-              <input
-                ref={n => (this.nodeTitle = n)}
-                style={{ width: '100%' }}
-                defaultValue={title}
-              />
-            </div>
-          </ModalBody>
+          <div className="form-group">
+            <input
+              onChange={e => this.setDataCache({ title: e.target.value })}
+              style={{ width: '100%' }}
+              defaultValue={title}
+            />
+          </div>
         );
       case 'Tags':
         return (
           <TagInput
             tags={tags}
-            uiColor={uiColor}
-            onSubmit={newTags => this.setFieldState({ tags: newTags })}
+            onSubmit={newTags => this.setDataCache({ tags: newTags })}
           />
         );
       case 'Photo':
         return (
-          <div>
-            <ModalBody
-              uiColor={uiColor}
-              background={background}
-              onSubmit={() =>
-                this.setFieldState({ title: this.nodeTitle.value })
-              }
-            >
-              <PhotoUpload
-                uiColor={uiColor}
-                onChange={imgFiles => this.setFieldState({ img: imgFiles })}
-              />
-            </ModalBody>
-          </div>
+          <PhotoUpload
+            onChange={imgFiles => {
+              this.setDataCache({ img: imgFiles, dialog: null });
+            }}
+          />
         );
       case 'Description':
         return (
-          <ModalBody
-            uiColor={uiColor}
-            background={background}
-            onSubmit={() =>
-              this.setFieldState({
-                description: this.nodeDescription.value || null
-              })
-            }
-          >
-            <div className="form-group">
-              <textarea
-                ref={n => (this.nodeDescription = n)}
-                rows={5}
-                style={{ width: '100%' }}
-                onSubmit={() => null}
-                placeholder={'<Please insert your description>'}
-              >
-                {description}
-              </textarea>
-            </div>
-          </ModalBody>
+          <div className="form-group">
+            <textarea
+              onChange={e =>
+                this.setDataCache({
+                  description: e.target.value || null
+                })
+              }
+              rows={5}
+              style={{ width: '100%' }}
+              placeholder={'<Please insert your description>'}
+            >
+              {description}
+            </textarea>
+          </div>
         );
       case 'Media':
         return (
-          <div>
-            <MediaSearch
-              media={media || []}
-              uiColor={uiColor}
-              background={background}
-              onSubmit={mediaItems => {
-                this.setFieldState({ media: mediaItems });
-              }}
-            />
-          </div>
+          <MediaSearch
+            media={media || []}
+            onChange={mediaItems => {
+              console.log('onChange');
+              this.setDataCache({ media: mediaItems });
+            }}
+          />
         );
       case 'Challenge':
         return (
-          <ModalBody uiColor={uiColor}>
-            <ChallengeAuthor
-              onSubmit={ch => {
-                this.setFieldState({ challenge: ch });
-              }}
-              uiColor={uiColor}
-              data={[]}
-            />
-          </ModalBody>
+          <ChallengeAuthor
+            onChange={ch => {
+              // console.log('challenge change');
+              this.setDataCache({ challenge: ch });
+            }}
+            data={[]}
+          />
         );
       default:
         return <div>error</div>;
@@ -360,7 +334,13 @@ class EditCardFront extends PureComponent {
             uiColor={uiColor}
             background={background}
           >
-            {this.modalWriteContent(dialogTitle)}
+            <ModalBody
+              onSubmit={() => {
+                this.setState({ data: this.data });
+              }}
+            >
+              {this.modalWriteContent(dialogTitle)}
+            </ModalBody>
           </Modal>
           <div className={cardLayout}>
             <div style={{ position: 'relative' }}>
