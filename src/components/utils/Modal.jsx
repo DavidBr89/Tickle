@@ -128,7 +128,7 @@ Modal.defaultProps = {
 };
 
 // TODO: fix padding bottom
-const ModalBody = ({ children, onSubmit, submitText, styles }) => (
+const ModalBody = ({ children, onSubmit, footerBtnText, styles }) => (
   <UIthemeContext.Consumer>
     {({ uiColor }) => (
       <div
@@ -158,7 +158,7 @@ const ModalBody = ({ children, onSubmit, submitText, styles }) => (
             style={{ background: uiColor }}
             onClick={onSubmit}
           >
-            {submitText}
+            {footerBtnText}
           </button>
         </div>
       </div>
@@ -169,14 +169,14 @@ const ModalBody = ({ children, onSubmit, submitText, styles }) => (
 ModalBody.propTypes = {
   children: PropTypes.node.isRequired,
   onSubmit: PropTypes.func,
-  submitText: PropTypes.text,
+  footerBtnText: PropTypes.text,
   styles: PropTypes.object
   // background: PropTypes.string
 };
 
 ModalBody.defaultProps = {
   onSubmit: null,
-  submitText: 'Save Changes',
+  footerBtnText: 'Close',
   uiColor: 'black',
   styles: {}
 };

@@ -3,28 +3,26 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import scrollIntoView from 'scroll-into-view';
 
+const { Provider, Consumer } = React.createContext({
+  register: null,
+  unregister: null
+});
+
 class ScrollView extends Component {
   static propTypes = {
     children: PropTypes.node
   };
-  static childContextTypes = {
-    scroll: PropTypes.object
-  };
+
   register = (name, ref) => {
     this.elements[name] = ref;
   };
+
   unregister = name => {
     delete this.elements[name];
   };
-  getChildContext() {
-    return {
-      scroll: {
-        register: this.register,
-        unregister: this.unregister
-      }
-    };
-  }
+
   elements = {};
+
   scrollTo = (name, time = 500) => {
     const node = ReactDOM.findDOMNode(this.elements[name]);
     // node.scrollLeft = 20000;
@@ -38,24 +36,42 @@ class ScrollView extends Component {
     });
   };
 
-  componentDidMount() {
-    // const domNode = ReactDOM.findDOMNode(this.props.children);
-    console.log('ref node', this.node);
-    // console.log('domNode', domNode);
-    // this.node.addEventListener('scroll', this.props.onScroll);
-  }
-
-  // componentDidUpdate() {
-  //   // const domNode = ReactDOM.findDOMNode(this.props.children);
-  //   console.log('ref node', this.node);
-  //   // console.log('domNode', domNode);
-  //   // domNode.addEventListener('scroll', () => console.log('scroll'));
-  // }
 
   render() {
-    return React.cloneElement(this.props.children, {
-      ref: e => (this.node = e)
-    });
+    return (
+      <Provider
+        value={{
+          register: this.register.bind(this),
+          unregister: this.unregister.bind(this)
+        }}
+      >
+        {React.cloneElement(this.props.children, {
+          ref: e => (this.node = e)
+        })}
+      </Provider>
+    );
+  }
+}
+
+class ScrollConsumer extends Component {
+  static propTypes = {
+    children: PropTypes.node
+  };
+
+  componentDidMount() {
+    console.log('props name', this.props.name);
+    this.props.register(this.props.name, this);
+  }
+  componentWillReceiveProps(nextProps) {
+    console.log('nextProps', nextProps.name);
+    this.props.register(nextProps.name, this);
+  }
+  componentWillUnmount() {
+    this.props.unregister(this.props.name);
+  }
+
+  render() {
+    return this.props.children;
   }
 }
 
@@ -69,18 +85,21 @@ class ScrollElement extends Component {
     name: PropTypes.string
   };
 
-  componentDidMount() {
-    this.context.scroll.register(this.props.name, this);
-  }
-  componentWillReceiveProps(nextProps) {
-    this.context.scroll.register(nextProps.name, this);
-  }
-  componentWillUnmount() {
-    this.context.scroll.unregister(this.props.name);
-  }
-
   render() {
-    return this.props.children;
+    const { name } = this.props;
+    return (
+      <Consumer>
+        {({ register, unregister }) => (
+          <ScrollConsumer
+            register={register}
+            unregister={unregister}
+            name={name}
+          >
+            {this.props.children}
+          </ScrollConsumer>
+        )}
+      </Consumer>
+    );
   }
 }
 

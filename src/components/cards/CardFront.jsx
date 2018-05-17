@@ -40,7 +40,7 @@ const defaultProps = {
   // loc: { latitude: 50.828797, longitude: 4.352191 },
   creator: 'Jan',
   radius: 500,
-  media: null,
+  media: [],
   comments: []
 };
 
@@ -87,7 +87,7 @@ class ReadCardFront extends Component {
       case 'Media':
         return (
           <div>
-            <MediaOverview data={media} uiColor={uiColor} />
+            <MediaOverview data={media || []} uiColor={uiColor} />
           </div>
         );
       case 'Challenge':
@@ -212,10 +212,9 @@ class EditCardFront extends PureComponent {
   //   return false;
   // }
 
-  setDataCache(field) {
-    const data = { ...this.data, ...field };
-    this.data = data;
-    // this.setState(oldState => ({ data }));
+  setFieldState(field) {
+    console.log('Fieldstate');
+    this.setState(oldState => ({ data: { ...oldState.data, ...field } }));
   }
 
   data = {};
@@ -230,7 +229,7 @@ class EditCardFront extends PureComponent {
         return (
           <div className="form-group">
             <input
-              onChange={e => this.setDataCache({ title: e.target.value })}
+              onChange={e => this.setFieldState({ title: e.target.value })}
               style={{ width: '100%' }}
               defaultValue={title}
             />
@@ -240,14 +239,14 @@ class EditCardFront extends PureComponent {
         return (
           <TagInput
             tags={tags}
-            onSubmit={newTags => this.setDataCache({ tags: newTags })}
+            onSubmit={newTags => this.setFieldState({ tags: newTags })}
           />
         );
       case 'Photo':
         return (
           <PhotoUpload
             onChange={imgFiles => {
-              this.setDataCache({ img: imgFiles, dialog: null });
+              this.setFieldState({ img: imgFiles, dialog: null });
             }}
           />
         );
@@ -256,7 +255,7 @@ class EditCardFront extends PureComponent {
           <div className="form-group">
             <textarea
               onChange={e =>
-                this.setDataCache({
+                this.setFieldState({
                   description: e.target.value || null
                 })
               }
@@ -271,10 +270,10 @@ class EditCardFront extends PureComponent {
       case 'Media':
         return (
           <MediaSearch
-            media={media || []}
+            selectedMedia={media}
             onChange={mediaItems => {
-              console.log('onChange');
-              this.setDataCache({ media: mediaItems });
+              console.log('change media');
+              this.setFieldState({ media: mediaItems });
             }}
           />
         );
@@ -283,7 +282,7 @@ class EditCardFront extends PureComponent {
           <ChallengeAuthor
             onChange={ch => {
               // console.log('challenge change');
-              this.setDataCache({ challenge: ch });
+              this.setFieldState({ challenge: ch });
             }}
             data={[]}
           />
@@ -336,7 +335,7 @@ class EditCardFront extends PureComponent {
           >
             <ModalBody
               onSubmit={() => {
-                this.setState({ data: this.data });
+                this.setState({ dialog: null });
               }}
             >
               {this.modalWriteContent(dialogTitle)}

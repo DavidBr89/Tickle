@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import $ from 'jquery';
+
+import * as Icon from 'react-feather';
+
 // import MyGrid from 'mygrid/dist';
 import cxs from 'cxs';
 import giphyReq from 'giphy-api';
@@ -11,7 +14,7 @@ import giphyReq from 'giphy-api';
 import { ScrollView, ScrollElement } from '../utils/ScrollView';
 import gapi from './gapi';
 
-import { shadowStyleSelect } from './styles';
+import { createShadowStyle } from './styles';
 import { UIthemeContext } from 'Cards/styles';
 
 const giphy = giphyReq({ https: true });
@@ -72,6 +75,7 @@ const searchWikipedia = (q = 'dragon') =>
       descr: d.extract,
       thumbnail: d.thumbnail ? d.thumbnail.source : null, // d.thumbnail.source,
       url: d.fullurl,
+      id: d.fullurl,
       type: 'article'
     }));
 
@@ -93,6 +97,7 @@ const searchYoutube = (q = 'dragon') =>
       .execute(({ items }) => {
         const res = items.map(d => ({
           url: `http://www.youtube.com/embed/${d.id.videoId}`,
+          id: d.id.videoId,
           title: d.snippet.title,
           descr: d.snippet.description,
           thumbnail: d.snippet.thumbnails.default.url,
@@ -108,6 +113,7 @@ const searchGiphy = (q = 'pokemon') =>
       resolve(
         data.map(d => ({
           url: d.embed_url,
+          id: d.embed_url,
           title: d.title,
           descr: '',
           thumbnail: d.images.downsized_still.url,
@@ -289,20 +295,40 @@ ThumbNailSwitchDetail.defaultProps = {
   className: ''
 };
 
-const ThumbCell = ({ children, ...props }) => (
-  <div
-    className={`p-3 ${shadowStyleSelect(
-      props.selected ? 'black' : 'grey'
-    )} ${fullDim} ${props.className}`}
-    style={{ ...props.style, cursor: 'pointer' }}
-  >
-    {children}
-    <ThumbNailSwitchDetail {...props} />
-  </div>
+const ThumbCell = ({ children, className, ...props }) => (
+  <UIthemeContext.Consumer>
+    {({ uiColor, focusColor }) => (
+      <div
+        className={`p-3 ${className}`}
+        style={{
+          height: '40vh',
+          width: '100%',
+          maxHeight: 300,
+          ...props.style,
+          cursor: 'pointer',
+          position: 'relative',
+          ...createShadowStyle(props.selected ? focusColor : uiColor)
+        }}
+      >
+        <div
+          className="mr-3"
+          style={{ position: 'absolute', zIndex: 300, right: 0 }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'right' }}>
+            {children}
+          </div>
+        </div>
+        <ThumbNailSwitchDetail {...props} />
+      </div>
+    )}
+  </UIthemeContext.Consumer>
 );
 
 ThumbCell.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
+  className: PropTypes.string,
+  style: PropTypes.object,
+  selected: PropTypes.bool
 };
 
 ThumbCell.defaultProps = {
@@ -319,7 +345,6 @@ ThumbCell.defaultProps = {
 
 class MediaSearch extends Component {
   static propTypes = {
-    media: PropTypes.array.isRequired,
     onChange: PropTypes.func
   };
 
@@ -331,7 +356,7 @@ class MediaSearch extends Component {
   }
 
   render() {
-    const { media, onChange } = this.props;
+    const { selectedMedia, onChange } = this.props;
     const { selected } = this.state;
 
     const btnStyle = (sel, uiColor) => ({
@@ -345,12 +370,11 @@ class MediaSearch extends Component {
     const activeTab = sel => {
       switch (sel) {
         case 'overview':
-          return <MediaOverview data={media} onSelect={onChange} />;
+          return <MediaOverview data={selectedMedia} onChange={onChange} />;
         case 'wikipedia':
           return (
             <MetaSearch
-              data={media}
-              onSelect={onChange}
+              onChange={onChange}
               search={searchWikipedia}
               type="Article"
             />
@@ -358,20 +382,14 @@ class MediaSearch extends Component {
         case 'youtube':
           return (
             <MetaSearch
-              data={media}
-              onSelect={onChange}
+              onChange={onChange}
               search={searchYoutube}
               type="Video"
             />
           );
         case 'giphy':
           return (
-            <MetaSearch
-              data={media}
-              onSelect={onChange}
-              search={searchGiphy}
-              type="GIF"
-            />
+            <MetaSearch onChange={onChange} search={searchGiphy} type="GIF" />
           );
         default:
           return <div>{'Error selection'}</div>;
@@ -461,10 +479,18 @@ class ScrollList extends Component {
   static propTypes = {
     data: PropTypes.array,
     className: PropTypes.string,
+    children: PropTypes.func,
+    style: PropTypes.object
+  };
+
+  static defaultProps = {
+    data: [],
+    style: {},
+    className: '',
     children: d => d
   };
 
-  static defaultProps = { data: [], style: {} };
+  state = { selected: null };
 
   componentDidUpdate() {
     const { selected } = this.state;
@@ -472,14 +498,12 @@ class ScrollList extends Component {
     this.scrollTo(selected);
   }
 
-  state = { selected: null };
-
   scrollTo = name => {
     this._scroller.scrollTo(name);
   };
 
   render() {
-    const { data, children, style } = this.props;
+    const { data, children, className, style } = this.props;
     const { selected } = this.state;
     return (
       <div
@@ -492,7 +516,10 @@ class ScrollList extends Component {
         }}
       >
         <ScrollView ref={scroller => (this._scroller = scroller)}>
-          <div style={{ paddingRight: '5%', height: '400%' }}>
+          <div
+            className={className}
+            style={{ paddingRight: '5%', height: '400%', ...style }}
+          >
             {data.map(d => (
               <ScrollElement name={d.url}>
                 <div
@@ -513,24 +540,54 @@ class ScrollList extends Component {
   }
 }
 
+function SearchBar({ onSearch }) {
+  return (
+    <form style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <input
+        ref={searchBar => (this.searchBar = searchBar)}
+        type="text"
+        placeholder={'Search...'}
+        onChange={onSearch}
+      />
+      <button
+        className="ml-3 btn btn-active pl-3 pr-3"
+        style={{ background: 'blue' }}
+      >
+        <i className="fa fa-search" />
+      </button>
+    </form>
+  );
+}
+
+function ActiveBtn({ selected, onClick }) {
+  return (
+    <UIthemeContext.Consumer>
+      {({ focusColor }) => (
+        <div
+          style={{ color: selected ? 'tomato' : focusColor, lineHeight: 0 }}
+          onClick={onClick}
+        >
+          {selected ? <Icon.Trash2 size={40} /> : <Icon.PlusSquare size={40} />}
+        </div>
+      )}
+    </UIthemeContext.Consumer>
+  );
+}
+
 class MetaSearch extends Component {
   static propTypes = {
     search: PropTypes.oneOf(null, PropTypes.func),
-    data: PropTypes.array,
     type: PropTypes.string,
-    defaultData: PropTypes.array,
-    onSelect: PropTypes.func,
-    selected: PropTypes.oneOf([PropTypes.string, null])
+    onAdd: PropTypes.func,
+    preSelected: PropTypes.array
   };
 
   static defaultProps = {
     search: null,
-    data: [],
-    defaultData: [],
-    defaultResults: [],
     type: null,
-    onSelect: d => d,
-    selected: null
+    onAdd: d => d,
+    selected: null,
+    preSelected: []
   };
 
   constructor(props) {
@@ -542,29 +599,21 @@ class MetaSearch extends Component {
   }
 
   state = {
-    selected: this.props.selected,
-    results: this.props.data // this.props.search === null ? this.props.defaultData : []
+    data: this.props.preSelected, // this.props.search === null ? this.props.defaultData : []
+    selected: []
   };
 
   componentDidMount() {
     const { search } = this.props;
     if (search !== null)
-      search().then(results => this.mounted && this.setState({ results }));
+      search().then(data => this.mounted && this.setState({ data }));
   }
 
   componentWillReceiveProps(nextProps) {
     const { search } = nextProps;
-    if (search !== null) {
-      search().then(results => {
-        this.setState({ results });
-      });
-    } else {
-      this.setState({
-        selected: nextProps.selected,
-        results: nextProps.defaultData
-      });
-    }
-    // }
+    search().then(data => {
+      this.setState({ data });
+    });
   }
 
   // shouldComponentUpdate(nextProps, nextState) {
@@ -577,12 +626,11 @@ class MetaSearch extends Component {
   // }
 
   componentDidUpdate(prevProps, prevState) {
-    const { data, type, onSelect } = this.props;
-    const { results, selected } = this.state;
+    const { type, onChange } = this.props;
+    const { data, selected } = this.state;
 
-    if (selected) {
-      const newItem = results.find(d => d.url === selected);
-      onSelect([...data, { type, ...newItem }]);
+    if (selected.length !== prevState.selected.length) {
+      onChange(selected.map(id => data.find(d => d.id === id)));
     }
   }
 
@@ -591,8 +639,8 @@ class MetaSearch extends Component {
   }
 
   render() {
-    const { onSelect, search, type, defaultData } = this.props;
-    const { results, selected } = this.state;
+    const { onSelect, search, type, defaultData, onAdd } = this.props;
+    const { data, selected } = this.state;
     // let GoogleAuth;
     // const SCOPE = 'https://www.googleapis.com/auth/youtube.force-ssl';
     // Load the API's client and auth2 modules.
@@ -602,7 +650,7 @@ class MetaSearch extends Component {
       const searchVal = this.searchBar.value;
       if (search !== null) {
         search().then(items => {
-          this.setState({ results: items });
+          this.setState({ data: items });
         });
       } else {
         // TODO real search
@@ -611,35 +659,38 @@ class MetaSearch extends Component {
         });
       }
     };
+    const addItem = id => {
+      this.setState(oldState => ({
+        selected: [...oldState.selected, id]
+      }));
+    };
+    const removeItem = id =>
+      this.setState(oldState => ({
+        selected: oldState.selected.filter(d => d !== id)
+      }));
+
     // TODO: fix view height
     return (
       <div>
         <div style={{ width: '100%' }}>
           <div className="mb-3">
-            <form style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <input
-                ref={searchBar => (this.searchBar = searchBar)}
-                type="text"
-                placeholder={'Search...'}
-              />
-              <button
-                className="ml-3 btn btn-active pl-3 pr-3"
-                style={{ background: 'blue' }}
-                onClick={onSearch}
-              >
-                <i className="fa fa-search" />
-              </button>
-            </form>
+            <SearchBar onSearch={onSearch} />
           </div>
         </div>
-        <ScrollList data={results}>
+        <ScrollList data={data}>
           {(d, isSelected) => (
             <ThumbCell
               className="mb-3"
-              style={{ height: '30vh', maxHeight: 300 }}
+              selected={isSelected}
+              style={{ height: '40vh', maxHeight: 300 }}
               {...d}
             >
-              {isSelected && <div>{'Add'}</div>}
+              <ActiveBtn
+                selected={selected.includes(d.id)}
+                onClick={() =>
+                  selected.includes(d.id) ? removeItem(d.id) : addItem(d.id)
+                }
+              />
             </ThumbCell>
           )}
         </ScrollList>
@@ -657,6 +708,9 @@ class MetaSearch extends Component {
 //
 class MediaOverview extends Component {
   static propTypes = {};
+  static defaultProps = {
+    data: []
+  };
 
   constructor(props) {
     super(props);
@@ -666,10 +720,6 @@ class MediaOverview extends Component {
     this._scroller = null;
     this.searchBar = null;
   }
-
-  scrollTo = name => {
-    this._scroller.scrollTo(name);
-  };
 
   componentDidMount() {
     // $.ajax(options)
@@ -681,7 +731,7 @@ class MediaOverview extends Component {
   }
 
   componentDidUpdate() {
-    this.scrollTo(this.state.selected);
+    // this.scrollTo(this.state.selected);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -690,7 +740,9 @@ class MediaOverview extends Component {
   }
 
   render() {
-    const { data, selected } = this.state;
+    const { data } = this.props;
+    const { selected } = this.state;
+    console.log('data', data);
     // let GoogleAuth;
     // const SCOPE = 'https://www.googleapis.com/auth/youtube.force-ssl';
     // Load the API's client and auth2 modules.
@@ -698,43 +750,28 @@ class MediaOverview extends Component {
     // }
 
     // TODO: fix view height
+    const removeItem = id =>
+      this.setState(oldState => ({
+        selected: oldState.selected.filter(d => d !== id)
+      }));
     return (
       <div style={{ width: '100%', height: '60vh' }}>
-        <ScrollView ref={scroller => (this._scroller = scroller)}>
-          <div className={fullDim} style={{ overflowY: 'scroll' }}>
-            {data.length === 0 && <h3>{'No media added to this Card!'} </h3>}
-            <div
-              style={{
-                paddingRight: '5%',
-                height: `${data.length * 40}vh`
-              }}
+        {data.length === 0 && <h3>{'No media added to this Card!'} </h3>}
+        <ScrollList data={data}>
+          {d => (
+            <ThumbCell
+              {...d}
+              selected={selected === d.url}
+              onClick={() =>
+                this.setState(oldState => ({
+                  selected: oldState.selected !== d.url ? d.url : null
+                }))
+              }
             >
-              {data.map(d => (
-                <div
-                  className="mb-3"
-                  style={{
-                    height: '40vh',
-                    maxHeight: 300
-                  }}
-                >
-                  <ScrollElement name={d.url}>
-                    <ThumbCell
-                      {...d}
-                      selected={selected === d.url}
-                      onClick={() =>
-                        this.setState(oldState => ({
-                          selected: oldState.selected !== d.url ? d.url : null
-                        }))
-                      }
-                    >
-                      <button>{'Add'}</button>
-                    </ThumbCell>
-                  </ScrollElement>
-                </div>
-              ))}
-            </div>
-          </div>
-        </ScrollView>
+              <ActiveBtn selected onClick={() => removeItem(d.id)} />
+            </ThumbCell>
+          )}
+        </ScrollList>
       </div>
     );
   }

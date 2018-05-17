@@ -112,6 +112,7 @@ class Card extends React.Component {
     };
     const background = colorScale(type);
     const uiColor = chroma(background).darken(1);
+    const focusColor = chroma(background).darken(3);
 
     const updateAttrFunc = { onAttrUpdate: edit ? onUpdate : null };
 
@@ -156,7 +157,7 @@ class Card extends React.Component {
             background
           }}
         >
-          <UIthemeContext.Provider value={{ background, uiColor }}>
+          <UIthemeContext.Provider value={{ background, uiColor, focusColor }}>
             {togglecard()}
           </UIthemeContext.Provider>
         </div>
