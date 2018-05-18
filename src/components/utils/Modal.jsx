@@ -6,18 +6,20 @@ import chroma from 'chroma-js';
 // const ddg = new DDG('tickle');
 
 import { UIthemeContext } from 'Cards/styles';
+import WindowContext from 'Src/WindowContext';
 
 const Modal = ({
   visible,
   title,
   children,
   onClose,
-  style
+  style,
+  uiColor
   // background,
 }) =>
   ReactDOM.createPortal(
-    <UIthemeContext.Consumer>
-      {({ uiColor }) => (
+    <WindowContext.Consumer>
+      {({ width, height }) => (
         <div
           style={{
             width: '100%',
@@ -30,7 +32,9 @@ const Modal = ({
             zIndex: visible ? '100000' : '-10',
             left: 0,
             top: 0,
-            position: 'absolute'
+            position: 'absolute',
+            maxWidth: width,
+            maxHeight: height
           }}
         >
           <div
@@ -50,14 +54,16 @@ const Modal = ({
             <div className="modal-dialog" role="document">
               <div
                 className={`modal-content ${!title && 'pb-2 pt-2'}`}
-                style={{
-                  // TODO: why to check
-                  background:
-                    uiColor &&
-                    chroma(uiColor)
-                      .brighten(1.6)
-                      .desaturate(0.6)
-                }}
+                style={
+                  {
+                    // TODO: why to check
+                    // background:
+                    //   uiColor &&
+                    //   chroma(uiColor)
+                    //     .brighten(1.6)
+                    //     .desaturate(0.6)
+                  }
+                }
               >
                 {title ? (
                   <div
@@ -104,7 +110,7 @@ const Modal = ({
           </div>
         </div>
       )}
-    </UIthemeContext.Consumer>,
+    </WindowContext.Consumer>,
     document.querySelector('body')
   );
 
@@ -115,8 +121,11 @@ Modal.propTypes = {
   children: PropTypes.node,
   onClose: PropTypes.func,
   onSave: PropTypes.func,
-  style: PropTypes.object
+  style: PropTypes.object,
+  uiColor: PropTypes.object,
+  footer: PropTypes.oneOf([PropTypes.node, null])
 };
+
 Modal.defaultProps = {
   visible: true,
   title: null,
@@ -124,17 +133,20 @@ Modal.defaultProps = {
   onClose: () => null,
   onSave: () => null,
   style: {},
-  background: 'green'
+  background: 'green',
+  uiColor: 'grey',
+  footer: null
 };
 
 // TODO: fix padding bottom
-const ModalBody = ({ children, onSubmit, footerBtnText, styles }) => (
+// TODO: access child state
+const ModalBody = ({ children, footer, styles }) => (
   <UIthemeContext.Consumer>
     {({ uiColor }) => (
       <div
         style={{
           width: '100%',
-          // height: '80vh',
+          height: '100%',
           // TODO: outsource
           maxHeight: 800,
           // height: '100%',
@@ -152,14 +164,7 @@ const ModalBody = ({ children, onSubmit, footerBtnText, styles }) => (
             borderTop: `1px solid ${uiColor}`
           }}
         >
-          <button
-            type="button"
-            className="btn btn-primary"
-            style={{ background: uiColor }}
-            onClick={onSubmit}
-          >
-            {footerBtnText}
-          </button>
+          {footer}
         </div>
       </div>
     )}

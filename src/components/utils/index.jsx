@@ -1,64 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { shallowEqualProps } from 'shallow-equal-props';
 
-const Modal = ({ visible, children, closeHandler }) => (
-  <div
-    className="modal fade show"
-    tabIndex="-1"
-    role="dialog"
-    aria-labelledby="exampleModalLabel"
-    aria-hidden="true"
-    style={{
-      display: visible ? 'block' : 'none',
-      zIndex: '8000',
-      position: 'absolute',
-      top: 0,
-      width: '100%',
-      height: '100vh'
-    }}
-  >
-    <div className="modal-dialog modal-dialog-centered" role="document">
-      <div className="modal-content" style={{ position: 'relative' }}>
-        <div
-          style={{
-            position: 'absolute',
-            zIndex: '8000',
-            right: 10,
-            top: 10
-          }}
-        >
-          <button
-            type="button"
-            className="close "
-            style={{ width: '20px', height: '20px' }}
-            data-dismiss="modal"
-            aria-label="Close"
-            onClick={closeHandler}
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div className="modal-body">{children}</div>
-      </div>
-    </div>
-  </div>
-);
-
-Modal.propTypes = {
-  children: PropTypes.element.isRequired,
-  visible: PropTypes.bool.isRequired,
-  closeHandler: PropTypes.func.isRequired
-};
-
-Modal.defaultProps = {
-  id: 'exampleModal',
-  children: <div>{'Modal'}</div>,
-  closeHandler: d => d
-};
-
-class Wrapper extends React.Component {
+class DimWrapper extends React.Component {
   static propTypes = {
     children: PropTypes.func.isRequired
   };
@@ -114,4 +58,4 @@ class Wrapper extends React.Component {
   }
 }
 
-export { Modal, Wrapper };
+export { DimWrapper };

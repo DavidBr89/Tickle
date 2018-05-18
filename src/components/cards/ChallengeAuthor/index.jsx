@@ -85,37 +85,52 @@ class ChallengeAuthor extends Component {
     style: PropTypes.object,
     className: PropTypes.string,
     uiColor: PropTypes.string,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    reset: PropTypes.bool
   };
 
   static defaultProps = {
     style: {},
     className: '',
     uiColor: 'black',
-    onChange: d => d
+    onChange: d => d,
+    reset: false
   };
 
-  state = { selected: null };
+  state = {
+    selected: null,
+    challengeTypes: [
+      {
+        key: 'Photo Upload',
+        comp: <PhotoUploadAuthor onChange={this.props.onChange} />
+      },
+      { key: 'Learning Object', comp: <div>{'yeah'}</div> },
+      {
+        key: 'Mini Game',
+        comp: <PhotoUploadAuthor onChange={this.props.onChange} />
+      }
+    ]
+  };
 
-  challenge = null;
-
-  render() {
-    const { className, style, onChange } = this.props;
-
+  componentWillReceiveProps(nextProps) {
     const challengeTypes = [
       {
         key: 'Photo Upload',
-        comp: (
-          <PhotoUploadAuthor
-            onChange={challenge => {
-              this.challenge = challenge;
-            }}
-          />
-        )
+        comp: <PhotoUploadAuthor {...nextProps} />
       },
       { key: 'Learning Object', comp: <div>{'yeah'}</div> },
-      { key: 'Mini Game', comp: <PhotoUploadAuthor onChange={onChange} /> }
+      {
+        key: 'Mini Game',
+        comp: <PhotoUploadAuthor {...nextProps} />
+      }
     ];
+
+    this.setState({ challengeTypes });
+  }
+
+  render() {
+    const { className, style } = this.props;
+    const { challengeTypes } = this.state;
 
     return (
       <div

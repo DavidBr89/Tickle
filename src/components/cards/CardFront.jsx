@@ -1,6 +1,9 @@
 import React, { Component, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 // import chroma from 'chroma-js';
+import * as Icon from 'react-feather';
+
+import PhotoUpload from 'Utils/PhotoUpload';
 
 import { shallowEqualProps } from 'shallow-equal-props';
 
@@ -9,8 +12,6 @@ import { Modal, ModalBody } from '../utils/Modal';
 import { MediaSearch, MediaOverview } from './MediaSearch';
 import ChallengeAuthor from './ChallengeAuthor';
 import { cardLayout } from './styles';
-
-import PhotoUpload from './PhotoUpload';
 
 import {
   // FieldSet,
@@ -43,6 +44,63 @@ const defaultProps = {
   media: [],
   comments: []
 };
+
+const FooterBtn = ({ onClick, children, disabled, className, style = {} }) => (
+  <button
+    className={`${'btn '}${className}`}
+    style={{ ...style, lineHeight: 0 }}
+    onClick={onClick}
+    disabled={disabled}
+  >
+    {children}
+  </button>
+);
+
+class ChallengeAuthorModalBody extends Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string,
+    onChange: PropTypes.func
+  };
+
+  state = { challenge: null, added: false };
+
+  componentDidUpdate(prevProps, prevState) {
+    const { challenge, added } = this.state;
+
+    if (added !== prevState.added)
+      this.props.onChange(!added ? challenge : null);
+    // this.props.onChange(null);
+  }
+
+  render() {
+    const { challenge, added } = this.state;
+    const btnClass = `${!added ? 'bg-success' : 'bg-danger'} ${challenge ===
+      null && 'disabled'}`;
+    return (
+      <ModalBody
+        footer={
+          <FooterBtn
+            disabled={challenge === null}
+            className={btnClass}
+            style={{ width: '20%' }}
+            onClick={() => {
+              this.setState({ added: !added });
+            }}
+          >
+            {added ? <Icon.Trash2 /> : <Icon.Plus />}
+          </FooterBtn>
+        }
+      >
+        <ChallengeAuthor
+          onChange={ch => {
+            this.setState({ challenge: ch });
+          }}
+        />
+      </ModalBody>
+    );
+  }
+}
 
 class ReadCardFront extends Component {
   static propTypes = {
@@ -108,7 +166,7 @@ class ReadCardFront extends Component {
       onCollect,
       uiColor,
       flipHandler,
-      background,
+      // background,
       tagColorScale
     } = this.props;
 
@@ -124,9 +182,7 @@ class ReadCardFront extends Component {
           title={dialogTitle}
           onClose={() => this.setState({ dialog: null })}
         >
-          <ModalBody uiColor={uiColor}>
-            {this.modalReadContent(dialogTitle)}
-          </ModalBody>
+          {this.modalReadContent(dialogTitle)}
         </Modal>
 
         <div style={{ position: 'relative' }}>
@@ -199,10 +255,13 @@ class EditCardFront extends PureComponent {
   componentDidUpdate(prevProps, prevState) {
     const prevData = prevState.data;
     const { data } = this.state;
+    console.log('didUpdate', data);
     // TODO: check the other attrs
-    if (!shallowEqualProps(prevData, data)) {
+    if (
+      !shallowEqualProps(prevData, data) ||
+      !shallowEqualProps(prevData.challenge, data.challenge)
+    ) {
       console.log('update data', data);
-
       this.props.onAttrUpdate({ ...data });
     }
   }
@@ -213,7 +272,6 @@ class EditCardFront extends PureComponent {
   // }
 
   setFieldState(field) {
-    console.log('Fieldstate');
     this.setState(oldState => ({ data: { ...oldState.data, ...field } }));
   }
 
@@ -221,70 +279,82 @@ class EditCardFront extends PureComponent {
 
   modalWriteContent(modalTitle) {
     const { data } = this.state;
-    const { allChallenges } = this.props;
+    const { allChallenges, uiColor } = this.props;
     // TODO: img
     const { title, tags, img, description, media, challenge } = data;
+    const onClose = () => {
+      this.setState({ dialog: null });
+    };
     switch (modalTitle) {
       case 'Title':
         return (
-          <div className="form-group">
-            <input
-              onChange={e => this.setFieldState({ title: e.target.value })}
-              style={{ width: '100%' }}
-              defaultValue={title}
-            />
-          </div>
+          <ModalBody footer={<FooterBtn onClick={onClose} />}>
+            <div className="form-group">
+              <input
+                onChange={e => this.setFieldState({ title: e.target.value })}
+                style={{ width: '100%' }}
+                defaultValue={title}
+              />
+            </div>
+          </ModalBody>
         );
       case 'Tags':
         return (
-          <TagInput
-            tags={tags}
-            onSubmit={newTags => this.setFieldState({ tags: newTags })}
-          />
+          <ModalBody footer={<FooterBtn onClick={onClose} />}>
+            <TagInput
+              tags={tags}
+              onSubmit={newTags => this.setFieldState({ tags: newTags })}
+            />
+          </ModalBody>
         );
       case 'Photo':
         return (
-          <PhotoUpload
-            onChange={imgFiles => {
-              this.setFieldState({ img: imgFiles, dialog: null });
-            }}
-          />
+          <ModalBody footer={<FooterBtn onClick={onClose} />}>
+            <PhotoUpload
+              uiColor={uiColor}
+              defaultPhoto={data.img}
+              onChange={imgFiles => {
+                this.setFieldState({ img: imgFiles, dialog: null });
+              }}
+            />
+          </ModalBody>
         );
       case 'Description':
         return (
-          <div className="form-group">
-            <textarea
-              onChange={e =>
-                this.setFieldState({
-                  description: e.target.value || null
-                })
-              }
-              rows={5}
-              style={{ width: '100%' }}
-              placeholder={'<Please insert your description>'}
-            >
-              {description}
-            </textarea>
-          </div>
+          <ModalBody footer={<FooterBtn onClick={onClose} />}>
+            <div className="form-group">
+              <textarea
+                onChange={e =>
+                  this.setFieldState({
+                    description: e.target.value || null
+                  })
+                }
+                rows={5}
+                style={{ width: '100%' }}
+                placeholder={'<Please insert your description>'}
+              >
+                {description}
+              </textarea>
+            </div>
+          </ModalBody>
         );
       case 'Media':
         return (
-          <MediaSearch
-            selectedMedia={media}
-            onChange={mediaItems => {
-              console.log('change media');
-              this.setFieldState({ media: mediaItems });
-            }}
-          />
+          <ModalBody footer={<FooterBtn onClick={onClose} />}>
+            <MediaSearch
+              selectedMedia={media}
+              onChange={mediaItems => {
+                this.setFieldState({ media: mediaItems });
+              }}
+            />
+          </ModalBody>
         );
       case 'Challenge':
         return (
-          <ChallengeAuthor
+          <ChallengeAuthorModalBody
             onChange={ch => {
-              // console.log('challenge change');
               this.setFieldState({ challenge: ch });
             }}
-            data={[]}
           />
         );
       default:
@@ -333,13 +403,7 @@ class EditCardFront extends PureComponent {
             uiColor={uiColor}
             background={background}
           >
-            <ModalBody
-              onSubmit={() => {
-                this.setState({ dialog: null });
-              }}
-            >
-              {this.modalWriteContent(dialogTitle)}
-            </ModalBody>
+            {this.modalWriteContent(dialogTitle)}
           </Modal>
           <div className={cardLayout}>
             <div style={{ position: 'relative' }}>

@@ -133,28 +133,7 @@ const Iframe = ({ title, url, onClick, edit, style }) => (
       // border: '10px tomato solid'
     }}
   >
-    {edit && (
-      <button
-        onClick={onClick}
-        className="btn-danger"
-        style={{
-          // background: 'white',
-          border: 0,
-          paddingLeft: '5px',
-          paddingRight: '5px',
-          paddingTop: '5px',
-          paddingBottom: '1px',
-          position: 'absolute',
-          zIndex: 1000,
-          right: 8,
-          top: 10
-        }}
-      >
-        <i className="fa fa-2x fa-window-close" style={{ color: 'black' }} />
-      </button>
-    )}
-    <div className={fullDim} style={{ position: 'relative' }}>
-      <div className={fullDim} style={{ position: 'absolute' }} />
+    <div className={fullDim} style={{ position: 'absolute' }}>
       <iframe
         title={title}
         type="text/html"
@@ -224,11 +203,11 @@ const ThumbNailSwitchDetail = ({
   descr,
   url,
   onClick
-}) => {
-  if (selected && (type === 'video' || type === 'gif'))
-    return (
-      <Iframe edit url={url} title={title} descr={descr} onClick={onClick} />
-    );
+}) => (
+  // if (selected && (type === 'video' || type === 'gif'))
+  //   return (
+  //     <Iframe edit url={url} title={title} descr={descr} onClick={onClick} />
+  //   );
 
   // if (type === 'challenge')
   //   return (
@@ -237,55 +216,53 @@ const ThumbNailSwitchDetail = ({
   //     </div>
   //   );
 
-  return (
-    <div
-      onClick={onClick}
-      className={fullDim}
-      style={{
-        overflow: 'hidden',
-        backgroundImage: thumbnail !== null && `url('${thumbnail}')`,
-        backgroundRepeat: thumbnail !== null && 'no-repeat',
-        backgroundSize: thumbnail !== null && '100% 100%'
-      }}
-    >
-      {thumbnail ? (
-        <div
-          className="mt-1 ml-1 p-1"
+  <div
+    onClick={onClick}
+    className={fullDim}
+    style={{
+      overflow: 'hidden',
+      backgroundImage: thumbnail !== null && `url('${thumbnail}')`,
+      backgroundRepeat: thumbnail !== null && 'no-repeat',
+      backgroundSize: thumbnail !== null && '100% 100%'
+    }}
+  >
+    {thumbnail ? (
+      <div
+        className="mt-1 ml-1 p-1"
+        style={{
+          fontSize: '18px',
+          overflow: 'hidden',
+          zIndex: 2
+        }}
+      >
+        <span
           style={{
-            fontSize: '18px',
-            overflow: 'hidden',
-            zIndex: 2
+            background: 'whitesmoke'
           }}
         >
-          <span
-            style={{
-              background: 'whitesmoke'
-            }}
-          >
-            {selected ? <a href={url}>{title} </a> : title}
-          </span>
-          <div>
-            <small style={{ background: 'whitesmoke' }}>{url}</small>
-          </div>
+          {selected ? <a href={url}>{title} </a> : title}
+        </span>
+        <div>
+          <small style={{ background: 'whitesmoke' }}>{url}</small>
         </div>
-      ) : (
-        <div
-          style={{
-            position: 'relative',
-            width: '100%',
-            height: '100%'
-          }}
-        >
-          <div style={{ fontSize: '18px' }}>
-            <a href={url}>{title} </a>
-          </div>
-          <small>{url}</small>
-          <p>{descr}</p>
+      </div>
+    ) : (
+      <div
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: '100%'
+        }}
+      >
+        <div style={{ fontSize: '18px' }}>
+          <a href={url}>{title} </a>
         </div>
-      )}
-    </div>
-  );
-};
+        <small>{url}</small>
+        <p>{descr}</p>
+      </div>
+    )}
+  </div>
+);
 
 ThumbNailSwitchDetail.propTypes = {
   className: PropTypes.string

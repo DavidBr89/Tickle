@@ -4,7 +4,7 @@ import MapGL from 'react-map-gl';
 
 import { scaleOrdinal } from 'd3';
 
-import { Wrapper } from '../utils';
+import { DimWrapper } from '../utils';
 import MapAreaRadius from '../utils/map-layers/MapAreaRadius';
 import CardMarker from './CardMarker';
 import { DivOverlay, UserOverlay } from '../utils/map-layers/DivOverlay';
@@ -156,7 +156,7 @@ class MapAreaControl extends Component {
     });
 
     return (
-      <Wrapper extended={extended}>
+      <DimWrapper extended={extended}>
         {(width, height) => (
           <div
             style={{
@@ -225,7 +225,7 @@ class MapAreaControl extends Component {
             </MapGL>
           </div>
         )}
-      </Wrapper>
+      </DimWrapper>
     );
   }
 }

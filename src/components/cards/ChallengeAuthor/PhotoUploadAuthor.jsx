@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 
 import { createShadowStyle, UIthemeContext } from 'Cards/styles';
 
+import PhotoUpload from 'Utils/PhotoUpload';
+
 function convertToImgSrc(fileList) {
   let file = null;
 
@@ -19,7 +21,7 @@ function convertToImgSrc(fileList) {
   return null;
 }
 
-class PhotoUpload extends Component {
+class PhotoChallengeAuthor extends Component {
   static propTypes = {
     className: PropTypes.string,
     styles: PropTypes.object,
@@ -36,25 +38,25 @@ class PhotoUpload extends Component {
   };
 
   state = {
-    imgSrc: null,
-    imgFiles: null
+    img: null,
+    description: ''
   };
 
   shouldComponentUpdate(nextProps, nextState) {
-    return this.state.imgSrc !== nextState.imgSrc;
+    return (
+      this.state.img !== nextState.img ||
+      this.state.description !== nextState.description
+    );
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { imgSrc, imgFiles } = this.state;
+    const { img, description } = this.state;
     const { onChange } = this.props;
-    if (prevState.imgSrc !== imgSrc) {
-      onChange({ type: 'photo', imgFiles, description: this.textarea.value });
-    }
+    onChange({ type: 'photo', img, description });
   }
 
   render() {
     const { className, placeholder, styles, onChange } = this.props;
-    const { imgSrc } = this.state;
     return (
       <UIthemeContext.Consumer>
         {({ uiColor }) => (
@@ -67,58 +69,17 @@ class PhotoUpload extends Component {
               <textarea
                 placeholder={placeholder}
                 ref={r => (this.textarea = r)}
+                onChange={e => {
+                  this.setState({ description: e.target.value });
+                }}
                 style={{ width: '100%', minHeight: 50, height: 50 }}
               />
             </div>
-            <div
-              style={{
-                overflow: 'hidden',
-                height: '80%'
-              }}
-            >
+            <div style={{ width: '100%', height: '100%' }}>
               <h4>Upload Image</h4>
-              {console.log('uiColor', uiColor)}
-              {imgSrc !== null ? (
-                <img
-                  src={imgSrc}
-                  style={{ width: '100%', height: '100%' }}
-                  alt="test"
-                />
-              ) : (
-                <div
-                  style={{
-                    // TODO: outsource
-                    // height: '100%',
-                    minHeight: 80,
-                    maxHeight: 300,
-                    border: `dashed 3px ${uiColor}`,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                  }}
-                >
-                  <h1
-                    className="pl-2 pr-2"
-                    style={{ background: uiColor, color: 'black' }}
-                  >
-                    {'No Image'}
-                  </h1>
-                </div>
-              )}
-            </div>
-            <div>
-              <input
-                className="mt-3 w-100"
-                style={{ border: `${uiColor} 1px solid` }}
-                type="file"
-                accept="image/*"
-                capture="environment"
-                onChange={e =>
-                  this.setState({
-                    imgSrc: convertToImgSrc(e.target.files),
-                    imgFiles: e.target.files
-                  })
-                }
+              <PhotoUpload
+                uiColor={uiColor}
+                onChange={img => this.setState({ img })}
               />
             </div>
           </div>
@@ -128,4 +89,4 @@ class PhotoUpload extends Component {
   }
 }
 
-export default PhotoUpload;
+export default PhotoChallengeAuthor;

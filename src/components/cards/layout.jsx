@@ -5,9 +5,11 @@ import { WithContext as ReactTags } from 'react-tag-input';
 import { profileSrc, mediaScale, colorClass, colorScaleRandom } from './styles';
 // TODO: remove
 import { ModalBody } from '../utils/Modal';
-// import placeholderImg from './placeholder.png';
+// import placeholderImgSrc from './placeholder.png';
 
 import cx from './Card.scss';
+
+import placeholderImgSrc from './placeholder.png';
 
 const SearchIcon = ({ style, className }) => (
   <i
@@ -242,13 +244,14 @@ EditButton.propTypes = {
 
 EditButton.defaultProps = { style: {}, onClick: () => null, className: '' };
 
+
 const Img = ({ src, style }) => (
   <div
     className="mt-1 mb-1"
     style={{ border: '1px solid var(--black)', ...style }}
   >
     <img
-      src={src}
+      src={src && src !== '' && placeholderImgSrc}
       alt="Card img"
       style={{ width: '100%', height: '100%', maxHeight: '40vh' }}
     />

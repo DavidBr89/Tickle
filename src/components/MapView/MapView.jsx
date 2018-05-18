@@ -15,6 +15,8 @@ import { DragDropContextProvider } from 'react-dnd';
 import MapGL from 'react-map-gl';
 import * as d3 from 'd3';
 
+import WindowContext from 'Src/WindowContext';
+
 import { colorScale, cardTypeColorScale } from '../cards/styles';
 
 // import ReactTimeout from 'react-timeout';
@@ -446,314 +448,323 @@ class MapView extends PureComponent {
     // TODO: move to index.jsx
 
     return (
-      <div className="w-100 h-100">
-        <DragDropContextProvider backend={HTML5Backend}>
-          <div
-            className="w-100 h-100"
-            ref={cont => (this.cont = cont)}
-            style={{
-              position: 'relative'
-            }}
-          >
-            <DragLayer />
-            <nav
-              className="navbar navbar-light"
+      <WindowContext.Provider value={{ width, height }}>
+        <div className="w-100 h-100">
+          <DragDropContextProvider backend={HTML5Backend}>
+            <div
+              className="w-100 h-100"
+              ref={cont => (this.cont = cont)}
               style={{
-                zIndex: 4000
-                // filter: 'blur(10px)',
-
-                // display: 'flex'
+                position: 'relative'
               }}
             >
-              <button
-                style={{ background: 'whitesmoke' }}
-                className="navbar-toggler"
-                type="button"
-                data-toggle="collapse"
-                data-target="#submenu"
-                aria-controls="submenu"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-              >
-                <span className="navbar-toggler-icon" />
-              </button>
-              <input
-                className="btn"
-                placeholder="Search Cards"
-                type="text"
-                onChange={evt => filterCardsAction(evt.target.value)}
-                onFocus={() => toggleSearchAction(true)}
-                onBlur={() => toggleSearchAction(false)}
-                style={{
-                  background: 'whitesmoke',
-                  textAlign: 'left'
-                }}
-              />
-            </nav>
-
-            <div
-              className="collapse"
-              id="submenu"
-              style={{ position: 'relative', zIndex: 4000 }}
-            >
-              <div
-                className="p-3"
-                style={{ display: 'flex', flexDirection: 'column' }}
-              >
-                <button
-                  className="btn"
-                  style={{
-                    zIndex: 3000,
-                    background: tagListView ? 'whitesmoke' : null
-                  }}
-                  onClick={toggleTagListAction}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      zIndex: 3000,
-                      transform: 'rotate(90deg)'
-                    }}
-                  >
-                    <Icon.BarChart size={30} />
-                  </div>
-                </button>
-                <button
-                  className="mt-3 btn"
-                  style={{
-                    // position: 'absolute',
-                    zIndex: 3000,
-                    background: gridView ? 'whitesmoke' : null
-                  }}
-                  onClick={toggleGridAction}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <div>{'Card grid'}</div>
-                    <Icon.Grid className="ml-1" size={30} />
-                  </div>
-                </button>
-                <button
-                  className="mt-3 btn"
-                  style={{
-                    // position: 'absolute',
-                    zIndex: 3000,
-                    background: gridView ? 'whitesmoke' : null
-                  }}
-                  onClick={() => {
-                    !this.fullscreen
-                      ? launchIntoFullscreen(this.cont)
-                      : exitFullscreen(this.cont);
-                    this.fullscreen = !this.fullscreen;
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <div>{'Full screen'}</div>
-                    <Icon.Monitor className="ml-1" size={20} />
-                  </div>
-                </button>
-                <button
-                  className="mt-3 btn"
-                  style={{
-                    // position: 'absolute',
-                    zIndex: 3000,
-                    background: gridView ? 'whitesmoke' : null
-                  }}
-                  onClick={toggleCardAuthoringAction}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <div>{'Author Cards'}</div>
-                    <div className="ml-1">
-                      <Icon.Clipboard size={20} />
-                    </div>
-                  </div>
-                </button>
-              </div>
-            </div>
-
-            <div className="w-100 h-100">
               <DragLayer />
-              <Modal
-                visible={cardChallengeOpen}
-                onClose={() =>
-                  toggleCardChallengeAction({ cardChallengeOpen: false })
-                }
+              <nav
+                className="navbar navbar-light"
+                style={{
+                  zIndex: 4000
+                  // filter: 'blur(10px)',
+
+                  // display: 'flex'
+                }}
               >
-                <ModalBody>
-                  <PhotoChallenge />
-                </ModalBody>
-              </Modal>
+                <button
+                  style={{ background: 'whitesmoke' }}
+                  className="navbar-toggler"
+                  type="button"
+                  data-toggle="collapse"
+                  data-target="#submenu"
+                  aria-controls="submenu"
+                  aria-expanded="false"
+                  aria-label="Toggle navigation"
+                >
+                  <span className="navbar-toggler-icon" />
+                </button>
+                <input
+                  className="btn"
+                  placeholder="Search Cards"
+                  type="text"
+                  onChange={evt => filterCardsAction(evt.target.value)}
+                  onFocus={() => toggleSearchAction(true)}
+                  onBlur={() => toggleSearchAction(false)}
+                  style={{
+                    background: 'whitesmoke',
+                    textAlign: 'left'
+                  }}
+                />
+              </nav>
 
               <div
-                style={{
-                  position: 'absolute',
-                  left: 0,
-                  top: 0,
-                  filter: tsneView && 'blur(4px)'
-                }}
-              />
-              <div
-                className="w-100"
-                style={{
-                  opacity: gridView ? 1 : 0,
-                  display: !gridView ? 'none' : null,
-                  transition: 'opacity 0.5s',
-                  height: '25%'
-                }}
+                className="collapse"
+                id="submenu"
+                style={{ position: 'relative', zIndex: 4000 }}
               >
-                <Accordion
-                  data={cards}
-                  className="ml-1 mr-2"
-                  duration={600}
-                  centered={selectedCardId !== null}
-                  selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
-                  width={100}
-                  height={100}
-                  unit={'%'}
-                  slotSize={100 / 3.5}
-                  style={{
-                    // width: '100%',
-                    zIndex: 2000,
-                    marginTop: 30
-                  }}
+                <div
+                  className="p-3"
+                  style={{ display: 'flex', flexDirection: 'column' }}
                 >
-                  {d => (
+                  <button
+                    className="btn"
+                    style={{
+                      zIndex: 3000,
+                      background: tagListView ? 'whitesmoke' : null
+                    }}
+                    onClick={toggleTagListAction}
+                  >
                     <div
-                      className="w-100 h-100"
-                      key={d.id}
                       style={{
                         display: 'flex',
-                        justifyContent: 'center'
-                        // border: 'black 5px solid'
-                        // pointerEvents: 'none'
+                        justifyContent: 'center',
+                        zIndex: 3000,
+                        transform: 'rotate(90deg)'
                       }}
                     >
-                      <DragSourceCont dragHandler={dragCardAction} data={d}>
-                        <div style={{ width: '100%', height: '100%' }}>
-                          <PreviewCard
-                            {...d}
-                            onClick={() =>
-                              selectedCardId === d.id
-                                ? extCardAction(d.id)
-                                : selectCardAction(d.id)
-                            }
-                            tagColorScale={tagColorScale}
-                            key={d.id}
-                            edit={d.template}
-                            selected={selectedCardId === d.id}
-                            style={{
-                              transition: `transform 1s`,
-                              transform: selectedCardId === d.id && 'scale(1.2)'
-                              // width: '100%',
-                              // height: '100%',
-                              // width: '100%'
-                              // maxWidth: '200px'
-                            }}
-                          />
-                        </div>
-                      </DragSourceCont>
+                      <Icon.BarChart size={30} />
                     </div>
-                  )}
-                </Accordion>
-              </div>
-              {selectedCardId === 'temp' && <DragAndDropScreen />}
-              <DropTargetCont
-                dropHandler={
-                  selectedCardId === 'temp'
-                    ? createCardAction
-                    : updateCardAction
-                }
-                dragged={isCardDragging}
-                style={{
-                  // width: '100%',
-                  // height: '100%',
-                  // position: 'relative',
-                  // background: 'white',
-                  zIndex: 1000
-                }}
-              >
-                <ForceOverlay
-                  delay={1}
-                  width={width}
-                  height={height}
-                  force
-                  data={cards}
-                  sets={cardSets}
-                  selectedCardId={selectedCardId}
-                  extCardId={extCardId}
-                  userLocation={userLocation}
-                  mode={!tsneView ? 'geo' : 'som'}
-                  labels={!gridView}
-                  onMapViewportChange={changeMapViewportAction}
-                  padding={{
-                    bottom: !gridView && !tagListView ? height * 1 / 6 : 50,
-                    top:
-                      gridView || tagListView
-                        ? height * 1 / 1.7
-                        : height * 1 / 6,
-                    left: 70,
-                    right: 70
-                  }}
-                  colorScale={tagColorScale}
-                >
-                  {({ x, y, ...c }) => (
-                    <ExtendableMarker
-                      style={{
-                        //TODO
-                        // display: extCardId !== c.id && c.template && 'none'
-                      }}
-                      key={c.id}
-                      width={extCardId === c.id ? width : 25}
-                      height={extCardId === c.id ? height : 30}
-                      x={extCardId === c.id ? width / 2 : x}
-                      y={extCardId === c.id ? height / 2 : y}
-                      extended={extCardId === c.id}
-                      preview={
-                        <DragSourceCont
-                          dragHandler={dragCardAction}
-                          data={c}
-                          x={x}
-                          y={y}
-                        >
-                          <PreviewMarker
-                            selected={selectedCardId === c.id}
-                            color={'whitesmoke'}
-                          />
-                        </DragSourceCont>
-                      }
-                    >
-                      <Card
-                        {...c}
-                        onClose={() => extCardAction(null)}
-                        edit={authEnv}
-                        onCollect={() =>
-                          toggleCardChallengeAction({ cardChallengeOpen: true })
-                        }
-                        tagColorScale={tagColorScale}
-                        onUpdate={d => updateCardAction({ ...d, x, y })}
-                        style={{ zIndex: 4000 }}
-                      />
-                    </ExtendableMarker>
-                  )}
-                </ForceOverlay>
-              </DropTargetCont>
-              <button
-                className="fixed-bottom-right btn m-3"
-                style={{
-                  // position: 'absolute',
-                  zIndex: 1000,
-                  background: tsneView && 'whitesmoke'
-                }}
-                onClick={toggleTsneViewAction}
-              >
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <Icon.Eye size={30} />
+                  </button>
+                  <button
+                    className="mt-3 btn"
+                    style={{
+                      // position: 'absolute',
+                      zIndex: 3000,
+                      background: gridView ? 'whitesmoke' : null
+                    }}
+                    onClick={toggleGridAction}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <div>{'Card grid'}</div>
+                      <Icon.Grid className="ml-1" size={30} />
+                    </div>
+                  </button>
+                  <button
+                    className="mt-3 btn"
+                    style={{
+                      // position: 'absolute',
+                      zIndex: 3000,
+                      background: gridView ? 'whitesmoke' : null
+                    }}
+                    onClick={() => {
+                      !this.fullscreen
+                        ? launchIntoFullscreen(this.cont)
+                        : exitFullscreen(this.cont);
+                      this.fullscreen = !this.fullscreen;
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <div>{'Full screen'}</div>
+                      <Icon.Monitor className="ml-1" size={20} />
+                    </div>
+                  </button>
+                  <button
+                    className="mt-3 btn"
+                    style={{
+                      // position: 'absolute',
+                      zIndex: 3000,
+                      background: gridView ? 'whitesmoke' : null
+                    }}
+                    onClick={toggleCardAuthoringAction}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <div>{'Author Cards'}</div>
+                      <div className="ml-1">
+                        <Icon.Clipboard size={20} />
+                      </div>
+                    </div>
+                  </button>
                 </div>
-              </button>
+              </div>
+
+              <div className="w-100 h-100">
+                <DragLayer />
+                <Modal
+                  visible={cardChallengeOpen}
+                  onClose={() =>
+                    toggleCardChallengeAction({ cardChallengeOpen: false })
+                  }
+                >
+                  <ModalBody>
+                    <PhotoChallenge />
+                  </ModalBody>
+                </Modal>
+
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    filter: tsneView && 'blur(4px)'
+                  }}
+                />
+                <div
+                  className="w-100"
+                  style={{
+                    opacity: gridView ? 1 : 0,
+                    display: !gridView ? 'none' : null,
+                    transition: 'opacity 0.5s',
+                    height: '25%'
+                  }}
+                >
+                  <Accordion
+                    data={cards}
+                    className="ml-1 mr-2"
+                    duration={600}
+                    centered={selectedCardId !== null}
+                    selectedIndex={cards.findIndex(
+                      c => c.id === selectedCardId
+                    )}
+                    width={100}
+                    height={100}
+                    unit={'%'}
+                    slotSize={100 / 3.5}
+                    style={{
+                      // width: '100%',
+                      zIndex: 2000,
+                      marginTop: 30
+                    }}
+                  >
+                    {d => (
+                      <div
+                        className="w-100 h-100"
+                        key={d.id}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'center'
+                          // border: 'black 5px solid'
+                          // pointerEvents: 'none'
+                        }}
+                      >
+                        <DragSourceCont dragHandler={dragCardAction} data={d}>
+                          <div style={{ width: '100%', height: '100%' }}>
+                            <PreviewCard
+                              {...d}
+                              onClick={() =>
+                                selectedCardId === d.id
+                                  ? extCardAction(d.id)
+                                  : selectCardAction(d.id)
+                              }
+                              tagColorScale={tagColorScale}
+                              key={d.id}
+                              edit={d.template}
+                              selected={selectedCardId === d.id}
+                              style={{
+                                transition: `transform 1s`,
+                                transform:
+                                  selectedCardId === d.id && 'scale(1.2)'
+                                // width: '100%',
+                                // height: '100%',
+                                // width: '100%'
+                                // maxWidth: '200px'
+                              }}
+                            />
+                          </div>
+                        </DragSourceCont>
+                      </div>
+                    )}
+                  </Accordion>
+                </div>
+                {selectedCardId === 'temp' && <DragAndDropScreen />}
+                <DropTargetCont
+                  dropHandler={
+                    selectedCardId === 'temp'
+                      ? createCardAction
+                      : updateCardAction
+                  }
+                  dragged={isCardDragging}
+                  style={{
+                    // width: '100%',
+                    // height: '100%',
+                    // position: 'relative',
+                    // background: 'white',
+                    zIndex: 1000
+                  }}
+                >
+                  <ForceOverlay
+                    delay={1}
+                    width={width}
+                    height={height}
+                    force
+                    data={cards}
+                    sets={cardSets}
+                    selectedCardId={selectedCardId}
+                    extCardId={extCardId}
+                    userLocation={userLocation}
+                    mode={!tsneView ? 'geo' : 'som'}
+                    labels={!gridView}
+                    onMapViewportChange={changeMapViewportAction}
+                    padding={{
+                      bottom: !gridView && !tagListView ? height * 1 / 6 : 50,
+                      top:
+                        gridView || tagListView
+                          ? height * 1 / 1.7
+                          : height * 1 / 6,
+                      left: 70,
+                      right: 70
+                    }}
+                    colorScale={tagColorScale}
+                  >
+                    {({ x, y, ...c }) => (
+                      <ExtendableMarker
+                        style={
+                          {
+                            // TODO
+                            // display: extCardId !== c.id && c.template && 'none'
+                          }
+                        }
+                        key={c.id}
+                        width={extCardId === c.id ? width : 25}
+                        height={extCardId === c.id ? height : 30}
+                        x={extCardId === c.id ? width / 2 : x}
+                        y={extCardId === c.id ? height / 2 : y}
+                        extended={extCardId === c.id}
+                        preview={
+                          <DragSourceCont
+                            dragHandler={dragCardAction}
+                            data={c}
+                            x={x}
+                            y={y}
+                          >
+                            <PreviewMarker
+                              selected={selectedCardId === c.id}
+                              color={'whitesmoke'}
+                            />
+                          </DragSourceCont>
+                        }
+                      >
+                        <Card
+                          {...c}
+                          onClose={() => extCardAction(null)}
+                          edit={authEnv}
+                          onCollect={() =>
+                            toggleCardChallengeAction({
+                              cardChallengeOpen: true
+                            })
+                          }
+                          tagColorScale={tagColorScale}
+                          onUpdate={d => updateCardAction({ ...d, x, y })}
+                          style={{ zIndex: 4000 }}
+                        />
+                      </ExtendableMarker>
+                    )}
+                  </ForceOverlay>
+                </DropTargetCont>
+                <button
+                  className="fixed-bottom-right btn m-3"
+                  style={{
+                    // position: 'absolute',
+                    zIndex: 1000,
+                    background: tsneView && 'whitesmoke'
+                  }}
+                  onClick={toggleTsneViewAction}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Icon.Eye size={30} />
+                  </div>
+                </button>
+              </div>
             </div>
-          </div>
-        </DragDropContextProvider>
-      </div>
+          </DragDropContextProvider>
+        </div>
+      </WindowContext.Provider>
     );
   }
 }
