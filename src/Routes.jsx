@@ -7,6 +7,11 @@ import { createStore, applyMiddleware } from 'redux';
 import { createLogger } from 'redux-logger';
 import { Provider } from 'react-redux';
 
+import SignUp from './components/SignUp';
+import SignIn from './components/SignIn';
+
+import * as routes from 'RoutePaths';
+
 import {
   // Router,
   Route,
@@ -178,6 +183,8 @@ const Routes = () => (
           </DefaultLayout>
         )}
       />
+      <Route exact path={routes.SIGN_UP} component={() => <SignUp />} />
+      <Route exact path={routes.SIGN_IN} component={() => <SignIn />} />
     </Switch>
   </HashRouter>
 );

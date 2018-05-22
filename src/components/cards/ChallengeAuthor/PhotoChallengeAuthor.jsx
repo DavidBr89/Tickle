@@ -26,7 +26,9 @@ class PhotoChallengeAuthor extends Component {
     className: PropTypes.string,
     styles: PropTypes.object,
     onChange: PropTypes.func,
-    placeholder: PropTypes.string
+    placeholder: PropTypes.string,
+    reset: PropTypes.bool,
+    defaultImg: PropTypes.bool
   };
 
   static defaultProps = {
@@ -34,7 +36,9 @@ class PhotoChallengeAuthor extends Component {
     styles: {},
     onChange: d => d,
     uiColor: 'grey',
-    placeholder: 'Add your description'
+    placeholder: 'Add your description',
+    reset: false,
+    defaultImg: null
   };
 
   state = {
@@ -45,8 +49,14 @@ class PhotoChallengeAuthor extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     return (
       this.state.img !== nextState.img ||
-      this.state.description !== nextState.description
+      this.state.description !== nextState.description ||
+      nextProps.reset
     );
+  }
+
+  static getDerivedStateFromProps(nextProps) {
+    if (nextProps.reset) return { description: null, img: null };
+    return null;
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -56,7 +66,7 @@ class PhotoChallengeAuthor extends Component {
   }
 
   render() {
-    const { className, placeholder, styles, onChange } = this.props;
+    const { className, placeholder, styles, onChange, defaultImg } = this.props;
     return (
       <UIthemeContext.Consumer>
         {({ uiColor }) => (
@@ -79,6 +89,7 @@ class PhotoChallengeAuthor extends Component {
               <h4>Upload Image</h4>
               <PhotoUpload
                 uiColor={uiColor}
+                defaultImg={defaultImg}
                 onChange={img => this.setState({ img })}
               />
             </div>

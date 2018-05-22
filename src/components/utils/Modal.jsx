@@ -18,99 +18,95 @@ const Modal = ({
   // background,
 }) =>
   ReactDOM.createPortal(
-    <WindowContext.Consumer>
-      {({ width, height }) => (
-        <div
-          style={{
-            width: '100%',
-            height: '100%',
-            // height: '90vh',
-            // overflow: 'hidden',
-            background: 'rgba(0, 0, 0, 0.5)',
-            opacity: visible ? 1 : 0,
-            transition: 'opacity 1s',
-            zIndex: visible ? '100000' : '-10',
-            left: 0,
-            top: 0,
-            position: 'absolute',
-            maxWidth: width,
-            maxHeight: height
-          }}
-        >
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        // height: '90vh',
+        // overflow: 'hidden',
+        background: 'rgba(0, 0, 0, 0.5)',
+        opacity: visible ? 1 : 0,
+        transition: 'opacity 1s',
+        zIndex: visible ? '100000' : '-10',
+        left: 0,
+        top: 0,
+        position: 'absolute'
+        // maxWidth: width,
+        // maxHeight: height
+      }}
+    >
+      <div
+        className="modal fade show"
+        tabIndex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+        style={{
+          opacity: visible ? 1 : 0,
+          display: visible ? 'block' : 'none',
+          width: '100%',
+          height: '100%',
+          ...style
+        }}
+      >
+        <div className="modal-dialog" role="document">
           <div
-            className="modal fade show"
-            tabIndex="-1"
-            role="dialog"
-            aria-labelledby="exampleModalLabel"
-            aria-hidden="true"
-            style={{
-              opacity: visible ? 1 : 0,
-              display: visible ? 'block' : 'none',
-              width: '100%',
-              height: '100%',
-              ...style
-            }}
+            className={`modal-content ${!title && 'pb-2 pt-2'}`}
+            style={
+              {
+                // TODO: why to check
+                // background:
+                //   uiColor &&
+                //   chroma(uiColor)
+                //     .brighten(1.6)
+                //     .desaturate(0.6)
+              }
+            }
           >
-            <div className="modal-dialog" role="document">
+            {title ? (
               <div
-                className={`modal-content ${!title && 'pb-2 pt-2'}`}
-                style={
-                  {
-                    // TODO: why to check
-                    // background:
-                    //   uiColor &&
-                    //   chroma(uiColor)
-                    //     .brighten(1.6)
-                    //     .desaturate(0.6)
-                  }
-                }
+                className="modal-header"
+                style={{ borderBottom: `1px solid ${uiColor}` }}
               >
-                {title ? (
-                  <div
-                    className="modal-header"
-                    style={{ borderBottom: `1px solid ${uiColor}` }}
-                  >
-                    <h3 className="modal-title" id="exampleModalLabel">
-                      {title}
-                    </h3>
-                    <button
-                      type="button"
-                      className="close"
-                      data-dismiss="modal"
-                      aria-label="Close"
-                      onClick={onClose}
-                    >
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                ) : (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      zIndex: '8000',
-                      right: 10,
-                      top: 10
-                    }}
-                  >
-                    <button
-                      type="button"
-                      className="close "
-                      style={{ width: '20px', height: '20px' }}
-                      data-dismiss="modal"
-                      aria-label="Close"
-                      onClick={onClose}
-                    >
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                )}
-                {children}
+                <h3 className="modal-title" id="exampleModalLabel">
+                  {title}
+                </h3>
+                <button
+                  type="button"
+                  className="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                  onClick={onClose}
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
               </div>
-            </div>
+            ) : (
+              <div
+                style={{
+                  position: 'absolute',
+                  zIndex: '8000',
+                  right: 10,
+                  top: 10
+                }}
+              >
+                <button
+                  type="button"
+                  className="close "
+                  style={{ width: '20px', height: '20px' }}
+                  data-dismiss="modal"
+                  aria-label="Close"
+                  onClick={onClose}
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            )}
+            {children}
           </div>
         </div>
-      )}
-    </WindowContext.Consumer>,
+      </div>
+    </div>,
     document.querySelector('body')
   );
 
@@ -146,7 +142,7 @@ const ModalBody = ({ children, footer, styles }) => (
       <div
         style={{
           width: '100%',
-          height: '100%',
+          // height: '90%',
           // TODO: outsource
           maxHeight: 800,
           // height: '100%',

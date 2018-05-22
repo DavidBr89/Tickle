@@ -119,10 +119,12 @@ module.exports = {
     extensions: ['.js', '.jsx'],
     alias: {
       // 'mapbox-gl$': path.resolve('./node_modules/mapbox-gl/dist/mapbox-gl.js')
-      src$: './src',
+      Src: path.resolve(__dirname, './src'),
       DummyData: path.resolve(__dirname, './src/DummyData.js'),
       Cards: path.resolve(__dirname, 'src/components/cards'),
-      DB: path.resolve(__dirname, 'src/db/firestore.js')
+      Firebase: path.resolve(__dirname, 'src/firebase/index.js'),
+      Utils: path.resolve(__dirname, 'src/components/utils'),
+      RoutePaths: path.resolve(__dirname, 'src/routePaths')
     }
   },
   module: {

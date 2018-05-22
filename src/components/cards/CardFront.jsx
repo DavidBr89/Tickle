@@ -8,9 +8,9 @@ import PhotoUpload from 'Utils/PhotoUpload';
 import { shallowEqualProps } from 'shallow-equal-props';
 
 import placeholderImg from './placeholder.png';
-import { Modal, ModalBody } from '../utils/Modal';
+import { Modal, ModalBody } from 'Utils/Modal';
 import { MediaSearch, MediaOverview } from './MediaSearch';
-import ChallengeAuthor from './ChallengeAuthor';
+import ChallengeAuthorModalBody from './ChallengeAuthor';
 import { cardLayout } from './styles';
 
 import {
@@ -20,6 +20,7 @@ import {
   DescriptionField,
   EditButton,
   Img,
+  ImgOverlay,
   TagInput,
   // Tags,
   // SmallPreviewTags,
@@ -48,7 +49,7 @@ const defaultProps = {
 const FooterBtn = ({ onClick, children, disabled, className, style = {} }) => (
   <button
     className={`${'btn '}${className}`}
-    style={{ ...style, lineHeight: 0 }}
+    style={{ ...style, fontWeight: 'bold' }}
     onClick={onClick}
     disabled={disabled}
   >
@@ -56,51 +57,7 @@ const FooterBtn = ({ onClick, children, disabled, className, style = {} }) => (
   </button>
 );
 
-class ChallengeAuthorModalBody extends Component {
-  static propTypes = {
-    children: PropTypes.node,
-    className: PropTypes.string,
-    onChange: PropTypes.func
-  };
-
-  state = { challenge: null, added: false };
-
-  componentDidUpdate(prevProps, prevState) {
-    const { challenge, added } = this.state;
-
-    if (added !== prevState.added)
-      this.props.onChange(!added ? challenge : null);
-    // this.props.onChange(null);
-  }
-
-  render() {
-    const { challenge, added } = this.state;
-    const btnClass = `${!added ? 'bg-success' : 'bg-danger'} ${challenge ===
-      null && 'disabled'}`;
-    return (
-      <ModalBody
-        footer={
-          <FooterBtn
-            disabled={challenge === null}
-            className={btnClass}
-            style={{ width: '20%' }}
-            onClick={() => {
-              this.setState({ added: !added });
-            }}
-          >
-            {added ? <Icon.Trash2 /> : <Icon.Plus />}
-          </FooterBtn>
-        }
-      >
-        <ChallengeAuthor
-          onChange={ch => {
-            this.setState({ challenge: ch });
-          }}
-        />
-      </ModalBody>
-    );
-  }
-}
+const coverPhotoStyle = { height: '50%', maxHeight: 400, width: '100%' };
 
 class ReadCardFront extends Component {
   static propTypes = {
@@ -150,8 +107,6 @@ class ReadCardFront extends Component {
         );
       case 'Challenge':
         return <div>challenge</div>;
-      case 'Photo':
-        return <div>Photo</div>;
       default:
         return <div>error</div>;
     }
@@ -185,18 +140,16 @@ class ReadCardFront extends Component {
           {this.modalReadContent(dialogTitle)}
         </Modal>
 
-        <div style={{ position: 'relative' }}>
-          <Img src={img} />
-          <div
-            className="m-2 "
-            style={{ position: 'absolute', zIndex: 200, left: 0, top: 0 }}
-          >
+        <ImgOverlay src={img} style={coverPhotoStyle}>
+          <div style={{ display: 'flex', width: '70%', maxWidth: '80%' }}>
             {/* TODO: fix width */}
-            <div style={{ display: 'flex', width: '70%', maxWidth: '80%' }}>
-              <PreviewTags colorScale={tagColorScale} data={tags} />
-            </div>
+            <PreviewTags
+              colorScale={tagColorScale}
+              uiColor={uiColor}
+              data={tags}
+            />
           </div>
-        </div>
+        </ImgOverlay>
         <DescriptionField
           style={{ maxHeight: '20%' }}
           text={description}
@@ -255,7 +208,6 @@ class EditCardFront extends PureComponent {
   componentDidUpdate(prevProps, prevState) {
     const prevData = prevState.data;
     const { data } = this.state;
-    console.log('didUpdate', data);
     // TODO: check the other attrs
     if (
       !shallowEqualProps(prevData, data) ||
@@ -279,16 +231,23 @@ class EditCardFront extends PureComponent {
 
   modalWriteContent(modalTitle) {
     const { data } = this.state;
-    const { allChallenges, uiColor } = this.props;
+    const {
+      /* allChallenges, */ uiColor,
+      challenge: defaultChallenge,
+      tagColorScale
+    } = this.props;
+
+    console.log('tagColorScale', tagColorScale);
     // TODO: img
-    const { title, tags, img, description, media, challenge } = data;
+    const { title, tags, img, description, media } = data;
     const onClose = () => {
       this.setState({ dialog: null });
     };
+    const closeBtn = <FooterBtn onClick={onClose}>{'Close'}</FooterBtn>;
     switch (modalTitle) {
       case 'Title':
         return (
-          <ModalBody footer={<FooterBtn onClick={onClose} />}>
+          <ModalBody footer={closeBtn}>
             <div className="form-group">
               <input
                 onChange={e => this.setFieldState({ title: e.target.value })}
@@ -300,28 +259,30 @@ class EditCardFront extends PureComponent {
         );
       case 'Tags':
         return (
-          <ModalBody footer={<FooterBtn onClick={onClose} />}>
+          <ModalBody footer={closeBtn}>
             <TagInput
               tags={tags}
-              onSubmit={newTags => this.setFieldState({ tags: newTags })}
+              colorScale={tagColorScale}
+              uiColor={uiColor}
+              onChange={newTags => this.setFieldState({ tags: newTags })}
             />
           </ModalBody>
         );
       case 'Photo':
         return (
-          <ModalBody footer={<FooterBtn onClick={onClose} />}>
+          <ModalBody footer={closeBtn}>
             <PhotoUpload
               uiColor={uiColor}
-              defaultPhoto={data.img}
-              onChange={imgFiles => {
-                this.setFieldState({ img: imgFiles, dialog: null });
+              defaultPhoto={img}
+              onChange={({ files, src }) => {
+                this.setFieldState({ img: { src, files }, dialog: null });
               }}
             />
           </ModalBody>
         );
       case 'Description':
         return (
-          <ModalBody footer={<FooterBtn onClick={onClose} />}>
+          <ModalBody footer={closeBtn}>
             <div className="form-group">
               <textarea
                 onChange={e =>
@@ -340,7 +301,7 @@ class EditCardFront extends PureComponent {
         );
       case 'Media':
         return (
-          <ModalBody footer={<FooterBtn onClick={onClose} />}>
+          <ModalBody footer={closeBtn}>
             <MediaSearch
               selectedMedia={media}
               onChange={mediaItems => {
@@ -352,7 +313,9 @@ class EditCardFront extends PureComponent {
       case 'Challenge':
         return (
           <ChallengeAuthorModalBody
+            defaultChallenge={defaultChallenge ? defaultChallenge.type : null}
             onChange={ch => {
+              console.log('onchange', ch);
               this.setFieldState({ challenge: ch });
             }}
           />
@@ -406,10 +369,29 @@ class EditCardFront extends PureComponent {
             {this.modalWriteContent(dialogTitle)}
           </Modal>
           <div className={cardLayout}>
-            <div style={{ position: 'relative' }}>
-              <Img src={img} />
+            <ImgOverlay
+              src={img.src}
+              style={coverPhotoStyle}
+              footer={
+                <EditButton
+                  style={{
+                    position: 'absolute',
+                    bottom: 5,
+                    right: 5,
+                    width: 40,
+                    height: 40,
+                    zIndex: 3000
+                  }}
+                  onClick={() => {
+                    this.setState({
+                      dialog: { title: 'Photo', data: tags }
+                    });
+                  }}
+                />
+              }
+            >
               <div
-                className="m-2 "
+                className="m-2"
                 style={{ position: 'absolute', zIndex: 200, left: 0, top: 0 }}
               >
                 <div style={{ display: 'flex' }}>
@@ -424,22 +406,8 @@ class EditCardFront extends PureComponent {
                   />
                 </div>
               </div>
-              <EditButton
-                style={{
-                  position: 'absolute',
-                  bottom: 5,
-                  right: 5,
-                  width: 40,
-                  height: 40,
-                  zIndex: 3000
-                }}
-                onClick={() => {
-                  this.setState({
-                    dialog: { title: 'Photo', data: tags }
-                  });
-                }}
-              />
-            </div>
+            </ImgOverlay>
+
             <DescriptionField
               style={{ maxHeight: '20%' }}
               text={description}
@@ -483,7 +451,6 @@ class EditCardFront extends PureComponent {
                       })
                     }
                   />
-
                   <FlipButton
                     color={uiColor}
                     onClick={flipHandler}

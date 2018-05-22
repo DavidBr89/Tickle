@@ -12,7 +12,7 @@ import { scaleLinear, extent, geoMercator } from 'd3';
 import { getBoundingBox } from './utils';
 import { intersection } from 'lodash';
 
-import firestore from 'DB';
+import { firestore } from 'Firebase';
 
 // import setBBox from './fitbounds';
 // import mapboxgl from 'mapbox-gl';

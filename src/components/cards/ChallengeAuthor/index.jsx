@@ -1,25 +1,45 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import * as Icon from 'react-feather';
 
 import { UIthemeContext, modalBorder, createShadowStyle } from 'Cards/styles'; // eslint-disable-line
-import PhotoUploadAuthor from './PhotoUploadAuthor';
-import LearningObject from './LearningObject';
+import PhotoChallengeAuthor from './PhotoChallengeAuthor';
+
+import { Modal, ModalBody } from 'Utils/Modal';
+
+// import LearningObject from './LearningObject';
 
 class Nav extends Component {
   static propTypes = {
-    children: PropTypes.func,
+    children: PropTypes.oneOf([PropTypes.func, PropTypes.node]),
     className: PropTypes.string,
-    data: PropTypes.array
+    data: PropTypes.array,
+    preSelected: PropTypes.string,
+    onChange: PropTypes.func
   };
 
   static defaultProps = {
     className: '',
-    data: ['PhotoUpload', 'hangman', 'learning Object'],
+    data: ['1', '2', '3'],
     uiColor: 'black',
-    children: d => d
+    children: d => d,
+    preSelected: 'PhotoUpload',
+    onChange: d => d
   };
 
-  state = { selected: this.props.data[0].key };
+  constructor(props) {
+    // TODO
+    super(props);
+    this.state = { selected: props.preSelected };
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { selected } = this.state;
+    if (selected !== prevState.selected) {
+      console.log('selected');
+      this.props.onChange(selected);
+    }
+  }
 
   render() {
     const { data, children } = this.props;
@@ -49,13 +69,13 @@ class Nav extends Component {
               }}
               role="tablist"
             >
-              {data.map(d => (
+              {data.map(key => (
                 <button
                   className="btn"
                   type="button"
-                  onClick={updState(d.key)}
+                  onClick={updState(key)}
                   style={btnStyle(selected, uiColor)}
-                  id={d.key}
+                  id={key}
                 >
                   <div
                     style={{
@@ -63,14 +83,16 @@ class Nav extends Component {
                       textOverflow: 'ellipsis'
                     }}
                   >
-                    {d.key}
+                    {key}
                   </div>
                 </button>
               ))}
             </div>
             <div className="tab-content">
               <div className={'w-100 h-100'} role="tabpanel">
-                {children(data.find(d => d.key === selected))}
+                {children instanceof Function
+                  ? children(data.find(key => key === selected))
+                  : children}
               </div>
             </div>
           </div>
@@ -80,13 +102,23 @@ class Nav extends Component {
   }
 }
 
+function TestComp({ children }) {
+  return (
+    <div style={{ background: 'gold' }}>
+      <div>{'test'}</div>
+      <div>{children}</div>
+    </div>
+  );
+}
+
 class ChallengeAuthor extends Component {
   static propTypes = {
     style: PropTypes.object,
     className: PropTypes.string,
     uiColor: PropTypes.string,
     onChange: PropTypes.func,
-    reset: PropTypes.bool
+    reset: PropTypes.bool,
+    defaultChallenge: PropTypes.oneOf([PropTypes.object, null])
   };
 
   static defaultProps = {
@@ -94,79 +126,143 @@ class ChallengeAuthor extends Component {
     className: '',
     uiColor: 'black',
     onChange: d => d,
-    reset: false
+    reset: false,
+    defaultChallenge: null,
+    challengeTypes: ['Photo Upload', 'Learning Object', 'Mini Game']
+  };
+
+  challengeMap = {
+    PhotoUpload: PhotoChallengeAuthor,
+    LearningObject: TestComp,
+    MiniGame: PhotoChallengeAuthor
   };
 
   state = {
-    selected: null,
-    challengeTypes: [
-      {
-        key: 'Photo Upload',
-        comp: <PhotoUploadAuthor onChange={this.props.onChange} />
-      },
-      { key: 'Learning Object', comp: <div>{'yeah'}</div> },
-      {
-        key: 'Mini Game',
-        comp: <PhotoUploadAuthor onChange={this.props.onChange} />
-      }
-    ]
+    selectedKey: this.props.defaultChallenge
+      ? this.props.defaultChallenge.type
+      : Object.keys(this.challengeMap)[0]
   };
 
-  componentWillReceiveProps(nextProps) {
-    const challengeTypes = [
-      {
-        key: 'Photo Upload',
-        comp: <PhotoUploadAuthor {...nextProps} />
-      },
-      { key: 'Learning Object', comp: <div>{'yeah'}</div> },
-      {
-        key: 'Mini Game',
-        comp: <PhotoUploadAuthor {...nextProps} />
-      }
-    ];
-
-    this.setState({ challengeTypes });
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.state.selectedKey !== nextState.selectedKey;
   }
+
+  // getDerivedStateFromProps(nextProps, prevState) {
+  //
+  // }
+  // componentWillReceiveProps(nextProps) {
+  //   this.setState({ challengeTypes });
+  // }
 
   render() {
     const { className, style } = this.props;
-    const { challengeTypes } = this.state;
+    const { selectedKey } = this.state;
+    const challengeKeys = Object.keys(this.challengeMap);
 
     return (
       <div
         className={className}
         style={{ width: '100%', height: '100%', minHeight: 300, ...style }}
       >
-        <Nav data={challengeTypes}>
-          {({ comp }) => (
-            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+        <Nav
+          data={challengeKeys}
+          preSelected={selectedKey}
+          onChange={key => this.setState({ selectedKey: key })}
+        >
+          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+            <div
+              className="p-2"
+              style={{
+                // width: selected === t.name ? '100%' : '20vh',
+                width: '100%',
+                // height: '100%',
+                maxHeight: 600
+                // minHeight: 400
+              }}
+            >
               <div
-                className="p-2"
-                style={{
-                  // width: selected === t.name ? '100%' : '20vh',
-                  width: '100%',
-                  // height: '100%',
-                  maxHeight: 600
-                  // minHeight: 400
-                }}
-              >
-                <div
-                  className="w-100 p-2"
-                  style={
-                    {
-                      // border: 'grey 1px solid',
-                    }
+                className="w-100 p-2"
+                style={
+                  {
+                    // border: 'grey 1px solid',
                   }
-                >
-                  {comp}
-                </div>
+                }
+              >
+                {React.createElement(
+                  this.challengeMap[selectedKey],
+                  this.props
+                )}
               </div>
             </div>
-          )}
+          </div>
         </Nav>
       </div>
     );
   }
 }
 
-export default ChallengeAuthor;
+const FooterBtn = ({ onClick, children, disabled, className, style = {} }) => (
+  <button
+    className={`${'btn '}${className}`}
+    style={{ ...style, lineHeight: 0 }}
+    onClick={onClick}
+    disabled={disabled}
+  >
+    {children}
+  </button>
+);
+
+class ChallengeAuthorModalBody extends Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string,
+    onChange: PropTypes.func
+  };
+
+  state = { challenge: null, added: false };
+
+  // componentDidUpdate(prevProps, prevState) {
+  //   const { challenge, added } = this.state;
+  //
+  //   if (added !== prevState.added)
+  //     this.props.onChange(added ? challenge : null);
+  //   // this.props.onChange(null);
+  // }
+
+  render() {
+    const { challenge, added } = this.state;
+    const btnClass = `btn ${challenge === null && 'disabled'}`;
+    const iconSize = { width: 30, height: 30 };
+    return (
+      <ModalBody
+        footer={
+          <button
+            disabled={challenge === null}
+            className={btnClass}
+            style={{ lineHeight: 0 }}
+            onClick={() => {
+              this.props.onChange(!added ? challenge : null);
+              this.setState({ added: !added });
+            }}
+          >
+            <div className="m-1">
+              {added ? (
+                <Icon.Lock {...iconSize} />
+              ) : (
+                <Icon.PlusSquare {...iconSize} />
+              )}
+            </div>
+          </button>
+        }
+      >
+        <ChallengeAuthor
+          onChange={ch => {
+            this.setState({ challenge: ch, added: false });
+          }}
+        />
+      </ModalBody>
+    );
+  }
+}
+
+export default ChallengeAuthorModalBody;

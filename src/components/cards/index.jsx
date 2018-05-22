@@ -68,7 +68,8 @@ class Card extends React.Component {
         radius: PropTypes.number
       })
     ]),
-    author: PropTypes.object
+    author: PropTypes.object,
+    tagColorScale: PropTypes.func
   };
 
   static defaultProps = {
@@ -76,7 +77,7 @@ class Card extends React.Component {
     tags: null,
     description: null,
     // TODO: remove
-    challenge: { type: 'hangman' },
+    challenge: null,
     type: null,
     loc: {
       longitude: 0,
@@ -89,7 +90,7 @@ class Card extends React.Component {
     edit: false,
     onCollect: d => d,
     onUpdate: d => d,
-    type: null
+    tagColorScale: () => 'gold'
   };
 
   constructor(props) {
@@ -100,7 +101,14 @@ class Card extends React.Component {
   }
 
   render() {
-    const { style, edit, challenge, onUpdate, type } = this.props;
+    const {
+      style,
+      edit,
+      challenge,
+      onUpdate,
+      type,
+      tagColorScale
+    } = this.props;
     const { frontView } = this.state;
     // const { onClose } = this.props;
     const sideToggler = frontView ? cx.flipAnim : null;
@@ -126,6 +134,7 @@ class Card extends React.Component {
             background={background}
             flipHandler={flipHandler}
             uiColor={uiColor}
+            tagColorScale={tagColorScale}
             {...updateAttrFunc}
           />
         );
@@ -137,6 +146,7 @@ class Card extends React.Component {
           uiColor={uiColor}
           onCollect={onCollect}
           flipHandler={flipHandler}
+          tagColorScale={tagColorScale}
           setMapRadius={mapRadius => {
             onUpdate({ ...this.props, mapRadius });
           }}

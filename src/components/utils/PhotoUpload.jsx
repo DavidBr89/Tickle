@@ -27,7 +27,7 @@ class PhotoUpload extends Component {
     styles: PropTypes.object,
     onChange: PropTypes.func,
     placeholder: PropTypes.string,
-    defaultPhoto: PropTypes.any
+    defaultImg: PropTypes.any
   };
 
   static defaultProps = {
@@ -36,7 +36,7 @@ class PhotoUpload extends Component {
     onChange: d => d,
     uiColor: 'grey',
     placeholder: 'Add your description',
-    defaultPhoto: null
+    defaultImg: null
   };
 
   state = {
@@ -47,7 +47,7 @@ class PhotoUpload extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     return (
       this.state.imgSrc !== nextState.imgSrc ||
-      this.props.defaultPhoto !== nextProps.defaultPhoto
+      this.props.defaultImg !== nextProps.defaultImg
     );
   }
 
@@ -56,7 +56,7 @@ class PhotoUpload extends Component {
     const { onChange } = this.props;
     console.log('imgFiles', imgFiles);
     if (prevState.imgSrc !== imgSrc) {
-      onChange(imgFiles);
+      onChange({ src: imgSrc, files: imgFiles });
     }
   }
 
@@ -69,7 +69,7 @@ class PhotoUpload extends Component {
       styles,
       onChange,
       uiColor,
-      defaultPhoto
+      defaultImg
     } = this.props;
     const { imgSrc } = this.state;
     return (
@@ -95,7 +95,7 @@ class PhotoUpload extends Component {
               alignItems: 'center'
             }}
           >
-            {defaultPhoto !== null ? (
+            {imgSrc !== null ? (
               <div
                 style={{
                   overflow: 'hidden',
@@ -104,7 +104,7 @@ class PhotoUpload extends Component {
                 }}
               >
                 <img
-                  src={imgSrc || convertToImgSrc(defaultPhoto)}
+                  src={imgSrc || convertToImgSrc(defaultImg)}
                   width={'100%'}
                   height={this.contHeight}
                   alt="test"

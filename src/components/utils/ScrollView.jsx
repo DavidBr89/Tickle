@@ -59,11 +59,9 @@ class ScrollConsumer extends Component {
   };
 
   componentDidMount() {
-    console.log('props name', this.props.name);
     this.props.register(this.props.name, this);
   }
   componentWillReceiveProps(nextProps) {
-    console.log('nextProps', nextProps.name);
     this.props.register(nextProps.name, this);
   }
   componentWillUnmount() {

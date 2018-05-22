@@ -1,7 +1,11 @@
 import fetch from 'cross-fetch';
 import * as d3 from 'd3';
 
-import { receivePlaces, receiveCards, receiveAuthoredCards} from './components/MapView/actions';
+import {
+  receivePlaces,
+  receiveCards,
+  receiveAuthoredCards
+} from './components/MapView/actions';
 
 import NearbyPlaces from './places.json';
 
@@ -10,7 +14,7 @@ import {
   PerspectiveMercatorViewport
 } from 'viewport-mercator-project';
 
-import firestore from 'DB';
+import { firestore } from 'Firebase';
 
 import gapi from './gapi';
 // export const REQUEST_CHALLENGES = 'REQUEST_CHALLENGES';

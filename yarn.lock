@@ -4224,6 +4224,18 @@ find-up@^2.0.0, find-up@^2.1.0:
   dependencies:
     locate-path "^2.0.0"
 
+firebase-auth@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/firebase-auth/-/firebase-auth-0.1.2.tgz#de62ff456f649275fc4377e57e7e57bf1dc653e4"
+  dependencies:
+    firebase "^2.3.0"
+    firebase-token-generator "^2.0.0"
+    q "^1.4.1"
+
+firebase-token-generator@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/firebase-token-generator/-/firebase-token-generator-2.0.0.tgz#9767d759ec13abdc99ba115fd5ea99d8b93d1206"
+
 firebase-tools@^3.18.4:
   version "3.18.4"
   resolved "https://registry.yarnpkg.com/firebase-tools/-/firebase-tools-3.18.4.tgz#49fb40e1e1a7c977921b7b3ece12da8cdb139550"
@@ -4269,7 +4281,7 @@ firebase-tools@^3.18.4:
   optionalDependencies:
     "@google-cloud/functions-emulator" "^1.0.0-beta.4"
 
-firebase@2.x.x:
+firebase@2.x.x, firebase@^2.3.0:
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/firebase/-/firebase-2.4.2.tgz#4e1119ec0396ca561d8a7acbff1630feac6c0a31"
   dependencies:
@@ -8243,7 +8255,7 @@ pusher-js@^4.0.0:
     faye-websocket "0.9.4"
     xmlhttprequest "^1.8.0"
 
-q@^1.1.2:
+q@^1.1.2, q@^1.4.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
 

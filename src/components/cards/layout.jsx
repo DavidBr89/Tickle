@@ -244,16 +244,20 @@ EditButton.propTypes = {
 
 EditButton.defaultProps = { style: {}, onClick: () => null, className: '' };
 
-
 const Img = ({ src, style }) => (
   <div
     className="mt-1 mb-1"
-    style={{ border: '1px solid var(--black)', ...style }}
+    style={{
+      border: '1px solid var(--black)',
+      width: '100%',
+      height: '100%',
+      ...style
+    }}
   >
     <img
-      src={src && src !== '' && placeholderImgSrc}
+      src={src || placeholderImgSrc}
       alt="Card img"
-      style={{ width: '100%', height: '100%', maxHeight: '40vh' }}
+      style={{ width: '100%', height: '100%', overflow: 'hidden', ...style }}
     />
   </div>
 );
@@ -263,15 +267,43 @@ Img.propTypes = {
   style: {}
 };
 
-Img.defaultProps = { src: '', style: {} };
+Img.defaultProps = { src: null, style: {} };
 
-class MyTags extends Component {
+export const ImgOverlay = ({ src, style, children, footer }) => (
+  <div style={{ position: 'relative', ...style }}>
+    <Img src={src} />
+    <div
+      className="m-2 "
+      style={{ position: 'absolute', zIndex: 200, left: 0, top: 0 }}
+    >
+      {children}
+    </div>
+    {footer}
+  </div>
+);
+
+ImgOverlay.propTypes = {
+  src: PropTypes.string,
+  style: PropTypes.object,
+  children: PropTypes.node,
+  footer: PropTypes.node
+};
+
+ImgOverlay.defaultProps = {
+  src: placeholderImgSrc,
+  style: {},
+  children: null,
+  footer: null
+};
+
+class TagList extends Component {
   static propTypes = {
     className: PropTypes.string,
     handleDelete: PropTypes.func,
     handleAddition: PropTypes.func,
     data: PropTypes.array,
-    uiColor: PropTypes.string
+    uiColor: PropTypes.string,
+    colorScale: PropTypes.func
   };
 
   static defaultProps = {
@@ -279,7 +311,8 @@ class MyTags extends Component {
     handleDelete: d => d,
     handleAddition: d => d,
     data: [],
-    uiColor: 'black'
+    uiColor: 'black',
+    colorScale: () => 'gold'
   };
 
   constructor(props) {
@@ -295,6 +328,7 @@ class MyTags extends Component {
     const {
       data,
       uiColor,
+      colorScale,
       handleDelete,
       handleAddition,
       className
@@ -317,7 +351,12 @@ class MyTags extends Component {
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
           {data.map((d, i) => (
-            <Tag title={d} edit onClick={() => handleDelete(i)} />
+            <Tag
+              title={d}
+              edit
+              onClick={() => handleDelete(i)}
+              color={colorScale(d)}
+            />
           ))}
         </div>
       </div>
@@ -327,16 +366,18 @@ class MyTags extends Component {
 
 class TagInput extends React.Component {
   static propTypes = {
-    onSubmit: PropTypes.func,
+    onChange: PropTypes.func,
     tags: PropTypes.oneOf([PropTypes.arrayOf(PropTypes.string), null]),
-    uiColor: PropTypes.string
+    uiColor: PropTypes.string,
+    colorScale: PropTypes.func
   };
 
   static defaultProps = {
     values: [],
     tags: [],
-    onSubmit: d => d,
-    uiColor: ''
+    onChange: d => d,
+    uiColor: '',
+    colorScale: () => 'gold'
   };
 
   constructor(props) {
@@ -357,6 +398,11 @@ class TagInput extends React.Component {
     this.setState({ tags });
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    const { tags } = this.state;
+    if (tags.length !== prevState.tags.length) this.props.onChange(tags);
+  }
+
   handleAddition(tag) {
     const tags = this.state.tags;
     const newTags = [...new Set([...tags, tag])];
@@ -366,17 +412,16 @@ class TagInput extends React.Component {
 
   render() {
     const { tags } = this.state;
-    const { onSubmit, uiColor } = this.props;
+    const { uiColor, colorScale } = this.props;
 
     return (
-      <ModalBody onSubmit={() => onSubmit(tags)} uiColor={uiColor}>
-        <MyTags
-          uiColor={uiColor}
-          data={tags}
-          handleDelete={this.handleDelete}
-          handleAddition={this.handleAddition}
-        />
-      </ModalBody>
+      <TagList
+        uiColor={uiColor}
+        data={tags}
+        colorScale={colorScale}
+        handleDelete={this.handleDelete}
+        handleAddition={this.handleAddition}
+      />
     );
   }
 }
