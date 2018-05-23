@@ -131,33 +131,45 @@ class ChallengeAuthor extends Component {
     challengeTypes: ['Photo Upload', 'Learning Object', 'Mini Game']
   };
 
-  challengeMap = {
-    PhotoUpload: PhotoChallengeAuthor,
-    LearningObject: TestComp,
-    MiniGame: PhotoChallengeAuthor
-  };
+  // static getDerivedStateFromProps(nextProps) {
+  //   return {
+  //     challengeMap: {
+  //       PhotoUpload: <PhotoChallengeAuthor {...nextProps} />,
+  //       LearningObject: <TestComp {...nextProps} />,
+  //       MiniGame: <PhotoChallengeAuthor {...nextProps} />
+  //     }
+  //   };
+  // }
 
-  state = {
-    selectedKey: this.props.defaultChallenge
-      ? this.props.defaultChallenge.type
-      : Object.keys(this.challengeMap)[0]
-  };
+  constructor(props) {
+    super(props);
+
+    const challengeMap = {
+      PhotoUpload: <PhotoChallengeAuthor {...props} />,
+      LearningObject: <TestComp {...props} />,
+      MiniGame: <PhotoChallengeAuthor {...props} />
+    };
+
+    this.state = {
+      selectedKey: props.defaultChallenge
+        ? props.defaultChallenge.type
+        : Object.keys(challengeMap)[0],
+      challengeMap
+    };
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     return this.state.selectedKey !== nextState.selectedKey;
   }
 
-  // getDerivedStateFromProps(nextProps, prevState) {
-  //
-  // }
   // componentWillReceiveProps(nextProps) {
   //   this.setState({ challengeTypes });
   // }
 
   render() {
     const { className, style } = this.props;
-    const { selectedKey } = this.state;
-    const challengeKeys = Object.keys(this.challengeMap);
+    const { selectedKey, challengeMap } = this.state;
+    const challengeKeys = Object.keys(challengeMap);
 
     return (
       <div
@@ -180,19 +192,14 @@ class ChallengeAuthor extends Component {
                 // minHeight: 400
               }}
             >
-              <div
-                className="w-100 p-2"
-                style={
-                  {
-                    // border: 'grey 1px solid',
-                  }
-                }
-              >
-                {React.createElement(
-                  this.challengeMap[selectedKey],
-                  this.props
-                )}
-              </div>
+              {challengeKeys.map(key => (
+                <div
+                  className="w-100 p-2"
+                  style={{ display: selectedKey !== key && 'none' }}
+                >
+                  {challengeMap[key]}
+                </div>
+              ))}
             </div>
           </div>
         </Nav>

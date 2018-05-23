@@ -93,7 +93,6 @@ class CardGrid extends Component {
   constructor(props) {
     super(props);
     const cardStacks = centerLayout.bind(this)(props);
-    console.log('cardStacks');
     this.state = {
       cardStacks
     };
@@ -102,13 +101,9 @@ class CardGrid extends Component {
     // this.transitionStyles = transition.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { data } = nextProps;
-
+  static getDerivedStateFromProps(nextProps) {
     const cardStacks = centerLayout.bind(this)(nextProps);
-    this.setState({
-      cardStacks
-    });
+    return { cardStacks };
   }
 
   // TODO: change later
@@ -264,7 +259,6 @@ class AccordionWrapper extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log('change', this.state);
     const { selectedId } = this.state;
     clearTimeout(this.id);
     this.id = setTimeout(() => this.props.onChange(selectedId), 1000);

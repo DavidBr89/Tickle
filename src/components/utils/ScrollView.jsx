@@ -36,7 +36,6 @@ class ScrollView extends Component {
     });
   };
 
-
   render() {
     return (
       <Provider
@@ -61,11 +60,14 @@ class ScrollConsumer extends Component {
   componentDidMount() {
     this.props.register(this.props.name, this);
   }
-  componentWillReceiveProps(nextProps) {
-    this.props.register(nextProps.name, this);
-  }
+
   componentWillUnmount() {
     this.props.unregister(this.props.name);
+  }
+
+  componenDidUpdate() {
+    this.props.register(this.props.name, this);
+    return null;
   }
 
   render() {

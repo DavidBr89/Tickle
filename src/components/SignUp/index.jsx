@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 
-import * as routes from 'RoutePaths';
+import * as routes from 'Constants/routes';
 
 import { auth } from 'Firebase';
 
@@ -36,7 +36,7 @@ class SignUpForm extends Component {
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then(authUser => {
         this.setState(() => ({ ...INITIAL_STATE }));
-        history.push(routes.HOME);
+        history.push(routes.MAP);
       })
       .catch(error => {
         this.setState(byPropKey('error', error));

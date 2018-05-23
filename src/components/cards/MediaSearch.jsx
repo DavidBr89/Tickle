@@ -567,6 +567,15 @@ class MetaSearch extends Component {
     preSelected: []
   };
 
+  static getDerivedStateFromProps(nextProps) {
+    const { search } = nextProps;
+    console.log('this getDerivedStateFromProps', this);
+    search().then(data => {
+      this.setState({ data });
+    });
+    return null;
+  }
+
   constructor(props) {
     super(props);
 
@@ -586,13 +595,6 @@ class MetaSearch extends Component {
       search().then(data => this.mounted && this.setState({ data }));
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { search } = nextProps;
-    search().then(data => {
-      this.setState({ data });
-    });
-  }
-
   // shouldComponentUpdate(nextProps, nextState) {
   //   return true;
   // }
@@ -603,12 +605,16 @@ class MetaSearch extends Component {
   // }
 
   componentDidUpdate(prevProps, prevState) {
-    const { type, onChange } = this.props;
+    const { type, search, onChange } = this.props;
     const { data, selected } = this.state;
 
     if (selected.length !== prevState.selected.length) {
       onChange(selected.map(id => data.find(d => d.id === id)));
     }
+
+    search().then(newData => {
+      this.setState({ data: newData });
+    });
   }
 
   componentWillUnmount() {

@@ -13,7 +13,7 @@ import './index.scss';
 
 import { AppContainer } from 'react-hot-loader';
 
-import Routes from './Routes';
+import App from './App';
 
 const render = Component => {
   ReactDOM.render(
@@ -27,9 +27,9 @@ const render = Component => {
 console.log('module', module === true);
 
 if (module.hot) {
-  module.hot.accept('./Routes', () => {
+  module.hot.accept('./App', () => {
     console.log('hot');
-    render(Routes);
+    render(App);
   });
 }
-render(Routes);
+render(App);

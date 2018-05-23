@@ -124,7 +124,7 @@ module.exports = {
       Cards: path.resolve(__dirname, 'src/components/cards'),
       Firebase: path.resolve(__dirname, 'src/firebase/index.js'),
       Utils: path.resolve(__dirname, 'src/components/utils'),
-      RoutePaths: path.resolve(__dirname, 'src/routePaths')
+      Constants: path.resolve(__dirname, 'src/constants')
     }
   },
   module: {

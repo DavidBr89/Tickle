@@ -1,16 +1,19 @@
 import React from 'react';
 import thunkMiddleware from 'redux-thunk';
 
-// import tsnejs from 'tsne';
-
 import { createStore, applyMiddleware } from 'redux';
 import { createLogger } from 'redux-logger';
 import { Provider } from 'react-redux';
 
 import SignUp from './components/SignUp';
 import SignIn from './components/SignIn';
+import LandingPage from './components/LandingPage';
 
-import * as routes from 'RoutePaths';
+import AuthUserContext from './components/AuthUserContext';
+
+import { firebase } from 'Firebase';
+
+import * as routes from 'Constants/routes';
 
 import {
   // Router,
@@ -27,9 +30,9 @@ import md5 from 'blueimp-md5';
 import rootReducer from './rootReducer';
 
 import MapView from './components/MapView';
-import Login from './components/Login';
+// import Login from './components/Login';
 
-import DefaultLayout from './layouts/MainLayout';
+import DefaultLayout from './components/Layout';
 
 import { dummyCards } from './dummyData';
 
@@ -158,12 +161,41 @@ const store = configureStore(rootReducer, defaultState);
 store.dispatch(fetchAuthoredCards(0));
 store.dispatch(fetchNearByPlaces());
 
-const Routes = () => (
+const withAuthentication = Component =>
+  class WithAuthentication extends React.Component {
+    constructor(props) {
+      super(props);
+
+      this.state = {
+        authUser: null
+      };
+    }
+
+    componentDidMount() {
+      firebase.auth.onAuthStateChanged(authUser => {
+        authUser
+          ? this.setState(() => ({ authUser }))
+          : this.setState(() => ({ authUser: null }));
+      });
+    }
+
+    render() {
+      const { authUser } = this.state;
+
+      return (
+        <AuthUserContext.Provider value={authUser}>
+          <Component />
+        </AuthUserContext.Provider>
+      );
+    }
+  };
+
+const App = () => (
   <HashRouter>
     <Switch>
       <Route
         exact
-        path="/"
+        path={routes.MAP}
         render={() => (
           <DefaultLayout>
             <Provider store={store}>
@@ -174,19 +206,35 @@ const Routes = () => (
       />
       <Route
         exact
-        path="/login"
+        path={routes.LANDING}
         render={() => (
           <DefaultLayout>
             <Provider store={store}>
-              <Login />
+              <LandingPage />
             </Provider>
           </DefaultLayout>
         )}
       />
-      <Route exact path={routes.SIGN_UP} component={() => <SignUp />} />
-      <Route exact path={routes.SIGN_IN} component={() => <SignIn />} />
+      <Route
+        exact
+        path={routes.SIGN_UP}
+        component={() => (
+          <DefaultLayout>
+            <SignUp />
+          </DefaultLayout>
+        )}
+      />
+      <Route
+        exact
+        path={routes.SIGN_IN}
+        component={() => (
+          <DefaultLayout>
+            <SignIn />
+          </DefaultLayout>
+        )}
+      />
     </Switch>
   </HashRouter>
 );
 
-export default Routes;
+export default withAuthentication(App);

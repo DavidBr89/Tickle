@@ -320,10 +320,10 @@ class TagList extends Component {
     this.state = { value: '' };
   }
 
-  componentWillReceiveProps() {
-    this.setState({ value: '' });
-  }
+  static getDerivedStateFromProps(nextProps) {
+    return {value: ''}
 
+  }
   render() {
     const {
       data,

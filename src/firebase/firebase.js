@@ -3,7 +3,7 @@ import '@firebase/firestore';
 // TODO: rename
 //
 // Add additional services you want to use
-import "@firebase/auth";
+import '@firebase/auth';
 // require("firebase/database");
 // require("firebase/firestore");
 // require("firebase/messaging");
