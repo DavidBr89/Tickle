@@ -8,6 +8,7 @@ import { Provider } from 'react-redux';
 import SignUp from './components/SignUp';
 import SignIn from './components/SignIn';
 import LandingPage from './components/LandingPage';
+import Home from './components/Home';
 
 import AuthUserContext from './components/AuthUserContext';
 
@@ -230,6 +231,15 @@ const App = () => (
         component={() => (
           <DefaultLayout>
             <SignIn />
+          </DefaultLayout>
+        )}
+      />
+      <Route
+        exact
+        path={routes.HOME}
+        component={() => (
+          <DefaultLayout>
+            <Home />
           </DefaultLayout>
         )}
       />

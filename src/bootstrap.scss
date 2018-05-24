@@ -191,6 +191,12 @@ body {
   overflow: hidden;
 }
 
+.content-block {
+  @extend .m-3;
+  margin-top: 60px !important;
+}
+
+
 @mixin border-radius {
   border: grey 2px solid;
   border-radius: .25rem;

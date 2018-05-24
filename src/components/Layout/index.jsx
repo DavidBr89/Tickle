@@ -49,7 +49,7 @@ function Menu({ style, children }) {
         style={{
           position: 'relative',
           zIndex: 4000,
-          background: 'antiquewhite'
+          background: 'whitesmoke'
         }}
       >
         <div

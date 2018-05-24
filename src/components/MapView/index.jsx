@@ -171,7 +171,7 @@ const mergeProps = (state, dispatcherProps) => {
     return { key: 'flyToUser', func: flyToUserAction };
   })();
 
-  const cards = authEnv ? [...authEnvCards, cardTemplate] : collectibleCards;
+  const cards = authEnv ? authEnvCards : collectibleCards;
 
   //TODO
   // display: extCardId !== c.id && c.template && 'none'

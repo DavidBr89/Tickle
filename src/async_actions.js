@@ -14,7 +14,7 @@ import {
   PerspectiveMercatorViewport
 } from 'viewport-mercator-project';
 
-import { firestore } from 'Firebase';
+import { firebase } from 'Firebase';
 
 import gapi from './gapi';
 // export const REQUEST_CHALLENGES = 'REQUEST_CHALLENGES';
@@ -108,7 +108,7 @@ export function fetchCards(userid) {
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
   return function(dispatch) {
-    return firestore
+    return firebase.firestore
       .collection('cards')
       .get()
       .then(querySnapshot => {
@@ -124,12 +124,12 @@ export function fetchAuthoredCards(userid) {
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
   return function(dispatch) {
-    return firestore
+    return firebase.firestore
       .collection('authoredCards')
       .get()
       .then(querySnapshot => {
         const data = [];
-        querySnapshot.forEach(doc => data.push(doc.data()));
+        querySnapshot.forEach(doc => data.push({ ...doc.data(), id: doc.id }));
         dispatch(receiveAuthoredCards(data));
       });
   };

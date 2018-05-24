@@ -61,34 +61,6 @@ import { Modal, ModalBody } from '../utils/Modal';
 import { DragSourceCont, DropTargetCont } from './DragAndDrop/DragSourceTarget';
 import DragLayer from './DragAndDrop/DragLayer';
 
-function DragAndDropScreen() {
-  return (
-    <div
-      style={{
-        marginTop: '3vh',
-        height: '59%',
-        fontSize: 100,
-        position: 'relative',
-        zIndex: 3000,
-        padding: '3vw'
-      }}
-    >
-      <div
-        className="w-100 h-100"
-        style={{
-          border: '2px dashed grey',
-          display: 'flex',
-          justifyContent: 'center',
-          background: 'whitesmoke',
-          alignItems: 'center'
-        }}
-      >
-        <div>{'drag and drop'}</div>
-      </div>
-    </div>
-  );
-}
-
 function launchIntoFullscreen(element) {
   if (element.requestFullscreen) {
     element.requestFullscreen();
@@ -187,7 +159,36 @@ CardMetaControl.propTypes = {
     .isRequired
 };
 
-const PreviewMarker = ({ selected, color, r = 25 }) => (
+function SpeechBubble({ ...props }) {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        transform: 'translate(-50%, -130%)',
+        background: 'whitesmoke'
+      }}
+    >
+      <div
+        className="m-1"
+        style={{
+          width: 200,
+
+          border: '2px dashed grey'
+        }}
+      >
+        <div className="m-1">
+          <h3>yeah drag and drop</h3>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+SpeechBubble.defaultProps = {};
+
+SpeechBubble.propTypes = {};
+
+const PreviewMarker = ({ selected, template, color, r = 25 }) => (
   <div
     className="w-100 h-100"
     style={{
@@ -211,6 +212,7 @@ const PreviewMarker = ({ selected, color, r = 25 }) => (
         }}
       />
     )}
+    {template && selected && <SpeechBubble />}
     <CardMarker
       color={color}
       style={{
@@ -453,6 +455,16 @@ class MapView extends PureComponent {
     return (
       <React.StrictMode>
         <WindowContext.Provider value={{ width, height }}>
+          <Modal
+            visible={cardChallengeOpen}
+            onClose={() =>
+              toggleCardChallengeAction({ cardChallengeOpen: false })
+            }
+          >
+            <ModalBody>
+              <PhotoChallenge />
+            </ModalBody>
+          </Modal>
           <div className="w-100 h-100" style={{ position: 'relative' }}>
             <DragDropContextProvider backend={HTML5Backend}>
               <div
@@ -465,7 +477,7 @@ class MapView extends PureComponent {
                 <DragLayer />
 
                 <input
-                  className="btn mt-3 mr-3"
+                  className="btn "
                   placeholder="Search Cards"
                   type="text"
                   onChange={evt => filterCardsAction(evt.target.value)}
@@ -476,98 +488,77 @@ class MapView extends PureComponent {
                     textAlign: 'left',
                     position: 'absolute',
                     right: 0,
-                    zIndex: 4000
+                    zIndex: 4000,
+                    marginTop: 10,
+                    marginRight: 10
                   }}
                 />
 
-                <div className="w-100 h-100">
-                  <DragLayer />
-                  <Modal
-                    visible={cardChallengeOpen}
-                    onClose={() =>
-                      toggleCardChallengeAction({ cardChallengeOpen: false })
-                    }
-                  >
-                    <ModalBody>
-                      <PhotoChallenge />
-                    </ModalBody>
-                  </Modal>
-
-                  <div
+                <div
+                  className="w-100"
+                  style={{
+                    opacity: gridView ? 1 : 0,
+                    display: !gridView ? 'none' : null,
+                    transition: 'opacity 0.5s',
+                    height: '25%',
+                    marginTop: 60
+                  }}
+                >
+                  <Accordion
+                    data={cards}
+                    className="ml-1 mr-2"
+                    duration={600}
+                    centered={selectedCardId !== null}
+                    selectedIndex={cards.findIndex(
+                      c => c.id === selectedCardId
+                    )}
+                    width={100}
+                    height={100}
+                    unit={'%'}
+                    slotSize={100 / 3.5}
                     style={{
-                      position: 'absolute',
-                      left: 0,
-                      top: 0,
-                      filter: tsneView && 'blur(4px)'
-                    }}
-                  />
-                  <div
-                    className="w-100"
-                    style={{
-                      opacity: gridView ? 1 : 0,
-                      display: !gridView ? 'none' : null,
-                      transition: 'opacity 0.5s',
-                      height: '25%'
+                      // width: '100%',
+                      zIndex: 2000,
+                      marginTop: 30
                     }}
                   >
-                    <Accordion
-                      data={cards}
-                      className="ml-1 mr-2"
-                      duration={600}
-                      centered={selectedCardId !== null}
-                      selectedIndex={cards.findIndex(
-                        c => c.id === selectedCardId
-                      )}
-                      width={100}
-                      height={100}
-                      unit={'%'}
-                      slotSize={100 / 3.5}
-                      style={{
-                        // width: '100%',
-                        zIndex: 2000,
-                        marginTop: 30
-                      }}
-                    >
-                      {d => (
-                        <div
-                          className="w-100 h-100"
-                          key={d.id}
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'center'
-                            // border: 'black 5px solid'
-                            // pointerEvents: 'none'
-                          }}
-                        >
-                          <DragSourceCont dragHandler={dragCardAction} data={d}>
-                            <div style={{ width: '100%', height: '100%' }}>
-                              <PreviewCard
-                                {...d}
-                                onClick={() =>
-                                  selectedCardId === d.id
-                                    ? extCardAction(d.id)
-                                    : selectCardAction(d.id)
-                                }
-                                tagColorScale={tagColorScale}
-                                key={d.id}
-                                edit={d.template}
-                                selected={selectedCardId === d.id}
-                                style={{
-                                  transition: `transform 1s`,
-                                  transform:
-                                    selectedCardId === d.id && 'scale(1.2)'
-                                  // width: '100%',
-                                  // height: '100%',
-                                  // width: '100%'
-                                  // maxWidth: '200px'
-                                }}
-                              />
-                            </div>
-                          </DragSourceCont>
+                    {d => (
+                      <div
+                        className="w-100 h-100"
+                        key={d.id}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'center'
+                          // border: 'black 5px solid'
+                          // pointerEvents: 'none'
+                        }}
+                      >
+                        <div style={{ width: '100%', height: '100%' }}>
+                          <PreviewCard
+                            {...d}
+                            onClick={() =>
+                              selectedCardId === d.id
+                                ? extCardAction(d.id)
+                                : selectCardAction(d.id)
+                            }
+                            tagColorScale={tagColorScale}
+                            key={d.id}
+                            edit={d.template}
+                            selected={selectedCardId === d.id}
+                            style={{
+                              transition: `transform 1s`,
+                              transform: selectedCardId === d.id && 'scale(1.2)'
+                              // width: '100%',
+                              // height: '100%',
+                              // width: '100%'
+                              // maxWidth: '200px'
+                            }}
+                          />
                         </div>
-                      )}
-                    </Accordion>
-
+                      </div>
+                    )}
+                  </Accordion>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <button
                       className="btn m-3"
                       style={{
@@ -584,7 +575,16 @@ class MapView extends PureComponent {
                       </div>
                     </button>
                   </div>
-                  {selectedCardId === 'temp' && <DragAndDropScreen />}
+
+                  <div
+                    className="w-100 h-100"
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      top: 0
+                      // filter: tsneView && 'blur(4px)'
+                    }}
+                  />
                   <DropTargetCont
                     dropHandler={
                       selectedCardId === 'temp'
@@ -626,12 +626,6 @@ class MapView extends PureComponent {
                     >
                       {({ x, y, ...c }) => (
                         <ExtendableMarker
-                          style={
-                            {
-                              // TODO
-                              // display: extCardId !== c.id && c.template && 'none'
-                            }
-                          }
                           key={c.id}
                           width={extCardId === c.id ? width : 25}
                           height={extCardId === c.id ? height : 30}
@@ -647,6 +641,7 @@ class MapView extends PureComponent {
                             >
                               <PreviewMarker
                                 selected={selectedCardId === c.id}
+                                template={c.template}
                                 color={'whitesmoke'}
                               />
                             </DragSourceCont>

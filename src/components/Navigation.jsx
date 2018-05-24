@@ -9,10 +9,10 @@ import AuthUserContext from './AuthUserContext';
 // const zip= rows=>rows[0].map((_,c)=>rows.map(row=>row[c]))
 
 const authRoutes = [routes.LANDING, routes.MAP, routes.ACCOUNT];
-const authRoutesNames = ['Home', 'Map', 'Account'];
+const authRoutesNames = ['Landing', 'Map', 'Account'];
 
 const nonAuthRoutes = [routes.LANDING, routes.SIGN_IN];
-const nonAuthRoutesNames = ['Home', 'Sign-In'];
+const nonAuthRoutesNames = ['Landing', 'Sign-In'];
 
 const Navigation = ({ children = d => d }) => (
   <AuthUserContext.Consumer>
@@ -29,6 +29,7 @@ const Navigation = ({ children = d => d }) => (
 const NavigationAuth = ({ children }) => (
   <React.Fragment>
     {authRoutes.map((r, i) => children(r, authRoutesNames[i]))}
+    <SignOutButton></SignOutButton>
   </React.Fragment>
 );
 

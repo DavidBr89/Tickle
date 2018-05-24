@@ -324,12 +324,6 @@ class ForceOverlay extends Component {
       this.props.selectedCardId !== selectedCardId &&
       selectedCardId !== null
     ) {
-      console.log(
-        'nextData',
-        nextData,
-        selectedCardId,
-        nextData.find(n => n.id === selectedCardId)
-      );
       const { loc } = nextData.find(n => n.id === selectedCardId);
       const { zoom } = { ...mapViewport, ...loc };
       console.log('select card', loc);
@@ -348,7 +342,7 @@ class ForceOverlay extends Component {
           mapViewport: newVp
         });
 
-        onMapViewportChange(mapViewport);
+        onMapViewportChange(newVp);
       }, selectionDelay);
     }
 

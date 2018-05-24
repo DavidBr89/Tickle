@@ -1,5 +1,5 @@
 import * as firebase from './firebase';
 import * as auth from './auth';
-import firestore from './db';
+import * as db from './db';
 
-export { auth, firebase, firestore };
+export { auth, firebase, db};

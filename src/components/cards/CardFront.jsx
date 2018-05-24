@@ -205,18 +205,18 @@ class EditCardFront extends PureComponent {
     this.nodeDescription = null;
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const prevData = prevState.data;
-    const { data } = this.state;
-    // TODO: check the other attrs
-    if (
-      !shallowEqualProps(prevData, data) ||
-      !shallowEqualProps(prevData.challenge, data.challenge)
-    ) {
-      console.log('update data', data);
-      this.props.onAttrUpdate({ ...data });
-    }
-  }
+  // componentDidUpdate(prevProps, prevState) {
+  //   const prevData = prevState.data;
+  //   const { data } = this.state;
+  //   // TODO: check the other attrs
+  //   if (
+  //     !shallowEqualProps(prevData, data) ||
+  //     !shallowEqualProps(prevData.challenge, data.challenge)
+  //   ) {
+  //     console.log('update data', data);
+  //     this.props.onAttrUpdate({ ...data });
+  //   }
+  // }
 
   // shouldComponentUpdate(nextProps, nextState) {
   //   // return this.props.description !== nextProps.description;
@@ -234,14 +234,16 @@ class EditCardFront extends PureComponent {
     const {
       /* allChallenges, */ uiColor,
       challenge: defaultChallenge,
-      tagColorScale
+      tagColorScale,
+      onAttrUpdate: onFieldUpdate
     } = this.props;
 
-    console.log('tagColorScale', tagColorScale);
+    // console.log('tagColorScale', tagColorScale);
     // TODO: img
     const { title, tags, img, description, media } = data;
     const onClose = () => {
       this.setState({ dialog: null });
+      onFieldUpdate({ ...data });
     };
     const closeBtn = <FooterBtn onClick={onClose}>{'Close'}</FooterBtn>;
     switch (modalTitle) {

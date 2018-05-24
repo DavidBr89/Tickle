@@ -12,8 +12,9 @@ import { scaleLinear, extent, geoMercator } from 'd3';
 import { getBoundingBox } from './utils';
 import { intersection } from 'lodash';
 
-import { firestore } from 'Firebase';
+import { db } from 'Firebase';
 
+import generate from 'firebase-auto-ids';
 // import setBBox from './fitbounds';
 // import mapboxgl from 'mapbox-gl';
 
@@ -48,6 +49,8 @@ import {
   // GET_TOPIC_MAP
 } from './async_actions';
 
+const gen = new generate.Generator();
+
 // const toGeoJSON = points => ({
 //   type: 'FeatureCollection',
 //   features: points.map(p => ({
@@ -58,13 +61,6 @@ import {
 //     }
 //   }))
 // });
-
-function createCard(obj) {
-  const copy = { ...obj };
-  if (!copy.tags) copy.tags = [];
-  copy.id = Math.random() * 100000;
-  return { ...copy };
-}
 
 const cardTemplateId = 'temp';
 function reducer(state = {}, action) {
@@ -86,7 +82,6 @@ function reducer(state = {}, action) {
     case TOGGLE_CARD_AUTHORING: {
       const { authoredCards, userLocation } = state;
 
-      const authEnvCards = [...authoredCards];
       const enabled = !state.authEnv;
 
       const cardTemplate = {
@@ -96,6 +91,9 @@ function reducer(state = {}, action) {
         edit: true,
         tags: []
       };
+
+      const authEnvCards = [...authoredCards, cardTemplate];
+
       return {
         ...state,
         authEnv: enabled,
@@ -129,26 +127,30 @@ function reducer(state = {}, action) {
     }
 
     case CREATE_CARD: {
-      const { authEnvCards, userLocation, cardTemplate } = state;
+      const { authEnvCards, userLocation, cardTemplate, mapViewport } = state;
+
+      const cardData = action.options;
+      const { x, y, tx, ty, vx, vy, ...restData } = cardData;
+      const vp = new PerspectiveMercatorViewport(mapViewport);
+      const [longitude, latitude] = vp.unproject([x, y]);
+
+      //
       const newCard = {
-        loc: userLocation,
-        ...cardTemplate,
-        id: Math.random() * 100000
+        ...restData,
+        loc: { latitude, longitude },
+        template: false,
+        // TODO: change
+        id: gen.generate(Date.now())
       };
-      console.log('cardData', newCard);
+
+      db.doCreateCard(newCard);
+
       const newCards = [...authEnvCards, newCard];
 
       return {
         ...state,
         authEnvCards: newCards,
-        selectedCardId: newCard.id,
-        cardTemplate: {
-          id: cardTemplateId,
-          template: true,
-          loc: userLocation,
-          edit: true,
-          tags: []
-        }
+        selectedCardId: newCard.id
       };
     }
 
@@ -157,7 +159,9 @@ function reducer(state = {}, action) {
 
       const cardData = action.options;
       const { x, y, tx, ty, vx, vy, ...restData } = cardData;
+
       console.log('cardData', x, y);
+
       console.log('mapViewport', mapViewport);
 
       const vp = new PerspectiveMercatorViewport(mapViewport);
@@ -167,6 +171,8 @@ function reducer(state = {}, action) {
         ...restData,
         loc: { latitude, longitude }
       };
+
+      // db.doUpdateCard(updatedCard);
 
       const updatedCards = authEnvCards.map(c => {
         if (c.id === cardData.id) {
