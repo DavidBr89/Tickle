@@ -1,13 +1,8 @@
 import fetch from 'cross-fetch';
-import * as d3 from 'd3';
 
-import {
-  receivePlaces,
-  receiveCards,
-  receiveAuthoredCards
-} from './components/MapView/actions';
+import { receivePlaces, receiveCards, receiveAuthoredCards } from './actions';
 
-import NearbyPlaces from './places.json';
+import NearbyPlaces from '../places.json';
 
 import {
   // WebMercatorViewport,
@@ -38,6 +33,7 @@ import gapi from './gapi';
 //   return { type: SCREEN_RESIZE, options };
 // }
 
+// TODO: remove
 gapi.load('client', () => {
   const discoveryUrl =
     'https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest';

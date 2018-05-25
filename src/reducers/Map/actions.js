@@ -130,15 +130,6 @@ export function dragCard(options) {
   return { type: DRAG_CARD, options };
 }
 
-export const UPDATE_CARD = 'UPDATE_CARD';
-export function updateCard(options) {
-  return { type: UPDATE_CARD, options };
-}
-
-export const CREATE_CARD = 'CREATE_CARD';
-export function createCard(options) {
-  return { type: CREATE_CARD, options };
-}
 
 export const TOGGLE_CARD_AUTHORING = 'TOGGLE_CARD_AUTHORING';
 export function toggleCardAuthoring() {

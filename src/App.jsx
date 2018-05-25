@@ -1,7 +1,7 @@
 import React from 'react';
 import thunkMiddleware from 'redux-thunk';
 
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import { createLogger } from 'redux-logger';
 import { Provider } from 'react-redux';
 
@@ -10,6 +10,7 @@ import SignIn from './components/SignIn';
 import LandingPage from './components/LandingPage';
 import Home from './components/Home';
 
+import WithAuthentication from './components/withAuthentication';
 import AuthUserContext from './components/AuthUserContext';
 
 import { firebase } from 'Firebase';
@@ -28,7 +29,7 @@ import {
 // import debug from 'debug';
 
 import md5 from 'blueimp-md5';
-import rootReducer from './rootReducer';
+import rootReducer from './reducers';
 
 import MapView from './components/MapView';
 // import Login from './components/Login';
@@ -41,9 +42,7 @@ import {
   fetchCards,
   fetchAuthoredCards,
   fetchNearByPlaces
-} from './async_actions';
-
-const loggerMiddleware = createLogger();
+} from './reducers/Cards/async_actions';
 
 function gravatar(email) {
   const base = 'http://www.gravatar.com/avatar/';
@@ -70,7 +69,8 @@ const defaultState = {
   user: {
     name: 'jan',
     email: 'jmaushag@gmail.com',
-    img: gravatar('jmaushag@gmail.com')
+    img: gravatar('jmaushag@gmail.com'),
+    userLocation: defaultLocation
   },
   Login: {
     height,
@@ -106,9 +106,9 @@ const defaultState = {
     isSearching: false,
     authEnv: false
   },
-  CardCreator: {
-    cards: dummyCards,
-    userLocation: defaultLocation,
+  Cards: {
+    accessibleCards: [],
+    createdCards: [],
     width,
     height,
     mapViewport: { ...defaultLocation, zoom: mapZoom },
@@ -127,19 +127,28 @@ const defaultState = {
 };
 
 function configureStore(rootReducer, initialState) {
-  const store = createStore(
-    rootReducer,
-    initialState,
+  // TODO: remove for production
+  const composeEnhancers =
+    typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+      ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+        // Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
+      })
+      : compose;
+
+  const loggerMiddleware = createLogger();
+  const enhancer = composeEnhancers(
     applyMiddleware(
       thunkMiddleware, // lets us dispatch() functions
       process.env.NODE_ENV === 'development' && loggerMiddleware // neat middleware that logs actions
     )
   );
 
+  const store = createStore(rootReducer, initialState, enhancer);
+
   if (module.hot) {
     // Enable Webpack hot module replacement for reducers
-    module.hot.accept('./rootReducer', () => {
-      const nextRootReducer = require('./rootReducer');
+    module.hot.accept('./reducers', () => {
+      const nextRootReducer = require('./reducers');
       store.replaceReducer(nextRootReducer);
     });
   }
@@ -162,34 +171,34 @@ const store = configureStore(rootReducer, defaultState);
 store.dispatch(fetchAuthoredCards(0));
 store.dispatch(fetchNearByPlaces());
 
-const withAuthentication = Component =>
-  class WithAuthentication extends React.Component {
-    constructor(props) {
-      super(props);
-
-      this.state = {
-        authUser: null
-      };
-    }
-
-    componentDidMount() {
-      firebase.auth.onAuthStateChanged(authUser => {
-        authUser
-          ? this.setState(() => ({ authUser }))
-          : this.setState(() => ({ authUser: null }));
-      });
-    }
-
-    render() {
-      const { authUser } = this.state;
-
-      return (
-        <AuthUserContext.Provider value={authUser}>
-          <Component />
-        </AuthUserContext.Provider>
-      );
-    }
-  };
+// const withAuthentication = Component =>
+//   class WithAuthentication extends React.Component {
+//     constructor(props) {
+//       super(props);
+//
+//       this.state = {
+//         authUser: null
+//       };
+//     }
+//
+//     componentDidMount() {
+//       firebase.auth.onAuthStateChanged(authUser => {
+//         authUser
+//           ? this.setState(() => ({ authUser }))
+//           : this.setState(() => ({ authUser: null }));
+//       });
+//     }
+//
+//     render() {
+//       const { authUser } = this.state;
+//
+//       return (
+//         <AuthUserContext.Provider value={authUser}>
+//           <Component />
+//         </AuthUserContext.Provider>
+//       );
+//     }
+//   };
 
 const App = () => (
   <HashRouter>

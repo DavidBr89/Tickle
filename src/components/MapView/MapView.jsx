@@ -377,7 +377,7 @@ class MapView extends PureComponent {
       extCardId,
       selectedCard,
       direction,
-      mapViewport,
+      // mapViewport,
       // setCardOpacity,
       userSelected,
       userChangedMapViewport,
@@ -413,7 +413,8 @@ class MapView extends PureComponent {
       changeViewportAction,
       toggleCardAuthoringAction,
       cardAuthoring,
-      createCardAction
+      createCardAction,
+      cardDropHandler
       // navigateFirstTimeAction
     } = this.props;
 
@@ -449,8 +450,6 @@ class MapView extends PureComponent {
       .scaleLinear()
       .domain(d3.extent(cardSets, d => d.count))
       .range([20, 100]);
-
-    // TODO: move to index.jsx
 
     return (
       <React.StrictMode>
@@ -586,11 +585,7 @@ class MapView extends PureComponent {
                     }}
                   />
                   <DropTargetCont
-                    dropHandler={
-                      selectedCardId === 'temp'
-                        ? createCardAction
-                        : updateCardAction
-                    }
+                    dropHandler={cardDropHandler}
                     dragged={isCardDragging}
                     style={{
                       // width: '100%',

@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import SignOutButton from './SignOut';
@@ -14,8 +15,8 @@ const authRoutesNames = ['Landing', 'Map', 'Account'];
 const nonAuthRoutes = [routes.LANDING, routes.SIGN_IN];
 const nonAuthRoutesNames = ['Landing', 'Sign-In'];
 
-const Navigation = ({ children = d => d }) => (
-  <AuthUserContext.Consumer>
+const Navigation = ({ authUser, children = d => d }) => (
+  <React.Fragment>
     {authUser =>
       authUser ? (
         <NavigationAuth>{children}</NavigationAuth>
@@ -23,13 +24,13 @@ const Navigation = ({ children = d => d }) => (
         <NavigationNonAuth>{children}</NavigationNonAuth>
       )
     }
-  </AuthUserContext.Consumer>
+  </React.Fragment>
 );
 
 const NavigationAuth = ({ children }) => (
   <React.Fragment>
     {authRoutes.map((r, i) => children(r, authRoutesNames[i]))}
-    <SignOutButton></SignOutButton>
+    <SignOutButton />
   </React.Fragment>
 );
 
@@ -39,4 +40,8 @@ const NavigationNonAuth = ({ children }) => (
   </React.Fragment>
 );
 
-export default Navigation;
+const mapStateToProps = state => ({
+  authUser: state.sessionState.authUser
+});
+
+export default connect(mapStateToProps)(Navigation);

@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
 
 import { db } from 'Firebase';
 
@@ -14,16 +16,16 @@ class HomePage extends Component {
   }
 
   componentDidMount() {
+    const { onSetUsers } = this.props;
     db.onceGetUsers().then(snapshot => {
       const users = [];
       snapshot.forEach(d => users.push(d.data()));
-
-      this.setState({ users });
+      onSetUsers({ users });
     });
   }
 
   render() {
-    const { users } = this.state;
+    const { users } = this.props;
     return (
       <div className="content-block">
         <h1>Home</h1>
@@ -34,6 +36,17 @@ class HomePage extends Component {
   }
 }
 
+const mapStateToProps = state => ({
+  users: state.User.users
+});
+
+const mapDispatchToProps = dispatch => ({
+  onSetUsers: users => dispatch({ type: 'USERS_SET', users })
+});
+
 const authCondition = authUser => !!authUser;
 
-export default withAuthorization(authCondition)(HomePage);
+export default compose(
+  withAuthorization(authCondition),
+  connect(mapStateToProps, mapDispatchToProps)
+)(HomePage);

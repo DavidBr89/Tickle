@@ -1,3 +1,4 @@
+import generate from 'firebase-auto-ids';
 // import { combineReducers } from 'redux';
 // import cards from './cards';
 // import visibilityFilter from './visibilityFilter';
@@ -9,12 +10,11 @@ import {
 } from 'viewport-mercator-project';
 
 import { scaleLinear, extent, geoMercator } from 'd3';
-import { getBoundingBox } from './utils';
+// import { getBoundingBox } from './utils';
 import { intersection } from 'lodash';
 
 import { db } from 'Firebase';
 
-import generate from 'firebase-auto-ids';
 // import setBBox from './fitbounds';
 // import mapboxgl from 'mapbox-gl';
 
@@ -31,20 +31,20 @@ import {
   TOGGLE_GRID_VIEW,
   TOGGLE_TSNE_VIEW,
   TOGGLE_SEARCH,
-  RECEIVE_PLACES,
+  // RECEIVE_PLACES,
   FILTER_CARDS,
   DRAG_CARD,
-  UPDATE_CARD,
-  RECEIVE_CARDS,
+  // UPDATE_CARD,
+  // RECEIVE_CARDS,
   CHANGE_VIEWPORT,
   TOGGLE_CARD_AUTHORING,
-  RECEIVE_AUTHORED_CARDS,
-  CREATE_CARD,
+  // RECEIVE_AUTHORED_CARDS,
+  // CREATE_CARD,
   CHANGE_MAP_VIEWPORT
 } from './actions';
 
 import {
-  RETRIEVE_DIRECTION,
+  // RETRIEVE_DIRECTION,
   LOAD_DIRECTION
   // GET_TOPIC_MAP
 } from './async_actions';
@@ -68,19 +68,19 @@ function reducer(state = {}, action) {
   // const { selectedCardId } = state;
 
   switch (action.type) {
-    case RECEIVE_AUTHORED_CARDS: {
-      const cards = action.options;
-      const authoredCards = cards.map(c => ({ ...c, edit: true }));
-
-      return {
-        ...state,
-        authoredCards
-        // cards
-        // isCardDragging
-      };
-    }
+    // case RECEIVE_AUTHORED_CARDS: {
+    //   const cards = action.options;
+    //   const createdCards = cards.map(c => ({ ...c, edit: true }));
+    //
+    //   return {
+    //     ...state,
+    //     createdCards
+    //     // cards
+    //     // isCardDragging
+    //   };
+    // }
     case TOGGLE_CARD_AUTHORING: {
-      const { authoredCards, userLocation } = state;
+      const { createdCards, userLocation } = state;
 
       const enabled = !state.authEnv;
 
@@ -92,12 +92,12 @@ function reducer(state = {}, action) {
         tags: []
       };
 
-      const authEnvCards = [...authoredCards, cardTemplate];
+      // const authEnvCards = [...createdCards, cardTemplate];
 
       return {
         ...state,
         authEnv: enabled,
-        authEnvCards,
+        // authEnvCards,
         cardTemplate,
         selectedCardId: enabled ? cardTemplateId : null
         // cards
@@ -114,87 +114,6 @@ function reducer(state = {}, action) {
       };
     }
 
-    case RECEIVE_CARDS: {
-      const cards = action.options;
-      console.log('RECEIVE_CARDS', cards);
-
-      return {
-        ...state,
-        cards: cards.map(c => ({ ...c, edit: false })),
-        defaultCards: cards
-        // isCardDragging
-      };
-    }
-
-    case CREATE_CARD: {
-      const { authEnvCards, userLocation, cardTemplate, mapViewport } = state;
-
-      const cardData = action.options;
-      const { x, y, tx, ty, vx, vy, ...restData } = cardData;
-      const vp = new PerspectiveMercatorViewport(mapViewport);
-      const [longitude, latitude] = vp.unproject([x, y]);
-
-      //
-      const newCard = {
-        ...restData,
-        loc: { latitude, longitude },
-        template: false,
-        // TODO: change
-        id: gen.generate(Date.now())
-      };
-
-      db.doCreateCard(newCard);
-
-      const newCards = [...authEnvCards, newCard];
-
-      return {
-        ...state,
-        authEnvCards: newCards,
-        selectedCardId: newCard.id
-      };
-    }
-
-    case UPDATE_CARD: {
-      const { authEnvCards, mapViewport } = state;
-
-      const cardData = action.options;
-      const { x, y, tx, ty, vx, vy, ...restData } = cardData;
-
-      console.log('cardData', x, y);
-
-      console.log('mapViewport', mapViewport);
-
-      const vp = new PerspectiveMercatorViewport(mapViewport);
-
-      const [longitude, latitude] = vp.unproject([x, y]);
-      const updatedCard = {
-        ...restData,
-        loc: { latitude, longitude }
-      };
-
-      // db.doUpdateCard(updatedCard);
-
-      const updatedCards = authEnvCards.map(c => {
-        if (c.id === cardData.id) {
-          return { id: c.id, ...updatedCard };
-        }
-        return c;
-      });
-
-      return {
-        ...state,
-        authEnvCards: updatedCards
-        // authoredCards
-
-        // isCardDragging
-      };
-      // const tmpCards = [...authEnvCards];
-
-      // const cardIndex = tmpCards.findIndex(c => c.id === cardData.id);
-      // console.log('cardIndex', cardIndex);
-      // console.log('existAlready');
-      // tmpCards[cardIndex] = { ...cards[cardIndex], ...cardData };
-    }
     case DRAG_CARD: {
       const isCardDragging = action.options;
       return {
@@ -215,7 +134,7 @@ function reducer(state = {}, action) {
       return { ...state, tagListView: !state.tagListView, gridView: false };
     }
     case FILTER_CARDS: {
-      console.log('action', action);
+      // console.log('action', action);
       const selectedTags = action.options;
       // if (selectedTags.length === 0)
       //   return { ...state, cards: state.defaultCards };
@@ -228,30 +147,30 @@ function reducer(state = {}, action) {
       console.log('cards', cards);
       return { ...state, cards, selectedTags };
     }
-    case RECEIVE_PLACES: {
-      const { results: places } = action.options;
-      // console.log('places', places);
-      const placeCards = places.map(
-        ({
-          id,
-          geometry: {
-            location: { lat: latitude, lng: longitude }
-          },
-          types: tags,
-          name: title
-        }) => ({
-          id,
-          loc: { latitude, longitude },
-          tags,
-          title,
-          challenge: { type: null },
-          media: []
-        })
-      );
-      // console.log('cardPlaces', placeCards);
-      const newCards = [...state.cards, ...placeCards];
-      return { ...state, cards: newCards, defaultCards: newCards };
-    }
+    // case RECEIVE_PLACES: {
+    //   const { results: places } = action.options;
+    //   // console.log('places', places);
+    //   const placeCards = places.map(
+    //     ({
+    //       id,
+    //       geometry: {
+    //         location: { lat: latitude, lng: longitude }
+    //       },
+    //       types: tags,
+    //       name: title
+    //     }) => ({
+    //       id,
+    //       loc: { latitude, longitude },
+    //       tags,
+    //       title,
+    //       challenge: { type: null },
+    //       media: []
+    //     })
+    //   );
+    //   // console.log('cardPlaces', placeCards);
+    //   const newCards = [...state.cards, ...placeCards];
+    //   return { ...state, cards: newCards, defaultCards: newCards };
+    // }
     case TOGGLE_TSNE_VIEW: {
       return { ...state, tsneView: !state.tsneView };
     }
@@ -288,37 +207,37 @@ function reducer(state = {}, action) {
     case LOAD_DIRECTION: {
       return { ...state, directionLoading: true };
     }
-    case RETRIEVE_DIRECTION: {
-      const direction = action.options;
-      const bbox = getBoundingBox(direction.routes[0].geometry.coordinates);
-      // bbox.forEach(a => (a[1] += state.latCenterOffset));
-
-      const { width, height, latitude, longitude, zoom } = state;
-      const vp = new PerspectiveMercatorViewport({
-        width,
-        height,
-        zoom,
-        latitude,
-        longitude
-      }).fitBounds(bbox, {
-        padding: 20,
-        offset: [0, height / 4]
-      });
-
-      const [bottomLng, bottomLat] = vp.unproject([width / 2, height / 3]);
-
-      const { zoom: minZoom } = vp;
-
-      return {
-        ...state,
-        direction,
-        latitude: bottomLat, // latitude + 0.0135,
-        longitude: bottomLng,
-        zoom: minZoom,
-        directionLoading: false
-        // height: state.height - 200
-      };
-    }
+    // case RETRIEVE_DIRECTION: {
+    //   const direction = action.options;
+    //   const bbox = getBoundingBox(direction.routes[0].geometry.coordinates);
+    //   // bbox.forEach(a => (a[1] += state.latCenterOffset));
+    //
+    //   const { width, height, latitude, longitude, zoom } = state;
+    //   const vp = new PerspectiveMercatorViewport({
+    //     width,
+    //     height,
+    //     zoom,
+    //     latitude,
+    //     longitude
+    //   }).fitBounds(bbox, {
+    //     padding: 20,
+    //     offset: [0, height / 4]
+    //   });
+    //
+    //   const [bottomLng, bottomLat] = vp.unproject([width / 2, height / 3]);
+    //
+    //   const { zoom: minZoom } = vp;
+    //
+    //   return {
+    //     ...state,
+    //     direction,
+    //     latitude: bottomLat, // latitude + 0.0135,
+    //     longitude: bottomLng,
+    //     zoom: minZoom,
+    //     directionLoading: false
+    //     // height: state.height - 200
+    //   };
+    // }
     // case FLY_TO_USER: {
     //   const { width, height, zoom, userLocation } = state;
     //   const mapViewport = offsetMapViewport({

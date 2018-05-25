@@ -157,6 +157,7 @@ class DropTargetCont extends PureComponent {
     // console.log('dropped', dropped, 'prevDropped', prevState.dropped);
     // console.log('this.props', this.props);
     if (prevProps.dragged && !this.props.dragged)
+      //TODO: do I need all these fields
       dropHandler({
         ...data,
         x: left,

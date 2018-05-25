@@ -18,13 +18,13 @@ import {
   filterCards,
   toggleSearch,
   dragCard,
-  updateCard,
   changeViewport,
-  toggleCardAuthoring,
-  createCard
-} from './actions';
+  toggleCardAuthoring
+} from 'Reducers/Map/actions';
 
-import { fetchDirection, computeTopicMap } from './async_actions';
+import { updateCard, createCard } from 'Reducers/Cards/actions';
+
+import { fetchDirection } from 'Reducers/Map/async_actions';
 
 import MapView from './MapView';
 
@@ -34,26 +34,30 @@ import MapView from './MapView';
 const mapStateToProps = state => {
   const {
     selectedCardId,
-    cards,
     width,
     height,
     latitude,
     longitude,
     zoom,
-    direction
+    direction,
+    authEnv,
+    mapViewport
     // userSelected,
     // userLocation,
     // directionLoading
   } = state.MapView;
 
+  const { accessibleCards, createdCards, cardTemplate } = state.Cards;
+
+  const cards = authEnv ? [...createdCards, cardTemplate] : accessibleCards;
+
   const selectedCard =
     selectedCardId !== null ? cards.find(d => d.id === selectedCardId) : null;
 
-  const { mapViewport, ...restState } = state.MapView;
-
   return {
-    ...restState,
-    selectedCard
+    ...state.MapView,
+    selectedCard,
+    cards
   };
 };
 
@@ -101,9 +105,6 @@ const mapDispatchToProps = dispatch => ({
   toggleTsneViewAction: options => {
     dispatch(toggleTsneView(options));
   },
-  computeTopicMapAction: options => {
-    dispatch(computeTopicMap(options));
-  },
   toggleGridAction: options => {
     dispatch(toggleGrid(options));
   },
@@ -140,44 +141,51 @@ const mergeProps = (state, dispatcherProps) => {
     userSelected,
     cards: collectibleCards,
     authEnv,
-    authEnvCards,
-    cardTemplate
+    createdCards,
+    cardTemplate,
+    accessibleCards,
+    mapViewport
   } = state;
   const {
     fetchDirectionAction,
     selectCardAction,
-    flyToUserAction
+    flyToUserAction,
+    createCardAction,
+    updateCardAction
   } = dispatcherProps;
 
-  const nextCardControlAction = (() => {
-    if (userSelected && direction !== null) {
-      return {
-        key: 'selectCard',
-        func: () => selectCardAction(selectedCardId)
-      };
-    }
-    if (directionLoading) return { key: 'directionLoading', func: d => d };
-    if (direction === null) {
-      return {
-        key: 'route',
-        func: () =>
-          fetchDirectionAction({
-            startCoords: userLocation,
-            destCoords: selectedCard.loc
-          })
-      };
-    }
+  const cardAction =
+    selectedCardId === 'temp' ? createCardAction : updateCardAction;
 
-    return { key: 'flyToUser', func: flyToUserAction };
-  })();
+  const cardDropHandler = cardData => cardAction({ cardData, mapViewport });
 
-  const cards = authEnv ? authEnvCards : collectibleCards;
+  // const nextCardControlAction = (() => {
+  //   if (userSelected && direction !== null) {
+  //     return {
+  //       key: 'selectCard',
+  //       func: () => selectCardAction(selectedCardId)
+  //     };
+  //   }
+  //   if (directionLoading) return { key: 'directionLoading', func: d => d };
+  //   if (direction === null) {
+  //     return {
+  //       key: 'route',
+  //       func: () =>
+  //         fetchDirectionAction({
+  //           startCoords: userLocation,
+  //           destCoords: selectedCard.loc
+  //         })
+  //     };
+  //   }
+  //
+  //   return { key: 'flyToUser', func: flyToUserAction };
+  // })();
 
-  //TODO
+  // TODO
   // display: extCardId !== c.id && c.template && 'none'
   // const templateId = extCardId !== c.id && c.template && 'none'
 
-  return { ...state, nextCardControlAction, ...dispatcherProps, cards };
+  return { ...state, ...dispatcherProps, cardDropHandler };
 };
 
 const MapViewCont = connect(mapStateToProps, mapDispatchToProps, mergeProps)(
