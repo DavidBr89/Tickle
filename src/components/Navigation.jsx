@@ -15,7 +15,7 @@ const authRoutesNames = ['Landing', 'Map', 'Account'];
 const nonAuthRoutes = [routes.LANDING, routes.SIGN_IN];
 const nonAuthRoutesNames = ['Landing', 'Sign-In'];
 
-const Navigation = ({ authUser, children = d => d }) => (
+const Navigation = ({ authUser, children = <div></div> }) => (
   <React.Fragment>
     {authUser =>
       authUser ? (
@@ -41,7 +41,7 @@ const NavigationNonAuth = ({ children }) => (
 );
 
 const mapStateToProps = state => ({
-  authUser: state.sessionState.authUser
+  authUser: state.Session.authUser
 });
 
 export default connect(mapStateToProps)(Navigation);

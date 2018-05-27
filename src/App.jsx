@@ -5,36 +5,16 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { createLogger } from 'redux-logger';
 import { Provider } from 'react-redux';
 
-import SignUp from './components/SignUp';
-import SignIn from './components/SignIn';
-import LandingPage from './components/LandingPage';
-import Home from './components/Home';
+// import withAuthentication from './components/withAuthentication';
+// import AuthUserContext from './components/AuthUserContext';
 
-import WithAuthentication from './components/withAuthentication';
-import AuthUserContext from './components/AuthUserContext';
-
-import { firebase } from 'Firebase';
-
-import * as routes from 'Constants/routes';
-
-import {
-  // Router,
-  Route,
-  // hashHistory,
-  // IndexRoute,
-  // Link,
-  HashRouter,
-  Switch
-} from 'react-router-dom';
-// import debug from 'debug';
+// import { firebase } from 'Firebase';
 
 import md5 from 'blueimp-md5';
 import rootReducer from './reducers';
+import Routes from './Routes';
 
-import MapView from './components/MapView';
 // import Login from './components/Login';
-
-import DefaultLayout from './components/Layout';
 
 import { dummyCards } from './dummyData';
 
@@ -105,6 +85,9 @@ const defaultState = {
     selectedTags: [],
     isSearching: false,
     authEnv: false
+  },
+  Session: {
+    authUser: null
   },
   Cards: {
     accessibleCards: [],
@@ -201,59 +184,9 @@ store.dispatch(fetchNearByPlaces());
 //   };
 
 const App = () => (
-  <HashRouter>
-    <Switch>
-      <Route
-        exact
-        path={routes.MAP}
-        render={() => (
-          <DefaultLayout>
-            <Provider store={store}>
-              <MapView />
-            </Provider>
-          </DefaultLayout>
-        )}
-      />
-      <Route
-        exact
-        path={routes.LANDING}
-        render={() => (
-          <DefaultLayout>
-            <Provider store={store}>
-              <LandingPage />
-            </Provider>
-          </DefaultLayout>
-        )}
-      />
-      <Route
-        exact
-        path={routes.SIGN_UP}
-        component={() => (
-          <DefaultLayout>
-            <SignUp />
-          </DefaultLayout>
-        )}
-      />
-      <Route
-        exact
-        path={routes.SIGN_IN}
-        component={() => (
-          <DefaultLayout>
-            <SignIn />
-          </DefaultLayout>
-        )}
-      />
-      <Route
-        exact
-        path={routes.HOME}
-        component={() => (
-          <DefaultLayout>
-            <Home />
-          </DefaultLayout>
-        )}
-      />
-    </Switch>
-  </HashRouter>
+  <Provider store={store}>
+    <Routes />
+  </Provider>
 );
 
-export default withAuthentication(App);
+export default App;
