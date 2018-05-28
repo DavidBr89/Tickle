@@ -95,30 +95,30 @@ export function toggleTsneView(options) {
   return { type: TOGGLE_TSNE_VIEW, options };
 }
 
-export const FILTER_CARDS = 'FILTER_CARDS';
-export function filterCards(options) {
-  return { type: FILTER_CARDS, options };
-}
+// export const FILTER_CARDS = 'FILTER_CARDS';
+// export function filterCards(options) {
+//   return { type: FILTER_CARDS, options };
+// }
 
 export const TOGGLE_GRID_VIEW = 'TOGGLE_GRID';
 export function toggleGrid(options) {
   return { type: TOGGLE_GRID_VIEW, options };
 }
 
-export const RECEIVE_PLACES = 'RECEIVE_PLACES';
-export function receivePlaces(options) {
-  return { type: RECEIVE_PLACES, options };
-}
+// export const RECEIVE_PLACES = 'RECEIVE_PLACES';
+// export function receivePlaces(options) {
+//   return { type: RECEIVE_PLACES, options };
+// }
 
-export const RECEIVE_CARDS = 'RECEIVE_CARDS';
-export function receiveCards(options) {
-  return { type: RECEIVE_CARDS, options };
-}
-
-export const RECEIVE_AUTHORED_CARDS = 'RECEIVE_AUTHORED_CARDS';
-export function receiveAuthoredCards(options) {
-  return { type: RECEIVE_AUTHORED_CARDS, options };
-}
+// export const RECEIVE_CARDS = 'RECEIVE_CARDS';
+// export function receiveCards(options) {
+//   return { type: RECEIVE_CARDS, options };
+// }
+//
+// export const RECEIVE_AUTHORED_CARDS = 'RECEIVE_AUTHORED_CARDS';
+// export function receiveAuthoredCards(options) {
+//   return { type: RECEIVE_AUTHORED_CARDS, options };
+// }
 
 export const TOGGLE_SEARCH = 'TOGGLE_SEARCH';
 export function toggleSearch(options) {
@@ -129,7 +129,6 @@ export const DRAG_CARD = 'DRAG_CARD';
 export function dragCard(options) {
   return { type: DRAG_CARD, options };
 }
-
 
 export const TOGGLE_CARD_AUTHORING = 'TOGGLE_CARD_AUTHORING';
 export function toggleCardAuthoring() {

@@ -421,7 +421,9 @@ class ForceOverlay extends Component {
       const oldNode = oldNodes.find(n => n.id === id) || { x: tx, y: ty };
       return {
         id,
-        ...oldNode,
+        // ...oldNode,
+        x: oldNode.x,
+        y:oldNode.y,
         tx,
         ty,
         tags,

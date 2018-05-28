@@ -291,11 +291,14 @@ class MapView extends PureComponent {
   componentDidMount() {
     // const map = this.map.getMap();
 
-    const { screenResizeAction } = this.props;
+    const { screenResizeAction, getUserCards } = this.props;
     screenResizeAction({
       width: this.cont.offsetWidth,
       height: this.cont.offsetHeight
     });
+
+    // getUserCards();
+
     // map._refreshExpiredTiles = false;
 
     // const {
@@ -409,12 +412,13 @@ class MapView extends PureComponent {
       toggleGridAction,
       toggleSearchAction,
       dragCardAction,
-      updateCardAction,
+      onCardUpdate,
       changeViewportAction,
       toggleCardAuthoringAction,
       cardAuthoring,
       createCardAction,
-      cardDropHandler
+      cardDropHandler,
+      getUserCards
       // navigateFirstTimeAction
     } = this.props;
 
@@ -426,14 +430,14 @@ class MapView extends PureComponent {
     //   longitude
     // });
 
-    const cardSets = setify(cards).filter(d => d.count > 0);
-    const barScales = setify(defaultCards).map(d => ({
-      key: d.key,
-      scale: d3
-        .scaleLinear()
-        .domain([0, d.count])
-        .range([10, 100])
-    }));
+    const cardSets = []; // setify(cards).filter(d => d.count > 0);
+    // const barScales = setify(cards).map(d => ({
+    //   key: d.key,
+    //   scale: d3
+    //     .scaleLinear()
+    //     .domain([0, d.count])
+    //     .range([10, 100])
+    // }));
 
     const tagColorScale = d3
       .scaleOrdinal()
@@ -652,7 +656,7 @@ class MapView extends PureComponent {
                               })
                             }
                             tagColorScale={tagColorScale}
-                            onUpdate={d => updateCardAction({ ...d, x, y })}
+                            onUpdate={d => onCardUpdate({ ...d, x, y })}
                             style={{ zIndex: 4000 }}
                           />
                         </ExtendableMarker>

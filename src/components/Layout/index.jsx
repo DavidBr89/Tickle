@@ -89,6 +89,15 @@ export default class MainLayout extends Component {
       <div id="main">
         <div className="layout__content">
           <div id="content-container">
+            <Menu style={{ position: 'absolute' }}>
+              <Navigation>
+                {(r, name) => (
+                  <Link className="btn mb-2" to={r}>
+                    {name}
+                  </Link>
+                )}
+              </Navigation>
+            </Menu>
             {children}
           </div>
         </div>

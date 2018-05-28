@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
+import { compose } from 'recompose';
 
 import { SignUpLink } from '../SignUp';
 import { PasswordForgetLink } from '../Password';
@@ -44,7 +45,6 @@ class SignInForm extends Component {
       .doSignInWithEmailAndPassword(email, password)
       .then(() => {
         this.setState(() => ({ ...INITIAL_STATE }));
-        console.log('yes login');
         history.push(routes.MAP);
       })
       .catch(error => {
@@ -87,6 +87,29 @@ class SignInForm extends Component {
   }
 }
 
+
+// const mapStateToProps = state => ({
+//   users: state.User.users
+// });
+
+// const mapDispatchToProps = dispatch => ({
+//   getCardsAction: users => dispatch(getCards)
+// });
+//
+// const authCondition = authUser => !!authUser;
+//
+// export default compose(
+//   withAuthorization(authCondition),
+//   connect(null, mapDispatchToProps)
+// )(HomePage);
+//
+
 export default withRouter(SignInPage);
+
+
+// export default compose(
+//   withAuthorization(authCondition),
+//   connect(mapStateToProps, mapDispatchToProps)
+// )(HomePage);
 
 export { SignInForm };

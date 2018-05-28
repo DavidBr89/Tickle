@@ -3,13 +3,24 @@ import { connect } from 'react-redux';
 
 import { firebase } from 'Firebase';
 
+import {
+  fetchReadableCards,
+  fetchCreatedCards
+} from 'Reducers/Cards/async_actions';
+
 const withAuthentication = Component => {
   class WithAuthentication extends React.Component {
     componentDidMount() {
-      const { onSetAuthUser } = this.props;
+      const { onSetAuthUser, getReadableCards, getCreatedCards } = this.props;
 
       firebase.auth.onAuthStateChanged(authUser => {
-        authUser ? onSetAuthUser(authUser) : onSetAuthUser(null);
+        if (authUser) {
+          onSetAuthUser(authUser);
+          getReadableCards(authUser);
+          getCreatedCards(authUser);
+        } else {
+          onSetAuthUser(null);
+        }
       });
     }
 
@@ -19,7 +30,10 @@ const withAuthentication = Component => {
   }
 
   const mapDispatchToProps = dispatch => ({
-    onSetAuthUser: authUser => dispatch({ type: 'AUTH_USER_SET', authUser })
+    // TODO: import sessionreducer
+    onSetAuthUser: authUser => dispatch({ type: 'AUTH_USER_SET', authUser }),
+    getReadableCards: authUser => dispatch(fetchReadableCards(authUser.uid)),
+    getCreatedCards: authUser => dispatch(fetchCreatedCards(authUser.uid))
   });
 
   return connect(null, mapDispatchToProps)(WithAuthentication);

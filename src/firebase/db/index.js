@@ -1,31 +1,53 @@
 import { firestore } from '../firebase';
 
 export const doCreateUser = (id, username, email) =>
-  firestore.collection('users').add({
-    id,
-    username,
-    email
-  });
+  firestore
+    .collection('users')
+    .doc(id)
+    .set({
+      id,
+      username,
+      email
+    });
 
 export const onceGetUsers = () => firestore.collection('users').get();
 
-const removeFunctionFields = obj =>
-  Object.keys(obj).reduce((acc, attr) => {
-    if (!(obj[attr] instanceof Function)) acc[attr] = obj[attr];
+const removeFunctionFields = ({ uiColor, template, edit, ...rest }) =>
+  Object.keys(rest).reduce((acc, attr) => {
+    if (!(rest[attr] instanceof Function)) acc[attr] = rest[attr];
     return acc;
   }, {});
 
-export const doCreateCard = card =>
+export const doCreateCard = (uid, card) =>
   firestore
-    .collection('cards')
+    .collection('users')
+    .doc(uid)
+    .collection('createdCards')
     .doc(card.id)
     .set(removeFunctionFields(card));
 
-export const doUpdateCard = card =>
+export const doUpdateCard = (uid, card) =>
   firestore
-    .collection('cards')
+    .collection('users')
+    .doc(uid)
+    .collection('createdCards')
     .doc(card.id)
     .set(removeFunctionFields(card));
+
+export const doDeleteCard = (uid, cid) =>
+  firestore
+    .collection('users')
+    .doc(uid)
+    .collection('createdCards')
+    .doc(cid)
+    .delete();
+
+export const readCards = (uid, collectionName = 'readableCards') =>
+  firestore
+    .collection('users')
+    .doc(uid)
+    .collection(collectionName)
+    .get();
 
 // TODO: get authored cards
 // return firebase.firestore

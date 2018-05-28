@@ -15,15 +15,13 @@ const authRoutesNames = ['Landing', 'Map', 'Account'];
 const nonAuthRoutes = [routes.LANDING, routes.SIGN_IN];
 const nonAuthRoutesNames = ['Landing', 'Sign-In'];
 
-const Navigation = ({ authUser, children = <div></div> }) => (
+const Navigation = ({ authUser, children }) => (
   <React.Fragment>
-    {authUser =>
-      authUser ? (
-        <NavigationAuth>{children}</NavigationAuth>
-      ) : (
-        <NavigationNonAuth>{children}</NavigationNonAuth>
-      )
-    }
+    {authUser ? (
+      <NavigationAuth>{children}</NavigationAuth>
+    ) : (
+      <NavigationNonAuth>{children}</NavigationNonAuth>
+    )}
   </React.Fragment>
 );
 

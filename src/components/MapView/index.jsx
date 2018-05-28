@@ -22,7 +22,8 @@ import {
   toggleCardAuthoring
 } from 'Reducers/Map/actions';
 
-import { updateCard, createCard } from 'Reducers/Cards/actions';
+import { updateCard, updateCardTemplate } from 'Reducers/Cards/actions';
+import { asyncCreateCard } from 'Reducers/Cards/async_actions';
 
 import { fetchDirection } from 'Reducers/Map/async_actions';
 
@@ -33,7 +34,6 @@ import MapView from './MapView';
 // Container
 const mapStateToProps = state => {
   const {
-    selectedCardId,
     width,
     height,
     latitude,
@@ -47,9 +47,19 @@ const mapStateToProps = state => {
     // directionLoading
   } = state.MapView;
 
-  const { accessibleCards, createdCards, cardTemplate } = state.Cards;
+  const {
+    readableCards,
+    createdCards,
+    cardTemplate,
+    selectedCardId
+  } = state.Cards;
 
-  const cards = authEnv ? [...createdCards, cardTemplate] : accessibleCards;
+  console.log('cardTemplate', cardTemplate);
+  const cards = authEnv ? [...createdCards, cardTemplate] : readableCards;
+
+  // TODO: simplify
+  const { uid } =
+    state.Session.authUser !== null ? state.Session.authUser : { uid: null };
 
   const selectedCard =
     selectedCardId !== null ? cards.find(d => d.id === selectedCardId) : null;
@@ -57,7 +67,8 @@ const mapStateToProps = state => {
   return {
     ...state.MapView,
     selectedCard,
-    cards
+    cards,
+    uid
   };
 };
 
@@ -127,7 +138,10 @@ const mapDispatchToProps = dispatch => ({
     dispatch(toggleCardAuthoring(options));
   },
   createCardAction: options => {
-    dispatch(createCard(options));
+    dispatch(asyncCreateCard(options));
+  },
+  updateCardTemplateAction: options => {
+    dispatch(updateCardTemplate(options));
   }
 });
 
@@ -144,20 +158,32 @@ const mergeProps = (state, dispatcherProps) => {
     createdCards,
     cardTemplate,
     accessibleCards,
-    mapViewport
+    mapViewport,
+    uid
   } = state;
+
   const {
     fetchDirectionAction,
     selectCardAction,
     flyToUserAction,
     createCardAction,
-    updateCardAction
+    updateCardAction,
+    fetchCardsAction,
+    updateCardTemplateAction
   } = dispatcherProps;
 
   const cardAction =
     selectedCardId === 'temp' ? createCardAction : updateCardAction;
 
-  const cardDropHandler = cardData => cardAction({ cardData, mapViewport });
+  const cardDropHandler = cardData =>
+    cardAction({ uid, cardData, mapViewport });
+
+  const onCardUpdate = cardData =>
+    cardData.template
+      ? updateCardTemplateAction(cardData)
+      : updateCardAction({ uid, cardData, mapViewport });
+
+  // const getUserCards = () => fetchCardsAction(uid);
 
   // const nextCardControlAction = (() => {
   //   if (userSelected && direction !== null) {
@@ -185,7 +211,7 @@ const mergeProps = (state, dispatcherProps) => {
   // display: extCardId !== c.id && c.template && 'none'
   // const templateId = extCardId !== c.id && c.template && 'none'
 
-  return { ...state, ...dispatcherProps, cardDropHandler };
+  return { ...state, ...dispatcherProps, cardDropHandler, onCardUpdate };
 };
 
 const MapViewCont = connect(mapStateToProps, mapDispatchToProps, mergeProps)(

@@ -1,4 +1,4 @@
-import generate from 'firebase-auto-ids';
+// import generate from 'firebase-auto-ids';
 // import { combineReducers } from 'redux';
 // import cards from './cards';
 // import visibilityFilter from './visibilityFilter';
@@ -23,12 +23,18 @@ import {
   RECEIVE_PLACES,
   // FILTER_CARDS,
   UPDATE_CARD,
-  RECEIVE_CARDS,
-  RECEIVE_AUTHORED_CARDS,
-  CREATE_CARD
+  UPDATE_CARD_TEMPLATE,
+  RECEIVE_READABLE_CARDS,
+  RECEIVE_CREATED_CARDS,
+  CREATE_CARD,
+  SUCCESS_CREATE_CARD,
+  ERROR_CREATE_CARD,
+  DELETE_CARD,
+  ERROR_DELETE_CARD,
+  SUCCESS_DELETE_CARD
 } from './actions';
 
-const gen = new generate.Generator();
+// const gen = new generate.Generator();
 
 // const toGeoJSON = points => ({
 //   type: 'FeatureCollection',
@@ -47,7 +53,7 @@ function reducer(state = {}, action) {
   // const { selectedCardId } = state;
 
   switch (action.type) {
-    case RECEIVE_AUTHORED_CARDS: {
+    case RECEIVE_CREATED_CARDS: {
       const cards = action.options;
       const createdCards = cards.map(c => ({ ...c, edit: true }));
 
@@ -59,49 +65,53 @@ function reducer(state = {}, action) {
       };
     }
 
-    case RECEIVE_CARDS: {
+    case RECEIVE_READABLE_CARDS: {
       const cards = action.options;
 
       return {
         ...state,
-        accessibleCards: cards.map(c => ({ ...c, edit: false }))
+        readableCards: cards.map(c => ({ ...c, edit: false }))
         // defaultCards: cards
         // isCardDragging
       };
     }
 
-    case CREATE_CARD: {
-      const { createdCards, cardTemplate } = state;
+    case SUCCESS_CREATE_CARD: {
+      // const { createdCards, cardTemplate } = state;
 
-      const { cardData, mapViewport } = action.options;
-      const { x, y, tx, ty, vx, vy, ...restData } = cardData;
-      const vp = new PerspectiveMercatorViewport(mapViewport);
-      const [longitude, latitude] = vp.unproject([x, y]);
+      // const newCard = action.options;
 
-      //
-      const newCard = {
-        ...restData,
-        loc: { latitude, longitude },
-        template: false,
-        // TODO: change
-        id: gen.generate(Date.now())
+      // const newCards = [...createdCards, newCard];
+
+      return {
+        ...state
+        // createdCards: newCards,
+        // selectedCardId: newCard.id
       };
+    }
+    case CREATE_CARD: {
+      const { createdCards } = state;
 
-      db.doCreateCard(newCard);
+      const card = action.options;
 
-      const newCards = [...createdCards, newCard];
+      const newCards = [...createdCards, card];
 
       return {
         ...state,
         createdCards: newCards,
-        selectedCardId: newCard.id
+        selectedCardId: card.id,
+        cardTemplate: state.defaultCardTemplate
       };
     }
 
-    case UPDATE_CARD: {
-      const { createdCards} = state;
+    case ERROR_CREATE_CARD: {
+      return state;
+    }
 
-      const { cardData, mapViewport} = action.options;
+    case UPDATE_CARD: {
+      const { createdCards } = state;
+
+      const { uid, cardData, mapViewport } = action.options;
       const { x, y, tx, ty, vx, vy, ...restData } = cardData;
 
       const vp = new PerspectiveMercatorViewport(mapViewport);
@@ -112,7 +122,7 @@ function reducer(state = {}, action) {
         loc: { latitude, longitude }
       };
 
-      // db.doUpdateCard(updatedCard);
+      db.doUpdateCard(uid, updatedCard);
 
       const updatedCards = createdCards.map(c => {
         if (c.id === cardData.id) {
@@ -135,6 +145,25 @@ function reducer(state = {}, action) {
       // console.log('existAlready');
       // tmpCards[cardIndex] = { ...cards[cardIndex], ...cardData };
     }
+
+    case UPDATE_CARD_TEMPLATE: {
+      const cardTemplate = action.options;
+      return { ...state, cardTemplate };
+    }
+    case DELETE_CARD: {
+      const { cards } = state;
+      const cid = action.options;
+
+      const newCards = cards.filter(c => c.id !== cid);
+      return { ...state, cards: newCards };
+    }
+    case SUCCESS_DELETE_CARD: {
+      return state;
+    }
+    case ERROR_DELETE_CARD: {
+      return state;
+    }
+
     case RECEIVE_PLACES: {
       const { results: places } = action.options;
       // console.log('places', places);

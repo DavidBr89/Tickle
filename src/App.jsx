@@ -40,6 +40,13 @@ const defaultCards = [...dummyCards];
 const mapZoom = 9;
 const [width, height] = [100, 100];
 // debug('lego:routes');
+const defaultCardTemplate = {
+  id: 'temp',
+  template: true,
+  loc: defaultLocation,
+  edit: true,
+  tags: []
+};
 const defaultState = {
   width,
   height,
@@ -77,7 +84,6 @@ const defaultState = {
     cardChallengeOpen: false,
     extCardId: false,
     AppOpenFirstTime: true,
-    selectedCardId: null, // dummyCards[0].id,
     birdsEyeView: false,
     gridView: true,
     tsneView: false,
@@ -87,25 +93,20 @@ const defaultState = {
     authEnv: false
   },
   Session: {
-    authUser: null
+    authUser: { uid: null }
   },
   Cards: {
-    accessibleCards: [],
+    readableCards: [],
     createdCards: [],
     width,
     height,
-    mapViewport: { ...defaultLocation, zoom: mapZoom },
+    // mapViewport: { ...defaultLocation, zoom: mapZoom },
     selectedCardId: null,
-    cardTemplate: {
-      id: 'temp',
-      template: true,
-      loc: defaultLocation,
-      edit: true,
-      tags: []
-    },
+    cardTemplate: { ...defaultCardTemplate },
+    defaultCardTemplate,
     defaultLocation,
-    throttle: false,
-    challenges: []
+    challenges: [],
+    selectedCardId: null
   }
 };
 
@@ -151,8 +152,8 @@ const store = configureStore(rootReducer, defaultState);
 // });
 //
 
-store.dispatch(fetchAuthoredCards(0));
-store.dispatch(fetchNearByPlaces());
+// store.dispatch(fetchAuthoredCards(0));
+// store.dispatch(fetchNearByPlaces());
 
 // const withAuthentication = Component =>
 //   class WithAuthentication extends React.Component {
