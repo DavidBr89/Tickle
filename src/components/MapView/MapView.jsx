@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 // import * as d3 from 'd3';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -225,7 +225,7 @@ const PreviewMarker = ({ selected, template, color, r = 25 }) => (
   </div>
 );
 
-class MapView extends PureComponent {
+class MapView extends Component {
   static propTypes = {
     cards: PropTypes.array.isRequired,
     defaultCards: PropTypes.array.isRequired,
@@ -550,7 +550,10 @@ class MapView extends PureComponent {
                             selected={selectedCardId === d.id}
                             style={{
                               transition: `transform 1s`,
-                              transform: selectedCardId === d.id && 'scale(1.2)'
+                              transform:
+                                selectedCardId === d.id && 'scale(1.2)',
+                              opacity: d.template && 0.8
+
                               // width: '100%',
                               // height: '100%',
                               // width: '100%'

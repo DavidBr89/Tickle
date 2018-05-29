@@ -57,7 +57,7 @@ class PreviewCard extends Component {
     title: PropTypes.string.isRequired,
     tags: PropTypes.oneOf([PropTypes.array.isRequired, null]),
     tagColorScale: PropTypes.func,
-    img: PropTypes.string,
+    img: PropTypes.object,
     challenge: PropTypes.func.isRequired,
     onClick: PropTypes.func.isRequired,
     style: PropTypes.object,
@@ -139,7 +139,7 @@ class PreviewCard extends Component {
                 width: '100%',
                 height: '100%'
               }}
-              src={img || placeholderImg}
+              src={img ? img.url : placeholderImg}
               alt="Card cap"
             />
           ) : (

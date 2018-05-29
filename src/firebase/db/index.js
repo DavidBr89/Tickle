@@ -1,4 +1,4 @@
-import { firestore } from '../firebase';
+import { firestore, storageRef } from '../firebase';
 
 export const doCreateUser = (id, username, email) =>
   firestore
@@ -18,21 +18,39 @@ const removeFunctionFields = ({ uiColor, template, edit, ...rest }) =>
     return acc;
   }, {});
 
-export const doCreateCard = (uid, card) =>
-  firestore
-    .collection('users')
-    .doc(uid)
-    .collection('createdCards')
-    .doc(card.id)
-    .set(removeFunctionFields(card));
+export const doCreateCard = (uid, card) => {
+  console.log('img', card.img);
+  const file = card.img ? card.img.file : null;
 
-export const doUpdateCard = (uid, card) =>
-  firestore
-    .collection('users')
-    .doc(uid)
-    .collection('createdCards')
-    .doc(card.id)
-    .set(removeFunctionFields(card));
+  const addToDb = newCard =>
+    firestore
+      .collection('users')
+      .doc(uid)
+      .collection('createdCards')
+      .doc(newCard.id)
+      .set(newCard);
+
+  if (file !== null) {
+    const imgRef = storageRef.child(`${file.name}${Date.now()}`);
+
+    const metadata = { contentType: file.type };
+    return imgRef
+      .put(file, metadata)
+      .then(() => imgRef.getDownloadURL())
+      .then(url => {
+        const newCard = {
+          ...removeFunctionFields(card),
+          img: { title: file.title, url }
+        };
+        return addToDb(newCard);
+      });
+  }
+  return addToDb(removeFunctionFields(card));
+  // imgRef.getDownloadURL().then(url => console.log('url', url));
+};
+
+// TODO: change later
+export const doUpdateCard = doCreateCard;
 
 export const doDeleteCard = (uid, cid) =>
   firestore

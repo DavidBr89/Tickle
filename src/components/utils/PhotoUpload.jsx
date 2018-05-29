@@ -52,11 +52,11 @@ class PhotoUpload extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { imgSrc, imgFiles } = this.state;
+    const { imgSrc, imgFile } = this.state;
     const { onChange } = this.props;
-    console.log('imgFiles', imgFiles);
+    // console.log('imgFiles', imgFile);
     if (prevState.imgSrc !== imgSrc) {
-      onChange({ src: imgSrc, files: imgFiles });
+      onChange({ url: imgSrc, file: imgFile });
     }
   }
 
@@ -125,12 +125,12 @@ class PhotoUpload extends Component {
             type="file"
             accept="image/*"
             capture="environment"
-            onChange={e =>
+            onChange={e => {
               this.setState({
                 imgSrc: convertToImgSrc(e.target.files),
-                imgFiles: e.target.files
-              })
-            }
+                imgFile: e.target.files[0]
+              });
+            }}
           />
         </div>
       </div>

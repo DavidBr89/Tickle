@@ -76,6 +76,8 @@ function somFy(data, width, height, callback = d => d) {
     gridType: 'rect',
     learningRate: 0.1
   };
+
+  //TODO: check later
   const dists = data.map(a => data.map(b => jaccard(a.tags, b.tags)));
 
   // TODO: verify with different data sets
@@ -423,7 +425,7 @@ class ForceOverlay extends Component {
         id,
         // ...oldNode,
         x: oldNode.x,
-        y:oldNode.y,
+        y: oldNode.y,
         tx,
         ty,
         tags,

@@ -36,7 +36,7 @@ const defaultProps = {
   challenge: { type: null },
   // date: '28/04/2012 10:00',
   tags: null,
-  img: placeholderImg,
+  img: null,
   xpPoints: null,
   description: null,
   // loc: { latitude: 50.828797, longitude: 4.352191 },
@@ -67,7 +67,7 @@ class ReadCardFront extends Component {
     tags: PropTypes.any, // PropTypes.oneOf([null, PropTypes.array]),
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
-    img: PropTypes.string.isRequired,
+    img: PropTypes.object,
     onCollect: PropTypes.func,
     onClose: PropTypes.func,
     flipHandler: PropTypes.func,
@@ -140,7 +140,7 @@ class ReadCardFront extends Component {
           {this.modalReadContent(dialogTitle)}
         </Modal>
 
-        <ImgOverlay src={img} style={coverPhotoStyle}>
+        <ImgOverlay src={img && img.url} style={coverPhotoStyle}>
           <div style={{ display: 'flex', width: '70%', maxWidth: '80%' }}>
             {/* TODO: fix width */}
             <PreviewTags
@@ -223,6 +223,13 @@ class EditCardFront extends PureComponent {
   //   return false;
   // }
 
+  onCloseModal = () => {
+    const { data } = this.state;
+    const { onAttrUpdate: onFieldUpdate } = this.props;
+    this.setState({ dialog: null });
+    onFieldUpdate({ ...data });
+  };
+
   setFieldState(field) {
     this.setState(oldState => ({ data: { ...oldState.data, ...field } }));
   }
@@ -241,11 +248,9 @@ class EditCardFront extends PureComponent {
     // console.log('tagColorScale', tagColorScale);
     // TODO: img
     const { title, tags, img, description, media } = data;
-    const onClose = () => {
-      this.setState({ dialog: null });
-      onFieldUpdate({ ...data });
-    };
-    const closeBtn = <FooterBtn onClick={onClose}>{'Close'}</FooterBtn>;
+    const closeBtn = (
+      <FooterBtn onClick={this.onCloseModal}>{'Close'}</FooterBtn>
+    );
     switch (modalTitle) {
       case 'Title':
         return (
@@ -275,9 +280,9 @@ class EditCardFront extends PureComponent {
           <ModalBody footer={closeBtn}>
             <PhotoUpload
               uiColor={uiColor}
-              defaultPhoto={img}
-              onChange={({ files, src }) => {
-                this.setFieldState({ img: { src, files }, dialog: null });
+              defaultPhoto={img.url}
+              onChange={imgFile => {
+                this.setFieldState({ img: imgFile, dialog: null });
               }}
             />
           </ModalBody>
@@ -364,7 +369,7 @@ class EditCardFront extends PureComponent {
           <Modal
             visible={modalVisible}
             title={modalVisible ? dialog.title : ''}
-            onClose={() => this.setState({ dialog: null })}
+            onClose={this.onCloseModal}
             uiColor={uiColor}
             background={background}
           >
@@ -372,7 +377,7 @@ class EditCardFront extends PureComponent {
           </Modal>
           <div className={cardLayout}>
             <ImgOverlay
-              src={img.src}
+              src={img.url}
               style={coverPhotoStyle}
               footer={
                 <EditButton

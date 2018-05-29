@@ -320,10 +320,11 @@ class TagList extends Component {
     this.state = { value: '' };
   }
 
-  static getDerivedStateFromProps(nextProps) {
-    return {value: ''}
+  // static getDerivedStateFromProps(nextProps) {
+  //   console.log('nextProps', nextProps);
+  //   return null; // { value: '' };
+  // }
 
-  }
   render() {
     const {
       data,
@@ -344,7 +345,10 @@ class TagList extends Component {
           <button
             className="btn btn-active ml-2"
             style={{ background: uiColor }}
-            onClick={() => handleAddition(value)}
+            onClick={() => {
+              this.setState({ value: '' });
+              handleAddition(value);
+            }}
           >
             Add
           </button>

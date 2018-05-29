@@ -4,6 +4,7 @@ import '@firebase/firestore';
 //
 // Add additional services you want to use
 import '@firebase/auth';
+import '@firebase/storage';
 // require("firebase/database");
 // require("firebase/firestore");
 // require("firebase/messaging");
@@ -19,4 +20,8 @@ const firestore = firebase.firestore(app);
 
 const auth = firebase.auth();
 
-export { firestore, auth };
+const storageRef = firebase.storage().ref();
+
+console.log('storageRef', storageRef);
+
+export { firestore, auth, storageRef };

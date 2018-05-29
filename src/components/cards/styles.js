@@ -40,6 +40,11 @@ const colors0 = [
   '#253494'
 ];
 
+
+const colors2 = [
+'#eeeee5','#6c843e','#dc383a','#687d99','#705f84','#fc9a1a','#aa3a33','#9c4257'
+]
+
 export const mediaScale = scaleOrdinal()
   .domain(mediaTypes)
   .range(['fa-link', 'fa-camera', 'fa-video-camera']);

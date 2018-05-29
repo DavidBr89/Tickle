@@ -18,6 +18,7 @@
   "dependencies": {
     "@firebase/app": "^0.2.0",
     "@firebase/firestore": "^0.4.1",
+    "@firebase/storage": "^0.2.3",
     "@mapbox/polylabel": "^1.0.2",
     "blueimp-md5": "^2.10.0",
     "bootstrap": "^4.0.0-beta.2",
