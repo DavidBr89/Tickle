@@ -526,12 +526,6 @@ function SearchBar({ onSearch }) {
         placeholder={'Search...'}
         onChange={onSearch}
       />
-      <button
-        className="ml-3 btn btn-active pl-3 pr-3"
-        style={{ background: 'blue' }}
-      >
-        <i className="fa fa-search" />
-      </button>
     </form>
   );
 }
@@ -567,14 +561,14 @@ class MetaSearch extends Component {
     preSelected: []
   };
 
-  static getDerivedStateFromProps(nextProps) {
-    const { search } = nextProps;
-    console.log('this getDerivedStateFromProps', this);
-    search().then(data => {
-      this.setState({ data });
-    });
-    return null;
-  }
+  // static getDerivedStateFromProps(nextProps) {
+  //   const { search } = nextProps;
+  //   console.log('this getDerivedStateFromProps', this);
+  //   search().then(data => {
+  //     this.setState({ data });
+  //   });
+  //   return null;
+  // }
 
   constructor(props) {
     super(props);
@@ -612,9 +606,9 @@ class MetaSearch extends Component {
       onChange(selected.map(id => data.find(d => d.id === id)));
     }
 
-    search().then(newData => {
-      this.setState({ data: newData });
-    });
+    // search().then(newData => {
+    //   this.setState({ data: newData });
+    // });
   }
 
   componentWillUnmount() {
@@ -629,16 +623,15 @@ class MetaSearch extends Component {
     // Load the API's client and auth2 modules.
     // Call the initClient function after the modules load.
     // }
-    const onSearch = () => {
-      const searchVal = this.searchBar.value;
+    const onSearch = searchStr => {
       if (search !== null) {
         search().then(items => {
           this.setState({ data: items });
         });
       } else {
-        // TODO real search
         this.setState({
-          results: defaultData.filter(d => d.title === searchVal)
+          // TODO real search query
+          results: defaultData.filter(d => d.title === searchStr)
         });
       }
     };
@@ -656,8 +649,12 @@ class MetaSearch extends Component {
     return (
       <div>
         <div style={{ width: '100%' }}>
-          <div className="mb-3">
-            <SearchBar onSearch={onSearch} />
+          <div className="mb-3 w-100">
+            <input
+              type="text"
+              placeholder={'Search...'}
+              onChange={evt => onSearch(evt.target.value)}
+            />
           </div>
         </div>
         <ScrollList data={data}>

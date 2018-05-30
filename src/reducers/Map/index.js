@@ -1,4 +1,3 @@
-import generate from 'firebase-auto-ids';
 // import { combineReducers } from 'redux';
 // import cards from './cards';
 // import visibilityFilter from './visibilityFilter';
@@ -23,21 +22,12 @@ import {
   RESIZE_CARD_WINDOW,
   USER_MOVE,
   SCREEN_RESIZE,
-  PLAY_CARD_CHALLENGE,
-  TOGGLE_CARD_CHALLENGE,
-  EXTEND_SELECTED_CARD,
   // FLY_TO_USER,
   TOGGLE_TAG_LIST,
   TOGGLE_GRID_VIEW,
-  TOGGLE_TSNE_VIEW,
-  TOGGLE_SEARCH,
   // RECEIVE_PLACES,
-  FILTER_CARDS,
-  DRAG_CARD,
-  // UPDATE_CARD,
   // RECEIVE_CARDS,
   CHANGE_VIEWPORT,
-  TOGGLE_CARD_AUTHORING,
   // RECEIVE_AUTHORED_CARDS,
   // CREATE_CARD,
   CHANGE_MAP_VIEWPORT
@@ -48,8 +38,6 @@ import {
   LOAD_DIRECTION
   // GET_TOPIC_MAP
 } from './async_actions';
-
-const gen = new generate.Generator();
 
 // const toGeoJSON = points => ({
 //   type: 'FeatureCollection',
@@ -79,31 +67,6 @@ function reducer(state = {}, action) {
     //     // isCardDragging
     //   };
     // }
-    case TOGGLE_CARD_AUTHORING: {
-      const { createdCards, userLocation } = state;
-
-      const enabled = !state.authEnv;
-
-      const cardTemplate = {
-        id: cardTemplateId,
-        template: true,
-        loc: userLocation,
-        edit: true,
-        tags: []
-      };
-
-      // const authEnvCards = [...createdCards, cardTemplate];
-
-      return {
-        ...state,
-        authEnv: enabled,
-        // authEnvCards,
-        cardTemplate,
-        selectedCardId: enabled ? cardTemplateId : null
-        // cards
-        // isCardDragging
-      };
-    }
     case CHANGE_VIEWPORT: {
       // const cards = action.options;
 
@@ -114,39 +77,39 @@ function reducer(state = {}, action) {
       };
     }
 
-    case DRAG_CARD: {
-      const isCardDragging = action.options;
-      return {
-        ...state,
-        isCardDragging
-      };
-    }
-    case TOGGLE_SEARCH: {
-      const isSearching = action.options;
-      return {
-        ...state,
-        isSearching,
-        selectedCardId: !isSearching ? state.selectedCardId : null,
-        selectedCardIdCache: state.selectedCardId
-      };
-    }
+    // case DRAG_CARD: {
+    //   const isCardDragging = action.options;
+    //   return {
+    //     ...state,
+    //     isCardDragging
+    //   };
+    // }
+    // case TOGGLE_SEARCH: {
+    //   const isSearching = action.options;
+    //   return {
+    //     ...state,
+    //     isSearching,
+    //     selectedCardId: !isSearching ? state.selectedCardId : null,
+    //     selectedCardIdCache: state.selectedCardId
+    //   };
+    // }
     case TOGGLE_TAG_LIST: {
       return { ...state, tagListView: !state.tagListView, gridView: false };
     }
-    case FILTER_CARDS: {
-      // console.log('action', action);
-      const selectedTags = action.options;
-      // if (selectedTags.length === 0)
-      //   return { ...state, cards: state.defaultCards };
-      // TODO: fix filtering
-      const cards = state.cards.filter(
-        c =>
-          selectedTags.length === 0 ||
-          intersection(c.tags, selectedTags).length > 0
-      );
-      console.log('cards', cards);
-      return { ...state, cards, selectedTags };
-    }
+    // case FILTER_CARDS: {
+    //   // console.log('action', action);
+    //   const selectedTags = action.options;
+    //   // if (selectedTags.length === 0)
+    //   //   return { ...state, cards: state.defaultCards };
+    //   // TODO: fix filtering
+    //   const cards = state.cards.filter(
+    //     c =>
+    //       selectedTags.length === 0 ||
+    //       intersection(c.tags, selectedTags).length > 0
+    //   );
+    //   console.log('cards', cards);
+    //   return { ...state, cards, selectedTags };
+    // }
     // case RECEIVE_PLACES: {
     //   const { results: places } = action.options;
     //   // console.log('places', places);
@@ -171,42 +134,42 @@ function reducer(state = {}, action) {
     //   const newCards = [...state.cards, ...placeCards];
     //   return { ...state, cards: newCards, defaultCards: newCards };
     // }
-    case TOGGLE_TSNE_VIEW: {
-      return { ...state, tsneView: !state.tsneView };
-    }
-    case TOGGLE_GRID_VIEW: {
-      const { selectedCardId } = state;
-      const gridView = !state.gridView;
-
-      const { width, height, zoom, latitude, longitude } = state;
-      const vp = new PerspectiveMercatorViewport({
-        width,
-        height,
-        zoom,
-        latitude,
-        longitude
-      });
-
-      // TODO
-      const [bottomLng, bottomLat] = gridView
-        ? vp.unproject([width / 2, height * 1 / 4])
-        : vp.unproject([width / 2, height * 3 / 4]);
-
-      return {
-        ...state,
-        gridView,
-        tagListView: false,
-        longitude: bottomLng,
-        latitude: bottomLat,
-        selectedCardId: !gridView
-          ? null
-          : selectedCardId || state.cacheSelectedCardId,
-        cacheSelectedCardId: selectedCardId
-      };
-    }
-    case LOAD_DIRECTION: {
-      return { ...state, directionLoading: true };
-    }
+    // case TOGGLE_TSNE_VIEW: {
+    //   return { ...state, tsneView: !state.tsneView };
+    // }
+    // case TOGGLE_GRID_VIEW: {
+    //   const { selectedCardId } = state;
+    //   const gridView = !state.gridView;
+    //
+    //   const { width, height, zoom, latitude, longitude } = state;
+    //   const vp = new PerspectiveMercatorViewport({
+    //     width,
+    //     height,
+    //     zoom,
+    //     latitude,
+    //     longitude
+    //   });
+    //
+    //   // TODO
+    //   const [bottomLng, bottomLat] = gridView
+    //     ? vp.unproject([width / 2, height * 1 / 4])
+    //     : vp.unproject([width / 2, height * 3 / 4]);
+    //
+    //   return {
+    //     ...state,
+    //     gridView,
+    //     tagListView: false,
+    //     longitude: bottomLng,
+    //     latitude: bottomLat,
+    //     selectedCardId: !gridView
+    //       ? null
+    //       : selectedCardId || state.cacheSelectedCardId,
+    //     cacheSelectedCardId: selectedCardId
+    //   };
+    // }
+    // case LOAD_DIRECTION: {
+    //   return { ...state, directionLoading: true };
+    // }
     // case RETRIEVE_DIRECTION: {
     //   const direction = action.options;
     //   const bbox = getBoundingBox(direction.routes[0].geometry.coordinates);
@@ -263,162 +226,6 @@ function reducer(state = {}, action) {
       return { ...state, mapViewport };
     }
 
-    // case CHANGE_MAP_VIEWPORT: {
-    //   const {
-    //     cards,
-    //     selectedCardId,
-    //     userLocation,
-    //     width,
-    //     height,
-    //     gridView,
-    //     defaultZoom,
-    //     selectedTags,
-    //     tagListView
-    //   } = state;
-    //   // if (state.extCardId !== null) return state;
-    //   const { longitude, latitude, zoom } = action.options;
-    //
-    //   if (zoom <= defaultZoom) return { ...state };
-    //
-    //   const bbox = getBoundingBox(
-    //     cards
-    //       .map(({ loc }) => [loc.longitude, loc.latitude])
-    //       .concat([[userLocation.longitude, userLocation.latitude]])
-    //   );
-    //
-    //   const selCard = cards.find(d => d.id === selectedCardId);
-    //   const { longitude: centerLng, latitude: centerLat } = selCard
-    //     ? selCard.loc
-    //     : { longitude, latitude };
-    //
-    //   const { zoom: minZoom, longitude: newLng, latitude: newLat } = (() => {
-    //     const offset = [0, gridView ? -height / 4 : 0];
-    //     if (zoom <= defaultZoom) {
-    //       return offsetMapViewport({
-    //         width,
-    //         height,
-    //         zoom: 8,
-    //         latitude: centerLat,
-    //         longitude: centerLng,
-    //         offset
-    //       }).fitBounds(bbox, {
-    //         padding: 10,
-    //         // offset
-    //         offset: [0, height / 2]
-    //       });
-    //     }
-    //     return offsetMapViewport({
-    //       width,
-    //       height,
-    //       zoom,
-    //       latitude: centerLat,
-    //       longitude: centerLng,
-    //       offset
-    //     });
-    //     // .fitBounds(bbox, {
-    //     //   // padding: 10,
-    //     //   offset: [0, 0]
-    //     // });
-    //   })();
-    //
-    //   // const screenVp = new PerspectiveMercatorViewport({
-    //   //   width,
-    //   //   height: height - 50,
-    //   //   zoom,
-    //   //   latitude: centerLat,
-    //   //   longitude: centerLng
-    //   // });
-    //
-    //   // // TODO: this is too slow
-    //   // const newCards = state.defaultCards.filter(({ loc, tags }) => {
-    //   //   const [x, y] = screenVp.project([loc.longitude, loc.latitude]);
-    //   //   const tagBool =
-    //   //     selectedTags.length === 0 ||
-    //   //     intersection(selectedTags, tags).length > 0;
-    //   //   return tagBool && y > 0 && y < height && x > 0 && x < width;
-    //   // });
-    //
-    //   // console.log('newCards', newCards);
-    //
-    //   return {
-    //     ...state,
-    //     longitude, // : newLng,
-    //     latitude, // : newLat,
-    //     // birdsEyeView,
-    //     // cards: newCards,
-    //
-    //     // latitude: newLat, // latScale(viewport.zoom),
-    //     zoom, // : Math.max(minZoom, zoom),
-    //     // selectedCardId: zoom < 10 ? null : state.selectedCardId,
-    //     userChangedMapViewport: true
-    //   };
-    //   // }
-    //
-    //   // const { latitude, longitude, zoom } = viewport;
-    //   // return {
-    //   //   ...state,
-    //   //   latitude,
-    //   //   longitude,
-    //   //   zoom,
-    //   //   // selectedCardId: zoom < 10 ? null : state.selectedCardId,
-    //   //   userChangedMapViewport: true
-    //   // };
-    // }
-    // case PLAY_CARD_CHALLENGE:
-    //   return Object.assign({}, state, {
-    //   todos: [
-    //       ...state.todos,
-    //       {
-    //         text: action.text,
-    //         completed: false
-    //       }
-    //     ]
-    // });
-    case SELECT_CARD: {
-      const selectedCardId = action.options;
-      const selectedCard = state.cards.find(d => d.id === selectedCardId);
-      const { width, height } = state;
-
-      // const mapViewport = offsetMapViewport({
-      //   width,
-      //   height,
-      //   ...selectedCard.loc,
-      //   zoom: 10,
-      //   offset: [0, -height / 4]
-      // });
-      //
-      // console.log('mapViewport', mapViewport);
-      // const { latitude, longitude, zoom } = mapViewport;
-
-      // const vp = new PerspectiveMercatorViewport({
-      //   mapViewport
-      // });
-
-      // const newCards = state.defaultCards.filter(({ loc }) => {
-      //   const [x, y] = vp.project([loc.longitude, loc.latitude]);
-      //   return x > 0 && x < width && y > 0 && y < height;
-      // });
-
-      return {
-        ...state,
-        // ...mapViewport,
-        // latitude,
-        // longitude,
-        // zoom,
-        direction: null,
-        selectedCardId,
-        // cards: selectedCardId !== null ? newCards : state.cards,
-        userChangedMapViewport: false,
-        userSelected: false
-      };
-    }
-
-    case EXTEND_SELECTED_CARD: {
-      const extCardId = action.options;
-      // console.log('extCardId', extCardId);
-      return { ...state, extCardId };
-    }
-
     case SCREEN_RESIZE: {
       const height = action.options.height;
       const width = action.options.width;
@@ -427,21 +234,6 @@ function reducer(state = {}, action) {
         width
       };
       return { ...state, ...newState };
-    }
-
-    case TOGGLE_CARD_CHALLENGE: {
-      const { cardChallengeOpen } = action.options;
-      return {
-        ...state,
-        cardChallengeOpen
-      };
-    }
-
-    case PLAY_CARD_CHALLENGE: {
-      return {
-        ...state,
-        modalOpen: !state.modalOpen
-      };
     }
 
     case USER_MOVE: {

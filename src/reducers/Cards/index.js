@@ -10,7 +10,7 @@ import {
 } from 'viewport-mercator-project';
 
 // import { getBoundingBox } from './utils';
-import { intersection } from 'lodash';
+// import { intersection } from 'lodash';
 
 import { db } from 'Firebase';
 
@@ -18,10 +18,8 @@ import { db } from 'Firebase';
 // import mapboxgl from 'mapbox-gl';
 
 import {
-  // PLAY_CARD_CHALLENGE,
-  // FLY_TO_USER,
   RECEIVE_PLACES,
-  // FILTER_CARDS,
+  FILTER_CARDS,
   UPDATE_CARD,
   UPDATE_CARD_TEMPLATE,
   RECEIVE_READABLE_CARDS,
@@ -31,7 +29,14 @@ import {
   ERROR_CREATE_CARD,
   DELETE_CARD,
   ERROR_DELETE_CARD,
-  SUCCESS_DELETE_CARD
+  SUCCESS_DELETE_CARD,
+  SELECT_CARD,
+  TOGGLE_CARD_CHALLENGE,
+  EXTEND_SELECTED_CARD,
+  PLAY_CARD_CHALLENGE,
+  TOGGLE_CARD_AUTHORING,
+  DRAG_CARD,
+  TOGGLE_TSNE_VIEW
 } from './actions';
 
 // const gen = new generate.Generator();
@@ -47,7 +52,21 @@ import {
 //   }))
 // });
 
+function updateCard(cardData, mapViewport) {
+  const { x, y, tx, ty, vx, vy, ...restData } = cardData;
+
+  const vp = new PerspectiveMercatorViewport(mapViewport);
+
+  const [longitude, latitude] = vp.unproject([x, y]);
+  const updatedCard = {
+    ...restData,
+    loc: { latitude, longitude }
+  };
+  return updatedCard;
+}
+
 const cardTemplateId = 'temp';
+// const cardTemplateId = 'temp';
 function reducer(state = {}, action) {
   // console.log('action', action);
   // const { selectedCardId } = state;
@@ -92,14 +111,14 @@ function reducer(state = {}, action) {
     case CREATE_CARD: {
       const { createdCards } = state;
 
-      const card = action.options;
+      const newCard = action.options;
 
-      const newCards = [...createdCards, card];
+      const newCards = [...createdCards, newCard];
 
       return {
         ...state,
         createdCards: newCards,
-        selectedCardId: card.id,
+        // selectedCardId: newCard.id,
         cardTemplate: state.defaultCardTemplate
       };
     }
@@ -112,15 +131,8 @@ function reducer(state = {}, action) {
       const { createdCards } = state;
 
       const { uid, cardData, mapViewport } = action.options;
-      const { x, y, tx, ty, vx, vy, ...restData } = cardData;
 
-      const vp = new PerspectiveMercatorViewport(mapViewport);
-
-      const [longitude, latitude] = vp.unproject([x, y]);
-      const updatedCard = {
-        ...restData,
-        loc: { latitude, longitude }
-      };
+      const updatedCard = updateCard(cardData, mapViewport);
 
       db.doUpdateCard(uid, updatedCard);
 
@@ -146,9 +158,39 @@ function reducer(state = {}, action) {
       // tmpCards[cardIndex] = { ...cards[cardIndex], ...cardData };
     }
 
+    case SELECT_CARD: {
+      const selectedCardId = action.options;
+      return {
+        ...state,
+        selectedCardId
+      };
+    }
+
+    case TOGGLE_CARD_CHALLENGE: {
+      const { cardChallengeOpen } = action.options;
+      return {
+        ...state,
+        cardChallengeOpen
+      };
+    }
+
+    case PLAY_CARD_CHALLENGE: {
+      return {
+        ...state,
+        modalOpen: !state.modalOpen
+      };
+    }
+
+    case EXTEND_SELECTED_CARD: {
+      const extCardId = action.options;
+      // console.log('extCardId', extCardId);
+      return { ...state, extCardId };
+    }
+
     case UPDATE_CARD_TEMPLATE: {
-      const cardTemplate = action.options;
-      return { ...state, cardTemplate };
+      const { cardData: cardTemplate, mapViewport } = action.options;
+      const updatedTemplate = updateCard(cardTemplate, mapViewport);
+      return { ...state, cardTemplate: updatedTemplate };
     }
     case DELETE_CARD: {
       const { cards } = state;
@@ -193,7 +235,82 @@ function reducer(state = {}, action) {
         defaultCards: placeCards
       };
     }
+
+    case TOGGLE_CARD_AUTHORING: {
+      const userLocation = action.options;
+      const enabled = !state.authEnv;
+
+      const cardTemplate = {
+        id: cardTemplateId,
+        template: true,
+        loc: userLocation,
+        edit: true,
+        tags: []
+      };
+
+      // const authEnvCards = [...createdCards, cardTemplate];
+
+      return {
+        ...state,
+        authEnv: enabled,
+        // authEnvCards,
+        cardTemplate,
+        selectedCardId: enabled ? cardTemplateId : null
+        // cards
+        // isCardDragging
+      };
+    }
+
+    case DRAG_CARD: {
+      const isCardDragging = action.options;
+      return {
+        ...state,
+        isCardDragging
+      };
+    }
+
+    case FILTER_CARDS: {
+      // console.log('action', action);
+      const selectedTags = action.options;
+      // if (selectedTags.length === 0)
+      //   return { ...state, cards: state.defaultCards };
+      // TODO: fix filtering
+      // const cards = state.cards.filter(
+      //   c =>
+      //     selectedTags.length === 0 ||
+      //     intersection(c.tags, selectedTags).length > 0
+      // );
+      return { ...state };
+    }
+    // case RECEIVE_PLACES: {
+    //   const { results: places } = action.options;
+    //   // console.log('places', places);
+    //   const placeCards = places.map(
+    //     ({
+    //       id,
+    //       geometry: {
+    //         location: { lat: latitude, lng: longitude }
+    //       },
+    //       types: tags,
+    //       name: title
+    //     }) => ({
+    //       id,
+    //       loc: { latitude, longitude },
+    //       tags,
+    //       title,
+    //       challenge: { type: null },
+    //       media: []
+    //     })
+    //   );
+    //   // console.log('cardPlaces', placeCards);
+    //   const newCards = [...state.cards, ...placeCards];
+    //   return { ...state, cards: newCards, defaultCards: newCards };
+    // }
+    case TOGGLE_TSNE_VIEW: {
+      return { ...state, tsneView: !state.tsneView };
+    }
   }
+
   return state;
 }
 

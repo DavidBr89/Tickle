@@ -40,7 +40,7 @@ class PhotoUpload extends Component {
   };
 
   state = {
-    imgSrc: null,
+    imgSrc: this.props.defaultImg,
     imgFiles: null
   };
 
@@ -60,6 +60,7 @@ class PhotoUpload extends Component {
     }
   }
 
+  // TODO: remove
   contHeight = 300;
 
   render() {

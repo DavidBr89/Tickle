@@ -67,7 +67,7 @@ class ReadCardFront extends Component {
     tags: PropTypes.any, // PropTypes.oneOf([null, PropTypes.array]),
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
-    img: PropTypes.object,
+    img: PropTypes.oneOf([PropTypes.object, null]),
     onCollect: PropTypes.func,
     onClose: PropTypes.func,
     flipHandler: PropTypes.func,
@@ -140,7 +140,7 @@ class ReadCardFront extends Component {
           {this.modalReadContent(dialogTitle)}
         </Modal>
 
-        <ImgOverlay src={img && img.url} style={coverPhotoStyle}>
+        <ImgOverlay src={img ? img.url : null} style={coverPhotoStyle}>
           <div style={{ display: 'flex', width: '70%', maxWidth: '80%' }}>
             {/* TODO: fix width */}
             <PreviewTags
@@ -191,11 +191,13 @@ class EditCardFront extends PureComponent {
   static propTypes = {
     ...ReadCardFront.propTypes,
     onAttrUpdate: PropTypes.func,
+    onSubmit: PropTypes.func,
     allChallenges: PropTypes.array
   };
   static defaultProps = {
     ...ReadCardFront.defaultProps,
     onAttrUpdate: d => d,
+    onSubmit: d => d,
     allChallenges: []
   };
 
@@ -241,8 +243,7 @@ class EditCardFront extends PureComponent {
     const {
       /* allChallenges, */ uiColor,
       challenge: defaultChallenge,
-      tagColorScale,
-      onAttrUpdate: onFieldUpdate
+      tagColorScale
     } = this.props;
 
     // console.log('tagColorScale', tagColorScale);
@@ -280,7 +281,7 @@ class EditCardFront extends PureComponent {
           <ModalBody footer={closeBtn}>
             <PhotoUpload
               uiColor={uiColor}
-              defaultPhoto={img.url}
+              defaultImg={img && img.url}
               onChange={imgFile => {
                 this.setFieldState({ img: imgFile, dialog: null });
               }}
@@ -322,7 +323,6 @@ class EditCardFront extends PureComponent {
           <ChallengeAuthorModalBody
             defaultChallenge={defaultChallenge ? defaultChallenge.type : null}
             onChange={ch => {
-              console.log('onchange', ch);
               this.setFieldState({ challenge: ch });
             }}
           />
@@ -339,7 +339,8 @@ class EditCardFront extends PureComponent {
       style,
       background,
       uiColor,
-      tagColorScale
+      tagColorScale,
+      onSubmit
     } = this.props;
     const { data } = this.state;
     const { title, tags, img, description, media, children, challenge } = data;
@@ -377,7 +378,7 @@ class EditCardFront extends PureComponent {
           </Modal>
           <div className={cardLayout}>
             <ImgOverlay
-              src={img.url}
+              src={img && img.url}
               style={coverPhotoStyle}
               footer={
                 <EditButton
@@ -441,12 +442,9 @@ class EditCardFront extends PureComponent {
                 })
               }
             />
-            <div>
+            <div className="p-1 pt-3">
               <div style={{ display: 'flex' }}>
-                <div
-                  className="p-1 pt-3"
-                  style={{ display: 'flex', width: '100%' }}
-                >
+                <div style={{ display: 'flex', width: '100%' }}>
                   {/* TODO: make component */}
                   <ChallengeButton
                     style={{ width: '80%' }}
@@ -466,6 +464,15 @@ class EditCardFront extends PureComponent {
                 </div>
               </div>
             </div>
+            <button
+              className="btn"
+              style={{ width: '80%' }}
+              color={uiColor}
+              edit
+              onClick={() => onSubmit(data)}
+            >
+              {'Create Card'}
+            </button>
             {children}
           </div>
         </div>

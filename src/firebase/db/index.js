@@ -19,8 +19,8 @@ const removeFunctionFields = ({ uiColor, template, edit, ...rest }) =>
   }, {});
 
 export const doCreateCard = (uid, card) => {
-  console.log('img', card.img);
   const file = card.img ? card.img.file : null;
+  console.log('file', file);
 
   const addToDb = newCard =>
     firestore
@@ -30,7 +30,7 @@ export const doCreateCard = (uid, card) => {
       .doc(newCard.id)
       .set(newCard);
 
-  if (file !== null) {
+  if (file) {
     const imgRef = storageRef.child(`${file.name}${Date.now()}`);
 
     const metadata = { contentType: file.type };
@@ -40,7 +40,7 @@ export const doCreateCard = (uid, card) => {
       .then(url => {
         const newCard = {
           ...removeFunctionFields(card),
-          img: { title: file.title, url }
+          img: { title: card.img.title || file.name, url }
         };
         return addToDb(newCard);
       });

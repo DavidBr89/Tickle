@@ -2,14 +2,10 @@
  * action types
  */
 
-export const SELECT_CARD = 'SELECT_CARD';
 export const RESIZE_CARD_WINDOW = 'RESIZE_CARD_WINDOW';
 export const USER_MOVE = 'USER_MOVE';
 export const CHANGE_MAP_VIEWPORT = 'CHANGE_MAP_VIEWPORT';
 export const SCREEN_RESIZE = 'SCREEN_RESIZE';
-export const PLAY_CARD_CHALLENGE = 'PLAY_CARD_CHALLENGE ';
-export const TOGGLE_CARD_CHALLENGE = 'TOGGLE_CARD_CHALLENGE';
-export const EXTEND_SELECTED_CARD = 'EXTEND_SELECTED_CARD';
 
 // TODO: not used
 export const NAVIGATE_APP_FIRST_TIME = 'NAVIGATE_APP_FIRST_TIME';
@@ -30,13 +26,6 @@ export const NAVIGATE_APP_FIRST_TIME = 'NAVIGATE_APP_FIRST_TIME';
  * action creators
  */
 
-export function extendSelectedCard(options) {
-  return { type: EXTEND_SELECTED_CARD, options };
-}
-export function selectCard(options) {
-  return { type: SELECT_CARD, options };
-}
-
 export function resizeCardWindow(options) {
   return { type: RESIZE_CARD_WINDOW, options };
 }
@@ -47,14 +36,6 @@ export function userMove(options) {
 
 export function changeMapViewport(options) {
   return { type: CHANGE_MAP_VIEWPORT, options };
-}
-
-export function playCardChallenge(options) {
-  return { type: PLAY_CARD_CHALLENGE, options };
-}
-
-export function toggleCardChallenge(options) {
-  return { type: TOGGLE_CARD_CHALLENGE, options };
 }
 
 // export function clickCard(options) {
@@ -90,21 +71,6 @@ export function routing(options) {
   return { type: ROUTE, options };
 }
 
-export const TOGGLE_TSNE_VIEW = 'TSNE_VIEW';
-export function toggleTsneView(options) {
-  return { type: TOGGLE_TSNE_VIEW, options };
-}
-
-// export const FILTER_CARDS = 'FILTER_CARDS';
-// export function filterCards(options) {
-//   return { type: FILTER_CARDS, options };
-// }
-
-export const TOGGLE_GRID_VIEW = 'TOGGLE_GRID';
-export function toggleGrid(options) {
-  return { type: TOGGLE_GRID_VIEW, options };
-}
-
 // export const RECEIVE_PLACES = 'RECEIVE_PLACES';
 // export function receivePlaces(options) {
 //   return { type: RECEIVE_PLACES, options };
@@ -119,18 +85,3 @@ export function toggleGrid(options) {
 // export function receiveAuthoredCards(options) {
 //   return { type: RECEIVE_AUTHORED_CARDS, options };
 // }
-
-export const TOGGLE_SEARCH = 'TOGGLE_SEARCH';
-export function toggleSearch(options) {
-  return { type: TOGGLE_SEARCH, options };
-}
-
-export const DRAG_CARD = 'DRAG_CARD';
-export function dragCard(options) {
-  return { type: DRAG_CARD, options };
-}
-
-export const TOGGLE_CARD_AUTHORING = 'TOGGLE_CARD_AUTHORING';
-export function toggleCardAuthoring() {
-  return { type: TOGGLE_CARD_AUTHORING };
-}

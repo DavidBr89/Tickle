@@ -69,28 +69,15 @@ const defaultState = {
   MapView: {
     mapViewport: {},
     // TODO: calc value
-    isCardDragging: false,
     latCenterOffset: 0.0018,
     latBottom: 0.003,
     defaultZoom: mapZoom,
-    cards: [],
-    defaultCards,
     zoom: mapZoom,
     direction: null,
     ...defaultLocation,
     userLocation: defaultLocation,
     height: 100,
-    width: 100,
-    cardChallengeOpen: false,
-    extCardId: false,
-    AppOpenFirstTime: true,
-    birdsEyeView: false,
-    gridView: true,
-    tsneView: false,
-    tagListView: false,
-    selectedTags: [],
-    isSearching: false,
-    authEnv: false
+    width: 100
   },
   Session: {
     authUser: { uid: null }
@@ -98,15 +85,13 @@ const defaultState = {
   Cards: {
     readableCards: [],
     createdCards: [],
-    width,
-    height,
-    // mapViewport: { ...defaultLocation, zoom: mapZoom },
     selectedCardId: null,
     cardTemplate: { ...defaultCardTemplate },
     defaultCardTemplate,
-    defaultLocation,
     challenges: [],
-    selectedCardId: null
+    cardChallengeOpen: false,
+    tsneView: false,
+    gridView: true
   }
 };
 

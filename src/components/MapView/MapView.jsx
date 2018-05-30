@@ -249,20 +249,20 @@ class MapView extends Component {
       longitude: PropTypes.number
     }).isRequired,
 
-    userMoveAction: PropTypes.func.isRequired,
-    changeMapViewportAction: PropTypes.func.isRequired,
-    selectCardAction: PropTypes.func.isRequired,
-    extCardAction: PropTypes.func.isRequired,
-    toggleCardChallengeAction: PropTypes.func.isRequired,
+    userMove: PropTypes.func.isRequired,
+    changeMapViewport: PropTypes.func.isRequired,
+    selectCard: PropTypes.func.isRequired,
+    extCard: PropTypes.func.isRequired,
+    toggleCardChallenge: PropTypes.func.isRequired,
     flyToUserAction: PropTypes.func.isRequired,
-    screenResizeAction: PropTypes.func.isRequired
+    screenResize: PropTypes.func.isRequired
   };
 
   constructor(props) {
     super(props);
 
     // TODO put into container element
-    const { screenResizeAction } = props;
+    const { screenResize } = props;
 
     // this._onChangeViewport = this._onChangeViewport.bind(this);
     // this._userMove = this._userMove.bind(this);
@@ -272,13 +272,13 @@ class MapView extends Component {
     const height = window.innerHeight;
 
     window.addEventListener('resize', () => {
-      screenResizeAction({
+      screenResize({
         width: this.cont.offsetWidth || window.innerWidth,
         height: this.cont.offsetHeight || window.innerHeight
       });
     });
 
-    screenResizeAction({
+    screenResize({
       width,
       height
     });
@@ -291,54 +291,11 @@ class MapView extends Component {
   componentDidMount() {
     // const map = this.map.getMap();
 
-    const { screenResizeAction, getUserCards } = this.props;
-    screenResizeAction({
+    const { screenResize, getUserCards } = this.props;
+    screenResize({
       width: this.cont.offsetWidth,
       height: this.cont.offsetHeight
     });
-
-    // getUserCards();
-
-    // map._refreshExpiredTiles = false;
-
-    // const {
-    //   computeTopicMapAction,
-    //   width,
-    //   height,
-    //   longitude,
-    //   latitude,
-    //   zoom,
-    //   cards
-    // } = this.props;
-    //
-    // window.addEventListener('resize', () => {
-    //   computeTopicMapAction({
-    //     width: window.innerWidth,
-    //     height: window.innerHeight,
-    //     latitude,
-    //     longitude,
-    //     zoom,
-    //     cards
-    //   });
-    // });
-
-    // computeTopicMapAction({
-    //   width,
-    //   height,
-    //   latitude,
-    //   longitude,
-    //   zoom,
-    //   cards
-    // });
-    // const { screenResize } = this.props;
-    // window.addEventListener('resize', () => {
-    //   this.setState({
-    //     mapHeight: {
-    //       width: window.innerWidth,
-    //       height: window.innerHeight
-    //     }
-    //   });
-    // });
 
     navigator.geolocation.watchPosition(
       pos => {
@@ -369,56 +326,56 @@ class MapView extends Component {
   render() {
     const {
       cards,
-      defaultCards,
+      // defaultCards,
       zoom,
       userLocation,
       selectedCardId,
-      latitude,
-      longitude,
+      // latitude,
+      // longitude,
       width,
       height,
       extCardId,
       selectedCard,
-      direction,
+      // direction,
       // mapViewport,
       // setCardOpacity,
-      userSelected,
-      userChangedMapViewport,
-      compass,
-      birdsEyeView,
+      // userSelected,
+      // userChangedMapViewport,
+      // compass,
+      // birdsEyeView,
       gridView,
       tsneView,
       tagListView,
       isSearching,
       isCardDragging,
-      authEnvCards,
+      // authEnvCards,
       authEnv,
-      cardTemplate,
+      // cardTemplate,
       // AppOpenFirstTime,
       // headerPad,
 
-      userMoveAction,
-      changeMapViewportAction,
-      selectCardAction,
-      extCardAction,
+      // nextCardControl,
       cardChallengeOpen,
-      toggleCardChallengeAction,
-      fetchDirectionAction,
-      filterCardsAction,
-      // flyToUserAction,
-      nextCardControlAction,
-      toggleTagListAction,
-      toggleTsneViewAction,
-      toggleGridAction,
-      toggleSearchAction,
-      dragCardAction,
+
+      // userMove,
+      changeMapViewport,
+      selectCard,
+      extendSelectedCard,
+      toggleCardChallenge,
+      fetchDirection,
+      filterCards,
+      // toggleTagList,
+      toggleTsneView,
+      toggleGrid,
+      toggleSearch,
+      dragCard,
       onCardUpdate,
-      changeViewportAction,
-      toggleCardAuthoringAction,
-      cardAuthoring,
-      createCardAction,
-      cardDropHandler,
-      getUserCards
+      changeViewport,
+      toggleCardAuthoring,
+      // cardAuthoring,
+      // createCard,
+      cardDropHandler
+      // getUserCards
       // navigateFirstTimeAction
     } = this.props;
 
@@ -460,9 +417,7 @@ class MapView extends Component {
         <WindowContext.Provider value={{ width, height }}>
           <Modal
             visible={cardChallengeOpen}
-            onClose={() =>
-              toggleCardChallengeAction({ cardChallengeOpen: false })
-            }
+            onClose={() => toggleCardChallenge({ cardChallengeOpen: false })}
           >
             <ModalBody>
               <PhotoChallenge />
@@ -483,9 +438,9 @@ class MapView extends Component {
                   className="btn "
                   placeholder="Search Cards"
                   type="text"
-                  onChange={evt => filterCardsAction(evt.target.value)}
-                  onFocus={() => toggleSearchAction(true)}
-                  onBlur={() => toggleSearchAction(false)}
+                  onChange={evt => filterCards(evt.target.value)}
+                  onFocus={() => toggleSearch(true)}
+                  onBlur={() => toggleSearch(false)}
                   style={{
                     background: 'whitesmoke',
                     textAlign: 'left',
@@ -541,8 +496,8 @@ class MapView extends Component {
                             {...d}
                             onClick={() =>
                               selectedCardId === d.id
-                                ? extCardAction(d.id)
-                                : selectCardAction(d.id)
+                                ? extendSelectedCard(d.id)
+                                : selectCard(d.id)
                             }
                             tagColorScale={tagColorScale}
                             key={d.id}
@@ -572,7 +527,7 @@ class MapView extends Component {
                         zIndex: 1000,
                         background: 'whitesmoke'
                       }}
-                      onClick={toggleCardAuthoringAction}
+                      onClick={() => toggleCardAuthoring(userLocation)}
                     >
                       <div
                         style={{ display: 'flex', justifyContent: 'center' }}
@@ -614,7 +569,7 @@ class MapView extends Component {
                       userLocation={userLocation}
                       mode={!tsneView ? 'geo' : 'som'}
                       labels={!gridView}
-                      onMapViewportChange={changeMapViewportAction}
+                      onMapViewportChange={changeMapViewport}
                       padding={{
                         bottom: !gridView && !tagListView ? height * 1 / 6 : 50,
                         top:
@@ -636,7 +591,7 @@ class MapView extends Component {
                           extended={extCardId === c.id}
                           preview={
                             <DragSourceCont
-                              dragHandler={dragCardAction}
+                              dragHandler={dragCard}
                               data={c}
                               x={x}
                               y={y}
@@ -651,10 +606,11 @@ class MapView extends Component {
                         >
                           <Card
                             {...c}
-                            onClose={() => extCardAction(null)}
+                            onClose={() => extendSelectedCard(null)}
                             edit={authEnv}
+                            onSubmit={cardDropHandler}
                             onCollect={() =>
-                              toggleCardChallengeAction({
+                              toggleCardChallenge({
                                 cardChallengeOpen: true
                               })
                             }
@@ -673,7 +629,7 @@ class MapView extends Component {
                       zIndex: 1000,
                       background: tsneView && 'whitesmoke'
                     }}
-                    onClick={toggleTsneViewAction}
+                    onClick={toggleTsneView}
                   >
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
                       <Icon.Eye size={30} />
