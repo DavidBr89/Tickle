@@ -1,0 +1,123 @@
+@import "../variables.scss";
+
+svg {
+  overflow: visible !important;
+}
+
+.vx-axis-tick {
+  text {
+    font-size: 12px;
+  }
+}
+
+
+
+// @font-face {
+//   font-family: typeWriter;
+//   src: url(./american_typewriter.ttf);
+// }
+
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@font-face {
+  font-family: "sliced juice";
+  src: url(./sliced_juice.ttf);
+}
+
+// path {
+//   stroke: $secBrown;
+//   fill: none;
+// }
+
+// svg * {
+//   stroke: black;
+// }
+
+// path {
+//   fill-opacity: .1;
+//   stroke-opacity: 1;
+//   fill: none
+// }
+
+body {
+  background: #b17c51 url(./bg.jpg);
+}
+
+p {
+  font-family: "Meddon";
+  color: $primBrown;
+}
+
+// div {
+//   font-family: "Meddon";
+//   color: $primBrown;
+// }
+
+h1 {
+  font-size: 2.5em;
+  text-transform: uppercase;
+  font-weight: lighter;
+  letter-spacing: .15em;
+  font-family: "sliced juice";
+  color: grey;
+}
+
+h2 {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: .9em;
+  text-align: center;
+  text-transform: uppercase;
+  padding-bottom: 10px;
+  word-spacing: 5px;
+  letter-spacing: .1em;
+}
+
+h3 {
+  font-size: 1.2em;
+  font-style: italic;
+  text-align: center;
+  color: #8E8264;
+}
+
+h4 {
+  font-family: Arial, Helvetica, sans-serif;
+  text-transform: uppercase;
+  font-size: .8em;
+  color: $black;
+  letter-spacing: .1em;
+
+  // padding-left: 20px;
+}
+
+ul {
+  list-style: none;
+}
+
+ol {
+  margin-left: 40px;
+}
+
+p {
+  margin-bottom: 20px;
+}
+
+hr {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #000;
+  margin-bottom: 20px;
+}
+
+hr:last-child {
+  display: none;
+}
+
+.serif {
+  font-family: 'Meddon', serif;
+  color: $primBrown;
+  font-style: italic;
+}

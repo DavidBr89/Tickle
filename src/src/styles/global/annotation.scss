@@ -1,0 +1,81 @@
+@import "../variables.scss";
+@import "./index.scss";
+
+:root {
+  --annotation-color: $primBrown;
+}
+
+.annotation path {
+  stroke: $primBrown;
+  fill: none;
+}
+
+.annotation text,
+.annotation .annotation-connector .connector-dot,
+.annotation path.connector-arrow,
+.annotation.callout.rect path.subject {
+  fill: $primBrown;
+  font-size: .90em;
+
+  // @extend .serif;
+}
+
+@media only screen and (min-width: 1500px) {
+  .annotation text,
+  .annotation .annotation-connector .connector-dot,
+  .annotation path.connector-arrow,
+  .annotation.callout.rect path.subject {
+    font-size: 1em;
+
+    // @extend .serif;
+  }
+}
+
+
+.annotation-note-title {
+  font-weight: bold;
+}
+
+.annotation-note-bg {
+  fill: white;
+  fill-opacity: 0.7;
+}
+
+annotation.callout.rect path.subject {
+  fill-opacity: .1;
+}
+
+.annotation.badge path.subject-pointer, .annotation.badge path.subject {
+  fill: $primBrown;
+  stroke-width: 3px;
+  stroke-linecap: round;
+}
+
+.annotation.badge path.subject-ring {
+  fill: white;
+  stroke-width: 3px;
+}
+
+.annotation.badge .badge-text {
+  fill: white;
+  font-size: .7em;
+}
+
+/* Handling edit mode styles */
+.editable .annotation-subject, .editable .annotation-note {
+  cursor: move;
+}
+
+circle.handle {
+  stroke-dasharray: 5;
+  stroke: $primBrown;
+  fill: rgba(255, 255, 255, 0.2);
+  cursor: move;
+  stroke-opacity: .4;
+}
+
+// svg {
+//    // background-color: white;
+//    font-family: 'Lato';
+//    overflow: visible;
+// }

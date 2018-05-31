@@ -1,0 +1,397 @@
+@import "../styles/variables.scss";
+
+// .paper:before {
+//   content: '';
+//   width: 16px;
+//   height: 16px;
+//   background: #e62e2e;
+//   background: #e62e2e radial-gradient(circle 32px at 8px 4px, #e62e2e, #330a0a);
+//   box-shadow: 0 2px 5px hsla(0, 0%, 0%, 0.25);
+//   display: block;
+//   position: relative;
+//   z-index: 2;
+//   margin: 0px auto 10px auto;
+//   border-radius: 8px;
+// }
+//
+// .paper {
+//   background: white;
+//   background: white linear-gradient(to bottom right, white, #f0f0f0);
+//   padding: 10px 20px 20px 20px;
+//   box-shadow: 0 5px 5px hsla(0, 0%, 0%, 0.3), inset 0 0 5px hsla(0, 0%, 0%, 0.3);
+//   border-radius: 2px;
+// }
+//
+// .ripped {
+//   content: "";
+//   height: 2px;
+//   position: absolute;
+//   left: 0;
+//   right: 0;
+//   clip-path: polygon(0% 0%, 5% 100%, 10% 0%, 15% 100%, 20% 0%, 25% 100%, 30% 0%, 35% 100%, 40% 0%, 45% 100%, 50% 0%, 55% 100%, 60% 0%, 65% 100%, 70% 0%, 75% 100%, 80% 0%, 85% 100%, 90% 0%, 95% 100%, 100% 0%) !important;
+// }
+
+// .mainCont {
+//   background: #b17c51 url(./bg.jpg);
+// }
+
+/* entire container, keeps perspective */
+.flipContainer {
+  // width: 100%;
+  // height: 100%;
+  perspective: 1000px;
+}
+
+/* flip the pane when hovered */
+// .flipContainer:active .flipper, .flip-container.active .flipper {
+//   transform: rotateY(180deg);
+// }
+
+// .flipContainer:hover .flipper, .flipContainer.hover .flipper, .flipContainer.flip .flipper {
+//  transform: rotateY(180deg);
+// }
+
+.flipContainer, .front, .back {
+  // width: 320px;
+  // height: 480px;
+}
+
+/* flip speed goes here */
+.flipper {
+  // width: 100%;
+  // height: 100%;
+  transition: 0.6s;
+  transform-style: preserve-3d;
+
+  // position: relative;
+}
+
+.vertical.flipContainer {
+  position: relative;
+}
+
+.vertical .back {
+  transform: rotateX(180deg);
+}
+
+// .vertical.flipContainer .flipper {
+//   transform-origin: 100% 320px; /* half of height
+// }
+
+// .vertical.flipContainer .flipper {
+//   transform: rotateX(-180deg);
+// }
+
+.active {
+  transform: rotateX(-180deg);
+
+  // position: fixed;
+}
+
+/* hide back of pane during swap */
+.front, .back {
+  backface-visibility: hidden;
+  position: absolute;
+
+  // top: 0;
+  // left: 0;
+}
+
+/* front pane, placed above back */
+.front {
+  z-index: 2;
+
+  // width: 100%;
+  // height: 100%;
+
+  /* for firefox 31 */
+  transform: rotateY(0deg);
+}
+
+/* back, initially hidden pane */
+.back {
+  // width: 100%;
+  // height: 100%;
+  transform: rotateY(180deg);
+}
+
+.extraMargin {
+  margin-top: 30px;
+}
+
+// navigation
+// @import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,700");
+
+.nav {
+  // transform: rotate(2deg);
+  font-family: 'Open Sans', sans-serif;
+  background: $primWhite;
+
+  // padding: 20px !important;
+}
+
+.nav a {
+  color: #000000;
+  text-decoration: none;
+}
+
+.nav a:hover {
+  // color: #0000FF;
+  text-decoration: underline;
+}
+
+.title {
+  // float: left;
+  // width: 260px;
+  margin-bottom: 20px;
+}
+
+// h3 {
+//   color: #000000;
+// }
+.tags li:before, .tags a, #tagged {
+  color: #999999;
+}
+
+/* TAGGED */
+// .tagged { font-style: italic; margin-bottom: 20px; color: #999999;}
+//
+// /* HORIZONTAL
+// tr { vertical-align: top; }
+// td { padding-right: 30px; }
+
+.activelink {
+  text-decoration: line-through;
+}
+
+#credit {
+  position: fixed;
+  bottom: 15px;
+  font-size: 12px;
+}
+
+#credit a {
+  color: #ddd;
+}
+
+/* HOME */
+// #description img {
+//   margin-top: 20px;
+//   display: block;
+//   width: 700px;
+//   height: auto;
+// }
+$bg-color: #eee;
+$main-color: #fff;
+$text-color: #333;
+
+.contentBox {
+  height: auto;
+  overflow: hidden;
+  padding: 20px;
+  background: $main-color;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.05);
+
+  &:before, &:after {
+    content: "";
+    height: 2px;
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    clip-path: polygon(0% 0%, 5% 100%, 10% 0%, 15% 100%, 20% 0%, 25% 100%, 30% 0%, 35% 100%, 40% 0%, 45% 100%, 50% 0%, 55% 100%, 60% 0%, 65% 100%, 70% 0%, 75% 100%, 80% 0%, 85% 100%, 90% 0%, 95% 100%, 100% 0%);
+  }
+
+  &:before {
+    background-color: $bg-color;
+    top: 0;
+  }
+
+  &:after {
+    background-color: $main-color;
+    bottom: -2px;
+  }
+}
+
+/*
+Project: HTML & CSS Postcards
+Vintage French Postcard
+Author: Monica Aguinaga
+URL: http://itsnot1889.com/
+@thisismonica
+
+Postcard Credit: Unknown (let me know via twitter if you know the origin)
+stamp: http://dl.dropbox.com/u/5144828/stamp.jpg
+bg: http://dl.dropbox.com/u/5144828/webtreats-paper-pattern-2-brown-5.jpg
+ */
+
+.postcardCont {
+  background: $primWhite;
+  box-shadow: 0 5px 5px hsla(0, 0%, 0%, 0.3), inset 0 0 5px hsla(0, 0%, 0%, 0.3);
+  padding: 20px 20px 20px 20px;
+}
+
+// .postcard h2 {
+//   font-family: Arial, Helvetica, sans-serif;
+//   font-size: .7em;
+//   text-align: center;
+//   text-transform: uppercase;
+//   padding-bottom: 10px;
+//   word-spacing: 5px;
+//   letter-spacing: .1em;
+// }
+//
+// .postcard h1 {
+//   font-size: 1.6em;
+//   text-transform: uppercase;
+//   font-weight: lighter;
+//   letter-spacing: .15em;
+//
+//   // display:inline;
+// }
+
+.socialMedia li {
+  display: inline;
+  text-align: center;
+}
+
+.socialMedia li a {
+  text-decoration: none;
+  padding: .2em 1em;
+
+  // color: #fff;
+  // background-color: #036;
+}
+
+.postcard a {
+  color: #666666;
+  text-decoration: underline;
+  font-style: italic;
+  font-size: .9em;
+}
+
+a:hover {
+  color: #000000;
+}
+
+::-moz-selection {
+  color: #fff;
+  color: rgba(255, 255, 255, 0.85);
+  background: #D39995;
+}
+
+::selection {
+  color: #fff;
+  color: rgba(255, 255, 255, 0.85);
+  background: #D39995;
+}
+
+// .nav-circle {
+//   fill:none;
+//   stroke:#000;
+// }
+
+.link {
+  stroke-width: 1px;
+  stroke: black;
+  stroke-linecap: round;
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+// @font-face {
+//   font-family: typeWriter;
+//   src: url(./american_typewriter.ttf);
+// }
+
+/* Normalizes */
+body, ul, li, h1, h2, h3, form, fieldset, input, p {
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  list-style: none;
+}
+
+fieldset, img {
+  border: 0;
+}
+
+// .cover {
+//   background-image: url('./postcard_bxl.jpg');
+// }
+
+#branding {
+  position: relative;
+  padding: 40px;
+  text-align: center;
+  color: #A19182;
+
+  // background-image: url(../../passport_photo.jpg);
+  // background-repeat: no-repeat;
+  // background-position: 460px 20px;
+  // background-size: 79px 107px;
+}
+
+#branding:before {
+  // font-family: 'Goudy Bookletter 1911', serif;
+  transform: rotate(7deg);
+
+  // height: 80px;
+  // width: 90px;
+}
+
+.postcard .capitalm {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-style: normal;
+  font-size: .87em;
+  padding-right: 10px;
+  margin-bottom: -20px;
+  border-bottom: none;
+}
+
+.postcard h4 {
+  font-family: Arial, Helvetica, sans-serif;
+  text-transform: uppercase;
+  font-size: .8em;
+  color: #666666;
+  letter-spacing: .1em;
+  padding-left: 20px;
+}
+
+.postcard a {
+  color: #666666;
+  text-decoration: underline;
+  font-style: italic;
+  font-size: .9em;
+}
+
+a:hover {
+  color: #000000;
+}
+
+::-moz-selection {
+  color: #fff;
+  color: rgba(255, 255, 255, 0.85);
+  background: #D39995;
+}
+
+::selection {
+  color: #fff;
+  color: rgba(255, 255, 255, 0.85);
+  background: #D39995;
+}
+
+// .nav-circle {
+//   fill:none;
+//   stroke:#000;
+// }
+
+.centerTable {
+  margin: auto;
+  width: 100%;
+
+  // border: 3px solid #73AD21;
+  // border: 1px solid black;
+  padding: 2px;
+}

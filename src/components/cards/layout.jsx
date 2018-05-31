@@ -95,6 +95,61 @@ FieldSet.defaultProps = {
   style: {}
 };
 
+export const ChallengeField = ({
+  text,
+  onEdit,
+  onClick,
+  placeholder,
+  style,
+  borderColor,
+  edit
+}) => (
+  <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
+    <FieldSet edit={edit} borderColor={borderColor} legend={'Challenge'}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          height: '100%'
+        }}
+      >
+        <div
+          className={cx.textClamp}
+          style={{ height: '100%', overflow: 'hidden' }}
+        >
+          {text !== null ? (
+            text
+          ) : (
+            <span style={{ fontStyle: 'italic' }}>{placeholder}</span>
+          )}
+        </div>
+      </div>
+    </FieldSet>
+  </div>
+);
+
+ChallengeField.propTypes = {
+  text: PropTypes.oneOf([PropTypes.string, null]),
+  // TODO: how to
+  onEdit: PropTypes.func,
+  onClick: PropTypes.func,
+  placeholder: PropTypes.string,
+  borderColor: PropTypes.string,
+  style: PropTypes.object,
+  edit: PropTypes.bool
+};
+
+ChallengeField.defaultProps = {
+  text: null,
+  onEdit: null,
+  onClick: null,
+  borderColor: null,
+  placeholder: 'Add a challenge to your Card',
+  style: {},
+  edit: false
+};
+
 const DescriptionField = ({
   text,
   onEdit,
@@ -554,13 +609,14 @@ PreviewTags.defaultProps = {
   colorScale: () => 'red'
 };
 
-const ChallengeButton = ({
+const BigButton = ({
   collected,
   onClick,
   expPoints,
   color,
   style,
-  edit
+  edit,
+  children
 }) => (
   <button
     className={`btn btn-active btn-lg btn-block}`}
@@ -576,7 +632,7 @@ const ChallengeButton = ({
   >
     <div style={{ display: 'flex', justifyContent: 'center' }}>
       <span style={{ display: 'inline-flex' }}>
-        {edit ? 'Add Challenge' : 'Collect'}
+        {children}
         {edit && (
           <EditIcon
             className="ml-1"
@@ -584,24 +640,11 @@ const ChallengeButton = ({
           />
         )}
       </span>
-      {!edit && (
-        <div
-          style={{
-            marginLeft: '4px',
-            paddingLeft: '4px',
-            paddingRight: '4px',
-            border: '2px grey solid'
-            // borderRadius: '5px'
-          }}
-        >
-          {`${expPoints}xp`}
-        </div>
-      )}
     </div>
   </button>
 );
 
-ChallengeButton.propTypes = {
+BigButton.propTypes = {
   collected: PropTypes.bool,
   edit: PropTypes.bool,
   onClick: PropTypes.func,
@@ -610,7 +653,7 @@ ChallengeButton.propTypes = {
   style: PropTypes.object
 };
 
-ChallengeButton.defaultProps = {
+BigButton.defaultProps = {
   collected: false,
   toggleCardChallenge: d => d,
   expPoints: 60,
@@ -731,6 +774,6 @@ export {
   Tags,
   TagInput,
   PreviewTags,
-  ChallengeButton,
+  BigButton,
   Comments
 };

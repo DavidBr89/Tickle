@@ -1,0 +1,1587 @@
+[
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 33932,
+                "join": ",",
+                "name": "The Pop Group",
+                "resource_url": "https://api.discogs.com/artists/33932",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "UK",
+        "genres": [
+            "Rock"
+        ],
+        "images": [
+            {
+                "height": 300,
+                "resource_url": "https://img.discogs.com/141TQnBPYE6F2u1nVKMVt3QMrhM=/fit-in/300x300/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-2237106-1271543368.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/141TQnBPYE6F2u1nVKMVt3QMrhM=/fit-in/300x300/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-2237106-1271543368.jpeg.jpg",
+                "uri150": "https://img.discogs.com/cCYC-MieucvWBhPAdMRRuFMd8RA=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-2237106-1271543368.jpeg.jpg",
+                "width": 300
+            },
+            {
+                "height": 300,
+                "resource_url": "https://img.discogs.com/MXajaPRCu-3w7wYL7kHrfqlMBxQ=/fit-in/300x300/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-2237106-1271543375.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/MXajaPRCu-3w7wYL7kHrfqlMBxQ=/fit-in/300x300/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-2237106-1271543375.jpeg.jpg",
+                "uri150": "https://img.discogs.com/242Tqqc9ileZm3EWQP8925APq64=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-2237106-1271543375.jpeg.jpg",
+                "width": 300
+            }
+        ],
+        "key": 0,
+        "styles": [
+            "Free Jazz",
+            "Post Rock",
+            "Dub",
+            "Industrial",
+            "Punk"
+        ],
+        "thumb": "https://img.discogs.com/cCYC-MieucvWBhPAdMRRuFMd8RA=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-2237106-1271543368.jpeg.jpg",
+        "title": "Y",
+        "uri": "https://www.discogs.com/The-Pop-Group-Y/release/2237106"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 33930,
+                "join": "/",
+                "name": "The Slits",
+                "resource_url": "https://api.discogs.com/artists/33930",
+                "role": "",
+                "tracks": ""
+            },
+            {
+                "anv": "",
+                "id": 33932,
+                "join": ",",
+                "name": "The Pop Group",
+                "resource_url": "https://api.discogs.com/artists/33932",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "UK",
+        "genres": [
+            "Rock",
+            "Funk / Soul"
+        ],
+        "images": [
+            {
+                "height": 583,
+                "resource_url": "https://img.discogs.com/yT7yQScHOs_pCtAYfJQT_6Nl57E=/fit-in/600x583/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-196296-1403389559-6595.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/yT7yQScHOs_pCtAYfJQT_6Nl57E=/fit-in/600x583/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-196296-1403389559-6595.jpeg.jpg",
+                "uri150": "https://img.discogs.com/s_qZHrIpiiUHWRXpW1vpRfbRIYg=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-196296-1403389559-6595.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 594,
+                "resource_url": "https://img.discogs.com/gUNbUHhH8Q3V2pG1E4QDfzmAJ0U=/fit-in/600x594/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-196296-1403389558-3690.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/gUNbUHhH8Q3V2pG1E4QDfzmAJ0U=/fit-in/600x594/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-196296-1403389558-3690.jpeg.jpg",
+                "uri150": "https://img.discogs.com/viEvdQ7219n6lge-fyev9JfELrg=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-196296-1403389558-3690.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 605,
+                "resource_url": "https://img.discogs.com/D22RKDqaY-3ZtlrayMiSGp3Q-tU=/fit-in/600x605/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-196296-1403389559-3347.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/D22RKDqaY-3ZtlrayMiSGp3Q-tU=/fit-in/600x605/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-196296-1403389559-3347.jpeg.jpg",
+                "uri150": "https://img.discogs.com/Hxu_Sp45luPugOE2RyowNRRmM54=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-196296-1403389559-3347.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 604,
+                "resource_url": "https://img.discogs.com/yAwMSTlBVjRBZwaaKgr5UTxdLYM=/fit-in/600x604/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-196296-1403389559-5152.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/yAwMSTlBVjRBZwaaKgr5UTxdLYM=/fit-in/600x604/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-196296-1403389559-5152.jpeg.jpg",
+                "uri150": "https://img.discogs.com/oGe0KwQ2-PSD1RPV9vjANlpj-sM=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-196296-1403389559-5152.jpeg.jpg",
+                "width": 600
+            }
+        ],
+        "key": 1,
+        "released": "1980-03-07",
+        "styles": [
+            "New Wave",
+            "Punk",
+            "Avantgarde",
+            "Experimental",
+            "Post-Punk",
+            "Free Funk"
+        ],
+        "thumb": "https://img.discogs.com/s_qZHrIpiiUHWRXpW1vpRfbRIYg=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-196296-1403389559-6595.jpeg.jpg",
+        "title": "In The Beginning There Was Rhythm / Where There's A Will..",
+        "uri": "https://www.discogs.com/The-Slits-The-Pop-Group-In-The-Beginning-There-Was-Rhythm-Where-Theres-A-Will/release/196296"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 366355,
+                "join": "",
+                "name": "Jens Rachut",
+                "resource_url": "https://api.discogs.com/artists/366355",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "Germany",
+        "genres": [
+            "Non-Music"
+        ],
+        "images": [
+            {
+                "height": 538,
+                "resource_url": "https://img.discogs.com/FAMM4HPz4mguirqqFJldt0Avxs4=/fit-in/600x538/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-6953818-1430305995-1265.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/FAMM4HPz4mguirqqFJldt0Avxs4=/fit-in/600x538/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-6953818-1430305995-1265.jpeg.jpg",
+                "uri150": "https://img.discogs.com/n61qPCFWi4alGcmvIMmoe8W5u-I=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-6953818-1430305995-1265.jpeg.jpg",
+                "width": 600
+            }
+        ],
+        "key": 2,
+        "released": "2015-04-30",
+        "styles": [
+            "Audiobook"
+        ],
+        "thumb": "https://img.discogs.com/n61qPCFWi4alGcmvIMmoe8W5u-I=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-6953818-1430305995-1265.jpeg.jpg",
+        "title": "Herzinfarkt ",
+        "uri": "https://www.discogs.com/Jens-Rachut-Herzinfarkt-/release/6953818"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 33930,
+                "join": "",
+                "name": "The Slits",
+                "resource_url": "https://api.discogs.com/artists/33930",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "Europe",
+        "genres": [
+            "Rock"
+        ],
+        "images": [
+            {
+                "height": 563,
+                "resource_url": "https://img.discogs.com/OzNB3HprGFHxL60IJUYzhHYyHAE=/fit-in/600x563/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1561356-1288187653.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/OzNB3HprGFHxL60IJUYzhHYyHAE=/fit-in/600x563/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1561356-1288187653.jpeg.jpg",
+                "uri150": "https://img.discogs.com/YYa_Iw_sYAv7mHL7ZMe85ddPKXY=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-1561356-1288187653.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 612,
+                "resource_url": "https://img.discogs.com/Qb_A7TFsmmjYzp3jAG80SFTsAr4=/fit-in/600x612/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1561356-1228523692.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/Qb_A7TFsmmjYzp3jAG80SFTsAr4=/fit-in/600x612/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1561356-1228523692.jpeg.jpg",
+                "uri150": "https://img.discogs.com/XdL5Y3Y0k4yeTY-z2qKMd_3Q9zQ=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-1561356-1228523692.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 612,
+                "resource_url": "https://img.discogs.com/YLlRazmBWCwruOHQuJGjyKEEU-Y=/fit-in/600x612/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1561356-1228523762.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/YLlRazmBWCwruOHQuJGjyKEEU-Y=/fit-in/600x612/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1561356-1228523762.jpeg.jpg",
+                "uri150": "https://img.discogs.com/YE-6BSh33v_BsLtr1xjRN2kQ9u4=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-1561356-1228523762.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 493,
+                "resource_url": "https://img.discogs.com/UVpa42pz8Mgigwl3UPGo3Yz0Qyw=/fit-in/500x493/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1561356-1417610251-5927.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/UVpa42pz8Mgigwl3UPGo3Yz0Qyw=/fit-in/500x493/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1561356-1417610251-5927.jpeg.jpg",
+                "uri150": "https://img.discogs.com/X_uGI8hrnrs5U8GWEYTTFebIlpU=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-1561356-1417610251-5927.jpeg.jpg",
+                "width": 500
+            },
+            {
+                "height": 484,
+                "resource_url": "https://img.discogs.com/TYBmpTznTn43s-IsYcsAD53H6fQ=/fit-in/500x484/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1561356-1417610251-4692.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/TYBmpTznTn43s-IsYcsAD53H6fQ=/fit-in/500x484/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1561356-1417610251-4692.jpeg.jpg",
+                "uri150": "https://img.discogs.com/OkDEJ34cE91cp4PBStxmpgCXXCk=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-1561356-1417610251-4692.jpeg.jpg",
+                "width": 500
+            },
+            {
+                "height": 495,
+                "resource_url": "https://img.discogs.com/vXGRNZzNIRpZPbB7eYvLoGsSHJw=/fit-in/500x495/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1561356-1417610252-1167.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/vXGRNZzNIRpZPbB7eYvLoGsSHJw=/fit-in/500x495/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1561356-1417610252-1167.jpeg.jpg",
+                "uri150": "https://img.discogs.com/OtYYfdI6FBqYfKLR3a3b1ea8Ukw=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-1561356-1417610252-1167.jpeg.jpg",
+                "width": 500
+            }
+        ],
+        "key": 3,
+        "released": "1981",
+        "styles": [
+            "Dub",
+            "Punk"
+        ],
+        "thumb": "https://img.discogs.com/YYa_Iw_sYAv7mHL7ZMe85ddPKXY=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-1561356-1288187653.jpeg.jpg",
+        "title": "Return Of The Giant Slits",
+        "uri": "https://www.discogs.com/Slits-Return-Of-The-Giant-Slits/release/1561356"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 366355,
+                "join": "&",
+                "name": "Jens Rachut",
+                "resource_url": "https://api.discogs.com/artists/366355",
+                "role": "",
+                "tracks": ""
+            },
+            {
+                "anv": "",
+                "id": 439214,
+                "join": "",
+                "name": "Jonas Landerschier",
+                "resource_url": "https://api.discogs.com/artists/439214",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "Germany",
+        "genres": [
+            "Stage & Screen"
+        ],
+        "images": [
+            {
+                "height": 200,
+                "resource_url": "https://img.discogs.com/f_Xm6xeFFW8Cng1DTPzwsVPTFNY=/fit-in/200x200/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-4218205-1358851718-5563.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/f_Xm6xeFFW8Cng1DTPzwsVPTFNY=/fit-in/200x200/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-4218205-1358851718-5563.jpeg.jpg",
+                "uri150": "https://img.discogs.com/Pphcl2YP5fWnG0m-qtrNil-NTpU=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-4218205-1358851718-5563.jpeg.jpg",
+                "width": 200
+            }
+        ],
+        "key": 4,
+        "released": "2013-01-18",
+        "styles": [
+            "Audiobook"
+        ],
+        "thumb": "https://img.discogs.com/Pphcl2YP5fWnG0m-qtrNil-NTpU=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-4218205-1358851718-5563.jpeg.jpg",
+        "title": "Blinder Mond",
+        "uri": "https://www.discogs.com/Jens-Rachut-Jonas-Landerschier-Blinder-Mond/release/4218205"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 5454,
+                "join": ",",
+                "name": "Liquid Liquid",
+                "resource_url": "https://api.discogs.com/artists/5454",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "US",
+        "genres": [
+            "Rock",
+            "Funk / Soul"
+        ],
+        "images": [
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/KypyXgHdRNEiOGA5gISnzPVPdOA=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-7360014-1439761576-9698.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/KypyXgHdRNEiOGA5gISnzPVPdOA=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-7360014-1439761576-9698.jpeg.jpg",
+                "uri150": "https://img.discogs.com/YYZwCpj9gDZ01NbUJhOtHvMYHZ4=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-7360014-1439761576-9698.jpeg.jpg",
+                "width": 600
+            }
+        ],
+        "key": 5,
+        "released": "2015",
+        "styles": [
+            "Leftfield",
+            "Rhythmic Noise",
+            "Tribal",
+            "Indie Rock"
+        ],
+        "thumb": "https://img.discogs.com/YYZwCpj9gDZ01NbUJhOtHvMYHZ4=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-7360014-1439761576-9698.jpeg.jpg",
+        "title": "Successive Reflexes",
+        "uri": "https://www.discogs.com/Liquid-Liquid-Successive-Reflexes/release/7360014"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 12834,
+                "join": ",",
+                "name": "Devo",
+                "resource_url": "https://api.discogs.com/artists/12834",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "France",
+        "genres": [
+            "Electronic",
+            "Rock"
+        ],
+        "images": [
+            {
+                "height": 498,
+                "resource_url": "https://img.discogs.com/DsEXXrjXBgwZrgoR1mOtU83NdJU=/fit-in/500x498/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-432144-1443552677-6100.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/DsEXXrjXBgwZrgoR1mOtU83NdJU=/fit-in/500x498/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-432144-1443552677-6100.jpeg.jpg",
+                "uri150": "https://img.discogs.com/VlWisdgIxe5_b9yfZybKM2xpikc=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-432144-1443552677-6100.jpeg.jpg",
+                "width": 500
+            },
+            {
+                "height": 592,
+                "resource_url": "https://img.discogs.com/ZD7ABMmItX9rxzgCfeh_LodkGzQ=/fit-in/600x592/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-432144-1443612788-4159.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/ZD7ABMmItX9rxzgCfeh_LodkGzQ=/fit-in/600x592/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-432144-1443612788-4159.jpeg.jpg",
+                "uri150": "https://img.discogs.com/ThLj703LQeaa5sbutwi-lesN_RY=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-432144-1443612788-4159.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 594,
+                "resource_url": "https://img.discogs.com/YL9MGpgvpUX2szhTV6mvCLZnpwY=/fit-in/600x594/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-432144-1443612803-4921.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/YL9MGpgvpUX2szhTV6mvCLZnpwY=/fit-in/600x594/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-432144-1443612803-4921.jpeg.jpg",
+                "uri150": "https://img.discogs.com/dbRSqGquAaMYho3_kQsorYi5fJ4=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-432144-1443612803-4921.jpeg.jpg",
+                "width": 600
+            }
+        ],
+        "key": 6,
+        "released": "1978",
+        "styles": [
+            "New Wave",
+            "Electro",
+            "Synth-pop"
+        ],
+        "thumb": "https://img.discogs.com/VlWisdgIxe5_b9yfZybKM2xpikc=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-432144-1443552677-6100.jpeg.jpg",
+        "title": "Q: Are We Not Men? A: We Are Devo!",
+        "uri": "https://www.discogs.com/Devo-Q-Are-We-Not-Men-A-We-Are-Devo/release/432144"
+    },
+    {
+        "artists": [
+            {
+                "anv": "Torske",
+                "id": 679,
+                "join": ",",
+                "name": "Bj\u00f8rn Torske",
+                "resource_url": "https://api.discogs.com/artists/679",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "Sweden",
+        "genres": [
+            "Electronic"
+        ],
+        "images": [
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/iBbM5h916UvZLaagbSEF90oAa3c=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-13090-1171945447.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/iBbM5h916UvZLaagbSEF90oAa3c=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-13090-1171945447.jpeg.jpg",
+                "uri150": "https://img.discogs.com/qar4bqq9q7r_ZKJ_zPF4Gj9DgIQ=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-13090-1171945447.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/puAdA1wkMHrzrzhKqRwwB3wF630=/fit-in/598x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-13090-1171945514.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/puAdA1wkMHrzrzhKqRwwB3wF630=/fit-in/598x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-13090-1171945514.jpeg.jpg",
+                "uri150": "https://img.discogs.com/B-lvrqkAvumeEoeEgDiH3hmrbD0=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-13090-1171945514.jpeg.jpg",
+                "width": 598
+            },
+            {
+                "height": 300,
+                "resource_url": "https://img.discogs.com/sovvxPTqQD8cOZop1BS9RwrN7tY=/fit-in/244x300/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-13090-1076680568.jpg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/sovvxPTqQD8cOZop1BS9RwrN7tY=/fit-in/244x300/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-13090-1076680568.jpg.jpg",
+                "uri150": "https://img.discogs.com/0JZS_fpxaRXS9G5Ae1GmPt9z2jo=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-13090-1076680568.jpg.jpg",
+                "width": 244
+            }
+        ],
+        "key": 7,
+        "released": "1999-08-00",
+        "styles": [
+            "House",
+            "Disco"
+        ],
+        "thumb": "https://img.discogs.com/0JZS_fpxaRXS9G5Ae1GmPt9z2jo=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-13090-1076680568.jpg.jpg",
+        "title": "Sexy Disco",
+        "uri": "https://www.discogs.com/Torske-Sexy-Disco/release/13090"
+    },
+    {
+        "artists": [
+            {
+                "anv": "Tore",
+                "id": 190,
+                "join": "/",
+                "name": "Erot",
+                "resource_url": "https://api.discogs.com/artists/190",
+                "role": "",
+                "tracks": ""
+            },
+            {
+                "anv": "Torske",
+                "id": 679,
+                "join": "",
+                "name": "Bj\u00f8rn Torske",
+                "resource_url": "https://api.discogs.com/artists/679",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "Sweden",
+        "genres": [
+            "Electronic"
+        ],
+        "images": [
+            {
+                "height": 248,
+                "resource_url": "https://img.discogs.com/I_89XKKPY9gzmcN614wsJxN5-1s=/fit-in/250x248/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-402-001.jpg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/I_89XKKPY9gzmcN614wsJxN5-1s=/fit-in/250x248/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-402-001.jpg.jpg",
+                "uri150": "https://img.discogs.com/O6q6GZeJHq8CERH36GQw4Aj3KjE=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-402-001.jpg.jpg",
+                "width": 250
+            },
+            {
+                "height": 400,
+                "resource_url": "https://img.discogs.com/SriWAIxCHiKxxoboqaGEcuP4ZvQ=/fit-in/400x400/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-402-1273811317.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/SriWAIxCHiKxxoboqaGEcuP4ZvQ=/fit-in/400x400/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-402-1273811317.jpeg.jpg",
+                "uri150": "https://img.discogs.com/33Jr-Z185ul4VueYqd-ymE4jc18=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-402-1273811317.jpeg.jpg",
+                "width": 400
+            },
+            {
+                "height": 400,
+                "resource_url": "https://img.discogs.com/CGkQhlnWwxqFZHeMKFth5fsq4-A=/fit-in/400x400/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-402-1273811326.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/CGkQhlnWwxqFZHeMKFth5fsq4-A=/fit-in/400x400/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-402-1273811326.jpeg.jpg",
+                "uri150": "https://img.discogs.com/yB-WOMVEjjppriS8X8OeMWwwhiI=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-402-1273811326.jpeg.jpg",
+                "width": 400
+            },
+            {
+                "height": 400,
+                "resource_url": "https://img.discogs.com/iOEbJ2_wqzt6i0zo4vjWsL8r0e0=/fit-in/400x400/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-402-1138145358.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/iOEbJ2_wqzt6i0zo4vjWsL8r0e0=/fit-in/400x400/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-402-1138145358.jpeg.jpg",
+                "uri150": "https://img.discogs.com/foS2IiMKBcRU_Dg-faSgA8nC_BU=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-402-1138145358.jpeg.jpg",
+                "width": 400
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/EWp199VopRHmoNk_Iv2D5KeCV4g=/fit-in/598x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-402-1171945307.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/EWp199VopRHmoNk_Iv2D5KeCV4g=/fit-in/598x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-402-1171945307.jpeg.jpg",
+                "uri150": "https://img.discogs.com/uU7PO2e3DubydhsWHEue9nyvZ30=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-402-1171945307.jpeg.jpg",
+                "width": 598
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/z0o2eCwzfuJeL4n4Bj36WC0Y5PM=/fit-in/598x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-402-1171945369.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/z0o2eCwzfuJeL4n4Bj36WC0Y5PM=/fit-in/598x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-402-1171945369.jpeg.jpg",
+                "uri150": "https://img.discogs.com/4E-wJj7fzyqwA7z_S-OxOJWWBJk=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-402-1171945369.jpeg.jpg",
+                "width": 598
+            },
+            {
+                "height": 400,
+                "resource_url": "https://img.discogs.com/tU3ijjzwRIimkCzuOSvsTqwqaZQ=/fit-in/400x400/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-402-1273811357.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/tU3ijjzwRIimkCzuOSvsTqwqaZQ=/fit-in/400x400/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-402-1273811357.jpeg.jpg",
+                "uri150": "https://img.discogs.com/7E0FgHx59cGSniM7ptLUc_ky4JE=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-402-1273811357.jpeg.jpg",
+                "width": 400
+            },
+            {
+                "height": 400,
+                "resource_url": "https://img.discogs.com/EB9eDDJ47tZvtT2GgSWJC9hBtj8=/fit-in/400x400/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-402-1273811368.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/EB9eDDJ47tZvtT2GgSWJC9hBtj8=/fit-in/400x400/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-402-1273811368.jpeg.jpg",
+                "uri150": "https://img.discogs.com/8Lr5m8WGYMRSw-1Qe4I4CRcxYgs=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-402-1273811368.jpeg.jpg",
+                "width": 400
+            }
+        ],
+        "key": 8,
+        "released": "1999-03-00",
+        "styles": [
+            "Deep House"
+        ],
+        "thumb": "https://img.discogs.com/O6q6GZeJHq8CERH36GQw4Aj3KjE=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-402-001.jpg.jpg",
+        "title": "Battlestar XB-7 / Jeg Vil V\u00e6re S\u00f8ppelmann",
+        "uri": "https://www.discogs.com/Tore-Torske-Battlestar-XB-7-Jeg-Vil-V%C3%A6re-S%C3%B8ppelmann/release/402"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 56940,
+                "join": ",",
+                "name": "Sound Waves",
+                "resource_url": "https://api.discogs.com/artists/56940",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "US",
+        "genres": [
+            "Electronic"
+        ],
+        "images": [
+            {
+                "height": 598,
+                "resource_url": "https://img.discogs.com/CZQSXYnVwKl1_yQUu7mitxQyYik=/fit-in/600x598/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-95989-1487773413-6429.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/CZQSXYnVwKl1_yQUu7mitxQyYik=/fit-in/600x598/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-95989-1487773413-6429.jpeg.jpg",
+                "uri150": "https://img.discogs.com/wEw_2B4JBZYwvSt1muXA2Zo2K30=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-95989-1487773413-6429.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/vhDLT-LuB-V24cXquYpsmsSvHpw=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-95989-1487773413-9570.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/vhDLT-LuB-V24cXquYpsmsSvHpw=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-95989-1487773413-9570.jpeg.jpg",
+                "uri150": "https://img.discogs.com/MTj0gduvti8QAc-UQzPo9q1Jc4Y=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-95989-1487773413-9570.jpeg.jpg",
+                "width": 600
+            }
+        ],
+        "key": 9,
+        "released": "1991-05-22",
+        "styles": [
+            "House",
+            "Deep House",
+            "Garage House"
+        ],
+        "thumb": "https://img.discogs.com/wEw_2B4JBZYwvSt1muXA2Zo2K30=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-95989-1487773413-6429.jpeg.jpg",
+        "title": "I Wanna Feel The Music / Gotta Have You",
+        "uri": "https://www.discogs.com/Sound-Waves-I-Wanna-Feel-The-Music-Gotta-Have-You/release/95989"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 26459,
+                "join": "",
+                "name": "Low Key",
+                "resource_url": "https://api.discogs.com/artists/26459",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "US",
+        "genres": [
+            "Electronic"
+        ],
+        "images": [
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/MeW-q603tiTUXhMUAW8DcTE4LzY=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-33618-1510638461-2560.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/MeW-q603tiTUXhMUAW8DcTE4LzY=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-33618-1510638461-2560.jpeg.jpg",
+                "uri150": "https://img.discogs.com/M2elriVq-t6BmSZZJoz8NvxqSqY=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-33618-1510638461-2560.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/BLnK6cTDcsD3Gm8A85lnGCBhsJY=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-33618-1510638400-9397.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/BLnK6cTDcsD3Gm8A85lnGCBhsJY=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-33618-1510638400-9397.jpeg.jpg",
+                "uri150": "https://img.discogs.com/VzmMG6HwAZWi_W_qpJHREzIEUwQ=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-33618-1510638400-9397.jpeg.jpg",
+                "width": 600
+            }
+        ],
+        "key": 10,
+        "released": "1993-00-00",
+        "styles": [
+            "Garage House",
+            "House"
+        ],
+        "thumb": "https://img.discogs.com/M2elriVq-t6BmSZZJoz8NvxqSqY=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-33618-1510638461-2560.jpeg.jpg",
+        "title": "I Cant Stop",
+        "uri": "https://www.discogs.com/Low-Key-I-Cant-Stop/release/33618"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 233784,
+                "join": "",
+                "name": "Orange Juice (3)",
+                "resource_url": "https://api.discogs.com/artists/233784",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "Germany",
+        "genres": [
+            "Rock",
+            "Pop"
+        ],
+        "images": [
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/rKG15Mp2wody1eXxJb6Xpo22AoY=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-2321996-1415562658-8339.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/rKG15Mp2wody1eXxJb6Xpo22AoY=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-2321996-1415562658-8339.jpeg.jpg",
+                "uri150": "https://img.discogs.com/gwQEyRuNfaS7vjNJuN096OGL_3c=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-2321996-1415562658-8339.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 595,
+                "resource_url": "https://img.discogs.com/16wedRZFDX3HKEhtuXPTmLMITbo=/fit-in/600x595/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-2321996-1415562656-8863.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/16wedRZFDX3HKEhtuXPTmLMITbo=/fit-in/600x595/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-2321996-1415562656-8863.jpeg.jpg",
+                "uri150": "https://img.discogs.com/97rDs2vPowz1KGoL1uFmfZyNjv4=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-2321996-1415562656-8863.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 602,
+                "resource_url": "https://img.discogs.com/kjQ6KXCHRvID65pEUhw2cJl0_2c=/fit-in/600x602/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-2321996-1415562656-1054.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/kjQ6KXCHRvID65pEUhw2cJl0_2c=/fit-in/600x602/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-2321996-1415562656-1054.jpeg.jpg",
+                "uri150": "https://img.discogs.com/63Z6j6W7lOGfkHJExDR00drj89g=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-2321996-1415562656-1054.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/D6egh2OTExeVhQJDIxhIK9MAMf8=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-2321996-1415562656-2716.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/D6egh2OTExeVhQJDIxhIK9MAMf8=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-2321996-1415562656-2716.jpeg.jpg",
+                "uri150": "https://img.discogs.com/cjLTzengxiF5kzMlTAVcccDDXf4=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-2321996-1415562656-2716.jpeg.jpg",
+                "width": 600
+            }
+        ],
+        "key": 11,
+        "released": "1982",
+        "styles": [
+            "Pop Rock",
+            "Indie Rock"
+        ],
+        "thumb": "https://img.discogs.com/gwQEyRuNfaS7vjNJuN096OGL_3c=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-2321996-1415562658-8339.jpeg.jpg",
+        "title": "Rip It Up",
+        "uri": "https://www.discogs.com/Orange-Juice-Rip-It-Up/release/2321996"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 39033,
+                "join": "",
+                "name": "House Of Jazz",
+                "resource_url": "https://api.discogs.com/artists/39033",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "US",
+        "genres": [
+            "Electronic"
+        ],
+        "images": [
+            {
+                "height": 478,
+                "resource_url": "https://img.discogs.com/xejU6Q0Pq2XXVh13kwIsa40hGW4=/fit-in/600x478/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-257523-1504979657-5947.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/xejU6Q0Pq2XXVh13kwIsa40hGW4=/fit-in/600x478/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-257523-1504979657-5947.jpeg.jpg",
+                "uri150": "https://img.discogs.com/wE1a-ADYhbxgTn70oTtdF66LB-4=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-257523-1504979657-5947.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 500,
+                "resource_url": "https://img.discogs.com/xeVA8G62Wpbe40YWf0qTMoXqEL4=/fit-in/500x500/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-257523-1159918493.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/xeVA8G62Wpbe40YWf0qTMoXqEL4=/fit-in/500x500/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-257523-1159918493.jpeg.jpg",
+                "uri150": "https://img.discogs.com/i6v8mVhzUJRZx8B_m6U4xZD3s40=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-257523-1159918493.jpeg.jpg",
+                "width": 500
+            },
+            {
+                "height": 499,
+                "resource_url": "https://img.discogs.com/RIYznLBJSd_7x_UMuGELmIhBy8M=/fit-in/500x499/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-257523-1159918510.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/RIYznLBJSd_7x_UMuGELmIhBy8M=/fit-in/500x499/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-257523-1159918510.jpeg.jpg",
+                "uri150": "https://img.discogs.com/GAvAEbMvGqyYx4GIqFGX95oNtxA=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-257523-1159918510.jpeg.jpg",
+                "width": 500
+            }
+        ],
+        "key": 12,
+        "released": "1993-00-00",
+        "styles": [
+            "House",
+            "Deep House",
+            "Garage House"
+        ],
+        "thumb": "https://img.discogs.com/wE1a-ADYhbxgTn70oTtdF66LB-4=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-257523-1504979657-5947.jpeg.jpg",
+        "title": "A House Of Jazz Mix",
+        "uri": "https://www.discogs.com/House-Of-Jazz-A-House-Of-Jazz-Mix/release/257523"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 26459,
+                "join": "",
+                "name": "Low Key",
+                "resource_url": "https://api.discogs.com/artists/26459",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "UK",
+        "genres": [
+            "Electronic"
+        ],
+        "images": [
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/tuOvCM7tUNM46eslzDFufDAz_aY=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-38023-1355819706-7919.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/tuOvCM7tUNM46eslzDFufDAz_aY=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-38023-1355819706-7919.jpeg.jpg",
+                "uri150": "https://img.discogs.com/ZWOIYddzXwMDbkezGGJToJzZ47U=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-38023-1355819706-7919.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/1ABgjr80TusjfGY4PMy31PJhEJY=/fit-in/583x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-38023-1165768923.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/1ABgjr80TusjfGY4PMy31PJhEJY=/fit-in/583x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-38023-1165768923.jpeg.jpg",
+                "uri150": "https://img.discogs.com/uagYSwFTBudZNsI-7ffTE01WPvU=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-38023-1165768923.jpeg.jpg",
+                "width": 583
+            },
+            {
+                "height": 211,
+                "resource_url": "https://img.discogs.com/1kdpsuR3Ti3Lmolk2_uo6mJ-4X8=/fit-in/600x211/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-38023-1165768937.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/1kdpsuR3Ti3Lmolk2_uo6mJ-4X8=/fit-in/600x211/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-38023-1165768937.jpeg.jpg",
+                "uri150": "https://img.discogs.com/J1sl_7welyjwoyOztjzJ0e1-3dU=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-38023-1165768937.jpeg.jpg",
+                "width": 600
+            }
+        ],
+        "key": 13,
+        "released": "1993",
+        "styles": [
+            "House",
+            "Deep House"
+        ],
+        "thumb": "https://img.discogs.com/ZWOIYddzXwMDbkezGGJToJzZ47U=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-38023-1355819706-7919.jpeg.jpg",
+        "title": "Try Me Baby",
+        "uri": "https://www.discogs.com/Low-Key-Try-Me-Baby/release/38023"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 28124,
+                "join": "",
+                "name": "Classic Man",
+                "resource_url": "https://api.discogs.com/artists/28124",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "UK",
+        "genres": [
+            "Electronic"
+        ],
+        "images": [
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/SRsXYyhd6Ez1M1NoZNuLz7WwOIA=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-6584439-1431468932-3659.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/SRsXYyhd6Ez1M1NoZNuLz7WwOIA=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-6584439-1431468932-3659.jpeg.jpg",
+                "uri150": "https://img.discogs.com/el2a7apgNUaIYTpGaMdERuDHttY=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-6584439-1431468932-3659.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/zfmAvA6_tE4jcHLnbOM0LzDhgy0=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-6584439-1431468931-3735.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/zfmAvA6_tE4jcHLnbOM0LzDhgy0=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-6584439-1431468931-3735.jpeg.jpg",
+                "uri150": "https://img.discogs.com/CwnbWM4_rcax8vXnw23D35vv7j8=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-6584439-1431468931-3735.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/wCO73JgvFi7LIu0YTLQXjsrXHvM=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-6584439-1423150424-2120.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/wCO73JgvFi7LIu0YTLQXjsrXHvM=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-6584439-1423150424-2120.jpeg.jpg",
+                "uri150": "https://img.discogs.com/e2ieBaaVkzUyzmCFBYipCRxgXzs=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-6584439-1423150424-2120.jpeg.jpg",
+                "width": 600
+            }
+        ],
+        "key": 14,
+        "released": "2015-01-00",
+        "styles": [
+            "House",
+            "Deep House"
+        ],
+        "thumb": "https://img.discogs.com/el2a7apgNUaIYTpGaMdERuDHttY=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-6584439-1431468932-3659.jpeg.jpg",
+        "title": "Mellow / Love",
+        "uri": "https://www.discogs.com/Classic-Man-Mellow-Love/release/6584439"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 388,
+                "join": ",",
+                "name": "Stereolab",
+                "resource_url": "https://api.discogs.com/artists/388",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "UK",
+        "genres": [
+            "Rock"
+        ],
+        "images": [
+            {
+                "height": 595,
+                "resource_url": "https://img.discogs.com/qiS-IFZPAZNX52Qi_1aWkcO1H4o=/fit-in/600x595/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-341152-1478205946-9815.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/qiS-IFZPAZNX52Qi_1aWkcO1H4o=/fit-in/600x595/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-341152-1478205946-9815.jpeg.jpg",
+                "uri150": "https://img.discogs.com/JfWSJKnejDMhxmDvx6F25ky5Uns=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-341152-1478205946-9815.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 595,
+                "resource_url": "https://img.discogs.com/AEh3d9HaeDwxOna0gKW_UwrK68s=/fit-in/600x595/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-341152-1478205947-9708.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/AEh3d9HaeDwxOna0gKW_UwrK68s=/fit-in/600x595/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-341152-1478205947-9708.jpeg.jpg",
+                "uri150": "https://img.discogs.com/rRjdRNH7yMUjvu0ytfLHaRlWjiU=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-341152-1478205947-9708.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 594,
+                "resource_url": "https://img.discogs.com/-hQuD9KMB_LzAPFzujon6xTzbIo=/fit-in/600x594/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-341152-1478205948-9607.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/-hQuD9KMB_LzAPFzujon6xTzbIo=/fit-in/600x594/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-341152-1478205948-9607.jpeg.jpg",
+                "uri150": "https://img.discogs.com/0puKUi6KbL7sEHv4LXNpi4P9hGY=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-341152-1478205948-9607.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 603,
+                "resource_url": "https://img.discogs.com/oVQrDeprabx2VOItfKagD42eldQ=/fit-in/600x603/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-341152-1478205948-8150.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/oVQrDeprabx2VOItfKagD42eldQ=/fit-in/600x603/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-341152-1478205948-8150.jpeg.jpg",
+                "uri150": "https://img.discogs.com/fhV_mWnGbtU2bqrViLC_D2wA5Gw=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-341152-1478205948-8150.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 594,
+                "resource_url": "https://img.discogs.com/DUsNk-REiegttUUpN2iZg7vDfIk=/fit-in/600x594/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-341152-1506728865-6727.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/DUsNk-REiegttUUpN2iZg7vDfIk=/fit-in/600x594/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-341152-1506728865-6727.jpeg.jpg",
+                "uri150": "https://img.discogs.com/kglcbsmpQzK8AIpRavco1jkOecw=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-341152-1506728865-6727.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 582,
+                "resource_url": "https://img.discogs.com/7jO1Jp7kpT4RWy9nF3YT_qXri7k=/fit-in/600x582/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-341152-1506728865-9629.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/7jO1Jp7kpT4RWy9nF3YT_qXri7k=/fit-in/600x582/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-341152-1506728865-9629.jpeg.jpg",
+                "uri150": "https://img.discogs.com/ReC1unFd-yUFaxtjUb4NbhLQOcI=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-341152-1506728865-9629.jpeg.jpg",
+                "width": 600
+            }
+        ],
+        "key": 15,
+        "released": "1992-05-26",
+        "styles": [
+            "Experimental",
+            "Indie Rock"
+        ],
+        "thumb": "https://img.discogs.com/JfWSJKnejDMhxmDvx6F25ky5Uns=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-341152-1478205946-9815.jpeg.jpg",
+        "title": "Peng!",
+        "uri": "https://www.discogs.com/Stereolab-Peng/release/341152"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 27305,
+                "join": ",",
+                "name": "Smith N Hack",
+                "resource_url": "https://api.discogs.com/artists/27305",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "Germany",
+        "genres": [
+            "Electronic"
+        ],
+        "images": [
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/Qx5y3d3zFek0mJSW3Sc3FjDpfDM=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-35150-1157483966.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/Qx5y3d3zFek0mJSW3Sc3FjDpfDM=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-35150-1157483966.jpeg.jpg",
+                "uri150": "https://img.discogs.com/831f7b3z2w-OksT540zy-8aYsLM=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-35150-1157483966.jpeg.jpg",
+                "width": 600
+            }
+        ],
+        "key": 16,
+        "released": "2002",
+        "styles": [
+            "Abstract",
+            "Disco",
+            "House",
+            "Techno",
+            "Electro",
+            "Experimental"
+        ],
+        "thumb": "https://img.discogs.com/831f7b3z2w-OksT540zy-8aYsLM=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-35150-1157483966.jpeg.jpg",
+        "title": "Tribute",
+        "uri": "https://www.discogs.com/Smith-N-Hack-Tribute/release/35150"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 81,
+                "join": ",",
+                "name": "P\u00e9p\u00e9 Bradock",
+                "resource_url": "https://api.discogs.com/artists/81",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "France",
+        "genres": [
+            "Electronic"
+        ],
+        "images": [
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/BQO0LRRA73FUZhnNxrWCKd4rpck=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-157183-1270204214.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/BQO0LRRA73FUZhnNxrWCKd4rpck=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-157183-1270204214.jpeg.jpg",
+                "uri150": "https://img.discogs.com/L8qVsZTddf5y8nFP6YQrQBjm3Rk=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-157183-1270204214.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/GbssnLDUf0XC9UTmb71SBnFZ2So=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-157183-1270204250.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/GbssnLDUf0XC9UTmb71SBnFZ2So=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-157183-1270204250.jpeg.jpg",
+                "uri150": "https://img.discogs.com/b09da9Nyk3DJuyVwyatcstqpusk=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-157183-1270204250.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/UAUuvTd0BGmi_TmQxqrnLTBmciQ=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-157183-1270204226.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/UAUuvTd0BGmi_TmQxqrnLTBmciQ=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-157183-1270204226.jpeg.jpg",
+                "uri150": "https://img.discogs.com/5u97xWxcoo6q9CaEuJ6ap32El00=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-157183-1270204226.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/Vqgf1lyZEphBvtS5nOE-t552Ijw=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-157183-1270204237.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/Vqgf1lyZEphBvtS5nOE-t552Ijw=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-157183-1270204237.jpeg.jpg",
+                "uri150": "https://img.discogs.com/P_S1GKV3erTuGSkCjNBs77gA1DA=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-157183-1270204237.jpeg.jpg",
+                "width": 600
+            }
+        ],
+        "key": 17,
+        "released": "2003",
+        "styles": [
+            "Deep House",
+            "Tech House"
+        ],
+        "thumb": "https://img.discogs.com/L8qVsZTddf5y8nFP6YQrQBjm3Rk=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-157183-1270204214.jpeg.jpg",
+        "title": "4",
+        "uri": "https://www.discogs.com/P%C3%A9p%C3%A9-Bradock-4/release/157183"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 34454,
+                "join": "vs.",
+                "name": "International Pony",
+                "resource_url": "https://api.discogs.com/artists/34454",
+                "role": "",
+                "tracks": ""
+            },
+            {
+                "anv": "",
+                "id": 1531,
+                "join": "",
+                "name": "LoSoul",
+                "resource_url": "https://api.discogs.com/artists/1531",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "Germany",
+        "genres": [
+            "Electronic"
+        ],
+        "images": [
+            {
+                "height": 350,
+                "resource_url": "https://img.discogs.com/QIJlp2A5y5VWLiN2DgGg-SmUAYg=/fit-in/350x350/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-124518-1152112362.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/QIJlp2A5y5VWLiN2DgGg-SmUAYg=/fit-in/350x350/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-124518-1152112362.jpeg.jpg",
+                "uri150": "https://img.discogs.com/gCjQiyPOG2YUeWltFVpSl73s7jM=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-124518-1152112362.jpeg.jpg",
+                "width": 350
+            },
+            {
+                "height": 350,
+                "resource_url": "https://img.discogs.com/SG1DXJbqL00OcK7dhHu8RQ18N0Q=/fit-in/350x350/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-124518-1152112376.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/SG1DXJbqL00OcK7dhHu8RQ18N0Q=/fit-in/350x350/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-124518-1152112376.jpeg.jpg",
+                "uri150": "https://img.discogs.com/PqufcfofVsHMprs8L9avtSMh2qk=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-124518-1152112376.jpeg.jpg",
+                "width": 350
+            }
+        ],
+        "key": 18,
+        "released": "2003-03-00",
+        "styles": [
+            "Minimal",
+            "Tech House"
+        ],
+        "thumb": "https://img.discogs.com/gCjQiyPOG2YUeWltFVpSl73s7jM=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-124518-1152112362.jpeg.jpg",
+        "title": "International Snootleg",
+        "uri": "https://www.discogs.com/International-Pony-vs-LoSoul-International-Snootleg/release/124518"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 208750,
+                "join": ",",
+                "name": "Levon Vincent",
+                "resource_url": "https://api.discogs.com/artists/208750",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "US",
+        "genres": [
+            "Electronic"
+        ],
+        "images": [
+            {
+                "height": 603,
+                "resource_url": "https://img.discogs.com/ggP-oK0SZofM9rKm_wsGZWdIfpQ=/fit-in/600x603/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-9419583-1480442921-6434.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/ggP-oK0SZofM9rKm_wsGZWdIfpQ=/fit-in/600x603/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-9419583-1480442921-6434.jpeg.jpg",
+                "uri150": "https://img.discogs.com/eelZnQ9iBxb4duduHr-iL44ydVo=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-9419583-1480442921-6434.jpeg.jpg",
+                "width": 600
+            }
+        ],
+        "key": 19,
+        "released": "2016-11-29",
+        "styles": [
+            "Deep House",
+            "House",
+            "Techno"
+        ],
+        "thumb": "https://img.discogs.com/eelZnQ9iBxb4duduHr-iL44ydVo=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-9419583-1480442921-6434.jpeg.jpg",
+        "title": "NYC-BERLIN DIALOGUES 2016",
+        "uri": "https://www.discogs.com/Levon-Vincent-NYC-BERLIN-DIALOGUES-2016/release/9419583"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 1982,
+                "join": ",",
+                "name": "Mark Seven",
+                "resource_url": "https://api.discogs.com/artists/1982",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "US",
+        "genres": [
+            "Electronic"
+        ],
+        "images": [
+            {
+                "height": 495,
+                "resource_url": "https://img.discogs.com/0vTh4TYQgmxeyj7nuvYV68xB4wg=/fit-in/490x495/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-10967350-1507374914-1479.png.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/0vTh4TYQgmxeyj7nuvYV68xB4wg=/fit-in/490x495/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-10967350-1507374914-1479.png.jpg",
+                "uri150": "https://img.discogs.com/aV4beHYkRyzV7VQz8FdoUuMELS8=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-10967350-1507374914-1479.png.jpg",
+                "width": 490
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/FRm8exxBQv4n-XV3DvdqBRE4PjM=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-10967350-1507653615-5120.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/FRm8exxBQv4n-XV3DvdqBRE4PjM=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-10967350-1507653615-5120.jpeg.jpg",
+                "uri150": "https://img.discogs.com/VNRsIx3rs99ASyBffL1YdHV_a2Q=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-10967350-1507653615-5120.jpeg.jpg",
+                "width": 600
+            }
+        ],
+        "key": 20,
+        "released": "2017-10-06",
+        "styles": [
+            "Deep House"
+        ],
+        "thumb": "https://img.discogs.com/aV4beHYkRyzV7VQz8FdoUuMELS8=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-10967350-1507374914-1479.png.jpg",
+        "title": "The Promised Land",
+        "uri": "https://www.discogs.com/Mark-Seven-The-Promised-Land/release/10967350"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 1094,
+                "join": ",",
+                "name": "Moodymann",
+                "resource_url": "https://api.discogs.com/artists/1094",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "UK",
+        "genres": [
+            "Electronic"
+        ],
+        "images": [
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/k_tru19JHd-ZoFFF4H1mL3FfLNs=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-11083148-1509554460-3499.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/k_tru19JHd-ZoFFF4H1mL3FfLNs=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-11083148-1509554460-3499.jpeg.jpg",
+                "uri150": "https://img.discogs.com/ddgvJMiftI8jmJ0Ple_AVla2L88=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-11083148-1509554460-3499.jpeg.jpg",
+                "width": 600
+            }
+        ],
+        "key": 21,
+        "released": "2017-11-00",
+        "styles": [
+            "Deep House"
+        ],
+        "thumb": "https://img.discogs.com/ddgvJMiftI8jmJ0Ple_AVla2L88=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-11083148-1509554460-3499.jpeg.jpg",
+        "title": "Forevernevermore",
+        "uri": "https://www.discogs.com/Moodymann-Forevernevermore/release/11083148"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 81,
+                "join": ",",
+                "name": "P\u00e9p\u00e9 Bradock",
+                "resource_url": "https://api.discogs.com/artists/81",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "France",
+        "genres": [
+            "Electronic"
+        ],
+        "images": [
+            {
+                "height": 611,
+                "resource_url": "https://img.discogs.com/DcwUNoD5R1nkyzKNbKU6DRuVAEs=/fit-in/600x611/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-9038054-1474000756-9298.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/DcwUNoD5R1nkyzKNbKU6DRuVAEs=/fit-in/600x611/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-9038054-1474000756-9298.jpeg.jpg",
+                "uri150": "https://img.discogs.com/G1a6xF8xQE-jhPYYapiKo-wd_FQ=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-9038054-1474000756-9298.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 611,
+                "resource_url": "https://img.discogs.com/FZO3LOJ3bUkBjtgQdb5rvpT9JpU=/fit-in/600x611/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-9038054-1474000759-4960.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/FZO3LOJ3bUkBjtgQdb5rvpT9JpU=/fit-in/600x611/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-9038054-1474000759-4960.jpeg.jpg",
+                "uri150": "https://img.discogs.com/TUWFMfdlgfTNnL8D0dEF5Zell-c=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-9038054-1474000759-4960.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 360,
+                "resource_url": "https://img.discogs.com/34YQJEJFN1tMLlfyt_CXwDHBDCc=/fit-in/600x360/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-9038054-1474373589-1704.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/34YQJEJFN1tMLlfyt_CXwDHBDCc=/fit-in/600x360/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-9038054-1474373589-1704.jpeg.jpg",
+                "uri150": "https://img.discogs.com/P58h3VWlVhIk814A2Y7rq16aN-k=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-9038054-1474373589-1704.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 360,
+                "resource_url": "https://img.discogs.com/1xw8bQPhxA5-3Ql_7RyKvsVljbU=/fit-in/600x360/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-9038054-1474373610-6108.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/1xw8bQPhxA5-3Ql_7RyKvsVljbU=/fit-in/600x360/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-9038054-1474373610-6108.jpeg.jpg",
+                "uri150": "https://img.discogs.com/7j3WIs_AdHmxAz7JkR19kO6kVdw=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-9038054-1474373610-6108.jpeg.jpg",
+                "width": 600
+            }
+        ],
+        "key": 22,
+        "released": "2016-09-12",
+        "styles": [
+            "House",
+            "Techno",
+            "Abstract",
+            "Experimental",
+            "Ambient"
+        ],
+        "thumb": "https://img.discogs.com/G1a6xF8xQE-jhPYYapiKo-wd_FQ=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-9038054-1474000756-9298.jpeg.jpg",
+        "title": "Baby Craddock ",
+        "uri": "https://www.discogs.com/P%C3%A9p%C3%A9-Bradock-Baby-Craddock-/release/9038054"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 81,
+                "join": ",",
+                "name": "P\u00e9p\u00e9 Bradock",
+                "resource_url": "https://api.discogs.com/artists/81",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "France",
+        "genres": [
+            "Electronic"
+        ],
+        "images": [
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/zvwtrNfuMM-Vu4Ru5l_aNp5RDLg=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-10907916-1506707710-3360.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/zvwtrNfuMM-Vu4Ru5l_aNp5RDLg=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-10907916-1506707710-3360.jpeg.jpg",
+                "uri150": "https://img.discogs.com/egpr0zXn3BgKZaanb7oIv_2V-6E=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-10907916-1506707710-3360.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/aAiK91vIXai59rGx0FgAyrAlZgo=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-10907916-1506707712-6789.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/aAiK91vIXai59rGx0FgAyrAlZgo=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-10907916-1506707712-6789.jpeg.jpg",
+                "uri150": "https://img.discogs.com/O2wWKJmDTpVWROJviRKzUarXpSo=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-10907916-1506707712-6789.jpeg.jpg",
+                "width": 600
+            }
+        ],
+        "key": 23,
+        "released": "2017-09-27",
+        "styles": [
+            "House",
+            "Deep House"
+        ],
+        "thumb": "https://img.discogs.com/egpr0zXn3BgKZaanb7oIv_2V-6E=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-10907916-1506707710-3360.jpeg.jpg",
+        "title": "#12\"@Last",
+        "uri": "https://www.discogs.com/P%C3%A9p%C3%A9-Bradock-12Last/release/10907916"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 34336,
+                "join": "aka",
+                "name": "MMM",
+                "resource_url": "https://api.discogs.com/artists/34336",
+                "role": "",
+                "tracks": ""
+            },
+            {
+                "anv": "",
+                "id": 1659,
+                "join": "&",
+                "name": "Errorsmith",
+                "resource_url": "https://api.discogs.com/artists/1659",
+                "role": "",
+                "tracks": ""
+            },
+            {
+                "anv": "",
+                "id": 346540,
+                "join": "",
+                "name": "Fiedel",
+                "resource_url": "https://api.discogs.com/artists/346540",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "Germany",
+        "genres": [
+            "Electronic"
+        ],
+        "images": [
+            {
+                "height": 500,
+                "resource_url": "https://img.discogs.com/cuQhthg16Pl_v3nXp14iiAlZFAg=/fit-in/498x500/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-57478-1131202826.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/cuQhthg16Pl_v3nXp14iiAlZFAg=/fit-in/498x500/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-57478-1131202826.jpeg.jpg",
+                "uri150": "https://img.discogs.com/blOA55EnHdKWtmeIdVV4CVXMLPo=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-57478-1131202826.jpeg.jpg",
+                "width": 498
+            }
+        ],
+        "key": 24,
+        "released": "1997-03-00",
+        "styles": [
+            "Techno",
+            "Electro"
+        ],
+        "thumb": "https://img.discogs.com/blOA55EnHdKWtmeIdVV4CVXMLPo=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-57478-1131202826.jpeg.jpg",
+        "title": "Donna",
+        "uri": "https://www.discogs.com/MMM-aka-Errorsmith-Fiedel-Donna/release/57478"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 4921762,
+                "join": ",",
+                "name": "Montezumas Rache (2)",
+                "resource_url": "https://api.discogs.com/artists/4921762",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "Netherlands",
+        "genres": [
+            "Electronic"
+        ],
+        "images": [
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/BtN4hsJuH6UTmZMXL4AA6huwWbE=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-5725071-1506887467-6402.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/BtN4hsJuH6UTmZMXL4AA6huwWbE=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-5725071-1506887467-6402.jpeg.jpg",
+                "uri150": "https://img.discogs.com/1b6k7F8h-YZX1IGy5yAyrh80zHE=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-5725071-1506887467-6402.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 364,
+                "resource_url": "https://img.discogs.com/4DB7pbUEFY4ELk2LkZbzBlSQKcg=/fit-in/364x364/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-5725071-1406914184-4828.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/4DB7pbUEFY4ELk2LkZbzBlSQKcg=/fit-in/364x364/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-5725071-1406914184-4828.jpeg.jpg",
+                "uri150": "https://img.discogs.com/u2izJItr5e-CpHvSWkUT_e3hlWs=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-5725071-1406914184-4828.jpeg.jpg",
+                "width": 364
+            }
+        ],
+        "key": 25,
+        "released": "2014",
+        "styles": [
+            "Instrumental",
+            "Tribal",
+            "Experimental",
+            "Leftfield"
+        ],
+        "thumb": "https://img.discogs.com/1b6k7F8h-YZX1IGy5yAyrh80zHE=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-5725071-1506887467-6402.jpeg.jpg",
+        "title": "Wu Du Wu",
+        "uri": "https://www.discogs.com/Montezumas-Rache-Wu-Du-Wu/release/5725071"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 26992,
+                "join": ",",
+                "name": "Palais Schaumburg",
+                "resource_url": "https://api.discogs.com/artists/26992",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "Germany",
+        "genres": [
+            "Rock",
+            "Pop"
+        ],
+        "images": [
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/5c0QotLQ_BnZNI2OWCHpfQdqEfE=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-116250-1450126271-5807.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/5c0QotLQ_BnZNI2OWCHpfQdqEfE=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-116250-1450126271-5807.jpeg.jpg",
+                "uri150": "https://img.discogs.com/mchMO-Gx2ckpRVB5ndUctL1Ko9U=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-116250-1450126271-5807.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/FZHdBa5VhhI65Q5V3FPOc6FzBBU=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-116250-1450126271-3206.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/FZHdBa5VhhI65Q5V3FPOc6FzBBU=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-116250-1450126271-3206.jpeg.jpg",
+                "uri150": "https://img.discogs.com/9DM1NB_uK1EvHXeQE3UDqklmBzw=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-116250-1450126271-3206.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/fr2gVU7f0bBdEwPWOO_0D9f1VZ4=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-116250-1450126271-4741.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/fr2gVU7f0bBdEwPWOO_0D9f1VZ4=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-116250-1450126271-4741.jpeg.jpg",
+                "uri150": "https://img.discogs.com/sKpey8ROJg0_b5HMYwBz2cXG5xs=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-116250-1450126271-4741.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/Fku3kX29ufLQdXkv1ecexlfTQPs=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-116250-1450126272-2622.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/Fku3kX29ufLQdXkv1ecexlfTQPs=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-116250-1450126272-2622.jpeg.jpg",
+                "uri150": "https://img.discogs.com/E04eimc1HdEeD0ltsM7mKMrXHzA=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-116250-1450126272-2622.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/ba47JN92kSrCQhWa6GCU1ec_P9Q=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-116250-1450126271-6689.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/ba47JN92kSrCQhWa6GCU1ec_P9Q=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-116250-1450126271-6689.jpeg.jpg",
+                "uri150": "https://img.discogs.com/jDlezlnKkg-NCHuTerhhHIqu0yg=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-116250-1450126271-6689.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/ZD5NCju5_1sWrzhhHhTkXaOLadU=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-116250-1450126271-2028.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/ZD5NCju5_1sWrzhhHhTkXaOLadU=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-116250-1450126271-2028.jpeg.jpg",
+                "uri150": "https://img.discogs.com/0It5zOo8jAUv52pNx1ILZLCxwis=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-116250-1450126271-2028.jpeg.jpg",
+                "width": 600
+            }
+        ],
+        "key": 26,
+        "released": "1981",
+        "styles": [
+            "New Wave",
+            "Experimental"
+        ],
+        "thumb": "https://img.discogs.com/mchMO-Gx2ckpRVB5ndUctL1Ko9U=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-116250-1450126271-5807.jpeg.jpg",
+        "title": "Palais Schaumburg",
+        "uri": "https://www.discogs.com/Palais-Schaumburg-Palais-Schaumburg/release/116250"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 26992,
+                "join": "",
+                "name": "Palais Schaumburg",
+                "resource_url": "https://api.discogs.com/artists/26992",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "Germany",
+        "genres": [
+            "Electronic",
+            "Rock"
+        ],
+        "images": [
+            {
+                "height": 300,
+                "resource_url": "https://img.discogs.com/8oJzo3QExD-CqQXOERvFArMljd4=/fit-in/297x300/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-84960-1076244780.jpg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/8oJzo3QExD-CqQXOERvFArMljd4=/fit-in/297x300/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-84960-1076244780.jpg.jpg",
+                "uri150": "https://img.discogs.com/xVWZ2b5dQ7rRh5Hga3kRVmhzOW0=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-84960-1076244780.jpg.jpg",
+                "width": 297
+            },
+            {
+                "height": 601,
+                "resource_url": "https://img.discogs.com/jaxDY6p-CZ2fclX1Jsoj4RXmKNA=/fit-in/600x601/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-84960-1224362813.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/jaxDY6p-CZ2fclX1Jsoj4RXmKNA=/fit-in/600x601/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-84960-1224362813.jpeg.jpg",
+                "uri150": "https://img.discogs.com/OTXXvwWkvVdLLjduc3YS1omqtCI=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-84960-1224362813.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 599,
+                "resource_url": "https://img.discogs.com/UbbZWty_pthrZFyiVmUgXKFE6FU=/fit-in/600x599/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-84960-1224362826.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/UbbZWty_pthrZFyiVmUgXKFE6FU=/fit-in/600x599/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-84960-1224362826.jpeg.jpg",
+                "uri150": "https://img.discogs.com/RcmqfGTgeUDGmYB71oPmk6jaEL4=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-84960-1224362826.jpeg.jpg",
+                "width": 600
+            }
+        ],
+        "key": 27,
+        "released": "1982",
+        "styles": [
+            "No Wave",
+            "Leftfield",
+            "Avantgarde"
+        ],
+        "thumb": "https://img.discogs.com/xVWZ2b5dQ7rRh5Hga3kRVmhzOW0=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-84960-1076244780.jpg.jpg",
+        "title": "Wir Bauen Eine Neue Stadt",
+        "uri": "https://www.discogs.com/Palais-Schaumburg-Wir-Bauen-Eine-Neue-Stadt/release/84960"
+    },
+    {
+        "artists": [
+            {
+                "anv": "",
+                "id": 26992,
+                "join": "",
+                "name": "Palais Schaumburg",
+                "resource_url": "https://api.discogs.com/artists/26992",
+                "role": "",
+                "tracks": ""
+            }
+        ],
+        "country": "Europe",
+        "genres": [
+            "Rock",
+            "Pop"
+        ],
+        "images": [
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/F-8ZBTp3tf3K7n6yCC_pgIzhFyw=/fit-in/588x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1881286-1395659432-3272.jpeg.jpg",
+                "type": "primary",
+                "uri": "https://img.discogs.com/F-8ZBTp3tf3K7n6yCC_pgIzhFyw=/fit-in/588x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1881286-1395659432-3272.jpeg.jpg",
+                "uri150": "https://img.discogs.com/fqbyFcNpzZEYMf0jmI1l9w1m-gc=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-1881286-1395659432-3272.jpeg.jpg",
+                "width": 588
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/xuFBQLbXIG4VVeFMmQF9vz_4bow=/fit-in/597x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1881286-1395659431-6217.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/xuFBQLbXIG4VVeFMmQF9vz_4bow=/fit-in/597x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1881286-1395659431-6217.jpeg.jpg",
+                "uri150": "https://img.discogs.com/3h8ZtdSUkxqw-0tEd0g_UOAmpNI=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-1881286-1395659431-6217.jpeg.jpg",
+                "width": 597
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/yE0xq8snQoG2LNqM2QsgMi0T9LY=/fit-in/597x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1881286-1395659432-8337.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/yE0xq8snQoG2LNqM2QsgMi0T9LY=/fit-in/597x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1881286-1395659432-8337.jpeg.jpg",
+                "uri150": "https://img.discogs.com/pL_rjEraTAFYIYiOkswuWpnU9So=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-1881286-1395659432-8337.jpeg.jpg",
+                "width": 597
+            },
+            {
+                "height": 591,
+                "resource_url": "https://img.discogs.com/mFoaqwA2WyMSwFd9WZ8QG4cD9WM=/fit-in/600x591/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1881286-1395659432-5965.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/mFoaqwA2WyMSwFd9WZ8QG4cD9WM=/fit-in/600x591/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1881286-1395659432-5965.jpeg.jpg",
+                "uri150": "https://img.discogs.com/VY_vopnaom6obWiV3l9cECtyLzs=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-1881286-1395659432-5965.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 597,
+                "resource_url": "https://img.discogs.com/Y7uwcvYJ2FbSPZyDa5beygzPbFY=/fit-in/600x597/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1881286-1395659432-6405.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/Y7uwcvYJ2FbSPZyDa5beygzPbFY=/fit-in/600x597/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1881286-1395659432-6405.jpeg.jpg",
+                "uri150": "https://img.discogs.com/Vmf8AXs74TU0vk1PGLzDIXWcaXs=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-1881286-1395659432-6405.jpeg.jpg",
+                "width": 600
+            },
+            {
+                "height": 600,
+                "resource_url": "https://img.discogs.com/kxbkMZlyzQFAuBaI0vrVmu4PJBA=/fit-in/599x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1881286-1395659432-9694.jpeg.jpg",
+                "type": "secondary",
+                "uri": "https://img.discogs.com/kxbkMZlyzQFAuBaI0vrVmu4PJBA=/fit-in/599x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-1881286-1395659432-9694.jpeg.jpg",
+                "uri150": "https://img.discogs.com/parAoVx5MWPx82zth6rVYSzfdq0=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-1881286-1395659432-9694.jpeg.jpg",
+                "width": 599
+            }
+        ],
+        "key": 28,
+        "released": "1982",
+        "styles": [
+            "New Wave"
+        ],
+        "thumb": "https://img.discogs.com/fqbyFcNpzZEYMf0jmI1l9w1m-gc=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-1881286-1395659432-3272.jpeg.jpg",
+        "title": "Lupa",
+        "uri": "https://www.discogs.com/Palais-Schaumburg-Lupa/release/1881286"
+    }
+]

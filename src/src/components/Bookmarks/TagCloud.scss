@@ -1,0 +1,38 @@
+@import "../../styles/variables.scss";
+
+.tag {
+  text-align: center;
+  font-family: Meddon, Serif;
+  position: absolute;
+
+  // background: color,
+  // backgroundOpacity: 0.5,
+  // box-shadow: 1px 1px 1px grey;
+  border: $black solid 2px;
+
+  // span {
+  color: $primBrown;
+  background: white;
+
+  // }
+}
+
+.text :hover {
+  // span {
+  color: white;
+  background: $secBrown;
+  cursor: pointer;
+  // }
+}
+
+
+.textHighlighted {
+  // span {
+  color: white;
+  background: $secBrown;
+  // }
+}
+
+// path {
+//   stroke: $secBrown;
+// }

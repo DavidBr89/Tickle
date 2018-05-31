@@ -1,0 +1,32 @@
+.rubber_stamp {
+  font-family: 'Vollkorn', serif;
+  font-size: 39px;
+  line-height: 45px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: red;
+  border: 7px solid red;
+  float: left;
+  padding: 10px 7px;
+  border-radius: 10px;
+
+  opacity: 0.7;
+  -webkit-transform: rotate(-20deg);
+  -o-transform: rotate(-20deg);
+  -moz-transform: rotate(-20deg);
+  -ms-transform: rotate(-20deg);
+  position:absolute;
+  top:32%;
+}
+
+.rubber_stamp::after {
+  position: absolute;
+  content: " ";
+  width: 105%;
+  height: auto;
+  min-height: 120%;
+  top: -10px;
+  left: -10px;
+  padding: 10px;
+  background: url(https://raw.github.com/domenicosolazzo/css3/master/img/noise.png) repeat;
+}

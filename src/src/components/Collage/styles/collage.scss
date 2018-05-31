@@ -1,0 +1,123 @@
+@import "../../../styles/variables.scss";
+
+.stamp {
+  position: absolute;
+
+  // width: 200px;
+  // 	height: 148px;
+  border-image: url(./stamp-border_2.png) 8 round;
+  border-width: 6px;
+  border-style: solid;
+  border-color: grey;
+  transition: width 0.3s ease,height 0.3s ease,left 0.5s ease,top 0.3s ease;
+
+  img {
+    cursor: pointer;
+  }
+}
+
+/* Rotate all even images 2 degrees */
+.stamp:nth-child(even) {
+  transform: rotate(4deg);
+}
+
+//
+// .stamp:nth-child(3n) {
+//   transform: rotate(1deg);
+// }
+//
+.stamp:nth-child(6n) {
+  transform: rotate(-4deg);
+}
+
+.stamp:nth-child(5n) {
+  transform: rotate(-10deg);
+}
+
+.stamp:hover {
+  z-index: 1000;
+  transform: scale(2);
+  transition: transform .15s linear;
+}
+
+.stamp {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0);
+}
+
+.title:nth-child(2) {
+  transform: translateZ(5px);
+}
+
+.title:nth-child(3) {
+  transform: translateZ(10px);
+}
+
+.title:nth-child(4) {
+  transform: translateZ(15px);
+}
+
+.title:nth-child(5) {
+  transform: translateZ(20px);
+}
+
+.title:nth-child(6) {
+  transform: translateZ(25px);
+}
+
+.title:nth-child(7) {
+  transform: translateZ(30px);
+}
+
+.title:nth-child(8) {
+  transform: translateZ(35px);
+}
+
+.title:nth-child(9) {
+  transform: translateZ(40px);
+}
+
+.title:nth-child(10) {
+  transform: translateZ(45px);
+}
+
+@keyframes wobble {
+  0%,100% {
+    transform: rotate3d(1, 1, 0, 40deg);
+  }
+
+  25% {
+    transform: rotate3d(-1, 1, 0, 40deg);
+  }
+
+  50% {
+    transform: rotate3d(-1, -1, 0, 40deg);
+  }
+
+  75% {
+    transform: rotate3d(1, -1, 0, 40deg);
+  }
+}
+
+.title {
+  // animation: wobble 5s ease-in-out infinite;
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  transform: rotate3d(-1, -1, 0, 25deg);
+  // z-index: 2;
+
+  .text {
+    font-family: "frijole";
+    font-weight: 400;
+    font-size: 5.5em;
+    stroke: black;
+    stroke-width: 1px;
+    stroke-linejoin: round;
+  }
+
+  position: absolute;
+  text-align: center;
+}
+
+.border {
+  border: solid 1px $black;
+}

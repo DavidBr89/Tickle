@@ -56,6 +56,7 @@ function updateCard(cardData, mapViewport) {
   const { x, y, tx, ty, vx, vy, ...restData } = cardData;
 
   const vp = new PerspectiveMercatorViewport(mapViewport);
+  console.log('vp', [x, y]);
 
   const [longitude, latitude] = vp.unproject([x, y]);
   const updatedCard = {
@@ -118,7 +119,7 @@ function reducer(state = {}, action) {
       return {
         ...state,
         createdCards: newCards,
-        // selectedCardId: newCard.id,
+        selectedCardId: newCard.id,
         cardTemplate: state.defaultCardTemplate
       };
     }

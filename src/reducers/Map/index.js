@@ -227,13 +227,9 @@ function reducer(state = {}, action) {
     }
 
     case SCREEN_RESIZE: {
-      const height = action.options.height;
-      const width = action.options.width;
-      const newState = {
-        height,
-        width
-      };
-      return { ...state, ...newState };
+      const { width, height } = action.options;
+      console.log('SCREEN_RESIZE', width, height);
+      return { ...state, width, height };
     }
 
     case USER_MOVE: {

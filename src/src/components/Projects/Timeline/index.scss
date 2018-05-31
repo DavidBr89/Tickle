@@ -1,0 +1,69 @@
+.timeline {
+  box-shadow: 4px 4px #000;
+  // border: 3px solid #000;
+}
+
+.timeSegment {
+  // position: absolute;
+  opacity: 0.5;
+  box-shadow: 4px 4px #000;
+  // border: 3px solid #000;
+
+  // background: green;
+}
+
+.timeSegment div {
+  // position: absolute;
+}
+
+.tooltip {
+  position: relative;
+
+  // display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+
+  // width: 120px;
+  background-color: white;
+
+  // color: #fff;
+  font-size: 12px;
+
+  // text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  top: -5px;
+  left: 110%;
+  border-width: -2px;
+  border-style: solid;
+  border-color: black;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  margin-top: -5px;
+  margin-left: -100px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent white transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.arrowDown {
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+
+  border-top: 20px solid #f00;
+}

@@ -1,0 +1,103 @@
+$thumbnail-border-color: rgba(0, 0, 0, 0.1);
+$thumbnail-border-color-highlight: #888;
+$highlighted-thumbnail-border-bottom-color: rgb(254, 43, 117);
+$thumbnail-overlay-color: rgba(255, 255, 255, 0.8);
+$overlay-transition-time: .1s;
+
+.thumbnailTimeline {
+  position: relative;
+  overflow: hidden;
+  border-right: 1px solid $thumbnail-border-color;
+  border-left: 1px solid $thumbnail-border-color;
+
+  .thumbnail {
+    position: absolute;
+    top: 0;
+    border: 1px solid $thumbnail-border-color;
+    border-right: 0;
+    transition: .2s left, .2s background-position, $overlay-transition-time border-color;
+    background-position: center center;
+    box-shadow: -4px 0px 4px rgba(0,0,0,0.1);
+    cursor: pointer;
+    text-align: center;
+
+    &:last-child {
+      border-right: 0;
+    }
+
+    &:first-child {
+      border-left: 0;
+      box-shadow: none;
+    }
+
+    &:hover {
+      // box-shadow: none;
+    }
+
+    .playContainer {
+      text-align: center;
+      margin: 10px auto 0;
+      width: 40px;
+    }
+
+    .playTriangle {
+      background: #fff;
+      width: 30px;
+      height: 25px;
+      position: absolute;
+      margin: 7px 4px 0;
+    }
+
+    .fa-youtube-play {
+      font-size: 40px;
+      color: rgb(254, 43, 117);
+    }
+  }
+
+  .thumbnailOverlay {
+    position: absolute;
+    left: 0px;
+    right: -1.5px; // needs 0.5px added to fix some off-by-one errors on the further right thumbs
+    top: -2px;
+    bottom: -1px;
+    background-color: $thumbnail-overlay-color;
+    opacity: 0;
+    transition: $overlay-transition-time opacity;
+    &.show-overlay {
+      opacity: 1;
+    }
+  }
+
+  // fix off by one on first thumbnail error
+  .thumbnail-0 .thumbnailOverlay {
+    left: -1px;
+  }
+
+  &.has-highlight .thumbnail {
+    &+.thumbnail {
+      border-right: 0;
+      border-color: $thumbnail-overlay-color;
+    }
+
+    &+.highlighted {
+      border-left: 1px solid $thumbnail-border-color-highlight;
+    }
+
+    &.highlighted+.thumbnail.highlighted {
+      border-left: 1px solid $thumbnail-border-color-highlight;
+    }
+    &.highlighted+.thumbnail.not-highlighted {
+      border-left: 1px solid $thumbnail-border-color-highlight;
+      ox-shadow: none;
+    }
+
+    &.highlighted {
+      opacity: 1;
+      -webkit-filter: none;
+      filter: none;
+      box-shadow: none;
+      border-color: $thumbnail-border-color-highlight;
+      border-bottom: 5px solid $highlighted-thumbnail-border-bottom-color;
+    }
+  }
+}

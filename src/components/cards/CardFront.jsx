@@ -17,6 +17,7 @@ import {
   // FieldSet,
   // PreviewMedia,
   MediaField,
+  ChallengeField,
   DescriptionField,
   EditButton,
   Img,
@@ -25,7 +26,7 @@ import {
   // Tags,
   // SmallPreviewTags,
   PreviewTags,
-  ChallengeButton,
+  BigButton,
   FlipButton
 } from './layout';
 
@@ -174,7 +175,7 @@ class ReadCardFront extends Component {
           }
         />
         <div className="p-1 pt-3" style={{ display: 'flex' }}>
-          <ChallengeButton
+          <BigButton
             onClick={onCollect}
             color={uiColor}
             style={{ width: '80%' }}
@@ -442,20 +443,30 @@ class EditCardFront extends PureComponent {
                 })
               }
             />
+
+            <ChallengeField
+              style={{ maxHeight: '20%' }}
+              media={media}
+              borderColor={uiColor}
+              edit
+              onEdit={() =>
+                this.setState({
+                  dialog: { title: 'Challenge', data: challenge }
+                })
+              }
+            />
+
             <div className="p-1 pt-3">
               <div style={{ display: 'flex' }}>
                 <div style={{ display: 'flex', width: '100%' }}>
-                  {/* TODO: make component */}
-                  <ChallengeButton
+                  <BigButton
                     style={{ width: '80%' }}
                     color={uiColor}
                     edit
-                    onClick={() =>
-                      this.setState({
-                        dialog: { title: 'Challenge', data: challenge }
-                      })
-                    }
-                  />
+                    onClick={() => onSubmit(data)}
+                  >
+                    {'Create Card'}
+                  </BigButton>
                   <FlipButton
                     color={uiColor}
                     onClick={flipHandler}
@@ -464,15 +475,6 @@ class EditCardFront extends PureComponent {
                 </div>
               </div>
             </div>
-            <button
-              className="btn"
-              style={{ width: '80%' }}
-              color={uiColor}
-              edit
-              onClick={() => onSubmit(data)}
-            >
-              {'Create Card'}
-            </button>
             {children}
           </div>
         </div>

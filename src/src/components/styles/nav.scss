@@ -1,0 +1,82 @@
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,700");
+
+#nav {
+  font-family: 'Open Sans', sans-serif;
+}
+
+#nav a {
+  color: #000000;
+  text-decoration: none;
+}
+
+#nav a:hover {
+  // color: #0000FF;
+  text-decoration: underline;
+}
+
+#title {
+  float: left;
+  width: 260px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: inherit;
+  margin-bottom: 8px;
+  font-weight: normal;
+  display: inline;
+}
+h3 {
+  font-size: inherit;
+  color: #999999;
+  font-weight: normal;
+}
+h4 {
+  font-size: inherit;
+  font-weight: normal;
+  margin-bottom: 20px;
+}
+ul { list-style: none; }
+ol { margin-left: 40px; }
+p { margin-bottom: 20px; }
+hr {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #000;
+  margin-bottom: 20px;
+}
+hr:last-child { display: none; }
+// h3 {
+//   color: #000000;
+// }
+.tags li:before, .tags a, #tagged {
+  color: #999999;
+}
+h4 {
+  display: none;
+}
+
+/* TAGGED */
+#tagged { font-style: italic; margin-bottom: 20px; color: #999999;}
+
+/* HORIZONTAL */
+tr { vertical-align: top; }
+td { padding-right: 30px; }
+
+#projects ul { list-style: none; }
+#project-list { margin-bottom: 20px; }
+.activelink { text-decoration: line-through; }
+#credit {
+  position: fixed;
+  bottom: 15px;
+  font-size: 12px;
+}
+#credit a { color: #ddd; }
+
+/* HOME */
+#description img {
+  margin-top: 20px;
+  display: block;
+  width: 700px;
+  height: auto;
+}

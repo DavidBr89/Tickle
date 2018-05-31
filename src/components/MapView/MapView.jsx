@@ -374,7 +374,8 @@ class MapView extends Component {
       toggleCardAuthoring,
       // cardAuthoring,
       // createCard,
-      cardDropHandler
+      onCardDrop,
+      createCard
       // getUserCards
       // navigateFirstTimeAction
     } = this.props;
@@ -547,7 +548,7 @@ class MapView extends Component {
                     }}
                   />
                   <DropTargetCont
-                    dropHandler={cardDropHandler}
+                    dropHandler={onCardDrop}
                     dragged={isCardDragging}
                     style={{
                       // width: '100%',
@@ -608,7 +609,7 @@ class MapView extends Component {
                             {...c}
                             onClose={() => extendSelectedCard(null)}
                             edit={authEnv}
-                            onSubmit={cardDropHandler}
+                            onSubmit={(d) => createCard({...d, x, y})}
                             onCollect={() =>
                               toggleCardChallenge({
                                 cardChallengeOpen: true

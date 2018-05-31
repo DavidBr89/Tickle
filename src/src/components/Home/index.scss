@@ -1,0 +1,111 @@
+@import "../../styles/variables.scss";
+
+$speechBubbleWidth: 200px;
+$pixelWidth: 85px;
+$strokeWidth: 2px;
+
+$w0: 70px;
+$w1: 40px;
+$w2: 30px;
+
+$pad: 5px;
+
+
+
+a {
+  color: $black;
+
+  // text-decoration: underline;
+  font-style: italic;
+
+  // font-size: .9em;
+}
+
+.emoji {
+  font-size: 22px;
+}
+
+//TODO: redo the whole computation
+.speechBubble {
+    border: $strokeWidth solid $black;
+    padding: 10px;
+
+  position: absolute;
+  left: 0;
+
+  // margin: 1em auto 80px;
+  // text-align: center;
+  color: #333;
+  background: #fff;
+}
+
+
+.bubble0 {
+  position: absolute;
+
+  // z-index: 10;
+  // bottom: $pad;
+  // width: $w0 / 2;
+  // height: $w0 / 2;
+
+  // border: 1px solid #c81e2b;
+  border: $strokeWidth solid $black;
+  background: #fff;
+  border-radius: 50px;
+
+  // display: block;
+}
+
+.bubble1 {
+  content: "";
+  position: absolute;
+
+  // z-index: 10;
+  // width: $w1 / 2;
+  // height: $w1 / 2;
+  border: $strokeWidth solid $black;
+  background: #fff;
+  border-radius: 50px;
+  display: block;
+}
+
+
+.bubble2 {
+  content: "";
+  position: absolute;
+
+  // z-index: 10;
+  // width: $w2 / 2;
+  // height: $w2 / 2;
+  border: $strokeWidth solid $black;
+  background: #fff;
+  border-radius: 50px;
+  display: block;
+}
+.header {
+  display: flex;
+
+  .branding {
+    position: relative;
+    flex: 1;
+    padding: 40px;
+    text-align: center;
+    color: $secBrown;
+    font-family: young;
+  }
+
+  .portrait {
+    position: absolute;
+    right: 20px;
+
+    .polaroid {
+      padding: 6px 6px 12px 6px;
+      box-shadow: 5px 5px 5px #BDBDBA;
+      border: $strokeWidth solid $black;
+      transform: rotate(5deg);
+    }
+
+    // transform:rotate(4deg);
+
+  }
+}

@@ -1,0 +1,300 @@
+@import "../../styles/variables.scss";
+
+/*
+Project: HTML & CSS Postcards
+Vintage French Postcard
+Author: Monica Aguinaga
+URL: http://itsnot1889.com/
+@thisismonica
+
+Postcard Credit: Unknown (let me know via twitter if you know the origin)
+stamp: http://dl.dropbox.com/u/5144828/stamp.jpg
+bg: http://dl.dropbox.com/u/5144828/webtreats-paper-pattern-2-brown-5.jpg
+ */
+
+.postcardCont {
+  // font-family: typeWriter;
+  width: 860px;
+  height: 640px;
+
+  // margin-top: 50px;
+  // margin-bottom: 20px;
+  // background-color: white;
+  background: white linear-gradient(to bottom right, white, #f0f0f0);
+
+  // -moz-box-shadow: 1px 1px 4px #BDBDBA;
+  // -webkit-box-shadow: 1px 1px 4px #BDBDBA;
+  float: left;
+  box-shadow: 0 5px 5px hsla(0, 0%, 0%, 0.3), inset 0 0 5px hsla(0, 0%, 0%, 0.3);
+  padding: 20px 20px 20px 20px;
+
+  // padding: 10px 0px 10px 20px;
+  // margin: 20px;
+}
+
+.postcard h2 {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: .7em;
+  text-align: center;
+  text-transform: uppercase;
+  padding-bottom: 10px;
+  word-spacing: 5px;
+  letter-spacing: .1em;
+}
+
+.postcard h1 {
+  font-size: 1.6em;
+  text-transform: uppercase;
+  font-weight: lighter;
+  letter-spacing: .15em;
+
+  // display:inline;
+}
+
+.socialMedia li {
+  display: inline;
+  text-align: center;
+}
+
+.socialMedia li a {
+  text-decoration: none;
+  padding: .2em 1em;
+
+  // color: #fff;
+  // background-color: #036;
+}
+
+.postcard h3 {
+  font-size: .8em;
+  font-style: italic;
+  text-align: center;
+  color: $thirdBrown;
+}
+
+.postcard .capitalm {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-style: normal;
+  font-size: .87em;
+  padding-right: 10px;
+  margin-bottom: -20px;
+  border-bottom: none;
+}
+
+.postcard h4 {
+  font-family: Arial, Helvetica, sans-serif;
+  text-transform: uppercase;
+  font-size: .8em;
+  color: #666666;
+  letter-spacing: .1em;
+  padding-left: 20px;
+}
+
+.postcard a {
+  color: #666666;
+  text-decoration: underline;
+  font-style: italic;
+  font-size: .9em;
+}
+
+a:hover {
+  color: #000000;
+}
+
+::-moz-selection {
+  color: #fff;
+  color: rgba(255, 255, 255, 0.85);
+  background: #D39995;
+}
+
+::selection {
+  color: #fff;
+  color: rgba(255, 255, 255, 0.85);
+  background: #D39995;
+}
+
+// .nav-circle {
+//   fill:none;
+//   stroke:#000;
+// }
+
+.link {
+  stroke-width: 1px;
+  stroke: black;
+  stroke-linecap: round;
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+
+/* Normalizes */
+body, ul, li, h1, h2, h3, form, fieldset, input, p {
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  list-style: none;
+}
+
+fieldset, img {
+  border: 0;
+}
+
+.cover {
+  background-image: url("./postcard_bxl.jpg");
+}
+
+// #branding {
+//   position: relative;
+//   padding: 40px;
+//   text-align: center;
+//   color: $secBrown;
+//
+//   // background-image: url(../../passport_photo.jpg);
+//   // background-repeat: no-repeat;
+//   // background-position: 460px 20px;
+//   // background-size: 79px 107px;
+// }
+//
+// #branding:before {
+//   // font-family: 'Goudy Bookletter 1911', serif;
+//   transform: rotate(7deg);
+//
+//   // height: 80px;
+//   // width: 90px;
+// }
+
+// #branding li {
+//   // display: inline;
+//   padding-right: 55px;
+//   font-size: .9em;
+// }
+//
+
+#photo {
+  background-image: url(../../passport_photo.jpg);
+
+  // background-size: 80px 90px;
+  background-size: 80px 100px;
+  height: 100px;
+  width: 80px;
+
+  // float: right;
+  // padding: 10px 10px 25px 10px;
+  // background: #eee;
+  // border: 1px solid #fff;
+}
+
+.polaroid {
+  position: absolute;
+  right: 37px;
+  top: 35px;
+  transform: rotate(5deg);
+
+  // background-image: url(../../passport_photo.jpg);
+  background-color: white;
+
+  // display: inline-block;
+  .border {
+    padding: 6px 6px 12px 6px;
+    box-shadow: 5px 5px 5px #BDBDBA;
+    border: 2px solid $secBrown;
+  }
+
+  // transform:rotate(4deg);
+}
+
+#originalpostcard {
+  margin: 20px;
+  float: left;
+  padding-top: 30px;
+}
+
+#border {
+  border-bottom: 1px dotted black;
+  width: 200px;
+  margin: auto;
+  margin-top: -15px;
+}
+
+
+#message p {
+  // witdh: 50px;
+  height: 100%;
+  font-size: 1em;
+  -moz-transform: rotate(2deg);
+  -webkit-transform: rotate(2deg);
+  -o-transform: rotate(2deg);
+  -ms-transform: rotate(2deg);
+  transform: rotate(2deg);
+  padding-top: 15px;
+  padding-left: 13px;
+}
+
+@media only screen and (min-width: 1500px) {
+  #message p {
+    font-size: 1.2em;
+  }
+}
+
+
+// #interests {
+//   background-image: url(http://dl.dropbox.com/u/5144828/line.png);
+//   background-repeat: repeat-y;
+//   height: 100%;
+// }
+
+.socialMedia li {
+  display: inline;
+  text-align: center;
+}
+
+.socialMedia li a {
+  text-decoration: none;
+  padding: .2em 1em;
+
+  // color: #fff;
+  // background-color: #036;
+}
+
+.postcard a {
+  color: #666666;
+  text-decoration: underline;
+  font-style: italic;
+  font-size: .9em;
+}
+
+a:hover {
+  color: #000000;
+}
+
+::-moz-selection {
+  color: #fff;
+  color: rgba(255, 255, 255, 0.85);
+  background: #D39995;
+}
+
+::selection {
+  color: #fff;
+  color: rgba(255, 255, 255, 0.85);
+  background: #D39995;
+}
+
+// .nav-circle {
+//   fill:none;
+//   stroke:#000;
+// }
+
+.centerTable {
+  margin: auto;
+  width: 100%;
+
+  // border: 3px solid #73AD21;
+  // border: 1px solid black;
+  padding: 2px;
+}
+
+.layout {
+  width: 100%;
+  height: 100%;
+}

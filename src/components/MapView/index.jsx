@@ -72,23 +72,21 @@ const mapDispatchToProps = dispatch =>
 const mergeProps = (state, dispatcherProps) => {
   const { selectedCardId, mapViewport, uid } = state;
 
-  const {
-    updateCard,
-    updateCardTemplate,
-    asyncCreateCard: createCard
-  } = dispatcherProps;
+  const { updateCard, updateCardTemplate, asyncCreateCard } = dispatcherProps;
 
-  const cardAction = selectedCardId === 'temp' ? updateCardTemplate : updateCard;
+  const cardAction =
+    selectedCardId === 'temp' ? updateCardTemplate : updateCard;
 
-  const cardDropHandler = cardData =>
-    cardAction({ uid, cardData, mapViewport });
+  const onCardDrop = cardData => cardAction({ uid, cardData, mapViewport });
+
+  const createCard = cardData => asyncCreateCard({ uid, cardData, mapViewport });
 
   const onCardUpdate = cardData =>
     cardData.template
       ? updateCardTemplate({ cardData, mapViewport })
       : updateCard({ uid, cardData, mapViewport });
 
-  return { ...state, ...dispatcherProps, cardDropHandler, onCardUpdate };
+  return { ...state, ...dispatcherProps, onCardDrop, onCardUpdate, createCard };
 };
 
 const MapViewCont = connect(mapStateToProps, mapDispatchToProps, mergeProps)(
