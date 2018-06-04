@@ -68,10 +68,10 @@ export default class CustomDragLayer extends Component {
       return null;
     }
 
+    console.log('this props', this.props);
     return (
       <div style={layerStyles}>
-        <div style={getItemStyles(this.props)}>
-        </div>
+        <div style={getItemStyles(this.props)} />
       </div>
     );
   }

@@ -108,6 +108,7 @@ class CardGrid extends Component {
 
   // TODO: change later
   shouldComponentUpdate(nextProps, nextState) {
+    console.log('update accordion');
     // return (
     //   this.props.data.length !== nextProps.data.length ||
     //   this.props.centered !== nextProps.centered ||

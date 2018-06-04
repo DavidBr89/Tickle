@@ -22,8 +22,8 @@ const byPropKey = (propertyName, value) => () => ({
 });
 
 const INITIAL_STATE = {
-  email: '',
-  password: '',
+  email: null,
+  password: null,
   error: null
 };
 
@@ -34,18 +34,31 @@ class SignInForm extends Component {
     this.state = { ...INITIAL_STATE };
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    const { history } = this.props;
+    const { email, password, error } = this.state;
+    if (
+      error === null &&
+      // email !== null &&
+      email !== prevState.email &&
+      // password !== null &&
+      password !== prevState.password
+    )
+      history.push(routes.MAP);
+  }
+
   onSubmit = event => {
     const { email, password } = this.state;
 
     const { history } = this.props;
-
     // console.log('auth', auth);
 
     auth
       .doSignInWithEmailAndPassword(email, password)
       .then(() => {
-        this.setState(() => ({ ...INITIAL_STATE }));
-        history.push(routes.MAP);
+        // this.setState(() => ({ ...INITIAL_STATE }));
+        console.log('onSubmit', email, password);
+      history.push(routes.MAP);
       })
       .catch(error => {
         this.setState(byPropKey('error', error));
@@ -56,6 +69,7 @@ class SignInForm extends Component {
 
   render() {
     const { email, password, error } = this.state;
+    console.log('auth', this.state);
 
     const isInvalid = password === '' || email === '';
 
@@ -87,7 +101,6 @@ class SignInForm extends Component {
   }
 }
 
-
 // const mapStateToProps = state => ({
 //   users: state.User.users
 // });
@@ -105,7 +118,6 @@ class SignInForm extends Component {
 //
 
 export default withRouter(SignInPage);
-
 
 // export default compose(
 //   withAuthorization(authCondition),

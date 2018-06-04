@@ -85,7 +85,8 @@ class CardBackSkeleton extends Component {
       mapRadius,
       flipHandler,
       deleteHandler,
-      tagColorScale
+      tagColorScale,
+      template
     } = this.props;
 
     const { extended } = this.state;
@@ -115,7 +116,7 @@ class CardBackSkeleton extends Component {
         }}
       >
         <FieldSet
-          legend={'Author'}
+          legend="Author"
           borderColor={uiColor}
           style={{ ...display('author') }}
           onClick={selectField('author')}
@@ -134,7 +135,7 @@ class CardBackSkeleton extends Component {
         <FieldSet
           style={{ width: '100%', ...display('map') }}
           edit={edit}
-          legend={'Location'}
+          legend="Location"
           borderColor={uiColor}
           onClick={selectField('map')}
         >
@@ -151,7 +152,7 @@ class CardBackSkeleton extends Component {
         </FieldSet>
         <FieldSet
           onClick={selectField('comments')}
-          legend={'Comments'}
+          legend="Comments"
           style={display('comments')}
           borderColor={uiColor}
         >
@@ -163,15 +164,21 @@ class CardBackSkeleton extends Component {
         </FieldSet>
         <div
           className="mt-2"
-          style={{ display: 'flex', justifyContent: 'space-between' }}
+          style={{
+            display: 'flex',
+            // TODO: to complex, simplify
+            justifyContent: edit && template ? 'flex-end' : 'space-between'
+          }}
         >
-          {edit && (
-            <DeleteButton
-              onClick={deleteHandler}
-              color={uiColor}
-              style={{ width: '20%' }}
-            />
-          )}
+          {edit &&
+            !template && (
+              <DeleteButton
+                onClick={deleteHandler}
+                className="bg-danger"
+                color={uiColor}
+                style={{ width: '20%' }}
+              />
+            )}
           <FlipButton
             className="ml-2"
             color={uiColor}

@@ -1,11 +1,17 @@
 import React, { Fragment, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { DragSource, DropTarget } from 'react-dnd';
+import DragLayer from 'react-dnd/lib/DragLayer';
 
+function collect(monitor) {
+  return {
+    sourceOffset: monitor.getSourceClientOffset()
+  };
+}
 // import cxx from '../CardCreator.scss';
 
 // import update from 'immutability-helper';
-const CardDragPreview = ({ width, height, left, top, fill }) => (
+const CardDrag = ({ width, height, left, top, fill }) => (
   <img
     width={width}
     height={height}
@@ -21,14 +27,14 @@ const CardDragPreview = ({ width, height, left, top, fill }) => (
   />
 );
 
-CardDragPreview.propTypes = {
+CardDrag.propTypes = {
   width: PropTypes.number,
   height: PropTypes.number,
   left: PropTypes.oneOf([null, PropTypes.number]),
   top: PropTypes.oneOf([null, PropTypes.number])
 };
 
-CardDragPreview.defaultProps = {
+CardDrag.defaultProps = {
   width: 50,
   height: 50,
   left: null,
@@ -36,7 +42,7 @@ CardDragPreview.defaultProps = {
   fill: 'transparent'
 };
 
-export default CardDragPreview;
+export const CardDragPreview = DragLayer(collect)(CardDrag);
 
 const style = {
   // border: '1px dashed gray',
@@ -69,7 +75,7 @@ const boxSource = {
   diffFromInitialOffset: monitor.getDifferenceFromInitialOffset(),
   isdropped: monitor.didDrop()
 }))
-class DragSourceCont extends PureComponent {
+export class DragSourceCont extends PureComponent {
   static propTypes = {
     connectDragSource: PropTypes.func.isRequired,
     isDragging: PropTypes.bool.isRequired,
@@ -103,6 +109,7 @@ class DragSourceCont extends PureComponent {
 const boxTarget = {
   drop(props, monitor, component) {
     const delta = monitor.getDifferenceFromInitialOffset();
+    console.log('monitor', monitor);
     const item = monitor.getItem();
     const left = Math.round(item.x + delta.x);
     const top = Math.round(item.y + delta.y);
@@ -124,7 +131,7 @@ const boxTarget = {
   diffFromInitialOffset: monitor.getDifferenceFromInitialOffset(),
   isdropped: monitor.didDrop()
 }))
-class DropTargetCont extends PureComponent {
+export class DropTargetCont extends PureComponent {
   static propTypes = {
     connectDropTarget: PropTypes.func.isRequired,
     // isOver: PropTypes.bool.isRequired,
@@ -142,8 +149,8 @@ class DropTargetCont extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      top: 20,
-      left: 80,
+      top: 100,
+      left: 100,
       dropped: false
     };
   }
@@ -157,7 +164,7 @@ class DropTargetCont extends PureComponent {
     // console.log('dropped', dropped, 'prevDropped', prevState.dropped);
     // console.log('this.props', this.props);
     if (prevProps.dragged && !this.props.dragged)
-      //TODO: do I need all these fields
+      // TODO: do I need all these fields
       dropHandler({
         ...data,
         x: left,
@@ -197,5 +204,3 @@ class DropTargetCont extends PureComponent {
     );
   }
 }
-
-export { DragSourceCont, DropTargetCont };

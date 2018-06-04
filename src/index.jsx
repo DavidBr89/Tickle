@@ -18,7 +18,10 @@ import App from './App';
 const render = Component => {
   ReactDOM.render(
     <AppContainer>
+
+      <React.StrictMode>
       <Component />
+      </React.StrictMode>
     </AppContainer>,
     document.getElementById('app')
   );

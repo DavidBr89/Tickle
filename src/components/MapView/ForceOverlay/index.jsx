@@ -30,8 +30,8 @@ function jaccard(a, b) {
     : 1;
 }
 
-function unproject(mapViewport, [x, y]) {
-  const vp = new PerspectiveMercatorViewport(mapViewport);
+function unproject(viewport, [x, y]) {
+  const vp = new PerspectiveMercatorViewport(viewport);
 
   const [lng, lat] = vp.unproject([x, y]);
   return [lng, lat];
@@ -77,7 +77,7 @@ function somFy(data, width, height, callback = d => d) {
     learningRate: 0.1
   };
 
-  //TODO: check later
+  // TODO: check later
   const dists = data.map(a => data.map(b => jaccard(a.tags, b.tags)));
 
   // TODO: verify with different data sets
@@ -200,7 +200,7 @@ class ForceOverlay extends Component {
     children: PropTypes.func,
     className: PropTypes.oneOf([null, PropTypes.string]),
     style: PropTypes.object,
-    mapViewport: PropTypes.shape({
+    viewport: PropTypes.shape({
       width: PropTypes.number,
       height: PropTypes.number,
       longitude: PropTypes.number,
@@ -224,7 +224,7 @@ class ForceOverlay extends Component {
       top: PropTypes.number,
       bottom: PropTypes.number
     }),
-    mode: PropTypes.oneOf(['geo', 'tsne', 'som', 'grid']),
+    mode: PropTypes.oneOf(['geo', 'tsne', 'som', 'grid', 'floorplan']),
     colorScale: PropTypes.func,
     labels: PropTypes.bool
   };
@@ -233,7 +233,7 @@ class ForceOverlay extends Component {
     children: d => d,
     className: null,
     style: {},
-    mapViewport: { width: 300, height: 400, longitude: 0, latitude: 0 },
+    viewport: { width: 300, height: 400, longitude: 0, latitude: 0 },
     padding: {
       right: 0,
       left: 0,
@@ -244,18 +244,20 @@ class ForceOverlay extends Component {
     data: [],
     delay: 100,
     selectionDelay: 900,
-    mode: 'geo',
+    mode: 'floorplan',
     colorScale: () => 'green',
     labels: false
   };
 
   constructor(props) {
     super(props);
-    const { data, mapViewport } = props;
-    const { width, height } = mapViewport;
+    const { data, viewport } = props;
+    const { width, height } = viewport;
 
     const initPos = data.map(() => [width / 2, height / 2]);
     const somPos = somFy(data, width, height);
+
+    // data.map(d => ([width/2, height/2]));
 
     const nodes = data.map(d => ({ ...d, x: width / 2, y: height / 2 }));
 
@@ -269,7 +271,7 @@ class ForceOverlay extends Component {
       tsnePos: initPos,
       somPos,
       gridPos: lapFy(somPos),
-      mapViewport: { width, height, zoom: 10, ...defaultLocation }
+      viewport: { width, height, zoom: 10, ...defaultLocation }
     };
 
     this.layout = this.layout.bind(this);
@@ -281,15 +283,15 @@ class ForceOverlay extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    const { mapViewport: oldVp } = this.state;
-    const { mapViewport } = nextState;
+    const { viewport: oldVp } = this.state;
+    const { viewport } = nextState;
 
     // return true;
     // console.log('extended', extended);
     return (
-      mapViewport.latitude !== oldVp.latitude ||
-      mapViewport.longitude !== oldVp.longitude ||
-      mapViewport.zoom !== oldVp.zoom ||
+      viewport.latitude !== oldVp.latitude ||
+      viewport.longitude !== oldVp.longitude ||
+      viewport.zoom !== oldVp.zoom ||
       this.props.height !== nextProps.height ||
       this.props.width !== nextProps.width ||
       this.props.mode !== nextProps.mode ||
@@ -318,7 +320,7 @@ class ForceOverlay extends Component {
       selectionDelay,
       onMapViewportChange
     } = nextProps;
-    const { mapViewport } = this.state;
+    const { viewport } = this.state;
 
     // clearTimeout(this.id);
 
@@ -327,7 +329,7 @@ class ForceOverlay extends Component {
       selectedCardId !== null
     ) {
       const { loc } = nextData.find(n => n.id === selectedCardId);
-      const { zoom } = { ...mapViewport, ...loc };
+      const { zoom } = { ...viewport, ...loc };
       console.log('select card', loc);
 
       this.id = setTimeout(() => {
@@ -341,7 +343,7 @@ class ForceOverlay extends Component {
         this.layout({
           props: nextProps,
           state: this.state,
-          mapViewport: newVp
+          viewport: newVp
         });
 
         onMapViewportChange(newVp);
@@ -351,7 +353,7 @@ class ForceOverlay extends Component {
     this.layout({
       props: nextProps,
       state: this.state,
-      mapViewport
+      viewport
     });
   }
 
@@ -365,11 +367,14 @@ class ForceOverlay extends Component {
     // this.ids.map(clearTimeout);
   }
 
-  layout({ props, state, mapViewport }) {
+  layout({ props, state, viewport }) {
     const { mode, delay, data, padding, force } = props; // this.props;
-    const { tsnePos, somPos, gridPos, nodes: oldNodes } = state;
+    const { tsnePos, gridPos, nodes: oldNodes } = state;
 
-    const { width, height, zoom, latitude, longitude } = mapViewport;
+    const { width, height, zoom, latitude, longitude } = viewport;
+    const somPos = somFy(data, width, height);
+    console.log('somPos', somPos);
+    // data.map(() => [width / 2, height / 2]); //
     // console.log('oldNodes', nextState, oldNodes);
 
     const vp = new PerspectiveMercatorViewport({
@@ -433,6 +438,7 @@ class ForceOverlay extends Component {
       };
     });
 
+    console.log('nodes', nodes);
     // console.log('node', nodes);
     // .filter(n => n.x > 0 && n.x < width && n.y > 0 && n.y < height);
     this.ids.map(clearTimeout);
@@ -471,7 +477,7 @@ class ForceOverlay extends Component {
 
     this.setState({
       nodes,
-      mapViewport
+      viewport
     });
   }
 
@@ -497,7 +503,7 @@ class ForceOverlay extends Component {
       data
     } = this.props;
 
-    const { mapViewport } = this.state;
+    const { viewport } = this.state;
     const { nodes } = this.state;
     // const newPos = nodes.map(d => transEvent.apply([d.x, d.y]));
     // TODO: change later
@@ -519,9 +525,9 @@ class ForceOverlay extends Component {
           }}
         >
           <MapGL
-            mapStyle={'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l'}
-            onViewportChange={mapViewport => {
-              onMapViewportChange(mapViewport);
+            mapStyle="mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l"
+            onViewportChange={viewport => {
+              onMapViewportChange(viewport);
               clearTimeout(this.id);
               // TODO: check later
               this.id = setTimeout(
@@ -529,19 +535,19 @@ class ForceOverlay extends Component {
                   this.layout({
                     props: this.props,
                     state: this.state,
-                    mapViewport
+                    viewport
                   }),
                 100
               );
-              this.setState({ mapViewport });
+              this.setState({ viewport });
             }}
             height={height}
             width={width}
-            latitude={mapViewport.latitude}
-            longitude={mapViewport.longitude}
-            zoom={mapViewport.zoom}
+            latitude={viewport.latitude}
+            longitude={viewport.longitude}
+            zoom={viewport.zoom}
           >
-            <UserOverlay {...mapViewport} location={userLocation} />
+            <UserOverlay {...viewport} location={userLocation} />
           </MapGL>
           {nodes.map(attr => children({ ...attr, selectedCardId }))}
         </div>
@@ -555,23 +561,23 @@ class ForceOverlay extends Component {
         <ZoomContainer
           width={width}
           height={height}
-          center={[width / 2, height * 2 / 3]}
+          center={[width / 2, (height * 2) / 3]}
           nodes={nodes}
           selectedId={selectedCardId}
           onZoom={() => null}
         >
           {(zoomedNodes, transform) => (
             <Fragment>
-              <BubbleOverlay
+                <BubbleOverlay
                 scale={transform.k}
                 nodes={zoomedNodes}
                 width={width}
                 height={height}
                 colorScale={colorScale}
                 labels={labels}
-              >
+                >
                 {d => children(d)}
-              </BubbleOverlay>
+                </BubbleOverlay>
             </Fragment>
           )}
         </ZoomContainer>

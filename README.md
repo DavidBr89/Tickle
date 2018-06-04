@@ -6,9 +6,9 @@ TICKLE playground for our Project
 * ~~integrate CardCreator into mapview~~
 * fix powerscale in accordion
 * ~~Server side~~
-* Server CRUD Operations
 * ~~add selectedCard Marker~~
 * user k-means for topic map
+* fix drag and drop on mobile
 
 
 * Fork and clone the project:

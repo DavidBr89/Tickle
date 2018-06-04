@@ -12,7 +12,8 @@ import {
 
 import * as cardActions from 'Reducers/Cards/actions';
 
-import { asyncCreateCard } from 'Reducers/Cards/async_actions';
+import * as asyncActions from 'Reducers/Cards/async_actions';
+import * as dataViewActions from 'Reducers/DataView/actions';
 
 // import { fetchDirection } from 'Reducers/Map/async_actions';
 
@@ -20,6 +21,7 @@ import MapView from './MapView';
 
 // import mapViewReducer from './reducer';
 
+console.log('asyncActions', asyncActions);
 // Container
 const mapStateToProps = state => {
   const {
@@ -34,7 +36,6 @@ const mapStateToProps = state => {
 
   // console.log('cardTemplate', cardTemplate);
   const cards = authEnv ? [...createdCards, cardTemplate] : readableCards;
-
   // TODO: simplify
   const { uid } =
     state.Session.authUser !== null ? state.Session.authUser : { uid: null };
@@ -46,6 +47,7 @@ const mapStateToProps = state => {
     // TODO: make more specific
     ...state.MapView,
     ...state.Cards,
+    ...state.DataView,
     selectedCard,
     selectedCardId,
     cards,
@@ -57,7 +59,8 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       ...cardActions,
-      asyncCreateCard,
+      ...asyncActions,
+      ...dataViewActions,
       resizeCardWindow,
       userMove,
       changeMapViewport,
@@ -72,25 +75,35 @@ const mapDispatchToProps = dispatch =>
 const mergeProps = (state, dispatcherProps) => {
   const { selectedCardId, mapViewport, uid } = state;
 
-  const { updateCard, updateCardTemplate, asyncCreateCard } = dispatcherProps;
+  const {
+    updateCard,
+    updateCardTemplate,
+    asyncCreateCard,
+    asyncRemoveCard
+  } = dispatcherProps;
 
-  const cardAction =
-    selectedCardId === 'temp' ? updateCardTemplate : updateCard;
+  const onCardDrop = cardData =>
+    selectedCardId === 'temp'
+      ? updateCardTemplate({ uid, cardData, mapViewport })
+      : updateCard({ uid, cardData, mapViewport });
 
-  const onCardDrop = cardData => cardAction({ uid, cardData, mapViewport });
-
-  const createCard = cardData => asyncCreateCard({ uid, cardData, mapViewport });
+  const cardAction = cardData =>
+    selectedCardId === 'temp'
+      ? asyncCreateCard({ uid, cardData, mapViewport })
+      : asyncRemoveCard({ uid, cid: cardData.id });
 
   const onCardUpdate = cardData =>
     cardData.template
       ? updateCardTemplate({ cardData, mapViewport })
       : updateCard({ uid, cardData, mapViewport });
 
-  return { ...state, ...dispatcherProps, onCardDrop, onCardUpdate, createCard };
+  return { ...state, ...dispatcherProps, onCardDrop, onCardUpdate, cardAction };
 };
 
-const MapViewCont = connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-  MapView
-);
+const MapViewCont = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
+)(MapView);
 
 export default MapViewCont;

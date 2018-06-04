@@ -40,23 +40,23 @@ class PhotoUpload extends Component {
   };
 
   state = {
-    imgSrc: this.props.defaultImg,
+    imgUrl: this.props.defaultImgUrl,
     imgFiles: null
   };
 
   shouldComponentUpdate(nextProps, nextState) {
     return (
-      this.state.imgSrc !== nextState.imgSrc ||
-      this.props.defaultImg !== nextProps.defaultImg
+      this.state.imgUrl !== nextState.imgUrl ||
+      this.props.defaultImgUrl !== nextProps.defaultImgUrl
     );
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { imgSrc, imgFile } = this.state;
+    const { imgUrl, imgFile } = this.state;
     const { onChange } = this.props;
     // console.log('imgFiles', imgFile);
-    if (prevState.imgSrc !== imgSrc) {
-      onChange({ url: imgSrc, file: imgFile });
+    if (prevState.imgUrl !== imgUrl) {
+      onChange({ url: imgUrl, file: imgFile });
     }
   }
 
@@ -72,7 +72,7 @@ class PhotoUpload extends Component {
       uiColor,
       defaultImg
     } = this.props;
-    const { imgSrc } = this.state;
+    const { imgUrl } = this.state;
     return (
       <div
         className={className}
@@ -96,7 +96,7 @@ class PhotoUpload extends Component {
               alignItems: 'center'
             }}
           >
-            {imgSrc !== null ? (
+            {imgUrl ? (
               <div
                 style={{
                   overflow: 'hidden',
@@ -105,8 +105,8 @@ class PhotoUpload extends Component {
                 }}
               >
                 <img
-                  src={imgSrc || convertToImgSrc(defaultImg)}
-                  width={'100%'}
+                  src={imgUrl}
+                  width="100%"
                   height={this.contHeight}
                   alt="test"
                 />
@@ -128,7 +128,7 @@ class PhotoUpload extends Component {
             capture="environment"
             onChange={e => {
               this.setState({
-                imgSrc: convertToImgSrc(e.target.files),
+                imgUrl: convertToImgSrc(e.target.files),
                 imgFile: e.target.files[0]
               });
             }}

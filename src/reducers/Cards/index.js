@@ -56,7 +56,6 @@ function updateCard(cardData, mapViewport) {
   const { x, y, tx, ty, vx, vy, ...restData } = cardData;
 
   const vp = new PerspectiveMercatorViewport(mapViewport);
-  console.log('vp', [x, y]);
 
   const [longitude, latitude] = vp.unproject([x, y]);
   const updatedCard = {
@@ -120,6 +119,7 @@ function reducer(state = {}, action) {
         ...state,
         createdCards: newCards,
         selectedCardId: newCard.id,
+        extCardId: null,
         cardTemplate: state.defaultCardTemplate
       };
     }
@@ -185,6 +185,7 @@ function reducer(state = {}, action) {
     case EXTEND_SELECTED_CARD: {
       const extCardId = action.options;
       // console.log('extCardId', extCardId);
+      // TODO: update
       return { ...state, extCardId };
     }
 
@@ -194,11 +195,19 @@ function reducer(state = {}, action) {
       return { ...state, cardTemplate: updatedTemplate };
     }
     case DELETE_CARD: {
-      const { cards } = state;
+      const { createdCards } = state;
       const cid = action.options;
 
-      const newCards = cards.filter(c => c.id !== cid);
-      return { ...state, cards: newCards };
+      const oldCardIndex = createdCards.findIndex(c => c.id === cid);
+      const newCreatedCards = createdCards.filter(c => c.id !== cid);
+      console.log('jump to', cid, Math.max(0, oldCardIndex - 1));
+      const selectedCardId = newCreatedCards[newCreatedCards.length - 1].id;
+      return {
+        ...state,
+        createdCards: newCreatedCards,
+        extCardId: null,
+        selectedCardId: 'temp'
+      };
     }
     case SUCCESS_DELETE_CARD: {
       return state;

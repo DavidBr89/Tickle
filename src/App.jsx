@@ -44,6 +44,7 @@ const defaultCardTemplate = {
   id: 'temp',
   template: true,
   loc: defaultLocation,
+  challenge: null,
   edit: true,
   tags: []
 };

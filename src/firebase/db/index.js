@@ -1,5 +1,55 @@
 import { firestore, storageRef } from '../firebase';
 
+const removeFunctionFields = ({ uiColor, template, edit, ...rest }) =>
+  Object.keys(rest).reduce((acc, attr) => {
+    if (!(rest[attr] instanceof Function)) acc[attr] = rest[attr];
+    return acc;
+  }, {});
+
+const addImgToStorage = file => {
+  const metadata = { contentType: file.type };
+  const imgRef = storageRef.child(`${file.name}${Date.now()}`);
+  return imgRef
+    .put(file, metadata)
+    .then(() => new Promise(resolve => resolve(imgRef.getDownloadURL())));
+};
+
+const uploadImgFields = card => {
+  const cardImgFile = card.img ? card.img.file : null;
+  const cardChallengeFile =
+    card.challenge !== null ? card.challenge.img.file : null;
+
+  const cardImgPromise = cardImgFile
+    ? addImgToStorage(cardImgFile).then(url => {
+      const img = {
+        title: card.img.title || cardImgFile.name,
+        url
+      };
+      return new Promise(resolve => resolve({ img }));
+    })
+    : {};
+  // card.img = null;
+
+  const challImgPromise = cardChallengeFile
+    ? addImgToStorage(cardChallengeFile).then(url => {
+        const challenge = {
+          img: {
+            title: cardChallengeFile.name,
+            url
+          }
+        };
+      return new Promise(resolve => resolve({ challenge }));
+    })
+    : {};
+
+  return Promise.all([cardImgPromise, challImgPromise]).then(values => {
+    const imgFields = values.reduce((acc, d) => ({ ...acc, ...d }));
+    const newCard = { ...removeFunctionFields(card), ...imgFields };
+    console.log('newCard to be added', newCard);
+    return newCard;
+  });
+};
+
 export const doCreateUser = (id, username, email) =>
   firestore
     .collection('users')
@@ -12,42 +62,15 @@ export const doCreateUser = (id, username, email) =>
 
 export const onceGetUsers = () => firestore.collection('users').get();
 
-const removeFunctionFields = ({ uiColor, template, edit, ...rest }) =>
-  Object.keys(rest).reduce((acc, attr) => {
-    if (!(rest[attr] instanceof Function)) acc[attr] = rest[attr];
-    return acc;
-  }, {});
-
-export const doCreateCard = (uid, card) => {
-  const file = card.img ? card.img.file : null;
-  console.log('file', file);
-
-  const addToDb = newCard =>
+export const doCreateCard = (uid, card) =>
+  uploadImgFields(card).then(c =>
     firestore
       .collection('users')
       .doc(uid)
       .collection('createdCards')
-      .doc(newCard.id)
-      .set(newCard);
-
-  if (file) {
-    const imgRef = storageRef.child(`${file.name}${Date.now()}`);
-
-    const metadata = { contentType: file.type };
-    return imgRef
-      .put(file, metadata)
-      .then(() => imgRef.getDownloadURL())
-      .then(url => {
-        const newCard = {
-          ...removeFunctionFields(card),
-          img: { title: card.img.title || file.name, url }
-        };
-        return addToDb(newCard);
-      });
-  }
-  return addToDb(removeFunctionFields(card));
-  // imgRef.getDownloadURL().then(url => console.log('url', url));
-};
+      .doc(c.id)
+      .set(c)
+  );
 
 // TODO: change later
 export const doUpdateCard = doCreateCard;

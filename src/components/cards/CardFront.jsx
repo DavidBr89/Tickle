@@ -10,7 +10,7 @@ import { shallowEqualProps } from 'shallow-equal-props';
 import placeholderImg from './placeholder.png';
 import { Modal, ModalBody } from 'Utils/Modal';
 import { MediaSearch, MediaOverview } from './MediaSearch';
-import ChallengeAuthorModalBody from './ChallengeAuthor';
+import ChallengeAuthorModalBody from 'Src/components/ChallengeAuthor';
 import { cardLayout } from './styles';
 
 import {
@@ -34,7 +34,7 @@ import CardHeader from './CardHeader';
 
 const defaultProps = {
   title: null,
-  challenge: { type: null },
+  challenge: null,
   // date: '28/04/2012 10:00',
   tags: null,
   img: null,
@@ -179,9 +179,16 @@ class ReadCardFront extends Component {
             onClick={onCollect}
             color={uiColor}
             style={{ width: '80%' }}
-          />
+          >
+            {'Collect Card'}{' '}
+          </BigButton>
 
-          <FlipButton color={uiColor} onClick={flipHandler} className="ml-2" />
+          <FlipButton
+            color={uiColor}
+            onClick={flipHandler}
+            style={{ width: '20%' }}
+            className="ml-2"
+          />
         </div>
       </div>
     );
@@ -191,6 +198,7 @@ class ReadCardFront extends Component {
 class EditCardFront extends PureComponent {
   static propTypes = {
     ...ReadCardFront.propTypes,
+    template: PropTypes.bool,
     onAttrUpdate: PropTypes.func,
     onSubmit: PropTypes.func,
     allChallenges: PropTypes.array
@@ -199,14 +207,19 @@ class EditCardFront extends PureComponent {
     ...ReadCardFront.defaultProps,
     onAttrUpdate: d => d,
     onSubmit: d => d,
-    allChallenges: []
+    allChallenges: [],
+    template: false
   };
 
   constructor(props) {
     super(props);
-    this.state = { data: { ...props }, dialog: null };
     this.nodeDescription = null;
   }
+  state = {
+    data: { ...this.props },
+    added: !this.props.template,
+    dialog: null
+  };
 
   // componentDidUpdate(prevProps, prevState) {
   //   const prevData = prevState.data;
@@ -241,18 +254,12 @@ class EditCardFront extends PureComponent {
 
   modalWriteContent(modalTitle) {
     const { data } = this.state;
-    const {
-      /* allChallenges, */ uiColor,
-      challenge: defaultChallenge,
-      tagColorScale
-    } = this.props;
+    const { /* allChallenges, */ uiColor, tagColorScale } = this.props;
 
     // console.log('tagColorScale', tagColorScale);
     // TODO: img
     const { title, tags, img, description, media } = data;
-    const closeBtn = (
-      <FooterBtn onClick={this.onCloseModal}>{'Close'}</FooterBtn>
-    );
+    const closeBtn = <FooterBtn onClick={this.onCloseModal}>Close</FooterBtn>;
     switch (modalTitle) {
       case 'Title':
         return (
@@ -322,7 +329,8 @@ class EditCardFront extends PureComponent {
       case 'Challenge':
         return (
           <ChallengeAuthorModalBody
-            defaultChallenge={defaultChallenge ? defaultChallenge.type : null}
+            uiColor={uiColor}
+            defaultChallenge={data.challenge}
             onChange={ch => {
               this.setFieldState({ challenge: ch });
             }}
@@ -341,9 +349,10 @@ class EditCardFront extends PureComponent {
       background,
       uiColor,
       tagColorScale,
-      onSubmit
+      onSubmit,
+      template
     } = this.props;
-    const { data } = this.state;
+    const { data, added } = this.state;
     const { title, tags, img, description, media, children, challenge } = data;
     const { dialog } = this.state;
     const modalVisible = dialog !== null;
@@ -444,35 +453,55 @@ class EditCardFront extends PureComponent {
               }
             />
 
-            <ChallengeField
-              style={{ maxHeight: '20%' }}
-              media={media}
-              borderColor={uiColor}
-              edit
-              onEdit={() =>
-                this.setState({
-                  dialog: { title: 'Challenge', data: challenge }
-                })
-              }
-            />
-
             <div className="p-1 pt-3">
-              <div style={{ display: 'flex' }}>
-                <div style={{ display: 'flex', width: '100%' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  width: '100%'
+                }}
+              >
+                <div style={{ display: 'inline-flex', width: '85%' }}>
+                  {template && (
+                    <BigButton
+                      className={added ? 'bg-danger' : 'bg-success'}
+                      color={uiColor}
+                      edit
+                      onClick={() => {
+                        this.setState({ added: !added });
+                        const message = window.confirm(
+                          `Are you sure you wish to ${
+                            added ? 'remove' : 'create'
+                          } this card?`
+                        );
+
+                        if (message) {
+                          onSubmit(data);
+                        }
+                      }}
+                    >
+                      {added ? 'Remove Card' : 'Create Card'}
+                    </BigButton>
+                  )}
                   <BigButton
-                    style={{ width: '80%' }}
+                    className="ml-1"
                     color={uiColor}
                     edit
-                    onClick={() => onSubmit(data)}
+                    onClick={() =>
+                      this.setState({
+                        dialog: { title: 'Challenge', data: challenge }
+                      })
+                    }
                   >
-                    {'Create Card'}
+                    {template ? 'Add Chall.' : 'Update Challenge'}
                   </BigButton>
-                  <FlipButton
-                    color={uiColor}
-                    onClick={flipHandler}
-                    className="ml-2"
-                  />
                 </div>
+                <FlipButton
+                  style={{ width: '16%' }}
+                  color={uiColor}
+                  onClick={flipHandler}
+                  className="ml-3"
+                />
               </div>
             </div>
             {children}

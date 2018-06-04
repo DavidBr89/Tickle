@@ -87,13 +87,13 @@ CardHeader.defaultProps = {
   title: null,
   // flipHandler: d => d,
   style: {},
-  children: <div>{'test'}</div>,
+  children: <div>test</div>,
   edit: false,
   onClose: () => null,
   onEdit: () => null,
   background: 'tomato',
   editButton: null,
-  placeholder: 'Please add a title',
+  placeholder: 'No Title',
   uiColor: 'black'
 };
 

@@ -17,6 +17,7 @@ import scc from 'connected-components';
 
 import { intersection, union, uniq } from 'lodash';
 import TopicAnnotationOverlay from './TopicAnnotationOverlay';
+import dobbyscan from './cluster';
 
 const euclDist = (x1, y1, x2, y2) => Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 
@@ -340,15 +341,30 @@ class BubbleOverlay extends Component {
     const oldSubComps = this.state.subComps;
 
     // const comps = compComps(nodes, 100);
+    const clusters = dobbyscan([...nodes], 100, n => n.x, n => n.y).map(
+      (vals, i) => ({ id: i, values: vals })
+    );
 
-    const comps = this.comps.map(c => {
-      const values = c.values.map(v => nodes.find(n => n.id === v.id));
-
-      return { ...c, values };
-    });
-
-    const subComps = comps.reduce((acc, c) => {
+    const subComps = clusters.map(c => {
       const centerPos = findCenterPos(c.values);
+
+      const sets = setify(c.values).sort(
+        (a, b) => b.values.length - a.values.length
+      ); // .filter(d => d.values.length > 1);
+      const ext = d3.extent(sets, s => s.values.length);
+      const sizeScale = d3
+        .scaleLinear()
+        .domain(ext)
+        .range([25, 55]);
+
+      const tags = d3
+        .nest()
+        .key(e => e)
+        .entries(c.values.reduce((acc, v) => [...acc, ...v.tags], []))
+        .sort((a, b) => b.values.length - a.values.length);
+
+      const ids = c.values.map(e => e.id);
+      const tagKeys = tags.map(e => e.key);
       // const dist = 100;
       // const xScale = d3
       //   .scaleLinear()
@@ -360,27 +376,27 @@ class BubbleOverlay extends Component {
       //   .range([centerPos[1] - dist / 2, centerPos[1] + dist / 2]);
 
       // TODO: compute real predecessor
-      const relatedComp = oldSubComps
-        .filter(oc => intersection(oc.tagKeys, c.tagKeys).length > 0)
-        .reduce(
-          (accu, d) => (accu.values.length < d.values.length ? d : accu),
-          { values: [] }
-        );
-      console.log('relatedComp', relatedComp);
-      const dist = Math.max(relatedComp.r, 12);
+      // const relatedComp = oldSubComps
+      //   .filter(oc => intersection(oc.tagKeys, c.tagKeys).length > 0)
+      //   .reduce(
+      //     (accu, d) => (accu.values.length < d.values.length ? d : accu),
+      //     { values: [] }
+      //   );
+
+      const dist = 10; // Math.max(relatedComp.r, 4);
       const values = c.values.map(v => ({
         ...v,
         x: Math.min(Math.max(v.x, centerPos[0] + dist), v.x),
         y: Math.min(Math.max(v.y, centerPos[1] + dist), v.y)
       }));
-
-      const tmpComps = compComps(values, dist).map(e => ({
-        ...e,
-        r: e.values.length * 7,
-        centerPos: findCenterPos(e.values)
-      }));
-      return [...acc, ...tmpComps];
-    }, []);
+      //
+      // const tmpComps = compComps(values, dist).map(e => ({
+      //   ...e,
+      //   r: e.values.length * 7,
+      //   centerPos: findCenterPos(e.values)
+      // }));
+      return { ...c, values, centerPos, sets, tagKeys, sizeScale, ids };
+    });
 
     this.setState({ subComps });
 
@@ -466,12 +482,12 @@ class BubbleOverlay extends Component {
           {
             //   rectPoints.map(d => (
             //   <rect
-          //     x={d.x0}
+            //     x={d.x0}
             //     y={d.y0}
-          //     width={d.width}
-          //     height={d.height}
-          //     fill="none"
-          //     stroke="black"
+            //     width={d.width}
+            //     height={d.height}
+            //     fill="none"
+            //     stroke="black"
             //     d={d3.line().curve(d3.curveBasis)(d)}
             //   />
             // ))
@@ -492,7 +508,7 @@ class BubbleOverlay extends Component {
           ))}
         </svg>
         {polyData.map(({ centroid: [cx, cy], centerPos: [x, y], ...d }) => {
-          const angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
+          const angle = Math.round((Math.atan2(cy - y, cx - x) / Math.PI) * 2);
           // const trans = angle === 0 ? 100
           //     : angle === -1 ? orient.top
           //     : angle === 1 ? orient.bottom
@@ -501,8 +517,8 @@ class BubbleOverlay extends Component {
             <div
               style={{
                 position: 'absolute',
-                left: x,
-                top: y,
+                left: cx,
+                top: cy,
                 transform: `translate(${angle === 0 ? -100 : 0}%, -50%)`,
                 background: 'white'
               }}

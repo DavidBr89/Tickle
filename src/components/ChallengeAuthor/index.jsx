@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import * as Icon from 'react-feather';
 
@@ -9,13 +9,14 @@ import { Modal, ModalBody } from 'Utils/Modal';
 
 // import LearningObject from './LearningObject';
 
-class Nav extends Component {
+class Nav extends React.Component {
   static propTypes = {
     children: PropTypes.oneOf([PropTypes.func, PropTypes.node]),
     className: PropTypes.string,
     data: PropTypes.array,
     preSelected: PropTypes.string,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    uiColor: PropTypes.string
   };
 
   static defaultProps = {
@@ -36,17 +37,20 @@ class Nav extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { selected } = this.state;
     if (selected !== prevState.selected) {
-      console.log('selected');
       this.props.onChange(selected);
     }
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return false;
+  }
+
   render() {
-    const { data, children } = this.props;
+    const { data, children, uiColor } = this.props;
     const { selected } = this.state;
 
-    const btnStyle = (sel, uiColor) => ({
-      background: sel ? uiColor : null,
+    const btnStyle = (sel, color) => ({
+      background: sel ? color : null,
       display: 'inline-flex',
       color: sel ? 'white' : null,
       width: '30%',
@@ -57,47 +61,43 @@ class Nav extends Component {
     const updState = sel => () => this.setState({ selected: sel });
 
     return (
-      <UIthemeContext.Consumer>
-        {({ uiColor }) => (
-          <div style={{ width: '100%' }}>
-            <div
-              className="mb-3 nav"
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                flexWrap: 'no-wrap'
-              }}
-              role="tablist"
+      <div style={{ width: '100%' }}>
+        <div
+          className="mb-3 nav"
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            flexWrap: 'no-wrap'
+          }}
+          role="tablist"
+        >
+          {data.map(key => (
+            <button
+              className="btn"
+              type="button"
+              onClick={updState(key)}
+              style={btnStyle(selected, uiColor)}
+              id={key}
             >
-              {data.map(key => (
-                <button
-                  className="btn"
-                  type="button"
-                  onClick={updState(key)}
-                  style={btnStyle(selected, uiColor)}
-                  id={key}
-                >
-                  <div
-                    style={{
-                      // TODO: does not work
-                      textOverflow: 'ellipsis'
-                    }}
-                  >
-                    {key}
-                  </div>
-                </button>
-              ))}
-            </div>
-            <div className="tab-content">
-              <div className={'w-100 h-100'} role="tabpanel">
-                {children instanceof Function
-                  ? children(data.find(key => key === selected))
-                  : children}
+              <div
+                style={{
+                  // TODO: does not work
+                  textOverflow: 'ellipsis'
+                }}
+              >
+                {key}
               </div>
-            </div>
+            </button>
+          ))}
+        </div>
+        <div className="tab-content">
+          <div className="w-100 h-100" role="tabpanel">
+            {children instanceof Function
+              ? children(data.find(key => key === selected))
+              : children}
           </div>
-        )}
-      </UIthemeContext.Consumer>
+        </div>
+      </div>
     );
   }
 }
@@ -105,13 +105,13 @@ class Nav extends Component {
 function TestComp({ children }) {
   return (
     <div style={{ background: 'gold' }}>
-      <div>{'test'}</div>
+      <div>test</div>
       <div>{children}</div>
     </div>
   );
 }
 
-class ChallengeAuthor extends Component {
+class ChallengeAuthor extends React.Component {
   static propTypes = {
     style: PropTypes.object,
     className: PropTypes.string,
@@ -144,22 +144,23 @@ class ChallengeAuthor extends Component {
   constructor(props) {
     super(props);
 
-    const challengeMap = {
-      PhotoUpload: <PhotoChallengeAuthor {...props} />,
-      LearningObject: <TestComp {...props} />,
-      MiniGame: <PhotoChallengeAuthor {...props} />
-    };
-
     this.state = {
       selectedKey: props.defaultChallenge
         ? props.defaultChallenge.type
-        : Object.keys(challengeMap)[0],
-      challengeMap
+        : Object.keys(this.challengeMap)[0]
     };
   }
 
+  challengeMap = {
+    PhotoUpload: <PhotoChallengeAuthor {...this.props} />,
+    LearningObject: <TestComp {...this.props} />,
+    MiniGame: <PhotoChallengeAuthor {...this.props} />
+  };
+
   shouldComponentUpdate(nextProps, nextState) {
-    return this.state.selectedKey !== nextState.selectedKey;
+    return (
+      this.state.selectedKey !== nextState.selectedKey || nextProps.uiColor
+    );
   }
 
   // componentWillReceiveProps(nextProps) {
@@ -167,9 +168,9 @@ class ChallengeAuthor extends Component {
   // }
 
   render() {
-    const { className, style } = this.props;
-    const { selectedKey, challengeMap } = this.state;
-    const challengeKeys = Object.keys(challengeMap);
+    const { className, uiColor, style } = this.props;
+    const { selectedKey } = this.state;
+    const challengeKeys = Object.keys(this.challengeMap);
 
     return (
       <div
@@ -180,6 +181,7 @@ class ChallengeAuthor extends Component {
           data={challengeKeys}
           preSelected={selectedKey}
           onChange={key => this.setState({ selectedKey: key })}
+          uiColor={uiColor}
         >
           <div style={{ display: 'flex', flexWrap: 'wrap' }}>
             <div
@@ -197,7 +199,7 @@ class ChallengeAuthor extends Component {
                   className="w-100 p-2"
                   style={{ display: selectedKey !== key && 'none' }}
                 >
-                  {challengeMap[key]}
+                  {this.challengeMap[key]}
                 </div>
               ))}
             </div>
@@ -219,11 +221,18 @@ const FooterBtn = ({ onClick, children, disabled, className, style = {} }) => (
   </button>
 );
 
-class ChallengeAuthorModalBody extends Component {
+class ChallengeAuthorModalBody extends React.Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    uiColor: PropTypes.string
+  };
+  static defaultProps = {
+    children: <div />,
+    className: '',
+    onChange: d => d,
+    uiColor: 'black'
   };
 
   state = { challenge: null, added: false };
@@ -238,10 +247,13 @@ class ChallengeAuthorModalBody extends Component {
 
   render() {
     const { challenge, added } = this.state;
+    const { uiColor } = this.props;
     const btnClass = `btn ${challenge === null && 'disabled'}`;
     const iconSize = { width: 30, height: 30 };
+
     return (
       <ModalBody
+        uiColor={uiColor}
         footer={
           <button
             disabled={challenge === null}
@@ -263,6 +275,7 @@ class ChallengeAuthorModalBody extends Component {
         }
       >
         <ChallengeAuthor
+          {...this.props}
           onChange={ch => {
             this.setState({ challenge: ch, added: false });
           }}

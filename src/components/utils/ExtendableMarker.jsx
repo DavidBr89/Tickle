@@ -55,8 +55,9 @@ class ExtendableMarker extends Component {
     const { x, y, extended } = nextProps;
 
     return (
-      extended !== this.props.extended ||
-      (this.props.x !== x && this.props.y !== y)
+      // extended !== this.props.extended ||
+      // (this.props.x !== x && this.props.y !== y)
+      true
     ); // nextProps.extended ||
     // this.props.extended !== nextProps.extended ||
     // !nextProps.throttle

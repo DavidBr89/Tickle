@@ -107,7 +107,8 @@ class Card extends React.Component {
       challenge,
       onUpdate,
       type,
-      tagColorScale
+      tagColorScale,
+      onSubmit
     } = this.props;
     const { frontView } = this.state;
     // const { onClose } = this.props;
@@ -147,6 +148,7 @@ class Card extends React.Component {
           onCollect={onCollect}
           flipHandler={flipHandler}
           tagColorScale={tagColorScale}
+          deleteHandler={onSubmit}
           setMapRadius={mapRadius => {
             onUpdate({ ...this.props, mapRadius });
           }}

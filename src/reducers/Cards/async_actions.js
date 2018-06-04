@@ -149,10 +149,11 @@ export function asyncCreateCard({ cardData, mapViewport, uid }) {
   };
 }
 
-export function asyncDeleteCard(uid, cid) {
+export function asyncRemoveCard({ uid, cid }) {
   // Thunk middleware knows how to handle functions.
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
+  console.log('async remove card');
   return function(dispatch) {
     dispatch(deleteCard(cid));
     return db.doDeleteCard(uid, cid).then(querySnapshot => {

@@ -6,7 +6,7 @@ import cx from './Card.scss';
 import { shadowStyle, colorClass, colorScale } from './styles';
 import { PreviewTags } from './layout';
 
-const PlaceholderAttr = ({ text, style, fullHeight }) => (
+const PlaceholderField = ({ text, style, fullHeight }) => (
   <div
     className="mb-1"
     style={{
@@ -23,6 +23,7 @@ const PlaceholderAttr = ({ text, style, fullHeight }) => (
         // marginBottom: '4px',
         color: 'grey',
         paddingLeft: '2px',
+        fontWeight: 'bold',
         ...style
       }}
     >
@@ -42,12 +43,12 @@ const PlaceholderAttr = ({ text, style, fullHeight }) => (
   </div>
 );
 
-PlaceholderAttr.propTypes = {
+PlaceholderField.propTypes = {
   text: PropTypes.string.isRequired,
   style: PropTypes.object,
   fullHeight: PropTypes.bool
 };
-PlaceholderAttr.defaultProps = {
+PlaceholderField.defaultProps = {
   style: {},
   fullHeight: false
 };
@@ -123,15 +124,18 @@ class PreviewCard extends Component {
             </div>
           </div>
         ) : (
-          <PlaceholderAttr text={'Title'} style={{ fontSize: '18px' }} />
+          <PlaceholderField text="Title" style={{ fontSize: '18px' }} />
         )}
         {Array.isArray(tags) && tags.length > 0 ? (
           <PreviewTags small colorScale={tagColorScale} data={tags} />
         ) : (
-          <PlaceholderAttr text={'Tags'} style={{ fontSize: '80%' }} />
+          <PlaceholderField text="Tags" style={{ fontSize: '80%' }} />
         )}
 
-        <div className="mt-1 mb-1" style={{ height: '50%' }}>
+        <div
+          className="mt-1 mb-1"
+          style={{ height: '50%', background: '#ffd70080' }}
+        >
           {img !== null || !edit ? (
             <img
               style={{
@@ -143,8 +147,8 @@ class PreviewCard extends Component {
               alt="Card cap"
             />
           ) : (
-            <PlaceholderAttr
-              text={'IMG'}
+            <PlaceholderField
+              text="IMG"
               fullHeight
               style={{ fontSize: '18px' }}
             />

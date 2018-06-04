@@ -12,7 +12,6 @@ import * as chromatic from 'd3-scale-chromatic';
 import { default as TouchBackend } from 'react-dnd-touch-backend';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContextProvider } from 'react-dnd';
-import MapGL from 'react-map-gl';
 import * as d3 from 'd3';
 
 // TODO: move
@@ -36,7 +35,7 @@ import TagBar from './TagBar';
 import TagList from './TagList';
 import { setify } from './utils';
 
-import PhotoChallenge from '../Challenges/PhotoChallenge';
+import PhotoChallenge from '../Challenges/MatchPhotoChallenge';
 
 // import StartNav from './StartNav';
 // import { VisibleView, VisibleElement } from '../utils/MySensor.jsx';
@@ -171,13 +170,12 @@ function SpeechBubble({ ...props }) {
       <div
         className="m-1"
         style={{
-          width: 200,
-
+          width: 270,
           border: '2px dashed grey'
         }}
       >
         <div className="m-1">
-          <h3>yeah drag and drop</h3>
+          <h3>drag and drop Card to change position</h3>
         </div>
       </div>
     </div>
@@ -192,9 +190,9 @@ const PreviewMarker = ({ selected, template, color, r = 25 }) => (
   <div
     className="w-100 h-100"
     style={{
-      position: 'relative'
-      // height: 2 * r,
-      // width: 2 * r
+      position: 'relative',
+      height: 2 * r,
+      width: 2 * r
     }}
   >
     {selected && (
@@ -212,14 +210,15 @@ const PreviewMarker = ({ selected, template, color, r = 25 }) => (
         }}
       />
     )}
-    {template && selected && <SpeechBubble />}
     <CardMarker
       color={color}
       style={{
         opacity: 1,
         position: 'absolute',
         transform: `translateX(3px)`,
-        zIndex: -100
+        zIndex: -100,
+        width: r, // '13vw',
+        height: r // '13vw',
       }}
     />
   </div>
@@ -364,6 +363,7 @@ class MapView extends Component {
       toggleCardChallenge,
       fetchDirection,
       filterCards,
+      dataView,
       // toggleTagList,
       toggleTsneView,
       toggleGrid,
@@ -372,10 +372,11 @@ class MapView extends Component {
       onCardUpdate,
       changeViewport,
       toggleCardAuthoring,
+      toggleDataView,
       // cardAuthoring,
-      // createCard,
+      // cardAction,
       onCardDrop,
-      createCard
+      cardAction
       // getUserCards
       // navigateFirstTimeAction
     } = this.props;
@@ -414,29 +415,53 @@ class MapView extends Component {
       .range([20, 100]);
 
     return (
-      <React.StrictMode>
-        <WindowContext.Provider value={{ width, height }}>
-          <Modal
-            visible={cardChallengeOpen}
-            onClose={() => toggleCardChallenge({ cardChallengeOpen: false })}
-          >
-            <ModalBody>
-              <PhotoChallenge />
-            </ModalBody>
-          </Modal>
+      <React.Fragment>
+        <Modal
+          visible={cardChallengeOpen}
+          onClose={() => toggleCardChallenge({ cardChallengeOpen: false })}
+        >
+          <ModalBody>
+            <PhotoChallenge />
+          </ModalBody>
+        </Modal>
+        <DragDropContextProvider
+          backend={width < 500 ? TouchBackend : HTML5Backend}
+        >
           <div className="w-100 h-100" style={{ position: 'relative' }}>
-            <DragDropContextProvider backend={HTML5Backend}>
+            <div
+              className="w-100 h-100"
+              ref={cont => (this.cont = cont)}
+              style={{
+                position: 'absolute'
+              }}
+            >
+              <DragLayer />
+
               <div
-                className="w-100 h-100"
-                ref={cont => (this.cont = cont)}
                 style={{
-                  position: 'absolute'
+                  display: 'flex',
+                  position: 'absolute',
+                  justifyContent: 'flex-end',
+                  marginTop: 10,
+                  marginRight: 10,
+                  width: '100%'
                 }}
               >
-                <DragLayer />
-
+                <button
+                  className="btn mr-3"
+                  style={{
+                    position: 'relative',
+                    zIndex: 1000,
+                    background: 'whitesmoke'
+                  }}
+                  onClick={() => toggleCardAuthoring(userLocation)}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Icon.Clipboard size={30} />
+                  </div>
+                </button>
                 <input
-                  className="btn "
+                  className="btn mr-3"
                   placeholder="Search Cards"
                   type="text"
                   onChange={evt => filterCards(evt.target.value)}
@@ -445,152 +470,133 @@ class MapView extends Component {
                   style={{
                     background: 'whitesmoke',
                     textAlign: 'left',
-                    position: 'absolute',
-                    right: 0,
-                    zIndex: 4000,
-                    marginTop: 10,
-                    marginRight: 10
+                    position: 'relative',
+                    // right: 0,
+                    zIndex: 4000
                   }}
                 />
+              </div>
 
-                <div
-                  className="w-100"
+              <div
+                className="w-100"
+                style={{
+                  opacity: gridView ? 1 : 0,
+                  display: !gridView ? 'none' : null,
+                  transition: 'opacity 0.5s',
+                  height: '25%',
+                  marginTop: 90
+                }}
+              >
+                <Accordion
+                  data={cards}
+                  className="ml-1 mr-2"
+                  duration={600}
+                  centered={selectedCardId !== null}
+                  selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
+                  width={100}
+                  height={100}
+                  unit="%"
+                  slotSize={100 / 3.5}
                   style={{
-                    opacity: gridView ? 1 : 0,
-                    display: !gridView ? 'none' : null,
-                    transition: 'opacity 0.5s',
-                    height: '25%',
-                    marginTop: 60
+                    // width: '100%',
+                    zIndex: 2000
                   }}
                 >
-                  <Accordion
-                    data={cards}
-                    className="ml-1 mr-2"
-                    duration={600}
-                    centered={selectedCardId !== null}
-                    selectedIndex={cards.findIndex(
-                      c => c.id === selectedCardId
-                    )}
-                    width={100}
-                    height={100}
-                    unit={'%'}
-                    slotSize={100 / 3.5}
-                    style={{
-                      // width: '100%',
-                      zIndex: 2000,
-                      marginTop: 30
-                    }}
-                  >
-                    {d => (
-                      <div
-                        className="w-100 h-100"
-                        key={d.id}
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'center'
-                          // border: 'black 5px solid'
-                          // pointerEvents: 'none'
-                        }}
-                      >
-                        <div style={{ width: '100%', height: '100%' }}>
-                          <PreviewCard
-                            {...d}
-                            onClick={() =>
-                              selectedCardId === d.id
-                                ? extendSelectedCard(d.id)
-                                : selectCard(d.id)
-                            }
-                            tagColorScale={tagColorScale}
-                            key={d.id}
-                            edit={d.template}
-                            selected={selectedCardId === d.id}
-                            style={{
-                              transition: `transform 1s`,
-                              transform:
-                                selectedCardId === d.id && 'scale(1.2)',
-                              opacity: d.template && 0.8
-
-                              // width: '100%',
-                              // height: '100%',
-                              // width: '100%'
-                              // maxWidth: '200px'
-                            }}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </Accordion>
-                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <button
-                      className="btn m-3"
+                  {d => (
+                    <div
+                      className="w-100 h-100"
+                      key={d.id}
                       style={{
-                        position: 'relative',
-                        zIndex: 1000,
-                        background: 'whitesmoke'
+                        display: 'flex',
+                        justifyContent: 'center'
+                        // border: 'black 5px solid'
+                        // pointerEvents: 'none'
                       }}
-                      onClick={() => toggleCardAuthoring(userLocation)}
                     >
-                      <div
-                        style={{ display: 'flex', justifyContent: 'center' }}
-                      >
-                        <Icon.Clipboard size={30} />
-                      </div>
-                    </button>
-                  </div>
+                      <div style={{ width: '100%', height: '100%' }}>
+                        <PreviewCard
+                          {...d}
+                          onClick={() =>
+                            selectedCardId === d.id
+                              ? extendSelectedCard(d.id)
+                              : selectCard(d.id)
+                          }
+                          tagColorScale={tagColorScale}
+                          key={d.id}
+                          edit={d.template}
+                          selected={selectedCardId === d.id}
+                          style={{
+                            transition: `transform 1s`,
+                            transform: selectedCardId === d.id && 'scale(1.2)',
+                            opacity: d.template && 0.8
 
-                  <div
-                    className="w-100 h-100"
-                    style={{
-                      position: 'absolute',
-                      left: 0,
-                      top: 0
-                      // filter: tsneView && 'blur(4px)'
+                            // width: '100%',
+                            // height: '100%',
+                            // width: '100%'
+                            // maxWidth: '200px'
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </Accordion>
+
+                <div
+                  className="w-100 h-100"
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0
+                    // filter: tsneView && 'blur(4px)'
+                  }}
+                />
+                <DropTargetCont
+                  dropHandler={onCardDrop}
+                  dragged={isCardDragging}
+                  style={{
+                    // width: '100%',
+                    // height: '100%',
+                    // position: 'relative',
+                    // background: 'white',
+                    zIndex: 1000
+                  }}
+                >
+                  <ForceOverlay
+                    delay={1}
+                    width={width}
+                    height={height}
+                    force
+                    data={cards}
+                    sets={cardSets}
+                    selectedCardId={selectedCardId}
+                    extCardId={extCardId}
+                    userLocation={userLocation}
+                    mode={dataView}
+                    labels={!gridView}
+                    onMapViewportChange={changeMapViewport}
+                    padding={{
+                      bottom: !gridView && !tagListView ? (height * 1) / 6 : 50,
+                      top:
+                        gridView || tagListView
+                          ? (height * 1) / 1.7
+                          : (height * 1) / 6,
+                      left: 70,
+                      right: 70
                     }}
-                  />
-                  <DropTargetCont
-                    dropHandler={onCardDrop}
-                    dragged={isCardDragging}
-                    style={{
-                      // width: '100%',
-                      // height: '100%',
-                      // position: 'relative',
-                      // background: 'white',
-                      zIndex: 1000
-                    }}
+                    colorScale={tagColorScale}
                   >
-                    <ForceOverlay
-                      delay={1}
-                      width={width}
-                      height={height}
-                      force
-                      data={cards}
-                      sets={cardSets}
-                      selectedCardId={selectedCardId}
-                      extCardId={extCardId}
-                      userLocation={userLocation}
-                      mode={!tsneView ? 'geo' : 'som'}
-                      labels={!gridView}
-                      onMapViewportChange={changeMapViewport}
-                      padding={{
-                        bottom: !gridView && !tagListView ? height * 1 / 6 : 50,
-                        top:
-                          gridView || tagListView
-                            ? height * 1 / 1.7
-                            : height * 1 / 6,
-                        left: 70,
-                        right: 70
-                      }}
-                      colorScale={tagColorScale}
-                    >
-                      {({ x, y, ...c }) => (
-                        <ExtendableMarker
-                          key={c.id}
-                          width={extCardId === c.id ? width : 25}
-                          height={extCardId === c.id ? height : 30}
-                          x={extCardId === c.id ? width / 2 : x}
-                          y={extCardId === c.id ? height / 2 : y}
-                          extended={extCardId === c.id}
-                          preview={
+                    {({ x, y, ...c }) => (
+                      <ExtendableMarker
+                        key={c.id}
+                        width={extCardId === c.id ? width : 25}
+                        height={extCardId === c.id ? height : 30}
+                        x={extCardId === c.id ? width / 2 : x}
+                        y={extCardId === c.id ? height / 2 : y}
+                        extended={extCardId === c.id}
+                        preview={
+                          <div>
+                            {selectedCardId === c.id &&
+                              !isCardDragging && <SpeechBubble />}
                             <DragSourceCont
                               dragHandler={dragCard}
                               data={c}
@@ -600,48 +606,51 @@ class MapView extends Component {
                               <PreviewMarker
                                 selected={selectedCardId === c.id}
                                 template={c.template}
-                                color={'whitesmoke'}
+                                color="whitesmoke"
                               />
                             </DragSourceCont>
+                          </div>
+                        }
+                      >
+                        <Card
+                          {...c}
+                          onClose={() => extendSelectedCard(null)}
+                          edit={authEnv}
+                          onSubmit={() => {
+                            console.log('cardAction', c);
+                            cardAction({ ...c, x, y });
+                          }}
+                          onCollect={() =>
+                            toggleCardChallenge({
+                              cardChallengeOpen: true
+                            })
                           }
-                        >
-                          <Card
-                            {...c}
-                            onClose={() => extendSelectedCard(null)}
-                            edit={authEnv}
-                            onSubmit={(d) => createCard({...d, x, y})}
-                            onCollect={() =>
-                              toggleCardChallenge({
-                                cardChallengeOpen: true
-                              })
-                            }
-                            tagColorScale={tagColorScale}
-                            onUpdate={d => onCardUpdate({ ...d, x, y })}
-                            style={{ zIndex: 4000 }}
-                          />
-                        </ExtendableMarker>
-                      )}
-                    </ForceOverlay>
-                  </DropTargetCont>
-                  <button
-                    className="fixed-bottom-right btn m-3"
-                    style={{
-                      // position: 'absolute',
-                      zIndex: 1000,
-                      background: tsneView && 'whitesmoke'
-                    }}
-                    onClick={toggleTsneView}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
-                      <Icon.Eye size={30} />
-                    </div>
-                  </button>
-                </div>
+                          tagColorScale={tagColorScale}
+                          onUpdate={d => onCardUpdate({ ...d, x, y })}
+                          style={{ zIndex: 4000 }}
+                        />
+                      </ExtendableMarker>
+                    )}
+                  </ForceOverlay>
+                </DropTargetCont>
+                <button
+                  className="fixed-bottom-right btn m-3"
+                  style={{
+                    // position: 'absolute',
+                    zIndex: 1000,
+                    background: tsneView && 'whitesmoke'
+                  }}
+                  onClick={() => toggleDataView(dataView === 'som' : 'geo')}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Icon.Eye size={30} />
+                  </div>
+                </button>
               </div>
-            </DragDropContextProvider>
+            </div>
           </div>
-        </WindowContext.Provider>
-      </React.StrictMode>
+        </DragDropContextProvider>
+      </React.Fragment>
     );
   }
 }

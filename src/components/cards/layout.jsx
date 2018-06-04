@@ -105,7 +105,7 @@ export const ChallengeField = ({
   edit
 }) => (
   <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
-    <FieldSet edit={edit} borderColor={borderColor} legend={'Challenge'}>
+    <FieldSet edit={edit} borderColor={borderColor} legend="Challenge">
       <div
         style={{
           display: 'flex',
@@ -160,7 +160,7 @@ const DescriptionField = ({
   edit
 }) => (
   <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
-    <FieldSet edit={edit} borderColor={borderColor} legend={'Description'}>
+    <FieldSet edit={edit} borderColor={borderColor} legend="Description">
       <div
         style={{
           display: 'flex',
@@ -219,7 +219,7 @@ const MediaField = ({
     style={{ ...style, cursor: 'pointer', overflow: 'hidden' }}
     onClick={onClick || onEdit}
   >
-    <FieldSet edit={edit} legend={'Media'} borderColor={borderColor}>
+    <FieldSet edit={edit} legend="Media" borderColor={borderColor}>
       <div style={{ display: 'flex', alignContent: 'end' }}>
         {Array.isArray(media) && media.length > 0 ? (
           <PreviewMedia
@@ -586,7 +586,7 @@ const PreviewTags = ({
     {data !== null &&
       data.length === 0 && (
         <div>
-          <Tag title={'No Tag'} color={'grey'} small={small} />
+          <Tag title="No Tag" color="grey" small={small} />
         </div>
       )}
     {data === null && <div style={{ fontStyle: 'italic' }}>{placeholder}</div>}
@@ -609,17 +609,18 @@ PreviewTags.defaultProps = {
   colorScale: () => 'red'
 };
 
-const BigButton = ({
+export const BigButton = ({
   collected,
   onClick,
   expPoints,
   color,
   style,
   edit,
-  children
+  children,
+  className
 }) => (
   <button
-    className={`btn btn-active btn-lg btn-block}`}
+    className={`btn btn-active btn-lg btn-block ${className}`}
     disabled={collected}
     style={{
       width: '100%',
@@ -663,19 +664,19 @@ BigButton.defaultProps = {
   style: {}
 };
 
-const FlipButton = ({ style, onClick, color, className }) => (
-  <button
-    className={`btn ${className}`}
-    style={{
-      background: color,
-      color: 'whitesmoke',
-      width: '20%',
-      ...style
-    }}
+export const FlipButton = ({ style, onClick, color, className }) => (
+  <BigButton
     onClick={onClick}
+    color={color}
+    style={style}
+    className={className}
   >
-    <i className="fa fa-retweet fa-2x" aria-hidden="true" />
-  </button>
+    <i
+      className="fa fa-retweet fa-2x"
+      style={{ fontSize: 32 }}
+      aria-hidden="true"
+    />
+  </BigButton>
 );
 
 FlipButton.propTypes = {
@@ -724,8 +725,8 @@ const Comments = ({ data, extended, onClose }) => (
           <div style={{ display: 'flex' }}>
             <img
               className={`${cx.avatar} mr-3`}
-              width={'20%'}
-              height={'20%'}
+              width="20%"
+              height="20%"
               src={profileSrc()}
               alt="alt"
             />
@@ -769,11 +770,9 @@ export {
   PreviewMedia,
   MediaField,
   EditButton,
-  FlipButton,
   Img,
   Tags,
   TagInput,
   PreviewTags,
-  BigButton,
   Comments
 };

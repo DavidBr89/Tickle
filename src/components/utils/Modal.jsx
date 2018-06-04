@@ -125,7 +125,7 @@ Modal.propTypes = {
 Modal.defaultProps = {
   visible: true,
   title: null,
-  children: <div>{'test'}</div>,
+  children: <div>test</div>,
   onClose: () => null,
   onSave: () => null,
   style: {},
@@ -136,42 +136,39 @@ Modal.defaultProps = {
 
 // TODO: fix padding bottom
 // TODO: access child state
-const ModalBody = ({ children, footer, styles }) => (
-  <UIthemeContext.Consumer>
-    {({ uiColor }) => (
-      <div
-        style={{
-          width: '100%',
-          // height: '90%',
-          // TODO: outsource
-          maxHeight: 800,
-          // height: '100%',
-          // height: '30vh',
-          overflow: 'hidden',
+const ModalBody = ({ children, footer, uiColor, styles }) => (
+  <div
+    style={{
+      width: '100%',
+      // height: '90%',
+      // TODO: outsource
+      maxHeight: 800,
+      // height: '100%',
+      // height: '30vh',
+      overflow: 'hidden',
 
-          ...styles
-        }}
-      >
-        <div className="modal-body">{children}</div>
+      ...styles
+    }}
+  >
+    <div className="modal-body">{children}</div>
 
-        <div
-          className="modal-footer"
-          style={{
-            borderTop: `1px solid ${uiColor}`
-          }}
-        >
-          {footer}
-        </div>
-      </div>
-    )}
-  </UIthemeContext.Consumer>
+    <div
+      className="modal-footer"
+      style={{
+        borderTop: `1px solid ${uiColor}`
+      }}
+    >
+      {footer}
+    </div>
+  </div>
 );
 
 ModalBody.propTypes = {
   children: PropTypes.node.isRequired,
   onSubmit: PropTypes.func,
   footerBtnText: PropTypes.text,
-  styles: PropTypes.object
+  styles: PropTypes.object,
+  uiColor: PropTypes.string
   // background: PropTypes.string
 };
 
