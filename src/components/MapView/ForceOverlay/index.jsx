@@ -19,8 +19,9 @@ import {
 } from '../../utils/map-layers/DivOverlay';
 
 import ZoomContainer from './ZoomContainer';
-import BubbleOverlay from './BubbleOverlay';
-import AmbientOverlay from './AmbientOverlay';
+import Cluster from './BubbleOverlay';
+// import AmbientOverlay from './AmbientOverlay';
+import dobbyscan from './cluster';
 
 // import { setify } from '../utils';
 
@@ -81,7 +82,7 @@ function somFy(data, width, height, callback = d => d) {
   const dists = data.map(a => data.map(b => jaccard(a.tags, b.tags)));
 
   // TODO: verify with different data sets
-  const som = new SOM(Math.floor(width / 10), Math.floor(height / 10), options);
+  const som = new SOM(Math.floor(width / 10), Math.floor(width / 20), options);
   som.setTraining(dists);
   while (som.trainOne()) {
     const somPos = som.predict(dists);
@@ -438,6 +439,9 @@ class ForceOverlay extends Component {
       };
     });
 
+    dobbyscan(nodes, 100, n => n.x, n => n.y).forEach(vals =>
+      vals.forEach(d => (d.lenSize = vals.length))
+    );
     console.log('nodes', nodes);
     // console.log('node', nodes);
     // .filter(n => n.x > 0 && n.x < width && n.y > 0 && n.y < height);
@@ -450,10 +454,10 @@ class ForceOverlay extends Component {
           .restart()
           // TODO: proper reheat
           .alpha(1)
-          .alphaMin(0.8)
+          .alphaMin(0.5)
           .force('x', d3.forceX(d => d.tx).strength(1))
           .force('y', d3.forceY(d => d.ty).strength(1))
-          .force('coll', d3.forceCollide(10))
+          .force('coll', d3.forceCollide(d => 20))
           // .force('center', d3.forceCenter(width / 2, height / 2))
           .on('end', () => {
             this.ids.map(clearTimeout);
@@ -567,18 +571,16 @@ class ForceOverlay extends Component {
           onZoom={() => null}
         >
           {(zoomedNodes, transform) => (
-            <Fragment>
-                <BubbleOverlay
+              <Cluster
                 scale={transform.k}
                 nodes={zoomedNodes}
                 width={width}
                 height={height}
                 colorScale={colorScale}
                 labels={labels}
-                >
-                {d => children(d)}
-                </BubbleOverlay>
-            </Fragment>
+              >
+                {children}
+              </Cluster>
           )}
         </ZoomContainer>
       </div>

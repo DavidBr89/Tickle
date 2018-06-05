@@ -281,9 +281,7 @@ class Cluster extends Component {
               lineHeight: 'normal',
               display: 'inline-block'
             }}
-          >
-            {values.length === 1 && children({ ...values[0], x: r, y: r })}
-          </div>
+          />
         </div>
       </div>
     );
@@ -341,7 +339,8 @@ class BubbleOverlay extends Component {
     const oldSubComps = this.state.subComps;
 
     // const comps = compComps(nodes, 100);
-    const clusters = dobbyscan([...nodes], 100, n => n.x, n => n.y).map(
+    const r = 20 / scale;
+    const clusters = dobbyscan([...nodes], r, n => n.x, n => n.y).map(
       (vals, i) => ({ id: i, values: vals })
     );
 
@@ -423,11 +422,41 @@ class BubbleOverlay extends Component {
     const blurFactor = 2;
     const bubbleRadius = 25;
 
-    const voronoi = d3
-      .voronoi()
-      .extent([[-1, -1], [width + 1, height + 1]])
-      .x(d => d.centerPos[0])
-      .y(d => d.centerPos[1]);
+    const voronoi = d3.voronoi().extent([[-1, -1], [width + 1, height + 1]]);
+    // .x(d => d.centerPos[0])
+    // .y(d => d.centerPos[1]);
+
+    const relax = (points, counter = 1) => {
+      const polygons = voronoi.polygons(points.map(d => d.centerPos));
+      const centroids = polygons.map(d3.polygonCentroid);
+      // const converged = points.every(
+      //   (point, i) => distance(point.centerPos, centroids[i] || 0) < 1
+      // );
+
+      const newPoints = points.map((p, i) => {
+        p.centerPos = centroids[i] || p.centerPos;
+        return p;
+      });
+
+      const newPolygons = voronoi.polygons(newPoints.map(d => d.centerPos));
+      // const newCentroids = polygons.map(
+      //   (d, i) => d3.polygonCentroid(d) || centroids[i]
+      // );
+      // if (!converged && counter > 0) {
+      //   return relax(
+      //     points.map((p, i) => {
+      //       p.centerPos = centroids[i] || 0;
+      //       return p;
+      //     }),
+      //     counter - 1
+      //   );
+      // }
+      return newPolygons;
+    };
+
+    const ns = relax(subComps);
+    // const vs = voronoi.polygons(subComps.map(d => d.centerPos));
+    // console.log('ns', ns, 'vs', vs);
 
     const size = d3
       .scaleLinear()
@@ -437,15 +466,12 @@ class BubbleOverlay extends Component {
 
     const baseSize = 20;
 
-    const polyData = voronoi.polygons(subComps).map(arrObj => {
+    const polyData = ns.map((arrObj, i) => {
       const polygon = arrObj.slice(0, arrObj.length - 1);
       const centroid = d3.polygonCentroid(polygon);
-      const { data } = arrObj;
-      return {
-        ...data,
-        centroid,
-        polygon
-      };
+      const data = subComps[i];
+      // const { data } = arrObj;
+      return { ...data, centroid, polygon };
     });
 
     // const bbs = bounds(values.map(d => [d.x, d.y]));
@@ -454,6 +480,13 @@ class BubbleOverlay extends Component {
     //   values.map(d => ({ x: d.x, y: d.y, r: baseSize }))
     // );
 
+    const clusteredNodes = polyData.reduce((acc, d) => {
+      const ns = d.values.map(n => {
+        const [x, y] = d.centerPos;
+        return { ...n, x, y };
+      });
+      return [...acc, ...ns];
+    }, []);
     return (
       <Fragment>
         <svg
@@ -527,7 +560,8 @@ class BubbleOverlay extends Component {
             </div>
           );
         })}
-        {polyData.map(d => <Cluster {...d}>{children}</Cluster>)}
+        {polyData.map(d => <Cluster {...d} r={d.values.length * 5} />)}
+        {clusteredNodes.map(children)}
       </Fragment>
     );
   }

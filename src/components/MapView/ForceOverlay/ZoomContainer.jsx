@@ -37,7 +37,7 @@ class ZoomContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      zoomHandler: d3.zoomIdentity
+      zoomHandler: d3.zoomIdentity.scale(0.5)
     };
 
     this.zoomFactory = this.zoomFactory.bind(this);
@@ -112,9 +112,10 @@ class ZoomContainer extends Component {
       );
       // const translate = [width / 2 - scale * x, height / 2 - scale * y];
 
+      const initScale = 0.5
       const zoomHandler = d3.zoomIdentity
-        .translate(width / 2 - x * scale, height / 2 - y * scale)
-        .scale(scale);
+        .translate(width / 2 - x * initScale, height / 2 - y * initScale)
+        .scale(initScale);
 
       d3.select(this.zoomCont).call(zoomFactoryCont.transform, zoomHandler);
 
@@ -133,7 +134,9 @@ class ZoomContainer extends Component {
     const { width, height, maxZoomScale } = this.props;
     return d3
       .zoom()
-      .wheelDelta(() => -d3.event.deltaY * (d3.event.deltaMode ? 50 : 1) / 500)
+      .wheelDelta(
+        () => (-d3.event.deltaY * (d3.event.deltaMode ? 50 : 1)) / 500
+      )
       .scaleExtent([0, maxZoomScale])
       .extent([[0, 0], [width, height]])
       .on('zoom', () => {
