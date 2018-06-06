@@ -221,35 +221,6 @@ class Cluster extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { data, scale } = nextProps;
-    // const { links, comps: oldComps } = this.state;
-
-    // const bbox = getBoundingBox(data, d => [d.x, d.y]);
-    //
-    // const distY = bbox[1][1] - bbox[0][1];
-    // const distX = bbox[1][0] - bbox[0][0];
-    // // TODO:
-    // const [maxX, maxY] = [100, 100];
-    //
-    // clearTimeout(this.id);
-    // this.id = setTimeout(() => {
-    //   let comps;
-    //   if (distY > maxY || distX > maxX) {
-    //     comps = compComps(data, links, maxX, maxY, scale);
-    //     this.setState({ comps, links });
-    //   }
-    // }, 50);
-    //
-    // const comps = oldComps.map(c => {
-    //   const values = c.values.map(n => data.find(tn => tn.id === n.id));
-    //   // console.log('c', c.sets);
-    //   const sets = c.sets.map(s => {
-    //     const values = s.values.map(n => data.find(tn => tn.id === n.id));
-    //     return { ...s, values };
-    //   });
-    //   return { ...c, values, sets };
-    // });
-    //
-    // this.setState({ comps, links });
   }
 
   render() {
@@ -315,28 +286,8 @@ class BubbleOverlay extends Component {
     scale: PropTypes.number
   };
 
-  constructor(props) {
-    super(props);
-    const { nodes, width, height } = props;
-
-    const links = generateLinks(nodes, 100);
-    this.comps = compComps(nodes, 100);
-
-    this.maxDist = width / 3;
-
-    const subComps = this.comps
-      .reduce((acc, c) => [...acc, ...compComps(c.values, this.maxDist)], [])
-      .map(c => ({ ...c, centerPos: findCenterPos(c.values) }));
-    this.subComps = subComps;
-    this.state = {
-      subComps,
-      links
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { nodes, width, height, scale } = nextProps;
-    const oldSubComps = this.state.subComps;
+  static getDerivedStateFromProps(nextProps) {
+    const { width, height, nodes, scale } = nextProps;
 
     // const comps = compComps(nodes, 100);
     const r = 20 / scale;
@@ -346,6 +297,11 @@ class BubbleOverlay extends Component {
 
     const subComps = clusters.map(c => {
       const centerPos = findCenterPos(c.values);
+      const pad = 50;
+      const boundedCenterPos = [
+        Math.min(Math.max(pad, centerPos[0]), width - pad),
+        Math.min(Math.max(pad, centerPos[1]), height - pad)
+      ];
 
       const sets = setify(c.values).sort(
         (a, b) => b.values.length - a.values.length
@@ -364,43 +320,31 @@ class BubbleOverlay extends Component {
 
       const ids = c.values.map(e => e.id);
       const tagKeys = tags.map(e => e.key);
-      // const dist = 100;
-      // const xScale = d3
-      //   .scaleLinear()
-      //   .domain(d3.extent(c.values, d => d.x))
-      //   .range([centerPos[0] - dist / 2, centerPos[0] + dist / 2]);
-      // const yScale = d3
-      //   .scaleLinear()
-      //   .domain(d3.extent(c.values, d => d.y))
-      //   .range([centerPos[1] - dist / 2, centerPos[1] + dist / 2]);
-
-      // TODO: compute real predecessor
-      // const relatedComp = oldSubComps
-      //   .filter(oc => intersection(oc.tagKeys, c.tagKeys).length > 0)
-      //   .reduce(
-      //     (accu, d) => (accu.values.length < d.values.length ? d : accu),
-      //     { values: [] }
-      //   );
 
       const dist = 10; // Math.max(relatedComp.r, 4);
       const values = c.values.map(v => ({
         ...v,
-        x: Math.min(Math.max(v.x, centerPos[0] + dist), v.x),
-        y: Math.min(Math.max(v.y, centerPos[1] + dist), v.y)
+        x: centerPos[0], // Math.min(Math.max(v.x, centerPos[0] + dist), v.x),
+        y: centerPos[1] // Math.min(Math.max(v.y, centerPos[1] + dist), v.y)
       }));
       //
-      // const tmpComps = compComps(values, dist).map(e => ({
-      //   ...e,
-      //   r: e.values.length * 7,
-      //   centerPos: findCenterPos(e.values)
-      // }));
-      return { ...c, values, centerPos, sets, tagKeys, sizeScale, ids };
+      return {
+        ...c,
+        values,
+        centerPos,
+        sets,
+        tagKeys,
+        sizeScale,
+        ids
+      };
     });
-
-    this.setState({ subComps });
-
-    // this.timeStamp = ts;
+    return { subComps };
   }
+
+  state = {
+    subComps: [],
+    links: []
+  };
 
   render() {
     const {
@@ -426,24 +370,25 @@ class BubbleOverlay extends Component {
     // .x(d => d.centerPos[0])
     // .y(d => d.centerPos[1]);
 
-    const relax = (points, counter = 1) => {
+    const relaxedVoronoi = (points, counter = 1) => {
       const polygons = voronoi.polygons(points.map(d => d.centerPos));
       const centroids = polygons.map(d3.polygonCentroid);
       // const converged = points.every(
       //   (point, i) => distance(point.centerPos, centroids[i] || 0) < 1
       // );
 
-      const newPoints = points.map((p, i) => {
-        p.centerPos = centroids[i] || p.centerPos;
-        return p;
-      });
-
-      const newPolygons = voronoi.polygons(newPoints.map(d => d.centerPos));
+      // const newPoints = points.reduce((acc, p, i) => {
+      //   const centerPos = centroids[i];
+      //   if (centroids[i]) return [{ ...p, centerPos }, ...acc];
+      //   return acc;
+      // }, []);
+      //
+      // const newPolygons = voronoi.polygons(newPoints.map(d => d.centerPos));
       // const newCentroids = polygons.map(
       //   (d, i) => d3.polygonCentroid(d) || centroids[i]
       // );
       // if (!converged && counter > 0) {
-      //   return relax(
+      //   return relaxedVoronoi(
       //     points.map((p, i) => {
       //       p.centerPos = centroids[i] || 0;
       //       return p;
@@ -451,10 +396,10 @@ class BubbleOverlay extends Component {
       //     counter - 1
       //   );
       // }
-      return newPolygons;
+      return polygons;
     };
 
-    const ns = relax(subComps);
+    const ns = relaxedVoronoi(subComps);
     // const vs = voronoi.polygons(subComps.map(d => d.centerPos));
     // console.log('ns', ns, 'vs', vs);
 
@@ -481,12 +426,13 @@ class BubbleOverlay extends Component {
     // );
 
     const clusteredNodes = polyData.reduce((acc, d) => {
-      const ns = d.values.map(n => {
-        const [x, y] = d.centerPos;
+      const ns = d.values.map((n, i) => {
+        const [x, y] = d.centerPos.map(e => e + i * 9);
         return { ...n, x, y };
       });
       return [...acc, ...ns];
     }, []);
+
     return (
       <Fragment>
         <svg
@@ -497,10 +443,11 @@ class BubbleOverlay extends Component {
           }}
         >
           <defs>
-            <filter id="fancy-goo">
+            <filter id="gooey">
               <feGaussianBlur
                 in="SourceGraphic"
-                stdDeviation="10"
+                stdDeviation="20"
+                colorInterpolationFilters="sRGB"
                 result="blur"
               />
               <feColorMatrix
@@ -511,24 +458,38 @@ class BubbleOverlay extends Component {
               />
               <feComposite in="SourceGraphic" in2="goo" operator="atop" />
             </filter>
+            <filter id="gooeyCodeFilter">
+              <feGaussianBlur
+                in="SourceGraphic"
+                stdDeviation="10"
+                colorInterpolationFilters="sRGB"
+                result="blur"
+              />
+              <feColorMatrix
+                in="blur"
+                mode="matrix"
+                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
+                result="gooey"
+              />
+            </filter>
           </defs>
-          {
-            //   rectPoints.map(d => (
-            //   <rect
-            //     x={d.x0}
-            //     y={d.y0}
-            //     width={d.width}
-            //     height={d.height}
-            //     fill="none"
-            //     stroke="black"
-            //     d={d3.line().curve(d3.curveBasis)(d)}
-            //   />
-            // ))
-          }
+          <g filter="url(#gooeyCodeFilter)">
+            {clusteredNodes.map(d => (
+              <rect
+                x={d.x - 35}
+                y={d.y - 35}
+                width={100}
+                height={100}
+                fill="lightgrey"
+              />
+            ))}
+          </g>
           {polyData.map(d => (
             <path
               fill="none"
               stroke="grey"
+              strokeLinecap="round"
+              strokeDasharray="5,10,5"
               d={d3.line().curve(d3.curveLinear)(d.polygon)}
             />
           ))}
@@ -553,14 +514,14 @@ class BubbleOverlay extends Component {
                 left: cx,
                 top: cy,
                 transform: `translate(${angle === 0 ? -100 : 0}%, -50%)`,
-                background: 'white'
+                background: 'white',
+                zIndex: 5000
               }}
             >
               {d.tagKeys.map(t => <div>{t}</div>)}
             </div>
           );
         })}
-        {polyData.map(d => <Cluster {...d} r={d.values.length * 5} />)}
         {clusteredNodes.map(children)}
       </Fragment>
     );

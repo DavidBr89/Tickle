@@ -389,7 +389,7 @@ class MapView extends Component {
     //   longitude
     // });
 
-    const cardSets = []; // setify(cards).filter(d => d.count > 0);
+    const cardSets = setify(cards).filter(d => d.count > 0);
     // const barScales = setify(cards).map(d => ({
     //   key: d.key,
     //   scale: d3
@@ -541,98 +541,92 @@ class MapView extends Component {
                   )}
                 </Accordion>
 
-                <div
-                  className="w-100 h-100"
-                  style={{
-                    position: 'absolute',
-                    left: 0,
-                    top: 0
-                    // filter: tsneView && 'blur(4px)'
+                {
+                  // <DropTargetCont
+                  // dropHandler={onCardDrop}
+                  // dragged={isCardDragging}
+                  // style={{
+                  //   position: 'absolute',
+                  //   // left: 0,
+                  //   // top: 0,
+                  //   // width: '100%',
+                  //   // height: '100%',
+                  //   // position: 'relative',
+                  //   // background: 'white',
+                  //   zIndex: 1000
+                  // }}
+                  // >
+                }
+                <ForceOverlay
+                  delay={1}
+                  width={width}
+                  height={height}
+                  force
+                  data={cards}
+                  sets={cardSets}
+                  selectedCardId={selectedCardId}
+                  extCardId={extCardId}
+                  userLocation={userLocation}
+                  mode="som"
+                  labels={!gridView}
+                  onMapViewportChange={changeMapViewport}
+                  padding={{
+                    bottom: height / 5,
+                    top: height / 5,
+                    left: width / 5,
+                    right: width / 5
                   }}
-                />
-                <DropTargetCont
-                  dropHandler={onCardDrop}
-                  dragged={isCardDragging}
-                  style={{
-                    // width: '100%',
-                    // height: '100%',
-                    // position: 'relative',
-                    // background: 'white',
-                    zIndex: 1000
-                  }}
+                  colorScale={tagColorScale}
                 >
-                  <ForceOverlay
-                    delay={1}
-                    width={width}
-                    height={height}
-                    force
-                    data={cards}
-                    sets={cardSets}
-                    selectedCardId={selectedCardId}
-                    extCardId={extCardId}
-                    userLocation={userLocation}
-                    mode={dataView}
-                    labels={!gridView}
-                    onMapViewportChange={changeMapViewport}
-                    padding={{
-                      bottom: !gridView && !tagListView ? (height * 1) / 6 : 50,
-                      top:
-                        gridView || tagListView
-                          ? (height * 1) / 1.7
-                          : (height * 1) / 6,
-                      left: 70,
-                      right: 70
-                    }}
-                    colorScale={tagColorScale}
-                  >
-                    {({ x, y, ...c }) => (
-                      <ExtendableMarker
-                        key={c.id}
-                        width={extCardId === c.id ? width : 25}
-                        height={extCardId === c.id ? height : 30}
-                        x={extCardId === c.id ? width / 2 : x}
-                        y={extCardId === c.id ? height / 2 : y}
-                        extended={extCardId === c.id}
-                        preview={
-                          <div>
-                            {selectedCardId === c.id &&
-                              !isCardDragging && <SpeechBubble />}
-                            <DragSourceCont
-                              dragHandler={dragCard}
-                              data={c}
-                              x={x}
-                              y={y}
-                            >
-                              <PreviewMarker
-                                selected={selectedCardId === c.id}
-                                template={c.template}
-                                color="whitesmoke"
-                              />
-                            </DragSourceCont>
-                          </div>
+                  {({ x, y, ...c }) => (
+                    <ExtendableMarker
+                      key={c.id}
+                      width={extCardId === c.id ? width : 25}
+                      height={extCardId === c.id ? height : 30}
+                      x={extCardId === c.id ? width / 2 : x}
+                      y={extCardId === c.id ? height / 2 : y}
+                      extended={extCardId === c.id}
+                      preview={
+                        <div>
+                          {selectedCardId === c.id &&
+                            !isCardDragging && <SpeechBubble />}
+                          <DragSourceCont
+                            dragHandler={dragCard}
+                            data={c}
+                            x={x}
+                            y={y}
+                          >
+                            <PreviewMarker
+                              selected={selectedCardId === c.id}
+                              template={c.template}
+                              color="whitesmoke"
+                            />
+                          </DragSourceCont>
+                        </div>
+                      }
+                    >
+                      <Card
+                        {...c}
+                        onClose={() => extendSelectedCard(null)}
+                        edit={authEnv}
+                        onSubmit={() => {
+                          console.log('cardAction', c);
+                          // TODO: rename
+                          cardAction({ ...c, x, y });
+                        }}
+                        onCollect={() =>
+                          toggleCardChallenge({
+                            cardChallengeOpen: true
+                          })
                         }
-                      >
-                        <Card
-                          {...c}
-                          onClose={() => extendSelectedCard(null)}
-                          edit={authEnv}
-                          onSubmit={() => {
-                            console.log('cardAction', c);
-                            cardAction({ ...c, x, y });
-                          }}
-                          onCollect={() =>
-                            toggleCardChallenge({
-                              cardChallengeOpen: true
-                            })
-                          }
-                          tagColorScale={tagColorScale}
-                          onUpdate={d => onCardUpdate({ ...d, x, y })}
-                          style={{ zIndex: 4000 }}
-                        />
-                      </ExtendableMarker>
-                    )}
-                  </ForceOverlay>
-                </DropTargetCont>
+                        tagColorScale={tagColorScale}
+                        onUpdate={d => onCardUpdate({ ...d, x, y })}
+                        style={{ zIndex: 4000 }}
+                      />
+                    </ExtendableMarker>
+                  )}
+                </ForceOverlay>
+                {/* </DropTargetCont> */}
                 <button
                   className="fixed-bottom-right btn m-3"
                   style={{
@@ -640,7 +634,7 @@ class MapView extends Component {
                     zIndex: 1000,
                     background: tsneView && 'whitesmoke'
                   }}
-                  onClick={() => toggleDataView(dataView === 'som' : 'geo')}
+                  onClick={() => toggleDataView((dataView === 'som': 'geo'))}
                 >
                   <div style={{ display: 'flex', justifyContent: 'center' }}>
                     <Icon.Eye size={30} />

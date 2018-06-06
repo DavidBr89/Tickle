@@ -100,22 +100,19 @@ class ZoomContainer extends Component {
       this.setState({ zoomHandler });
     } else {
       const bounds = getBoundingBox(nodes, d => [d.x, d.y]);
-      const offsetX = 50;
-      const offsetY = 200;
+      const offsetX = 0;
+      const offsetY = 0;
       const dx = bounds[1][0] - bounds[0][0] + offsetX;
       const dy = bounds[1][1] - bounds[0][1] + offsetY;
       const x = (bounds[0][0] + bounds[1][0]) / 2;
       const y = (bounds[0][1] + bounds[1][1]) / 2;
-      const scale = Math.max(
-        1,
-        Math.min(8, 0.9 / Math.max(dx / width, dy / height))
-      );
+      const scale = Math.max(dx / width, dy / height);
       // const translate = [width / 2 - scale * x, height / 2 - scale * y];
 
-      const initScale = 0.5
+      const initScale = 0.5;
       const zoomHandler = d3.zoomIdentity
-        .translate(width / 2 - x * initScale, height / 2 - y * initScale)
-        .scale(initScale);
+        .translate(width / 2 - x * scale, center[1] - y * scale)
+        .scale(scale);
 
       d3.select(this.zoomCont).call(zoomFactoryCont.transform, zoomHandler);
 
@@ -162,7 +159,6 @@ class ZoomContainer extends Component {
       return { ...d, x, y };
     });
     // .filter(({ x, y }) => x > 0 && x < width && y > 0 && y < height);
-    onZoom(newNodes);
 
     return (
       <div

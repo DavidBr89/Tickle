@@ -338,7 +338,7 @@ class ForceOverlay extends Component {
           width,
           height,
           zoom,
-          offset: [0, height / 4],
+          offset: [0, 0],
           ...loc
         });
         this.layout({
@@ -369,10 +369,10 @@ class ForceOverlay extends Component {
   }
 
   layout({ props, state, viewport }) {
-    const { mode, delay, data, padding, force } = props; // this.props;
+    const { mode, delay, data, padding, force, width, height } = props; // this.props;
     const { tsnePos, gridPos, nodes: oldNodes } = state;
 
-    const { width, height, zoom, latitude, longitude } = viewport;
+    const { zoom, latitude, longitude } = viewport;
     const somPos = somFy(data, width, height);
     console.log('somPos', somPos);
     // data.map(() => [width / 2, height / 2]); //
@@ -439,42 +439,42 @@ class ForceOverlay extends Component {
       };
     });
 
-    dobbyscan(nodes, 100, n => n.x, n => n.y).forEach(vals =>
-      vals.forEach(d => (d.lenSize = vals.length))
-    );
+    // dobbyscan(nodes, 50, n => n.x, n => n.y).forEach(vals =>
+    //   vals.forEach(d => (d.lenSize = vals.length))
+    // );
     console.log('nodes', nodes);
     // console.log('node', nodes);
     // .filter(n => n.x > 0 && n.x < width && n.y > 0 && n.y < height);
     this.ids.map(clearTimeout);
 
-    if (force) {
-      this.id = setTimeout(() => {
-        this.forceSim = this.forceSim
-          .nodes(nodes)
-          .restart()
-          // TODO: proper reheat
-          .alpha(1)
-          .alphaMin(0.5)
-          .force('x', d3.forceX(d => d.tx).strength(1))
-          .force('y', d3.forceY(d => d.ty).strength(1))
-          .force('coll', d3.forceCollide(d => 20))
-          // .force('center', d3.forceCenter(width / 2, height / 2))
-          .on('end', () => {
-            this.ids.map(clearTimeout);
-            this.ids = this.ids.concat([
-              setTimeout(
-                () =>
-                  this.setState({
-                    nodes: this.forceSim.nodes()
-                  }),
-                delay
-              )
-            ]);
-          });
-      }, delay);
-
-      this.forceSim.on('end', null);
-    }
+    // if (force) {
+    //   this.id = setTimeout(() => {
+    //     this.forceSim = this.forceSim
+    //       .nodes(nodes)
+    //       .restart()
+    //       // TODO: proper reheat
+    //       .alpha(1)
+    //       // .alphaMin(0.5)
+    //       .force('x', d3.forceX(d => d.tx).strength(1))
+    //       .force('y', d3.forceY(d => d.ty).strength(1))
+    //       // .force('coll', d3.forceCollide(d => 20))
+    //       // .force('center', d3.forceCenter(width / 2, height / 2))
+    //       .on('end', () => {
+    //         this.ids.map(clearTimeout);
+    //         this.ids = this.ids.concat([
+    //           setTimeout(
+    //             () =>
+    //               this.setState({
+    //                 nodes: this.forceSim.nodes()
+    //               }),
+    //             delay
+    //           )
+    //         ]);
+    //       });
+    //   }, delay);
+    //
+    //   this.forceSim.on('end', null);
+    // }
 
     this.ids = [...this.ids, this.id];
     // if (mode === 'geo') this.forceSim.stop();
@@ -504,7 +504,8 @@ class ForceOverlay extends Component {
       onDrop,
       // TODO: Remove this check
       dragged,
-      data
+      data,
+      padding
     } = this.props;
 
     const { viewport } = this.state;
@@ -561,26 +562,26 @@ class ForceOverlay extends Component {
     //
     const zoomLevel = 4;
     return (
-      <div style={{ overflow: 'hidden', width, height }}>
+      <div>
         <ZoomContainer
           width={width}
           height={height}
-          center={[width / 2, (height * 2) / 3]}
+          center={[width / 2, height / 2 + padding.top]}
           nodes={nodes}
           selectedId={selectedCardId}
           onZoom={() => null}
         >
           {(zoomedNodes, transform) => (
-              <Cluster
-                scale={transform.k}
-                nodes={zoomedNodes}
-                width={width}
-                height={height}
-                colorScale={colorScale}
-                labels={labels}
-              >
-                {children}
-              </Cluster>
+            <Cluster
+              scale={transform.k}
+              nodes={zoomedNodes}
+              width={width}
+              height={height}
+              colorScale={colorScale}
+              labels={labels}
+            >
+              {children}
+            </Cluster>
           )}
         </ZoomContainer>
       </div>
