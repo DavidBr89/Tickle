@@ -4,6 +4,25 @@ import * as d3 from 'd3';
 
 import { getBoundingBox } from '../utils';
 
+function centerView(props) {
+  const { nodes, width, center, height } = props;
+  // const zoomFactoryCont = this.zoomFactory(props);
+  const bounds = getBoundingBox(nodes, d => [d.x, d.y]);
+  const offsetX = 0;
+  const offsetY = 0;
+  const dx = bounds[1][0] - bounds[0][0] + offsetX;
+  const dy = bounds[1][1] - bounds[0][1] + offsetY;
+  const x = (bounds[0][0] + bounds[1][0]) / 2;
+  const y = (bounds[0][1] + bounds[1][1]) / 2;
+  const scale = Math.max(dx / width, dy / height);
+  // const translate = [width / 2 - scale * x, height / 2 - scale * y];
+
+  const zoomHandler = d3.zoomIdentity
+    .translate(width / 2 - x * scale, center[1] - y * scale)
+    .scale(scale);
+
+  return zoomHandler;
+}
 class ZoomContainer extends Component {
   static propTypes = {
     children: PropTypes.func,
@@ -36,99 +55,76 @@ class ZoomContainer extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      zoomHandler: d3.zoomIdentity.scale(0.5)
-    };
 
     this.zoomFactory = this.zoomFactory.bind(this);
+    this.centerView = centerView.bind(this);
+
+    // const zoomHandler = this.centerView(props);
+    // this.state = { zoomHandler };
+    //
+    //
+    this.state = {
+      zoomHandler: props.nodes.length > 1 ? centerView(props) : d3.zoomIdentity
+    };
   }
 
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   const { viewport: vp1 } = nextProps;
-  //   const { viewport: vp2 } = this.props;
-  //   return (
-  //     vp1.latitude !== vp2.latitude ||
-  //     vp1.longitude !== vp2.longitude ||
-  //     vp1.width !== vp2.width ||
-  //     vp1.height !== vp2.height ||
-  //     vp1.zoom !== vp2.zoom
-  //   );
-  // }
-
-  // //
-  // // componentDidUpdate() {
-  // //   const { selectedCardId, width, height } = this.props;
-  // //   const { nodes } = this.state;
-  // //   // this.forceSim.on('end', null);
-  // //   clearTimeout(this.id);
-  // //   // this.layout(nextProps);
-  // //
-  // //   if (selectedCardId !== null) {
-  // //     const n = nodes.find(d => d.id === selectedCardId);
-  // //     this.setState({
-  // //       zoomHandler: d3.zoomIdentity.translate(width / 2, height / 2)
-  // //     });
-  // //   }
-  // // }
-  //
   componentDidUpdate(prevProps, prevState) {
+    if (this.props.nodes.length > prevProps.nodes.length) {
+      const zoomHandler = centerView(this.props);
+      d3.select(this.zoomCont).call(
+        this.zoomFactoryCont.transform,
+        zoomHandler
+      );
+    }
+    // this.zoomFactoryCont = this.zoomFactory(this.props);
+    // d3.select(this.zoomCont).call(this.zoomFactoryCont);
+    // d3.select(this.zoomCont).call(
+    //   this.zoomFactoryCont.transform,
+    //   this.state.zoomHandler
+    // );
     // this.props.onZoom(newNodes);
   }
 
   componentDidMount() {
-    const zoomFactoryCont = this.zoomFactory();
-    d3.select(this.zoomCont).call(zoomFactoryCont);
+    this.zoomFactoryCont = this.zoomFactory(this.props);
+    d3.select(this.zoomCont).call(this.zoomFactory(this.props));
+    d3.select(this.zoomCont).call(
+      this.zoomFactoryCont.transform,
+      this.state.zoomHandler
+    );
+    // d3.select(this.zoomCont).call(this.zoomFactoryCont);
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { selectedId, width, height, nodes, center } = nextProps;
-    // const { zoomHandler: oldZoomHandler } = this.state;
-    const zoomScale = 1.5;
-    // this.forceSim.on('end', null);
+  // componentWillReceiveProps(nextProps) {
+  //   const { selectedId, width, height, nodes, center } = nextProps;
+  //
+  //   // const zoomHandler = this.centerView(this.props);
+  //   // this.setState({ zoomHandler });
+  //   // const { zoomHandler: oldZoomHandler } = this.state;
+  //   // const zoomScale = 1.5;
+  //   // // this.forceSim.on('end', null);
+  //   //
+  //   // if (selectedId !== null) {
+  //   //   // const zoomFactoryCont = this.zoomFactory(nextProps);
+  //   //   const n = nodes.find(d => d.id === selectedId);
+  //   //   const zoomHandler = d3.zoomIdentity
+  //   //     .translate(center[0] - n.x * zoomScale, center[1] - n.y * zoomScale)
+  //   //     .scale(zoomScale);
+  //   //
+  //   //   d3.select(this.zoomCont).call(
+  //   //     this.zoomFactoryCont.transform,
+  //   //     zoomHandler
+  //   //   );
+  //   //
+  //   // this.setState({ zoomHandler });
+  //   // } else {
+  //   //   // const zoomHandler = this.centerView(this.props);
+  //   //   // this.setState({ zoomHandler });
+  //   // }
+  // }
 
-    const zoomFactoryCont = this.zoomFactory();
-
-    if (selectedId !== null) {
-      const n = nodes.find(d => d.id === selectedId);
-      const zoomHandler = d3.zoomIdentity
-        .translate(center[0] - n.x * zoomScale, center[1] - n.y * zoomScale)
-        .scale(zoomScale);
-
-      // recalibrate zoomCont
-      d3.select(this.zoomCont).call(zoomFactoryCont.transform, zoomHandler);
-
-      this.setState({ zoomHandler });
-    } else {
-      const bounds = getBoundingBox(nodes, d => [d.x, d.y]);
-      const offsetX = 0;
-      const offsetY = 0;
-      const dx = bounds[1][0] - bounds[0][0] + offsetX;
-      const dy = bounds[1][1] - bounds[0][1] + offsetY;
-      const x = (bounds[0][0] + bounds[1][0]) / 2;
-      const y = (bounds[0][1] + bounds[1][1]) / 2;
-      const scale = Math.max(dx / width, dy / height);
-      // const translate = [width / 2 - scale * x, height / 2 - scale * y];
-
-      const initScale = 0.5;
-      const zoomHandler = d3.zoomIdentity
-        .translate(width / 2 - x * scale, center[1] - y * scale)
-        .scale(scale);
-
-      d3.select(this.zoomCont).call(zoomFactoryCont.transform, zoomHandler);
-
-      this.setState({ zoomHandler });
-    }
-
-    // else {
-    //   // TODO: zoom bounding box
-    //   this.setState({
-    //     zoomHandler: d3.zoomIdentity.translate(0, 0).scale(1)
-    //   });
-    // }
-  }
-
-  zoomFactory() {
-    const { width, height, maxZoomScale } = this.props;
+  zoomFactory(props) {
+    const { width, height, maxZoomScale } = props;
     return d3
       .zoom()
       .wheelDelta(

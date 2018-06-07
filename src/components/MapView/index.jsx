@@ -73,13 +73,14 @@ const mapDispatchToProps = dispatch =>
 // });
 
 const mergeProps = (state, dispatcherProps) => {
-  const { selectedCardId, mapViewport, uid } = state;
+  const { selectedCardId, mapViewport, dataView, uid } = state;
 
   const {
     updateCard,
     updateCardTemplate,
     asyncCreateCard,
-    asyncRemoveCard
+    asyncRemoveCard,
+    toggleDataView
   } = dispatcherProps;
 
   const onCardDrop = cardData =>
@@ -97,7 +98,9 @@ const mergeProps = (state, dispatcherProps) => {
       ? updateCardTemplate({ cardData, mapViewport })
       : updateCard({ uid, cardData, mapViewport });
 
-  return { ...state, ...dispatcherProps, onCardDrop, onCardUpdate, cardAction };
+  const setDataView = () => toggleDataView(dataView === 'som' ? 'geo' : 'som')
+
+  return { ...state, ...dispatcherProps, onCardDrop, onCardUpdate, cardAction, setDataView};
 };
 
 const MapViewCont = connect(

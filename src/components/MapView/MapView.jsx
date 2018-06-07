@@ -372,7 +372,7 @@ class MapView extends Component {
       onCardUpdate,
       changeViewport,
       toggleCardAuthoring,
-      toggleDataView,
+      setDataView,
       // cardAuthoring,
       // cardAction,
       onCardDrop,
@@ -451,7 +451,7 @@ class MapView extends Component {
                   className="btn mr-3"
                   style={{
                     position: 'relative',
-                    zIndex: 1000,
+                    zIndex: 4000,
                     background: 'whitesmoke'
                   }}
                   onClick={() => toggleCardAuthoring(userLocation)}
@@ -541,92 +541,80 @@ class MapView extends Component {
                   )}
                 </Accordion>
 
-                {
-                  // <DropTargetCont
-                  // dropHandler={onCardDrop}
-                  // dragged={isCardDragging}
-                  // style={{
-                  //   position: 'absolute',
-                  //   // left: 0,
-                  //   // top: 0,
-                  //   // width: '100%',
-                  //   // height: '100%',
-                  //   // position: 'relative',
-                  //   // background: 'white',
-                  //   zIndex: 1000
-                  // }}
-                  // >
-                }
-                <ForceOverlay
-                  delay={1}
-                  width={width}
-                  height={height}
-                  force
-                  data={cards}
-                  sets={cardSets}
-                  selectedCardId={selectedCardId}
-                  extCardId={extCardId}
-                  userLocation={userLocation}
-                  mode="som"
-                  labels={!gridView}
-                  onMapViewportChange={changeMapViewport}
-                  padding={{
-                    bottom: height / 5,
-                    top: height / 5,
-                    left: width / 5,
-                    right: width / 5
-                  }}
-                  colorScale={tagColorScale}
+                <DropTargetCont
+                  dropHandler={onCardDrop}
+                  dragged={isCardDragging}
                 >
-                  {({ x, y, ...c }) => (
-                    <ExtendableMarker
-                      key={c.id}
-                      width={extCardId === c.id ? width : 25}
-                      height={extCardId === c.id ? height : 30}
-                      x={extCardId === c.id ? width / 2 : x}
-                      y={extCardId === c.id ? height / 2 : y}
-                      extended={extCardId === c.id}
-                      preview={
-                        <div>
-                          {selectedCardId === c.id &&
-                            !isCardDragging && <SpeechBubble />}
-                          <DragSourceCont
-                            dragHandler={dragCard}
-                            data={c}
-                            x={x}
-                            y={y}
-                          >
-                            <PreviewMarker
-                              selected={selectedCardId === c.id}
-                              template={c.template}
-                              color="whitesmoke"
-                            />
-                          </DragSourceCont>
-                        </div>
-                      }
-                    >
-                      <Card
-                        {...c}
-                        onClose={() => extendSelectedCard(null)}
-                        edit={authEnv}
-                        onSubmit={() => {
-                          console.log('cardAction', c);
-                          // TODO: rename
-                          cardAction({ ...c, x, y });
-                        }}
-                        onCollect={() =>
-                          toggleCardChallenge({
-                            cardChallengeOpen: true
-                          })
+                  <ForceOverlay
+                    delay={1}
+                    width={width}
+                    height={height}
+                    force
+                    data={cards}
+                    sets={cardSets}
+                    selectedCardId={selectedCardId}
+                    extCardId={extCardId}
+                    userLocation={userLocation}
+                    mode={dataView}
+                    labels={!gridView}
+                    onMapViewportChange={changeMapViewport}
+                    padding={{
+                      bottom: height / 5,
+                      top: height / 5,
+                      left: width / 5,
+                      right: width / 5
+                    }}
+                    colorScale={tagColorScale}
+                  >
+                    {({ x, y, ...c }) => (
+                      <ExtendableMarker
+                        key={c.id}
+                        width={extCardId === c.id ? width : 25}
+                        height={extCardId === c.id ? height : 30}
+                        x={extCardId === c.id ? width / 2 : x}
+                        y={extCardId === c.id ? height / 2 : y}
+                        extended={extCardId === c.id}
+                        preview={
+                          <div>
+                            {selectedCardId === c.id &&
+                              !isCardDragging && <SpeechBubble />}
+                            <DragSourceCont
+                              dragHandler={dragCard}
+                              data={c}
+                              x={x}
+                              y={y}
+                            >
+                              <PreviewMarker
+                                selected={selectedCardId === c.id}
+                                template={c.template}
+                                color="whitesmoke"
+                              />
+                            </DragSourceCont>
+                          </div>
                         }
-                        tagColorScale={tagColorScale}
-                        onUpdate={d => onCardUpdate({ ...d, x, y })}
-                        style={{ zIndex: 4000 }}
-                      />
-                    </ExtendableMarker>
-                  )}
-                </ForceOverlay>
-                {/* </DropTargetCont> */}
+                      >
+                        <Card
+                          {...c}
+                          onClose={() => extendSelectedCard(null)}
+                          edit={authEnv}
+                          onSubmit={() => {
+                            console.log('cardAction', c);
+                            // TODO: rename
+                            cardAction({ ...c, x, y });
+                          }}
+                          onCollect={() =>
+                            toggleCardChallenge({
+                              cardChallengeOpen: true
+                            })
+                          }
+                          tagColorScale={tagColorScale}
+                          onUpdate={d => onCardUpdate({ ...d, x, y })}
+                          style={{ zIndex: 4000 }}
+                        />
+                      </ExtendableMarker>
+                    )}
+                  </ForceOverlay>
+                </DropTargetCont>
                 <button
                   className="fixed-bottom-right btn m-3"
                   style={{
@@ -634,7 +622,7 @@ class MapView extends Component {
                     zIndex: 1000,
                     background: tsneView && 'whitesmoke'
                   }}
-                  onClick={() => toggleDataView((dataView === 'som': 'geo'))}
+                  onClick={setDataView}
                 >
                   <div style={{ display: 'flex', justifyContent: 'center' }}>
                     <Icon.Eye size={30} />

@@ -90,7 +90,11 @@ const defaultState = {
     cardTemplate: { ...defaultCardTemplate },
     defaultCardTemplate,
     challenges: [],
-    cardChallengeOpen: false,
+    cardChallengeOpen: false
+    // TODO: outsource
+  },
+  DataView: {
+    dataView: 'som',
     tsneView: false,
     gridView: true
   }

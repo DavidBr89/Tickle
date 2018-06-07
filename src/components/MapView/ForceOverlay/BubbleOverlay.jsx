@@ -515,7 +515,7 @@ class BubbleOverlay extends Component {
                 top: cy,
                 transform: `translate(${angle === 0 ? -100 : 0}%, -50%)`,
                 background: 'white',
-                zIndex: 5000
+                zIndex: 3000
               }}
             >
               {d.tagKeys.map(t => <div>{t}</div>)}

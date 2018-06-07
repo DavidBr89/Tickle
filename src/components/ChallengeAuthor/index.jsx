@@ -42,7 +42,7 @@ class Nav extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return false;
+    return true;
   }
 
   render() {
@@ -179,7 +179,7 @@ class ChallengeAuthor extends React.Component {
       >
         <Nav
           data={challengeKeys}
-          preSelected={selectedKey}
+          preSelected={challengeKeys[0]}
           onChange={key => this.setState({ selectedKey: key })}
           uiColor={uiColor}
         >

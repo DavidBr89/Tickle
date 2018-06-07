@@ -338,7 +338,7 @@ class ForceOverlay extends Component {
           width,
           height,
           zoom,
-          offset: [0, 0],
+          offset: [0, height / 4],
           ...loc
         });
         this.layout({
@@ -426,12 +426,12 @@ class ForceOverlay extends Component {
     const nodes = data.map(({ id, x, y, tags, ...c }, i) => {
       const tx = xScale(pos[i][0]);
       const ty = yScale(pos[i][1]);
-      const oldNode = oldNodes.find(n => n.id === id) || { x: tx, y: ty };
+      // const oldNode = oldNodes.find(n => n.id === id) || { x: tx, y: ty };
       return {
         id,
         // ...oldNode,
-        x: oldNode.x,
-        y: oldNode.y,
+        x: tx,
+        y: ty,
         tx,
         ty,
         tags,
