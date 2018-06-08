@@ -18,7 +18,8 @@ function getItemStyles(props) {
   const { initialOffset, currentOffset } = props;
   if (!initialOffset || !currentOffset) {
     return {
-      display: 'none'
+      // display: 'none',
+      background: 'blue'
     };
   }
 
@@ -26,8 +27,7 @@ function getItemStyles(props) {
 
   const transform = `translate(${x}px, ${y}px)`;
   return {
-    transform,
-    WebkitTransform: transform
+    transform
   };
 }
 
@@ -63,12 +63,12 @@ export default class CustomDragLayer extends Component {
 
   render() {
     const { isDragging } = this.props;
+    console.log('isDragging', isDragging);
 
-    if (!isDragging) {
-      return null;
-    }
+    // if (!isDragging) {
+    //   return null;
+    // }
 
-    console.log('this props', this.props);
     return (
       <div style={layerStyles}>
         <div style={getItemStyles(this.props)} />

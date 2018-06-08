@@ -244,7 +244,7 @@ class ForceOverlay extends Component {
     force: false,
     data: [],
     delay: 100,
-    selectionDelay: 900,
+    selectionDelay: 10,
     mode: 'floorplan',
     colorScale: () => 'green',
     labels: false
@@ -276,7 +276,6 @@ class ForceOverlay extends Component {
     };
 
     this.layout = this.layout.bind(this);
-    this.ids = [];
 
     this.forceSim = d3.forceSimulation();
     // this.zoom = this.zoom.bind(this);
@@ -307,56 +306,23 @@ class ForceOverlay extends Component {
     );
   }
 
-  componentWillReceiveProps(nextProps) {
-    // clearTimeout(this.id);
-    // this.ids.map(clearTimeout);
-    // const { data: oldData } = this.props;
-    const {
-      data: nextData,
-      mode,
-      selectedCardId,
-      width,
-      height,
-      delay,
-      selectionDelay,
-      onMapViewportChange
-    } = nextProps;
-    const { viewport } = this.state;
-
-    // clearTimeout(this.id);
-
-    if (
-      this.props.selectedCardId !== selectedCardId &&
-      selectedCardId !== null
-    ) {
-      const { loc } = nextData.find(n => n.id === selectedCardId);
-      const { zoom } = { ...viewport, ...loc };
-      console.log('select card', loc);
-
-      this.id = setTimeout(() => {
-        const newVp = offsetMapViewport({
-          width,
-          height,
-          zoom,
-          offset: [0, height / 4],
-          ...loc
-        });
-        this.layout({
-          props: nextProps,
-          state: this.state,
-          viewport: newVp
-        });
-
-        onMapViewportChange(newVp);
-      }, selectionDelay);
-    }
-
-    this.layout({
-      props: nextProps,
-      state: this.state,
-      viewport
-    });
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   // clearTimeout(this.id);
+  //   // this.ids.map(clearTimeout);
+  //   // const { data: oldData } = this.props;
+  //   const {
+  //     data: nextData,
+  //     mode,
+  //     selectedCardId,
+  //     width,
+  //     height,
+  //     delay,
+  //     selectionDelay,
+  //     onMapViewportChange
+  //   } = nextProps;
+  //
+  //   const { viewport } = this.state;
+  // }
 
   componentDidUpdate() {
     // clearTimeout(this.id);
@@ -370,11 +336,11 @@ class ForceOverlay extends Component {
 
   layout({ props, state, viewport }) {
     const { mode, delay, data, padding, force, width, height } = props; // this.props;
-    const { tsnePos, gridPos, nodes: oldNodes } = state;
+    const { tsnePos, gridPos, somPos } = state;
 
     const { zoom, latitude, longitude } = viewport;
-    const somPos = somFy(data, width, height);
-    console.log('somPos', somPos);
+
+    // console.log('somPos', somPos);
     // data.map(() => [width / 2, height / 2]); //
     // console.log('oldNodes', nextState, oldNodes);
 
@@ -439,51 +405,23 @@ class ForceOverlay extends Component {
       };
     });
 
-    // dobbyscan(nodes, 50, n => n.x, n => n.y).forEach(vals =>
-    //   vals.forEach(d => (d.lenSize = vals.length))
-    // );
-    console.log('nodes', nodes);
-    // console.log('node', nodes);
-    // .filter(n => n.x > 0 && n.x < width && n.y > 0 && n.y < height);
-    this.ids.map(clearTimeout);
-
-    // if (force) {
-    //   this.id = setTimeout(() => {
-    //     this.forceSim = this.forceSim
-    //       .nodes(nodes)
-    //       .restart()
-    //       // TODO: proper reheat
-    //       .alpha(1)
-    //       // .alphaMin(0.5)
-    //       .force('x', d3.forceX(d => d.tx).strength(1))
-    //       .force('y', d3.forceY(d => d.ty).strength(1))
-    //       // .force('coll', d3.forceCollide(d => 20))
-    //       // .force('center', d3.forceCenter(width / 2, height / 2))
-    //       .on('end', () => {
-    //         this.ids.map(clearTimeout);
-    //         this.ids = this.ids.concat([
-    //           setTimeout(
-    //             () =>
-    //               this.setState({
-    //                 nodes: this.forceSim.nodes()
-    //               }),
-    //             delay
-    //           )
-    //         ]);
-    //       });
-    //   }, delay);
-    //
-    //   this.forceSim.on('end', null);
-    // }
-
-    this.ids = [...this.ids, this.id];
-    // if (mode === 'geo') this.forceSim.stop();
-
-    this.setState({
-      nodes,
-      viewport
-    });
+    return nodes;
   }
+
+  // static getDerivedStateFromProps(nextProps, prevState) {
+  //   const {}
+  //   if (nextProps.selectedCardId !== null) {
+  //
+  //   const { loc } = data.find(n => n.id === selectedCardId) || {};
+  //     const viewport = offsetMapViewport({
+  //       width,
+  //       height,
+  //       zoom,
+  //       offset: [0, height / 4],
+  //       ...loc
+  //     });
+  //   }
+  // }
 
   render() {
     const {
@@ -509,7 +447,14 @@ class ForceOverlay extends Component {
     } = this.props;
 
     const { viewport } = this.state;
-    const { nodes } = this.state;
+
+    const somPos = data.map(d => [width / 2, height / 2]); // somFy(data, width, height);
+
+    const nodes = this.layout({
+      props: this.props,
+      state: { ...this.state, somPos },
+      viewport
+    });
     // const newPos = nodes.map(d => transEvent.apply([d.x, d.y]));
     // TODO: change later
     // const selectedTags = selectedCardId ? tagNode && tagNode.tags : [];
@@ -533,17 +478,6 @@ class ForceOverlay extends Component {
             mapStyle="mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l"
             onViewportChange={viewport => {
               onMapViewportChange(viewport);
-              clearTimeout(this.id);
-              // TODO: check later
-              this.id = setTimeout(
-                () =>
-                  this.layout({
-                    props: this.props,
-                    state: this.state,
-                    viewport
-                  }),
-                100
-              );
               this.setState({ viewport });
             }}
             height={height}
@@ -558,9 +492,6 @@ class ForceOverlay extends Component {
         </div>
       );
     }
-    // TODO: get
-    //
-    const zoomLevel = 4;
     return (
       <div>
         <ZoomContainer

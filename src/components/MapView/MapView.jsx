@@ -30,9 +30,9 @@ import { Card, CardMarker, PreviewCard } from '../cards';
 import Accordion from './CardGrid';
 // import ContextView from './ContextView';
 import ForceOverlay from './ForceOverlay';
-import Title from './Title';
-import TagBar from './TagBar';
-import TagList from './TagList';
+// import Title from './Title';
+// import TagBar from './TagBar';
+// import TagList from './TagList';
 import { setify } from './utils';
 
 import PhotoChallenge from '../Challenges/MatchPhotoChallenge';
@@ -424,9 +424,7 @@ class MapView extends Component {
             <PhotoChallenge />
           </ModalBody>
         </Modal>
-        <DragDropContextProvider
-          backend={width < 500 ? TouchBackend : HTML5Backend}
-        >
+        <DragDropContextProvider backend={HTML5Backend}>
           <div className="w-100 h-100" style={{ position: 'relative' }}>
             <div
               className="w-100 h-100"
@@ -436,7 +434,6 @@ class MapView extends Component {
               }}
             >
               <DragLayer />
-
               <div
                 style={{
                   display: 'flex',

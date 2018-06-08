@@ -13,13 +13,13 @@ function centerLayout(nextProps) {
   // TODO: simplify
   const leftScale = j =>
     center -
-    slotSize * 3 / 2 -
-    (leftLen - j) * (center - slotSize * 3 / 2) / leftLen;
+    (slotSize * 3) / 2 -
+    ((leftLen - j) * (center - (slotSize * 3) / 2)) / leftLen;
   //
   const rightScale = j =>
     center +
     slotSize / 2 +
-    (rightLen - j) * (width - slotSize - center - slotSize / 2) / rightLen;
+    ((rightLen - j) * (width - slotSize - center - slotSize / 2)) / rightLen;
 
   const leftCards = data
     .slice(0, selectedIndex)

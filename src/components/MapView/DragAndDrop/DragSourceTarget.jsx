@@ -101,7 +101,11 @@ export class DragSourceCont extends PureComponent {
     const opacity = isDragging ? 0.4 : 1;
 
     return connectDragSource(
-      <div style={{ width: '100%', height: '100%', opacity }}>{children}</div>
+      <div
+        style={{ width: '100%', height: '100%', opacity, cursor: 'pointer' }}
+      >
+        {children}
+      </div>
     );
   }
 }
@@ -197,6 +201,6 @@ export class DropTargetCont extends PureComponent {
     // const { x, y } = clientOffset || { x: 0, y: 0 };
     // console.log('dropped', dropped);
 
-    return connectDropTarget(<span>{children}</span>);
+    return connectDropTarget(<div>{children}</div>);
   }
 }
