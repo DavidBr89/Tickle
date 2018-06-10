@@ -10,8 +10,9 @@ import MapGL from 'react-map-gl';
 
 // import louvain from './jlouvain';
 
-import { intersection, union, uniq } from 'lodash';
+import { intersection, union, uniq, isEqualWith } from 'lodash';
 import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
+import memoize from 'memoize-one';
 
 import {
   UserOverlay
@@ -19,7 +20,7 @@ import {
 } from '../../utils/map-layers/DivOverlay';
 
 import ZoomContainer from './ZoomContainer';
-import Cluster from './BubbleOverlay';
+import Cluster from './Cluster';
 // import AmbientOverlay from './AmbientOverlay';
 import dobbyscan from './cluster';
 
@@ -66,7 +67,7 @@ const offsetMapViewport = ({
     latitude: offsetLat,
     longitude: offsetLng
   });
-  console.log('return', longitude, latitude, offsetLng, offsetLat);
+  // console.log('return', longitude, latitude, offsetLng, offsetLat);
   return ret;
 };
 
@@ -78,6 +79,7 @@ function somFy(data, width, height, callback = d => d) {
     learningRate: 0.1
   };
 
+  console.log('data somFy', data);
   // TODO: check later
   const dists = data.map(a => data.map(b => jaccard(a.tags, b.tags)));
 
@@ -89,6 +91,8 @@ function somFy(data, width, height, callback = d => d) {
     callback(somPos);
   }
   const somPos = som.predict(dists);
+  // TODO: verify memoize
+  console.log('somFy, somFy', somFy);
   return somPos;
 }
 
@@ -250,16 +254,24 @@ class ForceOverlay extends Component {
     labels: false
   };
 
+  makeCluster = memoize(
+    ({ data, width, height }) => somFy(data, width, height),
+    (a, b) =>
+      a.width === b.width &&
+      a.height === b.height &&
+      // TODO: when u update stuff
+      isEqualWith(a.data, b.data, d => d.id)
+  );
+
+
   constructor(props) {
     super(props);
-    const { data, viewport } = props;
-    const { width, height } = viewport;
+    const { data } = props;
+    const { width, height, onMapViewportChange } = props;
 
     const initPos = data.map(() => [width / 2, height / 2]);
-    const somPos = somFy(data, width, height);
 
     // data.map(d => ([width/2, height/2]));
-
     const nodes = data.map(d => ({ ...d, x: width / 2, y: height / 2 }));
 
     const defaultLocation = {
@@ -267,62 +279,27 @@ class ForceOverlay extends Component {
       longitude: 4.315483
     };
 
+    const viewport = new PerspectiveMercatorViewport({
+      width,
+      height,
+      zoom: 10,
+      ...defaultLocation
+    });
+
+    // TODO: rename
+    onMapViewportChange(viewport);
+
     this.state = {
       nodes,
       tsnePos: initPos,
-      somPos,
-      gridPos: lapFy(somPos),
-      viewport: { width, height, zoom: 10, ...defaultLocation }
+      viewport
     };
+
 
     this.layout = this.layout.bind(this);
 
     this.forceSim = d3.forceSimulation();
-    // this.zoom = this.zoom.bind(this);
-    this.timeStamp = new Date().getMilliseconds();
   }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    const { viewport: oldVp } = this.state;
-    const { viewport } = nextState;
-
-    // return true;
-    // console.log('extended', extended);
-    return (
-      viewport.latitude !== oldVp.latitude ||
-      viewport.longitude !== oldVp.longitude ||
-      viewport.zoom !== oldVp.zoom ||
-      this.props.height !== nextProps.height ||
-      this.props.width !== nextProps.width ||
-      this.props.mode !== nextProps.mode ||
-      this.props.data.length !== nextProps.data.length ||
-      this.props.extCardId !== nextProps.extCardId ||
-      this.props.data.length !== nextProps.data.length ||
-      // TODO: fix this later
-      true
-      // width !== this.props.width ||
-      // height !== this.props.height ||
-      // true
-    );
-  }
-
-  // componentWillReceiveProps(nextProps) {
-  //   // clearTimeout(this.id);
-  //   // this.ids.map(clearTimeout);
-  //   // const { data: oldData } = this.props;
-  //   const {
-  //     data: nextData,
-  //     mode,
-  //     selectedCardId,
-  //     width,
-  //     height,
-  //     delay,
-  //     selectionDelay,
-  //     onMapViewportChange
-  //   } = nextProps;
-  //
-  //   const { viewport } = this.state;
-  // }
 
   componentDidUpdate() {
     // clearTimeout(this.id);
@@ -334,36 +311,25 @@ class ForceOverlay extends Component {
     // this.ids.map(clearTimeout);
   }
 
-  layout({ props, state, viewport }) {
-    const { mode, delay, data, padding, force, width, height } = props; // this.props;
-    const { tsnePos, gridPos, somPos } = state;
+  layout() {
+    const { mode, delay, data, padding, force, width, height } = this.props; // this.props;
+    const { viewport } = this.state;
 
-    const { zoom, latitude, longitude } = viewport;
-
-    // console.log('somPos', somPos);
-    // data.map(() => [width / 2, height / 2]); //
-    // console.log('oldNodes', nextState, oldNodes);
-
-    const vp = new PerspectiveMercatorViewport({
-      width,
-      height,
-      zoom,
-      latitude,
-      longitude
-    });
+    // console.log('viewport', viewport);
+    const somPos = this.makeCluster({ data, width, height });
 
     const geoPos = data.map(({ loc }) =>
-      vp.project([loc.longitude, loc.latitude])
+      viewport.project([loc.longitude, loc.latitude])
     );
 
     const pos = (() => {
       switch (mode) {
-        case 'tsne':
-          return tsnePos;
+        // case 'tsne':
+        //   return tsnePos;
         case 'som':
           return somPos;
-        case 'grid':
-          return gridPos;
+        // case 'grid':
+        //   return gridPos;
         default:
           return geoPos;
       }
@@ -448,13 +414,10 @@ class ForceOverlay extends Component {
 
     const { viewport } = this.state;
 
-    const somPos = data.map(d => [width / 2, height / 2]); // somFy(data, width, height);
+    // const somPos = data.map(d => [width / 2, height / 2]); // somFy(data, width, height);
 
-    const nodes = this.layout({
-      props: this.props,
-      state: { ...this.state, somPos },
-      viewport
-    });
+    const nodes = this.layout();
+
     // const newPos = nodes.map(d => transEvent.apply([d.x, d.y]));
     // TODO: change later
     // const selectedTags = selectedCardId ? tagNode && tagNode.tags : [];
@@ -478,7 +441,9 @@ class ForceOverlay extends Component {
             mapStyle="mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l"
             onViewportChange={viewport => {
               onMapViewportChange(viewport);
-              this.setState({ viewport });
+              this.setState({
+                viewport: new PerspectiveMercatorViewport(viewport)
+              });
             }}
             height={height}
             width={width}
@@ -504,6 +469,7 @@ class ForceOverlay extends Component {
         >
           {(zoomedNodes, transform) => (
             <Cluster
+              sets={sets}
               scale={transform.k}
               nodes={zoomedNodes}
               width={width}
