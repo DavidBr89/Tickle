@@ -24,6 +24,8 @@ import Cluster from './Cluster';
 // import AmbientOverlay from './AmbientOverlay';
 import dobbyscan from './cluster';
 
+import floorplanImg from './floorplan.png';
+
 // import { setify } from '../utils';
 
 function jaccard(a, b) {
@@ -95,82 +97,6 @@ function somFy(data, width, height, callback = d => d) {
   console.log('somFy, somFy', somFy);
   return somPos;
 }
-
-// function tsneFy(data, callback = d => d, iter = 400) {
-//   const sets = setify(data).reduce((acc, d) => {
-//     acc[d.key] 0= d.count;
-//     return acc;
-//   }, {});
-//
-//   const dists = data.map(a =>
-//     data.map(b =>
-//       jaccard(a.tags.filter(t => sets[t] > 1), b.tags.filter(t => sets[t] > 1))
-//     )
-//   );
-//
-//   // eslint-disable-next-line new-cap
-//   const model = new tsnejs.tSNE({
-//     dim: 2,
-//     perplexity: 10, // 10,
-//     epsilon: 40
-//   });
-//
-//   // initialize data with pairwise distances
-//   model.initDataDist(dists);
-//
-//   for (let i = 0; i < iter; ++i) {
-//     model.step();
-//     callback(model.getSolution());
-//   }
-//
-//   return model.getSolution();
-// }
-
-// function runTsne(data, iter = 400) {
-//   const dists = data.map(a => data.map(b => jaccard(a.tags, b.tags)));
-//
-//   // eslint-disable-next-line new-cap
-//   const model = new tsnejs.tSNE({
-//     dim: 2,
-//     perplexity: 10,
-//     epsilon: 50
-//   });
-//
-//   model.initDataDist(dists);
-//   for (let i = 0; i < iter; ++i) model.step();
-//   return model.getSolution();
-// }
-
-// function forceTsne({ width, height, nodes }) {
-//   const centerX = d3.scaleLinear().range([0, width]);
-//   const centerY = d3.scaleLinear().range([0, height]);
-//   const dists = nodes.map(a => nodes.map(b => jaccard(a.tags, b.tags)));
-//
-//   // eslint-disable-next-line new-cap
-//   const model = new tsnejs.tSNE({
-//     dim: 2,
-//     perplexity: 50,
-//     epsilon: 20
-//   });
-//
-//   model.initDataDist(dists);
-//   // every time you call this, solution gets better
-//   return function(alpha) {
-//     model.step();
-//     // console.log('this', this);
-//
-//     // Y is an array of 2-D points that you can plot
-//     const pos = model.getSolution();
-//
-//     centerX.domain(d3.extent(pos.map(d => d[0])));
-//     centerY.domain(d3.extent(pos.map(d => d[1])));
-//
-//     nodes.forEach((d, i) => {
-//       d.x += alpha * (centerX(pos[i][0]) - d.x);
-//       d.y += alpha * (centerY(pos[i][1]) - d.y);
-//     });
-//   };
-// }
 
 function lapFy(data) {
   const n = data.length;
@@ -263,7 +189,6 @@ class ForceOverlay extends Component {
       isEqualWith(a.data, b.data, d => d.id)
   );
 
-
   constructor(props) {
     super(props);
     const { data } = props;
@@ -295,7 +220,6 @@ class ForceOverlay extends Component {
       viewport
     };
 
-
     this.layout = this.layout.bind(this);
 
     this.forceSim = d3.forceSimulation();
@@ -326,7 +250,7 @@ class ForceOverlay extends Component {
       switch (mode) {
         // case 'tsne':
         //   return tsnePos;
-        case 'som':
+        case 'topic':
           return somPos;
         // case 'grid':
         //   return gridPos;
@@ -457,8 +381,34 @@ class ForceOverlay extends Component {
         </div>
       );
     }
+
+    if (mode === 'floorplan') {
+      return (
+        <div
+          style={{
+            backgroundImage: `url(${floorplanImg})`,
+            backgroundRepeat: 'round',
+            width,
+            height
+          }}
+        >
+          {children}
+          {nodes.map(attr =>
+            children({
+              ...attr,
+              ...(attr.floorLoc || { x: width / 2, y: height / 2 })
+            })
+          )}
+        </div>
+      );
+    }
+
     return (
       <div>
+        <div style={{ zIndex: 10000, marginTop: 30, display: 'none' }}>
+          <label htmlFor="fader">Volume</label>
+          <input type="range" min="0" max="5" value="3" id="fader" />
+        </div>
         <ZoomContainer
           width={width}
           height={height}

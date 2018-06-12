@@ -11,10 +11,6 @@ import * as d3 from 'd3';
 import { getBoundingBox, bounds, setify } from '../utils';
 import { groupPoints } from './utils';
 
-// import throttle from 'react-throttle-render';
-
-// import scc from 'connected-components';
-
 import { intersection, union, uniq } from 'lodash';
 import TopicAnnotationOverlay from './TopicAnnotationOverlay';
 import dobbyscan from './cluster';
@@ -39,7 +35,6 @@ function rects(quadtree) {
 
 function findCenterPos(values) {
   const bbox = getBoundingBox(values, d => [d.x, d.y]);
-  console.log('bbox', bbox);
   const poly = hull(
     groupPoints(
       [
@@ -61,75 +56,79 @@ function findCenterPos(values) {
 
 class Cluster extends Component {
   static propTypes = {
-    children: PropTypes.node,
+    children: PropTypes.func,
     className: PropTypes.string,
     scale: PropTypes.number
+  };
+
+  static defaultProps = {
+    children: d => d,
+    className: '',
+    scale: 1
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const { width, height, nodes, scale } = nextProps;
 
     // const comps = compComps(nodes, 100);
-    const logScale = d3
-      .scalePow()
-      .domain([1.5, 0])
-      .range([1, 30]);
+    // const logScale = d3
+    //   .scalePow()
+    //   .domain([1.5, 0])
+    //   .range([1, 30]);
 
-    const r = 20/scale;//scale * (prevState.subComps.length || 1) * 30;
-    Math.abs(logScale(scale));
-    console.log('scale r', r);
-    const clusters = dobbyscan([...nodes], r, n => n.x, n => n.y).map(
-      (vals, i) => ({ id: i, values: vals })
-    );
+    const r = 20 / scale; // scale * (prevState.clusters.length || 1) * 30;
+    // Math.abs(logScale(scale));
+    // console.log('scale r', r);
+    const clusters = dobbyscan([...nodes], r, n => n.x, n => n.y)
+      .map((vals, i) => ({ id: i, values: vals }))
+      .map(c => {
+        const centerPos = findCenterPos(c.values);
+        const pad = 50;
+        const boundedCenterPos = [
+          Math.min(Math.max(pad, centerPos[0]), width - pad),
+          Math.min(Math.max(pad, centerPos[1]), height - pad)
+        ];
 
-    const subComps = clusters.map(c => {
-      const centerPos = findCenterPos(c.values);
-      const pad = 50;
-      const boundedCenterPos = [
-        Math.min(Math.max(pad, centerPos[0]), width - pad),
-        Math.min(Math.max(pad, centerPos[1]), height - pad)
-      ];
+        const sets = setify(c.values).sort(
+          (a, b) => b.values.length - a.values.length
+        ); // .filter(d => d.values.length > 1);
+        const ext = d3.extent(sets, s => s.values.length);
+        const sizeScale = d3
+          .scaleLinear()
+          .domain(ext)
+          .range([25, 55]);
 
-      const sets = setify(c.values).sort(
-        (a, b) => b.values.length - a.values.length
-      ); // .filter(d => d.values.length > 1);
-      const ext = d3.extent(sets, s => s.values.length);
-      const sizeScale = d3
-        .scaleLinear()
-        .domain(ext)
-        .range([25, 55]);
+        const tags = d3
+          .nest()
+          .key(e => e)
+          .entries(c.values.reduce((acc, v) => [...acc, ...v.tags], []))
+          .sort((a, b) => b.values.length - a.values.length);
 
-      const tags = d3
-        .nest()
-        .key(e => e)
-        .entries(c.values.reduce((acc, v) => [...acc, ...v.tags], []))
-        .sort((a, b) => b.values.length - a.values.length);
+        const ids = c.values.map(e => e.id);
+        const tagKeys = tags.map(e => e.key);
 
-      const ids = c.values.map(e => e.id);
-      const tagKeys = tags.map(e => e.key);
-
-      const dist = 10; // Math.max(relatedComp.r, 4);
-      const values = c.values.map(v => ({
-        ...v,
-        x: centerPos[0], // Math.min(Math.max(v.x, centerPos[0] + dist), v.x),
-        y: centerPos[1] // Math.min(Math.max(v.y, centerPos[1] + dist), v.y)
-      }));
-      //
-      return {
-        ...c,
-        values,
-        centerPos,
-        sets,
-        tagKeys,
-        sizeScale,
-        ids
-      };
-    });
-    return { subComps };
+        const dist = 10; // Math.max(relatedComp.r, 4);
+        const values = c.values.map(v => ({
+          ...v,
+          x: centerPos[0], // Math.min(Math.max(v.x, centerPos[0] + dist), v.x),
+          y: centerPos[1] // Math.min(Math.max(v.y, centerPos[1] + dist), v.y)
+        }));
+        //
+        return {
+          ...c,
+          values,
+          centerPos,
+          sets,
+          tagKeys,
+          sizeScale,
+          ids
+        };
+      });
+    return { clusters };
   }
 
   state = {
-    subComps: [],
+    clusters: [],
     links: []
   };
 
@@ -148,7 +147,7 @@ class Cluster extends Component {
       children
     } = this.props;
 
-    const { subComps } = this.state;
+    const { clusters } = this.state;
 
     const blurFactor = 2;
     const bubbleRadius = 25;
@@ -157,14 +156,20 @@ class Cluster extends Component {
     // .x(d => d.centerPos[0])
     // .y(d => d.centerPos[1]);
 
-    const cells = voronoi.polygons(subComps.map(d => d.centerPos)); // relaxedVoronoi(subComps);
-    // const vs = voronoi.polygons(subComps.map(d => d.centerPos));
+    const cells = voronoi.polygons(clusters.map(d => d.centerPos)); // relaxedVoronoi(clusters);
+
+    // var bandWidth = upperBand - lowerBand;
+    // const contours = marchingsquares.isoContours(gridded, 20);
+    //
+    // console.log('isoContours', contours);
+    // const ms = gcc
+    // const vs = voronoi.polygons(clusters.map(d => d.centerPos));
     // console.log('ns', ns, 'vs', vs);
 
     const polyData = cells.map((arrObj, i) => {
       const polygon = arrObj.slice(0, arrObj.length - 1);
       const centroid = d3.polygonCentroid(polygon);
-      const data = subComps[i];
+      const data = clusters[i];
       // const { data } = arrObj;
       return { ...data, centroid, polygon };
     });
@@ -259,7 +264,7 @@ class Cluster extends Component {
           {polyData.map(d => (
             <path
               fill="none"
-              stroke="black"
+              stroke="grey"
               d={`M${d.centroid}L${d.centerPos}`}
             />
           ))}
@@ -272,16 +277,26 @@ class Cluster extends Component {
           //     : orient.left);
           return (
             <div
+              key={d.tagKeys.join('-')}
+              className="p-1"
               style={{
+                border: 'grey solid 1px',
+                // borderRadius: '10%',
                 position: 'absolute',
+                transition: 'left 500ms, top 500ms',
                 left: cx,
                 top: cy,
                 transform: `translate(${angle === 0 ? -100 : 0}%, -50%)`,
                 background: 'white',
-                zIndex: 3000
+                zIndex: 100,
+                maxWidth: 250,
+                display: 'flex',
+                flexWrap: 'wrap'
               }}
             >
-              {d.tagKeys.map(t => <div>{t}</div>)}
+              {d.tagKeys.length > 0
+                ? d.tagKeys.map(t => <div className="mr-1">{`${t} `} </div>)
+                : 'No tags'}
             </div>
           );
         })}

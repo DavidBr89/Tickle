@@ -9,16 +9,9 @@ import Spinner from 'react-loader-spinner';
 import * as chromatic from 'd3-scale-chromatic';
 
 // TODO: { LinearInterpolator, FlyToInterpolator }
-// import { default as TouchBackend } from 'react-dnd-touch-backend';
+import { default as TouchBackend } from 'react-dnd-touch-backend';
 import HTML5Backend from 'react-dnd-html5-backend';
-// import { DragDropContextProvider } from 'react-dnd';
-
-import {
-  DragSourceCont,
-  DropTargetCont,
-  DragDropContextProvider
-} from './DragAndDrop/DragSourceTarget';
-
+import { DragDropContextProvider } from 'react-dnd';
 import * as d3 from 'd3';
 
 // TODO: move
@@ -28,18 +21,43 @@ import withAuthorization from '../withAuthorization';
 
 import { colorScale, cardTypeColorScale } from '../cards/styles';
 
+// import ReactTimeout from 'react-timeout';
+// import rasterTileStyle from 'raster-tile-style';
+// import ngeohash from 'ngeohash';,
+// import cx from './MapView.scss';
 import { Card, CardMarker, PreviewCard } from '../cards';
+// import SvgOverlay from '../utils/map-layers/SvgOverlay';
 import Accordion from './CardGrid';
+// import ContextView from './ContextView';
 import ForceOverlay from './ForceOverlay';
+// import Title from './Title';
+// import TagBar from './TagBar';
+// import TagList from './TagList';
 import { setify } from './utils';
 
 import PhotoChallenge from '../Challenges/MatchPhotoChallenge';
 
-import { UserOverlay } from '../utils/map-layers/DivOverlay';
+// import StartNav from './StartNav';
+// import { VisibleView, VisibleElement } from '../utils/MySensor.jsx';
+
+// import { Grid } from '../utils';
+// import { ScrollElement, ScrollView } from '../utils/ScrollView';
+
+// import Modal from './components/utils/Modal';
+
+// import CardOverlay from '../utils/map-layers/CardOverlay';
+import {
+  UserOverlay
+  // UserMarker,
+} from '../utils/map-layers/DivOverlay';
+
 import ExtendableMarker from '../utils/ExtendableMarker';
+// import MapAreaRadius from '../utils/map-layers/MapAreaRadius';
 import chroma from 'chroma-js';
+// import cardIconSrc from '../utils/map-layers/cardIcon.svg';
 import { Modal, ModalBody } from '../utils/Modal';
 
+import { DragSourceCont, DropTargetCont } from './DragAndDrop/DragSourceTarget';
 import DragLayer from './DragAndDrop/DragLayer';
 
 function launchIntoFullscreen(element) {
@@ -206,7 +224,6 @@ const PreviewMarker = ({ selected, template, color, r = 25 }) => (
   </div>
 );
 
-@DragDropContextProvider
 class MapView extends Component {
   static propTypes = {
     cards: PropTypes.array.isRequired,
@@ -251,7 +268,7 @@ class MapView extends Component {
     // this.gridSpan = this.gridSpan.bind(this);
 
     const width = window.innerWidth;
-    const height = window.innerHeight ;
+    const height = window.innerHeight;
 
     window.addEventListener('resize', () => {
       screenResize({
@@ -415,269 +432,275 @@ class MapView extends Component {
               position: 'absolute'
             }}
           >
-            <div
-              style={{
-                display: 'flex',
-                position: 'absolute',
-                justifyContent: 'flex-end',
-                marginTop: 10,
-                marginRight: 10,
-                width: '100%'
-              }}
-            >
-              <button
-                className="btn mr-3"
+            <DragDropContextProvider backend={HTML5Backend}>
+              <DragLayer />
+              <div
                 style={{
-                  position: 'relative',
-                  zIndex: 4000,
-                  background: 'whitesmoke'
+                  display: 'flex',
+                  position: 'absolute',
+                  justifyContent: 'flex-end',
+                  marginTop: 10,
+                  marginRight: 10,
+                  width: '100%'
                 }}
-                onClick={() =>
-                  toggleCardAuthoring({ userLocation, width, height })
-                }
               >
-                <div
+                <button
+                  className="btn mr-3"
                   style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center'
+                    position: 'relative',
+                    zIndex: 4000,
+                    background: 'whitesmoke'
                   }}
+                  onClick={() =>
+                    toggleCardAuthoring({ userLocation, width, height })
+                  }
                 >
-                  <Icon.Clipboard size={30} />
-                  <strong>{!authEnv ? 'New Card' : 'All Cards'}</strong>
-                </div>
-              </button>
-              <input
-                className="btn mr-3"
-                placeholder="Search Cards"
-                type="text"
-                onChange={evt => filterCards(evt.target.value)}
-                onFocus={() => toggleSearch(true)}
-                onBlur={() => toggleSearch(false)}
-                style={{
-                  background: 'whitesmoke',
-                  textAlign: 'left',
-                  position: 'relative',
-                  // right: 0,
-                  zIndex: 4000
-                }}
-              />
-            </div>
-
-            <div
-              className="w-100"
-              style={{
-                opacity: gridView ? 1 : 0,
-                display: !gridView ? 'none' : null,
-                transition: 'opacity 0.5s',
-                height: '25%',
-                marginTop: 90
-              }}
-            >
-              <Accordion
-                data={cards}
-                className="ml-1 mr-2"
-                duration={600}
-                centered={selectedCardId !== null}
-                selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
-                width={100}
-                height={100}
-                unit="%"
-                slotSize={100 / 3.5}
-                style={{
-                  // width: '100%',
-                  zIndex: 2000
-                }}
-              >
-                {d => (
                   <div
-                    className="w-100 h-100"
-                    key={d.id}
                     style={{
                       display: 'flex',
-                      justifyContent: 'center'
-                      // border: 'black 5px solid'
-                      // pointerEvents: 'none'
+                      justifyContent: 'center',
+                      alignItems: 'center'
                     }}
                   >
-                    <div style={{ width: '100%', height: '100%' }}>
-                      <PreviewCard
-                        {...d}
-                        onClick={() =>
-                          selectedCardId === d.id
-                            ? extendSelectedCard(d.id)
-                            : selectCard(d.id)
-                        }
-                        tagColorScale={tagColorScale}
-                        key={d.id}
-                        edit={d.template}
-                        selected={selectedCardId === d.id}
-                        style={{
-                          transition: `transform 1s`,
-                          transform: selectedCardId === d.id && 'scale(1.2)',
-                          opacity: d.template && 0.8
-
-                          // width: '100%',
-                          // height: '100%',
-                          // width: '100%'
-                          // maxWidth: '200px'
-                        }}
-                      />
-                    </div>
+                    <Icon.Clipboard size={30} />
+                    <strong>{!authEnv ? 'New Card' : 'All Cards'}</strong>
                   </div>
-                )}
-              </Accordion>
-
-              <DropTargetCont dropHandler={onCardDrop} dragged={isCardDragging}>
-                <ForceOverlay
-                  delay={1}
-                  width={width}
-                  height={height}
-                  force
-                  data={cards}
-                  sets={cardSets}
-                  selectedCardId={selectedCardId}
-                  extCardId={extCardId}
-                  userLocation={userLocation}
-                  mode={dataView}
-                  labels={!gridView}
-                  onMapViewportChange={changeMapViewport}
-                  padding={{
-                    bottom: height / 5,
-                    top: height / 5,
-                    left: width / 5,
-                    right: width / 5
+                </button>
+                <input
+                  className="btn mr-3"
+                  placeholder="Search Cards"
+                  type="text"
+                  onChange={evt => filterCards(evt.target.value)}
+                  onFocus={() => toggleSearch(true)}
+                  onBlur={() => toggleSearch(false)}
+                  style={{
+                    background: 'whitesmoke',
+                    textAlign: 'left',
+                    position: 'relative',
+                    // right: 0,
+                    zIndex: 4000
                   }}
-                  colorScale={tagColorScale}
+                />
+              </div>
+
+              <div
+                className="w-100"
+                style={{
+                  opacity: gridView ? 1 : 0,
+                  display: !gridView ? 'none' : null,
+                  transition: 'opacity 0.5s',
+                  height: '25%',
+                  marginTop: 90
+                }}
+              >
+                <Accordion
+                  data={cards}
+                  className="ml-1 mr-2"
+                  duration={600}
+                  centered={selectedCardId !== null}
+                  selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
+                  width={100}
+                  height={100}
+                  unit="%"
+                  slotSize={100 / 3.5}
+                  style={{
+                    // width: '100%',
+                    zIndex: 2000
+                  }}
                 >
-                  {({ x, y, ...c }) => (
-                    <ExtendableMarker
-                      key={c.id}
-                      width={extCardId === c.id ? width : 25}
-                      height={extCardId === c.id ? height : 30}
-                      x={extCardId === c.id ? width / 2 : x}
-                      y={extCardId === c.id ? height / 2 : y}
-                      extended={extCardId === c.id}
-                      preview={
-                        <div>
-                          {selectedCardId === c.id &&
-                            !isCardDragging &&
-                            authEnv &&
-                            dataView !== 'topic' && <SpeechBubble />}
-                          <DragSourceCont
-                            dragHandler={dragCard}
-                            data={c}
-                            x={x}
-                            y={y}
-                          >
-                            <PreviewMarker
+                  {d => (
+                    <div
+                      className="w-100 h-100"
+                      key={d.id}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center'
+                        // border: 'black 5px solid'
+                        // pointerEvents: 'none'
+                      }}
+                    >
+                      <div style={{ width: '100%', height: '100%' }}>
+                        <PreviewCard
+                          {...d}
+                          onClick={() =>
+                            selectedCardId === d.id
+                              ? extendSelectedCard(d.id)
+                              : selectCard(d.id)
+                          }
+                          tagColorScale={tagColorScale}
+                          key={d.id}
+                          edit={d.template}
+                          selected={selectedCardId === d.id}
+                          style={{
+                            transition: `transform 1s`,
+                            transform: selectedCardId === d.id && 'scale(1.2)',
+                            opacity: d.template && 0.8
+
+                            // width: '100%',
+                            // height: '100%',
+                            // width: '100%'
+                            // maxWidth: '200px'
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </Accordion>
+
+                <DropTargetCont
+                  dropHandler={onCardDrop}
+                  dragged={isCardDragging}
+                >
+                  <ForceOverlay
+                    delay={1}
+                    width={width}
+                    height={height}
+                    force
+                    data={cards}
+                    sets={cardSets}
+                    selectedCardId={selectedCardId}
+                    extCardId={extCardId}
+                    userLocation={userLocation}
+                    mode={dataView}
+                    labels={!gridView}
+                    onMapViewportChange={changeMapViewport}
+                    padding={{
+                      bottom: height / 5,
+                      top: height / 5,
+                      left: width / 5,
+                      right: width / 5
+                    }}
+                    colorScale={tagColorScale}
+                  >
+                    {({ x, y, ...c }) => (
+                      <ExtendableMarker
+                        key={c.id}
+                        width={extCardId === c.id ? width : 25}
+                        height={extCardId === c.id ? height : 30}
+                        x={extCardId === c.id ? width / 2 : x}
+                        y={extCardId === c.id ? height / 2 : y}
+                        extended={extCardId === c.id}
+                        preview={
+                          <div>
+                            {selectedCardId === c.id &&
+                              !isCardDragging &&
+                              authEnv &&
+                              dataView !== 'topic' && <SpeechBubble />}
+                            <DragSourceCont
+                              dragHandler={dragCard}
+                              data={c}
+                              x={x}
+                              y={y}
+                            >
+                              <PreviewMarker
                               selected={selectedCardId === c.id}
                               template={c.template}
                               color="whitesmoke"
                             />
-                          </DragSourceCont>
-                        </div>
-                      }
-                    >
-                      <Card
-                        {...c}
-                        onClose={() => extendSelectedCard(null)}
-                        edit={authEnv}
-                        onSubmit={() => {
-                          console.log('cardAction', c);
-                          // TODO: rename
-                          cardAction({ ...c, x, y });
-                        }}
-                        onCollect={() =>
-                          toggleCardChallenge({
-                            cardChallengeOpen: true
-                          })
+                            </DragSourceCont>
+                          </div>
                         }
-                        tagColorScale={tagColorScale}
-                        onUpdate={d => onCardUpdate({ ...d, x, y })}
-                        style={{ zIndex: 4000 }}
-                      />
-                    </ExtendableMarker>
-                  )}
-                </ForceOverlay>
-              </DropTargetCont>
-              <div
-                className="fixed-bottom-right"
-                style={{
-                  display: 'flex',
-                  justifyContent: 'right',
-                  alignItems: 'flex-end'
-                }}
-              >
-                <button
-                  className={`btn mb-3 mr-2 ${dataView === 'geo' &&
-                    'btn-active'}`}
+                      >
+                        <Card
+                          {...c}
+                          onClose={() => extendSelectedCard(null)}
+                          edit={authEnv}
+                          onSubmit={() => {
+                            console.log('cardAction', c);
+                            // TODO: rename
+                            cardAction({ ...c, x, y });
+                          }}
+                          onCollect={() =>
+                            toggleCardChallenge({
+                              cardChallengeOpen: true
+                            })
+                          }
+                          tagColorScale={tagColorScale}
+                          onUpdate={d => onCardUpdate({ ...d, x, y })}
+                          style={{ zIndex: 4000 }}
+                        />
+                      </ExtendableMarker>
+                    )}
+                  </ForceOverlay>
+                </DropTargetCont>
+                <div
+                  className="fixed-bottom-right"
                   style={{
-                    // position: 'absolute',
-                    zIndex: 1000,
-                    background: tsneView && 'whitesmoke'
+                    display: 'flex',
+                    justifyContent: 'right',
+                    alignItems: 'flex-end'
                   }}
-                  onClick={() => setDataView('geo')}
                 >
-                  <div
+                  <button
+                    className={`btn mb-3 mr-2 ${dataView === 'geo' &&
+                      'btn-active'}`}
                     style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      height: 30,
-                      width: 44,
-                      fontWeight: 'bold'
+                      // position: 'absolute',
+                      zIndex: 1000,
+                      background: tsneView && 'whitesmoke'
                     }}
+                    onClick={() => setDataView('geo')}
                   >
-                    {'Map'}
-                  </div>
-                </button>
-                <button
-                  className={`btn mb-3 ${dataView === 'floorplan' &&
-                    'btn-active'}`}
-                  style={{
-                    // position: 'absolute',
-                    zIndex: 1000,
-                    background: tsneView && 'whitesmoke'
-                  }}
-                  onClick={() => setDataView('floorplan')}
-                >
-                  <div
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: 30,
+                        width: 44,
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      {'Map'}
+                    </div>
+                  </button>
+                  <button
+                    className={`btn mb-3 ${dataView === 'floorplan' &&
+                      'btn-active'}`}
                     style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      height: 30,
-                      fontWeight: 'bold'
+                      // position: 'absolute',
+                      zIndex: 1000,
+                      background: tsneView && 'whitesmoke'
                     }}
+                    onClick={() => setDataView('floorplan')}
                   >
-                    {'Floor'}
-                  </div>
-                </button>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: 30,
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      {'Floor'}
+                    </div>
+                  </button>
 
-                <button
-                  className={`btn mb-3 mr-3 ml-2 ${dataView === 'topic' &&
-                    'btn-active'}`}
-                  style={{
-                    // position: 'absolute',
-                    zIndex: 1000
-                    // background: dataView === 'som' && 'grey',
-                  }}
-                  onClick={() => setDataView('topic')}
-                >
-                  <div
+                  <button
+                    className={`btn mb-3 mr-3 ml-2 ${dataView === 'topic' &&
+                      'btn-active'}`}
                     style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      height: 30
+                      // position: 'absolute',
+                      zIndex: 1000
+                      // background: dataView === 'som' && 'grey',
                     }}
+                    onClick={() => setDataView('topic')}
                   >
-                    <div style={{ fontWeight: 'bold' }}>Topic</div>
-                  </div>
-                </button>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: 30
+                      }}
+                    >
+                      <div style={{ fontWeight: 'bold' }}>Topic</div>
+                    </div>
+                  </button>
+                </div>
               </div>
-            </div>
+            </DragDropContextProvider>
           </div>
         </div>
       </React.Fragment>

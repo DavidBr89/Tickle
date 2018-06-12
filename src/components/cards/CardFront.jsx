@@ -484,7 +484,7 @@ class EditCardFront extends PureComponent {
                     </BigButton>
                   )}
                   <BigButton
-                    className="ml-1"
+                    className="ml-2"
                     color={uiColor}
                     edit
                     onClick={() =>

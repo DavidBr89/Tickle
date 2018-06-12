@@ -128,35 +128,36 @@ module.exports = {
       Constants: path.resolve(__dirname, 'src/constants')
     }
   },
-  module: {
-    rules: loaders
-  },
-  devServer: {
-    contentBase: './public',
-    noInfo: true,
-    hot: true,
-    inline: true,
-    historyApiFallback: true,
-    port: PORT,
-    host: HOST,
-    disableHostCheck: true,
-    // TODO: change back later
-    https: false,
-    progress: true
-
-    // headers: {
-    //   'Access-Control-Allow-Origin': '*',
-    //   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-    //   'Access-Control-Allow-Headers':
-    //     'X-Requested-With, content-type, Authorization'
-    // }
-    // proxy: {
-    //   '**': {
-    //     target: 'http://localhost:8000/',
-    //     secure: false
-    //   }
-    // }
-  },
+  // module: {
+  //   rules: loaders
+  // },
+  // devServer: {
+  //   contentBase: './public',
+  //   noInfo: true,
+  //   hot: true,
+  //   inline: true,
+  //   historyApiFallback: true,
+  //   port: PORT,
+  //   host: HOST,
+  //   disableHostCheck: true,
+  //   // TODO: change back later
+  //   https: false,
+  //   progress: true,
+  //   overlay: true
+  //
+  //   // headers: {
+  //   //   'Access-Control-Allow-Origin': '*',
+  //   //   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+  //   //   'Access-Control-Allow-Headers':
+  //   //     'X-Requested-With, content-type, Authorization'
+  //   // }
+  //   // proxy: {
+  //   //   '**': {
+  //   //     target: 'http://localhost:8000/',
+  //   //     secure: false
+  //   //   }
+  //   // }
+  // },
   plugins: [
     new webpack.NamedModulesPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),

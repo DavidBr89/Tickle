@@ -94,7 +94,7 @@ const defaultState = {
     // TODO: outsource
   },
   DataView: {
-    dataView: 'som',
+    dataView: 'topic',
     tsneView: false,
     gridView: true
   }

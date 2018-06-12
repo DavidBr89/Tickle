@@ -1,6 +1,9 @@
 import React, { Fragment, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { DragSource, DropTarget } from 'react-dnd';
+
+import HTML5 from 'react-dnd-html5-backend';
+import { DragDropContext } from 'react-dnd';
 import DragLayer from 'react-dnd/lib/DragLayer';
 
 function collect(monitor) {
@@ -204,3 +207,4 @@ export class DropTargetCont extends PureComponent {
     return connectDropTarget(<div>{children}</div>);
   }
 }
+export const DragDropContextProvider = DragDropContext(HTML5);

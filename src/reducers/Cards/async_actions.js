@@ -126,6 +126,7 @@ export function fetchCardTemplates(uid) {
 export function asyncCreateCard({ cardData, mapViewport, uid }) {
   const { x, y, tx, ty, vx, vy, ...restData } = cardData;
 
+  // console.log('restData', restData);
   const vp = new PerspectiveMercatorViewport(mapViewport);
 
   const [longitude, latitude] = vp.unproject([x, y]);
@@ -138,6 +139,7 @@ export function asyncCreateCard({ cardData, mapViewport, uid }) {
     // TODO: change
     id: gen.generate(Date.now())
   };
+
   // Thunk middleware knows how to handle functions.
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
@@ -277,17 +279,17 @@ export function fetchNearByPlaces() {
           process.env.GoogleAccessToken
         }${PROXY_URL}`
       )
-    // .then(
-    //   response => console.log('nearbysearch', response),
-    //   // Do not use catch, because that will also catch
-    //   // any errors in the dispatch and resulting render,
-    //   // causing a loop of 'Unexpected batch number' errors.
-    //   // https://github.com/facebook/react/issues/6895
-    //   error => console.log('An error occurred.', error)
-    // )
-      .then(json => {
-        dispatch(receivePlaces(NearbyPlaces));
-      })
+        // .then(
+        //   response => console.log('nearbysearch', response),
+        //   // Do not use catch, because that will also catch
+        //   // any errors in the dispatch and resulting render,
+        //   // causing a loop of 'Unexpected batch number' errors.
+        //   // https://github.com/facebook/react/issues/6895
+        //   error => console.log('An error occurred.', error)
+        // )
+        .then(json => {
+          dispatch(receivePlaces(NearbyPlaces));
+        })
     );
   };
 }

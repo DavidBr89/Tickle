@@ -85,22 +85,30 @@ const mergeProps = (state, dispatcherProps) => {
 
   const onCardDrop = cardData =>
     selectedCardId === 'temp'
-      ? updateCardTemplate({ uid, cardData, mapViewport })
-      : updateCard({ uid, cardData, mapViewport });
+      ? updateCardTemplate({ uid, cardData, mapViewport, dataView })
+      : updateCard({ uid, cardData, mapViewport , dataView});
 
   const cardAction = cardData =>
     selectedCardId === 'temp'
-      ? asyncCreateCard({ uid, cardData, mapViewport })
+      ? asyncCreateCard({ uid, cardData, mapViewport , dataView})
       : asyncRemoveCard({ uid, cid: cardData.id });
 
   const onCardUpdate = cardData =>
     cardData.template
-      ? updateCardTemplate({ cardData, mapViewport })
-      : updateCard({ uid, cardData, mapViewport });
+      ? updateCardTemplate({ cardData, mapViewport, dataView })
+      : updateCard({ uid, cardData, mapViewport, dataView });
 
-  const setDataView = () => toggleDataView(dataView === 'som' ? 'geo' : 'som')
+  // TODO: change
+  const setDataView = toggleDataView;
 
-  return { ...state, ...dispatcherProps, onCardDrop, onCardUpdate, cardAction, setDataView};
+  return {
+    ...state,
+    ...dispatcherProps,
+    onCardDrop,
+    onCardUpdate,
+    cardAction,
+    setDataView
+  };
 };
 
 const MapViewCont = connect(

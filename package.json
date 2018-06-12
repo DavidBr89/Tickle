@@ -5,7 +5,7 @@
   "main": "''",
   "scripts": {
     "build": "webpack --config webpack.production.config.js",
-    "start": "webpack-dev-server",
+    "start": "webpack-serve webpack.config.js",
     "analyze": "webpack --config webpack.production.config.js --json > stats.json"
   },
   "repository": {
@@ -49,10 +49,12 @@
     "global": "^4.3.2",
     "history": "^4.7.2",
     "immutable": "^3.8.2",
+    "jquery": "^3.3.1",
     "lap-jv": "https://github.com/DinoJay/lap-jv/",
     "lodash": "^4.17.4",
     "mapbox": "^1.0.0-beta9",
     "mapbox-gl": "^0.44.1",
+    "marchingsquares": "^1.2.3",
     "material-icons": "^0.1.0",
     "materialize-css": "^0.100.2",
     "memoize-one": "^3.1.1",
@@ -145,6 +147,7 @@
     "url-loader": "^1.0.1",
     "webpack": "^4.1.1",
     "webpack-dev-server": "^3.1.1",
+    "webpack-serve": "^1.0.4",
     "webworkify": "^1.4.0",
     "worker-loader": "^1.1.1"
   }

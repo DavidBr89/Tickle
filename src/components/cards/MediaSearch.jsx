@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import $ from 'jquery';
+import { ajax } from 'jquery';
 
 import * as Icon from 'react-feather';
 
@@ -38,38 +38,50 @@ gapi.load('client', () => {
   });
 });
 
-const flickr = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${
+const flickrUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${
   process.env.FlickrAccessToken
-}&tags=football&format=json`;
+}`;
 
 const searchFlickr = (q = 'dragon') =>
   // new Promise(resolve => {
-  $.ajax({
-    url: flickr,
-    jsonp: 'callback',
-    dataType: 'jsonp'
-  }).then(({ query: { pages } }) => {
-    const values = Object.values(pages);
-    // console.log('pages', pages);
-    const results = values.map(d => ({
-      title: d.title,
-      descr: d.extract,
-      thumbnail: d.thumbnail ? d.thumbnail.source : null, // d.thumbnail.source,
-      url: d.fullurl,
-      type: 'article'
-    }));
-
+  //
+  ajax({
+    url: flickrUrl,
+    dataType: 'jsonp',
+    jsonp: 'jsoncallback',
+    /* tags: 'kitten',  */
+    data: {
+      text: q,
+      format: 'json',
+      extras: 'url_m,tags,machine_tags',
+      page: 1,
+      per_page: 25
+    }
+  }).then(({ photos: { photo: rawResult } }) => {
+    const results = rawResult.map(
+      ({ title, url_m: url, machine_tags: machineTags, tags }) => ({
+        title,
+        descr: tags,
+        thumbnail: url,
+        url,
+        type: 'photo'
+      })
+    );
+    //
     return new Promise(resolve => resolve(results));
   });
-const searchWikipedia = (q = 'dragon') =>
-  // new Promise(resolve => {
-  $.ajax({
-    url: `https://en.wikipedia.org/w/api.php?action=query&format=json&generator=prefixsearch&gpssearch=${q}&gpslimit=20&prop=info|pageimages|pageterms|extracts&piprop=thumbnail&pithumbsize=200&pilimit=10&exlimit=max&exintro&inprop=url&explaintext`,
+
+// TODO: add to params
+const wikiUrl = q =>
+  `https://en.wikipedia.org/w/api.php?action=query&format=json&generator=prefixsearch&gpssearch=${q}&gpslimit=20&prop=info|pageimages|pageterms|extracts&piprop=thumbnail&pithumbsize=200&pilimit=10&exlimit=max&exintro&inprop=url&explaintext`;
+
+const searchWikipedia = q =>
+  ajax({
+    url: wikiUrl(q),
     jsonp: 'callback',
     dataType: 'jsonp'
   }).then(({ query: { pages } }) => {
     const values = Object.values(pages);
-    console.log('pages', pages);
     const results = values.map(d => ({
       title: d.title,
       descr: d.extract,
@@ -123,6 +135,10 @@ const searchGiphy = (q = 'pokemon') =>
       )
     )
   );
+
+const pinterestUrl =
+  'https://api.pinterest.com/v3/users/jessicamalba/?access_token=2222904fa9e29280188a94b9f940eea54fdc2344f4c666f7aa86a3187d47858d';
+
 //
 const Iframe = ({ title, url, onClick, edit, style }) => (
   <div
@@ -242,22 +258,29 @@ const ThumbNailSwitchDetail = ({
         >
           {selected ? <a href={url}>{title} </a> : title}
         </span>
-        <div>
-          <small style={{ background: 'whitesmoke' }}>{url}</small>
+        <div
+          style={{
+            maxWidth: '80%',
+            // TODO: fix line break
+            maxHeight: 80,
+            background: 'whitesmoke',
+            fontSize: 'small'
+          }}
+        >
+          {descr}
         </div>
       </div>
     ) : (
       <div
         style={{
           position: 'relative',
-          width: '100%',
+          width: '90%',
           height: '100%'
         }}
       >
         <div style={{ fontSize: '18px' }}>
           <a href={url}>{title} </a>
         </div>
-        <small>{url}</small>
         <p>{descr}</p>
       </div>
     )}
@@ -327,10 +350,53 @@ class MediaSearch extends Component {
 
   static defaultProps = { onChange: () => null, media: [] };
 
-  constructor(props) {
-    super(props);
-    this.state = { selected: 'wikipedia' };
-  }
+    state = { selected: 'wikipedia' };
+
+  activeTab = sel => {
+    const { selectedMedia, onChange } = this.props;
+    switch (sel) {
+      case 'overview':
+        return <MediaOverview data={selectedMedia} onChange={onChange} />;
+      case 'wikipedia':
+        return (
+          <MetaSearch
+            onChange={onChange}
+            preSelected={selectedMedia}
+            searchFn={searchWikipedia}
+            type="Article"
+          />
+        );
+      case 'youtube':
+        return (
+          <MetaSearch
+            onChange={onChange}
+            preSelected={selectedMedia}
+            searchFn={searchYoutube}
+            type="Video"
+          />
+        );
+      case 'giphy':
+        return (
+          <MetaSearch
+            preSelected={selectedMedia}
+            onChange={onChange}
+            searchFn={searchGiphy}
+            type="GIF"
+          />
+        );
+      case 'flickr':
+        return (
+          <MetaSearch
+            preSelected={selectedMedia}
+            onChange={onChange}
+            searchFn={searchFlickr}
+            type="GIF"
+          />
+        );
+      default:
+        return <div>Error selection</div>;
+    }
+  };
 
   render() {
     const { selectedMedia, onChange } = this.props;
@@ -343,35 +409,6 @@ class MediaSearch extends Component {
     });
 
     const updState = sel => () => this.setState({ selected: sel });
-
-    const activeTab = sel => {
-      switch (sel) {
-        case 'overview':
-          return <MediaOverview data={selectedMedia} onChange={onChange} />;
-        case 'wikipedia':
-          return (
-            <MetaSearch
-              onChange={onChange}
-              search={searchWikipedia}
-              type="Article"
-            />
-          );
-        case 'youtube':
-          return (
-            <MetaSearch
-              onChange={onChange}
-              search={searchYoutube}
-              type="Video"
-            />
-          );
-        case 'giphy':
-          return (
-            <MetaSearch onChange={onChange} search={searchGiphy} type="GIF" />
-          );
-        default:
-          return <div>{'Error selection'}</div>;
-      }
-    };
 
     return (
       <UIthemeContext.Consumer>
@@ -390,7 +427,7 @@ class MediaSearch extends Component {
                 id="wikipedia"
               >
                 <i
-                  className={`fa fa-wikipedia-w fa-1x col-1`}
+                  className="fa fa-wikipedia-w fa-1x col-1"
                   style={{ fontSize: '19px' }}
                   aria-hidden="true"
                 />
@@ -403,7 +440,7 @@ class MediaSearch extends Component {
                 id="youtube"
               >
                 <i
-                  className={`fa fa-youtube fa-1x col-1`}
+                  className="fa fa-youtube fa-1x col-1"
                   style={{ fontSize: '19px' }}
                   aria-hidden="true"
                 />
@@ -428,21 +465,43 @@ class MediaSearch extends Component {
               <button
                 type="button"
                 className="btn"
+                onClick={updState('flickr')}
+                style={btnStyle(selected === 'flickr', uiColor)}
+                id="flickr"
+              >
+                <small
+                  style={{
+                    paddingLeft: '13px',
+                    paddingRight: '13px',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  Flickr
+                </small>
+              </button>
+              <button
+                type="button"
+                className="btn"
                 onClick={updState('overview')}
                 style={btnStyle(selected === 'overview', uiColor)}
                 id="overview"
               >
-                <i
-                  className={`fa fa-link fa-1x col-1`}
-                  style={{ fontSize: '19px' }}
-                  aria-hidden="true"
-                />
+                <span style={{ fontWeight: 'bold', fontSize: 'large' }}>
+                  Overview
+                </span>
+                {
+                  // <i
+                  // className="fa fa-link fa-1x col-1"
+                  // style={{ fontSize: '19px' }}
+                  // aria-hidden="true"
+                  // />
+                }
               </button>
             </div>
             <div className="tab-content">
               {/* TODO: check fade */}
               <div className={` ${fullDim}`} role="tabpanel">
-                {activeTab(selected)}
+                {this.activeTab(selected)}
               </div>
             </div>
           </div>
@@ -523,7 +582,7 @@ function SearchBar({ onSearch }) {
       <input
         ref={searchBar => (this.searchBar = searchBar)}
         type="text"
-        placeholder={'Search...'}
+        placeholder="Search..."
         onChange={onSearch}
       />
     </form>
@@ -547,28 +606,31 @@ function ActiveBtn({ selected, onClick }) {
 
 class MetaSearch extends Component {
   static propTypes = {
-    search: PropTypes.oneOf(null, PropTypes.func),
+    searchFn: PropTypes.func,
     type: PropTypes.string,
     onAdd: PropTypes.func,
-    preSelected: PropTypes.array
+    preSelected: PropTypes.array,
+    defaultQuery: PropTypes.string
   };
 
   static defaultProps = {
-    search: null,
+    searchFn: null,
+    defaultQuery: 'dragon',
     type: null,
     onAdd: d => d,
     selected: null,
     preSelected: []
   };
 
-  // static getDerivedStateFromProps(nextProps) {
-  //   const { search } = nextProps;
-  //   console.log('this getDerivedStateFromProps', this);
-  //   search().then(data => {
-  //     this.setState({ data });
-  //   });
-  //   return null;
-  // }
+  static getDerivedStateFromProps(nextProps) {
+    console.log('newProps');
+    // const { search } = nextProps;
+    // console.log('this getDerivedStateFromProps', this);
+    // search().then(data => {
+    //   this.setState({ data });
+    // });
+    return null;
+  }
 
   constructor(props) {
     super(props);
@@ -579,15 +641,23 @@ class MetaSearch extends Component {
   }
 
   state = {
-    data: this.props.preSelected, // this.props.search === null ? this.props.defaultData : []
-    selected: []
+    data: [], // this.props.search === null ? this.props.defaultData : []
+    selectedIds: this.props.preSelected.map(d => d.id)
   };
 
   componentDidMount() {
-    const { search } = this.props;
-    if (search !== null)
-      search().then(data => this.mounted && this.setState({ data }));
+    const { searchFn, defaultQuery } = this.props;
+    searchFn(defaultQuery).then(
+      data => this.mounted && this.setState({ data })
+    );
   }
+
+  // static getDerivedStateFromProps(nextProps, prevState) {
+  //   const { searchFn, defaultQuery } = this.props;
+  //   searchFn(defaultQuery).then(
+  //     data => this.mounted && this.setState({ data })
+  //   );
+  // }
 
   // shouldComponentUpdate(nextProps, nextState) {
   //   return true;
@@ -599,11 +669,11 @@ class MetaSearch extends Component {
   // }
 
   componentDidUpdate(prevProps, prevState) {
-    const { type, search, onChange } = this.props;
-    const { data, selected } = this.state;
+    const { type, searchFn, onChange } = this.props;
+    const { data, selectedIds } = this.state;
 
-    if (selected.length !== prevState.selected.length) {
-      onChange(selected.map(id => data.find(d => d.id === id)));
+    if (selectedIds.length !== prevState.selectedIds.length) {
+      onChange(selectedIds.map(id => data.find(d => d.id === id)));
     }
 
     // search().then(newData => {
@@ -615,35 +685,38 @@ class MetaSearch extends Component {
     this.mounted = false;
   }
 
+  onSearch = searchStr => {
+    const { searchFn } = this.props;
+    searchFn(searchStr).then(items => {
+      this.setState({ data: items });
+    });
+    // else {
+    //   this.setState({
+    //     // TODO real search query
+    //     results: defaultData.filter(d => d.title === searchStr)
+    //   });
+    // }
+  };
+
+  addItem = id => {
+    this.setState(oldState => ({
+      selectedIds: [...oldState.selectedIds, id]
+    }));
+  };
+
+  removeItem = id =>
+    this.setState(oldState => ({
+      selectedIds: oldState.selectedIds.filter(d => d !== id)
+    }));
+
   render() {
-    const { onSelect, search, type, defaultData, onAdd } = this.props;
-    const { data, selected } = this.state;
+    const { onSelect, search, type, onAdd, defaultQuery } = this.props;
+    const { data, selectedIds } = this.state;
     // let GoogleAuth;
     // const SCOPE = 'https://www.googleapis.com/auth/youtube.force-ssl';
     // Load the API's client and auth2 modules.
     // Call the initClient function after the modules load.
     // }
-    const onSearch = searchStr => {
-      if (search !== null) {
-        search().then(items => {
-          this.setState({ data: items });
-        });
-      } else {
-        this.setState({
-          // TODO real search query
-          results: defaultData.filter(d => d.title === searchStr)
-        });
-      }
-    };
-    const addItem = id => {
-      this.setState(oldState => ({
-        selected: [...oldState.selected, id]
-      }));
-    };
-    const removeItem = id =>
-      this.setState(oldState => ({
-        selected: oldState.selected.filter(d => d !== id)
-      }));
 
     // TODO: fix view height
     return (
@@ -652,8 +725,9 @@ class MetaSearch extends Component {
           <div className="mb-3 w-100">
             <input
               type="text"
-              placeholder={'Search...'}
-              onChange={evt => onSearch(evt.target.value)}
+              placeholder="Search..."
+              defaultValue={defaultQuery}
+              onChange={evt => this.onSearch(evt.target.value)}
             />
           </div>
         </div>
@@ -666,9 +740,11 @@ class MetaSearch extends Component {
               {...d}
             >
               <ActiveBtn
-                selected={selected.includes(d.id)}
+                selected={selectedIds.includes(d.id)}
                 onClick={() =>
-                  selected.includes(d.id) ? removeItem(d.id) : addItem(d.id)
+                  selectedIds.includes(d.id)
+                    ? this.removeItem(d.id)
+                    : this.addItem(d.id)
                 }
               />
             </ThumbCell>

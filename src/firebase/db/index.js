@@ -14,6 +14,7 @@ const addImgToStorage = file => {
     .then(() => new Promise(resolve => resolve(imgRef.getDownloadURL())));
 };
 
+// TODO: error handling
 const uploadImgFields = card => {
   const cardImgFile = card.img ? card.img.file : null;
   const cardChallengeFile =
@@ -45,7 +46,6 @@ const uploadImgFields = card => {
   return Promise.all([cardImgPromise, challImgPromise]).then(values => {
     const imgFields = values.reduce((acc, d) => ({ ...acc, ...d }));
     const newCard = { ...removeFunctionFields(card), ...imgFields };
-    console.log('newCard to be added', newCard);
     return newCard;
   });
 };
@@ -62,8 +62,10 @@ export const doCreateUser = (id, username, email) =>
 
 export const onceGetUsers = () => firestore.collection('users').get();
 
-export const doCreateCard = (uid, card) =>
-  uploadImgFields(card).then(c =>
+export const doCreateCard = (uid, card) => {
+
+  console.log('createCard', card)
+  return uploadImgFields(card).then(c =>
     firestore
       .collection('users')
       .doc(uid)
@@ -71,6 +73,7 @@ export const doCreateCard = (uid, card) =>
       .doc(c.id)
       .set(c)
   );
+}
 
 // TODO: change later
 export const doUpdateCard = doCreateCard;

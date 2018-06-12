@@ -52,7 +52,7 @@ import {
 //   }))
 // });
 
-function updateCard(cardData, mapViewport) {
+function updCardLoc(cardData, mapViewport) {
   const { x, y, tx, ty, vx, vy, ...restData } = cardData;
 
   const vp = new PerspectiveMercatorViewport(mapViewport);
@@ -63,6 +63,27 @@ function updateCard(cardData, mapViewport) {
     loc: { latitude, longitude }
   };
   return updatedCard;
+}
+
+function updCardFloorLoc(cardData) {
+  return { ...cardData, floorLoc: { x: cardData.x, y: cardData.y } };
+}
+
+function updCardTopic(cardData) {
+  return { ...cardData };
+}
+
+function updCard({ cardData, mapViewport, dataView }) {
+  switch (dataView) {
+    case 'geo':
+      return updCardLoc(cardData, mapViewport);
+    case 'topic':
+      return updCardTopic(cardData);
+    case 'floorplan':
+      return updCardFloorLoc(cardData);
+    default:
+      return updCardLoc(cardData, mapViewport);
+  }
 }
 
 const cardTemplateId = 'temp';
@@ -131,9 +152,9 @@ function reducer(state = {}, action) {
     case UPDATE_CARD: {
       const { createdCards } = state;
 
-      const { uid, cardData, mapViewport } = action.options;
+      const { uid, cardData, mapViewport, dataView } = action.options;
 
-      const updatedCard = updateCard(cardData, mapViewport);
+      const updatedCard = updCard({ cardData, mapViewport, dataView });
 
       db.doUpdateCard(uid, updatedCard);
 
@@ -190,8 +211,12 @@ function reducer(state = {}, action) {
     }
 
     case UPDATE_CARD_TEMPLATE: {
-      const { cardData: cardTemplate, mapViewport } = action.options;
-      const updatedTemplate = updateCard(cardTemplate, mapViewport);
+      const { cardData: cardTemplate, mapViewport, dataView } = action.options;
+      const updatedTemplate = updCard({
+        cardData: cardTemplate,
+        mapViewport,
+        dataView
+      });
       return { ...state, cardTemplate: updatedTemplate };
     }
     case DELETE_CARD: {
@@ -247,7 +272,7 @@ function reducer(state = {}, action) {
     }
 
     case TOGGLE_CARD_AUTHORING: {
-      const userLocation = action.options;
+      const { userLocation, width, height} = action.options;
       const enabled = !state.authEnv;
 
       const cardTemplate = {
@@ -255,7 +280,9 @@ function reducer(state = {}, action) {
         template: true,
         loc: userLocation,
         edit: true,
-        tags: []
+        tags: [],
+        challenge: null,
+        floorLoc: {x: width/2, y: height/2}
       };
 
       // const authEnvCards = [...createdCards, cardTemplate];
