@@ -11,7 +11,50 @@ const re = new RegExp(p);
 
 module.exports = [
   {
-    enforce: 'pre',
+    // global css
+    test: /\.css$/,
+    include: /[/\\]node_modules[/\\]/,
+    // include: /[\/\\](globalStyles)[\/\\]/,
+    loaders: ['style-loader?sourceMap', 'css-loader']
+  },
+  {
+    test: /\.scss$/,
+    exclude: /[/\\]components[/\\]/,
+    use: [
+      {
+        loader: 'style-loader'
+      },
+      {
+        loader: 'css-loader'
+      },
+      {
+        loader: 'sass-loader',
+        options: {
+          includePaths: [path.resolve(__dirname, 'node_modules/bootstrap')]
+        }
+      }
+    ]
+  },
+  // local scss modules
+  {
+    test: /\.scss$/,
+    include: /[/\\](components)[/\\]/,
+    exclude: /[/\\](node_modules)[/\\]/,
+    loaders: [
+      'style-loader?sourceMap',
+      'css-loader?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]',
+      'postcss-loader',
+      'sass-loader'
+    ]
+  },
+  // {
+  //   enforce: 'pre',
+  //   test: /\.js$/,
+  //   loader: 'babel-loader?cacheDirectory=true',
+  //   include: path.join(__dirname, 'node_modules/@tensorflow/tfjs-tsne')
+  // },
+  {
+    // enforce: 'pre',
     test: /\.js$/,
     loader: 'babel-loader?cacheDirectory=true',
     exclude: /(node_modules|bower_components|public)/
@@ -69,5 +112,5 @@ module.exports = [
     test: /\.csv/,
     exclude: /(node_modules|bower_components)/,
     loader: 'dsv-loader'
-  },
+  }
 ];

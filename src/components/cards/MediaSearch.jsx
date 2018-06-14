@@ -42,6 +42,8 @@ const flickrUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.se
   process.env.FlickrAccessToken
 }`;
 
+console.log('flickrUrl', flickrUrl);
+
 const searchFlickr = (q = 'dragon') =>
   // new Promise(resolve => {
   //
@@ -58,14 +60,20 @@ const searchFlickr = (q = 'dragon') =>
       per_page: 25
     }
   }).then(({ photos: { photo: rawResult } }) => {
+    console.log('rawResult', rawResult);
+
     const results = rawResult.map(
-      ({ title, url_m: url, machine_tags: machineTags, tags }) => ({
-        title,
-        descr: tags,
-        thumbnail: url,
-        url,
-        type: 'photo'
-      })
+      ({ title, farm, server, id, url_m: imgSrc, secret, tags }) => {
+        const url = `https://farm${farm}.staticflickr.com/${server}/${id}_${secret}.jpg`;
+        return {
+          title,
+          descr: tags,
+          thumbnail: imgSrc,
+          url,
+          id,
+          type: 'photo'
+        };
+      }
     );
     //
     return new Promise(resolve => resolve(results));
@@ -259,12 +267,13 @@ const ThumbNailSwitchDetail = ({
           {selected ? <a href={url}>{title} </a> : title}
         </span>
         <div
+          className="mt-2"
           style={{
             maxWidth: '80%',
             // TODO: fix line break
             maxHeight: 80,
-            background: 'whitesmoke',
-            fontSize: 'small'
+            background: 'whitesmoke'
+            // fontSize: 'small'
           }}
         >
           {descr}
@@ -288,47 +297,49 @@ const ThumbNailSwitchDetail = ({
 );
 
 ThumbNailSwitchDetail.propTypes = {
-  className: PropTypes.string
+  className: PropTypes.string,
+  children: PropTypes.any,
+  uiColor: PropTypes.string,
+  focusColor: PropTypes.string
 };
 
 ThumbNailSwitchDetail.defaultProps = {
-  className: ''
+  className: '',
+  children: null,
+  uiColor: 'grey',
+  focusColor: 'black'
 };
 
-const ThumbCell = ({ children, className, ...props }) => (
-  <UIthemeContext.Consumer>
-    {({ uiColor, focusColor }) => (
-      <div
-        className={`p-3 ${className}`}
-        style={{
-          height: '40vh',
-          width: '100%',
-          maxHeight: 300,
-          ...props.style,
-          cursor: 'pointer',
-          position: 'relative',
-          ...createShadowStyle(props.selected ? focusColor : uiColor)
-        }}
-      >
-        <div
-          className="mr-3"
-          style={{ position: 'absolute', zIndex: 300, right: 0 }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'right' }}>
-            {children}
-          </div>
-        </div>
-        <ThumbNailSwitchDetail {...props} />
-      </div>
-    )}
-  </UIthemeContext.Consumer>
+const ThumbCell = ({ children, className, focusColor, uiColor, ...props }) => (
+  <div
+    className={`p-3 ${className}`}
+    style={{
+      height: '40vh',
+      width: '100%',
+      maxHeight: 300,
+      ...props.style,
+      cursor: 'pointer',
+      position: 'relative',
+      ...createShadowStyle(props.selected ? focusColor : uiColor)
+    }}
+  >
+    <div
+      className="mr-3"
+      style={{ position: 'absolute', zIndex: 300, right: 0 }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'right' }}>{children}</div>
+    </div>
+    <ThumbNailSwitchDetail {...props} />
+  </div>
 );
 
 ThumbCell.propTypes = {
   children: PropTypes.node,
   className: PropTypes.string,
   style: PropTypes.object,
-  selected: PropTypes.bool
+  selected: PropTypes.bool,
+  uiColor: PropTypes.string,
+  focusColor: PropTypes.string
 };
 
 ThumbCell.defaultProps = {
@@ -340,7 +351,9 @@ ThumbCell.defaultProps = {
   selected: false,
   onClick: d => d,
   style: {},
-  className: ''
+  className: '',
+  uiColor: 'grey',
+  focusColor: 'black'
 };
 
 class MediaSearch extends Component {
@@ -350,7 +363,7 @@ class MediaSearch extends Component {
 
   static defaultProps = { onChange: () => null, media: [] };
 
-    state = { selected: 'wikipedia' };
+  state = { selected: 'wikipedia' };
 
   activeTab = sel => {
     const { selectedMedia, onChange } = this.props;
@@ -364,6 +377,7 @@ class MediaSearch extends Component {
             preSelected={selectedMedia}
             searchFn={searchWikipedia}
             type="Article"
+            key="wikipedia"
           />
         );
       case 'youtube':
@@ -373,6 +387,7 @@ class MediaSearch extends Component {
             preSelected={selectedMedia}
             searchFn={searchYoutube}
             type="Video"
+            key="youtube"
           />
         );
       case 'giphy':
@@ -382,6 +397,7 @@ class MediaSearch extends Component {
             onChange={onChange}
             searchFn={searchGiphy}
             type="GIF"
+            key="giphy"
           />
         );
       case 'flickr':
@@ -390,7 +406,8 @@ class MediaSearch extends Component {
             preSelected={selectedMedia}
             onChange={onChange}
             searchFn={searchFlickr}
-            type="GIF"
+            type="Photo"
+            key="flickr"
           />
         );
       default:

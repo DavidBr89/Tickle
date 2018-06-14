@@ -407,6 +407,16 @@ class TagList extends Component {
           >
             Add
           </button>
+          <button
+            className="btn btn-active ml-2"
+            style={{ background: uiColor }}
+            onClick={() => {
+              this.setState({ value: '' });
+              handleDelete(value);
+            }}
+          >
+            Add
+          </button>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
           {data.map((d, i) => (
@@ -446,15 +456,16 @@ class TagInput extends React.Component {
     // const tags =
     // iniTags !== null ? iniTags.map((text, i) => ({ id: i, text })) : [];
 
-    this.state = { tags: tags || [] };
     this.handleDelete = this.handleDelete.bind(this);
     this.handleAddition = this.handleAddition.bind(this);
   }
 
+  state = { tags: this.props.tags || [] };
+
   handleDelete(i) {
-    const tags = this.state.tags;
-    tags.splice(i, 1);
-    this.setState({ tags });
+    const { tags } = this.state;
+    const newTags = tags.filter((d, j) => i !== j);
+    this.setState({ tags: newTags });
   }
 
   componentDidUpdate(prevProps, prevState) {

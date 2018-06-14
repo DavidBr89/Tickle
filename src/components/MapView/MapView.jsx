@@ -21,9 +21,6 @@ import {
 
 import * as d3 from 'd3';
 
-// TODO: move
-import WindowContext from 'Src/WindowContext';
-
 import withAuthorization from '../withAuthorization';
 
 import { colorScale, cardTypeColorScale } from '../cards/styles';
@@ -251,7 +248,7 @@ class MapView extends Component {
     // this.gridSpan = this.gridSpan.bind(this);
 
     const width = window.innerWidth;
-    const height = window.innerHeight ;
+    const height = window.innerHeight;
 
     window.addEventListener('resize', () => {
       screenResize({
@@ -345,7 +342,7 @@ class MapView extends Component {
       extendSelectedCard,
       toggleCardChallenge,
       fetchDirection,
-      filterCards,
+      filter,
       dataView,
       // toggleTagList,
       toggleTsneView,
@@ -430,7 +427,8 @@ class MapView extends Component {
                 style={{
                   position: 'relative',
                   zIndex: 4000,
-                  background: 'whitesmoke'
+                  background: 'whitesmoke',
+                  display: 'none'
                 }}
                 onClick={() =>
                   toggleCardAuthoring({ userLocation, width, height })
@@ -451,13 +449,14 @@ class MapView extends Component {
                 className="btn mr-3"
                 placeholder="Search Cards"
                 type="text"
-                onChange={evt => filterCards(evt.target.value)}
+                onChange={evt => filter(evt.target.value)}
                 onFocus={() => toggleSearch(true)}
                 onBlur={() => toggleSearch(false)}
                 style={{
                   background: 'whitesmoke',
                   textAlign: 'left',
                   position: 'relative',
+                  display: 'none',
                   // right: 0,
                   zIndex: 4000
                 }}

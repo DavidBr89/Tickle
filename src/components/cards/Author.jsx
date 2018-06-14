@@ -6,7 +6,7 @@ import { scaleLinear, extent, range, scaleOrdinal } from 'd3';
 import cx from './Card.scss';
 import colorClasses from '../utils/colorClasses';
 
-import { skillTypes } from '../../dummyData';
+// import { skillTypes } from '../../dummyData';
 import CardMarker from './CardMarker';
 import { FieldSet } from './layout';
 

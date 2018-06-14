@@ -1,5 +1,8 @@
 import React, { Fragment, Component } from 'react';
 import PropTypes from 'prop-types';
+// import * as tf from '@tensorflow/tfjs';
+// import * as tsne from '@tensorflow/tfjs-tsne';
+
 import * as d3 from 'd3';
 
 // import tsnejs from 'tsne';
@@ -10,7 +13,14 @@ import MapGL from 'react-map-gl';
 
 // import louvain from './jlouvain';
 
-import { intersection, union, uniq, isEqualWith } from 'lodash';
+import {
+  intersection,
+  difference,
+  union,
+  uniq,
+  isEqualWith,
+  isEqual
+} from 'lodash';
 import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 import memoize from 'memoize-one';
 
@@ -73,7 +83,7 @@ const offsetMapViewport = ({
   return ret;
 };
 
-function somFy(data, width, height, callback = d => d) {
+function somFy(data, width, height) {
   const options = {
     fields: data.length,
     torus: true,
@@ -88,17 +98,18 @@ function somFy(data, width, height, callback = d => d) {
   // TODO: verify with different data sets
   const som = new SOM(Math.floor(width / 10), Math.floor(width / 20), options);
   som.setTraining(dists);
-  while (som.trainOne()) {
-    const somPos = som.predict(dists);
-    callback(somPos);
-  }
+  // while (som.trainOne()) {
+  //   const somPos = som.predict(dists);
+  //   callback(somPos);
+  // }
+
   const somPos = som.predict(dists);
   // TODO: verify memoize
   console.log('somFy, somFy', somFy);
   return somPos;
 }
 
-function lapFy(data) {
+function lapFy(data, width, height) {
   const n = data.length;
   const m = Math.ceil(Math.sqrt(n));
 
@@ -114,7 +125,11 @@ function lapFy(data) {
   const x = d3
     .scaleLinear()
     .domain([0, m - 1])
-    .range([0, 300]);
+    .range([0, width]);
+  const y = d3
+    .scaleLinear()
+    .domain([0, m - 1])
+    .range([0, height]);
 
   const la = lap(n, costs);
   const resLa = [...la.col].map((c, k) => {
@@ -123,7 +138,7 @@ function lapFy(data) {
     return { i, j };
   });
 
-  return resLa.map(d => [x(d.i), x(d.j)]);
+  return resLa.map(d => [x(d.i), y(d.j)]);
 }
 
 class ForceOverlay extends Component {
@@ -180,14 +195,79 @@ class ForceOverlay extends Component {
     labels: false
   };
 
-  makeCluster = memoize(
-    ({ data, width, height }) => somFy(data, width, height),
-    (a, b) =>
-      a.width === b.width &&
-      a.height === b.height &&
-      // TODO: when u update stuff
-      isEqualWith(a.data, b.data, d => d.id)
-  );
+  cache = [];
+  oldData = [];
+
+  myMemoizer({ data, width, height }) {
+    if (data.length !== this.oldData.length) {
+      this.cache = somFy([...data], width, height);
+      this.oldData = data;
+      return this.cache;
+    }
+
+    const arrayIsEqual = data.every(a => {
+      const oldItem = this.oldData.find(b => a.id === b.id);
+      // console.log('oldItem', oldItem);
+      if (!oldItem) return false;
+      // console.log(
+      //   'oldItem',
+      //   oldItem.tags,
+      //   'newItem',
+      //   a.tags,
+      //   difference(oldItem.tags, a.tags)
+      // );
+      return (
+        difference(a.tags, oldItem.tags).length === 0 &&
+        difference(oldItem.tags, a.tags).length === 0
+      );
+    });
+
+    console.log('arrayIsEqual', arrayIsEqual);
+    if (arrayIsEqual) return this.cache;
+
+    const timeStamp = new Date().getMilliseconds();
+    this.timeStamp = timeStamp;
+    this.cache = somFy([...data], width, height);
+    this.oldData = [...data.map(d => ({ ...d }))];
+    return this.cache;
+  }
+
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   const arrayIsEqual = nextProps.data.every(a => {
+  //     const oldItem = this.props.data.find(b => a.id === b.id);
+  //     // console.log('oldItem', oldItem);
+  //     if (!oldItem) return false;
+  //     console.log('oldItem', oldItem.tags, 'newItem', a.tags);
+  //     return a.tags.length === oldItem.tags.length;
+  //   });
+  //   return (
+  //     !arrayIsEqual ||
+  //     this.props.selectedCardId !== nextProps.selectedCardId ||
+  //     this.props.extCardId !== nextProps.extCardId
+  //   );
+  // }
+
+  // makeCluster = memoize(
+  //   ({ data, width, height }) => somFy(data, width, height),
+  //   // lapFy(somFy(data, width, height), width, height),
+  //   (argA, argB) =>
+  //     // isEqualWith(argA.data, argB.data, (a, b) => {
+  //     // console.log('a', a, 'b', b);
+  //     // return a.every(
+  //     //   aa =>
+  //     //     b.find(
+  //     //       bb =>
+  //     //         aa.id === bb.id &&
+  //     //         aa.tags &&
+  //     //         bb.tags &&
+  //     //         aa.tags.length === bb.tags.length
+  //     //     ) !== undefined
+  //     // );
+  //     // });
+  //     (
+  //       argA.width === argB.width && argA.height === argB.height && arrayIsEqual
+  //     // TODO: when u update stuff
+  // );
 
   constructor(props) {
     super(props);
@@ -214,20 +294,28 @@ class ForceOverlay extends Component {
     // TODO: rename
     onMapViewportChange(viewport);
 
+    // const dataX = tf.randomUniform([200, 10]);
+    // const tsneOpt = tsne.tsne(dataX);
+    // tsneOpt.compute(1).then(() => {
+    //   // tsne.coordinate returns a *tensor* with x, y coordinates of
+    //   // the embedded data.
+    //   const coordinates = tsneOpt.coordinates();
+    //   coordinates.print();
+    // });
+
     this.state = {
       nodes,
       tsnePos: initPos,
       viewport
     };
 
-    this.layout = this.layout.bind(this);
+    // this.layout = this.layout.bind(this);
 
     this.forceSim = d3.forceSimulation();
   }
 
   componentDidUpdate() {
-    // clearTimeout(this.id);
-    // this.ids.map(clearTimeout);
+    //
   }
 
   componentWillUnmount() {
@@ -239,9 +327,15 @@ class ForceOverlay extends Component {
     const { mode, delay, data, padding, force, width, height } = this.props; // this.props;
     const { viewport } = this.state;
 
-    // console.log('viewport', viewport);
-    const somPos = this.makeCluster({ data, width, height });
+    console.log('render mem');
+    const somPos = this.myMemoizer({ data, width, height });
+    console.log('somPos', somPos);
+    // Create some data
+    // const data000 = tf.randomUniform([2000, 10]);
+    // console.log('tsne', tsne);
 
+    // Initialize the tsne optimizer
+    //
     const geoPos = data.map(({ loc }) =>
       viewport.project([loc.longitude, loc.latitude])
     );
@@ -383,20 +477,32 @@ class ForceOverlay extends Component {
     }
 
     if (mode === 'floorplan') {
+      const xFloorScale = d3
+        .scaleLinear()
+        .domain(d3.extent(nodes, d => d.floorLoc.x))
+        .range([0, width]);
+
+      const yFloorScale = d3
+        .scaleLinear()
+        .domain(d3.extent(nodes, d => d.floorLoc.y))
+        .range([0, height]);
+
       return (
         <div
           style={{
             backgroundImage: `url(${floorplanImg})`,
-            backgroundRepeat: 'round',
+            // backgroundRepeat: 'round',
+            backgroundSize: 'cover',
             width,
             height
           }}
         >
           {children}
-          {nodes.map(attr =>
+          {nodes.map(n =>
             children({
-              ...attr,
-              ...(attr.floorLoc || { x: width / 2, y: height / 2 })
+              ...n,
+              x: xFloorScale(n.floorLoc ? n.floorLoc.x : width / 2),
+              y: yFloorScale(n.floorLoc ? n.floorLoc.y : height / 2)
             })
           )}
         </div>

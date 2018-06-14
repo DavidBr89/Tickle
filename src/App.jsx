@@ -5,7 +5,8 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { createLogger } from 'redux-logger';
 import { Provider } from 'react-redux';
 
-// import withAuthentication from './components/withAuthentication';
+import { hot } from 'react-hot-loader';
+// import withAuthentication from './components/withAuthentication';oo
 // import AuthUserContext from './components/AuthUserContext';
 
 // import { firebase } from 'Firebase';
@@ -16,7 +17,7 @@ import Routes from './Routes';
 
 // import Login from './components/Login';
 
-import { dummyCards } from './dummyData';
+// import { dummyCards } from './dummyData';
 
 import {
   fetchCards,
@@ -36,7 +37,7 @@ const defaultLocation = {
   radius: 500
 };
 
-const defaultCards = [...dummyCards];
+// const defaultCards = [...dummyCards];
 const mapZoom = 9;
 const [width, height] = [100, 100];
 // debug('lego:routes');
@@ -47,7 +48,10 @@ const defaultCardTemplate = {
   challenge: null,
   edit: true,
   tags: []
+  // floorLoc: { x: 0, y: 0 }
 };
+const cardTemplateId = 'temp';
+
 const defaultState = {
   width,
   height,
@@ -84,11 +88,12 @@ const defaultState = {
     authUser: { uid: null }
   },
   Cards: {
+    cardTemplateId,
     readableCards: [],
     createdCards: [],
-    selectedCardId: null,
-    cardTemplate: { ...defaultCardTemplate },
-    defaultCardTemplate,
+    // TODO: update
+    selectedCardId: cardTemplateId,
+    tmpCard: defaultCardTemplate,
     challenges: [],
     cardChallengeOpen: false
     // TODO: outsource
@@ -96,7 +101,9 @@ const defaultState = {
   DataView: {
     dataView: 'topic',
     tsneView: false,
-    gridView: true
+    gridView: true,
+    authEnv: true,
+    searchString: null
   }
 };
 
@@ -111,10 +118,9 @@ function configureStore(rootReducer, initialState) {
 
   const loggerMiddleware = createLogger();
   const enhancer = composeEnhancers(
-    applyMiddleware(
-      thunkMiddleware, // lets us dispatch() functions
-      process.env.NODE_ENV === 'development' && loggerMiddleware // neat middleware that logs actions
-    )
+    process.env.NODE_ENV === 'development'
+      ? applyMiddleware(thunkMiddleware, loggerMiddleware)
+      : applyMiddleware(thunkMiddleware)
   );
 
   const store = createStore(rootReducer, initialState, enhancer);
@@ -180,4 +186,4 @@ const App = () => (
   </Provider>
 );
 
-export default App;
+export default hot(module)(App);

@@ -27,15 +27,44 @@ const mapStateToProps = state => {
   const {
     readableCards,
     createdCards,
-    cardTemplate,
     selectedCardId,
-    authEnv
+    cardTemplateId,
+    tmpCard
   } = state.Cards;
+
+  // TODO: own dim reducer
+  const { width, height } = state.MapView;
+
+  const { userLocation } = state.MapView;
+
+  const { authEnv, searchString } = state.DataView;
 
   // const { userLocation } = state.MapView;
 
   // console.log('cardTemplate', cardTemplate);
-  const cards = authEnv ? [...createdCards, cardTemplate] : readableCards;
+  //
+  const defaultCardTemplate = {
+    id: cardTemplateId,
+    template: true,
+    loc: userLocation,
+    edit: true,
+    tags: [],
+    challenge: null,
+    floorLoc: { x: width / 2, y: height / 2 }
+  };
+  const templateCard = {
+    ...defaultCardTemplate,
+    ...tmpCard,
+    tags: tmpCard.tags || []
+  };
+
+  const cards = (authEnv
+    ? [...createdCards, templateCard]
+    : readableCards
+  ).filter(c => searchString === null || c.title === searchString);
+
+  console.log('cards', cards);
+
   // TODO: simplify
   const { uid } =
     state.Session.authUser !== null ? state.Session.authUser : { uid: null };
@@ -86,11 +115,11 @@ const mergeProps = (state, dispatcherProps) => {
   const onCardDrop = cardData =>
     selectedCardId === 'temp'
       ? updateCardTemplate({ uid, cardData, mapViewport, dataView })
-      : updateCard({ uid, cardData, mapViewport , dataView});
+      : updateCard({ uid, cardData, mapViewport, dataView });
 
   const cardAction = cardData =>
     selectedCardId === 'temp'
-      ? asyncCreateCard({ uid, cardData, mapViewport , dataView})
+      ? asyncCreateCard({ uid, cardData, mapViewport, dataView })
       : asyncRemoveCard({ uid, cid: cardData.id });
 
   const onCardUpdate = cardData =>

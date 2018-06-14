@@ -124,7 +124,7 @@ export function fetchCardTemplates(uid) {
 }
 
 export function asyncCreateCard({ cardData, mapViewport, uid }) {
-  const { x, y, tx, ty, vx, vy, ...restData } = cardData;
+  const { x, y, tx, ty, vx, vy, tags, ...restData } = cardData;
 
   // console.log('restData', restData);
   const vp = new PerspectiveMercatorViewport(mapViewport);
@@ -132,10 +132,12 @@ export function asyncCreateCard({ cardData, mapViewport, uid }) {
   const [longitude, latitude] = vp.unproject([x, y]);
 
   //
+  console.log('new card', tags);
   const newCard = {
     ...restData,
     loc: { latitude, longitude },
     template: false,
+    tags: tags || [],
     // TODO: change
     id: gen.generate(Date.now())
   };

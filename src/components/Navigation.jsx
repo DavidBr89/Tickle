@@ -9,11 +9,11 @@ import AuthUserContext from './AuthUserContext';
 
 // const zip= rows=>rows[0].map((_,c)=>rows.map(row=>row[c]))
 
-const authRoutes = [routes.LANDING, routes.MAP, routes.ACCOUNT];
-const authRoutesNames = ['Landing', 'Map', 'Account'];
+const authRoutes = [routes.LANDING, routes.MAP /* , routes.ACCOUNT */];
+const authRoutesNames = ['Home', 'Authur Cards'/* , 'Account' */];
 
 const nonAuthRoutes = [routes.LANDING, routes.SIGN_IN];
-const nonAuthRoutesNames = ['Landing', 'Sign-In'];
+const nonAuthRoutesNames = ['Home', 'Sign-In'];
 
 const Navigation = ({ authUser, children }) => (
   <React.Fragment>

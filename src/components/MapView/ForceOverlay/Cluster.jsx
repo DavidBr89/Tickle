@@ -84,10 +84,10 @@ class Cluster extends Component {
       .map(c => {
         const centerPos = findCenterPos(c.values);
         const pad = 50;
-        const boundedCenterPos = [
-          Math.min(Math.max(pad, centerPos[0]), width - pad),
-          Math.min(Math.max(pad, centerPos[1]), height - pad)
-        ];
+        // const boundedCenterPos = [
+        //   Math.min(Math.max(pad, centerPos[0]), width - pad),
+        //   Math.min(Math.max(pad, centerPos[1]), height - pad)
+        // ];
 
         const sets = setify(c.values).sort(
           (a, b) => b.values.length - a.values.length
@@ -107,9 +107,10 @@ class Cluster extends Component {
         const ids = c.values.map(e => e.id);
         const tagKeys = tags.map(e => e.key);
 
-        const dist = 10; // Math.max(relatedComp.r, 4);
+        // const dist = 10; // Math.max(relatedComp.r, 4);
         const values = c.values.map(v => ({
           ...v,
+          // TODO: update
           x: centerPos[0], // Math.min(Math.max(v.x, centerPos[0] + dist), v.x),
           y: centerPos[1] // Math.min(Math.max(v.y, centerPos[1] + dist), v.y)
         }));
@@ -183,10 +184,9 @@ class Cluster extends Component {
       return [...acc, ...curNodes];
     }, []);
 
-    const [w, h] = [150, 150];
+    // const [w, h] = [150, 150];
 
     const sets = setify(clusteredNodes).filter(d => d.count > 0);
-    d3.scale;
     // const cl = d3.scaleOrdinal
     //   .domain(sets.map(s => s.key))
     //   .range([

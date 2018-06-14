@@ -141,7 +141,7 @@ function reducer(state = {}, action) {
         createdCards: newCards,
         selectedCardId: newCard.id,
         extCardId: null,
-        cardTemplate: state.defaultCardTemplate
+        tmpCard: {}
       };
     }
 
@@ -156,6 +156,7 @@ function reducer(state = {}, action) {
 
       const updatedCard = updCard({ cardData, mapViewport, dataView });
 
+      // TODO: on Success/Error
       db.doUpdateCard(uid, updatedCard);
 
       const updatedCards = createdCards.map(c => {
@@ -217,7 +218,8 @@ function reducer(state = {}, action) {
         mapViewport,
         dataView
       });
-      return { ...state, cardTemplate: updatedTemplate };
+      console.log('cardTemplate', cardTemplate);
+      return { ...state, tmpCard: updatedTemplate };
     }
     case DELETE_CARD: {
       const { createdCards } = state;
@@ -225,8 +227,8 @@ function reducer(state = {}, action) {
 
       const oldCardIndex = createdCards.findIndex(c => c.id === cid);
       const newCreatedCards = createdCards.filter(c => c.id !== cid);
-      console.log('jump to', cid, Math.max(0, oldCardIndex - 1));
-      const selectedCardId = newCreatedCards[newCreatedCards.length - 1].id;
+      // console.log('jump to', cid, Math.max(0, oldCardIndex - 1));
+      // const selectedCardId = newCreatedCards[newCreatedCards.length - 1].id;
       return {
         ...state,
         createdCards: newCreatedCards,
@@ -272,18 +274,8 @@ function reducer(state = {}, action) {
     }
 
     case TOGGLE_CARD_AUTHORING: {
-      const { userLocation, width, height} = action.options;
+      const { userLocation, width, height } = action.options;
       const enabled = !state.authEnv;
-
-      const cardTemplate = {
-        id: cardTemplateId,
-        template: true,
-        loc: userLocation,
-        edit: true,
-        tags: [],
-        challenge: null,
-        floorLoc: {x: width/2, y: height/2}
-      };
 
       // const authEnvCards = [...createdCards, cardTemplate];
 
@@ -291,7 +283,7 @@ function reducer(state = {}, action) {
         ...state,
         authEnv: enabled,
         // authEnvCards,
-        cardTemplate,
+        cardTemplate: {},
         selectedCardId: enabled ? cardTemplateId : null
         // cards
         // isCardDragging
