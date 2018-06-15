@@ -28,6 +28,9 @@ node_modules
 .cache-loader
 
 # Ignore build files
+dist
+
+# Ignore build files
 public
 
 # Ignore api keys
