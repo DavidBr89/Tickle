@@ -13,6 +13,11 @@ export function receiveCreatedCards(options) {
   return { type: RECEIVE_CREATED_CARDS, options };
 }
 
+export const LOADING_CARDS = 'LOADING_CARDS';
+export function loadingCards(options) {
+  return { type: LOADING_CARDS, options };
+}
+
 export const RECEIVE_CARD_TEMPLATES = 'RECEIVE_CARD_TEMPLATES';
 export function receiveCardTemplates(options) {
   return { type: RECEIVE_CARD_TEMPLATES, options };

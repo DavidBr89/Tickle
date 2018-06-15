@@ -278,9 +278,7 @@ class Cluster extends Component {
           return (
             <div
               key={d.tagKeys.join('-')}
-              className="p-1"
               style={{
-                border: 'grey solid 1px',
                 // borderRadius: '10%',
                 position: 'absolute',
                 transition: 'left 500ms, top 500ms',
@@ -294,9 +292,13 @@ class Cluster extends Component {
                 flexWrap: 'wrap'
               }}
             >
-              {d.tagKeys.length > 0
-                ? d.tagKeys.map(t => <div className="mr-1">{`${t} `} </div>)
-                : 'No tags'}
+              <div className="m-1">
+                <div className="p-1" style={{ border: 'grey dashed 2px' }}>
+                  {d.tagKeys.length > 0
+                    ? d.tagKeys.map(t => <div className="mr-1">{`${t} `} </div>)
+                    : 'No tags'}
+                </div>
+              </div>
             </div>
           );
         })}

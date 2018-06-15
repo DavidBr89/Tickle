@@ -50,7 +50,7 @@ const mapStateToProps = state => {
     edit: true,
     tags: [],
     challenge: null,
-    floorLoc: { x: width / 2, y: height / 2 }
+    floorLoc: { relX: 0.5, relY: 0.5 }
   };
   const templateCard = {
     ...defaultCardTemplate,

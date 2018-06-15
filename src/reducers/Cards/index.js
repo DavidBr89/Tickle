@@ -65,8 +65,14 @@ function updCardLoc(cardData, mapViewport) {
   return updatedCard;
 }
 
-function updCardFloorLoc(cardData) {
-  return { ...cardData, floorLoc: { x: cardData.x, y: cardData.y } };
+function updCardFloorLoc(cardData, width, height) {
+  return {
+    ...cardData,
+    floorLoc: {
+      relX: cardData.x / width,
+      relY: cardData.y / height
+    }
+  };
 }
 
 function updCardTopic(cardData) {
@@ -74,13 +80,14 @@ function updCardTopic(cardData) {
 }
 
 function updCard({ cardData, mapViewport, dataView }) {
+  const { width, height } = mapViewport;
   switch (dataView) {
     case 'geo':
       return updCardLoc(cardData, mapViewport);
     case 'topic':
       return updCardTopic(cardData);
     case 'floorplan':
-      return updCardFloorLoc(cardData);
+      return updCardFloorLoc(cardData, width, height);
     default:
       return updCardLoc(cardData, mapViewport);
   }

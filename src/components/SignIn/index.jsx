@@ -9,7 +9,7 @@ import { auth } from 'Firebase';
 import * as routes from 'Constants/routes';
 
 const SignInPage = ({ history }) => (
-  <div>
+  <div className="ml-3" style={{ marginTop: 60}}>
     <h1>SignIn</h1>
     <SignInForm history={history} />
     <PasswordForgetLink />
@@ -58,7 +58,7 @@ class SignInForm extends Component {
       .then(() => {
         // this.setState(() => ({ ...INITIAL_STATE }));
         console.log('onSubmit', email, password);
-      history.push(routes.MAP);
+        history.push(routes.MAP);
       })
       .catch(error => {
         this.setState(byPropKey('error', error));

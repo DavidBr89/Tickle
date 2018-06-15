@@ -109,6 +109,30 @@ function somFy(data, width, height) {
   return somPos;
 }
 
+function mem({ data, width, height }) {
+  if (data.length !== this.cache.data.length) {
+    this.cache.result = somFy([...data], width, height);
+    this.cache.data = data;
+    return this.cache.data;
+  }
+
+  const arrayIsEqual = data.every(a => {
+    const oldItem = this.cache.data.find(b => a.id === b.id);
+    if (!oldItem) return false;
+    return (
+      difference(a.tags, oldItem.tags).length === 0 &&
+      difference(oldItem.tags, a.tags).length === 0
+    );
+  });
+
+  if (arrayIsEqual) return this.cache.result;
+
+  this.cache.result = somFy([...data], width, height);
+  this.cache.data = data;
+  return this.cache.result;
+}
+console.log('memoize', memoize);
+
 function lapFy(data, width, height) {
   const n = data.length;
   const m = Math.ceil(Math.sqrt(n));
@@ -195,42 +219,31 @@ class ForceOverlay extends Component {
     labels: false
   };
 
-  cache = [];
-  oldData = [];
-
-  myMemoizer({ data, width, height }) {
-    if (data.length !== this.oldData.length) {
-      this.cache = somFy([...data], width, height);
-      this.oldData = data;
-      return this.cache;
-    }
-
-    const arrayIsEqual = data.every(a => {
-      const oldItem = this.oldData.find(b => a.id === b.id);
-      // console.log('oldItem', oldItem);
-      if (!oldItem) return false;
-      // console.log(
-      //   'oldItem',
-      //   oldItem.tags,
-      //   'newItem',
-      //   a.tags,
-      //   difference(oldItem.tags, a.tags)
-      // );
-      return (
-        difference(a.tags, oldItem.tags).length === 0 &&
-        difference(oldItem.tags, a.tags).length === 0
-      );
-    });
-
-    console.log('arrayIsEqual', arrayIsEqual);
-    if (arrayIsEqual) return this.cache;
-
-    const timeStamp = new Date().getMilliseconds();
-    this.timeStamp = timeStamp;
-    this.cache = somFy([...data], width, height);
-    this.oldData = [...data.map(d => ({ ...d }))];
-    return this.cache;
-  }
+  // TODO: encacpsulate
+  // cache = { data: [], result: [] };
+  //
+  // myMemoizer({ data, width, height }) {
+  //   if (data.length !== this.cache.data.length) {
+  //     this.cache.result = somFy([...data], width, height);
+  //     this.cache.data = data;
+  //     return this.cache.data;
+  //   }
+  //
+  //   const arrayIsEqual = data.every(a => {
+  //     const oldItem = this.cache.data.find(b => a.id === b.id);
+  //     if (!oldItem) return false;
+  //     return (
+  //       difference(a.tags, oldItem.tags).length === 0 &&
+  //       difference(oldItem.tags, a.tags).length === 0
+  //     );
+  //   });
+  //
+  //   if (arrayIsEqual) return this.cache.result;
+  //
+  //   this.cache.result = somFy([...data], width, height);
+  //   this.cache.data = data;
+  //   return this.cache.result;
+  // }
 
   // shouldComponentUpdate(nextProps, nextState) {
   //   const arrayIsEqual = nextProps.data.every(a => {
@@ -247,32 +260,29 @@ class ForceOverlay extends Component {
   //   );
   // }
 
-  // makeCluster = memoize(
-  //   ({ data, width, height }) => somFy(data, width, height),
-  //   // lapFy(somFy(data, width, height), width, height),
-  //   (argA, argB) =>
-  //     // isEqualWith(argA.data, argB.data, (a, b) => {
-  //     // console.log('a', a, 'b', b);
-  //     // return a.every(
-  //     //   aa =>
-  //     //     b.find(
-  //     //       bb =>
-  //     //         aa.id === bb.id &&
-  //     //         aa.tags &&
-  //     //         bb.tags &&
-  //     //         aa.tags.length === bb.tags.length
-  //     //     ) !== undefined
-  //     // );
-  //     // });
-  //     (
-  //       argA.width === argB.width && argA.height === argB.height && arrayIsEqual
-  //     // TODO: when u update stuff
-  // );
+  makeCluster = memoize(
+    ({ data, width, height }) => somFy(data, width, height),
+    // lapFy(somFy(data, width, height), width, height),
+    ({ data: dataB }, { data: dataA }) => {
+      if (dataA.length !== dataB.length) {
+        return false;
+      }
+      const arrayIsEqual = dataA.every(a => {
+        const oldItem = dataB.find(b => a.id === b.id) || false;
+        if (!oldItem) return false;
+        return (
+          difference(a.tags, oldItem.tags).length === 0 &&
+          difference(oldItem.tags, a.tags).length === 0
+        );
+      });
+      return arrayIsEqual;
+    }
+  );
 
   constructor(props) {
     super(props);
     const { data } = props;
-    const { width, height, onMapViewportChange } = props;
+    const { width, height, onMapViewportChange, userLocation } = props;
 
     const initPos = data.map(() => [width / 2, height / 2]);
 
@@ -285,37 +295,80 @@ class ForceOverlay extends Component {
     };
 
     const viewport = new PerspectiveMercatorViewport({
-      width,
-      height,
+      width: 800,
+      height: 800,
       zoom: 10,
-      ...defaultLocation
+      ...userLocation
     });
 
     // TODO: rename
     onMapViewportChange(viewport);
 
-    // const dataX = tf.randomUniform([200, 10]);
-    // const tsneOpt = tsne.tsne(dataX);
-    // tsneOpt.compute(1).then(() => {
-    //   // tsne.coordinate returns a *tensor* with x, y coordinates of
-    //   // the embedded data.
-    //   const coordinates = tsneOpt.coordinates();
-    //   coordinates.print();
-    // });
-
     this.state = {
-      nodes,
-      tsnePos: initPos,
+      // nodes,
+      // tsnePos: initPos,
       viewport
     };
 
     // this.layout = this.layout.bind(this);
 
-    this.forceSim = d3.forceSimulation();
+    // this.forceSim = d3.forceSimulation();
   }
 
-  componentDidUpdate() {
-    //
+  // componentDidUpdate(oldProps, oldState) {
+  //   const { width, height } = this.props;
+  //   const { viewport } = this.state;
+  //   // onMapViewportChange(viewport);
+  //
+  //   if (width !== oldProps.width) {
+  //     const newVp = offsetMapViewport({
+  //       ...viewport,
+  //       width,
+  //       height,
+  //       offset: [0, height / 4]
+  //     });
+  //     this.setState({ viewport: newVp });
+  //   }
+  // }
+
+  componentDidUpdate(nextProps, prevState) {
+    const {
+      width,
+      height,
+      userLocation,
+      selectedCardId,
+      data,
+      mode,
+      onMapViewportChange
+    } = nextProps;
+    const {
+      viewport: { zoom }
+    } = prevState;
+
+    if (
+      width !== this.props.width ||
+      height !== this.props.height ||
+      selectedCardId !== this.props.selectedCardId ||
+      mode !== this.props.mode
+    ) {
+      const { loc } = data.find(d => d.id === selectedCardId) || {
+        loc: userLocation
+      };
+      // console.log(
+      //   'loc',
+      //   'selectedCardId',
+      //   selectedCardId !== this.props.selectedCardId
+      // );
+      const viewport = offsetMapViewport({
+        zoom,
+        ...userLocation,
+        width,
+        height,
+        offset: [0, 0]
+      });
+      onMapViewportChange(viewport);
+      this.setState({ viewport });
+    }
   }
 
   componentWillUnmount() {
@@ -328,7 +381,7 @@ class ForceOverlay extends Component {
     const { viewport } = this.state;
 
     console.log('render mem');
-    const somPos = this.myMemoizer({ data, width, height });
+    const somPos = this.makeCluster({ data, width, height });
     console.log('somPos', somPos);
     // Create some data
     // const data000 = tf.randomUniform([2000, 10]);
@@ -393,18 +446,21 @@ class ForceOverlay extends Component {
   }
 
   // static getDerivedStateFromProps(nextProps, prevState) {
-  //   const {}
-  //   if (nextProps.selectedCardId !== null) {
-  //
-  //   const { loc } = data.find(n => n.id === selectedCardId) || {};
-  //     const viewport = offsetMapViewport({
-  //       width,
-  //       height,
-  //       zoom,
-  //       offset: [0, height / 4],
-  //       ...loc
-  //     });
-  //   }
+  //   const { width, height, userLocation } = nextProps;
+  //   const { viewport } = prevState;
+  //   // if (nextProps.selectedCardId !== null) {
+  //   //
+  //   // const { loc } = data.find(n => n.id === selectedCardId) || {};
+  //   const newVp = offsetMapViewport({
+  //     ...viewport,
+  //     ...userLocation,
+  //     zoom: 8,
+  //     width,
+  //     height,
+  //     offset: [0, height / 4]
+  //   });
+  //   // }
+  //   return { viewport: newVp };
   // }
 
   render() {
@@ -477,16 +533,6 @@ class ForceOverlay extends Component {
     }
 
     if (mode === 'floorplan') {
-      const xFloorScale = d3
-        .scaleLinear()
-        .domain(d3.extent(nodes, d => d.floorLoc.x))
-        .range([0, width]);
-
-      const yFloorScale = d3
-        .scaleLinear()
-        .domain(d3.extent(nodes, d => d.floorLoc.y))
-        .range([0, height]);
-
       return (
         <div
           style={{
@@ -501,8 +547,8 @@ class ForceOverlay extends Component {
           {nodes.map(n =>
             children({
               ...n,
-              x: xFloorScale(n.floorLoc ? n.floorLoc.x : width / 2),
-              y: yFloorScale(n.floorLoc ? n.floorLoc.y : height / 2)
+              x: n.floorLoc.relX * width, // xFloorScale(n.floorLoc ? n.floorLoc.x : width / 2),
+              y: n.floorLoc.relY * height // yFloorScale(n.floorLoc ? n.floorLoc.y : height / 2)
             })
           )}
         </div>

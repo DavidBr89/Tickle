@@ -407,16 +407,6 @@ class TagList extends Component {
           >
             Add
           </button>
-          <button
-            className="btn btn-active ml-2"
-            style={{ background: uiColor }}
-            onClick={() => {
-              this.setState({ value: '' });
-              handleDelete(value);
-            }}
-          >
-            Add
-          </button>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
           {data.map((d, i) => (
@@ -433,7 +423,7 @@ class TagList extends Component {
   }
 }
 
-class TagInput extends React.Component {
+export class TagInput extends React.Component {
   static propTypes = {
     onChange: PropTypes.func,
     tags: PropTypes.oneOf([PropTypes.arrayOf(PropTypes.string), null]),
@@ -783,7 +773,6 @@ export {
   EditButton,
   Img,
   Tags,
-  TagInput,
   PreviewTags,
   Comments
 };

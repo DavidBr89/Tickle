@@ -11,7 +11,8 @@ import {
   createCardSuccess,
   deleteCard,
   deleteCardSuccess,
-  deleteCardError
+  deleteCardError,
+  loadingCards
 } from './actions';
 
 import NearbyPlaces from '../places.json';
@@ -97,6 +98,8 @@ export function fetchCreatedCards(uid) {
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
   return function(dispatch) {
+    dispatch(loadingCards());
+
     return db.readCards(uid, 'createdCards').then(querySnapshot => {
       const data = [];
       querySnapshot.forEach(doc => data.push(doc.data()));

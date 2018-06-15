@@ -41,10 +41,14 @@ const NavigationAuth = () => (
 const NavigationNonAuth = () => (
   <ul>
     <li>
-      <Link to={routes.LANDING}>Home</Link>
+      <h3>
+        <Link to={routes.LANDING}>Home</Link>
+      </h3>
     </li>
     <li>
-      <Link to={routes.SIGN_IN}>Sign In</Link>
+      <h3>
+        <Link to={routes.SIGN_IN}>Sign In</Link>
+      </h3>
     </li>
   </ul>
 );
@@ -71,7 +75,7 @@ const LandingPage = ({ onClick }) => {
       }}
     >
       <div>
-        <h1 style={{ fontWeight: 'bold' }}>TICKLE</h1>
+        <h1 style={{ fontWeight: 'bold', fontSize: 100 }}>TICKLE</h1>
       </div>
       <Navigation />
     </div>

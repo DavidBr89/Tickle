@@ -28,11 +28,7 @@ class Nav extends React.Component {
     onChange: d => d
   };
 
-  constructor(props) {
-    // TODO
-    super(props);
-    this.state = { selected: props.preSelected };
-  }
+  state = { selected: this.props.preSelected };
 
   componentDidUpdate(prevProps, prevState) {
     const { selected } = this.state;
@@ -41,9 +37,9 @@ class Nav extends React.Component {
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return true;
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return true;
+  // }
 
   render() {
     const { data, children, uiColor } = this.props;
@@ -145,9 +141,7 @@ class ChallengeAuthor extends React.Component {
     super(props);
 
     this.state = {
-      selectedKey: props.defaultChallenge
-        ? props.defaultChallenge.type
-        : Object.keys(this.challengeMap)[0]
+      selectedKey: Object.keys(this.challengeMap)[0]
     };
   }
 
@@ -157,11 +151,11 @@ class ChallengeAuthor extends React.Component {
     MiniGame: <PhotoChallengeAuthor {...this.props} />
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return (
-      this.state.selectedKey !== nextState.selectedKey || nextProps.uiColor
-    );
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return (
+  //     this.state.selectedKey !== nextState.selectedKey || nextProps.uiColor
+  //   );
+  // }
 
   // componentWillReceiveProps(nextProps) {
   //   this.setState({ challengeTypes });
@@ -178,7 +172,7 @@ class ChallengeAuthor extends React.Component {
         style={{ width: '100%', height: '100%', minHeight: 300, ...style }}
       >
         <Nav
-          data={challengeKeys}
+          data={[challengeKeys[0]]}
           preSelected={challengeKeys[0]}
           onChange={key => this.setState({ selectedKey: key })}
           uiColor={uiColor}
@@ -199,7 +193,7 @@ class ChallengeAuthor extends React.Component {
                   className="w-100 p-2"
                   style={{ display: selectedKey !== key && 'none' }}
                 >
-                  {this.challengeMap[key]}
+                  {this.challengeMap.PhotoUpload}
                 </div>
               ))}
             </div>

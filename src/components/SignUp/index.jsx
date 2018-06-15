@@ -5,7 +5,7 @@ import * as routes from 'Constants/routes';
 import { auth, db } from 'Firebase';
 
 const SignUpPage = ({ ...props }) => (
-  <div>
+  <div className="ml-3" style={{marginTop: 60}}>
     <h1>SignUp</h1>
     <SignUpForm {...props} />
   </div>
