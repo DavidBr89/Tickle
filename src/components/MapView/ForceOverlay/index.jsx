@@ -8,7 +8,8 @@ import * as d3 from 'd3';
 // import tsnejs from 'tsne';
 import lap from 'lap-jv/lap.js';
 import SOM from 'ml-som';
-import MapGL from 'react-map-gl';
+
+import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 // import│ {shallowEqualProps} from'shallow-equal-props';
 
 // import louvain from './jlouvain';
@@ -21,7 +22,7 @@ import {
   isEqualWith,
   isEqual
 } from 'lodash';
-import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
+
 import memoize from 'memoize-one';
 
 import {
@@ -31,8 +32,9 @@ import {
 
 import ZoomContainer from './ZoomContainer';
 import Cluster from './Cluster';
+import Map from './Map';
 // import AmbientOverlay from './AmbientOverlay';
-import dobbyscan from './cluster';
+// import dobbyscan from './cluster';
 
 import floorplanImg from './floorplan.png';
 
@@ -42,13 +44,6 @@ function jaccard(a, b) {
   return a.length !== 0 && b.length !== 0
     ? 1 - intersection(a, b).length / union(a, b).length
     : 1;
-}
-
-function unproject(viewport, [x, y]) {
-  const vp = new PerspectiveMercatorViewport(viewport);
-
-  const [lng, lat] = vp.unproject([x, y]);
-  return [lng, lat];
 }
 
 const offsetMapViewport = ({
@@ -497,6 +492,9 @@ class ForceOverlay extends Component {
     // const selectedTags = selectedCardId ? tagNode && tagNode.tags : [];
 
     if (mode === 'geo') {
+      const { loc } = nodes.find(d => d.id === selectedCardId) || {
+        loc: userLocation
+      };
       return (
         <div
           className={className}
@@ -511,23 +509,17 @@ class ForceOverlay extends Component {
             ...style
           }}
         >
-          <MapGL
-            mapStyle="mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l"
-            onViewportChange={viewport => {
-              onMapViewportChange(viewport);
-              this.setState({
-                viewport: new PerspectiveMercatorViewport(viewport)
-              });
-            }}
+          <Map
             height={height}
             width={width}
-            latitude={viewport.latitude}
-            longitude={viewport.longitude}
-            zoom={viewport.zoom}
+            onViewportChange={onMapViewportChange}
+            {...loc}
+            zoom={10}
+            nodes={nodes}
+            selectedCardId={selectedCardId}
           >
-            <UserOverlay {...viewport} location={userLocation} />
-          </MapGL>
-          {nodes.map(attr => children({ ...attr, selectedCardId }))}
+            {d => children({ ...d })}
+          </Map>
         </div>
       );
     }
