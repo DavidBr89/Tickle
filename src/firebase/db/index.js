@@ -6,7 +6,7 @@ const removeFunctionFields = ({ uiColor, template, edit, ...rest }) =>
     return acc;
   }, {});
 
-const addImgToStorage = file => {
+export const addImgToStorage = file => {
   const metadata = { contentType: file.type };
   const imgRef = storageRef.child(`${file.name}${Date.now()}`);
   return imgRef

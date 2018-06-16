@@ -22,13 +22,13 @@ import {
   EditButton,
   Img,
   ImgOverlay,
-  TagInput,
   // Tags,
   // SmallPreviewTags,
-  PreviewTags,
   BigButton,
   FlipButton
 } from './layout';
+
+import { TagInput, PreviewTags } from 'Utils/Tag';
 
 import CardHeader from './CardHeader';
 
@@ -280,7 +280,7 @@ class EditCardFront extends PureComponent {
               tags={tags}
               colorScale={tagColorScale}
               uiColor={uiColor}
-              onChange={newTags => this.setFieldState({ tags: [ ...newTags ] })}
+              onChange={newTags => this.setFieldState({ tags: [...newTags] })}
             />
           </ModalBody>
         );

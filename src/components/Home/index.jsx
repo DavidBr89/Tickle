@@ -26,11 +26,13 @@ class HomePage extends Component {
 
   render() {
     const { users } = this.props;
+    console.log('props.user', users);
+
+        // {users.map(d => <div>{Object.values(d)}</div>)}
     return (
       <div className="content-block">
         <h1>Home</h1>
         <p>The Home Page is accessible by every signed in user.</p>
-        {users.map(d => <div>{Object.values(d)}</div>)}
       </div>
     );
   }

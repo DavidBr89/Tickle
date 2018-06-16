@@ -129,6 +129,7 @@
     "cache-loader": "^1.2.2",
     "clean-webpack-plugin": "^0.1.19",
     "css-loader": "^0.28.10",
+    "error-overlay-webpack-plugin": "^0.1.5",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-config-prettier": "^2.9.0",

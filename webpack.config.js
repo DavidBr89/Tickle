@@ -2,10 +2,10 @@ const webpack = require('webpack');
 const path = require('path');
 const loaders = require('./webpack.loaders');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ErrorOverlayPlugin = require('error-overlay-webpack-plugin');
 
 const apiTokens = require('./api_keys.json');
 const alias = require('./alias');
-
 
 // const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 // const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -68,6 +68,7 @@ module.exports = {
     new webpack.EnvironmentPlugin(apiTokens),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('development')
-    })
+    }),
+    new ErrorOverlayPlugin()
   ]
 };

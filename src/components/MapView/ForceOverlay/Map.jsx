@@ -8,42 +8,11 @@ import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 
 const mapStyleUrl = 'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l';
 
-class MapWrapper extends Component {
-  static propTypes = {
-    children: PropTypes.node,
-    className: PropTypes.string
-  };
+const defaultLocation = {
+  latitude: 50.85146,
+  longitude: 4.315483
+};
 
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    const {
-      width,
-      height,
-      latitude,
-      longitude,
-      zoom,
-      onViewportChange,
-      children
-    } = this.props;
-
-    return (
-      <MapGL
-        mapStyle={mapStyleUrl}
-        onViewportChange={onViewportChange}
-        height={height}
-        width={width}
-        latitude={latitude}
-        longitude={longitude}
-        zoom={zoom}
-      >
-        {children}
-      </MapGL>
-    );
-  }
-}
 class Map extends Component {
   static propTypes = {
     children: PropTypes.node,
@@ -57,10 +26,14 @@ class Map extends Component {
   // }
 
   componentDidUpdate(prevProps, prevState) {
-    const { latitude, longitude, selectedCardId } = this.props;
-    if (prevProps.selectedCardId !== selectedCardId) {
+    const { latitude, longitude, selectedId } = this.props;
+    if (prevProps.selectedId !== selectedId) {
       this.setState({ latitude, longitude });
     }
+  }
+
+  componentDidMount() {
+    this.props.onViewportChange({ ...this.state });
   }
 
   render() {

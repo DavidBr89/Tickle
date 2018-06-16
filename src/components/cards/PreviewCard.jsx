@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import placeholderImg from './placeholder.png';
 import cx from './Card.scss';
 import { shadowStyle, colorClass, colorScale } from './styles';
-import { PreviewTags } from './layout';
+import { PreviewTags } from 'Utils/Tag';
 
 const PlaceholderField = ({ text, style, fullHeight }) => (
   <div

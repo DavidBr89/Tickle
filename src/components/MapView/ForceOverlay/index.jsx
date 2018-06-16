@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 // import * as tf from '@tensorflow/tfjs';
 // import * as tsne from '@tensorflow/tfjs-tsne';
 
-import * as d3 from 'd3';
-
 // import tsnejs from 'tsne';
 import lap from 'lap-jv/lap.js';
 import SOM from 'ml-som';
@@ -14,37 +12,9 @@ import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 
 // import louvain from './jlouvain';
 
-import {
-  intersection,
-  difference,
-  union,
-  uniq,
-  isEqualWith,
-  isEqual
-} from 'lodash';
-
-import memoize from 'memoize-one';
-
-import {
-  UserOverlay
-  // UserMarker,
-} from '../../utils/map-layers/DivOverlay';
-
-import ZoomContainer from './ZoomContainer';
-import Cluster from './Cluster';
 import Map from './Map';
-// import AmbientOverlay from './AmbientOverlay';
-// import dobbyscan from './cluster';
-
-import floorplanImg from './floorplan.png';
-
-// import { setify } from '../utils';
-
-function jaccard(a, b) {
-  return a.length !== 0 && b.length !== 0
-    ? 1 - intersection(a, b).length / union(a, b).length
-    : 1;
-}
+import Floorplan from './Floorplan';
+import TopicMap from './TopicMap';
 
 const offsetMapViewport = ({
   width,
@@ -78,100 +48,11 @@ const offsetMapViewport = ({
   return ret;
 };
 
-function somFy(data, width, height) {
-  const options = {
-    fields: data.length,
-    torus: true,
-    gridType: 'rect',
-    learningRate: 0.1
-  };
-
-  console.log('data somFy', data);
-  // TODO: check later
-  const dists = data.map(a => data.map(b => jaccard(a.tags, b.tags)));
-
-  // TODO: verify with different data sets
-  const som = new SOM(Math.floor(width / 10), Math.floor(width / 20), options);
-  som.setTraining(dists);
-  // while (som.trainOne()) {
-  //   const somPos = som.predict(dists);
-  //   callback(somPos);
-  // }
-
-  const somPos = som.predict(dists);
-  // TODO: verify memoize
-  console.log('somFy, somFy', somFy);
-  return somPos;
-}
-
-function mem({ data, width, height }) {
-  if (data.length !== this.cache.data.length) {
-    this.cache.result = somFy([...data], width, height);
-    this.cache.data = data;
-    return this.cache.data;
-  }
-
-  const arrayIsEqual = data.every(a => {
-    const oldItem = this.cache.data.find(b => a.id === b.id);
-    if (!oldItem) return false;
-    return (
-      difference(a.tags, oldItem.tags).length === 0 &&
-      difference(oldItem.tags, a.tags).length === 0
-    );
-  });
-
-  if (arrayIsEqual) return this.cache.result;
-
-  this.cache.result = somFy([...data], width, height);
-  this.cache.data = data;
-  return this.cache.result;
-}
-console.log('memoize', memoize);
-
-function lapFy(data, width, height) {
-  const n = data.length;
-  const m = Math.ceil(Math.sqrt(n));
-
-  const costs = data.map(d =>
-    data.map((_, k) => {
-      const i = k % m;
-      const j = (k - i) / m;
-      const dx = d[0] - i - 0.5;
-      const dy = d[1] - j - 0.5;
-      return dx * dx + dy * dy;
-    })
-  );
-  const x = d3
-    .scaleLinear()
-    .domain([0, m - 1])
-    .range([0, width]);
-  const y = d3
-    .scaleLinear()
-    .domain([0, m - 1])
-    .range([0, height]);
-
-  const la = lap(n, costs);
-  const resLa = [...la.col].map((c, k) => {
-    const i = k % m;
-    const j = (k - i) / m;
-    return { i, j };
-  });
-
-  return resLa.map(d => [x(d.i), y(d.j)]);
-}
-
 class ForceOverlay extends Component {
   static propTypes = {
     children: PropTypes.func,
     className: PropTypes.oneOf([null, PropTypes.string]),
     style: PropTypes.object,
-    viewport: PropTypes.shape({
-      width: PropTypes.number,
-      height: PropTypes.number,
-      longitude: PropTypes.number,
-      latitude: PropTypes.number,
-      zoom: PropTypes.number
-    }),
     data: PropTypes.arrayOf(
       PropTypes.shape({
         loc: PropTypes.shape({
@@ -198,7 +79,6 @@ class ForceOverlay extends Component {
     children: d => d,
     className: null,
     style: {},
-    viewport: { width: 300, height: 400, longitude: 0, latitude: 0 },
     padding: {
       right: 0,
       left: 0,
@@ -214,66 +94,6 @@ class ForceOverlay extends Component {
     labels: false
   };
 
-  // TODO: encacpsulate
-  // cache = { data: [], result: [] };
-  //
-  // myMemoizer({ data, width, height }) {
-  //   if (data.length !== this.cache.data.length) {
-  //     this.cache.result = somFy([...data], width, height);
-  //     this.cache.data = data;
-  //     return this.cache.data;
-  //   }
-  //
-  //   const arrayIsEqual = data.every(a => {
-  //     const oldItem = this.cache.data.find(b => a.id === b.id);
-  //     if (!oldItem) return false;
-  //     return (
-  //       difference(a.tags, oldItem.tags).length === 0 &&
-  //       difference(oldItem.tags, a.tags).length === 0
-  //     );
-  //   });
-  //
-  //   if (arrayIsEqual) return this.cache.result;
-  //
-  //   this.cache.result = somFy([...data], width, height);
-  //   this.cache.data = data;
-  //   return this.cache.result;
-  // }
-
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   const arrayIsEqual = nextProps.data.every(a => {
-  //     const oldItem = this.props.data.find(b => a.id === b.id);
-  //     // console.log('oldItem', oldItem);
-  //     if (!oldItem) return false;
-  //     console.log('oldItem', oldItem.tags, 'newItem', a.tags);
-  //     return a.tags.length === oldItem.tags.length;
-  //   });
-  //   return (
-  //     !arrayIsEqual ||
-  //     this.props.selectedCardId !== nextProps.selectedCardId ||
-  //     this.props.extCardId !== nextProps.extCardId
-  //   );
-  // }
-
-  makeCluster = memoize(
-    ({ data, width, height }) => somFy(data, width, height),
-    // lapFy(somFy(data, width, height), width, height),
-    ({ data: dataB }, { data: dataA }) => {
-      if (dataA.length !== dataB.length) {
-        return false;
-      }
-      const arrayIsEqual = dataA.every(a => {
-        const oldItem = dataB.find(b => a.id === b.id) || false;
-        if (!oldItem) return false;
-        return (
-          difference(a.tags, oldItem.tags).length === 0 &&
-          difference(oldItem.tags, a.tags).length === 0
-        );
-      });
-      return arrayIsEqual;
-    }
-  );
-
   constructor(props) {
     super(props);
     const { data } = props;
@@ -283,161 +103,11 @@ class ForceOverlay extends Component {
 
     // data.map(d => ([width/2, height/2]));
     const nodes = data.map(d => ({ ...d, x: width / 2, y: height / 2 }));
-
-    const defaultLocation = {
-      latitude: 50.85146,
-      longitude: 4.315483
-    };
-
-    const viewport = new PerspectiveMercatorViewport({
-      width: 800,
-      height: 800,
-      zoom: 10,
-      ...userLocation
-    });
-
-    // TODO: rename
-    onMapViewportChange(viewport);
-
-    this.state = {
-      // nodes,
-      // tsnePos: initPos,
-      viewport
-    };
-
-    // this.layout = this.layout.bind(this);
-
-    // this.forceSim = d3.forceSimulation();
-  }
-
-  // componentDidUpdate(oldProps, oldState) {
-  //   const { width, height } = this.props;
-  //   const { viewport } = this.state;
-  //   // onMapViewportChange(viewport);
-  //
-  //   if (width !== oldProps.width) {
-  //     const newVp = offsetMapViewport({
-  //       ...viewport,
-  //       width,
-  //       height,
-  //       offset: [0, height / 4]
-  //     });
-  //     this.setState({ viewport: newVp });
-  //   }
-  // }
-
-  componentDidUpdate(nextProps, prevState) {
-    const {
-      width,
-      height,
-      userLocation,
-      selectedCardId,
-      data,
-      mode,
-      onMapViewportChange
-    } = nextProps;
-    const {
-      viewport: { zoom }
-    } = prevState;
-
-    if (
-      width !== this.props.width ||
-      height !== this.props.height ||
-      selectedCardId !== this.props.selectedCardId ||
-      mode !== this.props.mode
-    ) {
-      const { loc } = data.find(d => d.id === selectedCardId) || {
-        loc: userLocation
-      };
-      // console.log(
-      //   'loc',
-      //   'selectedCardId',
-      //   selectedCardId !== this.props.selectedCardId
-      // );
-      const viewport = offsetMapViewport({
-        zoom,
-        ...userLocation,
-        width,
-        height,
-        offset: [0, 0]
-      });
-      onMapViewportChange(viewport);
-      this.setState({ viewport });
-    }
   }
 
   componentWillUnmount() {
     // clearTimeout(this.id);
     // this.ids.map(clearTimeout);
-  }
-
-  layout() {
-    const { mode, delay, data, padding, force, width, height } = this.props; // this.props;
-    const { viewport } = this.state;
-
-    console.log('render mem');
-    const somPos = this.makeCluster({ data, width, height });
-    console.log('somPos', somPos);
-    // Create some data
-    // const data000 = tf.randomUniform([2000, 10]);
-    // console.log('tsne', tsne);
-
-    // Initialize the tsne optimizer
-    //
-    const geoPos = data.map(({ loc }) =>
-      viewport.project([loc.longitude, loc.latitude])
-    );
-
-    const pos = (() => {
-      switch (mode) {
-        // case 'tsne':
-        //   return tsnePos;
-        case 'topic':
-          return somPos;
-        // case 'grid':
-        //   return gridPos;
-        default:
-          return geoPos;
-      }
-    })();
-
-    const xScale =
-      mode !== 'geo'
-        ? d3
-          .scaleLinear()
-          .domain(d3.extent(pos.map(d => d[0])))
-          .range([padding.left, width - padding.right])
-        : x => x;
-
-    const yScale =
-      mode !== 'geo'
-        ? d3
-          .scaleLinear()
-          .domain(d3.extent(pos.map(d => d[1])))
-          .range([padding.top, height - padding.bottom])
-        : y => y;
-    // const tsnePos = runTsne(data, 300);
-
-    // prevent stretching of similiarities
-    // const padY = height / 7;
-
-    const nodes = data.map(({ id, x, y, tags, ...c }, i) => {
-      const tx = xScale(pos[i][0]);
-      const ty = yScale(pos[i][1]);
-      // const oldNode = oldNodes.find(n => n.id === id) || { x: tx, y: ty };
-      return {
-        id,
-        // ...oldNode,
-        x: tx,
-        y: ty,
-        tx,
-        ty,
-        tags,
-        ...c
-      };
-    });
-
-    return nodes;
   }
 
   // static getDerivedStateFromProps(nextProps, prevState) {
@@ -481,11 +151,9 @@ class ForceOverlay extends Component {
       padding
     } = this.props;
 
-    const { viewport } = this.state;
-
     // const somPos = data.map(d => [width / 2, height / 2]); // somFy(data, width, height);
 
-    const nodes = this.layout();
+    const nodes = data;
 
     // const newPos = nodes.map(d => transEvent.apply([d.x, d.y]));
     // TODO: change later
@@ -516,7 +184,7 @@ class ForceOverlay extends Component {
             {...loc}
             zoom={10}
             nodes={nodes}
-            selectedCardId={selectedCardId}
+            selectedId={selectedCardId}
           >
             {d => children({ ...d })}
           </Map>
@@ -526,56 +194,24 @@ class ForceOverlay extends Component {
 
     if (mode === 'floorplan') {
       return (
-        <div
-          style={{
-            backgroundImage: `url(${floorplanImg})`,
-            // backgroundRepeat: 'round',
-            backgroundSize: 'cover',
-            width,
-            height
-          }}
-        >
-          {children}
-          {nodes.map(n =>
-            children({
-              ...n,
-              x: n.floorLoc.relX * width, // xFloorScale(n.floorLoc ? n.floorLoc.x : width / 2),
-              y: n.floorLoc.relY * height // yFloorScale(n.floorLoc ? n.floorLoc.y : height / 2)
-            })
-          )}
-        </div>
+        <Floorplan width={width} height={height} nodes={nodes}>
+          {d => children({ ...d })}
+        </Floorplan>
       );
     }
 
     return (
-      <div>
-        <div style={{ zIndex: 10000, marginTop: 30, display: 'none' }}>
-          <label htmlFor="fader">Volume</label>
-          <input type="range" min="0" max="5" value="3" id="fader" />
-        </div>
-        <ZoomContainer
-          width={width}
-          height={height}
-          center={[width / 2, height / 2 + padding.top]}
-          nodes={nodes}
-          selectedId={selectedCardId}
-          onZoom={() => null}
-        >
-          {(zoomedNodes, transform) => (
-            <Cluster
-              sets={sets}
-              scale={transform.k}
-              nodes={zoomedNodes}
-              width={width}
-              height={height}
-              colorScale={colorScale}
-              labels={labels}
-            >
-              {children}
-            </Cluster>
-          )}
-        </ZoomContainer>
-      </div>
+      <TopicMap
+        sets={sets}
+        width={width}
+        height={height}
+        nodes={nodes}
+        selectedId={selectedCardId}
+        colorScale={colorScale}
+        padding={padding}
+      >
+        {children}
+      </TopicMap>
     );
   }
 }

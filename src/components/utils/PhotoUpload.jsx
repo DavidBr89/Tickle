@@ -100,16 +100,11 @@ class PhotoUpload extends Component {
               <div
                 style={{
                   overflow: 'hidden',
-                  width: '100%',
-                  height: this.contHeight
+                  width: '100%'
+                  // height: this.contHeight
                 }}
               >
-                <img
-                  src={imgUrl}
-                  width="100%"
-                  height={this.contHeight}
-                  alt="test"
-                />
+                <img src={imgUrl} width="100%" alt="test" />
               </div>
             ) : (
               <h1

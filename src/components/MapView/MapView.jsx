@@ -170,6 +170,8 @@ const PreviewMarker = ({ selected, template, color, r = 25 }) => (
     className="w-100 h-100"
     style={{
       position: 'relative',
+      transform: selected && 'scale(1.5)',
+      transition: 'transform 1s',
       height: 2 * r,
       width: 2 * r
     }}
