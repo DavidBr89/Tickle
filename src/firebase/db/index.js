@@ -8,9 +8,19 @@ const removeFunctionFields = ({ uiColor, template, edit, ...rest }) =>
 
 export const addImgToStorage = file => {
   const metadata = { contentType: file.type };
-  const imgRef = storageRef.child(`${file.name}${Date.now()}`);
+  const imgRef = storageRef.child(`images/${file.name}${Date.now()}`);
+  console.log('metadata', metadata, 'imgRef', imgRef);
   return imgRef
     .put(file, metadata)
+    .then(() => new Promise(resolve => resolve(imgRef.getDownloadURL())));
+};
+
+export const testAddImgToStorage = file => {
+  // const metadata = { contentType: file.type };
+  const imgRef = storageRef.child(`${file.name}${Date.now()}`);
+  console.log('imgRef', imgRef);
+  return imgRef
+    .put(file)
     .then(() => new Promise(resolve => resolve(imgRef.getDownloadURL())));
 };
 
@@ -20,6 +30,7 @@ const uploadImgFields = card => {
   const cardChallengeFile =
     card.challenge !== null ? card.challenge.img.file : null;
 
+  // TODO update
   const cardImgPromise = cardImgFile
     ? addImgToStorage(cardImgFile).then(url => {
       const img = {
@@ -50,21 +61,36 @@ const uploadImgFields = card => {
   });
 };
 
-export const doCreateUser = (id, username, email) =>
+export const doCreateUser = ({ id, username, email, imgUrl, interests }) =>
   firestore
     .collection('users')
     .doc(id)
     .set({
       id,
       username,
-      email
+      email,
+      imgUrl,
+      interests
     });
+
+export const getUserInfo = uid =>
+  firestore
+    .collection('users')
+    .doc(uid)
+    .get()
+    .then(
+      doc =>
+        new Promise(
+          resolve => resolve(doc.data()),
+          error => console.log('error in getUser, doc not existing', error)
+        )
+    )
+    .catch(err => console.log('err i getUser'));
 
 export const onceGetUsers = () => firestore.collection('users').get();
 
 export const doCreateCard = (uid, card) => {
-
-  console.log('createCard', card)
+  console.log('createCard', card);
   return uploadImgFields(card).then(c =>
     firestore
       .collection('users')
@@ -73,7 +99,7 @@ export const doCreateCard = (uid, card) => {
       .doc(c.id)
       .set(c)
   );
-}
+};
 
 // TODO: change later
 export const doUpdateCard = doCreateCard;

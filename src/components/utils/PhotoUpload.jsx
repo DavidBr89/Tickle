@@ -36,7 +36,9 @@ class PhotoUpload extends Component {
     onChange: d => d,
     uiColor: 'grey',
     placeholder: 'Add your description',
-    defaultImg: null
+    defaultImg: null,
+    width: 250,
+    height: 250
   };
 
   state = {
@@ -70,8 +72,11 @@ class PhotoUpload extends Component {
       styles,
       onChange,
       uiColor,
-      defaultImg
+      defaultImg,
+      width,
+      height
     } = this.props;
+
     const { imgUrl } = this.state;
     return (
       <div
@@ -87,7 +92,8 @@ class PhotoUpload extends Component {
           <div
             style={{
               // TODO: outsource
-              height: '100%',
+              height,
+              width,
               // minHeight: 80,
               // maxHeight: 300,
               border: `dashed 3px ${uiColor}`,
@@ -116,7 +122,7 @@ class PhotoUpload extends Component {
             )}
           </div>
           <input
-            className="mt-3 w-100"
+            className="mt-3"
             style={{ border: `${uiColor} 1px solid` }}
             type="file"
             accept="image/*"

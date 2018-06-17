@@ -21,7 +21,6 @@ import MapView from './MapView';
 
 // import mapViewReducer from './reducer';
 
-console.log('asyncActions', asyncActions);
 // Container
 const mapStateToProps = state => {
   const {
@@ -38,6 +37,7 @@ const mapStateToProps = state => {
   const { userLocation } = state.MapView;
 
   const { authEnv, searchString } = state.DataView;
+  const { uid, email, username, imgUrl: usrImgUrl } = state.Session;
 
   // const { userLocation } = state.MapView;
 
@@ -50,8 +50,15 @@ const mapStateToProps = state => {
     edit: true,
     tags: [],
     challenge: null,
-    floorLoc: { relX: 0.5, relY: 0.5 }
+    floorLoc: { relX: 0.5, relY: 0.5 },
+    author: {
+      uid,
+      username,
+      email,
+      imgUrl: usrImgUrl
+    }
   };
+
   const templateCard = {
     ...defaultCardTemplate,
     ...tmpCard,
@@ -64,10 +71,6 @@ const mapStateToProps = state => {
   ).filter(c => searchString === null || c.title === searchString);
 
   console.log('cards', cards);
-
-  // TODO: simplify
-  const { uid } =
-    state.Session.authUser !== null ? state.Session.authUser : { uid: null };
 
   const selectedCard =
     selectedCardId !== null ? cards.find(d => d.id === selectedCardId) : null;

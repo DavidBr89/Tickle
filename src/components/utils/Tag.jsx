@@ -59,9 +59,10 @@ export class TagList extends Component {
           <button
             className="btn btn-active ml-2"
             style={{ background: uiColor }}
-            onClick={() => {
+            onClick={event => {
               this.setState({ value: '' });
               handleAddition(value);
+              event.preventDefault();
             }}
           >
             Add

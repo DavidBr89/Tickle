@@ -1,16 +1,20 @@
+import { AUTH_USER_SET, SET_AUTH_USER_INFO } from './actions';
+
 const INITIAL_STATE = {
   authUser: null
 };
 
-const applySetAuthUser = (state, action) => ({
-  ...state,
-  authUser: action.authUser
-});
-
 function sessionReducer(state = INITIAL_STATE, action) {
   switch (action.type) {
-    case 'AUTH_USER_SET': {
-      return applySetAuthUser(state, action);
+    case AUTH_USER_SET: {
+      const {
+        options: { uid }
+      } = action;
+      return { ...state, uid };
+    }
+    case SET_AUTH_USER_INFO: {
+      const { options } = action;
+      return { ...state, ...options };
     }
     default:
       return state;

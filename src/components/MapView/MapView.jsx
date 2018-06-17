@@ -10,7 +10,7 @@ import * as chromatic from 'd3-scale-chromatic';
 
 // TODO: { LinearInterpolator, FlyToInterpolator }
 // import { default as TouchBackend } from 'react-dnd-touch-backend';
-import HTML5Backend from 'react-dnd-html5-backend';
+// import HTML5Backend from 'react-dnd-html5-backend';
 // import { DragDropContextProvider } from 'react-dnd';
 
 import {
@@ -406,7 +406,10 @@ class MapView extends Component {
             <PhotoChallenge />
           </ModalBody>
         </Modal>
-        <div className="w-100 h-100" style={{ position: 'relative' }}>
+        <div
+          className="w-100 h-100"
+          style={{ position: 'relative', overflow: 'hidden' }}
+        >
           <div
             className="w-100 h-100"
             ref={cont => (this.cont = cont)}
@@ -532,6 +535,7 @@ class MapView extends Component {
               <DropTargetCont dropHandler={onCardDrop} dragged={isCardDragging}>
                 <ForceOverlay
                   delay={1}
+                  dragging={isCardDragging}
                   width={width}
                   height={height}
                   force

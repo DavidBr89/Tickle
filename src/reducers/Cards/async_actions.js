@@ -141,6 +141,7 @@ export function asyncCreateCard({ cardData, mapViewport, uid }) {
     loc: { latitude, longitude },
     template: false,
     tags: tags || [],
+    uid,
     // TODO: change
     id: gen.generate(Date.now())
   };

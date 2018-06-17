@@ -146,7 +146,7 @@ class ForceOverlay extends Component {
       height,
       onDrop,
       // TODO: Remove this check
-      dragged,
+      dragging,
       data,
       padding
     } = this.props;
@@ -181,6 +181,7 @@ class ForceOverlay extends Component {
             height={height}
             width={width}
             onViewportChange={onMapViewportChange}
+            dragging={dragging}
             {...loc}
             zoom={10}
             nodes={nodes}

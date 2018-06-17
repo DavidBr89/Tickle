@@ -5,11 +5,14 @@ import * as routes from 'Constants/routes';
 import { auth, db } from 'Firebase';
 
 import PhotoUpload from 'Utils/PhotoUpload';
+import { TagInput } from 'Utils/Tag';
 
 const SignUpPage = ({ ...props }) => (
-  <div className="m-3" style={{ marginTop: 60 }}>
-    <h1>SignUp</h1>
-    <SignUpForm {...props} />
+  <div style={{ marginTop: 60, overflow: 'scroll' }}>
+    <div className="m-3">
+      <h1>SignUp</h1>
+      <SignUpForm {...props} />
+    </div>
   </div>
 );
 
@@ -18,7 +21,10 @@ const INITIAL_STATE = {
   email: '',
   passwordOne: '',
   passwordTwo: '',
-  error: null
+  error: null,
+  img: null,
+  interests: [],
+  loading: false
 };
 
 const byPropKey = (propertyName, value) => () => ({
@@ -29,23 +35,34 @@ class SignUpForm extends Component {
   state = INITIAL_STATE;
 
   onSubmit = event => {
-    const { username, email, passwordOne } = this.state;
+    const { username, email, passwordOne, img, interests } = this.state;
 
     const { history } = this.props;
+
+    this.setState({ loading: true });
 
     auth
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then(authUser => {
         // Create a user in your own accessible Firebase Database too
-        db.doCreateUser(authUser.uid, username, email)
-          .then(() => {
-            this.setState(() => ({ ...INITIAL_STATE }));
-            history.push(routes.HOME);
+        db.addImgToStorage(img.file)
+          .then(imgUrl => {
+            console.log('imgUrl', imgUrl);
+            db.doCreateUser({
+              id: authUser.uid,
+              username,
+              email,
+              imgUrl,
+              interests
+            })
+              .then(() => {
+                this.setState(() => ({ ...INITIAL_STATE }));
+                history.push(routes.MAP);
+              })
+              .catch(error => {
+                this.setState(byPropKey('error', error));
+              });
           })
-          // .then(() => {
-          //   console.log('addImgToStorage', this.state.imgUrl);
-          //
-          // })
           .catch(error => {
             this.setState(byPropKey('error', error));
           });
@@ -57,20 +74,35 @@ class SignUpForm extends Component {
     event.preventDefault();
   };
 
+  // componentDidUpdate(prevProps, prevState) {
+  //   const { img } = this.state;
+  //   if (img !== null) {
+  //     console.log('addImgToStorage', img);
+  //   }
+  // }
+
   render() {
-    const { username, email, passwordOne, passwordTwo, error } = this.state;
+    const {
+      username,
+      email,
+      passwordOne,
+      passwordTwo,
+      error,
+      img,
+      loading
+    } = this.state;
 
     const isInvalid =
       passwordOne !== passwordTwo ||
       passwordOne === '' ||
       email === '' ||
-      username === '';
-
+      username === '' ||
+      img === null;
 
     return (
       <form onSubmit={this.onSubmit}>
         <div className="form-group">
-          <label htmlFor="email">Email address:</label>
+          <label htmlFor="email">Username:</label>
           <div>
             <input
               className="form-control"
@@ -99,23 +131,13 @@ class SignUpForm extends Component {
         </div>
 
         <div className="form-group">
-          <label htmlFor="pwd">Interests:</label>
-          <div>
-            <input
-              className="form-control"
-              value={passwordOne}
-              onChange={event =>
-                this.setState(byPropKey('passwordOne', event.target.value))
-              }
-              type="password"
-              placeholder="Password"
-            />
-          </div>
-        </div>
-        <div className="form-group">
           <label htmlFor="pwd">User Photo:</label>
-          <div>
-            <PhotoUpload onChange={imgUrl => this.setState({ imgUrl })} />
+          <PhotoUpload onChange={img => this.setState({ img })} />
+        </div>
+        <div>
+          <div className="form-group">
+            <label htmlFor="pwd">Interests:</label>
+            <TagInput onChange={tags => this.setState({ interests: tags })} />
           </div>
         </div>
         <div className="form-group">
@@ -142,7 +164,7 @@ class SignUpForm extends Component {
           />
         </div>
         <button disabled={isInvalid} type="submit">
-          Sign Up
+          Sign Up {loading && <span>loading</span>}
         </button>
 
         {error && <p>{error.message}</p>}

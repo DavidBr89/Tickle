@@ -12,7 +12,7 @@ import {
 // import { getBoundingBox } from './utils';
 // import { intersection } from 'lodash';
 
-import { db } from 'Firebase';
+// import { db } from 'Firebase';
 
 // import setBBox from './fitbounds';
 // import mapboxgl from 'mapbox-gl';
@@ -164,7 +164,7 @@ function reducer(state = {}, action) {
       const updatedCard = updCard({ cardData, mapViewport, dataView });
 
       // TODO: on Success/Error
-      db.doUpdateCard(uid, updatedCard);
+      // db.doUpdateCard(uid, updatedCard);
 
       const updatedCards = createdCards.map(c => {
         if (c.id === cardData.id) {

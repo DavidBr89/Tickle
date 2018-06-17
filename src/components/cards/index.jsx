@@ -19,6 +19,8 @@ import CardFront from './CardFront';
 import PreviewCard from './PreviewCard';
 import CardMarker from './CardMarker';
 
+import { db } from 'Firebase';
+
 import { colorScale, UIthemeContext } from './styles';
 
 // ReadCardBack.defaultProps = {
@@ -90,15 +92,18 @@ class Card extends React.Component {
     edit: false,
     onCollect: d => d,
     onUpdate: d => d,
-    tagColorScale: () => 'gold'
+    tagColorScale: () => 'gold',
+    author: { username: 'defaultUser', email: 'defaultEmail' }
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      frontView: true
-    };
-  }
+  state = {
+    frontView: true
+  };
+
+  // componentDidMount() {
+  //   const { uid } = this.props;
+  //   db.getUserInfo(uid).then(usr => console.log('yeah', usr));
+  // }
 
   render() {
     const {
@@ -108,7 +113,8 @@ class Card extends React.Component {
       onUpdate,
       type,
       tagColorScale,
-      onSubmit
+      onSubmit,
+      author
     } = this.props;
     const { frontView } = this.state;
     // const { onClose } = this.props;
@@ -149,6 +155,7 @@ class Card extends React.Component {
           flipHandler={flipHandler}
           tagColorScale={tagColorScale}
           deleteHandler={onSubmit}
+          author={author}
           setMapRadius={mapRadius => {
             onUpdate({ ...this.props, mapRadius });
           }}

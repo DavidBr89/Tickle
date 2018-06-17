@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 // import Grid from 'mygrid/dist';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { profileSrc, mediaScale, colorClass, colorScaleRandom } from './styles';
+
+import cxx from './layout.scss';
+
 // TODO: remove
 // import { ModalBody } from '../utils/Modal';
 // import placeholderImgSrc from './placeholder.png';
@@ -11,9 +14,11 @@ import cx from './Card.scss';
 
 import placeholderImgSrc from './placeholder.png';
 
+console.log('cxxx', cxx);
+
 const SearchIcon = ({ style, className }) => (
   <i
-    className={`fa fa-search ${className}`}
+    className={`fa fa-search ${className} ${cxx.icon}`}
     style={{ cursor: 'pointer', opacity: 0.75, fontSize: '1rem', ...style }}
   />
 );
@@ -23,7 +28,7 @@ SearchIcon.defaultProps = { style: {}, className: '' };
 
 const EditIcon = ({ style, className }) => (
   <i
-    className={`fa fa-pencil-square-o ${className}`}
+    className={`fa fa-pencil-square-o ${className} ${cxx.icon}`}
     style={{ cursor: 'pointer', fontSize: '1.2rem', ...style }}
   />
 );
@@ -55,26 +60,28 @@ Legend.defaultProps = { style: {}, children: null };
 
 const FieldSet = ({ children, legend, style, edit, borderColor, onClick }) => (
   <div style={{ overflow: 'hidden', ...style }} onClick={onClick}>
-    <fieldset
+    <div
       style={{
         border: `1px solid ${borderColor}`,
         marginTop: '4px',
-        padding: '6px',
+        padding: '10px',
         width: '100%',
         height: '100%'
         // overflow: 'hidden'
       }}
     >
-      <Legend>
-        {legend}{' '}
-        {!edit ? (
-          <SearchIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
-        ) : (
-          <EditIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
-        )}
-      </Legend>
+      <h5 className={cxx.hover}>
+        <span>
+          {legend}{' '}
+          {!edit ? (
+            <SearchIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
+          ) : (
+            <EditIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
+          )}
+        </span>
+      </h5>
       {children}
-    </fieldset>
+    </div>
   </div>
 );
 

@@ -38,7 +38,12 @@ DeleteButton.defaultProps = {
 class CardBackSkeleton extends Component {
   static propTypes = {
     comments: PropTypes.array.isRequired,
-    author: PropTypes.object.isRequired,
+    author: PropTypes.shape({
+      username: PropTypes.string,
+      email: PropTypes.string,
+      uid: PropTypes.string,
+      usrImgUrl: PropTypes.oneOf(null, PropTypes.string)
+    }),
     flipHandler: PropTypes.func.isRequired,
     linkedCards: PropTypes.array,
     cardSets: PropTypes.array,
@@ -56,6 +61,12 @@ class CardBackSkeleton extends Component {
   static defaultProps = {
     linkedCards: [],
     loc: { latitude: 0, longitude: 0 },
+    author: {
+      uid: null,
+      username: 'defaulUser',
+      email: 'default@gmail.com',
+      usrImgUrl: null
+    },
     cardSets: [],
     uiColor: 'grey',
     edit: false,
@@ -65,10 +76,7 @@ class CardBackSkeleton extends Component {
     deleteHandler: d => d
   };
 
-  constructor(props) {
-    super(props);
-    this.state = { extended: null };
-  }
+  state = { extended: null };
 
   shouldComponentUpdate(nextProps, nextState) {
     return this.state.extended !== nextState.extended;
@@ -123,6 +131,7 @@ class CardBackSkeleton extends Component {
         >
           <Author
             {...author}
+            img={author.usrImgUrl}
             extended={extended === 'author'}
             tagColorScale={tagColorScale}
             onClose={() => {

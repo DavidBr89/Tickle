@@ -71,88 +71,95 @@ CardStack.propTypes = {
 
 CardStack.defaultProps = { number: 0 };
 
-const Author = ({
-  extended,
+const ExtendedAuthor = ({
   onClose,
   color,
   style,
   tagColorScale,
-  ...profile
-}) => {
-  const { name, skills, activity, interests, img } = profile;
-  if (!extended) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          // alignItems: 'center',
-          // height: '100%',
-          ...style
-        }}
-      >
-        <img
-          className={`${cx.avatar}`}
-          width={'40%'}
-          height={'80%'}
-          src={img || profileSrc()}
-          alt="alt"
-        />
-      </div>
-    );
-  }
-  return (
-    <div>
-      <button
-        type="button"
-        className="close "
-        data-dismiss="modal"
-        aria-label="Close"
-        onClick={onClose}
-      >
-        <span aria-hidden="true">&times;</span>
-      </button>
-      <div
-        style={{
-          display: 'flex',
-          position: 'relative',
-          justifyContent: 'center',
-          // alignItems: 'center',
-          flexDirection: 'column',
-          ...style
-        }}
-      >
-        <img
-          className={`${cx.avatar}`}
-          style={{ alignSelf: 'center' }}
-          width={'40%'}
-          height={'40%'}
-          src={img || profileSrc()}
-          alt="alt"
-        />
+  name,
+  skills,
+  activity,
+  interests,
+  imgUrl,
+  placeholderImgUrl
+}) => (
+  <div>
+    <button
+      type="button"
+      className="close "
+      data-dismiss="modal"
+      aria-label="Close"
+      onClick={onClose}
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <div
+      style={{
+        display: 'flex',
+        position: 'relative',
+        justifyContent: 'center',
+        // alignItems: 'center',
+        flexDirection: 'column',
+        ...style
+      }}
+    >
+      <img
+        className={`${cx.avatar}`}
+        style={{ alignSelf: 'center' }}
+        width="40%"
+        height="40%"
+        src={imgUrl}
+        alt="alt"
+      />
 
-        <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
-          Personal
-        </div>
-        <FieldSet legend={'Interests:'}>
-          <SkillBar data={interests} tagColorScale={tagColorScale} />
-        </FieldSet>
-        <FieldSet legend={'skills:'}>
-          <SkillBar data={skills} tagColorScale={tagColorScale} />
-        </FieldSet>
-        <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
-          Activity
-        </div>
-        <FieldSet legend={'Collected Cards'}>
-          <CardStack number={30} />
-        </FieldSet>
-        <FieldSet legend={'Created Cards'}>
-          <CardStack number={14} />
-        </FieldSet>
+      <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
+        Personal
       </div>
+      <FieldSet legend="Interests:">
+        <SkillBar data={interests} tagColorScale={tagColorScale} />
+      </FieldSet>
+      <FieldSet legend="skills:">
+        <SkillBar data={skills} tagColorScale={tagColorScale} />
+      </FieldSet>
+      <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
+        Activity
+      </div>
+      <FieldSet legend="Collected Cards">
+        <CardStack number={30} />
+      </FieldSet>
+      <FieldSet legend="Created Cards">
+        <CardStack number={14} />
+      </FieldSet>
     </div>
+  </div>
+);
+
+const AuthorPreview = ({ imgUrl, style }) => (
+  <div
+    style={{
+      display: 'flex',
+      justifyContent: 'center',
+      // alignItems: 'center',
+      // height: '100%',
+      ...style
+    }}
+  >
+    <img
+      className={`${cx.avatar}`}
+      width="40%"
+      height="80%"
+      src={imgUrl}
+      alt="alt"
+    />
+  </div>
+);
+
+const Author = ({ extended, ...restProps }) =>
+  extended ? (
+    <ExtendedAuthor {...restProps} />
+  ) : (
+    <AuthorPreview {...restProps} />
   );
-};
 
 // Author.propTypes = {
 //   //  profile: PropTypes.shape({
@@ -171,6 +178,8 @@ const Author = ({
 
 Author.defaultProps = {
   // TODO: check
+  placeholderImgUrl:
+    'http://sunfieldfarm.org/wp-content/uploads/2014/02/profile-placeholder.png',
   // profile: {
   name: 'jan',
   skills: [

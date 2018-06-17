@@ -37,7 +37,7 @@ class Map extends Component {
   }
 
   render() {
-    const { width, height, latitude, longitude, zoom } = this.state;
+    const { width, height, latitude, longitude, dragging, zoom } = this.state;
 
     const { userLocation, nodes, children } = this.props;
 
@@ -49,8 +49,10 @@ class Map extends Component {
         mapStyle={mapStyleUrl}
         onViewportChange={viewport => {
           console.log('viewport', viewport);
-          this.setState({ ...viewport });
-          this.props.onViewportChange(viewport);
+          if(!dragging){
+            this.setState({ ...viewport });
+            this.props.onViewportChange(viewport);
+          }
         }}
         height={height}
         width={width}
