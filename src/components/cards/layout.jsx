@@ -58,8 +58,15 @@ Legend.propTypes = {
 
 Legend.defaultProps = { style: {}, children: null };
 
-const FieldSet = ({ children, legend, style, edit, borderColor, onClick }) => (
-  <div style={{ overflow: 'hidden', ...style }} onClick={onClick}>
+export const FieldSet = ({
+  children,
+  legend,
+  style,
+  edit,
+  borderColor,
+  onClick
+}) => (
+  <div style={{ overflow: 'hidden', ...style }} >
     <div
       style={{
         border: `1px solid ${borderColor}`,
@@ -70,7 +77,7 @@ const FieldSet = ({ children, legend, style, edit, borderColor, onClick }) => (
         // overflow: 'hidden'
       }}
     >
-      <h5 className={cxx.hover}>
+      <h5 className={cxx.hover} onClick={onClick}>
         <span>
           {legend}{' '}
           {!edit ? (
@@ -514,7 +521,6 @@ Comments.defaultProps = {
 };
 
 export {
-  FieldSet,
   DescriptionField,
   PreviewMedia,
   MediaField,

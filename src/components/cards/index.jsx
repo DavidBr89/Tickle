@@ -129,8 +129,6 @@ class Card extends React.Component {
     const uiColor = chroma(background).darken(1);
     const focusColor = chroma(background).darken(3);
 
-    const updateAttrFunc = { onAttrUpdate: edit ? onUpdate : null };
-
     const togglecard = () => {
       if (frontView)
         return (
@@ -142,7 +140,7 @@ class Card extends React.Component {
             flipHandler={flipHandler}
             uiColor={uiColor}
             tagColorScale={tagColorScale}
-            {...updateAttrFunc}
+            onUpdate={onUpdate}
           />
         );
       return (

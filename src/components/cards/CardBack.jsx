@@ -97,9 +97,11 @@ class CardBackSkeleton extends Component {
       template
     } = this.props;
 
+    // /TODO: card template update
     const { extended } = this.state;
     const selectField = field => () =>
       extended !== field && this.setState({ extended: field });
+
     const unSelectField = field => () =>
       extended === field && this.setState({ extended: null });
 
@@ -110,7 +112,7 @@ class CardBackSkeleton extends Component {
 
     const display = field => ({
       display: isHidden(field) ? 'none' : null,
-      height: extended === field ? '100%' : '29%'
+      height: extended === field ? '100%' : '25%'
       // opacity: field !== 'map' && edit ? 0.5 : null
     });
 
@@ -119,15 +121,16 @@ class CardBackSkeleton extends Component {
         ref={cont => (this.cont = cont)}
         className={`container ${cx.cardMini2} `}
         style={{
-          height: '90%',
-          zIndex: -10
+          height: '80%'
         }}
       >
         <FieldSet
           legend="Author"
           borderColor={uiColor}
           style={{ ...display('author') }}
-          onClick={selectField('author')}
+          onClick={() =>
+            this.setState({ extended: extended !== 'author' ? 'author' : null })
+          }
         >
           <Author
             {...author}
@@ -137,7 +140,6 @@ class CardBackSkeleton extends Component {
             onClose={() => {
               // TODO
               // console.log('onCLose');
-              this.setState({ extended: null });
             }}
           />
         </FieldSet>

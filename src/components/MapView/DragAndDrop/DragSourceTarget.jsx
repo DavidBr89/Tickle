@@ -116,7 +116,6 @@ export class DragSourceCont extends PureComponent {
 const boxTarget = {
   drop(props, monitor, component) {
     const delta = monitor.getDifferenceFromInitialOffset();
-    console.log('monitor', monitor);
     const item = monitor.getItem();
     const left = Math.round(item.x + delta.x);
     const top = Math.round(item.y + delta.y);
@@ -165,7 +164,7 @@ export class DropTargetCont extends PureComponent {
   componentDidUpdate(prevProps) {
     const { dropHandler, children } = this.props;
     const { left, top, data } = this.state;
-    // console.log('this.state', this.state);
+    console.log('left top', left, top);
     // console.log('yeah dropHandler', this.props);
     // const newid = Math.random() * 100;
     // console.log('dropped', dropped, 'prevDropped', prevState.dropped);

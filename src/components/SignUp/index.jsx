@@ -7,6 +7,11 @@ import { auth, db } from 'Firebase';
 import PhotoUpload from 'Utils/PhotoUpload';
 import { TagInput } from 'Utils/Tag';
 
+import { compose } from 'recompose';
+import { connect } from 'react-redux';
+
+import { setAuthUser } from 'Reducers/Session/actions';
+
 const SignUpPage = ({ ...props }) => (
   <div style={{ marginTop: 60, overflow: 'scroll' }}>
     <div className="m-3">
@@ -37,7 +42,7 @@ class SignUpForm extends Component {
   onSubmit = event => {
     const { username, email, passwordOne, img, interests } = this.state;
 
-    const { history } = this.props;
+    const { history, onSetAuthUser } = this.props;
 
     this.setState({ loading: true });
 
@@ -47,16 +52,19 @@ class SignUpForm extends Component {
         // Create a user in your own accessible Firebase Database too
         db.addImgToStorage(img.file)
           .then(imgUrl => {
-            console.log('imgUrl', imgUrl);
-            db.doCreateUser({
-              id: authUser.uid,
+            const userProfile = {
+              uid: authUser.uid,
               username,
+              photoURL: imgUrl,
               email,
-              imgUrl,
               interests
-            })
+            };
+
+            db.doCreateUser(userProfile)
               .then(() => {
                 this.setState(() => ({ ...INITIAL_STATE }));
+                onSetAuthUser(userProfile);
+                // Jump to page
                 history.push(routes.MAP);
               })
               .catch(error => {
@@ -179,6 +187,18 @@ const SignUpLink = () => (
   </p>
 );
 
-export default withRouter(SignUpPage);
+const mapDispatchToProps = dispatch => ({
+  onSetAuthUser: authUser => {
+    dispatch(setAuthUser(authUser));
+  }
+});
+
+export default compose(
+  withRouter,
+  connect(
+    null,
+    mapDispatchToProps
+  )
+)(SignUpPage);
 
 export { SignUpForm, SignUpLink };

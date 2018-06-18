@@ -32,17 +32,14 @@ const mapStateToProps = state => {
   } = state.Cards;
 
   // TODO: own dim reducer
-  const { width, height } = state.MapView;
-
-  const { userLocation } = state.MapView;
+  const { width, height, userLocation } = state.MapView;
 
   const { authEnv, searchString } = state.DataView;
-  const { uid, email, username, imgUrl: usrImgUrl } = state.Session;
+  const authUser = state.Session;
 
   // const { userLocation } = state.MapView;
 
   // console.log('cardTemplate', cardTemplate);
-  //
   const defaultCardTemplate = {
     id: cardTemplateId,
     template: true,
@@ -51,13 +48,10 @@ const mapStateToProps = state => {
     tags: [],
     challenge: null,
     floorLoc: { relX: 0.5, relY: 0.5 },
-    author: {
-      uid,
-      username,
-      email,
-      imgUrl: usrImgUrl
-    }
+    author: { ...authUser }
   };
+
+  console.log('templateCard', templateCard);
 
   const templateCard = {
     ...defaultCardTemplate,
@@ -83,7 +77,7 @@ const mapStateToProps = state => {
     selectedCard,
     selectedCardId,
     cards,
-    uid
+    authUser
   };
 };
 
@@ -105,7 +99,15 @@ const mapDispatchToProps = dispatch =>
 // });
 
 const mergeProps = (state, dispatcherProps) => {
-  const { selectedCardId, mapViewport, dataView, uid } = state;
+  const {
+    selectedCardId,
+    mapViewport,
+    width,
+    height,
+    dataView,
+    authUser
+  } = state;
+  const { uid } = authUser;
 
   const {
     updateCard,
@@ -115,20 +117,21 @@ const mergeProps = (state, dispatcherProps) => {
     toggleDataView
   } = dispatcherProps;
 
+  const viewport = { ...mapViewport, width, height };
   const onCardDrop = cardData =>
     selectedCardId === 'temp'
-      ? updateCardTemplate({ uid, cardData, mapViewport, dataView })
-      : updateCard({ uid, cardData, mapViewport, dataView });
+      ? updateCardTemplate({ uid, cardData, viewport, dataView })
+      : updateCard({ uid, cardData, viewport, dataView });
 
   const cardAction = cardData =>
     selectedCardId === 'temp'
-      ? asyncCreateCard({ uid, cardData, mapViewport, dataView })
+      ? asyncCreateCard({ uid, cardData, viewport, dataView })
       : asyncRemoveCard({ uid, cid: cardData.id });
 
   const onCardUpdate = cardData =>
     cardData.template
-      ? updateCardTemplate({ cardData, mapViewport, dataView })
-      : updateCard({ uid, cardData, mapViewport, dataView });
+      ? updateCardTemplate({ cardData, viewport, dataView })
+      : updateCard({ uid, cardData, viewport, dataView });
 
   // TODO: change
   const setDataView = toggleDataView;

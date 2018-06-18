@@ -3,8 +3,11 @@ import PropTypes from 'prop-types';
 
 import { scaleLinear, extent, range, scaleOrdinal } from 'd3';
 
+import { db } from 'Firebase';
+
 import cx from './Card.scss';
 import colorClasses from '../utils/colorClasses';
+import setify from 'Utils/setify';
 
 // import { skillTypes } from '../../dummyData';
 import CardMarker from './CardMarker';
@@ -18,8 +21,9 @@ const profileSrc = () => {
 
 const SkillBar = ({ data, tagColorScale }) => {
   const scale = scaleLinear()
-    .domain(extent(data, d => d.level))
-    .range([30, 100]);
+    .domain(extent(data, d => d.count))
+    // TODO
+    .range([50, 100]);
 
   // console.log('scale', scale.domain());
 
@@ -34,10 +38,10 @@ const SkillBar = ({ data, tagColorScale }) => {
             display: 'inline-flex',
             justifyContent: 'center',
             alignItems: 'center',
-            background: tagColorScale(d.type)
+            background: tagColorScale(d.key)
           }}
         >
-          <span>{d.type}</span>
+          <span>{d.key}</span>
         </div>
       ))}
     </div>
@@ -80,61 +84,52 @@ const ExtendedAuthor = ({
   skills,
   activity,
   interests,
-  imgUrl,
-  placeholderImgUrl
+  photoURL,
+  placeholderImgUrl,
+  numCollectedCards,
+  numCreatedCards
 }) => (
-  <div>
-    <button
-      type="button"
-      className="close "
-      data-dismiss="modal"
-      aria-label="Close"
-      onClick={onClose}
-    >
-      <span aria-hidden="true">&times;</span>
-    </button>
-    <div
-      style={{
-        display: 'flex',
-        position: 'relative',
-        justifyContent: 'center',
-        // alignItems: 'center',
-        flexDirection: 'column',
-        ...style
-      }}
-    >
-      <img
-        className={`${cx.avatar}`}
-        style={{ alignSelf: 'center' }}
-        width="40%"
-        height="40%"
-        src={imgUrl}
-        alt="alt"
-      />
+  <div
+    style={{
+      display: 'flex',
+      position: 'relative',
+      justifyContent: 'center',
+      // alignItems: 'center',
+      flexDirection: 'column',
+      ...style
+    }}
+  >
+    <img
+      className={`${cx.avatar}`}
+      style={{ alignSelf: 'center' }}
+      width="40%"
+      height="40%"
+      src={photoURL}
+      alt="alt"
+    />
 
-      <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
-        Personal
-      </div>
-      <FieldSet legend="Interests:">
-        <SkillBar data={interests} tagColorScale={tagColorScale} />
-      </FieldSet>
-      <FieldSet legend="skills:">
-        <SkillBar data={skills} tagColorScale={tagColorScale} />
-      </FieldSet>
-      <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
-        Activity
-      </div>
-      <FieldSet legend="Collected Cards">
-        <CardStack number={30} />
-      </FieldSet>
-      <FieldSet legend="Created Cards">
-        <CardStack number={14} />
-      </FieldSet>
+    <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
+      Personal
     </div>
+    <FieldSet legend="Interests:">
+      <SkillBar data={interests} tagColorScale={tagColorScale} />
+    </FieldSet>
+    <FieldSet legend="skills:">
+      <SkillBar data={skills} tagColorScale={tagColorScale} />
+    </FieldSet>
+    <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
+      Activity
+    </div>
+    <FieldSet legend="Collected Cards">
+      <CardStack number={numCollectedCards} />
+    </FieldSet>
+    <FieldSet legend="Created Cards">
+      <CardStack number={numCreatedCards} />
+    </FieldSet>
   </div>
 );
 
-const AuthorPreview = ({ imgUrl, style }) => (
+const AuthorPreview = ({ photoURL, style, username, name, email }) => (
   <div
     style={{
       display: 'flex',
@@ -144,22 +139,85 @@ const AuthorPreview = ({ imgUrl, style }) => (
       ...style
     }}
   >
-    <img
-      className={`${cx.avatar}`}
-      width="40%"
-      height="80%"
-      src={imgUrl}
-      alt="alt"
-    />
+    <div style={{ display: 'flex' }}>
+      <img width="40%" height="80%" src={photoURL} alt="alt" />
+      <div className="ml-3">
+        <div>
+          <span style={{ fontWeight: 'bold' }}>username: </span>
+          {username}
+        </div>
+        <div>
+          <span style={{ fontWeight: 'bold' }}>name: </span>
+          {name}
+        </div>
+        <div>
+          <span style={{ fontWeight: 'bold' }}>email: </span> {email}
+        </div>
+      </div>
+    </div>
   </div>
 );
 
-const Author = ({ extended, ...restProps }) =>
-  extended ? (
-    <ExtendedAuthor {...restProps} />
-  ) : (
-    <AuthorPreview {...restProps} />
-  );
+class Author extends React.Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string
+  };
+
+  state = { ...this.props,
+
+          collectedCards: [],
+          createdCards: [],
+          numCollectedCards: 0,
+          numCreatedCards:0
+  };
+
+  componentDidMount() {
+    const { uid } = this.props;
+    db.getDetailedUserInfo(uid).then(
+      ({
+        interests: plainInterests,
+        createdCards,
+        collectedCards,
+        ...userDetails
+      }) => {
+        console.log('userDetails', userDetails);
+        // TODO: change
+        const interests = plainInterests.map(key => ({ key, count: 10 }));
+        const skills = setify([...createdCards, ...collectedCards]);
+        const numCollectedCards = collectedCards.length;
+        const numCreatedCards = createdCards.length;
+
+        this.setState({
+          ...userDetails,
+          interests,
+          skills,
+          collectedCards,
+          createdCards,
+          numCollectedCards,
+          numCreatedCards
+        });
+      }
+    );
+  }
+
+  render() {
+    const { extended, uid } = this.props;
+
+    return extended ? (
+      <ExtendedAuthor {...this.state} key={uid} />
+    ) : (
+      <AuthorPreview {...this.state} key={uid} />
+    );
+  }
+}
+
+// const Author = ({ extended, ...restProps }) =>
+//   extended ? (
+//     <ExtendedAuthor {...restProps} key={restProps.uid} />
+//   ) : (
+//     <AuthorPreview {...restProps} key={restProps.uid} />
+//   );
 
 // Author.propTypes = {
 //   //  profile: PropTypes.shape({
@@ -183,15 +241,11 @@ Author.defaultProps = {
   // profile: {
   name: 'jan',
   skills: [
-    { type: 'arts', level: 22 },
-    { type: 'music', level: 14 },
-    { type: 'sports', level: 10 }
+    { key: 'arts', level: 22 },
+    { key: 'music', level: 14 },
+    { key: 'sports', level: 10 }
   ],
-  interests: [
-    { type: 'movies', level: 12 },
-    { type: 'football', level: 5 },
-    { type: 'xbox', level: 10 }
-  ],
+  interests: [{ key: 'movies' }, { key: 'football' }, { key: 'xbox' }],
   activity: { collectedCards: 20, createdCards: 13 },
   // },
   style: {},

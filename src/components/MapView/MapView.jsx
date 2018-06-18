@@ -331,6 +331,7 @@ class MapView extends Component {
       isCardDragging,
       // authEnvCards,
       authEnv,
+      authUser,
       // cardTemplate,
       // AppOpenFirstTime,
       // headerPad,
@@ -586,6 +587,7 @@ class MapView extends Component {
                     >
                       <Card
                         {...c}
+                        key={authUser.uid}
                         onClose={() => extendSelectedCard(null)}
                         edit={authEnv}
                         onSubmit={() => {

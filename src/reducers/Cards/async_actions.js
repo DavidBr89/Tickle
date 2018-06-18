@@ -85,9 +85,7 @@ export function fetchReadableCards(uid) {
   // thus making it able to dispatch actions itself.
   return function(dispatch) {
     // TODO: change later
-    return db.readCards(uid, 'createdCards').then(querySnapshot => {
-      const data = [];
-      querySnapshot.forEach(doc => data.push(doc.data()));
+    return db.readCards(uid, 'createdCards').then(data => {
       dispatch(receiveReadableCards(data));
     });
   };
@@ -100,9 +98,7 @@ export function fetchCreatedCards(uid) {
   return function(dispatch) {
     dispatch(loadingCards());
 
-    return db.readCards(uid, 'createdCards').then(querySnapshot => {
-      const data = [];
-      querySnapshot.forEach(doc => data.push(doc.data()));
+    return db.readCards(uid, 'createdCards').then(data => {
       dispatch(receiveCreatedCards(data));
     });
   };
@@ -126,19 +122,13 @@ export function fetchCardTemplates(uid) {
   };
 }
 
-export function asyncCreateCard({ cardData, mapViewport, uid }) {
+export function asyncCreateCard({ cardData, uid }) {
   const { x, y, tx, ty, vx, vy, tags, ...restData } = cardData;
 
   // console.log('restData', restData);
-  const vp = new PerspectiveMercatorViewport(mapViewport);
-
-  const [longitude, latitude] = vp.unproject([x, y]);
-
   //
-  console.log('new card', tags);
   const newCard = {
     ...restData,
-    loc: { latitude, longitude },
     template: false,
     tags: tags || [],
     uid,

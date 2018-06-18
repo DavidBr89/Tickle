@@ -1,6 +1,6 @@
 import React from 'react';
+// import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-
 import { firebase } from 'Firebase';
 
 import {
@@ -18,16 +18,19 @@ const withAuthentication = Component => {
         onSetAuthUser,
         getReadableCards,
         getCreatedCards,
-        fetchUserInfoXXX
+        // TODO: rename
+        fetchUserInfo
       } = this.props;
 
       firebase.auth.onAuthStateChanged(authUser => {
-        console.log('authenticated', authUser.uid);
         if (authUser) {
-          fetchUserInfo(authUser);
-          getReadableCards(authUser);
-          getCreatedCards(authUser);
-          // fetchUserInfo(authUser.uid);
+          const {uid} = authUser;
+          // const userProfile = authUser.providerData[0]:
+          // console.log('authenticated', authUser.providerData[0]);
+          // onSetAuthUser(authUser.providerData);
+          getReadableCards(uid);
+          getCreatedCards(uid);
+          fetchUserInfo(uid);
         } else {
           onSetAuthUser({ uid: null });
         }
@@ -48,9 +51,9 @@ const withAuthentication = Component => {
     onSetAuthUser: authUser => {
       dispatch(setAuthUser(authUser));
     },
-    fetchUserInfo: authUser => dispatch(fetchUserInfo(authUser.uid)),
-    getReadableCards: authUser => dispatch(fetchReadableCards(authUser.uid)),
-    getCreatedCards: authUser => dispatch(fetchCreatedCards(authUser.uid))
+    fetchUserInfo: uid => dispatch(fetchUserInfo(uid)),
+    getReadableCards: uid => dispatch(fetchReadableCards(uid)),
+    getCreatedCards: uid => dispatch(fetchCreatedCards(uid))
   });
 
   return connect(

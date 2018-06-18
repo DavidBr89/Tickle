@@ -17,3 +17,10 @@ export const doPasswordReset = email => auth.sendPasswordResetEmail(email);
 // Password Change
 export const doPasswordUpdate = password =>
   auth.currentUser.updatePassword(password);
+
+// export const getUserProfile = auth.currentUser;
+
+export const updateUserProfile = (userProfile) =>
+  auth.currentUser.updateProfile(userProfile);
+
+export const getUserInfo = () => auth.currentUser;

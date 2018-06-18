@@ -12,7 +12,7 @@ import {
 // import { getBoundingBox } from './utils';
 // import { intersection } from 'lodash';
 
-// import { db } from 'Firebase';
+import { db } from 'Firebase';
 
 // import setBBox from './fitbounds';
 // import mapboxgl from 'mapbox-gl';
@@ -79,17 +79,17 @@ function updCardTopic(cardData) {
   return { ...cardData };
 }
 
-function updCard({ cardData, mapViewport, dataView }) {
-  const { width, height } = mapViewport;
+function updCard({ cardData, viewport, dataView }) {
+  const { width, height } = viewport;
   switch (dataView) {
     case 'geo':
-      return updCardLoc(cardData, mapViewport);
+      return updCardLoc(cardData, viewport);
     case 'topic':
       return updCardTopic(cardData);
     case 'floorplan':
       return updCardFloorLoc(cardData, width, height);
     default:
-      return updCardLoc(cardData, mapViewport);
+      return updCardLoc(cardData, viewport);
   }
 }
 
@@ -159,12 +159,17 @@ function reducer(state = {}, action) {
     case UPDATE_CARD: {
       const { createdCards } = state;
 
-      const { uid, cardData, mapViewport, dataView } = action.options;
+      const { uid, cardData, viewport, dataView } = action.options;
 
-      const updatedCard = updCard({ cardData, mapViewport, dataView });
+      const updatedCard = updCard({ cardData, viewport, dataView });
 
       // TODO: on Success/Error
-      // db.doUpdateCard(uid, updatedCard);
+      // TODO: on Success/Error
+      // TODO: on Success/Error
+      // TODO: on Success/Error
+      // TODO: on Success/Error
+      // TODO: on Success/Error
+      db.doUpdateCard(uid, updatedCard);
 
       const updatedCards = createdCards.map(c => {
         if (c.id === cardData.id) {
@@ -219,13 +224,12 @@ function reducer(state = {}, action) {
     }
 
     case UPDATE_CARD_TEMPLATE: {
-      const { cardData: cardTemplate, mapViewport, dataView } = action.options;
+      const { cardData: cardTemplate, viewport, dataView } = action.options;
       const updatedTemplate = updCard({
         cardData: cardTemplate,
-        mapViewport,
+        viewport,
         dataView
       });
-      console.log('cardTemplate', cardTemplate);
       return { ...state, tmpCard: updatedTemplate };
     }
     case DELETE_CARD: {

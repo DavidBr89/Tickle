@@ -241,9 +241,10 @@ class EditCardFront extends PureComponent {
 
   onCloseModal = () => {
     const { data } = this.state;
-    const { onAttrUpdate: onFieldUpdate } = this.props;
+    const { onUpdate } = this.props;
     this.setState({ dialog: null });
-    onFieldUpdate({ ...data });
+    console.log('update', data);
+    onUpdate({ ...data });
   };
 
   setFieldState(field) {

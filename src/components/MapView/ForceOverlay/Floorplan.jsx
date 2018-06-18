@@ -30,15 +30,16 @@ class Floorplan extends Component {
           height
         }}
       >
-        {nodes.map(n =>
-          children({
+        {nodes.map(n => {
+          const x = n.floorLoc.relX * width;
+          const y = n.floorLoc.relY * height;
+          console.log('x', x, 'y', y, width, height);
+          return children({
             ...n,
-            x: n.floorLoc.relX * width,
-            // xFloorScale(n.floorLoc ? n.floorLoc.x : width / 2),
-            y: n.floorLoc.relY * height
-            // yFloorScale(n.floorLoc ? n.floorLoc.y : height / 2)
-          })
-        )}
+            x,
+            y
+          });
+        })}
       </div>
     );
   }

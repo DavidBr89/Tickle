@@ -6,6 +6,21 @@ const removeFunctionFields = ({ uiColor, template, edit, ...rest }) =>
     return acc;
   }, {});
 
+export const readCards = (uid, collectionName = 'readableCards') =>
+  firestore
+    .collection('users')
+    .doc(uid)
+    .collection(collectionName)
+    .get()
+    .then(querySnapshot => {
+      const data = [];
+      querySnapshot.forEach(doc => data.push(doc.data()));
+      return new Promise(
+        resolve => resolve(data),
+        error => console.log('error in readCards', error)
+      );
+    });
+
 export const addImgToStorage = file => {
   const metadata = { contentType: file.type };
   const imgRef = storageRef.child(`images/${file.name}${Date.now()}`);
@@ -61,17 +76,11 @@ const uploadImgFields = card => {
   });
 };
 
-export const doCreateUser = ({ id, username, email, imgUrl, interests }) =>
+export const doCreateUser = userProfile =>
   firestore
     .collection('users')
-    .doc(id)
-    .set({
-      id,
-      username,
-      email,
-      imgUrl,
-      interests
-    });
+    .doc(userProfile.uid)
+    .set(userProfile);
 
 export const getUserInfo = uid =>
   firestore
@@ -84,6 +93,34 @@ export const getUserInfo = uid =>
           resolve => resolve(doc.data()),
           error => console.log('error in getUser, doc not existing', error)
         )
+    )
+    .catch(err => console.log('err  getUser'));
+
+export const getDetailedUserInfo = uid =>
+  firestore
+    .collection('users')
+    .doc(uid)
+    .get()
+    .then(doc =>
+      Promise.all([
+        readCards(uid, 'readableCards'),
+        readCards(uid, 'createdCards'),
+        readCards(uid, 'collectedCards')
+      ]).then(values => {
+        console.log('values', values);
+        const usr = doc.data();
+        return new Promise(
+          resolve =>
+            resolve({
+              ...usr,
+              readableCards: values[0],
+              createdCards: values[1],
+              collectedCards: values[2]
+            }),
+          error => console.log('error in getUser, doc not existing', error)
+        );
+        const imgFields = values.reduce((acc, d) => ({ ...acc, ...d }));
+      })
     )
     .catch(err => console.log('err i getUser'));
 
@@ -111,13 +148,6 @@ export const doDeleteCard = (uid, cid) =>
     .collection('createdCards')
     .doc(cid)
     .delete();
-
-export const readCards = (uid, collectionName = 'readableCards') =>
-  firestore
-    .collection('users')
-    .doc(uid)
-    .collection(collectionName)
-    .get();
 
 // TODO: get authored cards
 // return firebase.firestore
