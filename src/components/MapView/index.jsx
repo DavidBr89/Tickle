@@ -51,8 +51,6 @@ const mapStateToProps = state => {
     author: { ...authUser }
   };
 
-  console.log('templateCard', templateCard);
-
   const templateCard = {
     ...defaultCardTemplate,
     ...tmpCard,
@@ -110,7 +108,7 @@ const mergeProps = (state, dispatcherProps) => {
   const { uid } = authUser;
 
   const {
-    updateCard,
+    asyncUpdateCard,
     updateCardTemplate,
     asyncCreateCard,
     asyncRemoveCard,
@@ -121,7 +119,7 @@ const mergeProps = (state, dispatcherProps) => {
   const onCardDrop = cardData =>
     selectedCardId === 'temp'
       ? updateCardTemplate({ uid, cardData, viewport, dataView })
-      : updateCard({ uid, cardData, viewport, dataView });
+      : asyncUpdateCard({ uid, cardData, viewport, dataView });
 
   const cardAction = cardData =>
     selectedCardId === 'temp'
@@ -131,7 +129,7 @@ const mergeProps = (state, dispatcherProps) => {
   const onCardUpdate = cardData =>
     cardData.template
       ? updateCardTemplate({ cardData, viewport, dataView })
-      : updateCard({ uid, cardData, viewport, dataView });
+      : asyncUpdateCard({ uid, cardData, viewport, dataView });
 
   // TODO: change
   const setDataView = toggleDataView;

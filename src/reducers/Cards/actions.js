@@ -27,6 +27,10 @@ export const UPDATE_CARD = 'UPDATE_CARD';
 export function updateCard(options) {
   return { type: UPDATE_CARD, options };
 }
+export const CARD_IS_UPDATING = 'CARD_IS_UPDATING';
+export function cardIsUpdating(options) {
+  return { type: CARD_IS_UPDATING, options };
+}
 export const SUCCESS_UPDATE_CARD = 'SUCCESS_UPDATE_CARD';
 export function updateCardSuccess(options) {
   return { type: SUCCESS_UPDATE_CARD, options };

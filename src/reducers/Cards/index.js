@@ -4,15 +4,12 @@
 // import visibilityFilter from './visibilityFilter';
 // import turf from 'turf';
 // import booleanWithin from '@turf/boolean-within';
-import {
-  // WebMercatorViewport,
-  PerspectiveMercatorViewport
-} from 'viewport-mercator-project';
 
 // import { getBoundingBox } from './utils';
 // import { intersection } from 'lodash';
 
 import { db } from 'Firebase';
+import { updCard } from './helper';
 
 // import setBBox from './fitbounds';
 // import mapboxgl from 'mapbox-gl';
@@ -36,6 +33,7 @@ import {
   PLAY_CARD_CHALLENGE,
   TOGGLE_CARD_AUTHORING,
   DRAG_CARD,
+  LOADING_CARDS,
   TOGGLE_TSNE_VIEW
 } from './actions';
 
@@ -51,48 +49,6 @@ import {
 //     }
 //   }))
 // });
-
-function updCardLoc(cardData, mapViewport) {
-  const { x, y, tx, ty, vx, vy, ...restData } = cardData;
-
-  const vp = new PerspectiveMercatorViewport(mapViewport);
-
-  const [longitude, latitude] = vp.unproject([x, y]);
-  const updatedCard = {
-    ...restData,
-    loc: { latitude, longitude }
-  };
-  return updatedCard;
-}
-
-function updCardFloorLoc(cardData, width, height) {
-  return {
-    ...cardData,
-    floorLoc: {
-      relX: cardData.x / width,
-      relY: cardData.y / height
-    }
-  };
-}
-
-function updCardTopic(cardData) {
-  return { ...cardData };
-}
-
-function updCard({ cardData, viewport, dataView }) {
-  const { width, height } = viewport;
-  switch (dataView) {
-    case 'geo':
-      return updCardLoc(cardData, viewport);
-    case 'topic':
-      return updCardTopic(cardData);
-    case 'floorplan':
-      return updCardFloorLoc(cardData, width, height);
-    default:
-      return updCardLoc(cardData, viewport);
-  }
-}
-
 const cardTemplateId = 'temp';
 // const cardTemplateId = 'temp';
 function reducer(state = {}, action) {
@@ -100,13 +56,22 @@ function reducer(state = {}, action) {
   // const { selectedCardId } = state;
 
   switch (action.type) {
+    case LOADING_CARDS: {
+
+      return {
+        ...state,
+        loadingCards: true
+      };
+    }
+
     case RECEIVE_CREATED_CARDS: {
       const cards = action.options;
       const createdCards = cards.map(c => ({ ...c, edit: true }));
 
       return {
         ...state,
-        createdCards
+        createdCards,
+        loadingCards: false
         // cards
         // isCardDragging
       };
@@ -117,7 +82,8 @@ function reducer(state = {}, action) {
 
       return {
         ...state,
-        readableCards: cards.map(c => ({ ...c, edit: false }))
+        readableCards: cards.map(c => ({ ...c, edit: false })),
+        loadingCards: false
         // defaultCards: cards
         // isCardDragging
       };
@@ -159,21 +125,11 @@ function reducer(state = {}, action) {
     case UPDATE_CARD: {
       const { createdCards } = state;
 
-      const { uid, cardData, viewport, dataView } = action.options;
-
-      const updatedCard = updCard({ cardData, viewport, dataView });
-
-      // TODO: on Success/Error
-      // TODO: on Success/Error
-      // TODO: on Success/Error
-      // TODO: on Success/Error
-      // TODO: on Success/Error
-      // TODO: on Success/Error
-      db.doUpdateCard(uid, updatedCard);
+      const updatedCard = action.options;
 
       const updatedCards = createdCards.map(c => {
-        if (c.id === cardData.id) {
-          return { id: c.id, ...updatedCard };
+        if (c.id === updatedCard.id) {
+          return updatedCard;
         }
         return c;
       });
@@ -181,9 +137,6 @@ function reducer(state = {}, action) {
       return {
         ...state,
         createdCards: updatedCards
-        // authoredCards
-
-        // isCardDragging
       };
       // const tmpCards = [...createdCards];
 

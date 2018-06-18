@@ -1,6 +1,7 @@
 import generate from 'firebase-auto-ids';
 
 import fetch from 'cross-fetch';
+import { updCard } from './helper';
 
 import {
   receivePlaces,
@@ -12,7 +13,10 @@ import {
   deleteCard,
   deleteCardSuccess,
   deleteCardError,
-  loadingCards
+  loadingCards,
+  updateCard,
+  updateCardSuccess,
+  updateCardError
 } from './actions';
 
 import NearbyPlaces from '../places.json';
@@ -109,6 +113,7 @@ export function fetchCardTemplates(uid) {
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
   return function(dispatch) {
+        dispatch(loadingCards());
     return firebase.firestore
       .collection('users')
       .doc(uid)
@@ -157,6 +162,20 @@ export function asyncRemoveCard({ uid, cid }) {
     return db.doDeleteCard(uid, cid).then(querySnapshot => {
       dispatch(deleteCardSuccess(cid));
     });
+  };
+}
+
+export function asyncUpdateCard({ uid, cardData, viewport, dataView }) {
+  const updatedCard = updCard({ cardData, viewport, dataView });
+  console.log('updatedCard', updatedCard);
+  return function(dispatch) {
+    dispatch(updateCard(updatedCard));
+    return db
+      .doUpdateCard(uid, updatedCard)
+      .then(() => {
+        dispatch(updateCardSuccess(updatedCard));
+      })
+      .catch(err => dispatch(updateCardError(err)));
   };
 }
 

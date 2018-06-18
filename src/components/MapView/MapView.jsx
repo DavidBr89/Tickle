@@ -259,10 +259,10 @@ class MapView extends Component {
       });
     });
 
-    screenResize({
-      width,
-      height
-    });
+    // screenResize({
+    //   width,
+    //   height
+    // });
 
     this.scrollTo = scrollTo.bind(this);
     // this.node = null;
@@ -270,14 +270,13 @@ class MapView extends Component {
   }
 
   componentDidMount() {
-    // const map = this.map.getMap();
-
     const { screenResize, getUserCards } = this.props;
     screenResize({
       width: this.cont.offsetWidth,
       height: this.cont.offsetHeight
     });
 
+    // TODO: update
     navigator.geolocation.watchPosition(
       pos => {
         const userLocation = {
@@ -286,7 +285,7 @@ class MapView extends Component {
         };
 
         // TODO:
-        const centerLocation = { ...userLocation };
+        // const centerLocation = { ...userLocation };
       },
       // 50.846749, 4.352349
       d => console.log('error watch pos', d),
@@ -300,8 +299,6 @@ class MapView extends Component {
     navigator.geolocation.getCurrentPosition(() => {}, () => {}, {
       timeout: 1
     });
-
-    // navigator.geolocation.clearWatch(this.state.watchPosId);
   }
 
   render() {

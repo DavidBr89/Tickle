@@ -42,31 +42,6 @@ class ExtendableMarker extends Component {
     style: {}
   };
 
-  // static defaultProps = {
-  //   throttle: null
-  // };
-
-  constructor(props) {
-    super(props);
-    this.timeStamp = 0;
-  }
-
-  shouldComponentUpdate(nextProps) {
-    const { x, y, extended } = nextProps;
-
-    return (
-      // extended !== this.props.extended ||
-      // (this.props.x !== x && this.props.y !== y)
-      true
-    ); // nextProps.extended ||
-    // this.props.extended !== nextProps.extended ||
-    // !nextProps.throttle
-    // }
-
-    // componentWillUpdate(nextProps, nextState) {
-    //   // this.timeStamp = new Date().getMilliseconds();
-  }
-
   render() {
     const {
       width,
@@ -93,9 +68,9 @@ class ExtendableMarker extends Component {
           transform: 'translate(-50%, -50%)',
           right: extended && 0,
           bottom: extended && 0,
-          width: `${width}px`,
-          height: `${height}px`,
-          zIndex: extended ? 10000 : 0,
+          width,
+          height,
+          zIndex: extended ? 4000 : 0,
           transition: `transform ${delay}ms, left ${delay}ms, top ${delay}ms, width ${delay}ms, height ${delay}ms`,
           ...style
         }}
