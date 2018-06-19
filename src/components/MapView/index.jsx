@@ -112,7 +112,9 @@ const mergeProps = (state, dispatcherProps) => {
     updateCardTemplate,
     asyncCreateCard,
     asyncRemoveCard,
-    toggleDataView
+    toggleDataView,
+    selectCard,
+    extendSelectedCard
   } = dispatcherProps;
 
   const viewport = { ...mapViewport, width, height };
@@ -133,6 +135,8 @@ const mergeProps = (state, dispatcherProps) => {
 
   // TODO: change
   const setDataView = toggleDataView;
+  const previewCardAction = d =>
+    selectedCardId === d.id ? extendSelectedCard(d.id) : selectCard(d.id);
 
   return {
     ...state,
@@ -140,7 +144,8 @@ const mergeProps = (state, dispatcherProps) => {
     onCardDrop,
     onCardUpdate,
     cardAction,
-    setDataView
+    setDataView,
+    previewCardAction
   };
 };
 

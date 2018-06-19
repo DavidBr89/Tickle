@@ -110,7 +110,7 @@ class SignUpForm extends Component {
     return (
       <form onSubmit={this.onSubmit}>
         <div className="form-group">
-          <label htmlFor="email">Username:</label>
+          <label htmlFor="username">Username:</label>
           <div>
             <input
               className="form-control"

@@ -4,10 +4,47 @@ import MapGL from 'react-map-gl';
 
 import { scaleOrdinal } from 'd3';
 
-import { DimWrapper } from '../utils';
 import MapAreaRadius from '../utils/map-layers/MapAreaRadius';
 import CardMarker from './CardMarker';
 import { DivOverlay, UserOverlay } from '../utils/map-layers/DivOverlay';
+
+class DimWrapper extends React.Component {
+  static propTypes = {
+    children: PropTypes.func.isRequired
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = { width: 0, height: 0 };
+  }
+
+  componentDidMount() {
+    const width = this.node.offsetWidth;
+    const height = this.node.offsetHeight;
+    this.setState({ width, height });
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.extended !== prevProps.extended) {
+      const width = this.node.offsetWidth;
+      const height = this.node.offsetHeight;
+      this.setState({ width, height });
+    }
+  }
+
+  render() {
+    const { children } = this.props;
+    const { width, height } = this.state;
+    return (
+      <div
+        ref={node => (this.node = node)}
+        style={{ height: '100%', width: '100%' }}
+      >
+        {children(width, height)}
+      </div>
+    );
+  }
+}
 
 function MapAreaForm({ ...props }) {
   const {
@@ -110,7 +147,7 @@ class MapAreaControl extends Component {
     const { onChange } = this.props;
     const { radius } = this.state;
     // TODO: why prevState
-    if (!prevState.extended) onChange(radius);
+    // if (!prevState.extended) onChange(radius);
   }
 
   // componentDidMount() {
@@ -155,78 +192,63 @@ class MapAreaControl extends Component {
       zoom: scaleZoom(radius)
     });
 
+    // {extended && (
+    //   <div
+    //     style={{
+    //       position: 'absolute',
+    //       zIndex: 2000,
+    //       right: 0
+    //     }}
+    //   >
+    //     {edit && (
+    //       <div style={{ height, width }}>
+    //         <MapAreaForm
+    //           className="ml-3"
+    //           width={width}
+    //           height={height}
+    //           selectedRadius={radius}
+    //           uiColor={uiColor}
+    //           scaleRad={scaleRad}
+    //           onChange={r => this.setState({ radius: r })}
+    //         />
+    //       </div>
+    //     )}
+    //   </div>
+    // )}
+
     return (
-      <DimWrapper extended={extended}>
-        {(width, height) => (
-          <div
-            style={{
-              width: `${width}px`,
-              height: `${height - 50}px`,
-              // transition: 'all 1s ease-out',
-              position: 'relative'
-            }}
-          >
-            {extended && (
-              <div
-                style={{
-                  position: 'absolute',
-                  zIndex: 2000,
-                  right: 0
-                }}
-              >
-                <button
-                  type="button"
-                  className="close mr-2 mt-1"
-                  data-dismiss="modal"
-                  aria-label="Close"
-                  onClick={onClose}
-                >
-                  <span aria-hidden="true">×</span>
-                </button>
-
-                {edit && (
-                  <div style={{ height, width }}>
-                    <MapAreaForm
-                      className="ml-3"
-                      width={width}
-                      height={height}
-                      selectedRadius={radius}
-                      uiColor={uiColor}
-                      scaleRad={scaleRad}
-                      onChange={r => this.setState({ radius: r })}
-                    />
-                  </div>
-                )}
-              </div>
+      <div style={{ height: '100%', width: '100%' }}>
+        <div style={{ height: '100%', width: '100%' }}>
+          <DimWrapper extended={extended}>
+            {(width, height) => (
+              <MapGL {...mapViewport(width, height)}>
+                <MapAreaRadius
+                  userLocation={userLocation}
+                  mapViewport={mapViewport(width, height)}
+                  cardPosition={{ ...loc }}
+                  radius={radius}
+                />
+                <DivOverlay {...mapViewport(width, height)} data={[{ loc }]}>
+                  {(_, [left, top]) => (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        left: left - markerWidth / 2,
+                        top: top - markerHeight / 2,
+                        width: markerWidth,
+                        height: markerHeight
+                      }}
+                    >
+                      <CardMarker />
+                    </div>
+                  )}
+                </DivOverlay>
+              </MapGL>
             )}
-
-            <MapGL {...mapViewport(width, height)}>
-              <MapAreaRadius
-                userLocation={userLocation}
-                mapViewport={mapViewport(width, height)}
-                cardPosition={{ ...loc }}
-                radius={radius}
-              />
-              <DivOverlay {...mapViewport(width, height)} data={[{ loc }]}>
-                {(_, [left, top]) => (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      left: left - markerWidth / 2,
-                      top: top - markerHeight / 2,
-                      width: markerWidth,
-                      height: markerHeight
-                    }}
-                  >
-                    <CardMarker />
-                  </div>
-                )}
-              </DivOverlay>
-            </MapGL>
-          </div>
-        )}
-      </DimWrapper>
+          </DimWrapper>
+        </div>
+      </div>
     );
   }
 }
-export default MapAreaControl;
+export { MapAreaControl };

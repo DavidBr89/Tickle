@@ -64,29 +64,41 @@ export const FieldSet = ({
   style,
   edit,
   borderColor,
-  onClick
+  onClick,
+  legendStyle,
+  bodyStyle
 }) => (
-  <div style={{ overflow: 'hidden', ...style }} >
+  <div style={{ ...style }}>
     <div
       style={{
         border: `1px solid ${borderColor}`,
         marginTop: '4px',
-        padding: '10px',
         width: '100%',
-        height: '100%'
+        height: '100%',
+        padding: 10,
+        ...bodyStyle
+
         // overflow: 'hidden'
       }}
     >
-      <h5 className={cxx.hover} onClick={onClick}>
-        <span>
-          {legend}{' '}
-          {!edit ? (
-            <SearchIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
-          ) : (
-            <EditIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
-          )}
-        </span>
-      </h5>
+      <div
+        style={{
+          position: 'relative'
+        }}
+      >
+        <div onClick={onClick}>
+          <h5 className={cxx.hover} style={legendStyle}>
+            <span>
+              {legend}{' '}
+              {!edit ? (
+                <SearchIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
+              ) : (
+                <EditIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
+              )}
+            </span>
+          </h5>
+        </div>
+      </div>
       {children}
     </div>
   </div>
@@ -98,7 +110,9 @@ FieldSet.propTypes = {
   children: PropTypes.node.isRequired,
   edit: PropTypes.bool,
   style: PropTypes.object,
-  onClick: PropTypes.oneOf([null, PropTypes.func])
+  onClick: PropTypes.oneOf([null, PropTypes.func]),
+  legendStyle: PropTypes.object,
+  bodyStyle: PropTypes.object
 };
 
 FieldSet.defaultProps = {
@@ -106,7 +120,9 @@ FieldSet.defaultProps = {
   borderColor: 'grey',
   classname: '',
   onClick: null,
-  style: {}
+  style: {},
+  legendStyle: {},
+  bodyStyle: {}
 };
 
 export const ChallengeField = ({

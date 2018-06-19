@@ -149,6 +149,33 @@ export const doDeleteCard = (uid, cid) =>
     .doc(cid)
     .delete();
 
+// Add a new document with a generated id.
+export const addComment = ({ authorId, cardId, text }) =>
+  firestore
+    .collection('users')
+    .doc(authorId)
+    .collection('createdCards')
+    .doc(cardId)
+    .collection('comments')
+    .add({ text, authorId, date: new Date() });
+
+export const readComments = ({ authorId, cardId }) =>
+  firestore
+    .collection('users')
+    .doc(authorId)
+    .collection('createdCards')
+    .doc(cardId)
+    .collection('comments')
+    .get()
+    .then(querySnapshot => {
+      const comments = [];
+      querySnapshot.forEach(doc => comments.push(doc.data()));
+      return new Promise(
+        resolve => resolve(comments),
+        error => console.log('error in readComments', error)
+      );
+    });
+
 // TODO: get authored cards
 // return firebase.firestore
 //   .collection('authoredCards')

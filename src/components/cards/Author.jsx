@@ -66,6 +66,7 @@ const CardStack = ({ number }) => (
         </div>
       </div>
     ))}
+    {number === 0 && <div>No Cards!</div>}
   </div>
 );
 
@@ -84,10 +85,10 @@ const ExtendedAuthor = ({
   skills,
   activity,
   interests,
-  photoURL,
   placeholderImgUrl,
   numCollectedCards,
-  numCreatedCards
+  numCreatedCards,
+  ...authorPreviewProps
 }) => (
   <div
     style={{
@@ -99,14 +100,7 @@ const ExtendedAuthor = ({
       ...style
     }}
   >
-    <img
-      className={`${cx.avatar}`}
-      style={{ alignSelf: 'center' }}
-      width="40%"
-      height="40%"
-      src={photoURL}
-      alt="alt"
-    />
+    <AuthorPreview {...authorPreviewProps} />
 
     <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
       Personal
@@ -142,15 +136,15 @@ const AuthorPreview = ({ photoURL, style, username, name, email }) => (
     <div style={{ display: 'flex' }}>
       <img width="40%" height="80%" src={photoURL} alt="alt" />
       <div className="ml-3">
-        <div>
+        <div className="mb-1">
           <span style={{ fontWeight: 'bold' }}>username: </span>
           {username}
         </div>
-        <div>
+        <div className="mb-1">
           <span style={{ fontWeight: 'bold' }}>name: </span>
           {name}
         </div>
-        <div>
+        <div className="mb-1">
           <span style={{ fontWeight: 'bold' }}>email: </span> {email}
         </div>
       </div>
@@ -164,12 +158,13 @@ class Author extends React.Component {
     className: PropTypes.string
   };
 
-  state = { ...this.props,
+  state = {
+    ...this.props,
 
-          collectedCards: [],
-          createdCards: [],
-          numCollectedCards: 0,
-          numCreatedCards:0
+    collectedCards: [],
+    createdCards: [],
+    numCollectedCards: 0,
+    numCreatedCards: 0
   };
 
   componentDidMount() {

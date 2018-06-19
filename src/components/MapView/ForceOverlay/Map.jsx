@@ -16,8 +16,11 @@ const defaultLocation = {
 class Map extends Component {
   static propTypes = {
     children: PropTypes.node,
-    className: PropTypes.string
+    className: PropTypes.string,
+    disabled: PropTypes.boolean
   };
+
+  static defaultProps = { disabled: false };
 
   state = { ...this.props };
 
@@ -37,9 +40,9 @@ class Map extends Component {
   }
 
   render() {
-    const { width, height, latitude, longitude, dragging, zoom } = this.state;
+    const { width, height, latitude, longitude, zoom } = this.state;
 
-    const { userLocation, nodes, children } = this.props;
+    const { userLocation, nodes, disabled, children } = this.props;
 
     const viewport = new PerspectiveMercatorViewport({ ...this.state });
 
@@ -48,8 +51,7 @@ class Map extends Component {
         key="map"
         mapStyle={mapStyleUrl}
         onViewportChange={viewport => {
-          console.log('viewport', viewport);
-          if(!dragging){
+          if (!disabled) {
             this.setState({ ...viewport });
             this.props.onViewportChange(viewport);
           }

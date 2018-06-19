@@ -4,6 +4,8 @@ import { ajax } from 'jquery';
 
 import * as Icon from 'react-feather';
 
+import { uniqBy } from 'lodash';
+
 // import MyGrid from 'mygrid/dist';
 import cxs from 'cxs';
 import giphyReq from 'giphy-api';
@@ -15,6 +17,7 @@ import { ScrollView, ScrollElement } from '../utils/ScrollView';
 import gapi from './gapi';
 
 import { createShadowStyle } from './styles';
+
 import { UIthemeContext } from 'Cards/styles';
 
 const giphy = giphyReq({ https: true });
@@ -327,7 +330,7 @@ const ThumbCell = ({ children, className, focusColor, uiColor, ...props }) => (
       className="mr-3"
       style={{ position: 'absolute', zIndex: 300, right: 0 }}
     >
-      <div style={{ display: 'flex', justifyContent: 'right' }}>{children}</div>
+      <div>{children}</div>
     </div>
     <ThumbNailSwitchDetail {...props} />
   </div>
@@ -355,6 +358,126 @@ ThumbCell.defaultProps = {
   uiColor: 'grey',
   focusColor: 'black'
 };
+
+class UrlMediaList extends Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string,
+    focusColor: PropTypes.string,
+    uiColor: PropTypes.string
+  };
+
+  state = {
+    url: null,
+    descr: null,
+    title: null,
+    data: [...this.props.preSelected]
+  };
+
+  onSubmit = event => {
+    event.preventDefault();
+
+    const { url, title, descr } = this.state;
+    const urlItem = { id: url, url, title, descr, type: 'url' };
+
+    this.setState(({ data: oldData }) => ({
+      data: uniqBy([urlItem, ...oldData], 'id'),
+      title: '',
+      url: '',
+      descr: ''
+    }));
+  };
+
+  removeItem = id => {
+    this.setState(({ data: oldData }) => ({
+      data: oldData.filter(d => d.id !== id)
+    }));
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    const { onChange } = this.props;
+    const { data: oldData } = prevState;
+    const { data } = this.state;
+
+    if (oldData.length !== data.length) {
+      onChange(data);
+    }
+  }
+
+  render() {
+    const { focusColor, uiColor } = this.props;
+    const { url, title, descr, data } = this.state;
+
+    return (
+      <div>
+        <div className="mb-3">
+          <form className="form-horizontal" onSubmit={this.onSubmit}>
+            <div className="form-group">
+              <div>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Title"
+                  value={title}
+                  onChange={event => {
+                    this.setState({ title: event.target.value });
+                  }}
+                />
+              </div>
+            </div>
+            <div className="form-group">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Description"
+                value={descr}
+                onChange={event => this.setState({ descr: event.target.value })}
+              />
+            </div>
+            <div className="form-group">
+              <input
+                type="url"
+                placeholder="Url"
+                className="form-control"
+                value={url}
+                onChange={event => this.setState({ url: event.target.value })}
+              />
+            </div>
+            <button type="submit" className="btn">
+              Submit
+            </button>
+          </form>
+        </div>
+
+        {data.length > 0 ? (
+          <ScrollList data={data}>
+            {(d, isSelected) => (
+              <div
+                className="mb-3 p-3"
+                selected={isSelected}
+                style={{
+                  height: 150,
+                  ...createShadowStyle(isSelected ? focusColor : uiColor)
+                }}
+              >
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  <h3>{d.title}</h3>
+                  <ActiveBtn selected onClick={() => this.removeItem(d.id)} />
+                </div>
+                <small>{d.url}</small>
+                <div>{d.descr}</div>
+              </div>
+            )}
+          </ScrollList>
+        ) : (
+          <div className="m-3">No Urls added</div>
+        )}
+      </div>
+    );
+  }
+}
 
 class MediaSearch extends Component {
   static propTypes = {
@@ -408,6 +531,15 @@ class MediaSearch extends Component {
             searchFn={searchFlickr}
             type="Photo"
             key="flickr"
+          />
+        );
+      case 'url':
+        return (
+          <UrlMediaList
+            preSelected={selectedMedia.filter(d => d.type === 'url')}
+            onChange={onChange}
+            type="url"
+            key="url"
           />
         );
       default:
@@ -482,9 +614,9 @@ class MediaSearch extends Component {
               <button
                 type="button"
                 className="btn"
-                onClick={updState('flickr')}
-                style={btnStyle(selected === 'flickr', uiColor)}
-                id="flickr"
+                onClick={updState('url')}
+                style={btnStyle(selected === 'url', uiColor)}
+                id="giphy"
               >
                 <small
                   style={{
@@ -493,9 +625,28 @@ class MediaSearch extends Component {
                     fontWeight: 'bold'
                   }}
                 >
-                  Flickr
+                  URL
                 </small>
               </button>
+              {
+                // <button
+                //   type="button"
+                //   className="btn"
+                //   onClick={updState('flickr')}
+                //   style={btnStyle(selected === 'flickr', uiColor)}
+                //   id="flickr"
+                // >
+                //   <small
+                //     style={{
+                //       paddingLeft: '13px',
+                //         paddingRight: '13px',
+                //         fontWeight: 'bold'
+                //     }}
+                //   >
+                //     Flickr
+                //   </small>
+                // </button>
+              }
               <button
                 type="button"
                 className="btn"
@@ -562,7 +713,7 @@ class ScrollList extends Component {
       <div
         style={{
           width: '100%',
-          height: '50vh',
+          height: data.length > 0 ? '50vh' : null,
           maxHeight: 500,
           overflowY: 'scroll',
           ...style
@@ -639,16 +790,6 @@ class MetaSearch extends Component {
     preSelected: []
   };
 
-  static getDerivedStateFromProps(nextProps) {
-    console.log('newProps');
-    // const { search } = nextProps;
-    // console.log('this getDerivedStateFromProps', this);
-    // search().then(data => {
-    //   this.setState({ data });
-    // });
-    return null;
-  }
-
   constructor(props) {
     super(props);
 
@@ -721,10 +862,11 @@ class MetaSearch extends Component {
     }));
   };
 
-  removeItem = id =>
+  removeItem = id => {
     this.setState(oldState => ({
       selectedIds: oldState.selectedIds.filter(d => d !== id)
     }));
+  };
 
   render() {
     const { onSelect, search, type, onAdd, defaultQuery } = this.props;

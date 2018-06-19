@@ -154,9 +154,11 @@ class Card extends React.Component {
           tagColorScale={tagColorScale}
           deleteHandler={onSubmit}
           author={author}
-          setMapRadius={mapRadius => {
-            onUpdate({ ...this.props, mapRadius });
-          }}
+          onUpdate={comments => this.setState({ comments })}
+          setMapRadius={mapRadius =>
+            // onUpdate({ ...this.props, mapRadius });
+            null
+          }
         />
       );
     };

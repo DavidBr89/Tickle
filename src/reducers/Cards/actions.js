@@ -110,3 +110,17 @@ export const TOGGLE_CARD_CHALLENGE = 'TOGGLE_CARD_CHALLENGE';
 export function toggleCardChallenge(options) {
   return { type: TOGGLE_CARD_CHALLENGE, options };
 }
+
+export const ADD_COMMENT = 'ADD_COMMENT';
+export function addComment(options) {
+  return { type: ADD_COMMENT, options };
+}
+
+export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
+export function addCommentSuccess(options) {
+  return { type: ADD_COMMENT_SUCCESS, options };
+}
+export const ADD_COMMENT_ERROR = 'ADD_COMMENT_ERROR';
+export function addCommentError(options) {
+  return { type: ADD_COMMENT_ERROR, options };
+}

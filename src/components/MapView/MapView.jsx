@@ -329,6 +329,8 @@ class MapView extends Component {
       // authEnvCards,
       authEnv,
       authUser,
+
+      previewCardAction,
       // cardTemplate,
       // AppOpenFirstTime,
       // headerPad,
@@ -505,11 +507,7 @@ class MapView extends Component {
                     <div style={{ width: '100%', height: '100%' }}>
                       <PreviewCard
                         {...d}
-                        onClick={() =>
-                          selectedCardId === d.id
-                            ? extendSelectedCard(d.id)
-                            : selectCard(d.id)
-                        }
+                        onClick={() => previewCardAction(d)}
                         tagColorScale={tagColorScale}
                         key={d.id}
                         edit={d.template}
@@ -533,7 +531,7 @@ class MapView extends Component {
               <DropTargetCont dropHandler={onCardDrop} dragged={isCardDragging}>
                 <ForceOverlay
                   delay={1}
-                  dragging={isCardDragging}
+                  disabled={isCardDragging || extCardId !== null}
                   width={width}
                   height={height}
                   force

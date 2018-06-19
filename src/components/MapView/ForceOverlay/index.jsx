@@ -144,9 +144,8 @@ class ForceOverlay extends Component {
       userLocation,
       width,
       height,
-      onDrop,
       // TODO: Remove this check
-      dragging,
+      disabled,
       data,
       padding
     } = this.props;
@@ -181,7 +180,7 @@ class ForceOverlay extends Component {
             height={height}
             width={width}
             onViewportChange={onMapViewportChange}
-            dragging={dragging}
+            disabled={disabled}
             {...loc}
             zoom={10}
             nodes={nodes}
@@ -202,17 +201,19 @@ class ForceOverlay extends Component {
     }
 
     return (
-      <TopicMap
-        sets={sets}
-        width={width}
-        height={height}
-        nodes={nodes}
-        selectedId={selectedCardId}
-        colorScale={colorScale}
-        padding={padding}
-      >
-        {children}
-      </TopicMap>
+      <div style={style}>
+        <TopicMap
+          sets={sets}
+          width={width}
+          height={height}
+          nodes={nodes}
+          selectedId={selectedCardId}
+          colorScale={colorScale}
+          padding={padding}
+        >
+          {children}
+        </TopicMap>
+      </div>
     );
   }
 }

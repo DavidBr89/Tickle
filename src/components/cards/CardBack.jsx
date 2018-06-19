@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 
 import cx from './Card.scss';
 
-import { FieldSet, Comments, FlipButton } from './layout';
+import { FieldSet, FlipButton } from './layout';
+import Comments from './Comments';
 import CardHeader from './CardHeader';
 import Author from './Author';
-import MapAreaControl from './MapAreaControl';
+import { MapAreaControl } from './MapAreaControl';
 
 const DeleteButton = ({ style, onClick, color, className }) => (
   <button
@@ -82,55 +83,59 @@ class CardBackSkeleton extends Component {
     return this.state.extended !== nextState.extended;
   }
 
+  selectField = field =>
+    this.setState(({ extended: prevExtended }) => ({
+      extended: prevExtended !== field ? field : null
+    }));
+
   render() {
     const {
       loc,
       author,
       uiColor,
-      comments,
       edit,
       setMapRadius,
       mapRadius,
       flipHandler,
       deleteHandler,
       tagColorScale,
-      template
+      template,
+      id: cardId
     } = this.props;
 
     // /TODO: card template update
     const { extended } = this.state;
-    const selectField = field => () =>
-      extended !== field && this.setState({ extended: field });
-
-    const unSelectField = field => () =>
-      extended === field && this.setState({ extended: null });
 
     const isHidden = field => extended !== null && extended !== field;
     const isExtended = field => ({
       extended: extended === field && extended !== null
     });
 
-    const display = field => ({
-      display: isHidden(field) ? 'none' : null,
-      height: extended === field ? '100%' : '25%'
-      // opacity: field !== 'map' && edit ? 0.5 : null
-    });
+    const display = field => {
+      const h = extended === field ? { height: '90%' } : {};
+      return {
+        display: isHidden(field) ? 'none' : null,
+        ...h
+      };
+    };
 
     return (
       <div
         ref={cont => (this.cont = cont)}
         className={`container ${cx.cardMini2} `}
         style={{
-          height: '80%'
+          height: '90%',
+          display: 'flex',
+          alignContent: 'center',
+          flexDirection: 'column'
+          // pointerEvents: 'all'
         }}
       >
         <FieldSet
           legend="Author"
           borderColor={uiColor}
-          style={{ ...display('author') }}
-          onClick={() =>
-            this.setState({ extended: extended !== 'author' ? 'author' : null })
-          }
+          style={{ ...display('author'), transition: 'all 1s' }}
+          onClick={() => this.selectField('author')}
         >
           <Author
             {...author}
@@ -144,17 +149,18 @@ class CardBackSkeleton extends Component {
           />
         </FieldSet>
         <FieldSet
-          style={{ width: '100%', ...display('map') }}
+          style={{ width: '100%', height: '30%', ...display('map') }}
           edit={edit}
           legend="Location"
+          legendStyle={{ position: 'absolute', zIndex: 100, margin: 10 }}
+          bodyStyle={{ padding: 0 }}
           borderColor={uiColor}
-          onClick={selectField('map')}
+          onClick={() => this.selectField('map')}
         >
           <MapAreaControl
             {...this.props}
             {...loc}
             {...isExtended('map')}
-            onClose={unSelectField('map')}
             uiColor={uiColor}
             onChange={r => setMapRadius(r)}
             radius={mapRadius}
@@ -162,16 +168,20 @@ class CardBackSkeleton extends Component {
           />
         </FieldSet>
         <FieldSet
-          onClick={selectField('comments')}
+          onClick={() => this.selectField('comments')}
           legend="Comments"
           style={display('comments')}
           borderColor={uiColor}
         >
-          <Comments
-            extended={extended === 'comments'}
-            data={comments}
-            onClose={unSelectField('comments')}
-          />
+          {!template ? (
+            <Comments
+              author={author}
+              cardId={cardId}
+              extended={extended === 'comments'}
+            />
+          ) : (
+            'No comments'
+          )}
         </FieldSet>
         <div
           className="mt-2"
