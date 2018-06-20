@@ -5,7 +5,7 @@ import * as Icon from 'react-feather';
 
 import PhotoUpload from 'Utils/PhotoUpload';
 
-import { shallowEqualProps } from 'shallow-equal-props';
+import { isEqual } from 'lodash';
 
 import placeholderImg from './placeholder.png';
 import { Modal, ModalBody } from 'Utils/Modal';
@@ -221,18 +221,19 @@ class EditCardFront extends PureComponent {
     dialog: null
   };
 
-  // componentDidUpdate(prevProps, prevState) {
-  //   const prevData = prevState.data;
-  //   const { data } = this.state;
-  //   // TODO: check the other attrs
-  //   if (
-  //     !shallowEqualProps(prevData, data) ||
-  //     !shallowEqualProps(prevData.challenge, data.challenge)
-  //   ) {
-  //     console.log('update data', data);
-  //     this.props.onAttrUpdate({ ...data });
-  //   }
-  // }
+  componentDidUpdate(prevProps, prevState) {
+    const prevData = prevState.data;
+    const { onUpdate } = this.props;
+    const { data } = this.state;
+    // TODO: check the other attrs
+    if (
+      !isEqual(prevData, data) ||
+      !isEqual(prevData.challenge, data.challenge) ||
+      !isEqual(prevData.media, data.media)
+    ) {
+      onUpdate({ ...data });
+    }
+  }
 
   // shouldComponentUpdate(nextProps, nextState) {
   //   // return this.props.description !== nextProps.description;
@@ -242,9 +243,8 @@ class EditCardFront extends PureComponent {
   onCloseModal = () => {
     const { data } = this.state;
     const { onUpdate } = this.props;
-    this.setState({ dialog: null });
-    console.log('update', data);
     onUpdate({ ...data });
+    this.setState({ dialog: null });
   };
 
   setFieldState(field) {

@@ -317,7 +317,7 @@ const ThumbCell = ({ children, className, focusColor, uiColor, ...props }) => (
   <div
     className={`p-3 ${className}`}
     style={{
-      height: '40vh',
+      // height: '40vh',
       width: '100%',
       maxHeight: 300,
       ...props.style,
@@ -359,7 +359,7 @@ ThumbCell.defaultProps = {
   focusColor: 'black'
 };
 
-class UrlMediaList extends Component {
+class UrlMedia extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
@@ -409,7 +409,7 @@ class UrlMediaList extends Component {
     const { url, title, descr, data } = this.state;
 
     return (
-      <div>
+      <div className="w-100">
         <div className="mb-3">
           <form className="form-horizontal" onSubmit={this.onSubmit}>
             <div className="form-group">
@@ -444,13 +444,13 @@ class UrlMediaList extends Component {
               />
             </div>
             <button type="submit" className="btn">
-              Submit
+              Add Link
             </button>
           </form>
         </div>
 
         {data.length > 0 ? (
-          <ScrollList data={data}>
+          <ScrollList data={data} style={{ height: '90%' }}>
             {(d, isSelected) => (
               <div
                 className="mb-3 p-3"
@@ -535,7 +535,7 @@ class MediaSearch extends Component {
         );
       case 'url':
         return (
-          <UrlMediaList
+          <UrlMedia
             preSelected={selectedMedia.filter(d => d.type === 'url')}
             onChange={onChange}
             type="url"
@@ -562,7 +562,7 @@ class MediaSearch extends Component {
     return (
       <UIthemeContext.Consumer>
         {({ uiColor }) => (
-          <div style={{ width: '100%' }}>
+          <div style={{ width: '100%', maxHeight: 600 }}>
             <div
               className="mb-3 nav"
               style={{ display: 'flex', justifyContent: 'space-between' }}
@@ -713,7 +713,7 @@ class ScrollList extends Component {
       <div
         style={{
           width: '100%',
-          height: data.length > 0 ? '50vh' : null,
+          // height: data.length > 0 ? '50vh' : null,
           maxHeight: 500,
           overflowY: 'scroll',
           ...style
@@ -927,14 +927,7 @@ class MediaOverview extends Component {
     data: []
   };
 
-  constructor(props) {
-    super(props);
-
-    const { data, selected } = props;
-    this.state = { data, selected };
-    this._scroller = null;
-    this.searchBar = null;
-  }
+  state = { data: this.props.data };
 
   componentDidMount() {
     // $.ajax(options)
@@ -945,19 +938,23 @@ class MediaOverview extends Component {
     // });
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(_, { data: oldData }) {
+    const { data } = this.state;
+    const { onChange } = this.props;
+    if (oldData.length !== data.length) {
+      onChange(data);
+    }
+
     // this.scrollTo(this.state.selected);
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { data } = nextProps;
-    this.setState({ data });
-  }
+  removeItem = id =>
+    this.setState(oldState => ({
+      data: oldState.data.filter(d => d.id !== id)
+    }));
 
   render() {
-    const { data } = this.props;
-    const { selected } = this.state;
-    console.log('data', data);
+    const { data } = this.state;
     // let GoogleAuth;
     // const SCOPE = 'https://www.googleapis.com/auth/youtube.force-ssl';
     // Load the API's client and auth2 modules.
@@ -965,25 +962,22 @@ class MediaOverview extends Component {
     // }
 
     // TODO: fix view height
-    const removeItem = id =>
-      this.setState(oldState => ({
-        selected: oldState.selected.filter(d => d !== id)
-      }));
+
     return (
       <div style={{ width: '100%', height: '60vh' }}>
         {data.length === 0 && <h3>{'No media added to this Card!'} </h3>}
         <ScrollList data={data}>
-          {d => (
+          {(d, selected) => (
             <ThumbCell
               {...d}
               selected={selected === d.url}
               onClick={() =>
                 this.setState(oldState => ({
-                  selected: oldState.selected !== d.url ? d.url : null
+                  data: oldState.data !== d.url ? d.url : null
                 }))
               }
             >
-              <ActiveBtn selected onClick={() => removeItem(d.id)} />
+              <ActiveBtn selected onClick={() => this.removeItem(d.id)} />
             </ThumbCell>
           )}
         </ScrollList>

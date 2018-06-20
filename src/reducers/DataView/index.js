@@ -2,7 +2,8 @@ import { TOGGLE_DATA_VIEW, FILTER } from './actions';
 
 const INITIAL_STATE = {
   dataView: 'geo',
-  searchString: null
+  // searchString: null
+  filterSet: { key: 'all', set: null }
 };
 
 export default function dataViewReducer(state = INITIAL_STATE, action) {
@@ -11,9 +12,10 @@ export default function dataViewReducer(state = INITIAL_STATE, action) {
       return { ...state, dataView: action.options };
     }
     case 'FILTER': {
+      const filterSet = action.options;
       return {
         ...state,
-        searchString: action.options !== '' ? action.options : null
+        filterSet
       };
     }
     default:

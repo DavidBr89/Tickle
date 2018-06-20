@@ -33,7 +33,6 @@ function somFy(data, width, height) {
     gridType: 'rect',
     learningRate: 0.1
   };
-
   console.log('data somFy', data);
   // TODO: check later
   const dists = data.map(a => data.map(b => jaccard(a.tags, b.tags)));
@@ -52,28 +51,28 @@ function somFy(data, width, height) {
   return somPos;
 }
 
-function mem({ data, width, height }) {
-  if (data.length !== this.cache.data.length) {
-    this.cache.result = somFy([...data], width, height);
-    this.cache.data = data;
-    return this.cache.data;
-  }
-
-  const arrayIsEqual = data.every(a => {
-    const oldItem = this.cache.data.find(b => a.id === b.id);
-    if (!oldItem) return false;
-    return (
-      difference(a.tags, oldItem.tags).length === 0 &&
-      difference(oldItem.tags, a.tags).length === 0
-    );
-  });
-
-  if (arrayIsEqual) return this.cache.result;
-
-  this.cache.result = somFy([...data], width, height);
-  this.cache.data = data;
-  return this.cache.result;
-}
+// function mem({ data, width, height, filterSet}) {
+//   if (data.length !== this.cache.data.length) {
+//     this.cache.result = somFy([...data], width, height);
+//     this.cache.data = data;
+//     return this.cache.data;
+//   }
+//
+//   const arrayIsEqual = data.every(a => {
+//     const oldItem = this.cache.data.find(b => a.id === b.id);
+//     if (!oldItem) return false;
+//     return (
+//       difference(a.tags, oldItem.tags).length === 0 &&
+//       difference(oldItem.tags, a.tags).length === 0
+//     );
+//   });
+//
+//   if (arrayIsEqual) return this.cache.result;
+//
+//   this.cache.result = somFy([...data], width, height);
+//   this.cache.data = data;
+//   return this.cache.result;
+// }
 
 function lapFy(data, width, height) {
   const n = data.length;
@@ -113,12 +112,22 @@ class TopicMap extends Component {
     className: PropTypes.string
   };
 
+  defaultProps = { filterSet: [] };
+
   constructor(props) {
     super(props);
   }
 
   layout(data) {
-    const { mode, delay, padding, force, width, height } = this.props;
+    const {
+      mode,
+      delay,
+      padding,
+      force,
+      width,
+      height,
+      filterSet
+    } = this.props;
     const pos = this.makeCluster({ data, width, height });
 
     const xScale = d3
@@ -150,9 +159,13 @@ class TopicMap extends Component {
   }
 
   makeCluster = memoize(
-    ({ data, width, height }) => somFy(data, width, height),
+    ({ data, width, height, filterSet }) =>
+      somFy(data, width, height, filterSet),
     // lapFy(somFy(data, width, height), width, height),
-    ({ data: dataB, mode: modeB }, { data: dataA, mode: modeA }) => {
+    (
+      { data: dataB, mode: modeB, filterSet: fsB },
+      { data: dataA, mode: modeA, filterSet: fsA }
+    ) => {
       if (dataA.length !== dataB.length) {
         return false;
       }
@@ -177,17 +190,14 @@ class TopicMap extends Component {
       selectedId,
       sets,
       colorScale,
-      children
+      children,
+      filterSet
     } = this.props;
 
     const nodes = this.layout(data);
 
     return (
-      <div>
-        <div style={{ zIndex: 10000, marginTop: 30, display: 'none' }}>
-          <label htmlFor="fader">Volume</label>
-          <input type="range" min="0" max="5" value="3" id="fader" />
-        </div>
+      <React.Fragment>
         <ZoomContainer
           width={width}
           height={height}
@@ -204,12 +214,13 @@ class TopicMap extends Component {
               width={width}
               height={height}
               colorScale={colorScale}
+              filterSet={filterSet}
             >
               {children}
             </Cluster>
           )}
         </ZoomContainer>
-      </div>
+      </React.Fragment>
     );
   }
 }

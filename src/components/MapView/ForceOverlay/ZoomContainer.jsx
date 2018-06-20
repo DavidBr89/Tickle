@@ -190,23 +190,12 @@ class ZoomContainer extends Component {
           height,
           // pointerEvents: 'none',
           overflow: 'hidden',
-          // zIndex: 2000
+          // zIndex: 0,
           ...style
         }}
         ref={node => (this.zoomCont = node)}
       >
-        <div
-          style={{
-            // width,
-            // height,
-            position: 'absolute'
-            // overflow: 'hidden',
-            // left: 0,
-            // top: 0
-          }}
-        >
-          {children(newNodes, zoomHandler)}
-        </div>
+        {children(newNodes, zoomHandler)}
       </div>
     );
   }

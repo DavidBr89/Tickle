@@ -2,6 +2,7 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { intersection } from 'lodash';
 import {
   resizeCardWindow,
   userMove,
@@ -28,13 +29,14 @@ const mapStateToProps = state => {
     createdCards,
     selectedCardId,
     cardTemplateId,
-    tmpCard
+    tmpCard,
+    filterSet
   } = state.Cards;
 
   // TODO: own dim reducer
   const { width, height, userLocation } = state.MapView;
 
-  const { authEnv, searchString } = state.DataView;
+  const { authEnv } = state.DataView;
   const authUser = state.Session;
 
   // const { userLocation } = state.MapView;
@@ -57,12 +59,7 @@ const mapStateToProps = state => {
     tags: tmpCard.tags || []
   };
 
-  const cards = (authEnv
-    ? [...createdCards, templateCard]
-    : readableCards
-  ).filter(c => searchString === null || c.title === searchString);
-
-  console.log('cards', cards);
+  const cards = authEnv ? [...createdCards] : readableCards;
 
   const selectedCard =
     selectedCardId !== null ? cards.find(d => d.id === selectedCardId) : null;
@@ -74,7 +71,13 @@ const mapStateToProps = state => {
     ...state.DataView,
     selectedCard,
     selectedCardId,
-    cards,
+    cards: cards
+      .filter(
+        d =>
+          filterSet.length === 0 ||
+          intersection(d.tags, filterSet).length > 0
+      )
+      .concat([templateCard]),
     authUser
   };
 };

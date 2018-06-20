@@ -39,28 +39,105 @@ import { Modal, ModalBody } from '../utils/Modal';
 
 import DragLayer from './DragAndDrop/DragLayer';
 
-function launchIntoFullscreen(element) {
-  if (element.requestFullscreen) {
-    element.requestFullscreen();
-  } else if (element.mozRequestFullScreen) {
-    element.mozRequestFullScreen();
-  } else if (element.webkitRequestFullscreen) {
-    element.webkitRequestFullscreen();
-  } else if (element.msRequestFullscreen) {
-    element.msRequestFullscreen();
+// function launchIntoFullscreen(element) {
+//   if (element.requestFullscreen) {
+//     element.requestFullscreen();
+//   } else if (element.mozRequestFullScreen) {
+//     element.mozRequestFullScreen();
+//   } else if (element.webkitRequestFullscreen) {
+//     element.webkitRequestFullscreen();
+//   } else if (element.msRequestFullscreen) {
+//     element.msRequestFullscreen();
+//   }
+// }
+//
+// function exitFullscreen() {
+//   if (document.exitFullscreen) {
+//     document.exitFullscreen();
+//   } else if (document.mozCancelFullScreen) {
+//     document.mozCancelFullScreen();
+//   } else if (document.webkitExitFullscreen) {
+//     document.webkitExitFullscreen();
+//   }
+// }
+// () => filter(['football', 'baseball', 'basketball'])
+
+const Button = ({ value, active, onClick }) => (
+  <button
+    className={`btn mr-2 ${active ? 'btn-active' : null}`}
+    style={{
+      position: 'relative',
+      zIndex: 4000
+      // background: active && 'whitesmoke'
+      // display: 'none'
+    }}
+    onClick={onClick}
+  >
+    <strong style={{ color: active && 'whitesmoke' }}>{value}</strong>
+    <span> x</span>
+  </button>
+);
+
+class FilterPanel extends Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string
+  };
+  static defaultProps = { data: [] };
+
+  state = { data: this.props.data, curKey: null };
+
+  removeItem = key => {
+    this.setState(({ data: oldData }) => ({
+      data: oldData.filter(k => key !== k)
+    }));
+  };
+
+  addItem = key => {
+    this.setState(({ data: oldData }) => ({
+      data: [...oldData, key],
+      curKey: null
+    }));
+  };
+  componentDidUpdate(prevProps, prevState) {
+    const { onChange } = this.props;
+    const { data } = this.state;
+    if (prevState.data.length !== data.length) {
+      onChange(data);
+    }
+  }
+
+  render() {
+    const { onClick } = this.props;
+    const { data, curKey } = this.state;
+    return (
+      <div
+        className="input-group mt-2"
+        style={{ display: 'flex', justifyContent: 'flex-end' }}
+      >
+        {data.map(key => (
+          <Button key={key} value={key} onClick={() => this.removeItem(key)} />
+        ))}
+        <input
+          type="text"
+          placeholder="Add Tag"
+          value={curKey || ''}
+          onChange={event => this.setState({ curKey: event.target.value })}
+          style={{ position: 'relative', zIndex: 1000 }}
+        />
+        <div className="input-group-append">
+          <button
+            className="btn ml-2"
+            type="button"
+            onClick={() => this.addItem(curKey)}
+          >
+            Add
+          </button>
+        </div>
+      </div>
+    );
   }
 }
-
-function exitFullscreen() {
-  if (document.exitFullscreen) {
-    document.exitFullscreen();
-  } else if (document.mozCancelFullScreen) {
-    document.mozCancelFullScreen();
-  } else if (document.webkitExitFullscreen) {
-    document.webkitExitFullscreen();
-  }
-}
-
 // TODO: adapt colors
 const tagColors = chromatic.schemeAccent
   .reverse()
@@ -344,7 +421,7 @@ class MapView extends Component {
       extendSelectedCard,
       toggleCardChallenge,
       fetchDirection,
-      filter,
+      filterCards,
       dataView,
       // toggleTagList,
       toggleTsneView,
@@ -355,6 +432,7 @@ class MapView extends Component {
       changeViewport,
       toggleCardAuthoring,
       setDataView,
+      filterSet,
       // cardAuthoring,
       // cardAction,
       onCardDrop,
@@ -371,7 +449,7 @@ class MapView extends Component {
     //   longitude
     // });
 
-    const cardSets = setify(cards).filter(d => d.count > 0);
+    const cardSets = setify(cards);
     // const barScales = setify(cards).map(d => ({
     //   key: d.key,
     //   scale: d3
@@ -417,7 +495,8 @@ class MapView extends Component {
               position: 'absolute'
             }}
           >
-            <div
+            <FilterPanel
+              onChange={filterCards}
               style={{
                 display: 'flex',
                 position: 'absolute',
@@ -426,47 +505,9 @@ class MapView extends Component {
                 marginRight: 10,
                 width: '100%'
               }}
-            >
-              <button
-                className="btn mr-3"
-                style={{
-                  position: 'relative',
-                  zIndex: 4000,
-                  background: 'whitesmoke',
-                  display: 'none'
-                }}
-                onClick={() =>
-                  toggleCardAuthoring({ userLocation, width, height })
-                }
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                  }}
-                >
-                  <Icon.Clipboard size={30} />
-                  <strong>{!authEnv ? 'New Card' : 'All Cards'}</strong>
-                </div>
-              </button>
-              <input
-                className="btn mr-3"
-                placeholder="Search Cards"
-                type="text"
-                onChange={evt => filter(evt.target.value)}
-                onFocus={() => toggleSearch(true)}
-                onBlur={() => toggleSearch(false)}
-                style={{
-                  background: 'whitesmoke',
-                  textAlign: 'left',
-                  position: 'relative',
-                  display: 'none',
-                  // right: 0,
-                  zIndex: 4000
-                }}
-              />
-            </div>
+              onClick={filterCards}
+              data={filterSet}
+            />
 
             <div
               className="w-100"
@@ -475,7 +516,7 @@ class MapView extends Component {
                 display: !gridView ? 'none' : null,
                 transition: 'opacity 0.5s',
                 height: '25%',
-                marginTop: 90
+                marginTop: 30
               }}
             >
               <Accordion
@@ -515,6 +556,7 @@ class MapView extends Component {
                         style={{
                           transition: `transform 1s`,
                           transform: selectedCardId === d.id && 'scale(1.2)',
+                          zIndex: selectedCardId === d.id && 5000,
                           opacity: d.template && 0.8
 
                           // width: '100%',
@@ -538,11 +580,10 @@ class MapView extends Component {
                   data={cards}
                   sets={cardSets}
                   selectedCardId={selectedCardId}
-                  extCardId={extCardId}
                   userLocation={userLocation}
                   mode={dataView}
-                  labels={!gridView}
                   onMapViewportChange={changeMapViewport}
+                  filterSet={filterSet.set}
                   padding={{
                     bottom: height / 5,
                     top: height / 5,

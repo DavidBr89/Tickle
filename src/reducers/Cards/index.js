@@ -58,7 +58,6 @@ function reducer(state = {}, action) {
 
   switch (action.type) {
     case LOADING_CARDS: {
-
       return {
         ...state,
         loadingCards: true
@@ -264,8 +263,9 @@ function reducer(state = {}, action) {
     }
 
     case FILTER_CARDS: {
+      const filterSet = action.options;
       // console.log('action', action);
-      const selectedTags = action.options;
+      // const selectedTags = action.options;
       // if (selectedTags.length === 0)
       //   return { ...state, cards: state.defaultCards };
       // TODO: fix filtering
@@ -274,7 +274,7 @@ function reducer(state = {}, action) {
       //     selectedTags.length === 0 ||
       //     intersection(c.tags, selectedTags).length > 0
       // );
-      return { ...state };
+      return { ...state, filterSet, selectedCardId: null };
     }
     // case RECEIVE_PLACES: {
     //   const { results: places } = action.options;

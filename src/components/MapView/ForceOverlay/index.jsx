@@ -94,17 +94,17 @@ class ForceOverlay extends Component {
     labels: false
   };
 
-  constructor(props) {
-    super(props);
-    const { data } = props;
-    const { width, height, onMapViewportChange, userLocation } = props;
-
-    const initPos = data.map(() => [width / 2, height / 2]);
-
-    // data.map(d => ([width/2, height/2]));
-    const nodes = data.map(d => ({ ...d, x: width / 2, y: height / 2 }));
-  }
-
+  // constructor(props) {
+  //   super(props);
+  //   const { data } = props;
+  //   const { width, height, onMapViewportChange, userLocation } = props;
+  //
+  //   const initPos = data.map(() => [width / 2, height / 2]);
+  //
+  //   // data.map(d => ([width/2, height/2]));
+  //   const nodes = data.map(d => ({ ...d, x: width / 2, y: height / 2 }));
+  // }
+  //
   componentWillUnmount() {
     // clearTimeout(this.id);
     // this.ids.map(clearTimeout);
@@ -147,7 +147,8 @@ class ForceOverlay extends Component {
       // TODO: Remove this check
       disabled,
       data,
-      padding
+      padding,
+      filterSet
     } = this.props;
 
     // const somPos = data.map(d => [width / 2, height / 2]); // somFy(data, width, height);
@@ -207,6 +208,7 @@ class ForceOverlay extends Component {
           width={width}
           height={height}
           nodes={nodes}
+          filterSet={filterSet}
           selectedId={selectedCardId}
           colorScale={colorScale}
           padding={padding}

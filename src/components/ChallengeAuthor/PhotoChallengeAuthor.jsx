@@ -38,32 +38,13 @@ class MatchPhotoChallenge extends Component {
     uiColor: 'grey',
     placeholder: 'Add your description',
     reset: false,
-    defaultImg: null
+    img: { title: null, url: null }
   };
 
-  state = {
-    img: null,
-    description: ''
-  };
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return (
-      this.state.img !== nextState.img ||
-      this.state.description !== nextState.description ||
-      nextProps.reset
-    );
-  }
-
-  static getDerivedStateFromProps(nextProps) {
-    if (nextProps.reset) return { description: null, img: null };
-    return null;
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { img, description } = this.state;
-    const { onChange } = this.props;
-    onChange({ type: 'photo', img, data: {}, description });
-  }
+  // }
+  // componentDidUpdate(prevProps, prevState) {
+  //   this.props.onChange(this.state);
+  // }
 
   render() {
     const {
@@ -72,9 +53,10 @@ class MatchPhotoChallenge extends Component {
       styles,
       onChange,
       uiColor,
-      defaultChallenge
+      img,
+      description
     } = this.props;
-    const defaultImgUrl = defaultChallenge ? defaultChallenge.img.url : null;
+
     return (
       <div
         className={className}
@@ -83,20 +65,26 @@ class MatchPhotoChallenge extends Component {
         <div>
           <h4>Description</h4>
           <textarea
+            ref={node => (this.textArea = node)}
+            defaultValue={description}
             placeholder={placeholder}
-            ref={r => (this.textarea = r)}
-            onChange={e => {
-              this.setState({ description: e.target.value });
-            }}
             style={{ width: '100%', minHeight: 50, height: 50 }}
           />
         </div>
         <div style={{ width: '100%', height: '100%' }}>
           <h4>Upload Image</h4>
           <PhotoUpload
-            defaultImgUrl={defaultImgUrl}
+            defaultImgUrl={img.url}
+            key={img.url}
             uiColor={uiColor}
-            onChange={img => this.setState({ img })}
+            onChange={newImg => {
+              onChange({
+                type: 'photo',
+                img: newImg,
+                data: {},
+                description: this.textArea.value
+              });
+            }}
           />
         </div>
       </div>

@@ -54,6 +54,40 @@ function findCenterPos(values) {
   return centerPos;
 }
 
+function Tooltip({ centerX: cx, centerY: cy, tags, x, y, ...props }) {
+  const angle = Math.round((Math.atan2(cy - y, cx - x) / Math.PI) * 2);
+  // TODO
+  const dist = euclDist(cx, x, cy, y) || null;
+  return (
+    <div
+      key={tags.join('-')}
+      style={{
+        // borderRadius: '10%',
+        position: 'absolute',
+        transition: 'left 500ms, top 500ms',
+        left: dist ? cx : x,
+        top: dist ? cy : y,
+        transform: `translate(${angle === 0 ? -100 : 0}%, -50%)`,
+        background: 'white',
+        zIndex: 100,
+        maxWidth: 250,
+        display: 'flex',
+        flexWrap: 'wrap'
+      }}
+    >
+      <div className="m-1">
+        <div className="p-1" style={{ border: 'grey dashed 2px' }}>
+          {tags.length > 0
+            ? tags.map(t => <div className="mr-1">{`${t} `} </div>)
+            : 'Other'}
+        </div>
+      </div>
+    </div>
+  );
+}
+Tooltip.defaultProps = {};
+Tooltip.propTypes = {};
+
 class Cluster extends Component {
   static propTypes = {
     children: PropTypes.func,
@@ -145,7 +179,8 @@ class Cluster extends Component {
       links,
       nodes,
       labels,
-      children
+      children,
+      filterSet
     } = this.props;
 
     const { clusters } = this.state;
@@ -234,7 +269,7 @@ class Cluster extends Component {
               <feColorMatrix
                 in="blur"
                 mode="matrix"
-                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
+                values={`1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${20} -7`}
                 result="gooey"
               />
             </filter>
@@ -245,8 +280,8 @@ class Cluster extends Component {
                 <rect
                   x={d.x - (s.values.length * 15) / 2}
                   y={d.y - (s.values.length * 15) / 2}
-                  width={s.values.length * 15}
-                  height={s.values.length * 15}
+                  width={Math.max(40, s.values.length * 15)}
+                  height={Math.max(40, s.values.length * 15)}
                   fill={colorScale(s.key)}
                 />
               ))
@@ -269,39 +304,17 @@ class Cluster extends Component {
             />
           ))}
         </svg>
-        {polyData.map(({ centroid: [cx, cy], centerPos: [x, y], ...d }) => {
-          const angle = Math.round((Math.atan2(cy - y, cx - x) / Math.PI) * 2);
-          // const trans = angle === 0 ? 100
-          //     : angle === -1 ? orient.top
-          //     : angle === 1 ? orient.bottom
-          //     : orient.left);
-          return (
-            <div
-              key={d.tagKeys.join('-')}
-              style={{
-                // borderRadius: '10%',
-                position: 'absolute',
-                transition: 'left 500ms, top 500ms',
-                left: cx,
-                top: cy,
-                transform: `translate(${angle === 0 ? -100 : 0}%, -50%)`,
-                background: 'white',
-                zIndex: 100,
-                maxWidth: 250,
-                display: 'flex',
-                flexWrap: 'wrap'
-              }}
-            >
-              <div className="m-1">
-                <div className="p-1" style={{ border: 'grey dashed 2px' }}>
-                  {d.tagKeys.length > 0
-                    ? d.tagKeys.map(t => <div className="mr-1">{`${t} `} </div>)
-                    : 'No tags'}
-                </div>
-              </div>
-            </div>
-          );
-        })}
+        {polyData.map(
+          ({ centroid: [cx, cy], centerPos: [x, y], tagKeys, ...d }) => (
+            <Tooltip
+              centerX={cx}
+              centerY={cy}
+              x={x}
+              y={y}
+              tags={intersection(tagKeys, filterSet || tagKeys)}
+            />
+          )
+        )}
         {clusteredNodes.map(children)}
       </Fragment>
     );

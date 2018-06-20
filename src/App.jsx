@@ -95,7 +95,9 @@ const defaultState = {
     selectedCardId: cardTemplateId,
     tmpCard: defaultCardTemplate,
     challenges: [],
-    cardChallengeOpen: false
+    cardChallengeOpen: false,
+    filterSet: []
+    // extCard: null
     // TODO: outsource
   },
   DataView: {

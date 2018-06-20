@@ -124,3 +124,8 @@ export const ADD_COMMENT_ERROR = 'ADD_COMMENT_ERROR';
 export function addCommentError(options) {
   return { type: ADD_COMMENT_ERROR, options };
 }
+
+export const FILTER_CARDS = 'FILTER_CARDS';
+export function filterCards(options) {
+  return { type: FILTER_CARDS, options };
+}

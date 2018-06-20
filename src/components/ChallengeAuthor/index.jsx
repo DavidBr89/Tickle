@@ -98,15 +98,6 @@ class Nav extends React.Component {
   }
 }
 
-function TestComp({ children }) {
-  return (
-    <div style={{ background: 'gold' }}>
-      <div>test</div>
-      <div>{children}</div>
-    </div>
-  );
-}
-
 class ChallengeAuthor extends React.Component {
   static propTypes = {
     style: PropTypes.object,
@@ -137,17 +128,16 @@ class ChallengeAuthor extends React.Component {
   //   };
   // }
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      selectedKey: Object.keys(this.challengeMap)[0]
-    };
-  }
+  // constructor(props) {
+  //   super(props);
+  //
+  state = {
+    selectedKey: 'PhotoUpload'
+  };
+  // }
 
   challengeMap = {
     PhotoUpload: <PhotoChallengeAuthor {...this.props} />,
-    LearningObject: <TestComp {...this.props} />,
     MiniGame: <PhotoChallengeAuthor {...this.props} />
   };
 
@@ -229,7 +219,7 @@ class ChallengeAuthorModalBody extends React.Component {
     uiColor: 'black'
   };
 
-  state = { challenge: null, added: false };
+  state = { challenge: this.props.defaultChallenge, added: false };
 
   // componentDidUpdate(prevProps, prevState) {
   //   const { challenge, added } = this.state;
@@ -240,39 +230,31 @@ class ChallengeAuthorModalBody extends React.Component {
   // }
 
   render() {
-    const { challenge, added } = this.state;
-    const { uiColor } = this.props;
-    const btnClass = `btn ${challenge === null && 'disabled'}`;
-    const iconSize = { width: 30, height: 30 };
+    const { defaultChallenge, uiColor, onChange } = this.props;
+    const btnClass = `btn ${defaultChallenge === null && 'disabled'}`;
 
     return (
       <ModalBody
         uiColor={uiColor}
         footer={
           <button
-            disabled={challenge === null}
             className={btnClass}
+            disabled={defaultChallenge === null}
             style={{ lineHeight: 0 }}
             onClick={() => {
-              this.props.onChange(!added ? challenge : null);
-              this.setState({ added: !added });
+              onChange(null);
             }}
           >
-            <div className="m-1">
-              {added ? (
-                <Icon.Lock {...iconSize} />
-              ) : (
-                <Icon.PlusSquare {...iconSize} />
-              )}
+            <div className="m-3">
+              <strong>Remove</strong>
             </div>
           </button>
         }
       >
-        <ChallengeAuthor
-          {...this.props}
-          onChange={ch => {
-            this.setState({ challenge: ch, added: false });
-          }}
+        <PhotoChallengeAuthor
+          {...defaultChallenge}
+          key={defaultChallenge ? defaultChallenge.description : null}
+          onChange={onChange}
         />
       </ModalBody>
     );
