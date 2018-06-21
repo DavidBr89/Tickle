@@ -8,6 +8,8 @@ import lap from 'lap-jv/lap.js';
 import SOM from 'ml-som';
 
 import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
+
+import DimWrapper from 'Utils/DimensionsWrapper';
 // import│ {shallowEqualProps} from'shallow-equal-props';
 
 // import louvain from './jlouvain';
@@ -202,19 +204,23 @@ class ForceOverlay extends Component {
     }
 
     return (
-      <div style={style}>
-        <TopicMap
-          sets={sets}
-          width={width}
-          height={height}
-          nodes={nodes}
-          filterSet={filterSet}
-          selectedId={selectedCardId}
-          colorScale={colorScale}
-          padding={padding}
-        >
-          {children}
-        </TopicMap>
+      <div style={{ ...style, height: '100%', position: 'relative' }}>
+        <DimWrapper>
+          {(w, h) => (
+            <TopicMap
+              sets={sets}
+              width={width}
+              height={h || height}
+              nodes={nodes}
+              filterSet={filterSet}
+              selectedId={selectedCardId}
+              colorScale={colorScale}
+              padding={padding}
+            >
+              {children}
+            </TopicMap>
+          )}
+        </DimWrapper>
       </div>
     );
   }

@@ -17,8 +17,6 @@ import {
   isEqual
 } from 'lodash';
 
-import DimWrapper from 'Utils/DimensionsWrapper';
-
 import ZoomContainer from './ZoomContainer';
 import Cluster from './Cluster';
 
@@ -199,30 +197,28 @@ class TopicMap extends Component {
     const nodes = this.layout(data);
 
     return (
-      <div style={{ position: 'absolute', left:- 0, top:0 }}>
-        <ZoomContainer
-          width={width}
-          height={height}
-          center={[width / 2, height / 2 + padding.top]}
-          nodes={nodes}
-          selectedId={selectedId}
-          onZoom={() => null}
-        >
-          {(zoomedNodes, transform) => (
-            <Cluster
-              sets={sets}
-              scale={transform.k}
-              nodes={zoomedNodes}
-              width={width}
-              height={height}
-              colorScale={colorScale}
-              filterSet={filterSet}
-            >
-              {children}
-            </Cluster>
-          )}
-        </ZoomContainer>
-      </div>
+      <ZoomContainer
+        width={width}
+        height={height}
+        center={[width / 2, height / 2]}
+        nodes={nodes}
+        selectedId={selectedId}
+        onZoom={() => null}
+      >
+        {(zoomedNodes, transform) => (
+          <Cluster
+            sets={sets}
+            scale={transform.k}
+            nodes={zoomedNodes}
+            width={width}
+            height={height}
+            colorScale={colorScale}
+            filterSet={filterSet}
+          >
+            {children}
+          </Cluster>
+        )}
+      </ZoomContainer>
     );
   }
 }

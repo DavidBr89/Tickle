@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-export default class DimWrapper extends Component {
+class DimensionsWrapper extends React.Component {
   static propTypes = {
     children: PropTypes.func.isRequired
   };
@@ -14,13 +14,16 @@ export default class DimWrapper extends Component {
   componentDidMount() {
     const width = this.node.offsetWidth;
     const height = this.node.offsetHeight;
+    console.log('DIM', width, height);
     this.setState({ width, height });
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.extended !== prevProps.extended) {
-      const width = this.node.offsetWidth;
-      const height = this.node.offsetHeight;
+  componentDidUpdate(prevProps, prevState) {
+    const width = this.node.offsetWidth;
+    const height = this.node.offsetHeight;
+
+    console.log('UPDATE DIM', width, height);
+    if (prevState.width !== width || prevState.height !== height) {
       this.setState({ width, height });
     }
   }
@@ -38,3 +41,5 @@ export default class DimWrapper extends Component {
     );
   }
 }
+
+export default DimensionsWrapper;

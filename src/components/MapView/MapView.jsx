@@ -512,7 +512,11 @@ class MapView extends Component {
                 </Accordion>
               </div>
 
-              <DropTargetCont dropHandler={onCardDrop} dragged={isCardDragging}>
+              <DropTargetCont
+                dropHandler={onCardDrop}
+                dragged={isCardDragging}
+                style={{ height: '65%' }}
+              >
                 <ForceOverlay
                   delay={1}
                   disabled={isCardDragging || extCardId !== null}

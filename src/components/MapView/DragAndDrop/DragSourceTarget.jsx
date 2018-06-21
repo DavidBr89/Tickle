@@ -145,11 +145,13 @@ export class DropTargetCont extends PureComponent {
     // clientOffset: PropTypes.object.isRequired,
     children: PropTypes.element.isRequired,
     // dropped: PropTypes.bool.isRequired,
-    dropHandler: PropTypes.func
+    dropHandler: PropTypes.func,
+    style: PropTypes.object
   };
 
   static defaultProps = {
-    dropHandler: d => d
+    dropHandler: d => d,
+    style:{}
   };
 
   constructor(props) {
@@ -203,7 +205,7 @@ export class DropTargetCont extends PureComponent {
     // const { x, y } = clientOffset || { x: 0, y: 0 };
     // console.log('dropped', dropped);
 
-    return connectDropTarget(<div>{children}</div>);
+    return connectDropTarget(<div style={style}>{children}</div>);
   }
 }
 export const DragDropContextProvider = DragDropContext(HTML5);

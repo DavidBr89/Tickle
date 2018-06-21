@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
 class DimWrapper extends React.Component {
@@ -13,33 +12,18 @@ class DimWrapper extends React.Component {
   }
 
   componentDidMount() {
-    const node = ReactDOM.findDOMNode(this);
-    const width = node.offsetWidth;
-    const height = node.offsetHeight;
+    const width = this.node.offsetWidth;
+    const height = this.node.offsetHeight;
+    console.log('DIM', width, height);
     this.setState({ width, height });
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.extended !== prevProps.extended) {
-      const width = this.node.offsetWidth;
-      const height = this.node.offsetHeight;
-      console.log(
-        'change prevProps',
-        prevProps,
-        'props',
-        this.props,
-        width,
-        height
-      );
-      this.setState({ width, height });
-    }
-  }
-  // TODO: update prop check in wrapper
-  componentWillUpdate(nextProps) {
-    if (this.props.extended !== nextProps.extended) {
-      // const node = ReactDOM.findDOMNode(this);
-      const width = this.node.offsetWidth;
-      const height = this.node.offsetHeight;
+  componentDidUpdate(prevProps, prevState) {
+    const width = this.node.offsetWidth;
+    const height = this.node.offsetHeight;
+
+    console.log('UPDATE DIM', width, height);
+    if (prevState.width !== width || prevState.height !== height) {
       this.setState({ width, height });
     }
   }
@@ -50,7 +34,7 @@ class DimWrapper extends React.Component {
     return (
       <div
         ref={node => (this.node = node)}
-        style={{ height: '100%', width: '100%' }}
+        style={{ height: 500, width: '100%' }}
       >
         {children(width, height)}
       </div>
