@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 // import * as d3 from 'd3';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 // import { Motion, spring } from 'react-motion';
-import PropTypes from 'prop-types';
 import * as Icon from 'react-feather';
 import Spinner from 'react-loader-spinner';
 import * as chromatic from 'd3-scale-chromatic';
+import * as d3 from 'd3';
 
 // TODO: { LinearInterpolator, FlyToInterpolator }
 // import { default as TouchBackend } from 'react-dnd-touch-backend';
@@ -19,7 +20,7 @@ import {
   DragDropContextProvider
 } from './DragAndDrop/DragSourceTarget';
 
-import * as d3 from 'd3';
+import TagInput from 'Utils/TagInput';
 
 import withAuthorization from '../withAuthorization';
 
@@ -39,29 +40,6 @@ import { Modal, ModalBody } from '../utils/Modal';
 
 import DragLayer from './DragAndDrop/DragLayer';
 
-// function launchIntoFullscreen(element) {
-//   if (element.requestFullscreen) {
-//     element.requestFullscreen();
-//   } else if (element.mozRequestFullScreen) {
-//     element.mozRequestFullScreen();
-//   } else if (element.webkitRequestFullscreen) {
-//     element.webkitRequestFullscreen();
-//   } else if (element.msRequestFullscreen) {
-//     element.msRequestFullscreen();
-//   }
-// }
-//
-// function exitFullscreen() {
-//   if (document.exitFullscreen) {
-//     document.exitFullscreen();
-//   } else if (document.mozCancelFullScreen) {
-//     document.mozCancelFullScreen();
-//   } else if (document.webkitExitFullscreen) {
-//     document.webkitExitFullscreen();
-//   }
-// }
-// () => filter(['football', 'baseball', 'basketball'])
-
 const Button = ({ value, active, onClick }) => (
   <button
     className={`btn mr-2 ${active ? 'btn-active' : null}`}
@@ -78,66 +56,6 @@ const Button = ({ value, active, onClick }) => (
   </button>
 );
 
-class FilterPanel extends Component {
-  static propTypes = {
-    children: PropTypes.node,
-    className: PropTypes.string
-  };
-  static defaultProps = { data: [] };
-
-  state = { data: this.props.data, curKey: null };
-
-  removeItem = key => {
-    this.setState(({ data: oldData }) => ({
-      data: oldData.filter(k => key !== k)
-    }));
-  };
-
-  addItem = key => {
-    this.setState(({ data: oldData }) => ({
-      data: [...oldData, key],
-      curKey: null
-    }));
-  };
-  componentDidUpdate(prevProps, prevState) {
-    const { onChange } = this.props;
-    const { data } = this.state;
-    if (prevState.data.length !== data.length) {
-      onChange(data);
-    }
-  }
-
-  render() {
-    const { onClick } = this.props;
-    const { data, curKey } = this.state;
-    return (
-      <div
-        className="input-group mt-2"
-        style={{ display: 'flex', justifyContent: 'flex-end' }}
-      >
-        {data.map(key => (
-          <Button key={key} value={key} onClick={() => this.removeItem(key)} />
-        ))}
-        <input
-          type="text"
-          placeholder="Add Tag"
-          value={curKey || ''}
-          onChange={event => this.setState({ curKey: event.target.value })}
-          style={{ position: 'relative', zIndex: 1000 }}
-        />
-        <div className="input-group-append">
-          <button
-            className="btn ml-2"
-            type="button"
-            onClick={() => this.addItem(curKey)}
-          >
-            Add
-          </button>
-        </div>
-      </div>
-    );
-  }
-}
 // TODO: adapt colors
 const tagColors = chromatic.schemeAccent
   .reverse()
@@ -495,20 +413,24 @@ class MapView extends Component {
               position: 'absolute'
             }}
           >
-            <FilterPanel
-              onChange={filterCards}
-              style={{
-                display: 'flex',
-                position: 'absolute',
-                justifyContent: 'flex-end',
-                marginTop: 10,
-                marginRight: 10,
-                width: '100%'
-              }}
-              onClick={filterCards}
-              data={filterSet}
-            />
-
+            <div
+              className="input-group mt-2"
+              style={{ display: 'flex', justifyContent: 'flex-end' }}
+            >
+              <TagInput
+                onChange={filterCards}
+                style={{
+                  display: 'flex',
+                  position: 'absolute',
+                  justifyContent: 'flex-end',
+                  marginTop: 10,
+                  marginRight: 10,
+                  width: '100%'
+                }}
+                onClick={filterCards}
+                data={filterSet}
+              />
+            </div>
             <div
               className="w-100"
               style={{
@@ -698,27 +620,29 @@ class MapView extends Component {
                   </div>
                 </button>
 
-                <button
-                  className={`btn mb-3 mr-3 ml-2 ${dataView === 'topic' &&
-                    'btn-active'}`}
-                  style={{
-                    // position: 'absolute',
-                    zIndex: 1000
-                    // background: dataView === 'som' && 'grey',
-                  }}
-                  onClick={() => setDataView('topic')}
-                >
-                  <div
+                <div>
+                  <button
+                    className={`btn mb-3 mr-3 ml-2 ${dataView === 'topic' &&
+                      'btn-active'}`}
                     style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      height: 30
+                      // position: 'absolute',
+                      zIndex: 1000
+                      // background: dataView === 'som' && 'grey',
                     }}
+                    onClick={() => setDataView('topic')}
                   >
-                    <div style={{ fontWeight: 'bold' }}>Topic</div>
-                  </div>
-                </button>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: 30
+                      }}
+                    >
+                      <div style={{ fontWeight: 'bold' }}>Topic</div>
+                    </div>
+                  </button>
+                </div>
               </div>
             </div>
           </div>

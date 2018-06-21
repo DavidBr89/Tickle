@@ -243,7 +243,7 @@ class EditCardFront extends PureComponent {
   onCloseModal = () => {
     const { data } = this.state;
     const { onUpdate } = this.props;
-    onUpdate({ ...data });
+    // onUpdate({ ...data });
     this.setState({ dialog: null });
   };
 
@@ -255,6 +255,7 @@ class EditCardFront extends PureComponent {
 
   modalWriteContent(modalTitle) {
     const { data } = this.state;
+    const { challenge } = data;
     const { /* allChallenges, */ uiColor, tagColorScale } = this.props;
 
     // console.log('tagColorScale', tagColorScale);
@@ -331,7 +332,8 @@ class EditCardFront extends PureComponent {
         return (
           <ChallengeAuthorModalBody
             uiColor={uiColor}
-            defaultChallenge={data.challenge}
+            key={challenge ? challenge.id : 'newChallenge'}
+            challenge={challenge}
             onChange={ch => {
               this.setFieldState({ challenge: ch });
             }}

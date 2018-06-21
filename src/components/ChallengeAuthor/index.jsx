@@ -219,42 +219,50 @@ class ChallengeAuthorModalBody extends React.Component {
     uiColor: 'black'
   };
 
-  state = { challenge: this.props.defaultChallenge, added: false };
-
-  // componentDidUpdate(prevProps, prevState) {
-  //   const { challenge, added } = this.state;
-  //
-  //   if (added !== prevState.added)
-  //     this.props.onChange(added ? challenge : null);
-  //   // this.props.onChange(null);
-  // }
+  state = {
+    challenge: { id: null, img: { url: null }, ...this.props.challenge },
+    added: this.props.challenge !== null
+  };
 
   render() {
-    const { defaultChallenge, uiColor, onChange } = this.props;
-    const btnClass = `btn ${defaultChallenge === null && 'disabled'}`;
+    const { uiColor, onChange } = this.props;
+    const { challenge, added } = this.state;
+    const btnClass = `btn ${challenge === null && 'disabled'}`;
+
+    const btnDisabled =
+      challenge.description === null ||
+      challenge.title === null ||
+      challenge.img.url === null;
 
     return (
       <ModalBody
         uiColor={uiColor}
         footer={
           <button
-            className={btnClass}
-            disabled={defaultChallenge === null}
+            className="btn"
+            disabled={btnDisabled}
             style={{ lineHeight: 0 }}
             onClick={() => {
-              onChange(null);
+              if (added) onChange(null);
+              else {
+                onChange(challenge);
+              }
             }}
           >
             <div className="m-3">
-              <strong>Remove</strong>
+              <strong>{added ? 'Remove' : 'Add'}</strong>
             </div>
           </button>
         }
       >
         <PhotoChallengeAuthor
-          {...defaultChallenge}
-          key={defaultChallenge ? defaultChallenge.description : null}
-          onChange={onChange}
+          {...challenge}
+          onChange={ch => {
+            this.setState({
+              challenge: { ...ch, id: Math.random() * 1000 },
+              added: false
+            });
+          }}
         />
       </ModalBody>
     );

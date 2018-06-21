@@ -21,7 +21,7 @@ function convertToImgSrc(fileList) {
   return null;
 }
 
-class MatchPhotoChallenge extends Component {
+class PhotoChallengeAuthor extends Component {
   static propTypes = {
     className: PropTypes.string,
     styles: PropTypes.object,
@@ -38,13 +38,28 @@ class MatchPhotoChallenge extends Component {
     uiColor: 'grey',
     placeholder: 'Add your description',
     reset: false,
+    description: null,
     img: { title: null, url: null }
   };
 
+  state = { title: '', ...this.props };
   // }
-  // componentDidUpdate(prevProps, prevState) {
-  //   this.props.onChange(this.state);
-  // }
+  componentDidUpdate(prevProps, prevState) {
+    const { img, description, title } = this.state;
+    const { onChange } = this.props;
+    if (
+      img.url !== prevState.img.url ||
+      description !== prevState.description ||
+      title !== prevState.title
+    ) {
+      onChange({
+        type: 'photo',
+        img,
+        description,
+        title
+      });
+    }
+  }
 
   render() {
     const {
@@ -54,7 +69,8 @@ class MatchPhotoChallenge extends Component {
       onChange,
       uiColor,
       img,
-      description
+      description,
+      title
     } = this.props;
 
     return (
@@ -63,9 +79,18 @@ class MatchPhotoChallenge extends Component {
         style={{ width: '100%', height: '100%', ...styles }}
       >
         <div>
+          <h4>Title</h4>
+          <input
+            value={title}
+            placeholder={placeholder}
+            onChange={e => this.setState({ title: e.target.value })}
+            style={{ width: '100%', minHeight: 50, height: 50 }}
+          />
+        </div>
+        <div>
           <h4>Description</h4>
           <textarea
-            ref={node => (this.textArea = node)}
+            onChange={e => this.setState({ description: e.target.value })}
             defaultValue={description}
             placeholder={placeholder}
             style={{ width: '100%', minHeight: 50, height: 50 }}
@@ -75,15 +100,9 @@ class MatchPhotoChallenge extends Component {
           <h4>Upload Image</h4>
           <PhotoUpload
             defaultImgUrl={img.url}
-            key={img.url}
             uiColor={uiColor}
             onChange={newImg => {
-              onChange({
-                type: 'photo',
-                img: newImg,
-                data: {},
-                description: this.textArea.value
-              });
+              this.setState({ img: newImg });
             }}
           />
         </div>
@@ -92,4 +111,4 @@ class MatchPhotoChallenge extends Component {
   }
 }
 
-export default MatchPhotoChallenge;
+export default PhotoChallengeAuthor;
