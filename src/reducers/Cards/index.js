@@ -11,12 +11,16 @@
 import { db } from 'Firebase';
 import { updCard } from './helper';
 
+import { union, difference } from 'lodash';
+
 // import setBBox from './fitbounds';
 // import mapboxgl from 'mapbox-gl';
 
 import {
   RECEIVE_PLACES,
   FILTER_CARDS,
+  REMOVE_CARD_FILTER,
+  ADD_CARD_FILTER,
   UPDATE_CARD,
   UPDATE_CARD_SUCCESS,
   UPDATE_CARD_TEMPLATE,
@@ -262,20 +266,34 @@ function reducer(state = {}, action) {
       };
     }
 
-    case FILTER_CARDS: {
-      const filterSet = action.options;
-      // console.log('action', action);
-      // const selectedTags = action.options;
-      // if (selectedTags.length === 0)
-      //   return { ...state, cards: state.defaultCards };
-      // TODO: fix filtering
-      // const cards = state.cards.filter(
-      //   c =>
-      //     selectedTags.length === 0 ||
-      //     intersection(c.tags, selectedTags).length > 0
-      // );
-      return { ...state, filterSet, selectedCardId: null };
+    case ADD_CARD_FILTER: {
+      const { filterSet } = state;
+      const set = action.options;
+
+      return { ...state, filterSet: union(filterSet, set) };
     }
+
+    case REMOVE_CARD_FILTER: {
+      const { filterSet } = state;
+      const set = action.options;
+
+      return { ...state, filterSet: difference(filterSet, set) };
+    }
+
+    // case FILTER_CARDS: {
+    //   const set = action.options;
+    //   // console.log('action', action);
+    //   // const selectedTags = action.options;
+    //   // if (selectedTags.length === 0)
+    //   //   return { ...state, cards: state.defaultCards };
+    //   // TODO: fix filtering
+    //   // const cards = state.cards.filter(
+    //   //   c =>
+    //   //     selectedTags.length === 0 ||
+    //   //     intersection(c.tags, selectedTags).length > 0
+    //   // );
+    //   return { ...state, filterSet: , selectedCardId: null };
+    // }
     // case RECEIVE_PLACES: {
     //   const { results: places } = action.options;
     //   // console.log('places', places);

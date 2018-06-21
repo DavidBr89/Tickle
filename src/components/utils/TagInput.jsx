@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { difference } from 'lodash';
 
 export default class FilterPanel extends Component {
   static propTypes = {
@@ -23,10 +24,14 @@ export default class FilterPanel extends Component {
     }));
   };
   componentDidUpdate(prevProps, prevState) {
-    const { onChange } = this.props;
+    const { onRemove, onAdd } = this.props;
     const { data } = this.state;
-    if (prevState.data.length !== data.length) {
-      onChange(data);
+    const { data: oldData } = prevState;
+    if (oldData.length > data.length) {
+      onRemove(difference(oldData, data));
+    }
+    if (oldData.length < data.length) {
+      onAdd(difference(data, oldData));
     }
   }
 
@@ -67,19 +72,21 @@ export default class FilterPanel extends Component {
           <div
             style={{
               display: 'flex',
+              alignItems: 'center',
               flexWrap: 'no-wrap'
             }}
           >
             {data.map(key => (
               <span
-                className="btn mr-2"
+                className=" btn mr-2"
                 style={{
                   position: 'relative',
-                  zIndex: 4000
+                  zIndex: 4000,
+                  fontSize: 'small'
                 }}
                 onClick={() => this.removeItem(key)}
               >
-                <strong>{key}</strong>
+                <span>{key}</span>
                 <span> x</span>
               </span>
             ))}

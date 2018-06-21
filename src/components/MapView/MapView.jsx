@@ -8,6 +8,7 @@ import * as Icon from 'react-feather';
 import Spinner from 'react-loader-spinner';
 import * as chromatic from 'd3-scale-chromatic';
 import * as d3 from 'd3';
+import { intersection, union } from 'lodash';
 
 // TODO: { LinearInterpolator, FlyToInterpolator }
 // import { default as TouchBackend } from 'react-dnd-touch-backend';
@@ -40,21 +41,7 @@ import { Modal, ModalBody } from '../utils/Modal';
 
 import DragLayer from './DragAndDrop/DragLayer';
 
-const Button = ({ value, active, onClick }) => (
-  <button
-    className={`btn mr-2 ${active ? 'btn-active' : null}`}
-    style={{
-      position: 'relative',
-      zIndex: 4000
-      // background: active && 'whitesmoke'
-      // display: 'none'
-    }}
-    onClick={onClick}
-  >
-    <strong style={{ color: active && 'whitesmoke' }}>{value}</strong>
-    <span> x</span>
-  </button>
-);
+import { StyledButton } from 'Utils/StyledComps';
 
 // TODO: adapt colors
 const tagColors = chromatic.schemeAccent
@@ -340,6 +327,8 @@ class MapView extends Component {
       toggleCardChallenge,
       fetchDirection,
       filterCards,
+      addCardFilter,
+      removeCardFilter,
       dataView,
       // toggleTagList,
       toggleTsneView,
@@ -413,84 +402,115 @@ class MapView extends Component {
               position: 'absolute'
             }}
           >
-            <div
-              className="input-group mt-2"
-              style={{ display: 'flex', justifyContent: 'flex-end' }}
-            >
-              <TagInput
-                onChange={filterCards}
+            <div className="h-100">
+              <div
+                className="input-group mt-2"
+                style={{ display: 'flex', justifyContent: 'flex-end' }}
+              >
+                <div className="mr-3">
+                  <StyledButton
+                    className="mb-2"
+                    style={{ zIndex: 2000, position: 'relative' }}
+                    onClick={active =>
+                      active
+                        ? addCardFilter(['basketball', 'football', 'baseball'])
+                        : removeCardFilter([
+                          'basketball',
+                          'football',
+                          'baseball'
+                        ])
+                    }
+                  >
+                    Sports
+                  </StyledButton>
+                  <StyledButton
+                    style={{ zIndex: 2000, position: 'relative' }}
+                    onClick={active =>
+                      active
+                        ? addCardFilter(['hard', 'normal', 'easy'])
+                        : removeCardFilter(['hard', 'normal', 'easy'])
+                    }
+                  >
+                    difficulty
+                  </StyledButton>
+                </div>
+                <TagInput
+                  onAdd={addCardFilter}
+                  onRemove={removeCardFilter}
+                  key={filterSet.join(',')}
+                  style={{
+                    display: 'flex',
+                    position: 'absolute',
+                    justifyContent: 'flex-end',
+                    marginTop: 10,
+                    marginRight: 10,
+                    width: '100%'
+                  }}
+                  onClick={addCardFilter}
+                  data={filterSet}
+                />
+              </div>
+              <div
+                className="w-100"
                 style={{
-                  display: 'flex',
-                  position: 'absolute',
-                  justifyContent: 'flex-end',
-                  marginTop: 10,
-                  marginRight: 10,
-                  width: '100%'
-                }}
-                onClick={filterCards}
-                data={filterSet}
-              />
-            </div>
-            <div
-              className="w-100"
-              style={{
-                opacity: gridView ? 1 : 0,
-                display: !gridView ? 'none' : null,
-                transition: 'opacity 0.5s',
-                height: '25%',
-                marginTop: 30
-              }}
-            >
-              <Accordion
-                data={cards}
-                className="ml-1 mr-2"
-                duration={600}
-                centered={selectedCardId !== null}
-                selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
-                width={100}
-                height={100}
-                unit="%"
-                slotSize={100 / 3.5}
-                style={{
-                  // width: '100%',
-                  zIndex: 2000
+                  opacity: gridView ? 1 : 0,
+                  display: !gridView ? 'none' : null,
+                  transition: 'opacity 0.5s',
+                  height: '25%',
+                  marginTop: 30
                 }}
               >
-                {d => (
-                  <div
-                    className="w-100 h-100"
-                    key={d.id}
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'center'
-                      // border: 'black 5px solid'
-                      // pointerEvents: 'none'
-                    }}
-                  >
-                    <div style={{ width: '100%', height: '100%' }}>
-                      <PreviewCard
-                        {...d}
-                        onClick={() => previewCardAction(d)}
-                        tagColorScale={tagColorScale}
-                        key={d.id}
-                        edit={d.template}
-                        selected={selectedCardId === d.id}
-                        style={{
-                          transition: `transform 1s`,
-                          transform: selectedCardId === d.id && 'scale(1.2)',
-                          zIndex: selectedCardId === d.id && 5000,
-                          opacity: d.template && 0.8
+                <Accordion
+                  data={cards}
+                  className="ml-1 mr-2"
+                  duration={600}
+                  centered={selectedCardId !== null}
+                  selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
+                  width={100}
+                  height={100}
+                  unit="%"
+                  slotSize={100 / 3.5}
+                  style={{
+                    // width: '100%',
+                    zIndex: 2000
+                  }}
+                >
+                  {d => (
+                    <div
+                      className="w-100 h-100"
+                      key={d.id}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center'
+                        // border: 'black 5px solid'
+                        // pointerEvents: 'none'
+                      }}
+                    >
+                      <div style={{ width: '100%', height: '100%' }}>
+                        <PreviewCard
+                          {...d}
+                          onClick={() => previewCardAction(d)}
+                          tagColorScale={tagColorScale}
+                          key={d.id}
+                          edit={d.template}
+                          selected={selectedCardId === d.id}
+                          style={{
+                            transition: `transform 1s`,
+                            transform: selectedCardId === d.id && 'scale(1.2)',
+                            zIndex: selectedCardId === d.id && 5000,
+                            opacity: d.template && 0.8
 
-                          // width: '100%',
-                          // height: '100%',
-                          // width: '100%'
-                          // maxWidth: '200px'
-                        }}
-                      />
+                            // width: '100%',
+                            // height: '100%',
+                            // width: '100%'
+                            // maxWidth: '200px'
+                          }}
+                        />
+                      </div>
                     </div>
-                  </div>
-                )}
-              </Accordion>
+                  )}
+                </Accordion>
+              </div>
 
               <DropTargetCont dropHandler={onCardDrop} dragged={isCardDragging}>
                 <ForceOverlay
@@ -620,7 +640,14 @@ class MapView extends Component {
                   </div>
                 </button>
 
-                <div>
+                <div
+                  style={{
+                    height: 200,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-end'
+                  }}
+                >
                   <button
                     className={`btn mb-3 mr-3 ml-2 ${dataView === 'topic' &&
                       'btn-active'}`}

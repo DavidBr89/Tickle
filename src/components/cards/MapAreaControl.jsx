@@ -8,43 +8,7 @@ import MapAreaRadius from '../utils/map-layers/MapAreaRadius';
 import CardMarker from './CardMarker';
 import { DivOverlay, UserOverlay } from '../utils/map-layers/DivOverlay';
 
-class DimWrapper extends React.Component {
-  static propTypes = {
-    children: PropTypes.func.isRequired
-  };
-
-  constructor(props) {
-    super(props);
-    this.state = { width: 0, height: 0 };
-  }
-
-  componentDidMount() {
-    const width = this.node.offsetWidth;
-    const height = this.node.offsetHeight;
-    this.setState({ width, height });
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.extended !== prevProps.extended) {
-      const width = this.node.offsetWidth;
-      const height = this.node.offsetHeight;
-      this.setState({ width, height });
-    }
-  }
-
-  render() {
-    const { children } = this.props;
-    const { width, height } = this.state;
-    return (
-      <div
-        ref={node => (this.node = node)}
-        style={{ height: '100%', width: '100%' }}
-      >
-        {children(width, height)}
-      </div>
-    );
-  }
-}
+import DimWrapper from 'Utils/DimensionsWrapper';
 
 function MapAreaForm({ ...props }) {
   const {

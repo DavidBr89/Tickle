@@ -17,6 +17,8 @@ import {
   isEqual
 } from 'lodash';
 
+import DimWrapper from 'Utils/DimensionsWrapper';
+
 import ZoomContainer from './ZoomContainer';
 import Cluster from './Cluster';
 
@@ -197,7 +199,7 @@ class TopicMap extends Component {
     const nodes = this.layout(data);
 
     return (
-      <React.Fragment>
+      <div style={{ position: 'absolute', left:- 0, top:0 }}>
         <ZoomContainer
           width={width}
           height={height}
@@ -220,7 +222,7 @@ class TopicMap extends Component {
             </Cluster>
           )}
         </ZoomContainer>
-      </React.Fragment>
+      </div>
     );
   }
 }
