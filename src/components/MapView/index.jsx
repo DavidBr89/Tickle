@@ -18,7 +18,7 @@ import * as dataViewActions from 'Reducers/DataView/actions';
 
 // import { fetchDirection } from 'Reducers/Map/async_actions';
 
-import MapView from './MapView';
+import MapViewPage from './MapViewPage';
 
 // import mapViewReducer from './reducer';
 
@@ -74,8 +74,7 @@ const mapStateToProps = state => {
     cards: cards
       .filter(
         d =>
-          filterSet.length === 0 ||
-          intersection(d.tags, filterSet).length > 0
+          filterSet.length === 0 || intersection(d.tags, filterSet).length > 0
       )
       .concat([templateCard]),
     authUser
@@ -152,10 +151,10 @@ const mergeProps = (state, dispatcherProps) => {
   };
 };
 
-const MapViewCont = connect(
+const MapView = connect(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps
-)(MapView);
+)(MapViewPage);
 
-export default MapViewCont;
+export default MapView;

@@ -1,19 +1,19 @@
-import React from 'react';
+// import React from 'react';
 
-import AuthUserContext from '../AuthUserContext';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
+
 import withAuthorization from '../withAuthorization';
+import AdminPage from './AdminPage';
 
-const AdminPage = () => (
-  <AuthUserContext.Consumer>
-    {authUser => (
-      <div>
-        <h1>Admin</h1>
-        <p>Restricted area! Only users with the admin rule are authorized.</p>
-      </div>
-    )}
-  </AuthUserContext.Consumer>
-);
+const authCondition = authUser => !!authUser; // && authUser.role === 'ADMIN';
 
-const authCondition = authUser => !!authUser && authUser.role === 'ADMIN';
+const mapStateToProps = state => ({
+  authUser: state.Session
+});
 
-export default withAuthorization(authCondition)(AdminPage);
+
+export default compose(
+  withAuthorization(authCondition),
+  connect(mapStateToProps)
+)(AdminPage);

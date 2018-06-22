@@ -189,7 +189,7 @@ class ZoomContainer extends Component {
           width,
           height,
           // pointerEvents: 'none',
-          overflow: 'hidden',
+          // overflow: 'hidden',
           // zIndex: 0,
           ...style
         }}

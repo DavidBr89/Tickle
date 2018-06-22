@@ -6,6 +6,7 @@ import SignIn from './components/SignIn';
 import LandingPage from './components/LandingPage';
 import Home from './components/Home';
 import MapView from './components/MapView';
+import Admin from './components/Admin';
 import DefaultLayout from './components/Layout';
 
 import withAuthentication from './components/withAuthentication';
@@ -59,6 +60,15 @@ const Routes = () => (
         component={() => (
           <DefaultLayout>
             <Home />
+          </DefaultLayout>
+        )}
+      />
+      <Route
+        exact
+        path={routes.ADMIN}
+        component={() => (
+          <DefaultLayout>
+            <Admin />
           </DefaultLayout>
         )}
       />

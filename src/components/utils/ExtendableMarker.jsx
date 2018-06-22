@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
 const CardImg = ({ width, height }) => (
@@ -24,7 +25,8 @@ class ExtendableMarker extends Component {
     children: PropTypes.node,
     preview: PropTypes.node,
     node: PropTypes.object,
-    style: PropTypes.object
+    style: PropTypes.object,
+    domNode: PropTypes.node.isRequired
   };
 
   static defaultProps = {
@@ -54,13 +56,15 @@ class ExtendableMarker extends Component {
       onClick,
       preview,
       node,
-      style
+      style,
+      domNode
     } = this.props;
 
     const marker = (
       <div
         onClick={onClick}
         style={{
+          // position: extended ? 'fixed' 'absolute',
           position: 'absolute',
           maxWidth: 500,
           left: x,
@@ -86,6 +90,8 @@ class ExtendableMarker extends Component {
         </div>
       </div>
     );
+
+    // const teleported = ReactDOM.createPortal(marker, domNode);
     return marker;
   }
 }

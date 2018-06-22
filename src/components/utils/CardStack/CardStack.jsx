@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import * as d3 from 'd3';
+import { range, scaleBand } from 'd3';
 // import VisibilitySensor from 'react-visibility-sensor/visibility-sensor.js';
 
 function centerLayout(nextProps) {
@@ -161,9 +161,8 @@ class CardGrid extends Component {
 
     // TODO: reorder
     if (!centered) {
-      const scale = d3
-        .scaleBand()
-        .domain(d3.range(0, data.length))
+      const scale = scaleBand()
+        .domain(range(0, data.length))
         .paddingInner(1)
         // .align(0.5)
         .range([0, width - slotSize]);

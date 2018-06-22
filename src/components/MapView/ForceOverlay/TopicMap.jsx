@@ -112,7 +112,7 @@ class TopicMap extends Component {
     className: PropTypes.string
   };
 
-  defaultProps = { filterSet: [] };
+  defaultProps = { filterSet: [], center: 0 };
 
   constructor(props) {
     super(props);
@@ -191,7 +191,8 @@ class TopicMap extends Component {
       sets,
       colorScale,
       children,
-      filterSet
+      filterSet,
+      center
     } = this.props;
 
     const nodes = this.layout(data);
@@ -200,7 +201,7 @@ class TopicMap extends Component {
       <ZoomContainer
         width={width}
         height={height}
-        center={[width / 2, height / 2]}
+        center={center}
         nodes={nodes}
         selectedId={selectedId}
         onZoom={() => null}

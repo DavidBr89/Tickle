@@ -21,14 +21,14 @@ import {
   DragDropContextProvider
 } from './DragAndDrop/DragSourceTarget';
 
-import TagInput from 'Utils/TagInput';
+import { TagInput, DropDown } from 'Utils/TagInput';
 
 import withAuthorization from '../withAuthorization';
 
 import { colorScale, cardTypeColorScale } from '../cards/styles';
 
 import { Card, CardMarker, PreviewCard } from '../cards';
-import Accordion from './CardGrid';
+import Accordion from 'Utils/CardStack';
 import ForceOverlay from './ForceOverlay';
 import { setify } from './utils';
 
@@ -188,7 +188,7 @@ const PreviewMarker = ({ selected, template, color, r = 25 }) => (
 );
 
 @DragDropContextProvider
-class MapView extends Component {
+class MapViewPage extends Component {
   static propTypes = {
     cards: PropTypes.array.isRequired,
     defaultCards: PropTypes.array.isRequired,
@@ -394,6 +394,7 @@ class MapView extends Component {
         <div
           className="w-100 h-100"
           style={{ position: 'relative', overflow: 'hidden' }}
+          ref={node => (this.domCont = node)}
         >
           <div
             className="w-100 h-100"
@@ -410,7 +411,11 @@ class MapView extends Component {
                 <div className="mr-3">
                   <StyledButton
                     className="mb-2"
-                    style={{ zIndex: 2000, position: 'relative' }}
+                    style={{
+                      zIndex: 2000,
+                      position: 'relative',
+                      display: 'none'
+                    }}
                     onClick={active =>
                       active
                         ? addCardFilter(['basketball', 'football', 'baseball'])
@@ -424,7 +429,11 @@ class MapView extends Component {
                     Sports
                   </StyledButton>
                   <StyledButton
-                    style={{ zIndex: 2000, position: 'relative' }}
+                    style={{
+                      zIndex: 2000,
+                      position: 'relative',
+                      display: 'none'
+                    }}
                     onClick={active =>
                       active
                         ? addCardFilter(['hard', 'normal', 'easy'])
@@ -434,13 +443,11 @@ class MapView extends Component {
                     difficulty
                   </StyledButton>
                 </div>
-                <TagInput
-                  onAdd={addCardFilter}
-                  onRemove={removeCardFilter}
-                  key={filterSet.join(',')}
+                <DropDown
+                  onChange={filterCards}
                   style={{
                     display: 'flex',
-                    position: 'absolute',
+                    // position: 'absolute',
                     justifyContent: 'flex-end',
                     marginTop: 10,
                     marginRight: 10,
@@ -540,6 +547,7 @@ class MapView extends Component {
                 >
                   {({ x, y, ...c }) => (
                     <ExtendableMarker
+                      domNode={this.domCont || document.getElementById('app')}
                       key={c.id}
                       width={extCardId === c.id ? width : 25}
                       height={extCardId === c.id ? height : 30}
@@ -685,6 +693,6 @@ class MapView extends Component {
 
 const authCondition = authUser => !!authUser;
 
-export default withAuthorization(authCondition)(MapView);
+export default withAuthorization(authCondition)(MapViewPage);
 
 // export default MapView;

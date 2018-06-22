@@ -7,3 +7,9 @@ export const SET_AUTH_USER_INFO = 'SET_AUTH_USER_INFO';
 export function setAuthUserInfo(options) {
   return { type: SET_AUTH_USER_INFO, options };
 }
+
+export const SET_USERS = 'SET_USERS';
+export function setUsers(options) {
+  return { type: SET_USERS, options };
+}
+

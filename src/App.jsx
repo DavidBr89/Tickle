@@ -96,8 +96,8 @@ const defaultState = {
     tmpCard: defaultCardTemplate,
     challenges: [],
     cardChallengeOpen: false,
-    filterSet: []
-    // extCard: null
+    filterSet: [],
+    extCard: null
     // TODO: outsource
   },
   DataView: {

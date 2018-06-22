@@ -9,7 +9,7 @@ import { auth } from 'Firebase';
 import * as routes from 'Constants/routes';
 
 const SignInPage = ({ history }) => (
-  <div className="ml-3" style={{ marginTop: 60}}>
+  <div className="content-block">
     <h1>SignIn</h1>
     <SignInForm history={history} />
     <PasswordForgetLink />

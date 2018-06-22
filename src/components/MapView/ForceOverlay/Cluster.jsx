@@ -21,18 +21,18 @@ function distance(a, b) {
   return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
 }
 
-function rects(quadtree) {
-  const nodes = [];
-  quadtree.visit((node, x0, y0, x1, y1) => {
-    node.x0 = x0;
-    node.y0 = y0;
-    node.x1 = x1;
-    node.y1 = y1;
-    nodes.push({ x0, y0, x1, y1, width: x1 - x0, height: y1 - y0 });
-  });
-  return nodes;
-}
-
+// function rects(quadtree) {
+//   const nodes = [];
+//   quadtree.visit((node, x0, y0, x1, y1) => {
+//     node.x0 = x0;
+//     node.y0 = y0;
+//     node.x1 = x1;
+//     node.y1 = y1;
+//     nodes.push({ x0, y0, x1, y1, width: x1 - x0, height: y1 - y0 });
+//   });
+//   return nodes;
+// }
+//
 function findCenterPos(values) {
   const bbox = getBoundingBox(values, d => [d.x, d.y]);
   const poly = hull(
@@ -221,7 +221,17 @@ class Cluster extends Component {
 
     // const [w, h] = [150, 150];
 
-    const sets = setify(clusteredNodes).filter(d => d.count > 0);
+    const sets = setify(clusteredNodes).map(
+      ({ values: oldValues, x, y, ...rest }) => {
+        const size = oldValues.length * 50;
+        const values = oldValues.map(v => {
+          const rx = v.x - size / 2;
+          const ry = v.y - size / 2;
+          return { rx, ry, ...v };
+        });
+        return { ...rest, values, size };
+      }
+    );
     // const cl = d3.scaleOrdinal
     //   .domain(sets.map(s => s.key))
     //   .range([
@@ -278,10 +288,10 @@ class Cluster extends Component {
             {sets.map(s =>
               s.values.map(d => (
                 <rect
-                  x={d.x - (s.values.length * 15) / 2}
-                  y={d.y - (s.values.length * 15) / 2}
-                  width={Math.max(40, s.values.length * 15)}
-                  height={Math.max(40, s.values.length * 15)}
+                  x={d.rx}
+                  y={d.ry}
+                  width={s.size}
+                  height={s.size}
                   fill={colorScale(s.key)}
                 />
               ))

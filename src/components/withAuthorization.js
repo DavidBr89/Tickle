@@ -26,7 +26,10 @@ const withAuthorization = condition => Component => {
     authUser: state.Session
   });
 
-  return compose(withRouter, connect(mapStateToProps))(WithAuthorization);
+  return compose(
+    withRouter,
+    connect(mapStateToProps)
+  )(WithAuthorization);
 };
 
 export default withAuthorization;

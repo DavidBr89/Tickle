@@ -204,13 +204,14 @@ class ForceOverlay extends Component {
     }
 
     return (
-      <div style={{ ...style, height: '100%', position: 'relative' }}>
+      <div style={{ ...style, height: '100%' }}>
         <DimWrapper>
           {(w, h) => (
             <TopicMap
               sets={sets}
               width={width}
-              height={h || height}
+              height={height}
+              center={[width / 2, (height * 3) / 4]}
               nodes={nodes}
               filterSet={filterSet}
               selectedId={selectedCardId}

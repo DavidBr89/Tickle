@@ -1,63 +1,55 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { difference } from 'lodash';
+import { difference, intersection, uniq } from 'lodash';
 
-export default class FilterPanel extends Component {
+export const TagInput = class TagInput extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string
   };
-  static defaultProps = { data: [] };
-
-  state = { data: this.props.data, curKey: null };
-
-  removeItem = key => {
-    this.setState(({ data: oldData }) => ({
-      data: oldData.filter(k => key !== k)
-    }));
+  static defaultProps = {
+    data: [],
+    onChange: d => d,
+    onAdd: d => d,
+    onRemove: d => d,
+    onTagInputChange: d => d
   };
-
-  addItem = key => {
-    this.setState(({ data: oldData }) => ({
-      data: [key, ...oldData],
-      curKey: null
-    }));
-  };
-  componentDidUpdate(prevProps, prevState) {
-    const { onRemove, onAdd } = this.props;
-    const { data } = this.state;
-    const { data: oldData } = prevState;
-    if (oldData.length > data.length) {
-      onRemove(difference(oldData, data));
-    }
-    if (oldData.length < data.length) {
-      onAdd(difference(data, oldData));
-    }
-  }
 
   render() {
-    const { onClick } = this.props;
-    const { data, curKey } = this.state;
+    const {
+      onClick,
+      onAdd,
+      onRemove,
+      onTagInputChange,
+      data,
+      style,
+      inputTag
+    } = this.props;
     return (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          backgroundColor: '#fff',
+          overflow: 'hidden',
+          padding: 5
+          // width: 300
+        }}
+      >
         <div
           style={{
-            backgroundColor: '#fff',
-            border: '1px solid #ccc',
-            overflow: 'hidden',
-            padding: 5,
-            width: 300,
             display: 'flex',
             flexWrap: 'no-wrap',
             position: 'relative',
             zIndex: 2000
+            // width: 250
           }}
         >
           <input
             type="text"
-            placeholder="Add Tag"
-            value={curKey || ''}
-            onChange={event => this.setState({ curKey: event.target.value })}
+            placeholder="Search by Tag"
+            value={inputTag}
+            onChange={event => onTagInputChange(event.target.value)}
             style={{
               position: 'relative',
               zIndex: 1000,
@@ -65,10 +57,20 @@ export default class FilterPanel extends Component {
               border: 0,
               color: '#777',
               outline: 'none',
-              padding: 5,
-              width: 80
+              padding: 5
+              // width: 80
             }}
           />
+          <button
+            className="slim-btn ml-2 mr-2"
+            type="button"
+            style={{ fontWeight: 'bold' }}
+            onClick={() => {
+              onAdd(inputTag);
+            }}
+          >
+            +
+          </button>
           <div
             style={{
               display: 'flex',
@@ -78,13 +80,14 @@ export default class FilterPanel extends Component {
           >
             {data.map(key => (
               <span
-                className=" btn mr-2"
+                className="mr-2"
                 style={{
                   position: 'relative',
                   zIndex: 4000,
-                  fontSize: 'small'
+                  fontSize: 'small',
+                  fontWeight: 'bold'
                 }}
-                onClick={() => this.removeItem(key)}
+                onClick={() => onRemove(key)}
               >
                 <span>{key}</span>
                 <span> x</span>
@@ -92,16 +95,154 @@ export default class FilterPanel extends Component {
             ))}
           </div>
         </div>
-        <div style={{ position: 'relative', right: 0, zIndex: 1000 }}>
+      </div>
+    );
+  }
+};
+
+export const DropDown = class DropDown extends Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string
+  };
+  static defaultProps = { style: {} };
+
+  state = { active: false, curSet: [], setList: [] };
+
+  // .dropdown:hover .dropdown-content {
+  //     display: block;
+  // }
+  componentDidUpdate(prevProps, prevState) {
+    const { onChange } = this.props;
+    const { curSet } = this.state;
+    const { curSet: oldSet } = prevState;
+
+    if (curSet.length !== oldSet.length) {
+      onChange(curSet);
+    }
+  }
+
+  removeListItem = set => {
+    this.setState(({ setList: olList }) => ({
+      setList: olList.filter(s => difference(set, s).length !== 0),
+      active: false
+    }));
+  };
+
+  render() {
+    const { active, curSet, curKey, setList } = this.state;
+    // const { style } = this.props;
+    const drStyle = { display: active ? 'block' : 'none' };
+    return (
+      <div
+        style={{
+          alignItems: 'center',
+          backgroundColor: '#fff'
+          // border: '2px solid #ccc'
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            border: '1px solid lightgrey'
+          }}
+        >
+          <TagInput
+            {...this.props}
+            data={curSet}
+            onTagInputChange={key => this.setState({ curKey: key })}
+            inputTag={curKey}
+            onAdd={k =>
+              this.setState(({ curSet: oldSet }) => ({
+                curSet: uniq([k, ...oldSet]),
+                curKey: ''
+              }))
+            }
+            onRemove={k => {
+              this.setState(({ curSet: oldSet }) => ({
+                curSet: oldSet.filter(key => key !== k)
+              }));
+            }}
+          />
           <button
-            className="btn ml-2 mr-2"
-            type="button"
-            onClick={() => this.addItem(curKey)}
+            className="slim-btn m-2"
+            onClick={() => this.setState(st => ({ active: !st.active }))}
+            disabled={setList.length === 0}
+            style={{ position: 'relative', zIndex: 1000 }}
           >
-            Add
+            ▼
           </button>
+          <button
+            className="slim-btn m-2"
+            type="button"
+            onClick={() =>
+              this.setState(({ curSet: cl, setList: oldSetList }) => ({
+                setList: [cl, ...oldSetList],
+                // curSet: [],
+                active: false
+              }))
+            }
+            style={{ position: 'relative', zIndex: 1000 }}
+          >
+            Add set
+          </button>
+        </div>
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 5000,
+            display: active ? 'block' : 'none'
+            // border: '1px solid lightgrey'
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              width: '100%'
+            }}
+          >
+            <div
+              className="dropdown-content p-2"
+              style={{
+                background: 'whitesmoke'
+                // border: '2px solid #ccc'
+                // border: '1px solid lightgrey'
+              }}
+            >
+              {setList.map(set => (
+                <div
+                  style={{
+                    padding: '0.25rem 1.5rem',
+                    pointer: 'cursor',
+                    display: 'flex',
+                    // justifyContent: 'space-around',
+                    alignItems: 'center',
+                    position: 'relative',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <div
+                    onClick={() => {
+                      this.setState({ curSet: set, active: false });
+                    }}
+                  >
+                    {set.join(', ')}
+                  </div>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      right: 0
+                    }}
+                    onClick={() => this.removeListItem(set)}
+                  >
+                    x
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     );
   }
-}
+};

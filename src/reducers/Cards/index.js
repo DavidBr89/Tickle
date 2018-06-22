@@ -270,30 +270,28 @@ function reducer(state = {}, action) {
       const { filterSet } = state;
       const set = action.options;
 
-      return { ...state, filterSet: union(filterSet, set) };
+      return {
+        ...state,
+        filterSet: union(filterSet, set),
+        selectedCardId: null
+      };
     }
 
     case REMOVE_CARD_FILTER: {
       const { filterSet } = state;
       const set = action.options;
 
-      return { ...state, filterSet: difference(filterSet, set) };
+      return {
+        ...state,
+        filterSet: difference(filterSet, set),
+        selectedCardId: null
+      };
     }
 
-    // case FILTER_CARDS: {
-    //   const set = action.options;
-    //   // console.log('action', action);
-    //   // const selectedTags = action.options;
-    //   // if (selectedTags.length === 0)
-    //   //   return { ...state, cards: state.defaultCards };
-    //   // TODO: fix filtering
-    //   // const cards = state.cards.filter(
-    //   //   c =>
-    //   //     selectedTags.length === 0 ||
-    //   //     intersection(c.tags, selectedTags).length > 0
-    //   // );
-    //   return { ...state, filterSet: , selectedCardId: null };
-    // }
+    case FILTER_CARDS: {
+      const filterSet = action.options;
+      return { ...state, filterSet, selectedCardId: null };
+    }
     // case RECEIVE_PLACES: {
     //   const { results: places } = action.options;
     //   // console.log('places', places);
