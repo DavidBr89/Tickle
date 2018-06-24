@@ -30,7 +30,7 @@ import { colorScale, cardTypeColorScale } from '../cards/styles';
 import { Card, CardMarker, PreviewCard } from '../cards';
 import Accordion from 'Utils/CardStack';
 import ForceOverlay from './ForceOverlay';
-import { setify } from './utils';
+import setify from 'Utils/setify';
 
 import PhotoChallenge from '../Challenges/MatchPhotoChallenge';
 

@@ -7,6 +7,7 @@ import * as d3 from 'd3';
 
 import lap from 'lap-jv/lap.js';
 import SOM from 'ml-som';
+import setify from 'Utils/setify';
 
 import {
   intersection,
@@ -18,7 +19,7 @@ import {
 } from 'lodash';
 
 import ZoomContainer from './ZoomContainer';
-import Cluster from './Cluster';
+import TagCluster from './TagCluster';
 
 function jaccard(a, b) {
   return a.length !== 0 && b.length !== 0
@@ -33,7 +34,6 @@ function somFy(data, width, height) {
     gridType: 'rect',
     learningRate: 0.1
   };
-  console.log('data somFy', data);
   // TODO: check later
   const dists = data.map(a => data.map(b => jaccard(a.tags, b.tags)));
 
@@ -128,7 +128,14 @@ class TopicMap extends Component {
       height,
       filterSet
     } = this.props;
-    const pos = this.makeCluster({ data, width, height });
+    const pos =
+      data.length > 0
+        ? this.makeCluster({
+          data,
+          width: width * 4,
+          height: height * 2
+        })
+        : [width / 2, height / 2];
 
     const xScale = d3
       .scaleLinear()
@@ -166,11 +173,12 @@ class TopicMap extends Component {
       { data: dataB, mode: modeB, filterSet: fsB },
       { data: dataA, mode: modeA, filterSet: fsA }
     ) => {
+      console.log('dataA', dataA, 'dataB', dataB);
       if (dataA.length !== dataB.length) {
         return false;
       }
       const arrayIsEqual = dataA.every(a => {
-        const oldItem = dataB.find(b => a.id === b.id) || false;
+        const oldItem = dataB.find(b => a.key === b.key) || false;
         if (!oldItem) return false;
         return (
           difference(a.tags, oldItem.tags).length === 0 &&
@@ -195,7 +203,7 @@ class TopicMap extends Component {
       center
     } = this.props;
 
-    const nodes = this.layout(data);
+    const nodes = this.layout(sets);
 
     return (
       <ZoomContainer
@@ -207,7 +215,7 @@ class TopicMap extends Component {
         onZoom={() => null}
       >
         {(zoomedNodes, transform) => (
-          <Cluster
+          <TagCluster
             sets={sets}
             scale={transform.k}
             nodes={zoomedNodes}
@@ -217,7 +225,7 @@ class TopicMap extends Component {
             filterSet={filterSet}
           >
             {children}
-          </Cluster>
+          </TagCluster>
         )}
       </ZoomContainer>
     );

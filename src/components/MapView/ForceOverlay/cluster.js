@@ -1,29 +1,35 @@
 import kdbush from 'kdbush';
+import { intersection, max } from 'lodash';
 
-function defaultGetLng(p) {
+function defaultX(p) {
   return p[0];
 }
-function defaultGetLat(p) {
+function defaultY(p) {
   return p[1];
 }
 
-export default function dobbyscan(points, radius, getLng, getLat) {
-  if (!getLng) getLng = defaultGetLng;
-  if (!getLat) getLat = defaultGetLat;
+export default function dobbyscan({
+  points,
+  radius = d => d,
+  x = p => p[0],
+  y = p => p[1]
+}) {
+  if (!x) x = defaultX;
+  if (!y) y = defaultY;
 
   const pointIds = new Uint32Array(points.length);
   for (var i = 0; i < points.length; i++) {
     pointIds[i] = i;
   }
 
-  function getLngI(i) {
-    return getLng(points[i]);
+  function getX(i) {
+    return x(points[i]);
   }
-  function getLatI(i) {
-    return getLat(points[i]);
+  function getY(i) {
+    return y(points[i]);
   }
 
-  const index = kdbush(pointIds, getLngI, getLatI);
+  const index = kdbush(pointIds, getX, getY);
 
   const clusters = [];
   const clustered = new Uint8Array(points.length);
@@ -44,11 +50,23 @@ export default function dobbyscan(points, radius, getLng, getLat) {
       cluster.push(points[j]);
 
       const unclusteredNeighbors = index
-        .within(getLngI(j), getLatI(j), radius)
+        .within(
+          getX(j),
+          getY(j),
+          Math.max(radius(points[i])),
+          radius(points[j])
+        )
         .filter(isUnclustered);
+      // .filter(c => {
+      //   const tagsA = points[c].tags;
+      //   const tagsB = points[i].tags;
+      //   const is = intersection(tagsA, tagsB);
+      //   console.log('is', tagsA, tagsB, is);
+      //   return is.length > 0;
+      // });
       // .map((id) => points[id]);
       //   geokdbush.around(
-      //     index, getLngI(j), getLatI(j), Infinity, radius, isUnclustered);
+      //     index, getX(j), getY(j), Infinity, radius, isUnclustered);
 
       for (let k = 0; k < unclusteredNeighbors.length; k++) {
         const q = unclusteredNeighbors[k];

@@ -1,21 +1,17 @@
 import { nest } from 'd3';
-import { intersection, uniq, flatten } from 'lodash';
+import { uniq, flatten } from 'lodash';
 
 export default function setify(data) {
   const spreadData = [...data].map(({ tags, ...rest }) =>
-    tags.map(t => ({ tag: t, ...rest }))
+    tags.map(t => ({ tag: t, tags, ...rest }))
   );
   return nest()
     .key(d => d.tag)
     .entries(flatten([...spreadData]))
     .map(d => {
-      const count = d.values.length;
-      const tags = uniq(flatten(intersection(d.values.map(e => e.tags))));
-      const values = d.values.map(e => {
-        e.tagId = `${d.key}${e.id}`;
-        return e;
-      });
-      return { count, tags, ...d, values };
+      const tags = uniq(flatten(d.values.map(e => e.tags)));
+      console.log('d.values', d.values);
+      return { tags, tag: d.key, ...d };
     })
     .sort((a, b) => {
       const nameA = a.key.toUpperCase(); // ignore upper and lowercase
