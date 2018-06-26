@@ -155,14 +155,12 @@ class ForceOverlay extends Component {
 
     // const somPos = data.map(d => [width / 2, height / 2]); // somFy(data, width, height);
 
-    const nodes = data;
-
     // const newPos = nodes.map(d => transEvent.apply([d.x, d.y]));
     // TODO: change later
     // const selectedTags = selectedCardId ? tagNode && tagNode.tags : [];
 
     if (mode === 'geo') {
-      const { loc } = nodes.find(d => d.id === selectedCardId) || {
+      const { loc } = data.find(d => d.id === selectedCardId) || {
         loc: userLocation
       };
       return (
@@ -186,7 +184,7 @@ class ForceOverlay extends Component {
             disabled={disabled}
             {...loc}
             zoom={10}
-            nodes={nodes}
+            nodes={data}
             selectedId={selectedCardId}
           >
             {d => children({ ...d })}
@@ -197,7 +195,7 @@ class ForceOverlay extends Component {
 
     if (mode === 'floorplan') {
       return (
-        <Floorplan width={width} height={height} nodes={nodes}>
+        <Floorplan width={width} height={height} nodes={data}>
           {d => children({ ...d })}
         </Floorplan>
       );
@@ -209,10 +207,10 @@ class ForceOverlay extends Component {
           {(w, h) => (
             <TopicMap
               sets={sets}
+              data={data}
               width={width}
               height={height}
               center={[width / 2, (height * 3) / 4]}
-              nodes={nodes}
               filterSet={filterSet}
               selectedId={selectedCardId}
               colorScale={colorScale}

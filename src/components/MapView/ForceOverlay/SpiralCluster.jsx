@@ -14,11 +14,44 @@ import { groupPoints } from './utils';
 import { intersection, union, uniqBy, uniq, flatten } from 'lodash';
 import TopicAnnotationOverlay from './TopicAnnotationOverlay';
 import dobbyscan from './cluster';
+import TagCloud from './TagCloud';
 
 const euclDist = (x1, y1, x2, y2) => Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 
 function distance(a, b) {
   return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
+}
+
+function makeTreemap({ data, width, height, padX, padY }) {
+  const ratio = 1.5;
+  const sorted = data.sort((a, b) => b.values.length - a.count);
+  const treemap = d3
+    .treemap()
+    .size([width / ratio, height])
+    .paddingInner(0)
+    .round(true)
+    .tile(d3.treemapSquarify.ratio(1));
+
+  const size = d3
+    .scaleLinear()
+    .domain(d3.extent(data, d => d.count))
+    .range([5, 25]);
+
+  const first = { name: 'root', children: sorted };
+  const root = d3.hierarchy(first).sum(d => size(d.count));
+  treemap(root);
+  if (!root.children) return [];
+  root.children.forEach(d => {
+    d.left = padX / 2 + Math.round(d.x0 * ratio);
+    d.top = padY / 2 + Math.round(d.y0);
+
+    d.width = Math.round(d.x1 * ratio) - Math.round(d.x0 * ratio) - padX / 2;
+    d.height = Math.round(d.y1) - Math.round(d.y0) - padY / 2;
+  });
+
+  return root.children;
+  // const padY = 10;
+  // const padX = 20;
 }
 
 // function rects(quadtree) {
@@ -196,94 +229,83 @@ class Cluster extends Component {
       children
     } = this.props;
 
-    const clusters = this.findClusters();
-    const cells = this.getVoronoiCells(clusters);
+    const trData = makeTreemap({
+      data: nodes,
+      width,
+      height,
+      padX: 10,
+      padY: 20
+    });
+    console.log('trData', nodes, trData);
+    // const clusters = this.findClusters();
 
-    const blurFactor = 2;
-    const bubbleRadius = 25;
+    // function collisionCheck(base_rect, new_rect) {
+    //   const padding = 5;
+    //   if (
+    //     base_rect.x < new_rect.x - padding + new_rect.w + padding * 2 &&
+    //     base_rect.x + base_rect.w > new_rect.x - padding &&
+    //     base_rect.y < new_rect.y - padding + new_rect.h + padding * 2 &&
+    //     base_rect.h + base_rect.y > new_rect.y - padding
+    //   ) {
+    //     return true;
+    //   }
+    //   return false;
+    // }
+    //
+    // const number_of_pictures = 10;
+    // const state = { pictures: [] };
+    //
+    // const m = 10;
+    // const center = { x: width / 2 / m, y: (height * 2) / 3 / m };
+    // function findNext() {
+    //   let i = 0;
+    //   const dist = 0.01;
+    //   let angle = 0;
+    //   while (i < 90000) {
+    //     i += 1;
+    //     // Spiral code from https://stackoverflow.com/questions/6824391/drawing-a-spiral-on-an-html-canvas-using-javascript
+    //     const incr = angle ? 1 / (dist + dist * angle) / 2 : dist;
+    //     const x = (dist + dist * angle) * Math.cos(angle) + center.x;
+    //     const y = (dist + dist * angle) * Math.sin(angle) + center.y;
+    //     const temp_w = 120 / m; // Math.random() * 30 + 5;
+    //     const temp_h = temp_w;
+    //     const temp_rect = {
+    //       x: x - temp_w / 2,
+    //       y: y - temp_h / 2,
+    //       w: temp_w,
+    //       h: temp_h,
+    //       i
+    //     };
+    //     const checks = [];
+    //     for (const pict of state.pictures) {
+    //       const check = collisionCheck(pict, temp_rect);
+    //       checks.push(!check);
+    //     }
+    //
+    //     if (checks.every(val => val === true)) {
+    //       state.pictures.push(temp_rect);
+    //       break;
+    //     }
+    //     angle += incr;
+    //   }
+    // }
+    //
+    // for (let j = 0; j < number_of_pictures; j++) {
+    //   findNext();
+    // }
+    // console.log('state pic', state.pictures);
 
     return (
-      <Fragment>
-        <svg
-          style={{
-            position: 'absolute',
-            width,
-            height
-          }}
-        >
-          <defs>
-            <filter id="gooey">
-              <feGaussianBlur
-                in="SourceGraphic"
-                stdDeviation="10"
-                colorInterpolationFilters="sRGB"
-                result="blur"
-              />
-              <feColorMatrix
-                in="blur"
-                mode="matrix"
-                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9"
-                result="goo"
-              />
-              <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-            </filter>
-            <filter id="gooeyCodeFilter">
-              <feGaussianBlur
-                in="SourceGraphic"
-                stdDeviation="10"
-                colorInterpolationFilters="sRGB"
-                result="blur"
-              />
-              <feColorMatrix
-                in="blur"
-                mode="matrix"
-                values={`1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${20} -7`}
-                result="gooey"
-              />
-            </filter>
-          </defs>
-          {cells.map(d => (
-            <path
-              fill="none"
-              stroke="grey"
-              strokeLinecap="round"
-              strokeDasharray="5,10,5"
-              d={d3.line().curve(d3.curveLinear)(d.polygon)}
-            />
-          ))}
-          {cells.map(d => (
-            <path
-              fill="none"
-              stroke="grey"
-              d={`M${d.centroid}L${d.centerPos}`}
-            />
-          ))}
-        </svg>
-        {cells.map(
-          ({ centroid: [cx, cy], centerPos: [x, y], tags, tag, ...d }) => (
-            <Tooltip
-              coords={[x, y]}
-              centroid={[cx, cy]}
-              size={Math.min(30, Math.max(d.values.length * 10, 15))}
-              x={x}
-              y={y}
-              colorScale={colorScale}
-              tags={tags}
-            />
-          )
-        )}
-        {cells.map(d => (
-          <React.Fragment>
-            {d.values.map((e, i) =>
-              children({
-                ...e,
-                x: d.centerPos[0] + i * 5,
-                y: d.centerPos[1] + i * 5
-              })
-            )}
-          </React.Fragment>
-        ))}
-      </Fragment>
+      <div style={{ position: 'relative' }}>
+        <TagCloud
+          data={trData}
+          width={width}
+          height={height}
+          padX={10}
+          padY={10}
+          onHover={d => console.log('yeah', d)}
+        />
+      </div>
     );
   }
 }

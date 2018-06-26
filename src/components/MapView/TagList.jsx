@@ -46,7 +46,7 @@ class TagList extends Component {
           <Tag
             className="ml-2 mr-2 mb-2"
             innerClassName="p-1"
-            barWidth={`${barScales.find(s => s.key === d.key).scale(d.count)}%`}
+            barWidth={`${20}%`}
             color={colorScale(d.key)}
           >
             {d.key}

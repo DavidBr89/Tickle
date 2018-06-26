@@ -14,7 +14,9 @@ import { hot } from 'react-hot-loader';
 import md5 from 'blueimp-md5';
 import rootReducer from './reducers';
 import Routes from './Routes';
+import * as chromatic from 'd3-scale-chromatic';
 
+import chroma from 'chroma-js';
 // import Login from './components/Login';
 
 // import { dummyCards } from './dummyData';
@@ -51,6 +53,10 @@ const defaultCardTemplate = {
   // floorLoc: { x: 0, y: 0 }
 };
 const cardTemplateId = 'temp';
+
+const tagColors = chromatic.schemeSet3
+  .reverse()
+  .map(c => chroma(c).alpha(0.04));
 
 const defaultState = {
   width,
@@ -89,6 +95,7 @@ const defaultState = {
   },
   Cards: {
     cardTemplateId,
+    tagColors,
     readableCards: [],
     createdCards: [],
     // TODO: update
@@ -99,6 +106,8 @@ const defaultState = {
     filterSet: [],
     extCard: null
     // TODO: outsource
+    //
+    // TODO: adapt colors
   },
   DataView: {
     dataView: 'topic',

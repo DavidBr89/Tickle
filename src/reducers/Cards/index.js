@@ -10,6 +10,8 @@
 
 import { db } from 'Firebase';
 import { updCard } from './helper';
+import setify from 'Utils/setify';
+import * as d3 from 'd3';
 
 import { union, difference } from 'lodash';
 
@@ -69,13 +71,22 @@ function reducer(state = {}, action) {
     }
 
     case RECEIVE_CREATED_CARDS: {
+      const { tagColors } = state;
       const cards = action.options;
       const createdCards = cards.map(c => ({ ...c, edit: true }));
+
+      const cardSets = setify(cards);
+
+      const tagColorScale = d3
+        .scaleOrdinal()
+        .domain(cardSets.map(s => s.key))
+        .range(tagColors);
 
       return {
         ...state,
         createdCards,
-        loadingCards: false
+        loadingCards: false,
+        tagColorScale
         // cards
         // isCardDragging
       };

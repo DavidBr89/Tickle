@@ -8,6 +8,7 @@ import * as d3 from 'd3';
 import lap from 'lap-jv/lap.js';
 import SOM from 'ml-som';
 import setify from 'Utils/setify';
+import DimWrapper from 'Utils/DimensionsWrapper';
 
 import {
   intersection,
@@ -19,7 +20,7 @@ import {
 } from 'lodash';
 
 import ZoomContainer from './ZoomContainer';
-import TagCluster from './TagCluster';
+import BlockCluster from './BlockCluster';
 
 function jaccard(a, b) {
   return a.length !== 0 && b.length !== 0
@@ -128,14 +129,11 @@ class TopicMap extends Component {
       height,
       filterSet
     } = this.props;
-    const pos =
-      data.length > 0
-        ? this.makeCluster({
-          data,
-          width: width * 4,
-          height: height * 2
-        })
-        : [width / 2, height / 2];
+    const pos = this.computeCluster({
+      data,
+      width: width * 4,
+      height: height * 2
+    });
 
     const xScale = d3
       .scaleLinear()
@@ -165,7 +163,7 @@ class TopicMap extends Component {
     return nodes;
   }
 
-  makeCluster = memoize(
+  computeCluster = memoize(
     ({ data, width, height, filterSet }) =>
       somFy(data, width, height, filterSet),
     // lapFy(somFy(data, width, height), width, height),
@@ -173,7 +171,7 @@ class TopicMap extends Component {
       { data: dataB, mode: modeB, filterSet: fsB },
       { data: dataA, mode: modeA, filterSet: fsA }
     ) => {
-      console.log('dataA', dataA, 'dataB', dataB);
+      // return false;
       if (dataA.length !== dataB.length) {
         return false;
       }
@@ -193,7 +191,7 @@ class TopicMap extends Component {
     const {
       width,
       height,
-      nodes: data,
+      data,
       padding,
       selectedId,
       sets,
@@ -203,31 +201,40 @@ class TopicMap extends Component {
       center
     } = this.props;
 
-    const nodes = this.layout(sets);
+    const selectedTags = selectedId
+      ? data.find(d => d.id === selectedId).tags
+      : [];
 
     return (
-      <ZoomContainer
-        width={width}
-        height={height}
-        center={center}
-        nodes={nodes}
-        selectedId={selectedId}
-        onZoom={() => null}
+      <div
+        className="h-100 w-100"
+        style={{
+          paddingTop: 20,
+          paddingLeft: 20,
+          paddingRight: 20,
+          paddingBottom: 40
+        }}
       >
-        {(zoomedNodes, transform) => (
-          <TagCluster
-            sets={sets}
-            scale={transform.k}
-            nodes={zoomedNodes}
-            width={width}
-            height={height}
-            colorScale={colorScale}
-            filterSet={filterSet}
-          >
-            {children}
-          </TagCluster>
-        )}
-      </ZoomContainer>
+        <DimWrapper>
+          {(w, h) => (
+            <div>
+              <BlockCluster
+                sets={sets}
+                scale={1}
+                nodes={data}
+                selectedTags={selectedTags}
+                width={w}
+                height={h}
+                colorScale={colorScale}
+                filterSet={filterSet}
+              >
+                {children}
+              </BlockCluster>
+              {data.map(d => children({ ...d, x: width / 2, y: -100 }))}
+            </div>
+          )}
+        </DimWrapper>
+      </div>
     );
   }
 }

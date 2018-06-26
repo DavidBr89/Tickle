@@ -6,7 +6,6 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 // import { Motion, spring } from 'react-motion';
 import * as Icon from 'react-feather';
 import Spinner from 'react-loader-spinner';
-import * as chromatic from 'd3-scale-chromatic';
 import * as d3 from 'd3';
 import { intersection, union } from 'lodash';
 
@@ -36,17 +35,11 @@ import PhotoChallenge from '../Challenges/MatchPhotoChallenge';
 
 import { UserOverlay } from '../utils/map-layers/DivOverlay';
 import ExtendableMarker from '../utils/ExtendableMarker';
-import chroma from 'chroma-js';
 import { Modal, ModalBody } from '../utils/Modal';
 
 import DragLayer from './DragAndDrop/DragLayer';
 
 import { StyledButton } from 'Utils/StyledComps';
-
-// TODO: adapt colors
-const tagColors = chromatic.schemeAccent
-  .reverse()
-  .map(c => chroma(c).alpha(0.04));
 
 //   [
 //   '#7fcdbb',
@@ -158,21 +151,6 @@ const PreviewMarker = ({ selected, template, color, r = 25 }) => (
       width: 2 * r
     }}
   >
-    {selected && (
-      <div
-        className="m-3"
-        style={{
-          position: 'absolute',
-          width: r * 2, // '13vw',
-          height: r * 2, // '13vw',
-          transform: `translate(${-r}px,${-r}px)`,
-          opacity: 0.5,
-          zIndex: 1000,
-          borderRadius: '50%',
-          border: '3px black solid'
-        }}
-      />
-    )}
     <CardMarker
       color={color}
       style={{
@@ -313,6 +291,7 @@ class MapViewPage extends Component {
       authUser,
 
       previewCardAction,
+      tagColors,
       // cardTemplate,
       // AppOpenFirstTime,
       // headerPad,
@@ -343,7 +322,8 @@ class MapViewPage extends Component {
       // cardAuthoring,
       // cardAction,
       onCardDrop,
-      cardAction
+      cardAction,
+      tagColorScale
       // getUserCards
       // navigateFirstTimeAction
     } = this.props;
@@ -365,21 +345,13 @@ class MapViewPage extends Component {
     //     .range([10, 100])
     // }));
 
-    const tagColorScale = d3
-      .scaleOrdinal()
-      .domain(
-        cardSets
-          .sort((a, b) => a.values.length - b.values.length)
-          .map(s => s.key)
-      )
-      .range(tagColors);
 
     const selectedTags = selectedCard ? selectedCard.tags : [];
 
-    const barScale = d3
-      .scaleLinear()
-      .domain(d3.extent(cardSets, d => d.count))
-      .range([20, 100]);
+    // const barScale = d3
+    //   .scaleLinear()
+    //   .domain(d3.extent(cardSets, d => d.count))
+    //   .range([20, 100]);
 
     return (
       <React.Fragment>
@@ -547,10 +519,10 @@ class MapViewPage extends Component {
                 >
                   {({ x, y, ...c }) => (
                     <ExtendableMarker
-                      domNode={this.domCont || document.getElementById('app')}
                       key={c.id}
                       width={extCardId === c.id ? width : 25}
                       height={extCardId === c.id ? height : 30}
+                      center={[width / 2, height / 2]}
                       x={extCardId === c.id ? width / 2 : x}
                       y={extCardId === c.id ? height / 2 : y}
                       extended={extCardId === c.id}
