@@ -198,12 +198,9 @@ class TopicMap extends Component {
       colorScale,
       children,
       filterSet,
-      center
+      center,selectedTags
     } = this.props;
 
-    const selectedTags = selectedId
-      ? data.find(d => d.id === selectedId).tags
-      : [];
 
     return (
       <div

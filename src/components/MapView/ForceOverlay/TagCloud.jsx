@@ -105,7 +105,8 @@ class Tag extends React.Component {
       onMouseLeave,
       padding,
       highlighted,
-      count
+      count,
+      active
     } = this.props;
 
     const st = {
@@ -118,7 +119,9 @@ class Tag extends React.Component {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      transition: 'all'
+      transition: 'all',
+      opacity: !active && 0.3
+
       // borderRadius: '100%'
       // marginLef: '100%'
       // transition: 'width 1s height 2s'
@@ -184,7 +187,7 @@ class TagCloud extends React.Component {
   };
 
   render() {
-    const { colorScale, data, onHover } = this.props;
+    const { colorScale, data, onHover, selectedTags } = this.props;
 
     const treemap = data.map((d, i) => (
       <Tag
@@ -192,6 +195,7 @@ class TagCloud extends React.Component {
         key={d.data.key}
         color={colorScale(d.data.key)}
         count={d.data.count}
+        active={selectedTags.includes(d.data.key)}
         index={i}
         onMouseEnter={() => onHover(d.data.key)}
         onMouseLeave={() => onHover(null)}

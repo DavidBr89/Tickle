@@ -11,6 +11,8 @@ import {
   changeViewport
 } from 'Reducers/Map/actions';
 
+import setify from 'Utils/setify';
+
 import * as cardActions from 'Reducers/Cards/actions';
 
 import * as asyncActions from 'Reducers/Cards/async_actions';
@@ -60,9 +62,21 @@ const mapStateToProps = state => {
   };
 
   const cards = authEnv ? [...createdCards] : readableCards;
+  const filteredCards = cards
+    .filter(
+      d => filterSet.length === 0 || intersection(d.tags, filterSet).length > 0
+    )
+    .concat([templateCard]);
+
+  const cardSets = setify(filteredCards);
 
   const selectedCard =
-    selectedCardId !== null ? cards.find(d => d.id === selectedCardId) : null;
+    selectedCardId !== null
+      ? filteredCards.find(d => d.id === selectedCardId)
+      : null;
+
+  const selectedTags =
+    selectedCard !== null ? selectedCard.tags : cardSets.map(d => d.key);
 
   return {
     // TODO: make more specific
@@ -70,13 +84,11 @@ const mapStateToProps = state => {
     ...state.Cards,
     ...state.DataView,
     selectedCard,
+    selectedTags,
     selectedCardId,
-    cards: cards
-      .filter(
-        d =>
-          filterSet.length === 0 || intersection(d.tags, filterSet).length > 0
-      )
-      .concat([templateCard]),
+    cardSets,
+    // selectedTags,
+    cards: filteredCards,
     authUser
   };
 };

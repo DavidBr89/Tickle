@@ -5,14 +5,16 @@ import { difference, intersection, uniq } from 'lodash';
 export const TagInput = class TagInput extends Component {
   static propTypes = {
     children: PropTypes.node,
-    className: PropTypes.string
+    className: PropTypes.string,
+    onSelect: PropTypes.func
   };
   static defaultProps = {
     data: [],
     onChange: d => d,
     onAdd: d => d,
     onRemove: d => d,
-    onTagInputChange: d => d
+    onTagInputChange: d => d,
+    onSelect: d => d
   };
 
   render() {
@@ -23,7 +25,8 @@ export const TagInput = class TagInput extends Component {
       onTagInputChange,
       data,
       style,
-      inputTag
+      inputTag,
+      onSelect
     } = this.props;
     return (
       <div
@@ -48,6 +51,7 @@ export const TagInput = class TagInput extends Component {
           <input
             type="text"
             placeholder="Search by Tag"
+            onSelect={onSelect}
             value={inputTag}
             onChange={event => onTagInputChange(event.target.value)}
             style={{
@@ -62,7 +66,7 @@ export const TagInput = class TagInput extends Component {
             }}
           />
           <button
-            className="slim-btn ml-2 mr-2"
+            className="slim-btn ml-2 mr-2 pl-2 pr-2"
             type="button"
             style={{ fontWeight: 'bold' }}
             onClick={() => {
@@ -107,7 +111,7 @@ export const DropDown = class DropDown extends Component {
   };
   static defaultProps = { style: {} };
 
-  state = { active: false, curSet: [], setList: [] };
+  state = { active: false, curSet: this.props.data, setList: [] };
 
   // .dropdown:hover .dropdown-content {
   //     display: block;
@@ -125,7 +129,8 @@ export const DropDown = class DropDown extends Component {
   removeListItem = set => {
     this.setState(({ setList: olList }) => ({
       setList: olList.filter(s => difference(set, s).length !== 0),
-      active: false
+      active: false,
+      curSet: []
     }));
   };
 
@@ -133,6 +138,13 @@ export const DropDown = class DropDown extends Component {
     const { active, curSet, curKey, setList } = this.state;
     // const { style } = this.props;
     const drStyle = { display: active ? 'block' : 'none' };
+    const isCurSetNew =
+      curSet.length > 0 &&
+      setList.filter(s => intersection(curSet, s).length === curSet.length)
+        .length === 0;
+
+    console.log('isCurSetNew', isCurSetNew);
+
     return (
       <div
         style={{
@@ -152,12 +164,14 @@ export const DropDown = class DropDown extends Component {
             data={curSet}
             onTagInputChange={key => this.setState({ curKey: key })}
             inputTag={curKey}
-            onAdd={k =>
-              this.setState(({ curSet: oldSet }) => ({
-                curSet: uniq([k, ...oldSet]),
-                curKey: ''
-              }))
-            }
+            onAdd={k => {
+              if (k !== '') {
+                this.setState(({ curSet: oldSet }) => ({
+                  curSet: uniq([k, ...oldSet]),
+                  curKey: ''
+                }));
+              }
+            }}
             onRemove={k => {
               this.setState(({ curSet: oldSet }) => ({
                 curSet: oldSet.filter(key => key !== k)
@@ -167,24 +181,10 @@ export const DropDown = class DropDown extends Component {
           <button
             className="slim-btn m-2"
             onClick={() => this.setState(st => ({ active: !st.active }))}
-            disabled={setList.length === 0}
+            disabled={curSet.length === 0}
             style={{ position: 'relative', zIndex: 1000 }}
           >
             ▼
-          </button>
-          <button
-            className="slim-btn m-2"
-            type="button"
-            onClick={() =>
-              this.setState(({ curSet: cl, setList: oldSetList }) => ({
-                setList: [cl, ...oldSetList],
-                // curSet: [],
-                active: false
-              }))
-            }
-            style={{ position: 'relative', zIndex: 1000 }}
-          >
-            Add set
           </button>
         </div>
         <div
@@ -209,10 +209,39 @@ export const DropDown = class DropDown extends Component {
                 // border: '1px solid lightgrey'
               }}
             >
-              {setList.map(set => (
+              {isCurSetNew && (
                 <div
                   style={{
-                    padding: '0.25rem 1.5rem',
+                    padding: '0.25rem',
+                    pointer: 'cursor',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    position: 'relative',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <div>{curSet.join(', ')}</div>
+                  <button
+                    className="slim-btn m-2"
+                    type="button"
+                    onClick={() =>
+                      this.setState(({ curSet: cl, setList: oldSetList }) => ({
+                        setList: [cl, ...oldSetList],
+                        // curSet: [],
+                        active: false
+                      }))
+                    }
+                    style={{ position: 'relative', zIndex: 1000 }}
+                  >
+                    Add set
+                  </button>
+                </div>
+              )}
+              {[...setList].map(set => (
+                <div
+                  style={{
+                    padding: '0.25rem',
                     pointer: 'cursor',
                     display: 'flex',
                     // justifyContent: 'space-around',

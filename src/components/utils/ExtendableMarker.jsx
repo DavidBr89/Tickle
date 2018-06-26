@@ -74,7 +74,7 @@ class ExtendableMarker extends Component {
           bottom: extended && 0,
           width,
           height,
-          zIndex: extended ? 4000 : 0,
+          zIndex: 4000,
           transition: `transform ${delay}ms, left ${delay}ms, top ${delay}ms, width ${delay}ms, height ${delay}ms`,
           ...style
         }}

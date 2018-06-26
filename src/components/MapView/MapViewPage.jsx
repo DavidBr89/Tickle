@@ -29,7 +29,6 @@ import { colorScale, cardTypeColorScale } from '../cards/styles';
 import { Card, CardMarker, PreviewCard } from '../cards';
 import Accordion from 'Utils/CardStack';
 import ForceOverlay from './ForceOverlay';
-import setify from 'Utils/setify';
 
 import PhotoChallenge from '../Challenges/MatchPhotoChallenge';
 
@@ -157,6 +156,7 @@ const PreviewMarker = ({ selected, template, color, r = 25 }) => (
         opacity: 1,
         position: 'absolute',
         transform: `translateX(3px)`,
+        // border: 'black 1px solid',
         zIndex: -100,
         width: r, // '13vw',
         height: r // '13vw',
@@ -323,7 +323,9 @@ class MapViewPage extends Component {
       // cardAction,
       onCardDrop,
       cardAction,
-      tagColorScale
+      tagColorScale,
+      cardSets,
+      selectedTags
       // getUserCards
       // navigateFirstTimeAction
     } = this.props;
@@ -336,7 +338,7 @@ class MapViewPage extends Component {
     //   longitude
     // });
 
-    const cardSets = setify(cards);
+    // const cardSets = setify(cards);
     // const barScales = setify(cards).map(d => ({
     //   key: d.key,
     //   scale: d3
@@ -344,9 +346,6 @@ class MapViewPage extends Component {
     //     .domain([0, d.count])
     //     .range([10, 100])
     // }));
-
-
-    const selectedTags = selectedCard ? selectedCard.tags : [];
 
     // const barScale = d3
     //   .scaleLinear()
@@ -380,43 +379,9 @@ class MapViewPage extends Component {
                 className="input-group mt-2"
                 style={{ display: 'flex', justifyContent: 'flex-end' }}
               >
-                <div className="mr-3">
-                  <StyledButton
-                    className="mb-2"
-                    style={{
-                      zIndex: 2000,
-                      position: 'relative',
-                      display: 'none'
-                    }}
-                    onClick={active =>
-                      active
-                        ? addCardFilter(['basketball', 'football', 'baseball'])
-                        : removeCardFilter([
-                          'basketball',
-                          'football',
-                          'baseball'
-                        ])
-                    }
-                  >
-                    Sports
-                  </StyledButton>
-                  <StyledButton
-                    style={{
-                      zIndex: 2000,
-                      position: 'relative',
-                      display: 'none'
-                    }}
-                    onClick={active =>
-                      active
-                        ? addCardFilter(['hard', 'normal', 'easy'])
-                        : removeCardFilter(['hard', 'normal', 'easy'])
-                    }
-                  >
-                    difficulty
-                  </StyledButton>
-                </div>
                 <DropDown
                   onChange={filterCards}
+                  onSelect={() => selectCard(null)}
                   style={{
                     display: 'flex',
                     // position: 'absolute',
@@ -494,7 +459,7 @@ class MapViewPage extends Component {
               <DropTargetCont
                 dropHandler={onCardDrop}
                 dragged={isCardDragging}
-                style={{ height: '65%' }}
+                style={{ height: '65%', zIndex: 5000 }}
               >
                 <ForceOverlay
                   delay={1}
@@ -504,11 +469,11 @@ class MapViewPage extends Component {
                   force
                   data={cards}
                   sets={cardSets}
+                  selectedTags={selectedTags}
                   selectedCardId={selectedCardId}
                   userLocation={userLocation}
                   mode={dataView}
                   onMapViewportChange={changeMapViewport}
-                  filterSet={filterSet.set}
                   padding={{
                     bottom: height / 5,
                     top: height / 5,
@@ -527,11 +492,10 @@ class MapViewPage extends Component {
                       y={extCardId === c.id ? height / 2 : y}
                       extended={extCardId === c.id}
                       preview={
-                        <div>
+                        <span>
                           {selectedCardId === c.id &&
                             !isCardDragging &&
-                            authEnv &&
-                            dataView !== 'topic' && <SpeechBubble />}
+                            authEnv && <SpeechBubble />}
                           <DragSourceCont
                             dragHandler={dragCard}
                             data={c}
@@ -544,7 +508,7 @@ class MapViewPage extends Component {
                               color="whitesmoke"
                             />
                           </DragSourceCont>
-                        </div>
+                        </span>
                       }
                     >
                       <Card

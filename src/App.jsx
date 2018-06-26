@@ -99,10 +99,11 @@ const defaultState = {
     readableCards: [],
     createdCards: [],
     // TODO: update
-    selectedCardId: cardTemplateId,
+    selectedCardId: null,
     tmpCard: defaultCardTemplate,
     challenges: [],
     cardChallengeOpen: false,
+    selectedTags: [],
     filterSet: [],
     extCard: null
     // TODO: outsource

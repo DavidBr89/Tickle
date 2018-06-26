@@ -162,6 +162,7 @@ function reducer(state = {}, action) {
     }
 
     case SELECT_CARD: {
+      const { cards } = state;
       const selectedCardId = action.options;
       return {
         ...state,

@@ -203,9 +203,8 @@ class ForceOverlay extends Component {
 
     return (
       <div style={{ ...style, height: '100%' }}>
-        <DimWrapper>
-          {(w, h) => (
             <TopicMap
+              {...this.props}
               sets={sets}
               data={data}
               width={width}
@@ -218,8 +217,6 @@ class ForceOverlay extends Component {
             >
               {children}
             </TopicMap>
-          )}
-        </DimWrapper>
       </div>
     );
   }

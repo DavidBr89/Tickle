@@ -151,7 +151,7 @@ export class DropTargetCont extends PureComponent {
 
   static defaultProps = {
     dropHandler: d => d,
-    style:{}
+    style: {}
   };
 
   constructor(props) {

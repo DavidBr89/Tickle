@@ -111,6 +111,7 @@ class Cluster extends Component {
     return (
       <div style={{ position: 'relative' }}>
         <TagCloud
+          {...this.props}
           data={trData}
           width={width}
           height={height}
