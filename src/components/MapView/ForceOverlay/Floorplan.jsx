@@ -18,6 +18,11 @@ class Floorplan extends Component {
     nodes: []
   };
 
+  // componentDidMount() {
+  //   // const { width, height, onMapViewportChange } = this.props;
+  //   // onMapViewportChange({ width, height });
+  // }
+
   render() {
     const { width, height, children, nodes } = this.props;
     return (
@@ -28,12 +33,12 @@ class Floorplan extends Component {
           backgroundSize: 'cover',
           width,
           height
+          // position: 'relative'
         }}
       >
         {nodes.map(n => {
           const x = n.floorLoc.relX * width;
           const y = n.floorLoc.relY * height;
-          console.log('x', x, 'y', y, width, height);
           return children({
             ...n,
             x,

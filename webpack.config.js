@@ -34,6 +34,7 @@ module.exports = {
   },
   devServer: {
     contentBase: './public',
+    overlay: true,
     noInfo: true,
     hot: true,
     inline: true,

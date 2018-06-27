@@ -113,7 +113,7 @@ class TopicMap extends Component {
     className: PropTypes.string
   };
 
-  defaultProps = { filterSet: [], center: 0 };
+ static defaultProps = { filterSet: [], center: 0 };
 
   constructor(props) {
     super(props);
@@ -198,9 +198,9 @@ class TopicMap extends Component {
       colorScale,
       children,
       filterSet,
-      center,selectedTags
+      center,
+      selectedTags
     } = this.props;
-
 
     return (
       <div

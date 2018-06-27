@@ -117,7 +117,8 @@ const mergeProps = (state, dispatcherProps) => {
     width,
     height,
     dataView,
-    authUser
+    authUser,
+    extCardId
   } = state;
   const { uid } = authUser;
 
@@ -143,7 +144,7 @@ const mergeProps = (state, dispatcherProps) => {
       : asyncRemoveCard({ uid, cid: cardData.id });
 
   const onCardUpdate = cardData =>
-    cardData.template
+    selectedCardId === 'temp'
       ? updateCardTemplate({ cardData, viewport, dataView })
       : asyncUpdateCard({ uid, cardData, viewport, dataView });
 
@@ -152,6 +153,8 @@ const mergeProps = (state, dispatcherProps) => {
   const previewCardAction = d =>
     selectedCardId === d.id ? extendSelectedCard(d.id) : selectCard(d.id);
 
+  const unSelectCard = () => (extCardId === null ? selectCard(null) : d => d);
+
   return {
     ...state,
     ...dispatcherProps,
@@ -159,7 +162,8 @@ const mergeProps = (state, dispatcherProps) => {
     onCardUpdate,
     cardAction,
     setDataView,
-    previewCardAction
+    previewCardAction,
+    unSelectCard
   };
 };
 

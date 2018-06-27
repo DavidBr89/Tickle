@@ -182,7 +182,7 @@ export const DropDown = class DropDown extends Component {
             className="slim-btn m-2"
             onClick={() => this.setState(st => ({ active: !st.active }))}
             disabled={curSet.length === 0}
-            style={{ position: 'relative', zIndex: 1000 }}
+            style={{ position: 'relative', zIndex: 1000, display: 'none' }}
           >
             ▼
           </button>

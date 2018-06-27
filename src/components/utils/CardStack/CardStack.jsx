@@ -80,7 +80,7 @@ class CardGrid extends Component {
     style: {},
     className: '',
     data: [],
-    duration: 800,
+    duration: 100,
     width: 100,
     innerMargin: 0,
     unit: 'vw',
@@ -156,8 +156,7 @@ class CardGrid extends Component {
     const { leftCards, centerCard, rightCards } = cardStacks;
     const allCards = [...leftCards, ...centerCard, ...rightCards];
 
-    const transition = `left ${duration / 1000}s, transform ${duration /
-      1000}s`;
+    const transition = `left ${duration}ms, transform ${duration}ms`;
 
     // TODO: reorder
     if (!centered) {

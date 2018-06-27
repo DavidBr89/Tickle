@@ -6,6 +6,7 @@ import { UserOverlay } from '../../utils/map-layers/DivOverlay';
 
 import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 
+
 const mapStyleUrl = 'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l';
 
 const defaultLocation = {

@@ -129,6 +129,98 @@ class ForceOverlay extends Component {
   //   // }
   //   return { viewport: newVp };
   // }
+  selectComp = () => {
+    const {
+      mode,
+      data,
+      selectedCardId,
+      userLocation,
+      className,
+      style,
+      onViewportChange,
+      disabled,
+      width,
+      height,
+      onMapViewportChange,
+      children,
+      sets,
+      filterSet,
+      padding,
+      colorScale
+    } = this.props;
+    const { loc } = data.find(d => d.id === selectedCardId) || {
+      loc: userLocation
+    };
+
+    switch (mode) {
+      case 'geo': {
+        return (
+          <div
+            className={className}
+            style={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              overflow: 'hidden',
+              left: 0,
+              top: 0,
+              // pointerEvents: 'none',
+              ...style
+            }}
+          >
+            <Map
+              height={height}
+              width={width}
+              onViewportChange={onMapViewportChange}
+              disabled={disabled}
+              {...loc}
+              zoom={10}
+              nodes={data}
+              selectedId={selectedCardId}
+            >
+              {d => children({ ...d })}
+            </Map>
+          </div>
+        );
+      }
+      case 'floorplan': {
+        return (
+          <DimWrapper>
+            {(w, h) => (
+              <Floorplan
+                {...this.props}
+                width={width}
+                height={height}
+                nodes={data}
+              >
+                {children}
+              </Floorplan>
+            )}
+          </DimWrapper>
+        );
+      }
+      default: {
+        return (
+          <div style={{ ...style, height: '100%' }}>
+            <TopicMap
+              {...this.props}
+              sets={sets}
+              data={data}
+              width={width}
+              height={height}
+              center={[width / 2, (height * 3) / 4]}
+              filterSet={filterSet}
+              selectedId={selectedCardId}
+              colorScale={colorScale}
+              padding={padding}
+            >
+              {children}
+            </TopicMap>
+          </div>
+        );
+      }
+    }
+  };
 
   render() {
     const {
@@ -153,72 +245,9 @@ class ForceOverlay extends Component {
       filterSet
     } = this.props;
 
-    // const somPos = data.map(d => [width / 2, height / 2]); // somFy(data, width, height);
+    const comp = this.selectComp();
 
-    // const newPos = nodes.map(d => transEvent.apply([d.x, d.y]));
-    // TODO: change later
-    // const selectedTags = selectedCardId ? tagNode && tagNode.tags : [];
-
-    if (mode === 'geo') {
-      const { loc } = data.find(d => d.id === selectedCardId) || {
-        loc: userLocation
-      };
-      return (
-        <div
-          className={className}
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            overflow: 'hidden',
-            left: 0,
-            top: 0,
-            // pointerEvents: 'none',
-            ...style
-          }}
-        >
-          <Map
-            height={height}
-            width={width}
-            onViewportChange={onMapViewportChange}
-            disabled={disabled}
-            {...loc}
-            zoom={10}
-            nodes={data}
-            selectedId={selectedCardId}
-          >
-            {d => children({ ...d })}
-          </Map>
-        </div>
-      );
-    }
-
-    if (mode === 'floorplan') {
-      return (
-        <Floorplan width={width} height={height} nodes={data}>
-          {d => children({ ...d })}
-        </Floorplan>
-      );
-    }
-
-    return (
-      <div style={{ ...style, height: '100%' }}>
-            <TopicMap
-              {...this.props}
-              sets={sets}
-              data={data}
-              width={width}
-              height={height}
-              center={[width / 2, (height * 3) / 4]}
-              filterSet={filterSet}
-              selectedId={selectedCardId}
-              colorScale={colorScale}
-              padding={padding}
-            >
-              {children}
-            </TopicMap>
-      </div>
-    );
+    return comp;
   }
 }
 

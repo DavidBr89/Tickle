@@ -128,14 +128,18 @@ export const onceGetUsers = () => firestore.collection('users').get();
 
 export const doCreateCard = (uid, card) => {
   console.log('createCard', card);
-  return uploadImgFields(card).then(c =>
-    firestore
+  return uploadImgFields(card).then(c => {
+    if (c.id == 'temp') {
+      console.log('temp to create');
+      throw 'error: temp card to create';
+    }
+    return firestore
       .collection('users')
       .doc(uid)
       .collection('createdCards')
       .doc(c.id)
-      .set(c)
-  );
+      .set(c);
+  });
 };
 
 // TODO: change later

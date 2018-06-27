@@ -186,7 +186,8 @@ function reducer(state = {}, action) {
     }
 
     case EXTEND_SELECTED_CARD: {
-      const extCardId = action.options;
+      const { selectedCardId} = state;
+      const extCardId= action.options;
       // console.log('extCardId', extCardId);
       // TODO: update
       return { ...state, extCardId };

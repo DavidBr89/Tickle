@@ -117,6 +117,7 @@ function SpeechBubble({ ...props }) {
       style={{
         position: 'absolute',
         transform: 'translate(-50%, -130%)',
+        // zIndex: 6000,
         background: 'whitesmoke'
       }}
     >
@@ -124,6 +125,8 @@ function SpeechBubble({ ...props }) {
         className="m-1"
         style={{
           width: 270,
+          // position: 'relative',
+          // zIndex: 4000,
           border: '2px dashed grey'
         }}
       >
@@ -145,6 +148,7 @@ const PreviewMarker = ({ selected, template, color, r = 25 }) => (
     style={{
       position: 'relative',
       transform: selected && 'scale(1.5)',
+      zIndex: selected && 5000,
       transition: 'transform 1s',
       height: 2 * r,
       width: 2 * r
@@ -157,7 +161,7 @@ const PreviewMarker = ({ selected, template, color, r = 25 }) => (
         position: 'absolute',
         transform: `translateX(3px)`,
         // border: 'black 1px solid',
-        zIndex: -100,
+        // zIndex: -100,
         width: r, // '13vw',
         height: r // '13vw',
       }}
@@ -380,6 +384,7 @@ class MapViewPage extends Component {
                 style={{ display: 'flex', justifyContent: 'flex-end' }}
               >
                 <DropDown
+                  key={filterSet.join(',')}
                   onChange={filterCards}
                   onSelect={() => selectCard(null)}
                   style={{
@@ -387,8 +392,7 @@ class MapViewPage extends Component {
                     // position: 'absolute',
                     justifyContent: 'flex-end',
                     marginTop: 10,
-                    marginRight: 10,
-                    width: '100%'
+                    marginRight: 10
                   }}
                   onClick={addCardFilter}
                   data={filterSet}
@@ -416,7 +420,7 @@ class MapViewPage extends Component {
                   slotSize={100 / 3.5}
                   style={{
                     // width: '100%',
-                    zIndex: 2000
+                    zIndex: dataView === 'geo' && 1000
                   }}
                 >
                   {d => (
@@ -441,7 +445,7 @@ class MapViewPage extends Component {
                           style={{
                             transition: `transform 1s`,
                             transform: selectedCardId === d.id && 'scale(1.2)',
-                            zIndex: selectedCardId === d.id && 5000,
+                            // zIndex: selectedCardId === d.id && 5000,
                             opacity: d.template && 0.8
 
                             // width: '100%',
@@ -459,7 +463,7 @@ class MapViewPage extends Component {
               <DropTargetCont
                 dropHandler={onCardDrop}
                 dragged={isCardDragging}
-                style={{ height: '65%', zIndex: 5000 }}
+                style={{ height: '65%' }}
               >
                 <ForceOverlay
                   delay={1}
@@ -485,6 +489,7 @@ class MapViewPage extends Component {
                   {({ x, y, ...c }) => (
                     <ExtendableMarker
                       key={c.id}
+                      delay={10}
                       width={extCardId === c.id ? width : 25}
                       height={extCardId === c.id ? height : 30}
                       center={[width / 2, height / 2]}
@@ -492,10 +497,13 @@ class MapViewPage extends Component {
                       y={extCardId === c.id ? height / 2 : y}
                       extended={extCardId === c.id}
                       preview={
-                        <span>
+                        <span
+                          style={{
+                            zIndex: selectedCardId === c.id && 7000
+                          }}
+                        >
                           {selectedCardId === c.id &&
-                            !isCardDragging &&
-                            authEnv && <SpeechBubble />}
+                            !isCardDragging && <SpeechBubble />}
                           <DragSourceCont
                             dragHandler={dragCard}
                             data={c}
@@ -547,7 +555,7 @@ class MapViewPage extends Component {
                     'btn-active'}`}
                   style={{
                     // position: 'absolute',
-                    zIndex: 1000,
+                    // zIndex: 1000,
                     background: tsneView && 'whitesmoke'
                   }}
                   onClick={() => setDataView('geo')}
@@ -570,7 +578,7 @@ class MapViewPage extends Component {
                     'btn-active'}`}
                   style={{
                     // position: 'absolute',
-                    zIndex: 1000,
+                    // zIndex: 1000,
                     background: tsneView && 'whitesmoke'
                   }}
                   onClick={() => setDataView('floorplan')}
@@ -590,7 +598,7 @@ class MapViewPage extends Component {
 
                 <div
                   style={{
-                    height: 200,
+                    // height: 200,
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'flex-end'
@@ -599,11 +607,13 @@ class MapViewPage extends Component {
                   <button
                     className={`btn mb-3 mr-3 ml-2 ${dataView === 'topic' &&
                       'btn-active'}`}
-                    style={{
-                      // position: 'absolute',
-                      zIndex: 1000
-                      // background: dataView === 'som' && 'grey',
-                    }}
+                    style={
+                      {
+                        // position: 'absolute',
+                        // zIndex: 1000
+                        // background: dataView === 'som' && 'grey',
+                      }
+                    }
                     onClick={() => setDataView('topic')}
                   >
                     <div

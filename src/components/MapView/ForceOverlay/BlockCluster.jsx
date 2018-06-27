@@ -1,5 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
+import { addCardFilter } from 'Reducers/Cards/actions';
+
 // import * as chromatic from 'd3-scale-chromatic';
 // import hull from 'hull.js';
 import hull from 'concaveman';
@@ -125,5 +130,14 @@ class Cluster extends Component {
     );
   }
 }
+function mapStateToProps(state) {
+  return {};
+}
 
-export default Cluster;
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ addCardFilter }, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Cluster);

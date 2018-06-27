@@ -3,13 +3,16 @@ import PropTypes from 'prop-types';
 
 class DimWrapper extends React.Component {
   static propTypes = {
-    children: PropTypes.func.isRequired
+    children: PropTypes.func.isRequired,
+    style: PropTypes.object
   };
 
   constructor(props) {
     super(props);
     this.state = { width: 0, height: 0 };
   }
+
+  static defaultProps = { style: {} };
 
   componentDidMount() {
     const width = this.node.offsetWidth;
@@ -22,19 +25,18 @@ class DimWrapper extends React.Component {
     const width = this.node.offsetWidth;
     const height = this.node.offsetHeight;
 
-    console.log('UPDATE DIM', width, height);
     if (prevState.width !== width || prevState.height !== height) {
       this.setState({ width, height });
     }
   }
 
   render() {
-    const { children } = this.props;
+    const { children, style } = this.props;
     const { width, height } = this.state;
     return (
       <div
         ref={node => (this.node = node)}
-        style={{ height: 500, width: '100%' }}
+        style={{ height: 500, width: '100%', ...style }}
       >
         {children(width, height)}
       </div>

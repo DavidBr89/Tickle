@@ -19,6 +19,8 @@ function getItemStyles(props) {
   if (!initialOffset || !currentOffset) {
     return {
       // display: 'none',
+      width: 20,
+      height: 20,
       background: 'blue'
     };
   }
