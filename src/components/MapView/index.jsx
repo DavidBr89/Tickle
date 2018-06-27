@@ -70,13 +70,18 @@ const mapStateToProps = state => {
 
   const cardSets = setify(filteredCards);
 
+  console.log('SelectedCardId', selectedCardId);
   const selectedCard =
     selectedCardId !== null
       ? filteredCards.find(d => d.id === selectedCardId)
       : null;
 
   const selectedTags =
-    selectedCard !== null ? selectedCard.tags : cardSets.map(d => d.key);
+    selectedCard !== null
+      ? selectedCard.tags
+      : filterSet.length > 0
+        ? filterSet
+        : cardSets.map(d => d.key);
 
   return {
     // TODO: make more specific

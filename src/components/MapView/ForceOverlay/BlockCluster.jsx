@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { addCardFilter } from 'Reducers/Cards/actions';
+import { addCardFilter, removeCardFilter } from 'Reducers/Cards/actions';
 
 // import * as chromatic from 'd3-scale-chromatic';
 // import hull from 'hull.js';
@@ -101,7 +101,8 @@ class Cluster extends Component {
       links,
       sets,
       labels,
-      children
+      children,
+      filterSet
     } = this.props;
 
     const trData = makeTreemap({
@@ -123,19 +124,19 @@ class Cluster extends Component {
           padX={10}
           padY={10}
           colorScale={colorScale}
+          filterSet={filterSet}
           onHover={d => console.log('yeah', d)}
         />
-        {}
       </div>
     );
   }
 }
 function mapStateToProps(state) {
-  return {};
+  return { filterSet: state.Cards.filterSet };
 }
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ addCardFilter }, dispatch);
+  bindActionCreators({ addCardFilter, removeCardFilter }, dispatch);
 
 export default connect(
   mapStateToProps,

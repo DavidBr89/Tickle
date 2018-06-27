@@ -107,7 +107,9 @@ class Tag extends React.Component {
       highlighted,
       count,
       active,
-      addCardFilter
+      addCardFilter,
+      removeCardFilter,
+      filterSet
     } = this.props;
 
     const st = {
@@ -134,7 +136,11 @@ class Tag extends React.Component {
     return (
       <div style={st} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
         <div
-          onClick={() => addCardFilter([data.key])}
+          onClick={() =>
+            filterSet.includes(data.key)
+              ? removeCardFilter([data.key])
+              : addCardFilter([data.key])
+          }
           style={{
             width: '90%',
             height: '90%',
@@ -195,13 +201,17 @@ class TagCloud extends React.Component {
       data,
       onHover,
       selectedTags,
-      addCardFilter
+      addCardFilter,
+      removeCardFilter,
+      filterSet
     } = this.props;
 
     const treemap = data.map((d, i) => (
       <Tag
         {...d}
+        filterSet={filterSet}
         addCardFilter={addCardFilter}
+        removeCardFilter={removeCardFilter}
         key={d.data.key}
         color={colorScale(d.data.key)}
         count={d.data.count}
