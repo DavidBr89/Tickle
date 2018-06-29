@@ -1,22 +1,57 @@
 import React, { Fragment, Component } from 'react';
 import PropTypes from 'prop-types';
-// import * as tf from '@tensorflow/tfjs';
-// import * as tsne from '@tensorflow/tfjs-tsne';
 
-// import tsnejs from 'tsne';
-import lap from 'lap-jv/lap.js';
-import SOM from 'ml-som';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 
 import DimWrapper from 'Utils/DimensionsWrapper';
+import ExtendableMarker from 'Utils/ExtendableMarker';
+
+import { dragCard } from 'Reducers/Cards/actions';
 // import│ {shallowEqualProps} from'shallow-equal-props';
 
 // import louvain from './jlouvain';
 
+import {
+  DragSourceCont,
+  DropTargetCont,
+  DragDropContextProvider
+} from '../DragAndDrop/DragSourceTarget';
+
 import Map from './Map';
 import Floorplan from './Floorplan';
-import TopicMap from './TopicMap';
+import TreeMapCluster from './TreeMapCluster';
+
+import { Card, CardMarker, PreviewCard } from 'Cards';
+
+const PreviewMarker = ({ selected, template, color, r = 25 }) => (
+  <div
+    className="w-100 h-100"
+    style={{
+      position: 'relative',
+      transform: selected && 'scale(1.5)',
+      zIndex: selected && 5000,
+      transition: 'transform 1s',
+      height: 2 * r,
+      width: 2 * r
+    }}
+  >
+    <CardMarker
+      color={color}
+      style={{
+        opacity: 1,
+        position: 'absolute',
+        transform: `translateX(3px)`,
+        // border: 'black 1px solid',
+        // zIndex: -100,
+        width: r, // '13vw',
+        height: r // '13vw',
+      }}
+    />
+  </div>
+);
 
 const offsetMapViewport = ({
   width,
@@ -146,8 +181,38 @@ class ForceOverlay extends Component {
       sets,
       filterSet,
       padding,
-      colorScale
+      colorScale,
+      dragCard,
+      extCardId,
+      isCardDragging
     } = this.props;
+
+    // x={extCardId === c.id ? width / 2 : x}
+    // y={extCardId === c.id ? height / 2 : y}
+    const draggable = c => (
+      <ExtendableMarker
+        key={c.id}
+        delay={10}
+        width={extCardId === c.id ? width : 25}
+        height={extCardId === c.id ? height : 30}
+        center={[width / 2, height / 2]}
+        x={extCardId === c.id ? width / 2 : c.x}
+        y={extCardId === c.id ? height / 2 : c.y}
+        extended={extCardId === c.id}
+        preview={
+          <DragSourceCont dragHandler={dragCard} data={c} x={c.x} y={c.y}>
+            <PreviewMarker
+              selected={selectedCardId === c.id}
+              template={c.template}
+              color="whitesmoke"
+            />
+          </DragSourceCont>
+        }
+      >
+        {children(c)}
+      </ExtendableMarker>
+    );
+
     const { loc } = data.find(d => d.id === selectedCardId) || {
       loc: userLocation
     };
@@ -178,7 +243,7 @@ class ForceOverlay extends Component {
               nodes={data}
               selectedId={selectedCardId}
             >
-              {d => children({ ...d })}
+              {d => draggable({ ...d })}
             </Map>
           </div>
         );
@@ -193,7 +258,7 @@ class ForceOverlay extends Component {
                 height={height}
                 nodes={data}
               >
-                {children}
+                {draggable}
               </Floorplan>
             )}
           </DimWrapper>
@@ -201,21 +266,23 @@ class ForceOverlay extends Component {
       }
       default: {
         return (
-          <div style={{ ...style, height: '100%' }}>
-            <TopicMap
-              {...this.props}
-              sets={sets}
-              data={data}
-              width={width}
-              height={height}
-              center={[width / 2, (height * 3) / 4]}
-              filterSet={filterSet}
-              selectedId={selectedCardId}
-              colorScale={colorScale}
-              padding={padding}
-            >
-              {children}
-            </TopicMap>
+          <div style={{ ...style, height: '86%' }}>
+            <DimWrapper>
+              {(w, h) => (
+                <TreeMapCluster
+                  {...this.props}
+                  sets={sets}
+                  data={data}
+                  width={w}
+                  height={h}
+                  center={[width / 2, (height * 3) / 4]}
+                  filterSet={filterSet}
+                  selectedId={selectedCardId}
+                  colorScale={colorScale}
+                  padding={padding}
+                />
+              )}
+            </DimWrapper>
           </div>
         );
       }
@@ -251,4 +318,23 @@ class ForceOverlay extends Component {
   }
 }
 
-export default ForceOverlay;
+function mapStateToProps({
+  Cards: { extCardId, isCardDragging, selectedCardId }
+}) {
+  return { extCardId, isCardDragging, selectedCardId };
+}
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      dragCard
+    },
+    dispatch
+  );
+
+const DataOverlay = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ForceOverlay);
+
+export default DataOverlay;

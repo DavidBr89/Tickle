@@ -132,6 +132,7 @@ class Cluster extends Component {
     );
   }
 }
+
 function mapStateToProps(state) {
   return { filterSet: state.Cards.filterSet };
 }

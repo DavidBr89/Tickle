@@ -122,7 +122,7 @@ class Tag extends React.Component {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      transition: 'all',
+      transition: 'width 1s, height 1s',
       cursor: 'pointer',
       opacity: !active && 0.3
 
@@ -209,10 +209,10 @@ class TagCloud extends React.Component {
     const treemap = data.map((d, i) => (
       <Tag
         {...d}
+        key={d.data.key}
         filterSet={filterSet}
         addCardFilter={addCardFilter}
         removeCardFilter={removeCardFilter}
-        key={d.data.key}
         color={colorScale(d.data.key)}
         count={d.data.count}
         active={selectedTags.includes(d.data.key)}

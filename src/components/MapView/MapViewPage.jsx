@@ -142,32 +142,6 @@ SpeechBubble.defaultProps = {};
 
 SpeechBubble.propTypes = {};
 
-const PreviewMarker = ({ selected, template, color, r = 25 }) => (
-  <div
-    className="w-100 h-100"
-    style={{
-      position: 'relative',
-      transform: selected && 'scale(1.5)',
-      zIndex: selected && 5000,
-      transition: 'transform 1s',
-      height: 2 * r,
-      width: 2 * r
-    }}
-  >
-    <CardMarker
-      color={color}
-      style={{
-        opacity: 1,
-        position: 'absolute',
-        transform: `translateX(3px)`,
-        // border: 'black 1px solid',
-        // zIndex: -100,
-        width: r, // '13vw',
-        height: r // '13vw',
-      }}
-    />
-  </div>
-);
 
 @DragDropContextProvider
 class MapViewPage extends Component {
@@ -487,58 +461,24 @@ class MapViewPage extends Component {
                   colorScale={tagColorScale}
                 >
                   {({ x, y, ...c }) => (
-                    <ExtendableMarker
-                      key={c.id}
-                      delay={10}
-                      width={extCardId === c.id ? width : 25}
-                      height={extCardId === c.id ? height : 30}
-                      center={[width / 2, height / 2]}
-                      x={extCardId === c.id ? width / 2 : x}
-                      y={extCardId === c.id ? height / 2 : y}
-                      extended={extCardId === c.id}
-                      preview={
-                        <span
-                          style={{
-                            zIndex: selectedCardId === c.id && 7000
-                          }}
-                        >
-                          {selectedCardId === c.id &&
-                            !isCardDragging && <SpeechBubble />}
-                          <DragSourceCont
-                            dragHandler={dragCard}
-                            data={c}
-                            x={x}
-                            y={y}
-                          >
-                            <PreviewMarker
-                              selected={selectedCardId === c.id}
-                              template={c.template}
-                              color="whitesmoke"
-                            />
-                          </DragSourceCont>
-                        </span>
-                      }
-                    >
-                      <Card
-                        {...c}
-                        key={authUser.uid}
-                        onClose={() => extendSelectedCard(null)}
-                        edit={authEnv}
-                        onSubmit={() => {
-                          console.log('cardAction', c);
-                          // TODO: rename
-                          cardAction({ ...c, x, y });
-                        }}
-                        onCollect={() =>
-                          toggleCardChallenge({
-                            cardChallengeOpen: true
-                          })
-                        }
-                        tagColorScale={tagColorScale}
-                        onUpdate={d => onCardUpdate({ ...d, x, y })}
-                        style={{ zIndex: 4000 }}
-                      />
-                    </ExtendableMarker>
+
+        <Card
+          {...c}
+          key={authUser.uid}
+          onClose={() => extendSelectedCard(null)}
+          edit={authEnv}
+          onSubmit={() => {
+            cardAction({ ...c, x, y });
+          }}
+          onCollect={() =>
+            toggleCardChallenge({
+              cardChallengeOpen: true
+            })
+          }
+          tagColorScale={tagColorScale}
+          onUpdate={d => onCardUpdate({ ...d, x, y })}
+          style={{ zIndex: 4000 }}
+        />
                   )}
                 </ForceOverlay>
               </DropTargetCont>

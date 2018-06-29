@@ -227,7 +227,6 @@ class TopicMap extends Component {
               >
                 {children}
               </BlockCluster>
-              {data.map(d => children({ ...d, x: width / 2, y: -100 }))}
             </div>
           )}
         </DimWrapper>

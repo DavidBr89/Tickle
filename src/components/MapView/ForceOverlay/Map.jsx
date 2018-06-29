@@ -6,7 +6,6 @@ import { UserOverlay } from '../../utils/map-layers/DivOverlay';
 
 import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 
-
 const mapStyleUrl = 'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l';
 
 const defaultLocation = {
@@ -38,6 +37,13 @@ class Map extends Component {
 
   componentDidMount() {
     this.props.onViewportChange({ ...this.state });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { selectedId } = this.props;
+    if (prevProps.selectedId !== selectedId) {
+      this.props.onViewportChange({ ...this.state });
+    }
   }
 
   render() {
