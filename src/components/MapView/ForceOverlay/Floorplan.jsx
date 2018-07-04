@@ -17,11 +17,30 @@ class Floorplan extends Component {
     height: 400,
     nodes: []
   };
+  // }
 
   // componentDidMount() {
   //   // const { width, height, onMapViewportChange } = this.props;
   //   // onMapViewportChange({ width, height });
+  // });
   // }
+
+  // this.timeoutId = setTimeout(() => {
+  //   this.force = this.force
+  //     .nodes(nodes)
+  //     .restart()
+  //     .alpha(1)
+  //     .alphaMin(0.8)
+  //     // .force('x', d3.forceX((d, i) => xScale(pos[i][0])).strength(1))
+  //     // .force('y', d3.forceY((d, i) => yScale(pos[i][1])).strength(1))
+  //     .force('coll', d3.forceCollide(20))
+  //     .on('end', () => {
+  //       this.setState({
+  //         nodes: this.forceSim.nodes(),
+  //         timeStamp: new Date().getMilliseconds()
+  //       });
+  //     });
+  // }, 1000);
 
   render() {
     const { width, height, children, nodes } = this.props;

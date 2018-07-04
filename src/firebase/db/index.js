@@ -21,9 +21,9 @@ export const readCards = (uid, collectionName = 'readableCards') =>
       );
     });
 
-export const addImgToStorage = file => {
+export const addImgToStorage = (file, uid) => {
   const metadata = { contentType: file.type };
-  const imgRef = storageRef.child(`images/${file.name}${Date.now()}`);
+  const imgRef = storageRef.child(`images/${uid}/${file.name}`);
   console.log('metadata', metadata, 'imgRef', imgRef);
   return imgRef
     .put(file, metadata)
@@ -40,7 +40,7 @@ export const testAddImgToStorage = file => {
 };
 
 // TODO: error handling
-const uploadImgFields = card => {
+const uploadImgFields = (card, uid) => {
   const cardImgFile = card.img ? card.img.file : null;
   const cardChallengeFile =
     card.challenge !== null && card.challenge.img
@@ -49,7 +49,7 @@ const uploadImgFields = card => {
 
   // TODO update
   const cardImgPromise = cardImgFile
-    ? addImgToStorage(cardImgFile).then(url => {
+    ? addImgToStorage(cardImgFile, uid).then(url => {
       const img = {
         title: card.img.title || cardImgFile.name,
         url
@@ -60,7 +60,7 @@ const uploadImgFields = card => {
   // card.img = null;
 
   const challImgPromise = cardChallengeFile
-    ? addImgToStorage(cardChallengeFile).then(url => {
+    ? addImgToStorage(cardChallengeFile, uid).then(url => {
         const challenge = {
           img: {
             title: cardChallengeFile.name,
@@ -129,7 +129,7 @@ export const getDetailedUserInfo = uid =>
 export const onceGetUsers = () => firestore.collection('users').get();
 
 export const doCreateCard = (uid, card) =>
-  uploadImgFields(card).then(c => {
+  uploadImgFields(card, uid).then(c => {
     // TODO
     if (c.id == 'temp') {
       console.log('temp to create');

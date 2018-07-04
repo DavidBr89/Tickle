@@ -25,7 +25,7 @@ import {
 import NearbyPlaces from '../places.json';
 
 import { db, firebase } from 'Firebase';
-import gen from 'Src/idGenerator';
+import idGenerate from 'Src/idGenerator';
 
 import gapi from './gapi';
 
@@ -135,7 +135,7 @@ export function asyncCreateCard({ cardData, uid }) {
     tags: tags || [],
     uid,
     // TODO: change
-    id: gen.generate(Date.now())
+    id: idGenerate()
   };
 
   // Thunk middleware knows how to handle functions.
