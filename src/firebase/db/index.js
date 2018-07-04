@@ -131,16 +131,17 @@ export const onceGetUsers = () => firestore.collection('users').get();
 export const doCreateCard = (uid, card) =>
   uploadImgFields(card, uid).then(c => {
     // TODO
-    if (c.id == 'temp') {
+    if (c.id === 'temp') {
       console.log('temp to create');
       throw 'error: temp card to create';
+    } else {
+      return firestore
+        .collection('users')
+        .doc(uid)
+        .collection('createdCards')
+        .doc(c.id)
+        .set(c);
     }
-    return firestore
-      .collection('users')
-      .doc(uid)
-      .collection('createdCards')
-      .doc(c.id)
-      .set(c);
   });
 
 // TODO: change later

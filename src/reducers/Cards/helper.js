@@ -28,8 +28,9 @@ function updCardTopic(cardData) {
   return { ...cardData };
 }
 
-export function updCard({ cardData, viewport, dataView }) {
+export function updCard({ rawData, viewport, dataView }) {
   const { width, height } = viewport;
+  const cardData = {...rawData, tags: rawData.tags.length === 0 ? ['no_tags']: rawData.tags}
   switch (dataView) {
     case 'geo':
       return updCardLoc(cardData, viewport);
