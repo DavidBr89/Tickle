@@ -51,7 +51,9 @@ const mapStateToProps = state => {
     edit: true,
     tags: [],
     challenge: null,
-    floorLoc: { relX: 0.5, relY: 0.5 },
+    // floorLoc: { relX: 0.5, relY: 0.5 },
+    floorX: 0.5,
+    floorY: 0.5,
     author: { ...authUser }
   };
 

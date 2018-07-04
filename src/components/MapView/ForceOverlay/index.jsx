@@ -195,7 +195,7 @@ class ForceOverlay extends Component {
     const draggable = c => (
       <ExtendableMarker
         key={c.id}
-        delay={10}
+        delay={100}
         width={extCardId === c.id ? width : 25}
         height={extCardId === c.id ? height : 30}
         center={[width / 2, height / 2]}
@@ -275,7 +275,7 @@ class ForceOverlay extends Component {
                 {...this.props}
                 width={width}
                 height={height}
-                nodes={data}
+                data={data}
               >
                 {draggable}
               </Floorplan>

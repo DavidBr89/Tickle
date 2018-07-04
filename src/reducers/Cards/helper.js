@@ -19,10 +19,8 @@ function updCardLoc(cardData, mapViewport) {
 function updCardFloorLoc(cardData, width, height) {
   return {
     ...cardData,
-    floorLoc: {
-      relX: cardData.x / width,
-      relY: cardData.y / height
-    }
+      floorX: cardData.x / width,
+      floorY: cardData.y / height
   };
 }
 
