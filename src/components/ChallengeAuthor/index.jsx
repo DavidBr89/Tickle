@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import * as Icon from 'react-feather';
 
 import { UIthemeContext, modalBorder, createShadowStyle } from 'Cards/styles'; // eslint-disable-line
-import PhotoChallengeAuthor from './PhotoChallengeAuthor';
+import TextChallengeAuthor from './TextChallengeAuthor';
 
 import { Modal, ModalBody } from 'Utils/Modal';
 
@@ -230,9 +230,9 @@ class ChallengeAuthorModalBody extends React.Component {
     const btnClass = `btn ${challenge === null && 'disabled'}`;
 
     const btnDisabled =
-      challenge.description === null ||
-      challenge.title === null ||
-      challenge.img.url === null;
+      challenge.description === null || challenge.title === null;
+    // TODO
+    // challenge.img.url === null;
 
     return (
       <ModalBody
@@ -255,11 +255,11 @@ class ChallengeAuthorModalBody extends React.Component {
           </button>
         }
       >
-        <PhotoChallengeAuthor
+        <TextChallengeAuthor
           {...challenge}
           onChange={ch => {
             this.setState({
-              challenge: { ...ch, id: Math.random() * 1000 },
+              challenge: { ...ch },
               added: false
             });
           }}

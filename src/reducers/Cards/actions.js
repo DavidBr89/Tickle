@@ -130,6 +130,15 @@ export function filterCards(options) {
   return { type: FILTER_CARDS, options };
 }
 
+export const TOGGLE_DATA_VIEW = 'TOGGLE_DATA_VIEW';
+export function toggleDataView(options) {
+  return { type: TOGGLE_DATA_VIEW, options };
+}
+
+export const FILTER = 'FILTER';
+export function filter(options) {
+  return { type: FILTER, options };
+}
 export const ADD_CARD_FILTER = 'ADD_CARD_FILTER';
 export function addCardFilter(options) {
   return { type: ADD_CARD_FILTER, options };

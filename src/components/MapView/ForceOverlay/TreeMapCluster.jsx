@@ -102,8 +102,8 @@ class Cluster extends Component {
       links,
       sets,
       labels,
-      children,
-      filterSet
+      filterSet,
+      children
     } = this.props;
 
     const trData = makeTreemap({
@@ -116,7 +116,7 @@ class Cluster extends Component {
     // const clusters = this.findClusters();
 
     return (
-      <div style={{ position: 'relative' }}>
+      <div>
         <TagCloud
           {...this.props}
           data={trData}
@@ -126,15 +126,15 @@ class Cluster extends Component {
           padY={10}
           colorScale={colorScale}
           filterSet={filterSet}
-          onHover={d => console.log('yeah', d)}
         />
+        {data.map(d => children({ ...d, x: width / 2, y: height / 2 }))}
       </div>
     );
   }
 }
 
-function mapStateToProps(state) {
-  return { filterSet: state.Cards.filterSet };
+function mapStateToProps() {
+  return {};
 }
 
 const mapDispatchToProps = dispatch =>

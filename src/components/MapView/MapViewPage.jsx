@@ -142,7 +142,6 @@ SpeechBubble.defaultProps = {};
 
 SpeechBubble.propTypes = {};
 
-
 @DragDropContextProvider
 class MapViewPage extends Component {
   static propTypes = {
@@ -252,32 +251,17 @@ class MapViewPage extends Component {
       height,
       extCardId,
       selectedCard,
-      // direction,
-      // mapViewport,
-      // setCardOpacity,
-      // userSelected,
-      // userChangedMapViewport,
-      // compass,
-      // birdsEyeView,
       gridView,
       tsneView,
       tagListView,
       isSearching,
       isCardDragging,
-      // authEnvCards,
       authEnv,
       authUser,
 
       previewCardAction,
       tagColors,
-      // cardTemplate,
-      // AppOpenFirstTime,
-      // headerPad,
-
-      // nextCardControl,
       cardChallengeOpen,
-
-      // userMove,
       changeMapViewport,
       selectCard,
       extendSelectedCard,
@@ -297,8 +281,6 @@ class MapViewPage extends Component {
       toggleCardAuthoring,
       setDataView,
       filterSet,
-      // cardAuthoring,
-      // cardAction,
       onCardDrop,
       cardAction,
       tagColorScale,
@@ -373,13 +355,13 @@ class MapViewPage extends Component {
                 />
               </div>
               <div
-                className="w-100"
+                className="mb-3 mt-1"
                 style={{
-                  opacity: gridView ? 1 : 0,
-                  display: !gridView ? 'none' : null,
+                  // opacity: gridView ? 1 : 0,
+                  // display: !gridView ? 'none' : null,
                   transition: 'opacity 0.5s',
-                  height: '25%',
-                  marginTop: 30
+                  height: '25%'
+                  // marginTop: 30
                 }}
               >
                 <Accordion
@@ -440,15 +422,14 @@ class MapViewPage extends Component {
                 style={{ height: '65%' }}
               >
                 <ForceOverlay
-                  delay={1}
-                  disabled={isCardDragging || extCardId !== null}
+                  disabled={isCardDragging}
                   width={width}
                   height={height}
-                  force
                   data={cards}
                   sets={cardSets}
                   selectedTags={selectedTags}
                   selectedCardId={selectedCardId}
+                  filterSet={filterSet}
                   userLocation={userLocation}
                   mode={dataView}
                   onMapViewportChange={changeMapViewport}
@@ -461,24 +442,23 @@ class MapViewPage extends Component {
                   colorScale={tagColorScale}
                 >
                   {({ x, y, ...c }) => (
-
-        <Card
-          {...c}
-          key={authUser.uid}
-          onClose={() => extendSelectedCard(null)}
-          edit={authEnv}
-          onSubmit={() => {
-            cardAction({ ...c, x, y });
-          }}
-          onCollect={() =>
-            toggleCardChallenge({
-              cardChallengeOpen: true
-            })
-          }
-          tagColorScale={tagColorScale}
-          onUpdate={d => onCardUpdate({ ...d, x, y })}
-          style={{ zIndex: 4000 }}
-        />
+                    <Card
+                      {...c}
+                      key={c.id}
+                      onClose={() => extendSelectedCard(null)}
+                      edit={authEnv}
+                      onSubmit={() => {
+                        cardAction({ ...c, x, y });
+                      }}
+                      onCollect={() =>
+                        toggleCardChallenge({
+                          cardChallengeOpen: true
+                        })
+                      }
+                      tagColorScale={tagColorScale}
+                      onUpdate={d => onCardUpdate({ ...d, x, y })}
+                      style={{ zIndex: 4000 }}
+                    />
                   )}
                 </ForceOverlay>
               </DropTargetCont>
@@ -493,11 +473,13 @@ class MapViewPage extends Component {
                 <button
                   className={`btn mb-3 mr-2 ${dataView === 'geo' &&
                     'btn-active'}`}
-                  style={{
-                    // position: 'absolute',
-                    // zIndex: 1000,
-                    background: tsneView && 'whitesmoke'
-                  }}
+                  style={
+                    {
+                      // position: 'absolute',
+                      // zIndex: 1000,
+                      // background: dataView === 'geo' && 'whitesmoke'
+                    }
+                  }
                   onClick={() => setDataView('geo')}
                 >
                   <div
@@ -516,11 +498,13 @@ class MapViewPage extends Component {
                 <button
                   className={`btn mb-3 ${dataView === 'floorplan' &&
                     'btn-active'}`}
-                  style={{
-                    // position: 'absolute',
-                    // zIndex: 1000,
-                    background: tsneView && 'whitesmoke'
-                  }}
+                  style={
+                    {
+                      // position: 'absolute',
+                      // zIndex: 1000,
+                      // background: dataView === 'floorplan' && 'whitesmoke'
+                    }
+                  }
                   onClick={() => setDataView('floorplan')}
                 >
                   <div
@@ -579,6 +563,7 @@ class MapViewPage extends Component {
 
 const authCondition = authUser => !!authUser;
 
-export default withAuthorization(authCondition)(MapViewPage);
+export default MapViewPage;
+// export default withAuthorization(authCondition)(MapViewPage);
 
 // export default MapView;

@@ -25,10 +25,9 @@ import {
 import NearbyPlaces from '../places.json';
 
 import { db, firebase } from 'Firebase';
+import gen from 'Src/idGenerator';
 
 import gapi from './gapi';
-
-const gen = new generate.Generator();
 
 // export const REQUEST_CHALLENGES = 'REQUEST_CHALLENGES';
 // function requestChallenges(subreddit) {
@@ -152,8 +151,7 @@ export function asyncCreateCard({ cardData, uid }) {
 
 export function asyncRemoveCard({ uid, cid }) {
   // Thunk middleware knows how to handle functions.
-  // It passes the dispatch method as an argument to the function,
-  // thus making it able to dispatch actions itself.
+  // It passes the dispatch method as an argument to the function, thus making it able to dispatch actions itself.
   console.log('async remove card');
   return function(dispatch) {
     dispatch(deleteCard(cid));
@@ -164,6 +162,7 @@ export function asyncRemoveCard({ uid, cid }) {
 }
 
 export function asyncUpdateCard({ uid, cardData, viewport, dataView }) {
+  console.log('viewport', viewport);
   const updatedCard = updCard({ cardData, viewport, dataView });
   console.log('updatedCard', updatedCard);
   return function(dispatch) {
@@ -180,7 +179,7 @@ export function asyncUpdateCard({ uid, cardData, viewport, dataView }) {
 export function asyncAddComment(
   commentObj = {
     authorId: null,
-    cardId:null,
+    cardId: null,
     comment: { uid: '', text: '', date: null }
   }
 ) {

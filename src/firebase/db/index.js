@@ -43,7 +43,9 @@ export const testAddImgToStorage = file => {
 const uploadImgFields = card => {
   const cardImgFile = card.img ? card.img.file : null;
   const cardChallengeFile =
-    card.challenge !== null ? card.challenge.img.file : null;
+    card.challenge !== null && card.challenge.img
+      ? card.challenge.img.file
+      : null;
 
   // TODO update
   const cardImgPromise = cardImgFile
@@ -126,9 +128,9 @@ export const getDetailedUserInfo = uid =>
 
 export const onceGetUsers = () => firestore.collection('users').get();
 
-export const doCreateCard = (uid, card) => {
-  console.log('createCard', card);
-  return uploadImgFields(card).then(c => {
+export const doCreateCard = (uid, card) =>
+  uploadImgFields(card).then(c => {
+    // TODO
     if (c.id == 'temp') {
       console.log('temp to create');
       throw 'error: temp card to create';
@@ -140,7 +142,6 @@ export const doCreateCard = (uid, card) => {
       .doc(c.id)
       .set(c);
   });
-};
 
 // TODO: change later
 export const doUpdateCard = doCreateCard;

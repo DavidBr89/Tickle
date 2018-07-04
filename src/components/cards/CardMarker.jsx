@@ -34,9 +34,9 @@ class CardMarker extends Component {
     shadow: true
   };
 
-  shouldComponentUpdate() {
-    return false;
-  }
+  // shouldComponentUpdate() {
+  //   return false;
+  // }
 
   render() {
     const {

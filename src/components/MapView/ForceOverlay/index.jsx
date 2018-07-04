@@ -10,6 +10,7 @@ import DimWrapper from 'Utils/DimensionsWrapper';
 import ExtendableMarker from 'Utils/ExtendableMarker';
 
 import { dragCard } from 'Reducers/Cards/actions';
+import { changeMapViewport } from 'Reducers/Map/actions';
 // import│ {shallowEqualProps} from'shallow-equal-props';
 
 // import louvain from './jlouvain';
@@ -26,31 +27,33 @@ import TreeMapCluster from './TreeMapCluster';
 
 import { Card, CardMarker, PreviewCard } from 'Cards';
 
-const PreviewMarker = ({ selected, template, color, r = 25 }) => (
-  <div
-    className="w-100 h-100"
+export const shadowStyle = {
+  boxShadow: '3px 3px black',
+  border: '1px solid #000'
+  // border: '1px solid black'
+};
+
+const getShadowStyle = selected => (selected ? shadowStyle : {});
+
+const PreviewMarker = ({
+  selected,
+  template,
+  color,
+  size = 25,
+  offset = 100
+}) => (
+  <CardMarker
+    color={color}
     style={{
-      position: 'relative',
       transform: selected && 'scale(1.5)',
       zIndex: selected && 5000,
       transition: 'transform 1s',
-      height: 2 * r,
-      width: 2 * r
+      ...getShadowStyle(selected),
+      position: 'absolute',
+      width: size,
+      height: size // '13vw',
     }}
-  >
-    <CardMarker
-      color={color}
-      style={{
-        opacity: 1,
-        position: 'absolute',
-        transform: `translateX(3px)`,
-        // border: 'black 1px solid',
-        // zIndex: -100,
-        width: r, // '13vw',
-        height: r // '13vw',
-      }}
-    />
-  </div>
+  />
 );
 
 const offsetMapViewport = ({
@@ -213,6 +216,22 @@ class ForceOverlay extends Component {
       </ExtendableMarker>
     );
 
+    const nonDraggable = c => (
+      <ExtendableMarker
+        key={c.id}
+        delay={10}
+        width={extCardId === c.id ? width : 25}
+        height={extCardId === c.id ? height : 30}
+        center={[width / 2, height / 2]}
+        x={extCardId === c.id ? width / 2 : c.x}
+        y={extCardId === c.id ? height / 2 : c.y}
+        extended={extCardId === c.id}
+        preview={null}
+      >
+        {children(c)}
+      </ExtendableMarker>
+    );
+
     const { loc } = data.find(d => d.id === selectedCardId) || {
       loc: userLocation
     };
@@ -236,7 +255,7 @@ class ForceOverlay extends Component {
             <Map
               height={height}
               width={width}
-              onViewportChange={onMapViewportChange}
+              onViewportChange={changeMapViewport}
               disabled={disabled}
               {...loc}
               zoom={10}
@@ -280,7 +299,9 @@ class ForceOverlay extends Component {
                   selectedId={selectedCardId}
                   colorScale={colorScale}
                   padding={padding}
-                />
+                >
+                  {nonDraggable}
+                </TreeMapCluster>
               )}
             </DimWrapper>
           </div>
@@ -300,8 +321,7 @@ class ForceOverlay extends Component {
       sets,
       colorScale,
       labels,
-      onViewportChange,
-      onMapViewportChange,
+      changeMapViewport,
       userLocation,
       width,
       height,
@@ -327,7 +347,8 @@ function mapStateToProps({
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      dragCard
+      dragCard,
+      changeMapViewport
     },
     dispatch
   );

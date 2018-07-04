@@ -20,9 +20,6 @@ import { union, difference } from 'lodash';
 
 import {
   RECEIVE_PLACES,
-  FILTER_CARDS,
-  REMOVE_CARD_FILTER,
-  ADD_CARD_FILTER,
   UPDATE_CARD,
   UPDATE_CARD_SUCCESS,
   UPDATE_CARD_TEMPLATE,
@@ -41,7 +38,10 @@ import {
   TOGGLE_CARD_AUTHORING,
   DRAG_CARD,
   LOADING_CARDS,
-  TOGGLE_TSNE_VIEW
+  TOGGLE_TSNE_VIEW,
+  ADD_CARD_FILTER,
+  REMOVE_CARD_FILTER,
+  FILTER_CARDS
 } from './actions';
 
 // const gen = new generate.Generator();
@@ -63,6 +63,33 @@ function reducer(state = {}, action) {
   // const { selectedCardId } = state;
 
   switch (action.type) {
+    case ADD_CARD_FILTER: {
+      const { filterSet } = state;
+      const set = action.options;
+
+      return {
+        ...state,
+        filterSet: union(filterSet, set),
+        selectedCardId: null
+      };
+    }
+
+    case REMOVE_CARD_FILTER: {
+      const { filterSet } = state;
+      const set = action.options;
+
+      return {
+        ...state,
+        filterSet: difference(filterSet, set),
+        selectedCardId: null
+      };
+    }
+
+    case FILTER_CARDS: {
+      const filterSet = action.options;
+      return { ...state, filterSet };
+    }
+
     case LOADING_CARDS: {
       return {
         ...state,
@@ -141,9 +168,11 @@ function reducer(state = {}, action) {
       const { createdCards } = state;
 
       const updatedCard = action.options;
+      console.log('updatedCard', updatedCard);
 
       const updatedCards = createdCards.map(c => {
         if (c.id === updatedCard.id) {
+          console.log('change', updatedCard);
           return updatedCard;
         }
         return c;
@@ -186,8 +215,8 @@ function reducer(state = {}, action) {
     }
 
     case EXTEND_SELECTED_CARD: {
-      const { selectedCardId} = state;
-      const extCardId= action.options;
+      const { selectedCardId } = state;
+      const extCardId = action.options;
       // console.log('extCardId', extCardId);
       // TODO: update
       return { ...state, extCardId };
@@ -279,32 +308,6 @@ function reducer(state = {}, action) {
       };
     }
 
-    case ADD_CARD_FILTER: {
-      const { filterSet } = state;
-      const set = action.options;
-
-      return {
-        ...state,
-        filterSet: union(filterSet, set),
-        selectedCardId: null
-      };
-    }
-
-    case REMOVE_CARD_FILTER: {
-      const { filterSet } = state;
-      const set = action.options;
-
-      return {
-        ...state,
-        filterSet: difference(filterSet, set),
-        selectedCardId: null
-      };
-    }
-
-    case FILTER_CARDS: {
-      const filterSet = action.options;
-      return { ...state, filterSet, selectedCardId: null };
-    }
     // case RECEIVE_PLACES: {
     //   const { results: places } = action.options;
     //   // console.log('places', places);

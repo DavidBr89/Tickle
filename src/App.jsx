@@ -109,14 +109,14 @@ const defaultState = {
     // TODO: outsource
     //
     // TODO: adapt colors
-  },
-  DataView: {
-    dataView: 'topic',
-    tsneView: false,
-    gridView: true,
-    authEnv: true,
-    searchString: null
   }
+  // DataView: {
+  //   dataView: 'topic',
+  //   tsneView: false,
+  //   gridView: true,
+  //   authEnv: true,
+  //   searchString: null
+  // }
 };
 
 function configureStore(rootReducer, initialState) {

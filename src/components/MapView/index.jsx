@@ -61,7 +61,7 @@ const mapStateToProps = state => {
     tags: tmpCard.tags || []
   };
 
-  const cards = authEnv ? [...createdCards] : readableCards;
+  const cards = createdCards;
   const filteredCards = cards
     .filter(
       d => filterSet.length === 0 || intersection(d.tags, filterSet).length > 0
@@ -76,12 +76,7 @@ const mapStateToProps = state => {
       ? filteredCards.find(d => d.id === selectedCardId)
       : null;
 
-  const selectedTags =
-    selectedCard !== null
-      ? selectedCard.tags
-      : filterSet.length > 0
-        ? filterSet
-        : cardSets.map(d => d.key);
+  const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
 
   return {
     // TODO: make more specific
@@ -92,6 +87,7 @@ const mapStateToProps = state => {
     selectedTags,
     selectedCardId,
     cardSets,
+    filterSet,
     // selectedTags,
     cards: filteredCards,
     authUser
@@ -106,7 +102,6 @@ const mapDispatchToProps = dispatch =>
       ...dataViewActions,
       resizeCardWindow,
       userMove,
-      changeMapViewport,
       screenResize,
       changeViewport
     },

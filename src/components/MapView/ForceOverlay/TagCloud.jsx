@@ -36,33 +36,6 @@ const CardStack = ({ number }) => (
 //     setChildrenToInheritFontSize(child);
 //   });
 // };
-function autoSizeText(container, attempts = 200, width, height, count) {
-  const resizeText = el => {
-    attempts--;
-    let elNewFontSize;
-    if (
-      el.style.fontSize === '' ||
-      el.style.fontSize === 'inherit' ||
-      el.style.fontSize === 'NaN'
-    ) {
-      elNewFontSize = `${Math.max(20, 20 * count)}px`; // largest font to start with
-    } else {
-      elNewFontSize = `${parseInt(el.style.fontSize.slice(0, -2), 10) - 1}px`;
-    }
-    el.style.fontSize = elNewFontSize;
-
-    // this function can crash the app, so we need to limit it
-    if (attempts <= 0) {
-      return;
-    }
-
-    if (el.scrollWidth > width || el.scrollHeight > height) {
-      resizeText(el);
-    }
-  };
-  // setChildrenToInheritFontSize(container);
-  resizeText(container);
-}
 
 class Tag extends React.Component {
   static propTypes = {
@@ -72,7 +45,8 @@ class Tag extends React.Component {
     left: PropTypes.number.isRequired,
     highlighted: PropTypes.bool.isRequired,
     top: PropTypes.number.isRequired,
-    padding: PropTypes.number.isRequired
+    padding: PropTypes.number.isRequired,
+    transition: PropTypes.number
   };
 
   static defaultProps = {
@@ -84,13 +58,14 @@ class Tag extends React.Component {
     color: 'blue',
     fill: 'white',
     padding: 2,
-    clickHandler: () => null
+    clickHandler: () => null,
+    transition: 750
   };
 
-  componentDidMount() {
-    const node = ReactDom.findDOMNode(this.node);
-    const { width, height, padding, count } = this.props;
-  }
+  // componentDidMount() {
+  //   const node = ReactDom.findDOMNode(this.node);
+  //   const { width, height, padding, count } = this.props;
+  // }
 
   render() {
     const {
@@ -99,17 +74,20 @@ class Tag extends React.Component {
       width,
       height,
       color,
-      fill,
       data,
       onMouseEnter,
       onMouseLeave,
       padding,
       highlighted,
       count,
-      active,
       addCardFilter,
       removeCardFilter,
-      filterSet
+      filterSet,
+      selected,
+      onClick,
+      key,
+      children,
+      transition
     } = this.props;
 
     const st = {
@@ -119,14 +97,15 @@ class Tag extends React.Component {
       height,
       // background: color,
       position: 'absolute',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      transition: 'width 1s, height 1s',
+      // display: 'flex',
+      // justifyContent: 'center',
+      // alignItems: 'center',
+      transition: `left ${transition}ms, top ${transition}ms, width ${transition}ms, height ${transition}ms`,
       cursor: 'pointer',
-      opacity: !active && 0.3
+      background: highlighted && color,
+      border: selected ? 'grey dashed 4px' : `${color} solid 8px`
 
-      // borderRadius: '100%'
+      // borderRadius: `${10 / width}%`
       // marginLef: '100%'
       // transition: 'width 1s height 2s'
       // padding: 10
@@ -136,27 +115,33 @@ class Tag extends React.Component {
     return (
       <div style={st} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
         <div
-          onClick={() =>
-            filterSet.includes(data.key)
-              ? removeCardFilter([data.key])
-              : addCardFilter([data.key])
-          }
+          className="p-2"
+          onClick={() => onClick(children)}
           style={{
-            width: '90%',
-            height: '90%',
-            padding: '2%',
-            background: color,
+            width: '100%',
+            height: '100%',
+            // padding: '2%',
+            flexWrap: 'wrap',
             borderRadius: '100%',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center'
           }}
         >
-          <div>
+          <div
+            style={{
+              // width: '100%',
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
             <div
+              className="mr-2"
               style={{
                 fontSize: '3vh',
-                width: '100%',
+                // width: '100%',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -165,18 +150,11 @@ class Tag extends React.Component {
                 textOverflow: 'ellipsis'
               }}
             >
-              {data.key}
+              #{children}
             </div>
-            <div
-              style={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
-            >
+            <div style={{ display: 'flex', alignItems: 'center' }}>
               <CardStack number={count} />
-              <div className="ml-3">{count}</div>
+              <div className="ml-2">{count}</div>
             </div>
           </div>
         </div>
@@ -199,7 +177,6 @@ class TagCloud extends React.Component {
     const {
       colorScale,
       data,
-      onHover,
       selectedTags,
       addCardFilter,
       removeCardFilter,
@@ -209,20 +186,23 @@ class TagCloud extends React.Component {
     const treemap = data.map((d, i) => (
       <Tag
         {...d}
+        {...d.data}
         key={d.data.key}
         filterSet={filterSet}
-        addCardFilter={addCardFilter}
-        removeCardFilter={removeCardFilter}
+        onClick={tag =>
+          filterSet.includes(tag)
+            ? removeCardFilter([tag])
+            : addCardFilter([tag])
+        }
         color={colorScale(d.data.key)}
-        count={d.data.count}
-        active={selectedTags.includes(d.data.key)}
-        index={i}
-        onMouseEnter={() => onHover(d.data.key)}
-        onMouseLeave={() => onHover(null)}
-      />
+        highlighted={selectedTags.includes(d.data.key)}
+        selected={filterSet.includes(d.data.key)}
+      >
+        {d.data.key}
+      </Tag>
     ));
 
-    return <div>{treemap}</div>;
+    return <div style={{ position: 'relative' }}>{treemap}</div>;
   }
 }
 
