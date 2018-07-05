@@ -6,6 +6,8 @@ import { UserOverlay } from '../../utils/map-layers/DivOverlay';
 
 import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 
+import TagCluster from './TagCluster';
+
 const mapStyleUrl = 'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l';
 
 const defaultLocation = {
@@ -49,13 +51,18 @@ class Map extends Component {
   render() {
     const { width, height, latitude, longitude, zoom } = this.state;
 
-    const { userLocation, nodes, disabled, children } = this.props;
+    const { colorScale, userLocation, nodes, disabled, children } = this.props;
 
     const viewport = new PerspectiveMercatorViewport({ ...this.state });
 
+    const locNodes = nodes.map(n => {
+      const [x, y] = viewport.project([n.loc.longitude, n.loc.latitude]);
+      console.log('location', n.loc, x, y);
+      return { ...n, x, y };
+    });
+
     return (
       <MapGL
-        key="map"
         mapStyle={mapStyleUrl}
         onViewportChange={viewport => {
           if (!disabled) {
@@ -70,10 +77,14 @@ class Map extends Component {
         zoom={zoom}
       >
         <UserOverlay {...this.props} location={userLocation} />
-        {nodes.map(n => {
-          const [x, y] = viewport.project([n.loc.longitude, n.loc.latitude]);
-          return children({ ...n, x, y });
-        })}
+
+        <TagCluster
+          radius={40}
+          nodes={locNodes}
+          width={width}
+          height={height}
+          colorScale={colorScale}
+        />
       </MapGL>
     );
   }

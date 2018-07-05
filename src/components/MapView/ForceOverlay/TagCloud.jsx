@@ -12,19 +12,10 @@ import cxx from './TagCloud.scss';
 import { CardMarker } from 'Cards';
 
 const CardStack = ({ number }) => (
-  // const scale = d3
-  //   .scaleLinear()
-  //   .domain([0])
-  //   .range([30, 100]);
-
   <div style={{ display: 'flex' }}>
-    {d3.range(0, number).map(() => (
-      <div style={{ width: `${100 / number}%` }}>
-        <div style={{ width: 25, height: 30, opacity: 0.9 }}>
-          <CardMarker />
-        </div>
-      </div>
-    ))}
+    {d3
+      .range(0, number)
+      .map(() => <CardMarker style={{ width: '2vh', height: '2vh' }} />)}
     {number === 0 && <div>No Cards!</div>}
   </div>
 );
@@ -95,42 +86,27 @@ class Tag extends React.Component {
       top,
       width,
       height,
-      // background: color,
       position: 'absolute',
-      // display: 'flex',
-      // justifyContent: 'center',
-      // alignItems: 'center',
       transition: `left ${transition}ms, top ${transition}ms, width ${transition}ms, height ${transition}ms`,
       cursor: 'pointer',
       background: highlighted && color,
-      border: selected ? 'grey dashed 4px' : `${color} solid 8px`
-
-      // borderRadius: `${10 / width}%`
-      // marginLef: '100%'
-      // transition: 'width 1s height 2s'
-      // padding: 10
-      // border: 'black groove',
-      // borderRadius: '10%',
+      border: selected ? 'grey dashed 4px' : `${color} solid 8px`,
+      display: 'flex',
+      alignItems: 'center'
+      // paddingTop: height / 4,
+      // paddingBottom: height / 4
     };
     return (
-      <div style={st} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+      <div style={st} onClick={() => onClick(children)}>
         <div
-          className="p-2"
-          onClick={() => onClick(children)}
           style={{
-            width: '100%',
-            height: '100%',
-            // padding: '2%',
-            flexWrap: 'wrap',
-            borderRadius: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
+            width: '100%'
+            // height: '100%'
           }}
         >
           <div
             style={{
-              // width: '100%',
+              // height: '100%',
               display: 'flex',
               flexWrap: 'wrap',
               justifyContent: 'center',
@@ -140,11 +116,8 @@ class Tag extends React.Component {
             <div
               className="mr-2"
               style={{
-                fontSize: '3vh',
+                fontSize: '2vh',
                 // width: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis'
@@ -152,9 +125,8 @@ class Tag extends React.Component {
             >
               #{children}
             </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div className="pl-1 pr-1" style={{ maxWidth: '100%' }}>
               <CardStack number={count} />
-              <div className="ml-2">{count}</div>
             </div>
           </div>
         </div>

@@ -32,6 +32,7 @@ module.exports = {
   module: {
     rules: loaders
   },
+  devtool: 'eval',
   devServer: {
     contentBase: './public',
     overlay: true,
@@ -42,7 +43,6 @@ module.exports = {
     port: PORT,
     host: HOST,
     disableHostCheck: true,
-    // TODO: change back later
     https: false,
     progress: true
 

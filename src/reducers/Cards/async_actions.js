@@ -125,14 +125,14 @@ export function fetchCardTemplates(uid) {
 }
 
 export function asyncCreateCard({ cardData, uid, viewport, dataView }) {
-  const fullCard = {
+  const newCard = {
     ...cardData,
     id: idGenerate(),
     template: false,
     uid
   };
 
-  const newCard = updCard({ rawData: fullCard, viewport, dataView });
+  // const newCard = updCard({ rawData: fullCard, viewport, dataView });
 
   return function(dispatch) {
     dispatch(createCard(newCard));

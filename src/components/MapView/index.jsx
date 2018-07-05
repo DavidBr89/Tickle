@@ -43,15 +43,14 @@ const mapStateToProps = state => {
 
   // const { userLocation } = state.MapView;
 
-  // console.log('cardTemplate', cardTemplate);
+  console.log('tmpCard', tmpCard);
   const defaultCardTemplate = {
     id: cardTemplateId,
     template: true,
     loc: userLocation,
     edit: true,
-    tags: [],
+    tags: [authUser.username],
     challenge: null,
-    // floorLoc: { relX: 0.5, relY: 0.5 },
     floorX: 0.5,
     floorY: 0.5,
     author: { ...authUser }
@@ -60,7 +59,7 @@ const mapStateToProps = state => {
   const templateCard = {
     ...defaultCardTemplate,
     ...tmpCard,
-    tags: tmpCard.tags || []
+    tags: tmpCard.tags || defaultCardTemplate.tags
   };
 
   const cards = createdCards;

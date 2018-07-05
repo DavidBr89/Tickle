@@ -62,35 +62,34 @@ function Tooltip({
   size,
   ...props
 }) {
-  const dist = euclDist(cx, x, cy, y) || null;
-  const angle = Math.round((Math.atan2(cy - y, cx - x) / Math.PI) * 2);
-  const translate =
-    angle === 0
-      ? '00%, 0'
-      : angle === -1
-        ? '0, -50%'
-        : angle === 1
-          ? '0, -50%'
-          : '-00%, 0';
   return (
     <div
       key={tags.join('-')}
       style={{
-        // borderRadius: '10%',
         position: 'absolute',
         transition: 'left 500ms, top 500ms',
-        left: dist ? cx : x,
-        top: dist ? cy : y,
-        transform: `translate(${translate})`,
+        maxWidth: 80,
+        left: x,
+        top: y,
+        transform: `translate(-50%,-50%)`,
         background: 'white',
         zIndex: 100,
-        maxWidth: 250,
+        // maxWidth: '20vw',
+        // borderRadius: '10%',
         display: 'flex',
-        flexWrap: 'wrap'
+        justifyContent: 'center'
+        // border: 'grey solid 2px'
       }}
     >
       <div className="m-1">
-        <div className="p-1" style={{ border: 'grey dashed 2px' }}>
+        <div
+          style={{
+            // width: '100%',
+            // borderRadius: '30%',
+            display: 'flex',
+            flexWrap: 'wrap'
+          }}
+        >
           {tags.map(t => (
             <div
               className="mr-1"
@@ -115,28 +114,26 @@ class Cluster extends Component {
   };
 
   static defaultProps = {
-    children: d => d,
+    children: () => null,
     className: '',
-    scale: 1
+    radius: 1
   };
 
   // static getDerivedStateFromProps(nextProps, prevState) {
   // }
 
   findClusters = () => {
-    const { width, height, nodes, scale } = this.props;
-
-    const r = 39 / scale; // scale * (prevState.clusters.length || 1) * 30;
+    const { width, height, nodes, radius } = this.props;
 
     const clusters = dobbyscan({
       points: [...nodes],
       // TODO find real function
-      radius: d => r,
+      radius: () => radius,
       x: n => n.x,
       y: n => n.y
     }).map((nestedValues, i) => {
       const centerPos = findCenterPos(nestedValues);
-      const tags = flatten(intersection(nestedValues.map(e => e.tag)));
+      const tags = uniq(flatten(nestedValues.map(e => e.tags)));
       const values = uniqBy(
         flatten(nestedValues.map(d => d.values)).map(d => ({
           ...d,
@@ -145,6 +142,8 @@ class Cluster extends Component {
         })),
         'id'
       );
+
+      console.log('tags', tags);
 
       return {
         id: i,
@@ -187,7 +186,7 @@ class Cluster extends Component {
       width,
       height,
       zoom,
-      selectedTags,
+      // selectedTags,
       colorScale,
       comps,
       links,
@@ -211,51 +210,13 @@ class Cluster extends Component {
             height
           }}
         >
-          <defs>
-            <filter id="gooey">
-              <feGaussianBlur
-                in="SourceGraphic"
-                stdDeviation="10"
-                colorInterpolationFilters="sRGB"
-                result="blur"
-              />
-              <feColorMatrix
-                in="blur"
-                mode="matrix"
-                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9"
-                result="goo"
-              />
-              <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-            </filter>
-            <filter id="gooeyCodeFilter">
-              <feGaussianBlur
-                in="SourceGraphic"
-                stdDeviation="10"
-                colorInterpolationFilters="sRGB"
-                result="blur"
-              />
-              <feColorMatrix
-                in="blur"
-                mode="matrix"
-                values={`1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${20} -7`}
-                result="gooey"
-              />
-            </filter>
-          </defs>
           {cells.map(d => (
             <path
               fill="none"
-              stroke="grey"
+              stroke="none"
               strokeLinecap="round"
               strokeDasharray="5,10,5"
               d={d3.line().curve(d3.curveLinear)(d.polygon)}
-            />
-          ))}
-          {cells.map(d => (
-            <path
-              fill="none"
-              stroke="grey"
-              d={`M${d.centroid}L${d.centerPos}`}
             />
           ))}
         </svg>
@@ -263,10 +224,8 @@ class Cluster extends Component {
           ({ centroid: [cx, cy], centerPos: [x, y], tags, tag, ...d }) => (
             <Tooltip
               coords={[x, y]}
-              centroid={[cx, cy]}
+              centroid={[x, y]}
               size={Math.min(30, Math.max(d.values.length * 10, 15))}
-              x={x}
-              y={y}
               colorScale={colorScale}
               tags={tags}
             />

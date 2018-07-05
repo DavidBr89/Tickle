@@ -73,44 +73,6 @@ import { StyledButton } from 'Utils/StyledComps';
 
 // const TimoutGrid = ReactTimeout(Accordion);
 
-const CardMetaControl = ({ action }) => (
-  <div
-    key={action.key}
-    className="w-100"
-    style={{ display: 'flex', alignContent: 'center', marginBottom: 30 }}
-  >
-    <button
-      className="btn w-100"
-      style={{
-        background: 'whitesmoke',
-        fontWeight: 'bold',
-        transition: 'opacity 1s'
-        // position: 'absolute',
-        // top: -100
-      }}
-      onClick={action.func}
-    >
-      {(() => {
-        switch (action.key) {
-          case 'route':
-            return <Icon.Map />;
-          case 'selectCard':
-            return <Icon.MapPin />;
-          case 'flyToUser':
-            return <Icon.User />;
-          default:
-            return <Spinner type="ThreeDots" color="grey" height={24} />;
-        }
-      })()}
-    </button>
-  </div>
-);
-
-CardMetaControl.propTypes = {
-  action: PropTypes.shape({ key: PropTypes.string, func: PropTypes.func })
-    .isRequired
-};
-
 function SpeechBubble({ ...props }) {
   return (
     <div
@@ -339,6 +301,10 @@ class MapViewPage extends Component {
                 className="input-group mt-2"
                 style={{ display: 'flex', justifyContent: 'flex-end' }}
               >
+                <button className="btn" style={{ fontWeight: 'bold' }}>
+                  New Card
+                </button>
+                <dialog>uas</dialog>
                 <DropDown
                   key={filterSet.join(',')}
                   onChange={filterCards}

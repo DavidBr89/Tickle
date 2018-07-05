@@ -28,6 +28,7 @@ export const TagInput = class TagInput extends Component {
       inputTag,
       onSelect
     } = this.props;
+
     return (
       <div
         style={{

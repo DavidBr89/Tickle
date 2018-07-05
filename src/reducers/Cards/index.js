@@ -223,12 +223,14 @@ function reducer(state = {}, action) {
     }
 
     case UPDATE_CARD_TEMPLATE: {
-      const { cardData: cardTemplate, viewport, dataView } = action.options;
+      const { cardData, viewport, dataView } = action.options;
+
       const updatedTemplate = updCard({
-        cardData: cardTemplate,
+        cardData,
         viewport,
         dataView
       });
+
       return { ...state, tmpCard: updatedTemplate };
     }
     case DELETE_CARD: {

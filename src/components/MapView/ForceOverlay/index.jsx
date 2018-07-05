@@ -261,6 +261,7 @@ class ForceOverlay extends Component {
               zoom={10}
               nodes={data}
               selectedId={selectedCardId}
+                  colorScale={colorScale}
             >
               {d => draggable({ ...d })}
             </Map>
