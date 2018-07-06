@@ -245,6 +245,7 @@ class MapViewPage extends Component {
       filterSet,
       onCardDrop,
       cardAction,
+      toggleAuthEnv,
       tagColorScale,
       cardSets,
       selectedTags
@@ -299,12 +300,20 @@ class MapViewPage extends Component {
             <div className="h-100">
               <div
                 className="input-group mt-2"
-                style={{ display: 'flex', justifyContent: 'flex-end' }}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  zIndex: 100
+                }}
               >
-                <button className="btn" style={{ fontWeight: 'bold' }}>
+                <StyledButton
+                  className="btn mr-2"
+                  style={{ fontWeight: 'bold' }}
+                  onClick={toggleAuthEnv}
+                >
                   New Card
-                </button>
-                <dialog>uas</dialog>
+                </StyledButton>
+
                 <DropDown
                   key={filterSet.join(',')}
                   onChange={filterCards}
@@ -321,7 +330,7 @@ class MapViewPage extends Component {
                 />
               </div>
               <div
-                className="mb-3 mt-1"
+                className="mb-3 mt-3"
                 style={{
                   // opacity: gridView ? 1 : 0,
                   // display: !gridView ? 'none' : null,

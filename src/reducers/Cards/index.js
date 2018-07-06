@@ -12,6 +12,8 @@ import { db } from 'Firebase';
 import { updCard } from './helper';
 import setify from 'Utils/setify';
 import * as d3 from 'd3';
+import * as chromatic from 'd3-scale-chromatic';
+import chroma from 'chroma-js';
 
 import { union, difference } from 'lodash';
 
@@ -38,10 +40,10 @@ import {
   TOGGLE_CARD_AUTHORING,
   DRAG_CARD,
   LOADING_CARDS,
-  TOGGLE_TSNE_VIEW,
-  ADD_CARD_FILTER,
-  REMOVE_CARD_FILTER,
-  FILTER_CARDS
+  TOGGLE_TSNE_VIEW
+  // ADD_CARD_FILTER,
+  // REMOVE_CARD_FILTER,
+  // FILTER_CARDS
 } from './actions';
 
 // const gen = new generate.Generator();
@@ -57,39 +59,50 @@ import {
 //   }))
 // });
 const cardTemplateId = 'temp';
+
+const defaultLocation = {
+  latitude: 50.85146,
+  longitude: 4.315483,
+  radius: 500
+};
+
+const defaultCardTemplate = {
+  id: 'temp',
+  template: true,
+  loc: defaultLocation,
+  challenge: null,
+  edit: true,
+  tags: []
+  // floorLoc: { x: 0, y: 0 }
+};
+
+const tagColors = chromatic.schemeSet3
+  .reverse()
+  .map(c => chroma(c).alpha(0.04));
+
+const INITIAL_STATE = {
+  cardTemplateId,
+  tagColors,
+  readableCards: [],
+  createdCards: [],
+  tmpCards: [],
+  // TODO: update
+  tmpCard: defaultCardTemplate,
+  challenges: [],
+  cardChallengeOpen: false,
+  selectedTags: []
+  // filterSet: []
+  // TODO: outsource
+  //
+  // TODO: adapt colors
+};
+
 // const cardTemplateId = 'temp';
-function reducer(state = {}, action) {
+function reducer(state = INITIAL_STATE, action) {
   // console.log('action', action);
   // const { selectedCardId } = state;
 
   switch (action.type) {
-    case ADD_CARD_FILTER: {
-      const { filterSet } = state;
-      const set = action.options;
-
-      return {
-        ...state,
-        filterSet: union(filterSet, set),
-        selectedCardId: null
-      };
-    }
-
-    case REMOVE_CARD_FILTER: {
-      const { filterSet } = state;
-      const set = action.options;
-
-      return {
-        ...state,
-        filterSet: difference(filterSet, set),
-        selectedCardId: null
-      };
-    }
-
-    case FILTER_CARDS: {
-      const filterSet = action.options;
-      return { ...state, filterSet };
-    }
-
     case LOADING_CARDS: {
       return {
         ...state,
@@ -145,15 +158,15 @@ function reducer(state = {}, action) {
       };
     }
     case CREATE_CARD: {
-      const { createdCards } = state;
+      const { tmpCards } = state;
 
       const newCard = action.options;
 
-      const newCards = [...createdCards, newCard];
+      const newCards = [...tmpCards, newCard];
 
       return {
         ...state,
-        createdCards: newCards,
+        tmpCards: newCards,
         selectedCardId: newCard.id,
         extCardId: null,
         tmpCard: {}
@@ -190,14 +203,14 @@ function reducer(state = {}, action) {
       // tmpCards[cardIndex] = { ...cards[cardIndex], ...cardData };
     }
 
-    case SELECT_CARD: {
-      const { cards } = state;
-      const selectedCardId = action.options;
-      return {
-        ...state,
-        selectedCardId
-      };
-    }
+    // case SELECT_CARD: {
+    //   const { cards } = state;
+    //   const selectedCardId = action.options;
+    //   return {
+    //     ...state,
+    //     selectedCardId
+    //   };
+    // }
 
     case TOGGLE_CARD_CHALLENGE: {
       const { cardChallengeOpen } = action.options;
@@ -214,13 +227,13 @@ function reducer(state = {}, action) {
       };
     }
 
-    case EXTEND_SELECTED_CARD: {
-      const { selectedCardId } = state;
-      const extCardId = action.options;
-      // console.log('extCardId', extCardId);
-      // TODO: update
-      return { ...state, extCardId };
-    }
+    // case EXTEND_SELECTED_CARD: {
+    //   const { selectedCardId } = state;
+    //   const extCardId = action.options;
+    //   // console.log('extCardId', extCardId);
+    //   // TODO: update
+    //   return { ...state, extCardId };
+    // }
 
     case UPDATE_CARD_TEMPLATE: {
       const { cardData, viewport, dataView } = action.options;
@@ -285,22 +298,22 @@ function reducer(state = {}, action) {
       };
     }
 
-    case TOGGLE_CARD_AUTHORING: {
-      const { userLocation, width, height } = action.options;
-      const enabled = !state.authEnv;
-
-      // const authEnvCards = [...createdCards, cardTemplate];
-
-      return {
-        ...state,
-        authEnv: enabled,
-        // authEnvCards,
-        cardTemplate: {},
-        selectedCardId: enabled ? cardTemplateId : null
-        // cards
-        // isCardDragging
-      };
-    }
+    // case TOGGLE_CARD_AUTHORING: {
+    //   const { userLocation, width, height } = action.options;
+    //   const enabled = !state.authEnv;
+    //
+    //   // const authEnvCards = [...createdCards, cardTemplate];
+    //
+    //   return {
+    //     ...state,
+    //     authEnv: enabled,
+    //     // authEnvCards,
+    //     cardTemplate: {},
+    //     selectedCardId: enabled ? cardTemplateId : null
+    //     // cards
+    //     // isCardDragging
+    //   };
+    // }
 
     case DRAG_CARD: {
       const isCardDragging = action.options;

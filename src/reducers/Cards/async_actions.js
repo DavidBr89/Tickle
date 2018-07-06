@@ -22,6 +22,8 @@ import {
   addCommentError
 } from './actions';
 
+import { selectCard, extendSelectedCard } from '../DataView/actions';
+
 import NearbyPlaces from '../places.json';
 
 import { db, firebase } from 'Firebase';
@@ -135,10 +137,13 @@ export function asyncCreateCard({ cardData, uid, viewport, dataView }) {
   // const newCard = updCard({ rawData: fullCard, viewport, dataView });
 
   return function(dispatch) {
-    dispatch(createCard(newCard));
-    return db.doCreateCard(uid, newCard).then(querySnapshot => {
-      dispatch(createCardSuccess(newCard));
-    });
+    dispatch(createCard(newCard))
+      .then(dispatch(extendSelectedCard(null)))
+      .then(dispatch(selectCard(newCard.id)));
+
+    return db
+      .doCreateCard(uid, newCard)
+      .then(() => dispatch(createCardSuccess(newCard)));
   };
 }
 

@@ -29,11 +29,13 @@ const mapStateToProps = state => {
   const {
     readableCards,
     createdCards,
-    selectedCardId,
+    // selectedCardId,
     cardTemplateId,
     tmpCard,
-    filterSet
+    tmpCards
   } = state.Cards;
+
+  const { selectedCardId, filterSet } = state.DataView;
 
   // TODO: own dim reducer
   const { width, height, userLocation } = state.MapView;
@@ -62,20 +64,21 @@ const mapStateToProps = state => {
     tags: tmpCard.tags || defaultCardTemplate.tags
   };
 
-  const cards = createdCards;
-  const filteredCards = cards
-    .filter(
-      d => filterSet.length === 0 || intersection(d.tags, filterSet).length > 0
-    )
-    .concat([templateCard]);
+  const cards = authEnv ? [templateCard, ...tmpCards] : createdCards;
+  const filteredCards = cards.filter(
+    d => filterSet.length === 0 || intersection(d.tags, filterSet).length > 0
+  );
+  // .concat([templateCard]);
 
   const cardSets = setify(filteredCards);
 
-  console.log('SelectedCardId', selectedCardId);
+  console.log('SelectedCardId', selectedCardId, filteredCards);
   const selectedCard =
     selectedCardId !== null
       ? filteredCards.find(d => d.id === selectedCardId)
       : null;
+
+  console.log('selectedCard', selectedCard);
 
   const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
 

@@ -11,6 +11,8 @@ import ExtendableMarker from 'Utils/ExtendableMarker';
 
 import { dragCard } from 'Reducers/Cards/actions';
 import { changeMapViewport } from 'Reducers/Map/actions';
+
+import PreviewMarker from './PreviewMarker';
 // import│ {shallowEqualProps} from'shallow-equal-props';
 
 // import louvain from './jlouvain';
@@ -24,37 +26,6 @@ import {
 import Map from './Map';
 import Floorplan from './Floorplan';
 import TreeMapCluster from './TreeMapCluster';
-
-import { Card, CardMarker, PreviewCard } from 'Cards';
-
-export const shadowStyle = {
-  boxShadow: '3px 3px black',
-  border: '1px solid #000'
-  // border: '1px solid black'
-};
-
-const getShadowStyle = selected => (selected ? shadowStyle : {});
-
-const PreviewMarker = ({
-  selected,
-  template,
-  color,
-  size = 25,
-  offset = 100
-}) => (
-  <CardMarker
-    color={color}
-    style={{
-      transform: selected && 'scale(1.5)',
-      zIndex: selected && 5000,
-      transition: 'transform 1s',
-      ...getShadowStyle(selected),
-      position: 'absolute',
-      width: size,
-      height: size // '13vw',
-    }}
-  />
-);
 
 const offsetMapViewport = ({
   width,
@@ -261,7 +232,7 @@ class ForceOverlay extends Component {
               zoom={10}
               nodes={data}
               selectedId={selectedCardId}
-                  colorScale={colorScale}
+              colorScale={colorScale}
             >
               {d => draggable({ ...d })}
             </Map>
@@ -340,7 +311,8 @@ class ForceOverlay extends Component {
 }
 
 function mapStateToProps({
-  Cards: { extCardId, isCardDragging, selectedCardId }
+  Cards: { isCardDragging },
+  DataView: { extCardId, selectedCardId }
 }) {
   return { extCardId, isCardDragging, selectedCardId };
 }

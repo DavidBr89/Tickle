@@ -43,15 +43,6 @@ const defaultLocation = {
 const mapZoom = 9;
 const [width, height] = [100, 100];
 // debug('lego:routes');
-const defaultCardTemplate = {
-  id: 'temp',
-  template: true,
-  loc: defaultLocation,
-  challenge: null,
-  edit: true,
-  tags: []
-  // floorLoc: { x: 0, y: 0 }
-};
 const cardTemplateId = 'temp';
 
 const tagColors = chromatic.schemeSet3
@@ -92,25 +83,7 @@ const defaultState = {
   },
   Session: {
     authUser: { uid: null }
-  },
-  Cards: {
-    cardTemplateId,
-    tagColors,
-    readableCards: [],
-    createdCards: [],
-    // TODO: update
-    selectedCardId: null,
-    tmpCard: defaultCardTemplate,
-    challenges: [],
-    cardChallengeOpen: false,
-    selectedTags: [],
-    filterSet: [],
-    extCard: null
-    // TODO: outsource
-    //
-    // TODO: adapt colors
-  }
-  // DataView: {
+  }  // DataView: {
   //   dataView: 'topic',
   //   tsneView: false,
   //   gridView: true,

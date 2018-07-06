@@ -75,20 +75,10 @@ export function updateCardTemplate(options) {
   return { type: UPDATE_CARD_TEMPLATE, options };
 }
 
-export const SELECT_CARD = 'SELECT_CARD';
-export function selectCard(options) {
-  return { type: SELECT_CARD, options };
-}
-
-export const EXTEND_SELECTED_CARD = 'EXTEND_SELECTED_CARD';
-export function extendSelectedCard(options) {
-  return { type: EXTEND_SELECTED_CARD, options };
-}
-
-export const TOGGLE_CARD_AUTHORING = 'TOGGLE_CARD_AUTHORING';
-export function toggleCardAuthoring(options) {
-  return { type: TOGGLE_CARD_AUTHORING, options };
-}
+// export const TOGGLE_CARD_AUTHORING = 'TOGGLE_CARD_AUTHORING';
+// export function toggleCardAuthoring(options) {
+//   return { type: TOGGLE_CARD_AUTHORING, options };
+// }
 
 export const TOGGLE_SEARCH = 'TOGGLE_SEARCH';
 export function toggleSearch(options) {
@@ -125,26 +115,7 @@ export function addCommentError(options) {
   return { type: ADD_COMMENT_ERROR, options };
 }
 
-export const FILTER_CARDS = 'FILTER_CARDS';
-export function filterCards(options) {
-  return { type: FILTER_CARDS, options };
-}
-
-export const TOGGLE_DATA_VIEW = 'TOGGLE_DATA_VIEW';
-export function toggleDataView(options) {
-  return { type: TOGGLE_DATA_VIEW, options };
-}
-
-export const FILTER = 'FILTER';
-export function filter(options) {
-  return { type: FILTER, options };
-}
-export const ADD_CARD_FILTER = 'ADD_CARD_FILTER';
-export function addCardFilter(options) {
-  return { type: ADD_CARD_FILTER, options };
-}
-
-export const REMOVE_CARD_FILTER = 'REMOVE_CARD_FILTER';
-export function removeCardFilter(options) {
-  return { type: REMOVE_CARD_FILTER, options };
-}
+// export const TOGGLE_DATA_VIEW = 'TOGGLE_DATA_VIEW';
+// export function toggleDataView(options) {
+//   return { type: TOGGLE_DATA_VIEW, options };
+// }

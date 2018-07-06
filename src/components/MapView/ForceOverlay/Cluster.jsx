@@ -54,58 +54,6 @@ function findCenterPos(values) {
   return centerPos;
 }
 
-function Tooltip({
-  coords: [x, y],
-  colorScale,
-  tags,
-  centroid: [cx, cy],
-  size,
-  ...props
-}) {
-  return (
-    <div
-      key={tags.join('-')}
-      style={{
-        position: 'absolute',
-        transition: 'left 500ms, top 500ms',
-        maxWidth: 80,
-        left: x,
-        top: y,
-        transform: `translate(-50%,-50%)`,
-        background: 'white',
-        zIndex: 100,
-        // maxWidth: '20vw',
-        // borderRadius: '10%',
-        display: 'flex',
-        justifyContent: 'center'
-        // border: 'grey solid 2px'
-      }}
-    >
-      <div className="m-1">
-        <div
-          style={{
-            // width: '100%',
-            // borderRadius: '30%',
-            display: 'flex',
-            flexWrap: 'wrap'
-          }}
-        >
-          {tags.map(t => (
-            <div
-              className="mr-1"
-              style={{ fontSize: size, background: colorScale(t) }}
-            >
-              {`${t} `}{' '}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-Tooltip.defaultProps = {};
-Tooltip.propTypes = {};
-
 class Cluster extends Component {
   static propTypes = {
     children: PropTypes.func,
@@ -119,9 +67,6 @@ class Cluster extends Component {
     radius: 1
   };
 
-  // static getDerivedStateFromProps(nextProps, prevState) {
-  // }
-
   findClusters = () => {
     const { width, height, nodes, radius } = this.props;
 
@@ -131,25 +76,20 @@ class Cluster extends Component {
       radius: () => radius,
       x: n => n.x,
       y: n => n.y
-    }).map((nestedValues, i) => {
-      const centerPos = findCenterPos(nestedValues);
-      const tags = uniq(flatten(nestedValues.map(e => e.tags)));
-      const values = uniqBy(
-        flatten(nestedValues.map(d => d.values)).map(d => ({
-          ...d,
-          x: centerPos[0],
-          y: centerPos[1]
-        })),
-        'id'
-      );
-
-      console.log('tags', tags);
+    }).map((values, i) => {
+      const centerPos = findCenterPos(values);
+      const tags = uniq(flatten(values.map(e => e.tags)));
+      // const values = uniqBy(
+      //   flatten(nestedValues.map(d => d.values)).map(d => ({
+      //     ...d
+      //   })),
+      //   'id'
+      // );
 
       return {
         id: i,
         tags,
         count: values.length,
-        nestedValues,
         values,
         centerPos
       };
@@ -198,9 +138,6 @@ class Cluster extends Component {
     const clusters = this.findClusters();
     const cells = this.getVoronoiCells(clusters);
 
-    const blurFactor = 2;
-    const bubbleRadius = 25;
-
     return (
       <Fragment>
         <svg
@@ -220,28 +157,9 @@ class Cluster extends Component {
             />
           ))}
         </svg>
-        {cells.map(
-          ({ centroid: [cx, cy], centerPos: [x, y], tags, tag, ...d }) => (
-            <Tooltip
-              coords={[x, y]}
-              centroid={[x, y]}
-              size={Math.min(30, Math.max(d.values.length * 10, 15))}
-              colorScale={colorScale}
-              tags={tags}
-            />
-          )
+        {cells.map(({ centroid, centerPos, ...d }) =>
+          children({ centroid, centerPos, data: d })
         )}
-        {cells.map(d => (
-          <React.Fragment>
-            {d.values.map((e, i) =>
-              children({
-                ...e,
-                x: d.centerPos[0] + i * 5,
-                y: d.centerPos[1] + i * 5
-              })
-            )}
-          </React.Fragment>
-        ))}
       </Fragment>
     );
   }

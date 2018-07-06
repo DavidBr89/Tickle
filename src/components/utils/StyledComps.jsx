@@ -31,12 +31,14 @@ export class StyledButton extends Component {
     return (
       <div
         className={`${className} btn ${activeClass}`}
-        style={{  display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-fontWeight: 'bold',
-          ...style,
-           }}
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          fontWeight: 'bold',
+          // background: 'whitesmoke',
+          ...style
+        }}
         onClick={() =>
           this.setState(({ active: activeBefore }) => ({
             active: !activeBefore
