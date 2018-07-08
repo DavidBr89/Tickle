@@ -73,7 +73,8 @@ class CardGrid extends Component {
     centered: PropTypes.bool,
     children: PropTypes.func,
     slotSize: PropTypes.number,
-    selectedIndex: PropTypes.number
+    selectedIndex: PropTypes.number,
+    direction: PropTypes.oneOf(['horizontal', 'vertical'])
   };
 
   static defaultProps = {
@@ -87,7 +88,8 @@ class CardGrid extends Component {
     slotSize: 100 / 3,
     centered: true,
     children: d => d,
-    selectedIndex: 0
+    selectedIndex: 0,
+    direction: 'horizontal'
   };
 
   constructor(props) {
@@ -106,34 +108,6 @@ class CardGrid extends Component {
     return { cardStacks };
   }
 
-  // TODO: change later
-  shouldComponentUpdate(nextProps, nextState) {
-    console.log('update accordion');
-    // return (
-    //   this.props.data.length !== nextProps.data.length ||
-    //   this.props.centered !== nextProps.centered ||
-    //   nextProps.selected !== this.props.selected
-    // );
-    // TODO
-    return (
-      nextProps.selectedIndex !== this.props.selectedIndex ||
-      // TODO
-      nextProps.data.length !== this.props.data.length ||
-      nextProps.height !== this.props.height ||
-      true
-    );
-  }
-
-  // componentWillUpdate(nextProps, nextState) {
-  //   const { selectedId } = this.state;
-  //   if (
-  //     selectedId !== null &&
-  //     nextState.selectedId !== selectedId
-  //   ) {
-  //     this._scroller.scrollTo(selectedId);
-  //   }
-  // }
-
   render() {
     const {
       data,
@@ -148,7 +122,8 @@ class CardGrid extends Component {
       selectedIndex,
       duration,
       height,
-      onClick
+      onClick,
+      direction
     } = this.props;
 
     const { cardStacks } = this.state;
@@ -166,6 +141,10 @@ class CardGrid extends Component {
         // .align(0.5)
         .range([0, width - slotSize]);
       // i => i * (100 - slotSize * 3 / 4) / data.length;
+      const position = i =>
+        direction === 'vertical'
+          ? { top: `${scale(i)}${unit}` }
+          : { left: `${scale(i)}${unit}` };
       return (
         <div
           className={className}
@@ -190,8 +169,8 @@ class CardGrid extends Component {
                   paddingLeft: `${innerMargin / 2}${unit}`,
                   paddingRight: `${innerMargin / 2}${unit}`,
                   cursor: 'pointer',
-                  left: `${scale(i)}${unit}`,
-                  transition
+                  transition,
+                  ...position(i)
                 }}
               >
                 {children(d)}
@@ -202,6 +181,10 @@ class CardGrid extends Component {
       );
     }
 
+    const centerPos = c =>
+      direction === 'vertical'
+        ? { top: `${c.pos}${unit}` }
+        : { left: `${c.pos}${unit}` };
     return (
       <div
         className={className}
@@ -228,9 +211,9 @@ class CardGrid extends Component {
                   paddingRight: `${innerMargin / 2}${unit}`,
                   cursor: 'pointer',
                   // maxWidth: '200px',
-                  left: `${c.pos}${unit}`,
                   transition,
-                  zIndex: c.zIndex
+                  zIndex: c.zIndex,
+                  ...centerPos(c),
                 }}
               >
                 {children(d)}
