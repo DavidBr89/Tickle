@@ -8,7 +8,6 @@
 // import { getBoundingBox } from './utils';
 // import { intersection } from 'lodash';
 
-import { db } from 'Firebase';
 import { updCard } from './helper';
 import setify from 'Utils/setify';
 import * as d3 from 'd3';
@@ -33,7 +32,7 @@ import {
   DELETE_CARD,
   ERROR_DELETE_CARD,
   SUCCESS_DELETE_CARD,
-  SELECT_CARD,
+  // SELECT_CARD,
   TOGGLE_CARD_CHALLENGE,
   EXTEND_SELECTED_CARD,
   PLAY_CARD_CHALLENGE,
@@ -67,13 +66,14 @@ const defaultLocation = {
 };
 
 const defaultCardTemplate = {
-  id: 'temp',
+  id: cardTemplateId,
   template: true,
   loc: defaultLocation,
-  challenge: null,
   edit: true,
-  tags: []
-  // floorLoc: { x: 0, y: 0 }
+  tags: [],
+  challenge: null,
+  floorX: 0.5,
+  floorY: 0.5
 };
 
 const tagColors = chromatic.schemeSet3
@@ -169,7 +169,7 @@ function reducer(state = INITIAL_STATE, action) {
         tmpCards: newCards,
         selectedCardId: newCard.id,
         extCardId: null,
-        tmpCard: {}
+        tmpCard: defaultCardTemplate
       };
     }
 
@@ -178,12 +178,12 @@ function reducer(state = INITIAL_STATE, action) {
     }
 
     case UPDATE_CARD: {
-      const { createdCards } = state;
+      const { tmpCards } = state;
 
       const updatedCard = action.options;
       console.log('updatedCard', updatedCard);
 
-      const updatedCards = createdCards.map(c => {
+      const updatedCards = tmpCards.map(c => {
         if (c.id === updatedCard.id) {
           console.log('change', updatedCard);
           return updatedCard;
@@ -193,7 +193,7 @@ function reducer(state = INITIAL_STATE, action) {
 
       return {
         ...state,
-        createdCards: updatedCards
+        tmpCards: updatedCards
       };
       // const tmpCards = [...createdCards];
 
@@ -238,8 +238,9 @@ function reducer(state = INITIAL_STATE, action) {
     case UPDATE_CARD_TEMPLATE: {
       const { cardData, viewport, dataView } = action.options;
 
+      console.log('viewport', viewport);
       const updatedTemplate = updCard({
-        cardData,
+        rawData: cardData,
         viewport,
         dataView
       });

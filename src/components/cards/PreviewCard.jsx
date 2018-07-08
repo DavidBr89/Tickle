@@ -104,11 +104,11 @@ class PreviewCard extends Component {
     return (
       <div
         style={{
-          ...style,
           padding: '5px',
           height: '100%',
           background: colorScale(type),
-          ...shadowStyle
+          ...shadowStyle,
+          ...style,
           // minWidth: '100px'
           // maxHeight: '120px'
         }}

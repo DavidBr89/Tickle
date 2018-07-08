@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { addCardFilter, removeCardFilter } from 'Reducers/Cards/actions';
+import { addCardFilter, removeCardFilter } from 'Reducers/DataView/actions';
 
 // import * as chromatic from 'd3-scale-chromatic';
 // import hull from 'hull.js';

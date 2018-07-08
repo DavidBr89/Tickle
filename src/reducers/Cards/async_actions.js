@@ -134,12 +134,10 @@ export function asyncCreateCard({ cardData, uid, viewport, dataView }) {
     uid
   };
 
-  // const newCard = updCard({ rawData: fullCard, viewport, dataView });
-
   return function(dispatch) {
-    dispatch(createCard(newCard))
-      .then(dispatch(extendSelectedCard(null)))
-      .then(dispatch(selectCard(newCard.id)));
+    dispatch(createCard(newCard));
+    dispatch(extendSelectedCard(null));
+    dispatch(selectCard(newCard.id));
 
     return db
       .doCreateCard(uid, newCard)
@@ -160,9 +158,7 @@ export function asyncRemoveCard({ uid, cid }) {
 }
 
 export function asyncUpdateCard({ uid, cardData, viewport, dataView }) {
-  console.log('viewport', viewport);
   const updatedCard = updCard({ rawData: cardData, viewport, dataView });
-  console.log('updatedCard', updatedCard);
   return function(dispatch) {
     dispatch(updateCard(updatedCard));
     return db

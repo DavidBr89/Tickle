@@ -26,7 +26,6 @@ class HomePage extends Component {
 
   render() {
     const { users } = this.props;
-    console.log('props.user', users);
 
         // {users.map(d => <div>{Object.values(d)}</div>)}
     return (

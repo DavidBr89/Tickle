@@ -6,13 +6,12 @@ import { intersection } from 'lodash';
 import {
   resizeCardWindow,
   userMove,
-  changeMapViewport,
-  screenResize,
   changeViewport
 } from 'Reducers/Map/actions';
 
 import setify from 'Utils/setify';
 
+import { screenResize } from 'Reducers/Screen/actions';
 import * as cardActions from 'Reducers/Cards/actions';
 
 import * as asyncActions from 'Reducers/Cards/async_actions';
@@ -29,7 +28,6 @@ const mapStateToProps = state => {
   const {
     readableCards,
     createdCards,
-    // selectedCardId,
     cardTemplateId,
     tmpCard,
     tmpCards
@@ -46,27 +44,16 @@ const mapStateToProps = state => {
   // const { userLocation } = state.MapView;
 
   console.log('tmpCard', tmpCard);
-  const defaultCardTemplate = {
-    id: cardTemplateId,
-    template: true,
-    loc: userLocation,
-    edit: true,
-    tags: [authUser.username],
-    challenge: null,
-    floorX: 0.5,
-    floorY: 0.5,
-    author: { ...authUser }
-  };
-
   const templateCard = {
-    ...defaultCardTemplate,
     ...tmpCard,
-    tags: tmpCard.tags || defaultCardTemplate.tags
+    author: { ...authUser },
+    tags: tmpCard.tags.length > 0 ? tmpCard.tags : [authUser.username]
   };
 
+  console.log('templateCard', templateCard);
   const cards = authEnv ? [templateCard, ...tmpCards] : createdCards;
   const filteredCards = cards.filter(
-    d => filterSet.length === 0 || intersection(d.tags, filterSet).length > 0
+    d => filterSet.length === 0 || intersection(d.tags, filterSet).length === filterSet.length
   );
   // .concat([templateCard]);
 
@@ -77,8 +64,6 @@ const mapStateToProps = state => {
     selectedCardId !== null
       ? filteredCards.find(d => d.id === selectedCardId)
       : null;
-
-  console.log('selectedCard', selectedCard);
 
   const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
 

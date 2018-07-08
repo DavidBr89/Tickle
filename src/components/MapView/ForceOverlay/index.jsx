@@ -223,17 +223,7 @@ class ForceOverlay extends Component {
               ...style
             }}
           >
-            <Map
-              height={height}
-              width={width}
-              onViewportChange={changeMapViewport}
-              disabled={disabled}
-              {...loc}
-              zoom={10}
-              nodes={data}
-              selectedId={selectedCardId}
-              colorScale={colorScale}
-            >
+            <Map disabled={disabled} nodes={data} colorScale={colorScale}>
               {d => draggable({ ...d })}
             </Map>
           </div>

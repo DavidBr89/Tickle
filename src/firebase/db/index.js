@@ -121,12 +121,23 @@ export const getDetailedUserInfo = uid =>
             }),
           error => console.log('error in getUser, doc not existing', error)
         );
-        const imgFields = values.reduce((acc, d) => ({ ...acc, ...d }));
+        // const imgFields = values.reduce((acc, d) => ({ ...acc, ...d }));
       })
     )
     .catch(err => console.log('err i getUser'));
 
-export const onceGetUsers = () => firestore.collection('users').get();
+export const onceGetUsers = () =>
+  firestore
+    .collection('users')
+    .get()
+    .then(querySnapshot => {
+      const data = [];
+      querySnapshot.forEach(doc => data.push(doc.data()));
+      return new Promise(
+        resolve => resolve(data),
+        error => console.log('error in reading users', error)
+      );
+    });
 
 export const doCreateCard = (uid, card) =>
   uploadImgFields(card, uid).then(c => {

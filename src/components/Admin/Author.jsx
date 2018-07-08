@@ -8,8 +8,9 @@ import { db } from 'Firebase';
 import colorClasses from '../utils/colorClasses';
 
 // import { skillTypes } from '../../dummyData';
-import CardMarker from './CardMarker';
-import { FieldSet } from './layout';
+import setify from 'Utils/setify';
+import CardMarker from 'Cards/CardMarker';
+import { FieldSet } from 'Cards/layout';
 
 const profileSrc = () => {
   const gender = Math.random() < 0.5 ? 'men' : 'women';
@@ -120,17 +121,27 @@ const ExtendedAuthor = ({
   </div>
 );
 
-const AuthorPreview = ({ photoURL, style, username, name, email }) => (
+const AuthorPreview = ({
+  photoURL,
+  className,
+  style,
+  username,
+  name,
+  email
+}) => (
   <div
+    className={className}
     style={{
       display: 'flex',
       justifyContent: 'center',
+      boxShadow: '5px 5px black',
+      border: '1px black solid',
       // alignItems: 'center',
       // height: '100%',
       ...style
     }}
   >
-    <div style={{ display: 'flex' }}>
+    <div>
       <img width="40%" height="80%" src={photoURL} alt="alt" />
       <div className="ml-3">
         <div className="mb-1">
@@ -157,49 +168,19 @@ class Author extends React.Component {
 
   state = {
     ...this.props,
-
     collectedCards: [],
     createdCards: [],
     numCollectedCards: 0,
     numCreatedCards: 0
   };
 
-  componentDidMount() {
-    const { uid } = this.props;
-    db.getDetailedUserInfo(uid).then(
-      ({
-        interests: plainInterests,
-        createdCards,
-        collectedCards,
-        ...userDetails
-      }) => {
-        console.log('userDetails', userDetails);
-        // TODO: change
-        const interests = plainInterests.map(key => ({ key, count: 10 }));
-        const skills = setify([...createdCards, ...collectedCards]);
-        const numCollectedCards = collectedCards.length;
-        const numCreatedCards = createdCards.length;
-
-        this.setState({
-          ...userDetails,
-          interests,
-          skills,
-          collectedCards,
-          createdCards,
-          numCollectedCards,
-          numCreatedCards
-        });
-      }
-    );
-  }
-
   render() {
     const { extended, uid } = this.props;
 
     return extended ? (
-      <ExtendedAuthor {...this.state} key={uid} />
+      <ExtendedAuthor {...this.props} key={uid} />
     ) : (
-      <AuthorPreview {...this.state} key={uid} />
+      <AuthorPreview {...this.props} key={uid} />
     );
   }
 }
@@ -253,7 +234,7 @@ const Profile = ({ data }) => (
       src={profileSrc()}
       alt="alt"
     />
-    <div className="media-body">
+    <div>
       <div>{data.comment}</div>
       <div>
         <small className="font-italic">- {data.name}</small>

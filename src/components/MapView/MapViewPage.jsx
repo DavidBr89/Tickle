@@ -306,13 +306,13 @@ class MapViewPage extends Component {
                   zIndex: 100
                 }}
               >
-                <StyledButton
+                <button
                   className="btn mr-2"
-                  style={{ fontWeight: 'bold' }}
+                  style={{ background: 'whitesmoke', fontWeight: 'bold' }}
                   onClick={toggleAuthEnv}
                 >
-                  New Card
-                </StyledButton>
+                  <span>{authEnv ? 'View Cards' : 'Author Card'}</span>
+                </button>
 
                 <DropDown
                   key={filterSet.join(',')}

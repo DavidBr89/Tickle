@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import MapGL from 'react-map-gl';
 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
 import { UserOverlay } from '../../utils/map-layers/DivOverlay';
 
 import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
@@ -10,6 +13,8 @@ import { CardMarker } from 'Cards';
 
 import Cluster from './Cluster';
 import ForceCollide from './MiniForceCollide';
+
+import { changeMapViewport } from 'Reducers/Map/actions';
 
 const mapStyleUrl = 'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l';
 
@@ -66,6 +71,7 @@ function ClusterSurrogate({
         left: x,
         top: y,
         transform: `translate(-50%,-50%)`,
+        borderRadius: '50%',
         background: 'white',
         zIndex: 100,
         // maxWidth: '20vw',
@@ -83,7 +89,8 @@ function ClusterSurrogate({
             // borderRadius: '30%',
             display: 'inline-flex',
             justifyContent: 'center',
-            flexWrap: 'wrap'
+            flexWrap: 'wrap',
+            overflow: 'hidden'
           }}
         >
           {tags.map(t => (
@@ -109,7 +116,12 @@ class Map extends Component {
     disabled: PropTypes.boolean
   };
 
-  static defaultProps = { disabled: false };
+  static defaultProps = {
+    disabled: false,
+    maxZoom: 16,
+    viewport: { ...defaultLocation, width: 100, height: 100, zoom: 10 },
+    nodes: []
+  };
 
   state = { ...this.props };
 
@@ -118,32 +130,38 @@ class Map extends Component {
   // }
 
   componentDidUpdate(prevProps, prevState) {
-    const { latitude, longitude, selectedId } = this.props;
-    if (prevProps.selectedId !== selectedId) {
-      this.setState({ latitude, longitude });
-    }
-  }
+    const { nodes, selectedCardId, maxZoom } = this.props;
+    if (
+      selectedCardId !== null &&
+      prevProps.selectedCardId !== selectedCardId
+    ) {
+      const {
+        loc: { longitude, latitude }
+      } = nodes.find(n => selectedCardId === n.id);
 
-  componentDidMount() {
-    this.props.onViewportChange({ ...this.state });
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { selectedId } = this.props;
-    if (prevProps.selectedId !== selectedId) {
-      this.props.onViewportChange({ ...this.state });
+      const vp = { ...this.state, longitude, latitude, zoom: maxZoom };
+      this.props.changeMapViewport({ ...vp });
     }
   }
 
   render() {
-    const { width, height, latitude, longitude, zoom } = this.state;
+    const {
+      colorScale,
+      nodes,
+      disabled,
+      children,
+      maxZoom,
+      viewport,
+      userLocation
+    } = this.props;
 
-    const { colorScale, userLocation, nodes, disabled, children } = this.props;
+    const { width, height, latitude, longitude, zoom } = viewport;
 
-    const viewport = new PerspectiveMercatorViewport({ ...this.state });
+    console.log('nodes', nodes);
+    const vp = new PerspectiveMercatorViewport({ ...viewport });
 
     const locNodes = nodes.reduce((acc, n) => {
-      const [x, y] = viewport.project([n.loc.longitude, n.loc.latitude]);
+      const [x, y] = vp.project([n.loc.longitude, n.loc.latitude]);
       if (x > 0 && x < width && y > 0 && y < height) {
         return [{ ...n, x, y }, ...acc];
       }
@@ -153,10 +171,10 @@ class Map extends Component {
     return (
       <MapGL
         mapStyle={mapStyleUrl}
-        onViewportChange={viewport => {
+        onViewportChange={newViewport => {
           if (!disabled) {
-            this.setState({ ...viewport });
-            this.props.onViewportChange(viewport);
+            // this.setState({ ...viewport });
+            this.props.changeMapViewport({ ...newViewport });
           }
         }}
         height={height}
@@ -175,7 +193,7 @@ class Map extends Component {
           colorScale={colorScale}
         >
           {({ centroid, centerPos: [x, y], data: d }) =>
-            zoom > 13 ? (
+            zoom >= maxZoom ? (
               <ForceCollide data={d.values} targetPos={[x, y]}>
                 {children}
               </ForceCollide>
@@ -183,7 +201,7 @@ class Map extends Component {
               <ClusterSurrogate
                 coords={[x, y]}
                 centroid={[x, y]}
-                size={30 + d.values.length * 10}
+                size={Math.min(90, 30 + d.values.length * 10)}
                 colorScale={colorScale}
                 tags={d.tags}
               />
@@ -195,4 +213,24 @@ class Map extends Component {
   }
 }
 
-export default Map;
+const mapStateToProps = ({
+  MapView: { mapViewport, userLocation, width, height },
+  DataView: { selectedCardId }
+}) => ({
+  viewport: { ...mapViewport, width, height },
+  userLocation,
+  selectedCardId
+});
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      changeMapViewport
+    },
+    dispatch
+  );
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Map);

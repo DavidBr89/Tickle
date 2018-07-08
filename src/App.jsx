@@ -68,22 +68,22 @@ const defaultState = {
     mapZoom,
     challenges: []
   },
-  MapView: {
-    mapViewport: {},
-    // TODO: calc value
-    latCenterOffset: 0.0018,
-    latBottom: 0.003,
-    defaultZoom: mapZoom,
-    zoom: mapZoom,
-    direction: null,
-    ...defaultLocation,
-    userLocation: defaultLocation,
-    height: 100,
-    width: 100
-  },
+  // MapView: {
+  //   mapViewport: {},
+  //   // TODO: calc value
+  //   latCenterOffset: 0.0018,
+  //   latBottom: 0.003,
+  //   defaultZoom: mapZoom,
+  //   zoom: mapZoom,
+  //   direction: null,
+  //   ...defaultLocation,
+  //   userLocation: defaultLocation,
+  //   height: 100,
+  //   width: 100
+  // },
   Session: {
     authUser: { uid: null }
-  }  // DataView: {
+  } // DataView: {
   //   dataView: 'topic',
   //   tsneView: false,
   //   gridView: true,
