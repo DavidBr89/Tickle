@@ -34,12 +34,13 @@ import {
   SUCCESS_DELETE_CARD,
   // SELECT_CARD,
   TOGGLE_CARD_CHALLENGE,
-  EXTEND_SELECTED_CARD,
+  // EXTEND_SELECTED_CARD,
   PLAY_CARD_CHALLENGE,
-  TOGGLE_CARD_AUTHORING,
+  // TOGGLE_CARD_AUTHORING,
   DRAG_CARD,
   LOADING_CARDS,
-  TOGGLE_TSNE_VIEW
+  TOGGLE_TSNE_VIEW,
+  SUBMIT_CHALLENGE
   // ADD_CARD_FILTER,
   // REMOVE_CARD_FILTER,
   // FILTER_CARDS
@@ -158,7 +159,7 @@ function reducer(state = INITIAL_STATE, action) {
       };
     }
     case CREATE_CARD: {
-      const { tmpCards } = state;
+      const { tmpCards, createdCards } = state;
 
       const newCard = action.options;
 
@@ -167,6 +168,7 @@ function reducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         tmpCards: newCards,
+        createdCards: [newCard, ...createdCards],
         selectedCardId: newCard.id,
         extCardId: null,
         tmpCard: defaultCardTemplate
@@ -178,12 +180,12 @@ function reducer(state = INITIAL_STATE, action) {
     }
 
     case UPDATE_CARD: {
-      const { tmpCards } = state;
+      const { createdCards } = state;
 
       const updatedCard = action.options;
       console.log('updatedCard', updatedCard);
 
-      const updatedCards = tmpCards.map(c => {
+      const updatedCards = createdCards.map(c => {
         if (c.id === updatedCard.id) {
           console.log('change', updatedCard);
           return updatedCard;
@@ -193,7 +195,9 @@ function reducer(state = INITIAL_STATE, action) {
 
       return {
         ...state,
-        tmpCards: updatedCards
+        // TODO: remove
+        // tmpCards: updatedCards,
+        createdCards: updatedCards
       };
       // const tmpCards = [...createdCards];
 
@@ -203,6 +207,32 @@ function reducer(state = INITIAL_STATE, action) {
       // tmpCards[cardIndex] = { ...cards[cardIndex], ...cardData };
     }
 
+    case SUBMIT_CHALLENGE: {
+      const { createdCards } = state;
+
+      const { uid, cid, ...challengeSubmission } = action.options;
+      console.log('challengeSubmission', challengeSubmission);
+
+      const updatedCards = createdCards.map(c => {
+        if (c.id === cid) {
+          return { ...c, challengeSubmission };
+        }
+        return c;
+      });
+
+      return {
+        ...state,
+        // TODO: remove
+        // tmpCards: updatedCards,
+        createdCards: updatedCards
+      };
+      // const tmpCards = [...createdCards];
+
+      // const cardIndex = tmpCards.findIndex(c => c.id === cardData.id);
+      // console.log('cardIndex', cardIndex);
+      // console.log('existAlready');
+      // tmpCards[cardIndex] = { ...cards[cardIndex], ...cardData };
+    }
     // case SELECT_CARD: {
     //   const { cards } = state;
     //   const selectedCardId = action.options;

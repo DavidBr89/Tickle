@@ -110,9 +110,20 @@ export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
 export function addCommentSuccess(options) {
   return { type: ADD_COMMENT_SUCCESS, options };
 }
+
 export const ADD_COMMENT_ERROR = 'ADD_COMMENT_ERROR';
 export function addCommentError(options) {
   return { type: ADD_COMMENT_ERROR, options };
+}
+
+export const SUBMIT_CHALLENGE = 'SUBMIT_CHALLENGE';
+export function submitChallenge(options) {
+  return { type: SUBMIT_CHALLENGE, options };
+}
+
+export const SUBMIT_CHALLENGE_SUCCESS = 'SUBMIT_CHALLENGE_SUCCESS';
+export function submitChallengeSuccess(options) {
+  return { type: SUBMIT_CHALLENGE_SUCCESS, options };
 }
 
 // export const TOGGLE_DATA_VIEW = 'TOGGLE_DATA_VIEW';

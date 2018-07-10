@@ -130,6 +130,9 @@ export const createShadowStyle = (color = 'grey') => ({
 
 export const modalBorder = color => ({ borderTop: `1px solid ${color}` });
 
+
+export const coverPhotoStyle = { height: '50%', maxHeight: 400, width: '100%' };
+
 export const UIthemeContext = React.createContext({
   uiColor: 'orange',
   background: 'grey'

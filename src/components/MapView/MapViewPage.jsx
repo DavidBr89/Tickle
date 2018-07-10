@@ -277,14 +277,6 @@ class MapViewPage extends Component {
 
     return (
       <React.Fragment>
-        <Modal
-          visible={cardChallengeOpen}
-          onClose={() => toggleCardChallenge({ cardChallengeOpen: false })}
-        >
-          <ModalBody>
-            <PhotoChallenge />
-          </ModalBody>
-        </Modal>
         <div
           className="w-100 h-100"
           style={{ position: 'relative', overflow: 'hidden' }}
@@ -355,38 +347,33 @@ class MapViewPage extends Component {
                   }}
                 >
                   {d => (
-                    <div
-                      className="w-100 h-100"
+                    <PreviewCard
+                      {...d}
+                      onClick={() => previewCardAction(d)}
+                      tagColorScale={tagColorScale}
                       key={d.id}
+                      edit={d.template}
+                      selected={selectedCardId === d.id}
                       style={{
-                        display: 'flex',
-                        justifyContent: 'center'
-                        // border: 'black 5px solid'
-                        // pointerEvents: 'none'
-                      }}
-                    >
-                      <div style={{ width: '100%', height: '100%' }}>
-                        <PreviewCard
-                          {...d}
-                          onClick={() => previewCardAction(d)}
-                          tagColorScale={tagColorScale}
-                          key={d.id}
-                          edit={d.template}
-                          selected={selectedCardId === d.id}
-                          style={{
-                            transition: `transform 1s`,
-                            transform: selectedCardId === d.id && 'scale(1.2)',
-                            // zIndex: selectedCardId === d.id && 5000,
-                            opacity: d.template && 0.8
+                        transition: `transform 1s`,
+                        //TODO: change later
+                        height: height/4,
+                        // TODO
+                        // TODO
+                        // TODO
+                        // TODO
+                        // TODO
+                        // height: '100%',
+                        transform: selectedCardId === d.id && 'scale(1.2)',
+                        // zIndex: selectedCardId === d.id && 5000,
+                        opacity: d.template && 0.8
 
-                            // width: '100%',
-                            // height: '100%',
-                            // width: '100%'
-                            // maxWidth: '200px'
-                          }}
-                        />
-                      </div>
-                    </div>
+                        // width: '100%',
+                        // height: '100%',
+                        // width: '100%'
+                        // maxWidth: '200px'
+                      }}
+                    />
                   )}
                 </Accordion>
               </div>

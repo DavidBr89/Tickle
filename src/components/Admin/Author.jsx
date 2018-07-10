@@ -8,7 +8,7 @@ import { db } from 'Firebase';
 import colorClasses from '../utils/colorClasses';
 
 // import { skillTypes } from '../../dummyData';
-import setify from 'Utils/setify';
+// import setify from 'Utils/setify';
 import CardMarker from 'Cards/CardMarker';
 import { FieldSet } from 'Cards/layout';
 

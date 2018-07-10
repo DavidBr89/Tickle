@@ -5,11 +5,9 @@ import { scaleLinear, extent, range, scaleOrdinal } from 'd3';
 
 import { db } from 'Firebase';
 
-import colorClasses from '../utils/colorClasses';
-
 // import { skillTypes } from '../../dummyData';
-import CardMarker from './CardMarker';
-import { FieldSet } from './layout';
+import CardMarker from '../CardMarker';
+import { FieldSet } from '../layout';
 
 const profileSrc = () => {
   const gender = Math.random() < 0.5 ? 'men' : 'women';

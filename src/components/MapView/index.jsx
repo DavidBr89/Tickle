@@ -43,7 +43,6 @@ const mapStateToProps = state => {
 
   // const { userLocation } = state.MapView;
 
-  console.log('tmpCard', tmpCard);
   const templateCard = {
     ...tmpCard,
     author: { ...authUser },
@@ -51,19 +50,21 @@ const mapStateToProps = state => {
   };
 
   console.log('templateCard', templateCard);
-  const cards = authEnv ? [templateCard, ...tmpCards] : createdCards;
+  const cards = authEnv ? [templateCard, ...createdCards] : createdCards;
   const filteredCards = cards.filter(
-    d => filterSet.length === 0 || intersection(d.tags, filterSet).length === filterSet.length
+    d =>
+      filterSet.length === 0 ||
+      intersection(d.tags, filterSet).length === filterSet.length
   );
   // .concat([templateCard]);
+  //
+  console.log('filteredCards', filteredCards);
 
   const cardSets = setify(filteredCards);
 
   console.log('SelectedCardId', selectedCardId, filteredCards);
   const selectedCard =
-    selectedCardId !== null
-      ? filteredCards.find(d => d.id === selectedCardId)
-      : null;
+      filteredCards.find(d => d.id === selectedCardId) || null;
 
   const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
 

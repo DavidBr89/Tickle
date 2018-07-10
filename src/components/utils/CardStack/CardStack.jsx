@@ -1,25 +1,36 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { range, scaleBand } from 'd3';
+import * as d3 from 'd3';
 // import VisibilitySensor from 'react-visibility-sensor/visibility-sensor.js';
 
 function centerLayout(nextProps) {
-  const { slotSize, width, data, selectedIndex } = nextProps || this.props;
-  const center = width / 2;
+  const { slotSize, width, height, data, selectedIndex, direction } = nextProps;
+  const size = direction === 'horizontal' ? width : height;
+
+  const center = size / 2;
 
   const leftLen = selectedIndex + 1;
   const rightLen = data.length - selectedIndex;
 
-  // TODO: simplify
+  const leftSize = center - (slotSize * 3) / 2;
+
+  const rightSize = size - (slotSize * 3) / 2 - center;
+
+  const bufferLeft = index => (center - slotSize) / (leftLen - index);
+  const leftPos = j => (j * leftSize) / leftLen;
   const leftScale = j =>
-    center -
-    (slotSize * 3) / 2 -
-    ((leftLen - j) * (center - (slotSize * 3) / 2)) / leftLen;
-  //
+    center - slotSize > slotSize ? bufferLeft(j) + leftPos(j) : leftPos(j);
+
+  const bufferRight = index => slotSize / (rightLen - index);
+  const rightPos = j =>
+    center + slotSize / 2 + ((rightLen - j) * rightSize) / rightLen;
+
+  //TODO: not correct, fix bufferRight
   const rightScale = j =>
-    center +
-    slotSize / 2 +
-    ((rightLen - j) * (width - slotSize - center - slotSize / 2)) / rightLen;
+    rightPos(j) - bufferRight(j) >= center + slotSize / 2
+      ? rightPos(j) - bufferRight(j)
+      : rightPos(j);
 
   const leftCards = data
     .slice(0, selectedIndex)
@@ -59,10 +70,10 @@ function centerLayout(nextProps) {
       zIndex: j
     }));
 
-  return { leftCards, centerCard, rightCards };
+  return [...leftCards, ...centerCard, ...rightCards];
 }
 
-class CardGrid extends Component {
+class CardStack extends Component {
   static propTypes = {
     data: PropTypes.array,
     style: PropTypes.object,
@@ -94,19 +105,140 @@ class CardGrid extends Component {
 
   constructor(props) {
     super(props);
-    const cardStacks = centerLayout.bind(this)(props);
-    this.state = {
-      cardStacks
-    };
 
     // TODO: check later
     // this.transitionStyles = transition.bind(this);
   }
 
-  static getDerivedStateFromProps(nextProps) {
-    const cardStacks = centerLayout.bind(this)(nextProps);
-    return { cardStacks };
-  }
+  // static getDerivedStateFromProps(nextProps) {
+  //   const cardStacks = centerLayout.bind(this)(nextProps);
+  //   return { cardStacks };
+  // }
+
+  baseLayout = () => {
+    const {
+      data,
+      innerMargin,
+      style,
+      className,
+      children,
+      unit,
+      slotSize,
+      width,
+      // centered,
+      // selectedIndex,
+      duration,
+      height,
+      onClick,
+      direction
+    } = this.props;
+
+    const transition = `left ${duration}ms, top ${duration}ms, transform ${duration}ms`;
+
+    const size = direction === 'horizontal' ? width : height;
+    const scale = scaleBand()
+      .domain(range(0, data.length))
+      .paddingInner(1)
+      // .align(0.5)
+      .range([0, size - slotSize]);
+    // i => i * (100 - slotSize * 3 / 4) / data.length;
+    const plotData = data.map((d, i) => ({ ...d, pos: scale(i) }));
+    const position = d =>
+      direction === 'vertical'
+        ? { top: `${d.pos}${unit}` }
+        : { left: `${d.pos}${unit}` };
+
+    return plotData;
+    // return (
+    //   <div
+    //     className={className}
+    //     style={{ ...style, height: `${height}${unit}`, position: 'relative' }}
+    //   >
+    //     <div
+    //       style={{
+    //         perspective: '2400px',
+    //         perspectiveOrigin: '50% -50%',
+    //         width: '100%',
+    //         height: '100%'
+    //       }}
+    //     >
+    //       {plotData.map((d, i) => (
+    //         <div
+    //           key={d.id}
+    //           style={{
+    //             position: 'absolute',
+    //             width: `${slotSize - innerMargin}${unit}`,
+    //             height: '100%',
+    //             // maxWidth: '200px',
+    //             paddingLeft: `${innerMargin / 2}${unit}`,
+    //             paddingRight: `${innerMargin / 2}${unit}`,
+    //             cursor: 'pointer',
+    //             transition,
+    //             ...position(d)
+    //           }}
+    //         >
+    //           {children(d)}
+    //         </div>
+    //       ))}
+    //     </div>
+    //   </div>
+    // );
+  };
+
+  hoverLayout = (index = null) => {
+    const {
+      slotSize,
+      direction,
+      width,
+      height,
+      data,
+      innerMargin,
+      style,
+      className,
+      children,
+      unit,
+      // slotSize,
+      // centered,
+      // selectedIndex,
+      duration,
+      onClick
+      // direction
+    } = this.props;
+
+    const size = direction === 'horizontal' ? width : height;
+
+    const scale = d3
+      .scaleLinear()
+      .domain([0, data.length - 1])
+      .range([0, size - slotSize]);
+
+    if (index === null || index < 0) {
+      return data.map((c, i) => ({ ...c, pos: scale(i) }));
+    }
+
+    const xFirstLeft = d3
+      .scaleLinear()
+      .domain([0, index - 1])
+      .range([0, d3.max([scale(index) - slotSize, 0])]);
+
+    const xFirstRight = d3
+      .scaleLinear()
+      .domain([index + 1, data.length - 1])
+      .range([d3.min([scale(index) + slotSize, size]), width]);
+
+    return data.map((c, i) => {
+      if (index < i) {
+        return { ...c, pos: xFirstRight(i) };
+      }
+      if (index > i) {
+        return { ...c, pos: xFirstLeft(i) };
+      }
+      if (index === i) {
+        return { ...c, pos: scale(i) };
+      }
+      return c;
+    });
+  };
 
   render() {
     const {
@@ -126,65 +258,28 @@ class CardGrid extends Component {
       direction
     } = this.props;
 
-    const { cardStacks } = this.state;
+    // const { cardStacks } = this.state;
 
-    const { leftCards, centerCard, rightCards } = cardStacks;
-    const allCards = [...leftCards, ...centerCard, ...rightCards];
+    const allCards = centered
+      ? centerLayout(this.props)
+      : selectedIndex !== null
+        ? this.hoverLayout()
+        : this.baseLayout();
 
-    const transition = `left ${duration}ms, transform ${duration}ms`;
+    // const allCards = [...leftCards, ...centerCard, ...rightCards];
 
     // TODO: reorder
-    if (!centered) {
-      const scale = scaleBand()
-        .domain(range(0, data.length))
-        .paddingInner(1)
-        // .align(0.5)
-        .range([0, width - slotSize]);
-      // i => i * (100 - slotSize * 3 / 4) / data.length;
-      const position = i =>
-        direction === 'vertical'
-          ? { top: `${scale(i)}${unit}` }
-          : { left: `${scale(i)}${unit}` };
-      return (
-        <div
-          className={className}
-          style={{ ...style, height: `${height}${unit}`, position: 'relative' }}
-        >
-          <div
-            style={{
-              perspective: '2400px',
-              perspectiveOrigin: '50% -50%',
-              width: '100%',
-              height: '100%'
-            }}
-          >
-            {data.map((d, i) => (
-              <div
-                key={d.id}
-                style={{
-                  position: 'absolute',
-                  width: `${slotSize - innerMargin}${unit}`,
-                  height: '100%',
-                  // maxWidth: '200px',
-                  paddingLeft: `${innerMargin / 2}${unit}`,
-                  paddingRight: `${innerMargin / 2}${unit}`,
-                  cursor: 'pointer',
-                  transition,
-                  ...position(i)
-                }}
-              >
-                {children(d)}
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-    }
 
     const centerPos = c =>
       direction === 'vertical'
         ? { top: `${c.pos}${unit}` }
         : { left: `${c.pos}${unit}` };
+
+    const size =
+      direction === 'horizontal'
+        ? { width: `${slotSize - innerMargin}${unit}` }
+        : { height: `${slotSize - innerMargin}${unit}` };
+
     return (
       <div
         className={className}
@@ -197,26 +292,34 @@ class CardGrid extends Component {
             height: '100%'
           }}
         >
-          {data.map(d => {
+          {data.map((d, i) => {
+            // important for KEY
             const c = allCards.find(e => e.id === d.id);
             return (
               <div
                 key={d.id}
                 style={{
                   position: 'absolute',
-                  width: `${slotSize - innerMargin}${unit}`,
-                  height: '100%',
+                  // TODO
+                  // TODO
+                  // TODO
+                  // TODO
+                  // TODO
+                  // TODO
+                  // TODO
+                  // height: '100%',
                   // maxWidth: '200px',
                   paddingLeft: `${innerMargin / 2}${unit}`,
                   paddingRight: `${innerMargin / 2}${unit}`,
                   cursor: 'pointer',
                   // maxWidth: '200px',
-                  transition,
+                  transition: `left ${duration}ms, top ${duration}ms, transform ${duration}ms`,
                   zIndex: c.zIndex,
-                  ...centerPos(c),
+                  ...size,
+                  ...centerPos(c)
                 }}
               >
-                {children(d)}
+                {children(d, i)}
               </div>
             );
           })}
@@ -226,7 +329,7 @@ class CardGrid extends Component {
   }
 }
 
-class AccordionWrapper extends Component {
+export class CardStackControlled extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
@@ -235,22 +338,13 @@ class AccordionWrapper extends Component {
 
   static defaultProps = { onChange: d => d };
 
-  constructor(props) {
-    super(props);
-    this.state = { selectedIndex: null };
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { selectedId } = this.state;
-    clearTimeout(this.id);
-    this.id = setTimeout(() => this.props.onChange(selectedId), 1000);
-  }
+  state = { selectedIndex: null };
 
   render() {
     const { data } = this.props;
     const { selectedIndex } = this.state;
     return (
-      <CardGrid
+      <CardStack
         {...this.props}
         selectedIndex={this.state.selectedIndex}
         onClick={selectedId =>
@@ -259,9 +353,11 @@ class AccordionWrapper extends Component {
             selectedId
           })
         }
-      />
+      >
+        <div />
+      </CardStack>
     );
   }
 }
 
-export default CardGrid;
+export default CardStack;

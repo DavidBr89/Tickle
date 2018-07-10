@@ -4,9 +4,11 @@ import MapGL from 'react-map-gl';
 
 import { scaleOrdinal } from 'd3';
 
-import MapAreaRadius from '../utils/map-layers/MapAreaRadius';
-import CardMarker from './CardMarker';
-import { DivOverlay, UserOverlay } from '../utils/map-layers/DivOverlay';
+// TODO remove
+import MapAreaRadius from '../../utils/map-layers/MapAreaRadius';
+import CardMarker from '../CardMarker';
+// TODO remove
+import { DivOverlay } from '../../utils/map-layers/DivOverlay';
 
 import DimWrapper from 'Utils/DimensionsWrapper';
 

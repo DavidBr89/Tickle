@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { addCardFilter, removeCardFilter } from 'Reducers/DataView/actions';
+// import { addCardFilter, removeCardFilter } from 'Reducers/DataView/actions';
+import { tagFilter } from 'Reducers/DataView/async_actions';
 
 // import * as chromatic from 'd3-scale-chromatic';
 // import hull from 'hull.js';
@@ -138,7 +139,7 @@ function mapStateToProps() {
 }
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ addCardFilter, removeCardFilter }, dispatch);
+  bindActionCreators({ tagFilter }, dispatch);
 
 export default connect(
   mapStateToProps,

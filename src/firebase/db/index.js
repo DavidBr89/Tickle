@@ -1,10 +1,30 @@
 import { firestore, storageRef } from '../firebase';
 
-const removeFunctionFields = ({ uiColor, template, edit, ...rest }) =>
-  Object.keys(rest).reduce((acc, attr) => {
-    if (!(rest[attr] instanceof Function)) acc[attr] = rest[attr];
+const pruneFields = fields => {
+  const isNotFileOrFunc = val =>
+    !(val instanceof File) && !(val instanceof Function);
+
+  const pruneObject = obj =>
+    Object.keys(obj).reduce((acc, attr) => {
+      const val = obj[attr];
+      if (isNotFileOrFunc(val)) acc[attr] = val;
+      return acc;
+    }, {});
+
+  return Object.keys(fields).reduce((acc, attr) => {
+    const val = fields[attr];
+    if (val instanceof Array) {
+      acc[attr] = val;
+      return acc;
+    }
+    if (val instanceof Object) {
+      acc[attr] = pruneObject(val);
+      return acc;
+    }
+    if (isNotFileOrFunc(val)) acc[attr] = val;
     return acc;
   }, {});
+};
 
 export const readCards = (uid, collectionName = 'readableCards') =>
   firestore
@@ -27,7 +47,12 @@ export const addImgToStorage = (file, uid) => {
   console.log('metadata', metadata, 'imgRef', imgRef);
   return imgRef
     .put(file, metadata)
-    .then(() => new Promise(resolve => resolve(imgRef.getDownloadURL())));
+    .then(() => new Promise(resolve => resolve(imgRef.getDownloadURL())))
+    .catch(err => {
+      throw new Error(`erro in uploading img for ${uid}`);
+      // Handle any error that occurred in any of the previous
+      // promises in the chain.
+    });
 };
 
 export const testAddImgToStorage = file => {
@@ -41,6 +66,7 @@ export const testAddImgToStorage = file => {
 
 // TODO: error handling
 const uploadImgFields = (card, uid) => {
+  console.log('card.img', card.img);
   const cardImgFile = card.img ? card.img.file : null;
   const cardChallengeFile =
     card.challenge !== null && card.challenge.img
@@ -73,8 +99,7 @@ const uploadImgFields = (card, uid) => {
 
   return Promise.all([cardImgPromise, challImgPromise]).then(values => {
     const imgFields = values.reduce((acc, d) => ({ ...acc, ...d }));
-    const newCard = { ...removeFunctionFields(card), ...imgFields };
-    return newCard;
+    return imgFields;
   });
 };
 
@@ -140,18 +165,20 @@ export const onceGetUsers = () =>
     });
 
 export const doCreateCard = (uid, card) =>
-  uploadImgFields(card, uid).then(c => {
+  uploadImgFields(card, uid).then(imgFields => {
     // TODO
-    if (c.id === 'temp') {
+    if (card.id === 'temp') {
       console.log('temp to create');
       throw 'error: temp card to create';
     } else {
+      //TODO: make explicit
+      const newCard = pruneFields({ ...card, ...imgFields });
       return firestore
         .collection('users')
         .doc(uid)
         .collection('createdCards')
-        .doc(c.id)
-        .set(c);
+        .doc(newCard.id)
+        .set(newCard);
     }
   });
 

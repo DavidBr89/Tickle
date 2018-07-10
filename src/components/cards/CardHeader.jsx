@@ -28,7 +28,7 @@ const CardHeader = ({
   // TODO: change cardMini2 class
   return (
     <div
-      className="pl-2 pr-2 pt-2"
+      className="pl-2 pr-2 pt-3"
       style={{
         background,
         overflow: 'hidden',

@@ -7,11 +7,12 @@ import PhotoUpload from 'Utils/PhotoUpload';
 
 import { isEqual } from 'lodash';
 
-import placeholderImg from './placeholder.png';
+import PhotoChallenge from 'Src/components/Challenges/MatchPhotoChallenge';
+
 import { Modal, ModalBody } from 'Utils/Modal';
-import { MediaSearch, MediaOverview } from './MediaSearch';
+import { MediaSearch, MediaOverview } from '../MediaSearch';
 import ChallengeAuthorModalBody from 'Src/components/ChallengeAuthor';
-import { cardLayout } from './styles';
+import { cardLayout, coverPhotoStyle } from '../styles';
 
 import {
   // FieldSet,
@@ -26,11 +27,22 @@ import {
   // SmallPreviewTags,
   BigButton,
   FlipButton
-} from './layout';
+} from '../layout';
 
 import { TagInput, PreviewTags } from 'Utils/Tag';
 
-import CardHeader from './CardHeader';
+import CardHeader from '../CardHeader';
+
+const FooterBtn = ({ onClick, children, disabled, className, style = {} }) => (
+  <button
+    className={`${'btn '}${className}`}
+    style={{ ...style, fontWeight: 'bold' }}
+    onClick={onClick}
+    disabled={disabled}
+  >
+    {children}
+  </button>
+);
 
 const defaultProps = {
   title: null,
@@ -47,164 +59,16 @@ const defaultProps = {
   comments: []
 };
 
-const FooterBtn = ({ onClick, children, disabled, className, style = {} }) => (
-  <button
-    className={`${'btn '}${className}`}
-    style={{ ...style, fontWeight: 'bold' }}
-    onClick={onClick}
-    disabled={disabled}
-  >
-    {children}
-  </button>
-);
-
-const coverPhotoStyle = { height: '50%', maxHeight: 400, width: '100%' };
-
-class ReadCardFront extends Component {
-  static propTypes = {
-    children: PropTypes.node,
-    className: PropTypes.string,
-    uiColor: PropTypes.string,
-    tags: PropTypes.any, // PropTypes.oneOf([null, PropTypes.array]),
-    title: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    img: PropTypes.oneOf([PropTypes.object, null]),
-    onCollect: PropTypes.func,
-    onClose: PropTypes.func,
-    flipHandler: PropTypes.func,
-    style: PropTypes.object,
-    background: PropTypes.string,
-    tagColorScale: PropTypes.func
-  };
-
-  static defaultProps = {
-    ...defaultProps,
-    onCollect: null,
-    flipHandler: d => d,
-    tagColorScale: () => 'green'
-  };
-
-  constructor(props) {
-    super(props);
-    this.state = { dialog: null };
-  }
-
-  modalReadContent(modalTitle) {
-    const { title, tags, description, media, uiColor } = this.props;
-    switch (modalTitle) {
-      case 'Title':
-        return <p style={{ width: '100%' }}>{title}</p>;
-      case 'Tags':
-        return <p style={{ width: '100%' }}>{tags}</p>;
-      case 'Photo':
-        return <div>photo</div>;
-      case 'Description':
-        return <p style={{ width: '100%' }}>{description}</p>;
-      case 'Media':
-        return (
-          <div>
-            <MediaOverview data={media || []} uiColor={uiColor} />
-          </div>
-        );
-      case 'Challenge':
-        return <div>challenge</div>;
-      default:
-        return <div>error</div>;
-    }
-  }
-
-  render() {
-    const {
-      tags,
-      img,
-      description,
-      media,
-      onCollect,
-      uiColor,
-      flipHandler,
-      // background,
-      tagColorScale
-    } = this.props;
-
-    const { dialog } = this.state;
-    const modalVisible = dialog !== null;
-    const dialogTitle = dialog !== null ? dialog.title : null;
-
-    // TODO: modal color
-    return (
-      <div className={cardLayout}>
-        <Modal
-          visible={modalVisible}
-          title={dialogTitle}
-          onClose={() => this.setState({ dialog: null })}
-        >
-          {this.modalReadContent(dialogTitle)}
-        </Modal>
-
-        <ImgOverlay src={img ? img.url : null} style={coverPhotoStyle}>
-          <div style={{ display: 'flex', width: '70%', maxWidth: '80%' }}>
-            {/* TODO: fix width */}
-            <PreviewTags
-              colorScale={tagColorScale}
-              uiColor={uiColor}
-              data={tags}
-            />
-          </div>
-        </ImgOverlay>
-        <DescriptionField
-          style={{ maxHeight: '20%' }}
-          text={description}
-          borderColor={uiColor}
-          edit
-          onEdit={() =>
-            this.setState({
-              dialog: {
-                title: 'Description',
-                id: 'description',
-                data: description
-              }
-            })
-          }
-        />
-        <MediaField
-          style={{ height: '20%' }}
-          media={media}
-          borderColor={uiColor}
-          onClick={() =>
-            this.setState({ dialog: { title: 'Media', data: media } })
-          }
-        />
-        <div className="p-1 pt-3" style={{ display: 'flex' }}>
-          <BigButton
-            onClick={onCollect}
-            color={uiColor}
-            style={{ width: '80%' }}
-          >
-            {'Collect Card'}{' '}
-          </BigButton>
-
-          <FlipButton
-            color={uiColor}
-            onClick={flipHandler}
-            style={{ width: '20%' }}
-            className="ml-2"
-          />
-        </div>
-      </div>
-    );
-  }
-}
-
 class EditCardFront extends PureComponent {
   static propTypes = {
-    ...ReadCardFront.propTypes,
+    // ...ReadCardFront.propTypes,
     template: PropTypes.bool,
     onAttrUpdate: PropTypes.func,
     onSubmit: PropTypes.func,
     allChallenges: PropTypes.array
   };
   static defaultProps = {
-    ...ReadCardFront.defaultProps,
+    // ...ReadCardFront.defaultProps,
     onAttrUpdate: d => d,
     onSubmit: d => d,
     allChallenges: [],
@@ -256,7 +120,7 @@ class EditCardFront extends PureComponent {
   modalWriteContent(modalTitle) {
     const { data } = this.state;
     const { challenge } = data;
-    const { /* allChallenges, */ uiColor, tagColorScale } = this.props;
+    const { uiColor, tagColorScale } = this.props;
 
     // console.log('tagColorScale', tagColorScale);
     // TODO: img
@@ -291,9 +155,9 @@ class EditCardFront extends PureComponent {
           <ModalBody footer={closeBtn}>
             <PhotoUpload
               uiColor={uiColor}
-              defaultImg={img && img.url}
-              onChange={imgFile => {
-                this.setFieldState({ img: imgFile, dialog: null });
+              imgUrl={img ? img.url : null}
+              onChange={imgObj => {
+                this.setFieldState({ img: imgObj, dialog: null });
               }}
             />
           </ModalBody>
@@ -517,23 +381,4 @@ class EditCardFront extends PureComponent {
 
 EditCardFront.defaultProps = defaultProps;
 
-const CardFront = props =>
-  props.edit ? (
-    <EditCardFront {...props} />
-  ) : (
-    <CardHeader {...props}>
-      <ReadCardFront {...props} />
-    </CardHeader>
-  );
-
-CardFront.propTypes = {
-  edit: PropTypes.bool,
-  onAttrUpdate: PropTypes.func
-};
-
-CardFront.defaultProps = {
-  edit: false,
-  onAttrUpdate: () => null
-};
-
-export default CardFront;
+export default EditCardFront;

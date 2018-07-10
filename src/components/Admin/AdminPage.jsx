@@ -4,7 +4,38 @@ import PropTypes from 'prop-types';
 import Author from './Author';
 
 import PreviewCard from 'Cards/PreviewCard';
-import CardStack from 'Utils/CardStack';
+import CardStack from 'Utils/CardStack/CardStack';
+
+export class ControlledCardStack extends Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string,
+    onChange: PropTypes.func
+  };
+
+  static defaultProps = { onChange: d => d };
+
+  state = { selectedIndex: 0 };
+
+  render() {
+    const { data, children } = this.props;
+    const { selectedIndex } = this.state;
+    return (
+      <CardStack {...this.props} selectedIndex={this.state.selectedIndex}>
+        {(d, i) => (
+          <div
+            onClick={() => {
+              // console.log('ControlledCardStack click', d);
+              this.setState({ selectedIndex: i });
+            }}
+          >
+            {children(d)}
+          </div>
+        )}
+      </CardStack>
+    );
+  }
+}
 
 class AdminPage extends Component {
   static propTypes = {
@@ -27,24 +58,23 @@ class AdminPage extends Component {
     const { authUser, cards } = this.props;
     const { users } = this.props;
     const selectedCardId = null;
+    console.log('CardStack', CardStack);
     return (
       <div className="content-block">
         <h1>Admin {authUser.username}</h1>
         <p>Restricted area! Only users with the admin rule are authorized.</p>
         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <div>
-            <CardStack
+          <div style={{ height: 900, width: 200, border: 'black solid 1px' }}>
+            <ControlledCardStack
               data={cards}
               className="ml-1 mr-2"
               duration={600}
-              centered={selectedCardId !== null}
-              selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
-              width={100}
+              width={500}
               height={900}
               unit="px"
               direction="vertical"
-              slotSize={100}
-              style={{}}
+              slotSize={200}
+              centered
             >
               {d => (
                 <div
@@ -68,6 +98,7 @@ class AdminPage extends Component {
                       style={{
                         transition: `transform 1s`,
                         transform: selectedCardId === d.id && 'scale(1.2)',
+                        width: 180,
                         // zIndex: selectedCardId === d.id && 5000,
                         opacity: d.template && 0.8
 
@@ -80,7 +111,7 @@ class AdminPage extends Component {
                   </div>
                 </div>
               )}
-            </CardStack>
+            </ControlledCardStack>
           </div>
           <div>
             {users.map(u => (

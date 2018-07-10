@@ -150,8 +150,9 @@ class TagCloud extends React.Component {
       colorScale,
       data,
       selectedTags,
-      addCardFilter,
-      removeCardFilter,
+      // addCardFilter,
+      // removeCardFilter,
+      tagFilter,
       filterSet
     } = this.props;
 
@@ -161,11 +162,7 @@ class TagCloud extends React.Component {
         {...d.data}
         key={d.data.key}
         filterSet={filterSet}
-        onClick={tag =>
-          filterSet.includes(tag)
-            ? removeCardFilter([tag])
-            : addCardFilter([tag])
-        }
+        onClick={tag => tagFilter({ tag, filterSet })}
         color={colorScale(d.data.key)}
         highlighted={selectedTags.includes(d.data.key)}
         selected={filterSet.includes(d.data.key)}

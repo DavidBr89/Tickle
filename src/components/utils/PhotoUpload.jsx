@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { DimWrapper } from 'Utils';
+// import { DimWrapper } from 'Utils';
 
-import { createShadowStyle, UIthemeContext } from 'Cards/styles';
+// import { createShadowStyle, UIthemeContext } from 'Cards/style';
 
 function convertToImgSrc(fileList) {
   let file = null;
@@ -21,10 +21,129 @@ function convertToImgSrc(fileList) {
   return null;
 }
 
-class PhotoUpload extends Component {
+// class ControlledPhotoUpload extends Component {
+//   static propTypes = {
+//     className: PropTypes.string,
+//     style: PropTypes.object,
+//     onChange: PropTypes.func,
+//     placeholder: PropTypes.string,
+//     defaultImg: PropTypes.any
+//   };
+//
+//   static defaultProps = {
+//     className: '',
+//     style: {},
+//     onChange: d => d,
+//     uiColor: 'grey',
+//     placeholder: 'Add your description',
+//     defaultImg: null,
+//     width: 250,
+//     height: 250
+//   };
+//
+//   state = {
+//     imgUrl: this.props.defaultImgUrl,
+//     imgFiles: null
+//   };
+//
+//   shouldComponentUpdate(nextProps, nextState) {
+//     return (
+//       this.state.imgUrl !== nextState.imgUrl ||
+//       this.props.defaultImgUrl !== nextProps.defaultImgUrl
+//     );
+//   }
+//
+//   componentDidUpdate(prevProps, prevState) {
+//     const { imgUrl, imgFile } = this.state;
+//     const { onChange } = this.props;
+//     // console.log('imgFiles', imgFile);
+//     if (prevState.imgUrl !== imgUrl) {
+//       onChange({ url: imgUrl, file: imgFile });
+//     }
+//   }
+//
+//   // TODO: remove
+//   contHeight = 300;
+//
+//   render() {
+//     const {
+//       className,
+//       placeholder,
+//       style,
+//       onChange,
+//       uiColor,
+//       defaultImg,
+//       width,
+//       height
+//     } = this.props;
+//
+//     const { imgUrl } = this.state;
+//     return (
+//       <div
+//         className={className}
+//         style={{ width: '100%', height: '100%', ...style }}
+//       >
+//         <div
+//           style={{
+//             overflow: 'hidden',
+//             height: '100%'
+//           }}
+//         >
+//           <div
+//             style={{
+//               // TODO: outsource
+//               height,
+//               width,
+//               // minHeight: 80,
+//               // maxHeight: 300,
+//               border: `dashed 3px ${uiColor}`,
+//               display: 'flex',
+//               justifyContent: 'center',
+//               alignItems: 'center'
+//             }}
+//           >
+//             {imgUrl ? (
+//               <div
+//                 style={{
+//                   overflow: 'hidden',
+//                   width: '100%'
+//                   // height: this.contHeight
+//                 }}
+//               >
+//                 <img src={imgUrl} width="100%" alt="test" />
+//               </div>
+//             ) : (
+//               <h1
+//                 className="pl-2 pr-2"
+//                 style={{ background: uiColor, color: 'black', margin: '20%' }}
+//               >
+//                 {'No Image'}
+//               </h1>
+//             )}
+//           </div>
+//           <input
+//             className="mt-3"
+//             style={{ border: `${uiColor} 1px solid` }}
+//             type="file"
+//             accept="image#<{(|"
+//             capture="environment"
+//             onChange={e => {
+//               this.setState({
+//                 imgUrl: convertToImgSrc(e.target.files),
+//                 imgFile: e.target.files[0]
+//               });
+//             }}
+//           />
+//         </div>
+//       </div>
+//     );
+//   }
+// }
+//
+export default class PhotoUpload extends Component {
   static propTypes = {
     className: PropTypes.string,
-    styles: PropTypes.object,
+    style: PropTypes.object,
     onChange: PropTypes.func,
     placeholder: PropTypes.string,
     defaultImg: PropTypes.any
@@ -32,7 +151,7 @@ class PhotoUpload extends Component {
 
   static defaultProps = {
     className: '',
-    styles: {},
+    style: {},
     onChange: d => d,
     uiColor: 'grey',
     placeholder: 'Add your description',
@@ -41,26 +160,26 @@ class PhotoUpload extends Component {
     height: 250
   };
 
-  state = {
-    imgUrl: this.props.defaultImgUrl,
-    imgFiles: null
-  };
+  // state = {
+  //   imgUrl: this.props.defaultImgUrl,
+  //   imgFiles: null
+  // };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return (
-      this.state.imgUrl !== nextState.imgUrl ||
-      this.props.defaultImgUrl !== nextProps.defaultImgUrl
-    );
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return (
+  //     this.state.imgUrl !== nextState.imgUrl ||
+  //     this.props.defaultImgUrl !== nextProps.defaultImgUrl
+  //   );
+  // }
 
-  componentDidUpdate(prevProps, prevState) {
-    const { imgUrl, imgFile } = this.state;
-    const { onChange } = this.props;
-    // console.log('imgFiles', imgFile);
-    if (prevState.imgUrl !== imgUrl) {
-      onChange({ url: imgUrl, file: imgFile });
-    }
-  }
+  // componentDidUpdate(prevProps, prevState) {
+  //   const { imgUrl, imgFile } = this.state;
+  //   const { onChange } = this.props;
+  //   // console.log('imgFiles', imgFile);
+  //   if (prevState.imgUrl !== imgUrl) {
+  //     onChange({ url: imgUrl, file: imgFile });
+  //   }
+  // }
 
   // TODO: remove
   contHeight = 300;
@@ -69,19 +188,19 @@ class PhotoUpload extends Component {
     const {
       className,
       placeholder,
-      styles,
+      style,
       onChange,
       uiColor,
       defaultImg,
-      width,
-      height
+      // width,
+      // height,
+      imgUrl
     } = this.props;
 
-    const { imgUrl } = this.state;
     return (
       <div
         className={className}
-        style={{ width: '100%', height: '100%', ...styles }}
+        style={{ width: '100%', height: '100%', ...style }}
       >
         <div
           style={{
@@ -92,8 +211,8 @@ class PhotoUpload extends Component {
           <div
             style={{
               // TODO: outsource
-              height,
-              width,
+              height: '100%',
+              width: '100%',
               // minHeight: 80,
               // maxHeight: 300,
               border: `dashed 3px ${uiColor}`,
@@ -128,9 +247,9 @@ class PhotoUpload extends Component {
             accept="image/*"
             capture="environment"
             onChange={e => {
-              this.setState({
-                imgUrl: convertToImgSrc(e.target.files),
-                imgFile: e.target.files[0]
+              onChange({
+                url: convertToImgSrc(e.target.files),
+                file: e.target.files[0]
               });
             }}
           />
@@ -139,5 +258,3 @@ class PhotoUpload extends Component {
     );
   }
 }
-
-export default PhotoUpload;

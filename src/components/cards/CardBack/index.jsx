@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import cx from './Card.scss';
+// import cx from './Card.scss';
 
-import { FieldSet, FlipButton } from './layout';
+import { FieldSet, FlipButton } from '../layout';
 import Comments from './Comments';
-import CardHeader from './CardHeader';
+import CardHeader from '../CardHeader';
 import Author from './Author';
 import { MapAreaControl } from './MapAreaControl';
 
@@ -122,7 +122,7 @@ class CardBackSkeleton extends Component {
     return (
       <div
         ref={cont => (this.cont = cont)}
-        className={`container ${cx.cardMini2} `}
+        className="container"
         style={{
           height: '90%',
           display: 'flex',

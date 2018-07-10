@@ -19,7 +19,9 @@ import {
   updateCardError,
   addComment,
   addCommentSuccess,
-  addCommentError
+  addCommentError,
+  submitChallenge,
+  submitChallengeSuccess
 } from './actions';
 
 import { selectCard, extendSelectedCard } from '../DataView/actions';
@@ -221,5 +223,19 @@ export function fetchNearByPlaces() {
           dispatch(receivePlaces(NearbyPlaces));
         })
     );
+  };
+}
+
+export function asyncSubmitChallenge({ uid, cid, response, imgUrl }) {
+  return function(dispatch) {
+    console.log('response', { uid, cid, response, imgUrl });
+    dispatch(submitChallenge({ uid, cid, response, imgUrl }));
+    // return fetch(
+    //   `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=50.847109,4.352439&radius=500&key=${
+    //     process.env.GoogleAccessToken
+    //   }${PROXY_URL}`
+    // ).then(json => {
+    //   dispatch(receivePlaces(NearbyPlaces));
+    // });
   };
 }

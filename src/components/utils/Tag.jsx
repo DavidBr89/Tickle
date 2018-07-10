@@ -7,7 +7,10 @@ const tagStyle = {
   paddingRight: 8,
   textAlign: 'center',
   marginRight: 2,
-  marginTop: 2
+  marginTop: 2,
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis'
 };
 
 export class TagList extends Component {
