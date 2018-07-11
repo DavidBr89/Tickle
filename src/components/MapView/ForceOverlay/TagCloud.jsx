@@ -162,7 +162,7 @@ class TagCloud extends React.Component {
         {...d.data}
         key={d.data.key}
         filterSet={filterSet}
-        onClick={tag => tagFilter({ tag, filterSet })}
+        onClick={tag => tagFilter({ tag, filterSet})}
         color={colorScale(d.data.key)}
         highlighted={selectedTags.includes(d.data.key)}
         selected={filterSet.includes(d.data.key)}

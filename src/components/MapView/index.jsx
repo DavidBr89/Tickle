@@ -25,13 +25,7 @@ import MapViewPage from './MapViewPage';
 
 // Container
 const mapStateToProps = state => {
-  const {
-    readableCards,
-    createdCards,
-    cardTemplateId,
-    tmpCard,
-    tmpCards
-  } = state.Cards;
+  const { readableCards, createdCards, cardTemplateId, tmpCard } = state.Cards;
 
   const { selectedCardId, filterSet } = state.DataView;
 
@@ -39,32 +33,24 @@ const mapStateToProps = state => {
   const { width, height, userLocation } = state.MapView;
 
   const { authEnv } = state.DataView;
-  const authUser = state.Session;
+  const { uid, username } = state.Session;
 
   // const { userLocation } = state.MapView;
 
   const templateCard = {
     ...tmpCard,
-    author: { ...authUser },
-    tags: tmpCard.tags.length > 0 ? tmpCard.tags : [authUser.username]
+    uid: uid,
+    tags: tmpCard.tags.length > 0 ? tmpCard.tags : [username]
   };
 
-  console.log('templateCard', templateCard);
   const cards = authEnv ? [templateCard, ...createdCards] : createdCards;
   const filteredCards = cards.filter(
     d =>
       filterSet.length === 0 ||
       intersection(d.tags, filterSet).length === filterSet.length
   );
-  // .concat([templateCard]);
-  //
-  console.log('filteredCards', filteredCards);
-
   const cardSets = setify(filteredCards);
-
-  console.log('SelectedCardId', selectedCardId, filteredCards);
-  const selectedCard =
-      filteredCards.find(d => d.id === selectedCardId) || null;
+  const selectedCard = filteredCards.find(d => d.id === selectedCardId) || null;
 
   const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
 
@@ -80,7 +66,7 @@ const mapStateToProps = state => {
     filterSet,
     // selectedTags,
     cards: filteredCards,
-    authUser
+    // authUser
   };
 };
 
@@ -101,59 +87,15 @@ const mapDispatchToProps = dispatch =>
 // });
 
 const mergeProps = (state, dispatcherProps) => {
-  const {
-    selectedCardId,
-    mapViewport,
-    width,
-    height,
-    dataView,
-    authUser,
-    extCardId
-  } = state;
-  const { uid } = authUser;
+  const { selectedCardId } = state;
+  const { selectCard, extendSelectedCard } = dispatcherProps;
 
-  const {
-    asyncUpdateCard,
-    updateCardTemplate,
-    asyncCreateCard,
-    asyncRemoveCard,
-    toggleDataView,
-    selectCard,
-    extendSelectedCard
-  } = dispatcherProps;
-
-  const viewport = { ...mapViewport, width, height };
-  const onCardDrop = cardData =>
-    selectedCardId === 'temp'
-      ? updateCardTemplate({ uid, cardData, viewport, dataView })
-      : asyncUpdateCard({ uid, cardData, viewport, dataView });
-
-  const cardAction = cardData =>
-    selectedCardId === 'temp'
-      ? asyncCreateCard({ uid, cardData, viewport, dataView })
-      : asyncRemoveCard({ uid, cid: cardData.id });
-
-  const onCardUpdate = cardData =>
-    selectedCardId === 'temp'
-      ? updateCardTemplate({ cardData, viewport, dataView })
-      : asyncUpdateCard({ uid, cardData, viewport, dataView });
-
-  // TODO: change
-  const setDataView = toggleDataView;
   const previewCardAction = d =>
     selectedCardId === d.id ? extendSelectedCard(d.id) : selectCard(d.id);
-
-  const unSelectCard = () => (extCardId === null ? selectCard(null) : d => d);
-
   return {
     ...state,
     ...dispatcherProps,
-    onCardDrop,
-    onCardUpdate,
-    cardAction,
-    setDataView,
-    previewCardAction,
-    unSelectCard
+    previewCardAction
   };
 };
 

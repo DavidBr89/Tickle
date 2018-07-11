@@ -9,10 +9,9 @@ import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 import DimWrapper from 'Utils/DimensionsWrapper';
 import ExtendableMarker from 'Utils/ExtendableMarker';
 
-import { dragCard } from 'Reducers/Cards/actions';
+// import { dragCard } from 'Reducers/Cards/actions';
 import { changeMapViewport } from 'Reducers/Map/actions';
 
-import PreviewMarker from './PreviewMarker';
 // import│ {shallowEqualProps} from'shallow-equal-props';
 
 // import louvain from './jlouvain';
@@ -59,7 +58,7 @@ const offsetMapViewport = ({
   return ret;
 };
 
-class ForceOverlay extends Component {
+class DataOverlay extends Component {
   static propTypes = {
     children: PropTypes.func,
     className: PropTypes.oneOf([null, PropTypes.string]),
@@ -156,9 +155,10 @@ class ForceOverlay extends Component {
       filterSet,
       padding,
       colorScale,
-      dragCard,
+      // dragCard,
       extCardId,
-      isCardDragging
+      // isCardDragging,
+      preview
     } = this.props;
 
     // x={extCardId === c.id ? width / 2 : x}
@@ -173,15 +173,7 @@ class ForceOverlay extends Component {
         x={extCardId === c.id ? width / 2 : c.x}
         y={extCardId === c.id ? height / 2 : c.y}
         extended={extCardId === c.id}
-        preview={
-          <DragSourceCont dragHandler={dragCard} data={c} x={c.x} y={c.y}>
-            <PreviewMarker
-              selected={selectedCardId === c.id}
-              template={c.template}
-              color="whitesmoke"
-            />
-          </DragSourceCont>
-        }
+        preview={preview(c)}
       >
         {children(c)}
       </ExtendableMarker>
@@ -301,24 +293,24 @@ class ForceOverlay extends Component {
 }
 
 function mapStateToProps({
-  Cards: { isCardDragging },
+  // Cards: { isCardDragging },
   DataView: { extCardId, selectedCardId }
 }) {
-  return { extCardId, isCardDragging, selectedCardId };
+  return { extCardId, selectedCardId };
 }
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      dragCard,
+      // dragCard,
       changeMapViewport
     },
     dispatch
   );
 
-const DataOverlay = connect(
+const ConnectedDataOverlay = connect(
   mapStateToProps,
   mapDispatchToProps
-)(ForceOverlay);
+)(DataOverlay);
 
-export default DataOverlay;
+export default ConnectedDataOverlay;

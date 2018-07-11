@@ -20,6 +20,8 @@ import {
   DragDropContextProvider
 } from './DragAndDrop/DragSourceTarget';
 
+import PreviewMarker from './PreviewMarker';
+
 import { TagInput, DropDown } from 'Utils/TagInput';
 
 import withAuthorization from '../withAuthorization';
@@ -28,7 +30,7 @@ import { colorScale, cardTypeColorScale } from '../cards/styles';
 
 import { Card, CardMarker, PreviewCard } from '../cards';
 import Accordion from 'Utils/CardStack';
-import ForceOverlay from './ForceOverlay';
+import CardDataOverlay from './CardDataOverlay';
 
 import PhotoChallenge from '../Challenges/MatchPhotoChallenge';
 
@@ -356,8 +358,8 @@ class MapViewPage extends Component {
                       selected={selectedCardId === d.id}
                       style={{
                         transition: `transform 1s`,
-                        //TODO: change later
-                        height: height/4,
+                        // TODO: change later
+                        height: height / 4,
                         // TODO
                         // TODO
                         // TODO
@@ -378,52 +380,12 @@ class MapViewPage extends Component {
                 </Accordion>
               </div>
 
-              <DropTargetCont
-                dropHandler={onCardDrop}
-                dragged={isCardDragging}
+              <CardDataOverlay
+                cards={cards}
+                cardSets={cardSets}
+                selectedTags={selectedTags}
                 style={{ height: '65%' }}
-              >
-                <ForceOverlay
-                  disabled={isCardDragging}
-                  width={width}
-                  height={height}
-                  data={cards}
-                  sets={cardSets}
-                  selectedTags={selectedTags}
-                  selectedCardId={selectedCardId}
-                  filterSet={filterSet}
-                  userLocation={userLocation}
-                  mode={dataView}
-                  onMapViewportChange={changeMapViewport}
-                  padding={{
-                    bottom: height / 5,
-                    top: height / 5,
-                    left: width / 5,
-                    right: width / 5
-                  }}
-                  colorScale={tagColorScale}
-                >
-                  {({ x, y, ...c }) => (
-                    <Card
-                      {...c}
-                      key={c.id}
-                      onClose={() => extendSelectedCard(null)}
-                      edit={authEnv}
-                      onSubmit={() => {
-                        cardAction({ ...c, x, y });
-                      }}
-                      onCollect={() =>
-                        toggleCardChallenge({
-                          cardChallengeOpen: true
-                        })
-                      }
-                      tagColorScale={tagColorScale}
-                      onUpdate={d => onCardUpdate({ ...d, x, y })}
-                      style={{ zIndex: 4000 }}
-                    />
-                  )}
-                </ForceOverlay>
-              </DropTargetCont>
+              />
               <div
                 className="fixed-bottom-right"
                 style={{
@@ -460,13 +422,6 @@ class MapViewPage extends Component {
                 <button
                   className={`btn mb-3 ${dataView === 'floorplan' &&
                     'btn-active'}`}
-                  style={
-                    {
-                      // position: 'absolute',
-                      // zIndex: 1000,
-                      // background: dataView === 'floorplan' && 'whitesmoke'
-                    }
-                  }
                   onClick={() => setDataView('floorplan')}
                 >
                   <div

@@ -129,11 +129,14 @@ export function fetchCardTemplates(uid) {
 }
 
 export function asyncCreateCard({ cardData, uid, viewport, dataView }) {
+  // const { floorX, floorY, img, loc, media, title, tags, challenge } = cardData;
+
   const newCard = {
     ...cardData,
     id: idGenerate(),
-    template: false,
-    uid
+    uid,
+    // TODO: does not transmit correctly
+    date: new Date()
   };
 
   return function(dispatch) {
@@ -226,10 +229,18 @@ export function fetchNearByPlaces() {
   };
 }
 
-export function asyncSubmitChallenge({ uid, cid, response, imgUrl }) {
+export function asyncSubmitChallenge(challengeSubmission) {
   return function(dispatch) {
-    console.log('response', { uid, cid, response, imgUrl });
-    dispatch(submitChallenge({ uid, cid, response, imgUrl }));
+    console.log('response', db, challengeSubmission);
+    const { authorId: uid, cardId, ...challengeData } = challengeSubmission;
+    dispatch(submitChallenge(challengeSubmission));
+    return db
+      .addChallengeSubmission({ uid, cardId, challengeData })
+      .then(() => dispatch(submitChallengeSuccess()))
+      .catch(err => {
+        throw new Error('error saving challenge submission');
+      });
+
     // return fetch(
     //   `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=50.847109,4.352439&radius=500&key=${
     //     process.env.GoogleAccessToken

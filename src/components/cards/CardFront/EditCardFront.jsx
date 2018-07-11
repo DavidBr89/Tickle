@@ -43,7 +43,32 @@ const FooterBtn = ({ onClick, children, disabled, className, style = {} }) => (
     {children}
   </button>
 );
-
+// {id: null, floorX: 0.5, floorY: 0.5, img: null, loc: { latitude: 50.85146, longitude: 4.315483 }, media: null, title: null, tags: null, challenge: null,
+// }
+const extractCardFields = ({
+  id,
+  uid,
+  floorX = 0.5,
+  floorY = 0.5,
+  img = null,
+  loc: { latitude = 50.85146, longitude = 4.315483 },
+  tags = [],
+  media = null,
+  title = null,
+  challenge = null
+}) => ({
+  id,
+  uid,
+  floorX,
+  floorY,
+  img,
+  loc: { longitude, latitude },
+  tags,
+  media,
+  title,
+  challenge
+});
+//
 const defaultProps = {
   title: null,
   challenge: null,
@@ -80,7 +105,9 @@ class EditCardFront extends PureComponent {
     this.nodeDescription = null;
   }
   state = {
-    data: { ...this.props },
+    data: {
+      ...extractCardFields({ ...this.props })
+    },
     added: !this.props.template,
     dialog: null
   };
@@ -114,8 +141,6 @@ class EditCardFront extends PureComponent {
   setFieldState(field) {
     this.setState(oldState => ({ data: { ...oldState.data, ...field } }));
   }
-
-  data = {};
 
   modalWriteContent(modalTitle) {
     const { data } = this.state;
@@ -157,6 +182,7 @@ class EditCardFront extends PureComponent {
               uiColor={uiColor}
               imgUrl={img ? img.url : null}
               onChange={imgObj => {
+                console.log('img OBJ', imgObj);
                 this.setFieldState({ img: imgObj, dialog: null });
               }}
             />
@@ -219,9 +245,8 @@ class EditCardFront extends PureComponent {
       onSubmit,
       template
     } = this.props;
-    const { data, added } = this.state;
+    const { data, added, dialog } = this.state;
     const { title, tags, img, description, media, children, challenge } = data;
-    const { dialog } = this.state;
     const modalVisible = dialog !== null;
     const dialogTitle = dialog !== null ? dialog.title : null;
 
@@ -336,6 +361,7 @@ class EditCardFront extends PureComponent {
                       edit
                       onClick={() => {
                         this.setState({ added: !added });
+                        // TODO
                         const message = window.confirm(
                           `Are you sure you wish to ${
                             added ? 'remove' : 'create'
@@ -343,6 +369,7 @@ class EditCardFront extends PureComponent {
                         );
 
                         if (message) {
+                          console.log('create card data', data);
                           onSubmit(data);
                         }
                       }}

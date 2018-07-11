@@ -163,7 +163,8 @@ const AuthorPreview = ({
 class Author extends React.Component {
   static propTypes = {
     children: PropTypes.node,
-    className: PropTypes.string
+    className: PropTypes.string,
+    uid: PropTypes.number
   };
 
   state = {
@@ -173,6 +174,11 @@ class Author extends React.Component {
     numCollectedCards: 0,
     numCreatedCards: 0
   };
+
+  componentDidMount(prevProps, prevState) {
+    const { uid } = this.props;
+    // db.getUserInfo(uid).then(user => this.setState({ ...user }));
+  }
 
   render() {
     const { extended, uid } = this.props;

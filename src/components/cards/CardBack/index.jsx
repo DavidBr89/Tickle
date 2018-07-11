@@ -91,7 +91,6 @@ class CardBackSkeleton extends Component {
   render() {
     const {
       loc,
-      author,
       uiColor,
       edit,
       setMapRadius,
@@ -100,7 +99,8 @@ class CardBackSkeleton extends Component {
       deleteHandler,
       tagColorScale,
       template,
-      id: cardId
+      id: cardId,
+      uid
     } = this.props;
 
     // /TODO: card template update
@@ -138,8 +138,7 @@ class CardBackSkeleton extends Component {
           onClick={() => this.selectField('author')}
         >
           <Author
-            {...author}
-            img={author.usrImgUrl}
+            uid={uid}
             extended={extended === 'author'}
             tagColorScale={tagColorScale}
             onClose={() => {
@@ -172,17 +171,7 @@ class CardBackSkeleton extends Component {
           legend="Comments"
           style={display('comments')}
           borderColor={uiColor}
-        >
-          {!template ? (
-            <Comments
-              author={author}
-              cardId={cardId}
-              extended={extended === 'comments'}
-            />
-          ) : (
-            'No comments'
-          )}
-        </FieldSet>
+        />
         <div
           className="mt-2"
           style={{

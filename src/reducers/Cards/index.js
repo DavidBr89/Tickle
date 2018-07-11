@@ -40,7 +40,7 @@ import {
   DRAG_CARD,
   LOADING_CARDS,
   TOGGLE_TSNE_VIEW,
-  SUBMIT_CHALLENGE
+  SUBMIT_CHALLENGE,
   // ADD_CARD_FILTER,
   // REMOVE_CARD_FILTER,
   // FILTER_CARDS
@@ -210,11 +210,16 @@ function reducer(state = INITIAL_STATE, action) {
     case SUBMIT_CHALLENGE: {
       const { createdCards } = state;
 
-      const { uid, cid, ...challengeSubmission } = action.options;
+      const {
+        playerId,
+        cardId,
+        authorId,
+        ...challengeSubmission
+      } = action.options;
       console.log('challengeSubmission', challengeSubmission);
 
       const updatedCards = createdCards.map(c => {
-        if (c.id === cid) {
+        if (c.id === cardId) {
           return { ...c, challengeSubmission };
         }
         return c;
@@ -270,7 +275,7 @@ function reducer(state = INITIAL_STATE, action) {
 
       console.log('viewport', viewport);
       const updatedTemplate = updCard({
-        rawData: cardData,
+        rawData: { ...cardData, template: true },
         viewport,
         dataView
       });
@@ -328,6 +333,33 @@ function reducer(state = INITIAL_STATE, action) {
         defaultCards: placeCards
       };
     }
+
+    // case ADD_CARD_FILTER: {
+    //   const { filterSet } = state;
+    //   const tag = action.options;
+    //
+    //   return {
+    //     ...state,
+    //     filterSet: [...filterSet, tag]
+    //     // selectedCardId: null
+    //   };
+    // }
+    //
+    // case REMOVE_CARD_FILTER: {
+    //   const { filterSet } = state;
+    //   const tag = action.options;
+    //
+    //   return {
+    //     ...state,
+    //     filterSet: difference(filterSet, [tag])
+    //     // selectedCardId: null
+    //   };
+    // }
+    //
+    // case FILTER_CARDS: {
+    //   const filterSet = action.options;
+    //   return { ...state, filterSet };
+    // }
 
     // case TOGGLE_CARD_AUTHORING: {
     //   const { userLocation, width, height } = action.options;

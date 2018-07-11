@@ -1,6 +1,6 @@
 import { union, difference } from 'lodash';
 import {
-  TOGGLE_DATA_VIEW,
+  SET_DATA_VIEW,
   TOGGLE_AUTH_ENV,
   SELECT_CARD,
   EXTEND_SELECTED_CARD,
@@ -22,7 +22,7 @@ const INITIAL_STATE = {
 
 export default function dataViewReducer(state = INITIAL_STATE, action) {
   switch (action.type) {
-    case TOGGLE_DATA_VIEW: {
+    case SET_DATA_VIEW: {
       return { ...state, dataView: action.options };
     }
     case SELECT_CARD: {
@@ -43,22 +43,22 @@ export default function dataViewReducer(state = INITIAL_STATE, action) {
 
     case ADD_CARD_FILTER: {
       const { filterSet } = state;
-      const set = action.options;
+      const tag = action.options;
 
       return {
         ...state,
-        filterSet: union(filterSet, set)
+        filterSet: [...filterSet, tag]
         // selectedCardId: null
       };
     }
 
     case REMOVE_CARD_FILTER: {
       const { filterSet } = state;
-      const set = action.options;
+      const tag = action.options;
 
       return {
         ...state,
-        filterSet: difference(filterSet, set)
+        filterSet: difference(filterSet, [tag])
         // selectedCardId: null
       };
     }

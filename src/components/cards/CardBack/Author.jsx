@@ -8,6 +8,7 @@ import { db } from 'Firebase';
 // import { skillTypes } from '../../dummyData';
 import CardMarker from '../CardMarker';
 import { FieldSet } from '../layout';
+import setify from 'Utils/setify';
 
 const profileSrc = () => {
   const gender = Math.random() < 0.5 ? 'men' : 'women';
@@ -164,31 +165,30 @@ class Author extends React.Component {
 
   componentDidMount() {
     const { uid } = this.props;
-    db.getDetailedUserInfo(uid).then(
-      ({
+    console.log('uid', uid);
+    db.getDetailedUserInfo(uid).then(res => {
+      const {
         interests: plainInterests,
         createdCards,
         collectedCards,
         ...userDetails
-      }) => {
-        console.log('userDetails', userDetails);
-        // TODO: change
-        const interests = plainInterests.map(key => ({ key, count: 10 }));
-        const skills = setify([...createdCards, ...collectedCards]);
-        const numCollectedCards = collectedCards.length;
-        const numCreatedCards = createdCards.length;
+      } = res;
+      console.log('author', res);
+      const interests = plainInterests.map(key => ({ key, count: 10 }));
+      const skills = setify([...createdCards, ...collectedCards]);
+      const numCollectedCards = collectedCards.length;
+      const numCreatedCards = createdCards.length;
 
-        this.setState({
-          ...userDetails,
-          interests,
-          skills,
-          collectedCards,
-          createdCards,
-          numCollectedCards,
-          numCreatedCards
-        });
-      }
-    );
+      this.setState({
+        ...userDetails,
+        interests,
+        skills,
+        collectedCards,
+        createdCards,
+        numCollectedCards,
+        numCreatedCards
+      });
+    });
   }
 
   render() {

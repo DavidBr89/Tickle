@@ -1,6 +1,6 @@
-export const TOGGLE_DATA_VIEW = 'TOGGLE_DATA_VIEW';
-export function toggleDataView(options) {
-  return { type: TOGGLE_DATA_VIEW, options };
+export const SET_DATA_VIEW = 'SET_DATA_VIEW';
+export function setDataView(options) {
+  return { type: SET_DATA_VIEW, options };
 }
 
 export const TOGGLE_AUTH_ENV = 'TOGGLE_AUTH_ENV';

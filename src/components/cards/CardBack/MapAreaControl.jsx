@@ -182,18 +182,18 @@ class MapAreaControl extends Component {
     //   </div>
     // )}
 
+                // <MapAreaRadius
+                //   userLocation={userLocation}
+                //   mapViewport={mapViewport(width, height)}
+                //   cardPosition={{ ...loc }}
+                //   radius={radius}
+                // />
     return (
       <div style={{ height: '100%', width: '100%' }}>
         <div style={{ height: '100%', width: '100%' }}>
           <DimWrapper extended={extended}>
             {(width, height) => (
               <MapGL {...mapViewport(width, height)}>
-                <MapAreaRadius
-                  userLocation={userLocation}
-                  mapViewport={mapViewport(width, height)}
-                  cardPosition={{ ...loc }}
-                  radius={radius}
-                />
                 <DivOverlay {...mapViewport(width, height)} data={[{ loc }]}>
                   {(_, [left, top]) => (
                     <div

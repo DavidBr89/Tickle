@@ -11,7 +11,7 @@ export function fetchUserInfo(uid) {
     // TODO: change later
     console.log('disp set', uid);
     return db
-      .getUserInfo(uid)
+      .getUser(uid)
       .then(usrInfo => {
         console.log('usrInfo', usrInfo);
         dispatch(setAuthUserInfo({ uid, ...usrInfo }));

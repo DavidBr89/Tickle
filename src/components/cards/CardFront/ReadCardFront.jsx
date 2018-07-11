@@ -3,13 +3,11 @@ import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { asyncSubmitChallenge } from 'Reducers/Cards/async_actions';
 
 // import chroma from 'chroma-js';
 import * as Icon from 'react-feather';
 
 import MatchPhotoChallenge from 'Src/components/Challenges/MatchPhotoChallenge';
-import ChallengeAuthorModalBody from 'Src/components/ChallengeAuthor';
 import { TagInput, PreviewTags } from 'Utils/Tag';
 import { Modal, ModalBody } from 'Utils/Modal';
 
@@ -86,10 +84,11 @@ class ReadCardFront extends Component {
       uiColor,
       challenge,
       id,
-      asyncSubmitChallenge,
+      uid,
       challengeSubmission,
-      authUserId
+      onSubmitChallenge
     } = this.props;
+
     switch (field) {
       case 'Title':
         return <p style={{ width: '100%' }}>{title}</p>;
@@ -115,9 +114,9 @@ class ReadCardFront extends Component {
             key={id}
             data={challengeSubmission}
             onChange={d => {
-              asyncSubmitChallenge({
-                uid: authUserId,
-                cid: id,
+              onSubmitChallenge({
+                cardId: id,
+                authorId: uid,
                 ...challengeSubmission,
                 ...d
               });
@@ -215,17 +214,16 @@ class ReadCardFront extends Component {
   }
 }
 
-const mapStateToProps = state => ({ authUserId: state.Session.uid });
+// const mapStateToProps = state => ({ authUserId: state.Session.uid });
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      asyncSubmitChallenge
-    },
-    dispatch
-  );
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ReadCardFront);
+// const mapDispatchToProps = dispatch =>
+//   bindActionCreators(
+//     {
+//       asyncSubmitChallenge
+//     },
+//     dispatch
+//   );
+//
+export default ReadCardFront;
+// mapStateToProps
+// mapDispatchToProps

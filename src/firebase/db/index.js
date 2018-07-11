@@ -41,15 +41,15 @@ export const readCards = (uid, collectionName = 'readableCards') =>
       );
     });
 
-export const addImgToStorage = (file, uid) => {
+export const addImgToStorage = ({ file, uid, path = 'cards' }) => {
   const metadata = { contentType: file.type };
-  const imgRef = storageRef.child(`images/${uid}/${file.name}`);
+  const imgRef = storageRef.child(`images/${uid}/${path}/${file.name}`);
   console.log('metadata', metadata, 'imgRef', imgRef);
   return imgRef
     .put(file, metadata)
     .then(() => new Promise(resolve => resolve(imgRef.getDownloadURL())))
     .catch(err => {
-      throw new Error(`erro in uploading img for ${uid}`);
+      throw new Error(`error in uploading img for ${uid}`);
       // Handle any error that occurred in any of the previous
       // promises in the chain.
     });
@@ -75,7 +75,7 @@ const uploadImgFields = (card, uid) => {
 
   // TODO update
   const cardImgPromise = cardImgFile
-    ? addImgToStorage(cardImgFile, uid).then(url => {
+    ? addImgToStorage({ file: cardImgFile, uid, path: 'cards' }).then(url => {
       const img = {
         title: card.img.title || cardImgFile.name,
         url
@@ -86,15 +86,17 @@ const uploadImgFields = (card, uid) => {
   // card.img = null;
 
   const challImgPromise = cardChallengeFile
-    ? addImgToStorage(cardChallengeFile, uid).then(url => {
+    ? addImgToStorage({ file: cardChallengeFile, uid, path: 'challenge' }).then(
+      url => {
         const challenge = {
           img: {
             title: cardChallengeFile.name,
             url
           }
-        };
-      return new Promise(resolve => resolve({ challenge }));
-    })
+          };
+        return new Promise(resolve => resolve({ challenge }));
+      }
+    )
     : {};
 
   return Promise.all([cardImgPromise, challImgPromise]).then(values => {
@@ -109,7 +111,7 @@ export const doCreateUser = userProfile =>
     .doc(userProfile.uid)
     .set(userProfile);
 
-export const getUserInfo = uid =>
+export const getUser = uid =>
   firestore
     .collection('users')
     .doc(uid)
@@ -124,10 +126,7 @@ export const getUserInfo = uid =>
     .catch(err => console.log('err  getUser'));
 
 export const getDetailedUserInfo = uid =>
-  firestore
-    .collection('users')
-    .doc(uid)
-    .get()
+  getUser(uid)
     .then(doc =>
       Promise.all([
         readCards(uid, 'readableCards'),
@@ -171,8 +170,9 @@ export const doCreateCard = (uid, card) =>
       console.log('temp to create');
       throw 'error: temp card to create';
     } else {
-      //TODO: make explicit
       const newCard = pruneFields({ ...card, ...imgFields });
+      // TODO: make explicit
+      // const cardData = {floorX, floorY, id, img, loc, media, title, tags}
       return firestore
         .collection('users')
         .doc(uid)
@@ -219,6 +219,25 @@ export const readComments = ({ authorId, cardId }) =>
         error => console.log('error in readComments', error)
       );
     });
+
+export const addChallengeSubmission = ({ uid, cardId, challengeData }) => {
+  const { file, ...restChallengeSub } = challengeData;
+  return addImgToStorage({ file, uid, path: 'challengeSubmission' }).then(
+    imgUrl =>
+      firestore
+        .collection('users')
+        .doc(uid)
+        .collection('createdCards')
+        .doc(cardId)
+        .collection('challengeSubmission')
+        .add({ ...restChallengeSub, imgUrl, date: new Date() })
+        .catch(err => {
+          throw new Error(`error in uploading img for ${uid}`);
+          // Handle any error that occurred in any of the previous
+          // promises in the chain.
+        })
+  );
+};
 
 // TODO: get authored cards
 // return firebase.firestore
