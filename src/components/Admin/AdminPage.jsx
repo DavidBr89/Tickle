@@ -44,14 +44,13 @@ class AdminPage extends Component {
     users: PropTypes.array
   };
 
-  static defaultProps = { users: [] };
+  static defaultProps = { users: [], cards: [] };
 
-  constructor(props) {
-    super(props);
-  }
   componentDidMount() {
-    const { fetchUsers } = this.props;
+    const { fetchUsers, fetchCreatedCards, authUser } = this.props;
+    console.log('authUser DIDMOUNT', authUser.uid);
     fetchUsers();
+    fetchCreatedCards(authUser.uid);
   }
 
   render() {

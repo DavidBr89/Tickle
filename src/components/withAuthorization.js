@@ -17,13 +17,12 @@ const withAuthorization = condition => Component => {
     }
 
     render() {
-      // TODO: should I really inject the props
       return this.props.authUser ? <Component {...this.props} /> : null;
     }
   }
 
   const mapStateToProps = state => ({
-    authUser: state.Session
+    ...state.Session
   });
 
   return compose(

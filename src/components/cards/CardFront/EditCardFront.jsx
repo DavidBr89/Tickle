@@ -55,7 +55,8 @@ const extractCardFields = ({
   tags = [],
   media = null,
   title = null,
-  challenge = null
+  challenge = null,
+  description = ''
 }) => ({
   id,
   uid,
@@ -66,7 +67,8 @@ const extractCardFields = ({
   tags,
   media,
   title,
-  challenge
+  challenge,
+  description
 });
 //
 const defaultProps = {
@@ -83,6 +85,75 @@ const defaultProps = {
   media: [],
   comments: []
 };
+
+class TextAreaModal extends Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string
+  };
+
+  state = { ...this.props };
+
+  render() {
+    const { onClose } = this.props;
+    const { description } = this.state;
+
+    return (
+      <ModalBody
+        footer={
+          <FooterBtn onClick={() => onClose(description)}>Update</FooterBtn>
+        }
+      >
+        <div className="form-group">
+          <textarea
+            onChange={e =>
+              this.setState({
+                description: e.target.value || null
+              })
+            }
+            rows={5}
+            style={{ width: '100%' }}
+            placeholder={'<Please insert your description>'}
+          >
+            {description}
+          </textarea>
+        </div>
+      </ModalBody>
+    );
+  }
+}
+
+class TitleModal extends Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string
+  };
+
+  state = { ...this.props };
+
+  render() {
+    const { onUpdate } = this.props;
+    const { title } = this.state;
+
+    return (
+      <ModalBody
+        footer={<FooterBtn onClick={() => onUpdate(title)}>Update</FooterBtn>}
+      >
+        <div className="form-group">
+          <input
+            onChange={e =>
+              this.setState({
+                title: e.target.value || null
+              })
+            }
+            style={{ width: '100%' }}
+            value={title}
+          />
+        </div>
+      </ModalBody>
+    );
+  }
+}
 
 class EditCardFront extends PureComponent {
   static propTypes = {
@@ -154,15 +225,10 @@ class EditCardFront extends PureComponent {
     switch (modalTitle) {
       case 'Title':
         return (
-          <ModalBody footer={closeBtn}>
-            <div className="form-group">
-              <input
-                onChange={e => this.setFieldState({ title: e.target.value })}
-                style={{ width: '100%' }}
-                defaultValue={title}
-              />
-            </div>
-          </ModalBody>
+          <TitleModal
+            title={title}
+            onUpdate={newTitle => this.setFieldState({ title: newTitle })}
+          />
         );
       case 'Tags':
         return (
@@ -190,22 +256,20 @@ class EditCardFront extends PureComponent {
         );
       case 'Description':
         return (
-          <ModalBody footer={closeBtn}>
-            <div className="form-group">
-              <textarea
-                onChange={e =>
-                  this.setFieldState({
-                    description: e.target.value || null
-                  })
-                }
-                rows={5}
-                style={{ width: '100%' }}
-                placeholder={'<Please insert your description>'}
-              >
-                {description}
-              </textarea>
-            </div>
-          </ModalBody>
+          <div className="form-group">
+            <TextAreaModal
+              description={description}
+              key={description}
+              onClose={newDescr => {
+                this.setFieldState({
+                  description: newDescr
+                });
+              }}
+              rows={5}
+              style={{ width: '100%' }}
+              placeholder={'<Please insert your description>'}
+            />
+          </div>
         );
       case 'Media':
         return (

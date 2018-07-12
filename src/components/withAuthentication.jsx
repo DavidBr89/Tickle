@@ -24,15 +24,21 @@ const withAuthentication = Component => {
 
       firebase.auth.onAuthStateChanged(authUser => {
         if (authUser) {
-          const {uid} = authUser;
+          const { uid } = authUser;
           // const userProfile = authUser.providerData[0]:
           // console.log('authenticated', authUser.providerData[0]);
-          // onSetAuthUser(authUser.providerData);
+          // console.log('authUser', uid);
+          // onSetAuthUser({ uid });
+          // TODO: change
+          // TODO: change
+          // TODO: change
+          // TODO: change
+          // TODO: change
           getReadableCards(uid);
           getCreatedCards(uid);
           fetchUserInfo(uid);
         } else {
-          onSetAuthUser({ uid: null });
+          onSetAuthUser({ authUser: null });
         }
       });
     }

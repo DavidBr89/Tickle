@@ -124,7 +124,7 @@ function mapStateToProps(state) {
     ...state.Cards,
     ...state.DataView,
     userLocation: state.MapView.userLocation,
-    authUser: state.Session
+    ...state.Session
   };
 }
 
@@ -179,8 +179,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
       ? updateCardTemplate({ cardData, viewport, dataView })
       : asyncUpdateCard({ uid, cardData, viewport, dataView });
 
-  const onSubmitChallenge = (challengeSubmission) => {
-    asyncSubmitChallenge({ playerId: uid, ...challengeSubmission});
+  const onSubmitChallenge = challengeSubmission => {
+    asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
   };
   // TODO: change
 

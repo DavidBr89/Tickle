@@ -30,14 +30,37 @@ import idGenerate from 'Src/idGenerator';
 // }
 export function fetchUsers() {
   return function(dispatch) {
-    return db.onceGetUsers().then(data => {
-      const promises = data.map(({ uid }) => db.getDetailedUserInfo(uid));
-      Promise.all(promises).then(detailedUsers => {
-        dispatch(receiveUsers(detailedUsers));
-        dispatch(
-          getCards(uniqBy(flatten(detailedUsers.map(u => u.createdCards)), 'id'))
-        );
-      });
+    return db.onceGetUsers().then(users => {
+      // console.log('USers', data);
+      // const promises = data.map(({ uid }) => db.getDetailedUserInfo(uid));
+      dispatch(receiveUsers(users));
+      // Promise.all(promises).then(detailedUsers => {
+      //   dispatch(receiveUsers(detailedUsers));
+      //   dispatch(
+      //     getCards(
+      //       uniqBy(flatten(detailedUsers.map(u => u.createdCards)), 'id')
+      //     )
+      //   );
+      // });
+    });
+  };
+}
+
+export function fetchCreatedCards(uid) {
+  console.log('uid', uid);
+  return function(dispatch) {
+    return db.readCards(uid, 'createdCards').then(cards => {
+      // console.log('USers', data);
+      // const promises = data.map(({ uid }) => db.getDetailedUserInfo(uid));
+      dispatch(getCards(cards));
+      // Promise.all(promises).then(detailedUsers => {
+      //   dispatch(receiveUsers(detailedUsers));
+      //   dispatch(
+      //     getCards(
+      //       uniqBy(flatten(detailedUsers.map(u => u.createdCards)), 'id')
+      //     )
+      //   );
+      // });
     });
   };
 }

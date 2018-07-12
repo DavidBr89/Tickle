@@ -13,8 +13,7 @@ export function fetchUserInfo(uid) {
     return db
       .getUser(uid)
       .then(usrInfo => {
-        console.log('usrInfo', usrInfo);
-        dispatch(setAuthUserInfo({ uid, ...usrInfo }));
+        dispatch(setAuthUserInfo({ authUser: { uid, ...usrInfo } }));
       })
       .catch(err => console.log('err', err));
   };

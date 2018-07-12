@@ -157,6 +157,7 @@ export const onceGetUsers = () =>
     .then(querySnapshot => {
       const data = [];
       querySnapshot.forEach(doc => data.push(doc.data()));
+      console.log('data', data);
       return new Promise(
         resolve => resolve(data),
         error => console.log('error in reading users', error)
@@ -220,17 +221,23 @@ export const readComments = ({ authorId, cardId }) =>
       );
     });
 
-export const addChallengeSubmission = ({ uid, cardId, challengeData }) => {
+export const addChallengeSubmission = ({
+  uid,
+  cardId,
+  playerId,
+  challengeData
+}) => {
   const { file, ...restChallengeSub } = challengeData;
-  return addImgToStorage({ file, uid, path: 'challengeSubmission' }).then(
+  return addImgToStorage({ file, uid, path: 'challengeSubmissions' }).then(
     imgUrl =>
       firestore
         .collection('users')
         .doc(uid)
         .collection('createdCards')
         .doc(cardId)
-        .collection('challengeSubmission')
-        .add({ ...restChallengeSub, imgUrl, date: new Date() })
+        .collection('challengeSubmissions')
+        .doc(playerId)
+        .set({ ...restChallengeSub, imgUrl, date: new Date() })
         .catch(err => {
           throw new Error(`error in uploading img for ${uid}`);
           // Handle any error that occurred in any of the previous

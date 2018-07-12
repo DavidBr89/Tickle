@@ -1,6 +1,7 @@
 // import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { compose } from 'recompose';
 
 import { intersection } from 'lodash';
 import {
@@ -21,6 +22,9 @@ import * as dataViewActions from 'Reducers/DataView/actions';
 
 import MapViewPage from './MapViewPage';
 
+import withAuthorization from '../withAuthorization';
+
+
 // import mapViewReducer from './reducer';
 
 // Container
@@ -33,13 +37,15 @@ const mapStateToProps = state => {
   const { width, height, userLocation } = state.MapView;
 
   const { authEnv } = state.DataView;
-  const { uid, username } = state.Session;
+  const {
+    authUser: { uid, username }
+  } = state.Session;
 
   // const { userLocation } = state.MapView;
 
   const templateCard = {
     ...tmpCard,
-    uid: uid,
+    uid,
     tags: tmpCard.tags.length > 0 ? tmpCard.tags : [username]
   };
 
@@ -65,7 +71,7 @@ const mapStateToProps = state => {
     cardSets,
     filterSet,
     // selectedTags,
-    cards: filteredCards,
+    cards: filteredCards
     // authUser
   };
 };
@@ -99,10 +105,13 @@ const mergeProps = (state, dispatcherProps) => {
   };
 };
 
-const MapView = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-  mergeProps
-)(MapViewPage);
+const authCondition = authUser => authUser !== null;
 
-export default MapView;
+export default compose(
+  withAuthorization(authCondition),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+    mergeProps
+  )
+)(MapViewPage);

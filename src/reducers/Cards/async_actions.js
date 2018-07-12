@@ -129,6 +129,7 @@ export function fetchCardTemplates(uid) {
 }
 
 export function asyncCreateCard({ cardData, uid, viewport, dataView }) {
+  console.log('asyncCreateCard', { cardData, uid, viewport, dataView })
   // const { floorX, floorY, img, loc, media, title, tags, challenge } = cardData;
 
   const newCard = {
@@ -232,10 +233,15 @@ export function fetchNearByPlaces() {
 export function asyncSubmitChallenge(challengeSubmission) {
   return function(dispatch) {
     console.log('response', db, challengeSubmission);
-    const { authorId: uid, cardId, ...challengeData } = challengeSubmission;
+    const {
+      authorId: uid,
+      cardId,
+      playerId,
+      ...challengeData
+    } = challengeSubmission;
     dispatch(submitChallenge(challengeSubmission));
     return db
-      .addChallengeSubmission({ uid, cardId, challengeData })
+      .addChallengeSubmission({ uid, cardId, playerId, challengeData })
       .then(() => dispatch(submitChallengeSuccess()))
       .catch(err => {
         throw new Error('error saving challenge submission');

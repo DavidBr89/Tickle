@@ -67,7 +67,7 @@ const defaultState = {
     centerLocation: defaultLocation,
     mapZoom,
     challenges: []
-  },
+  }
   // MapView: {
   //   mapViewport: {},
   //   // TODO: calc value
@@ -81,9 +81,9 @@ const defaultState = {
   //   height: 100,
   //   width: 100
   // },
-  Session: {
-    authUser: { uid: null }
-  } // DataView: {
+  // Session: {
+  //   authUser: { uid: null }
+  // } // DataView: {
   //   dataView: 'topic',
   //   tsneView: false,
   //   gridView: true,

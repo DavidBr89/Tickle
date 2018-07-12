@@ -250,7 +250,9 @@ const ThumbNailSwitchDetail = ({
       overflow: 'hidden',
       backgroundImage: thumbnail !== null && `url('${thumbnail}')`,
       backgroundRepeat: thumbnail !== null && 'no-repeat',
-      backgroundSize: thumbnail !== null && '100% 100%'
+      backgroundSize: thumbnail !== null && '100% 100%',
+      minHeight: 150,
+      maxHeight: 300
     }}
   >
     {thumbnail ? (
@@ -315,11 +317,12 @@ ThumbNailSwitchDetail.defaultProps = {
 
 const ThumbCell = ({ children, className, focusColor, uiColor, ...props }) => (
   <div
-    className={`p-3 ${className}`}
+    className={`p-3 mb-3 ${className}`}
     style={{
       // height: '40vh',
       width: '100%',
-      maxHeight: 300,
+      // maxHeight: 300,
+      // minHeight: 150,
       ...props.style,
       cursor: 'pointer',
       position: 'relative',
@@ -486,18 +489,33 @@ class MediaSearch extends Component {
 
   static defaultProps = { onChange: () => null, media: [] };
 
-  state = { selected: 'wikipedia' };
+  state = { selected: 'wikipedia', mySelectedMedia: [] };
 
   activeTab = sel => {
     const { selectedMedia, onChange } = this.props;
+    const selArticles = selectedMedia.filter(m => m.type === 'article');
+    const selVideos = selectedMedia.filter(m => m.type === 'video');
+    const selGIFs = selectedMedia.filter(m => m.type === 'gif');
+    const selPhotos = selectedMedia.filter(m => m.type === 'photo');
+    const selURLs = selectedMedia.filter(m => m.type === 'url');
+    console.log('selectedMedia', selectedMedia);
+
     switch (sel) {
       case 'overview':
         return <MediaOverview data={selectedMedia} onChange={onChange} />;
       case 'wikipedia':
         return (
           <MetaSearch
-            onChange={onChange}
-            preSelected={selectedMedia}
+            onChange={newArticles =>
+              onChange([
+                ...newArticles,
+                ...selVideos,
+                ...selGIFs,
+                ...selPhotos,
+                ...selURLs
+              ])
+            }
+            preSelected={selArticles}
             searchFn={searchWikipedia}
             type="Article"
             key="wikipedia"
@@ -506,8 +524,16 @@ class MediaSearch extends Component {
       case 'youtube':
         return (
           <MetaSearch
-            onChange={onChange}
-            preSelected={selectedMedia}
+            onChange={newVideos =>
+              onChange([
+                ...newVideos,
+                ...selArticles,
+                ...selGIFs,
+                ...selPhotos,
+                ...selURLs
+              ])
+            }
+            preSelected={selVideos}
             searchFn={searchYoutube}
             type="Video"
             key="youtube"
@@ -516,8 +542,16 @@ class MediaSearch extends Component {
       case 'giphy':
         return (
           <MetaSearch
-            preSelected={selectedMedia}
-            onChange={onChange}
+            preSelected={selGIFs}
+            onChange={newGIFs =>
+              onChange([
+                ...newGIFs,
+                ...selArticles,
+                ...selVideos,
+                ...selPhotos,
+                ...selURLs
+              ])
+            }
             searchFn={searchGiphy}
             type="GIF"
             key="giphy"
@@ -526,8 +560,16 @@ class MediaSearch extends Component {
       case 'flickr':
         return (
           <MetaSearch
-            preSelected={selectedMedia}
-            onChange={onChange}
+            preSelected={selPhotos}
+            onChange={newPhotos =>
+              onChange([
+                ...newPhotos,
+                ...selArticles,
+                ...selVideos,
+                ...selGIFs,
+                ...selURLs
+              ])
+            }
             searchFn={searchFlickr}
             type="Photo"
             key="flickr"
@@ -536,8 +578,16 @@ class MediaSearch extends Component {
       case 'url':
         return (
           <UrlMedia
-            preSelected={selectedMedia.filter(d => d.type === 'url')}
-            onChange={onChange}
+            preSelected={selURLs}
+            onChange={newUrls =>
+              onChange([
+                ...newUrls,
+                ...selArticles,
+                ...selVideos,
+                ...selGIFs,
+                ...selPhotos
+              ])
+            }
             type="url"
             key="url"
           />
@@ -830,8 +880,11 @@ class MetaSearch extends Component {
     const { type, searchFn, onChange } = this.props;
     const { data, selectedIds } = this.state;
 
+    console.log('data', data, 'selectedIds', selectedIds);
     if (selectedIds.length !== prevState.selectedIds.length) {
-      onChange(selectedIds.map(id => data.find(d => d.id === id)));
+      const newData = data.filter(d => selectedIds.includes(d.id));
+      console.log('newData', newData);
+      onChange(newData);
     }
 
     // search().then(newData => {
@@ -900,11 +953,12 @@ class MetaSearch extends Component {
             >
               <ActiveBtn
                 selected={selectedIds.includes(d.id)}
-                onClick={() =>
+                onClick={() => {
+                  console.log('add item', d.id);
                   selectedIds.includes(d.id)
                     ? this.removeItem(d.id)
-                    : this.addItem(d.id)
-                }
+                    : this.addItem(d.id);
+                }}
               />
             </ThumbCell>
           )}

@@ -31,7 +31,7 @@ class MatchPhotoChallenge extends Component {
     styles: {}
   };
 
-  state = { imgUrl: null,  ...this.props.data };
+  state = { imgUrl: null, description: null, ...this.props.data };
 
   render() {
     const { className, description, onChange, styles } = this.props;

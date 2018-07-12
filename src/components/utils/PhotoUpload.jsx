@@ -214,18 +214,18 @@ export default class PhotoUpload extends Component {
               height: '100%',
               width: '100%',
               // minHeight: 80,
-              // maxHeight: 300,
               border: `dashed 3px ${uiColor}`,
               display: 'flex',
               justifyContent: 'center',
-              alignItems: 'center'
+              alignItems: 'center',
             }}
           >
             {imgUrl ? (
               <div
                 style={{
                   overflow: 'hidden',
-                  width: '100%'
+                  width: '100%',
+              maxHeight: 300,
                   // height: this.contHeight
                 }}
               >
