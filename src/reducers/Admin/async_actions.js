@@ -49,9 +49,11 @@ export function fetchUsers() {
 export function fetchCreatedCards(uid) {
   console.log('uid', uid);
   return function(dispatch) {
-    return db.readCards(uid, 'createdCards').then(cards => {
+    // db.getCardsWithSubmissions(uid);
+    return db.getCardsWithSubmissions(uid).then(cards => {
       // console.log('USers', data);
       // const promises = data.map(({ uid }) => db.getDetailedUserInfo(uid));
+      console.log('cards', cards)
       dispatch(getCards(cards));
       // Promise.all(promises).then(detailedUsers => {
       //   dispatch(receiveUsers(detailedUsers));

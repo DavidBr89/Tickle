@@ -17,20 +17,20 @@ function centerLayout(nextProps) {
 
   const rightSize = size - (slotSize * 3) / 2 - center;
 
-  const bufferLeft = index => (center - slotSize) / (leftLen - index);
+  // const bufferLeft = index => (center - slotSize) / (leftLen - index);
   const leftPos = j => (j * leftSize) / leftLen;
-  const leftScale = j =>
-    center - slotSize > slotSize ? bufferLeft(j) + leftPos(j) : leftPos(j);
+  const leftScale = j => leftPos(j);
+  // center - slotSize > slotSize ? bufferLeft(j) + leftPos(j) : leftPos(j);
 
   const bufferRight = index => slotSize / (rightLen - index);
   const rightPos = j =>
     center + slotSize / 2 + ((rightLen - j) * rightSize) / rightLen;
 
-  //TODO: not correct, fix bufferRight
-  const rightScale = j =>
-    rightPos(j) - bufferRight(j) >= center + slotSize / 2
-      ? rightPos(j) - bufferRight(j)
-      : rightPos(j);
+  // TODO: not correct, fix bufferRight
+  const rightScale = j => rightPos(j);
+  // rightPos(j) - bufferRight(j) >= center + slotSize / 2
+  //   ? rightPos(j) - bufferRight(j)
+  //   : rightPos(j);
 
   const leftCards = data
     .slice(0, selectedIndex)

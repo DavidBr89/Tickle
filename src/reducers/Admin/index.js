@@ -7,7 +7,7 @@
 // import setBBox from './fitbounds';
 // import mapboxgl from 'mapbox-gl';
 
-import { RECEIVE_USERS, GET_CARDS } from './actions';
+import { RECEIVE_USERS, GET_CARDS, TOGGLE_MODAL } from './actions';
 
 // const toGeoJSON = points => ({
 //   type: 'FeatureCollection',
@@ -19,7 +19,8 @@ import { RECEIVE_USERS, GET_CARDS } from './actions';
 //     }
 //   }))
 // });
-const INITIAL_STATE = { users: [], cards: [] };
+const INITIAL_STATE = { users: [], cards: [], modalActive: false };
+
 function reducer(state = INITIAL_STATE, action) {
   // console.log('action', action);
   // const { selectedCardId } = state;
@@ -32,6 +33,10 @@ function reducer(state = INITIAL_STATE, action) {
     case GET_CARDS: {
       const cards = action.options;
       return { ...state, cards };
+    }
+    case TOGGLE_MODAL: {
+      const modalActive = action.options;
+      return { ...state, modalActive };
     }
     default:
       return state;

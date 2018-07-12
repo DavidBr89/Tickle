@@ -6,7 +6,7 @@ import { scaleLinear, extent, range, scaleOrdinal } from 'd3';
 import { db } from 'Firebase';
 
 import colorClasses from '../utils/colorClasses';
-
+import * as Icon from 'react-feather';
 // import { skillTypes } from '../../dummyData';
 // import setify from 'Utils/setify';
 import CardMarker from 'Cards/CardMarker';
@@ -134,15 +134,21 @@ const AuthorPreview = ({
     style={{
       display: 'flex',
       justifyContent: 'center',
-      boxShadow: '5px 5px black',
-      border: '1px black solid',
+      boxShadow: '5px 5px grey',
+      border: '3px grey solid',
       // alignItems: 'center',
       // height: '100%',
       ...style
     }}
   >
     <div>
-      <img width="40%" height="80%" src={photoURL} alt="alt" />
+      {photoURL ? (
+        <img width="40%" height="80%" src={photoURL} alt="alt" />
+      ) : (
+        //TODO:change
+        <Icon.user />
+      )}
+
       <div className="ml-3">
         <div className="mb-1">
           <span style={{ fontWeight: 'bold' }}>username: </span>

@@ -5,8 +5,6 @@ import chroma from 'chroma-js';
 
 // const ddg = new DDG('tickle');
 
-import { UIthemeContext } from 'Cards/styles';
-import WindowContext from 'Src/WindowContext';
 
 const Modal = ({
   visible,
@@ -175,7 +173,7 @@ ModalBody.propTypes = {
 ModalBody.defaultProps = {
   onSubmit: null,
   footerBtnText: 'Close',
-  uiColor: 'black',
+  uiColor: 'grey',
   styles: {}
 };
 

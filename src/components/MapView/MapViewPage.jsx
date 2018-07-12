@@ -29,14 +29,14 @@ import withAuthorization from '../withAuthorization';
 import { colorScale, cardTypeColorScale } from '../cards/styles';
 
 import { Card, CardMarker, PreviewCard } from '../cards';
-import Accordion from 'Utils/CardStack';
+import CardStack from 'Utils/CardStack';
 import CardDataOverlay from './CardDataOverlay';
 
 import PhotoChallenge from '../Challenges/MatchPhotoChallenge';
 
 import { UserOverlay } from '../utils/map-layers/DivOverlay';
 import ExtendableMarker from '../utils/ExtendableMarker';
-import { Modal, ModalBody } from '../utils/Modal';
+import { Modal, ModalBody } from 'Utils/Modal';
 
 import DragLayer from './DragAndDrop/DragLayer';
 
@@ -73,7 +73,7 @@ import { StyledButton } from 'Utils/StyledComps';
 //   '#253494'
 // ].map(c => chroma(c).alpha(0.1));
 
-// const TimoutGrid = ReactTimeout(Accordion);
+// const TimoutGrid = ReactTimeout(CardStack);
 
 function SpeechBubble({ ...props }) {
   return (
@@ -333,7 +333,7 @@ class MapViewPage extends Component {
                   // marginTop: 30
                 }}
               >
-                <Accordion
+                <CardStack
                   data={cards}
                   className="ml-1 mr-2"
                   duration={600}
@@ -377,7 +377,7 @@ class MapViewPage extends Component {
                       }}
                     />
                   )}
-                </Accordion>
+                </CardStack>
               </div>
 
               <CardDataOverlay

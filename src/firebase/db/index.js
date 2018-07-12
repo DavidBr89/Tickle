@@ -41,6 +41,58 @@ export const readCards = (uid, collectionName = 'readableCards') =>
       );
     });
 
+function getChallengeSubmissions(uid, cid) {
+  const chSub = firestore
+    .collection('users')
+    .doc(uid)
+    .collection('createdCards')
+    .doc(cid)
+    .collection('challengeSubmissions');
+
+  console.log('getdata', 'challenge');
+  const challengeSubmissions = [];
+  return chSub.get().then(snapshot => {
+    console.log('snapshot', snapshot);
+    snapshot.forEach(item => {
+      const d = item.data(); // will have 'todo_item.title' and 'todo_item.completed'
+      console.log('item data', d);
+      challengeSubmissions.push(d);
+    });
+    return new Promise(resolve => resolve(challengeSubmissions));
+  });
+}
+
+export const getCardsWithSubmissions = uid =>
+  firestore
+    .collection('users')
+    .doc(uid)
+    .collection('createdCards')
+    .get()
+    .then(querySnapshot => {
+      const data = [];
+      const pendingPromises = [];
+      querySnapshot.forEach(doc => {
+        const d = doc.data();
+        // data.push(d);
+        // TODO: change async await
+        // TODO: change async await
+        // TODO: change async await
+        // TODO: change async await
+        pendingPromises.push(
+          getChallengeSubmissions(uid, d.id).then(challengeSubmissions => {
+            data.push({ ...d, challengeSubmissions });
+          })
+        );
+      });
+      return Promise.all(pendingPromises).then(
+        () =>
+          new Promise(
+            resolve => resolve(data),
+            error => console.log('error in readCards', error)
+          )
+      );
+    });
+
 export const addImgToStorage = ({ file, uid, path = 'cards' }) => {
   const metadata = { contentType: file.type };
   const imgRef = storageRef.child(`images/${uid}/${path}/${file.name}`);

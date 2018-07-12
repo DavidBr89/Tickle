@@ -284,25 +284,24 @@ MediaField.defaultProps = {
   edit: false
 };
 
-const PreviewMedia = ({ data, style }) => {
-  console.log('PREVIEW MEIDA', data)
-  return <div style={style}>
-    <div cols={data.length > 1 ? 2 : 0} rows={Math.min(data.length / 2, 1)}>
+const PreviewMedia = ({ data, style }) => (
+  <div style={style}>
+    <div>
       {data.map(m => (
-          <div key={m.url}>
+        <div key={m.url}>
           <div className="mr-1 row">
             <i
-                style={{ fontSize: '20px' }}
+              style={{ fontSize: '20px' }}
               className={`fa ${mediaScale(m.type)} col-1`}
               aria-hidden="true"
-              />
+            />
             <div className={`ml-1 col ${cx.textTrunc}`}>{m.title}</div>
           </div>
         </div>
       ))}
-      </div>
+    </div>
   </div>
-}
+);
 
 PreviewMedia.propTypes = {
   data: PropTypes.array.isRequired,
