@@ -49,7 +49,7 @@ const colors2 = [
   '#aa3a33',
   '#9c4257'
 ];
-const mediaTypes = ['game', 'hyperlink', 'photo', 'video'];
+const mediaTypes = ['article', 'photo', 'gif', 'video'];
 const challengeTypes = ['quiz', 'gap text', 'hangman'];
 export const mediaScale = scaleOrdinal()
   .domain(mediaTypes)

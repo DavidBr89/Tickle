@@ -56,7 +56,7 @@ class CardBackSkeleton extends Component {
     edit: PropTypes.bool,
     mapRadius: PropTypes.number,
     setMapRadius: PropTypes.func,
-    deleteHandler: PropTypes.func
+    onDelete: PropTypes.func
   };
 
   static defaultProps = {
@@ -74,7 +74,7 @@ class CardBackSkeleton extends Component {
     flipHandler: d => d,
     mapRadius: 100,
     setMapRadius: d => d,
-    deleteHandler: d => d
+    onDelete: d => d
   };
 
   state = { extended: null };
@@ -96,7 +96,7 @@ class CardBackSkeleton extends Component {
       setMapRadius,
       mapRadius,
       flipHandler,
-      deleteHandler,
+      onDelete,
       tagColorScale,
       template,
       id: cardId,
@@ -180,15 +180,14 @@ class CardBackSkeleton extends Component {
             justifyContent: edit && template ? 'flex-end' : 'space-between'
           }}
         >
-          {edit &&
-            !template && (
-              <DeleteButton
-                onClick={deleteHandler}
-                className="bg-danger"
-                color={uiColor}
-                style={{ width: '20%' }}
-              />
-            )}
+          {edit && (
+            <DeleteButton
+              onClick={onDelete}
+              className="bg-danger"
+              color={uiColor}
+              style={{ width: '20%' }}
+            />
+          )}
           <FlipButton
             className="ml-2"
             color={uiColor}

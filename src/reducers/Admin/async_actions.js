@@ -50,19 +50,9 @@ export function fetchCreatedCards(uid) {
   console.log('uid', uid);
   return function(dispatch) {
     // db.getCardsWithSubmissions(uid);
-    return db.getCardsWithSubmissions(uid).then(cards => {
-      // console.log('USers', data);
-      // const promises = data.map(({ uid }) => db.getDetailedUserInfo(uid));
-      console.log('cards', cards)
+    return db.readCardsWithSubmissions(uid).then(cards => {
+      console.log('cards', cards);
       dispatch(getCards(cards));
-      // Promise.all(promises).then(detailedUsers => {
-      //   dispatch(receiveUsers(detailedUsers));
-      //   dispatch(
-      //     getCards(
-      //       uniqBy(flatten(detailedUsers.map(u => u.createdCards)), 'id')
-      //     )
-      //   );
-      // });
     });
   };
 }

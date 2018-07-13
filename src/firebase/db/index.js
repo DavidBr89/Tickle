@@ -26,99 +26,121 @@ const pruneFields = fields => {
   }, {});
 };
 
-export const readCards = (uid, collectionName = 'readableCards') =>
+const getShallowCards = (uid, collectionName = 'readableCards') =>
   firestore
-    .collection('users')
-    .doc(uid)
-    .collection(collectionName)
+    .collection('cards')
+    .where('uid', '==', uid)
     .get()
     .then(querySnapshot => {
       const data = [];
-      querySnapshot.forEach(doc => data.push(doc.data()));
+      querySnapshot.forEach(doc => {
+        const d = doc.data();
+        data.push(d);
+      });
+
       return new Promise(
         resolve => resolve(data),
         error => console.log('error in readCards', error)
       );
     });
 
-function getChallengeSubmissions(uid, cid) {
-  const chSub = firestore
+export const readCards = (uid, collectionName = 'readableCards') =>
+  getShallowCards(uid).then(data => {
+    const pendingPromises = data.map(d =>
+      getOneChallengeSubmission(d.id, uid).then(
+        challengeSubmission =>
+          new Promise(resolve => resolve({ ...d, challengeSubmission }))
+      )
+    );
+    return Promise.all(pendingPromises).then(
+      data =>
+        new Promise(
+          resolve => resolve(data),
+          error => console.log('error in readCards', error)
+        )
+    );
+  });
+
+export const readCopyOlga = () => {
+  firestore
     .collection('users')
-    .doc(uid)
+    .doc('PbQiWWDMJgYCnl6vhK8fkMhWe4y2')
     .collection('createdCards')
+    .get()
+    .then(querySnapshot => {
+      const data = [];
+      querySnapshot.forEach(doc => {
+        const d = doc.data();
+        data.push(d);
+      });
+
+      data.forEach(d =>
+        firestore
+          .collection('cards')
+          .doc(d.id)
+          .set(d)
+      );
+    });
+};
+
+function getAllChallengeSubmissions(cid) {
+  const chSub = firestore
+    .collection('cards')
     .doc(cid)
     .collection('challengeSubmissions');
 
-  console.log('getdata', 'challenge');
   const challengeSubmissions = [];
   return chSub.get().then(snapshot => {
-    console.log('snapshot', snapshot);
     snapshot.forEach(item => {
       const d = item.data(); // will have 'todo_item.title' and 'todo_item.completed'
-      console.log('item data', d);
-      challengeSubmissions.push(d);
+      challengeSubmissions.push(d || []);
     });
     return new Promise(resolve => resolve(challengeSubmissions));
   });
 }
 
-export const getCardsWithSubmissions = uid =>
-  firestore
-    .collection('users')
-    .doc(uid)
-    .collection('createdCards')
+function getOneChallengeSubmission(cid, playerId) {
+  return firestore
+    .collection('cards')
+    .doc(cid)
+    .collection('challengeSubmissions')
+    .doc(playerId)
     .get()
-    .then(querySnapshot => {
-      const data = [];
-      const pendingPromises = [];
-      querySnapshot.forEach(doc => {
-        const d = doc.data();
-        // data.push(d);
-        // TODO: change async await
-        // TODO: change async await
-        // TODO: change async await
-        // TODO: change async await
-        pendingPromises.push(
-          getChallengeSubmissions(uid, d.id).then(challengeSubmissions => {
-            data.push({ ...d, challengeSubmissions });
-          })
-        );
-      });
-      return Promise.all(pendingPromises).then(
-        () =>
-          new Promise(
-            resolve => resolve(data),
-            error => console.log('error in readCards', error)
-          )
-      );
-    });
+    .then(doc => new Promise(resolve => resolve(doc.data() || null)));
+}
 
-export const addImgToStorage = ({ file, uid, path = 'cards' }) => {
+export const readCardsWithSubmissions = uid =>
+  getShallowCards(uid).then(data => {
+    console.log('readCardsWithSubmissions');
+    const pendingPromises = data.map(d =>
+      getAllChallengeSubmissions(d.id).then(challengeSubmissions => {
+        console.log('CHallengeSubmission', challengeSubmissions);
+        return new Promise(resolve => resolve({ ...d, challengeSubmissions }));
+      })
+    );
+    return Promise.all(pendingPromises).then(results =>
+      new Promise(resolve => resolve(results)).catch(err => {
+        throw new Error(`error in reading cards with submissions ${err}`);
+      })
+    );
+  });
+
+export const addImgToStorage = ({ file, path }) => {
   const metadata = { contentType: file.type };
-  const imgRef = storageRef.child(`images/${uid}/${path}/${file.name}`);
+  const imgRef = storageRef.child(`images/${path}`);
   console.log('metadata', metadata, 'imgRef', imgRef);
   return imgRef
     .put(file, metadata)
     .then(() => new Promise(resolve => resolve(imgRef.getDownloadURL())))
     .catch(err => {
-      throw new Error(`error in uploading img for ${uid}`);
+      throw new Error(`error in uploading img for ${file.name}`);
       // Handle any error that occurred in any of the previous
       // promises in the chain.
     });
 };
 
-export const testAddImgToStorage = file => {
-  // const metadata = { contentType: file.type };
-  const imgRef = storageRef.child(`${file.name}${Date.now()}`);
-  console.log('imgRef', imgRef);
-  return imgRef
-    .put(file)
-    .then(() => new Promise(resolve => resolve(imgRef.getDownloadURL())));
-};
-
 // TODO: error handling
-const uploadImgFields = (card, uid) => {
-  console.log('card.img', card.img);
+const uploadImgFields = card => {
   const cardImgFile = card.img ? card.img.file : null;
   const cardChallengeFile =
     card.challenge !== null && card.challenge.img
@@ -127,7 +149,10 @@ const uploadImgFields = (card, uid) => {
 
   // TODO update
   const cardImgPromise = cardImgFile
-    ? addImgToStorage({ file: cardImgFile, uid, path: 'cards' }).then(url => {
+    ? addImgToStorage({
+      file: cardImgFile,
+      path: `cards/${card.id}`
+    }).then(url => {
       const img = {
         title: card.img.title || cardImgFile.name,
         url
@@ -138,17 +163,19 @@ const uploadImgFields = (card, uid) => {
   // card.img = null;
 
   const challImgPromise = cardChallengeFile
-    ? addImgToStorage({ file: cardChallengeFile, uid, path: 'challenge' }).then(
-      url => {
-        const challenge = {
-          img: {
-            title: cardChallengeFile.name,
-            url
-          }
-          };
-        return new Promise(resolve => resolve({ challenge }));
-      }
-    )
+    ? addImgToStorage({
+      file: cardChallengeFile,
+      // TODO: fix cards with more challenges
+      path: `challenges/${card.id}`
+    }).then(url => {
+      const challenge = {
+        img: {
+          title: cardChallengeFile.name,
+          url
+        }
+      };
+      return new Promise(resolve => resolve({ challenge }));
+    })
     : {};
 
   return Promise.all([cardImgPromise, challImgPromise]).then(values => {
@@ -177,28 +204,19 @@ export const getUser = uid =>
     )
     .catch(err => console.log('err  getUser'));
 
+// TODO
 export const getDetailedUserInfo = uid =>
   getUser(uid)
-    .then(doc =>
-      Promise.all([
-        readCards(uid, 'readableCards'),
-        readCards(uid, 'createdCards'),
-        readCards(uid, 'collectedCards')
-      ]).then(values => {
-        console.log('values', values);
-        const usr = doc.data();
-        return new Promise(
-          resolve =>
-            resolve({
-              ...usr,
-              readableCards: values[0],
-              createdCards: values[1],
-              collectedCards: values[2]
-            }),
-          error => console.log('error in getUser, doc not existing', error)
-        );
-        // const imgFields = values.reduce((acc, d) => ({ ...acc, ...d }));
-      })
+    .then(
+      usr =>
+        new Promise(resolve =>
+          resolve({
+            ...usr,
+            readableCards: [],
+            createdCards: [],
+            collectedCards: []
+          })
+        )
     )
     .catch(err => console.log('err i getUser'));
 
@@ -217,7 +235,8 @@ export const onceGetUsers = () =>
     });
 
 export const doCreateCard = (uid, card) =>
-  uploadImgFields(card, uid).then(imgFields => {
+  uploadImgFields(card).then(imgFields => {
+    console.log('uid', imgFields);
     // TODO
     if (card.id === 'temp') {
       console.log('temp to create');
@@ -227,9 +246,7 @@ export const doCreateCard = (uid, card) =>
       // TODO: make explicit
       // const cardData = {floorX, floorY, id, img, loc, media, title, tags}
       return firestore
-        .collection('users')
-        .doc(uid)
-        .collection('createdCards')
+        .collection('cards')
         .doc(newCard.id)
         .set(newCard);
     }
@@ -238,11 +255,9 @@ export const doCreateCard = (uid, card) =>
 // TODO: change later
 export const doUpdateCard = doCreateCard;
 
-export const doDeleteCard = (uid, cid) =>
+export const doDeleteCard = cid =>
   firestore
-    .collection('users')
-    .doc(uid)
-    .collection('createdCards')
+    .collection('cards')
     .doc(cid)
     .delete();
 
@@ -280,21 +295,21 @@ export const addChallengeSubmission = ({
   challengeData
 }) => {
   const { file, ...restChallengeSub } = challengeData;
-  return addImgToStorage({ file, uid, path: 'challengeSubmissions' }).then(
-    imgUrl =>
-      firestore
-        .collection('users')
-        .doc(uid)
-        .collection('createdCards')
-        .doc(cardId)
-        .collection('challengeSubmissions')
-        .doc(playerId)
-        .set({ ...restChallengeSub, imgUrl, date: new Date() })
-        .catch(err => {
-          throw new Error(`error in uploading img for ${uid}`);
-          // Handle any error that occurred in any of the previous
-          // promises in the chain.
-        })
+  return addImgToStorage({
+    file,
+    path: `${uid}/challengeSubmissions/${cardId}`
+  }).then(imgUrl =>
+    firestore
+      .collection('cards')
+      .doc(cardId)
+      .collection('challengeSubmissions')
+      .doc(playerId)
+      .set({ ...restChallengeSub, imgUrl, date: new Date() })
+      .catch(err => {
+        throw new Error(`error adding challengesubmission for ${uid}`);
+        // Handle any error that occurred in any of the previous
+        // promises in the chain.
+      })
   );
 };
 

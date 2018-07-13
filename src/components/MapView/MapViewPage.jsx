@@ -255,28 +255,9 @@ class MapViewPage extends Component {
       // navigateFirstTimeAction
     } = this.props;
 
-    // const vp = new PerspectiveMercatorViewport({
-    //   width,
-    //   height,
-    //   zoom,
-    //   latitude,
-    //   longitude
-    // });
-
-    // const cardSets = setify(cards);
-    // const barScales = setify(cards).map(d => ({
-    //   key: d.key,
-    //   scale: d3
-    //     .scaleLinear()
-    //     .domain([0, d.count])
-    //     .range([10, 100])
-    // }));
-
-    // const barScale = d3
-    //   .scaleLinear()
-    //   .domain(d3.extent(cardSets, d => d.count))
-    //   .range([20, 100]);
-
+    const slotSize = 100 / 3.5;
+    const cardStackWidth =
+      slotSize / cards.length < slotSize ? 100 : slotSize * cards.length;
     return (
       <React.Fragment>
         <div
@@ -326,6 +307,8 @@ class MapViewPage extends Component {
               <div
                 className="mb-3 mt-3"
                 style={{
+                  display: 'flex',
+                  justifyContent: 'center',
                   // opacity: gridView ? 1 : 0,
                   // display: !gridView ? 'none' : null,
                   transition: 'opacity 0.5s',
@@ -339,10 +322,10 @@ class MapViewPage extends Component {
                   duration={600}
                   centered={selectedCardId !== null}
                   selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
-                  width={100}
+                  width={cardStackWidth}
                   height={100}
                   unit="%"
-                  slotSize={100 / 3.5}
+                  slotSize={cardStackWidth< 100 ? 100 : slotSize}
                   style={{
                     // width: '100%',
                     zIndex: dataView === 'geo' && 1000

@@ -129,7 +129,7 @@ export function fetchCardTemplates(uid) {
 }
 
 export function asyncCreateCard({ cardData, uid, viewport, dataView }) {
-  console.log('asyncCreateCard', { cardData, uid, viewport, dataView })
+  console.log('asyncCreateCard', { cardData, uid, viewport, dataView });
   // const { floorX, floorY, img, loc, media, title, tags, challenge } = cardData;
 
   const newCard = {
@@ -151,13 +151,15 @@ export function asyncCreateCard({ cardData, uid, viewport, dataView }) {
   };
 }
 
-export function asyncRemoveCard({ uid, cid }) {
+export function asyncRemoveCard(cid) {
   // Thunk middleware knows how to handle functions.
   // It passes the dispatch method as an argument to the function, thus making it able to dispatch actions itself.
-  console.log('async remove card');
+  console.log('async remove card', cid);
   return function(dispatch) {
     dispatch(deleteCard(cid));
-    return db.doDeleteCard(uid, cid).then(querySnapshot => {
+    dispatch(selectCard(null));
+    // TODO: remove dependencies
+    return db.doDeleteCard(cid).then(querySnapshot => {
       dispatch(deleteCardSuccess(cid));
     });
   };

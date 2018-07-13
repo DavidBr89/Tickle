@@ -321,8 +321,6 @@ const ThumbCell = ({ children, className, focusColor, uiColor, ...props }) => (
     style={{
       // height: '40vh',
       width: '100%',
-      // maxHeight: 300,
-      // minHeight: 150,
       ...props.style,
       cursor: 'pointer',
       position: 'relative',
@@ -502,7 +500,7 @@ class MediaSearch extends Component {
 
     switch (sel) {
       case 'overview':
-        return <MediaOverview data={selectedMedia} onChange={onChange} />;
+        return <MediaOverview data={selectedMedia} edit onChange={onChange} />;
       case 'wikipedia':
         return (
           <MetaSearch
@@ -978,7 +976,8 @@ class MetaSearch extends Component {
 class MediaOverview extends Component {
   static propTypes = {};
   static defaultProps = {
-    data: []
+    data: [],
+    edit: false
   };
 
   state = { data: this.props.data };
@@ -1009,6 +1008,7 @@ class MediaOverview extends Component {
 
   render() {
     const { data } = this.state;
+    const { edit } = this.props;
     // let GoogleAuth;
     // const SCOPE = 'https://www.googleapis.com/auth/youtube.force-ssl';
     // Load the API's client and auth2 modules.
@@ -1031,7 +1031,9 @@ class MediaOverview extends Component {
                 }))
               }
             >
-              <ActiveBtn selected onClick={() => this.removeItem(d.id)} />
+              {edit && (
+                <ActiveBtn selected onClick={() => this.removeItem(d.id)} />
+              )}
             </ThumbCell>
           )}
         </ScrollList>

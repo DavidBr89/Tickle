@@ -51,14 +51,14 @@ const CardDataOverlay = props => {
     authEnv,
     extendSelectedCard,
     dragCard,
-    cardAction,
+    createCard,
     toggleCardChallenge,
     onCardUpdate,
     cards,
     style,
-    onSubmitChallenge
+    onSubmitChallenge,
+    asyncRemoveCard
   } = props;
-  console.log('CardDataOverlay', props);
   return (
     <DropTargetCont
       dropHandler={onCardDrop}
@@ -100,8 +100,9 @@ const CardDataOverlay = props => {
             onClose={() => extendSelectedCard(null)}
             edit={authEnv}
             onSubmit={d => {
-              cardAction({ ...d, x, y });
+              createCard({ ...d, x, y });
             }}
+            onDelete={() => asyncRemoveCard(c.id)}
             onCollect={() =>
               toggleCardChallenge({
                 cardChallengeOpen: true
@@ -169,10 +170,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
       ? updateCardTemplate({ uid, cardData, viewport, dataView })
       : asyncUpdateCard({ uid, cardData, viewport, dataView });
 
-  const cardAction = cardData =>
-    selectedCardId === 'temp'
-      ? asyncCreateCard({ uid, cardData, viewport, dataView })
-      : asyncRemoveCard({ uid, cid: cardData.id });
+  const createCard = cardData =>
+    asyncCreateCard({ uid, cardData, viewport, dataView });
 
   const onCardUpdate = cardData =>
     selectedCardId === 'temp'
@@ -189,7 +188,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     ...dispatcherProps,
     onCardDrop,
     onCardUpdate,
-    cardAction,
+    createCard,
     onSubmitChallenge,
     ...ownProps
   };

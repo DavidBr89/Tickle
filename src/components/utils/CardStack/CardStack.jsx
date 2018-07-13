@@ -260,11 +260,13 @@ class CardStack extends Component {
 
     // const { cardStacks } = this.state;
 
-    const allCards = centered
-      ? centerLayout(this.props)
-      : selectedIndex !== null
-        ? this.hoverLayout()
-        : this.baseLayout();
+    // TODO: change later
+    const allCards =
+      centered && data.length > 3
+        ? centerLayout(this.props)
+        : selectedIndex !== null
+          ? this.hoverLayout()
+          : this.baseLayout();
 
     // const allCards = [...leftCards, ...centerCard, ...rightCards];
 
@@ -283,13 +285,22 @@ class CardStack extends Component {
     return (
       <div
         className={className}
-        style={{ ...style, height: `${height}${unit}`, position: 'relative' }}
+        style={{
+          ...style,
+          height: `${height}${unit}`,
+          width: `${width}${unit}`,
+          position: 'relative',
+          display: 'flex',
+          justifyContent: 'center'
+        }}
       >
         <div
           style={{
             perspective: '2400px',
             perspectiveOrigin: '50% -50%',
-            height: '100%'
+            height: '100%',
+            width: '100%'
+            // width: `${wh}${unit}`
           }}
         >
           {data.map((d, i) => {
@@ -300,15 +311,6 @@ class CardStack extends Component {
                 key={d.id}
                 style={{
                   position: 'absolute',
-                  // TODO
-                  // TODO
-                  // TODO
-                  // TODO
-                  // TODO
-                  // TODO
-                  // TODO
-                  // height: '100%',
-                  // maxWidth: '200px',
                   paddingLeft: `${innerMargin / 2}${unit}`,
                   paddingRight: `${innerMargin / 2}${unit}`,
                   cursor: 'pointer',

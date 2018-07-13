@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { scaleOrdinal } from 'd3';
+import * as Icon from 'react-feather';
 // import Grid from 'mygrid/dist';
 import { WithContext as ReactTags } from 'react-tag-input';
-import { profileSrc, mediaScale, colorClass, colorScaleRandom } from './styles';
-
+import { ARTICLE, PHOTO, GIF, VIDEO } from 'Constants/mediaTypes';
+import { profileSrc, colorClass, colorScaleRandom } from './styles';
 import cxx from './layout.scss';
 
 // TODO: remove
@@ -14,7 +16,23 @@ import cx from './Card.scss';
 
 import placeholderImgSrc from './placeholder.png';
 
-console.log('cxxx', cxx);
+const challengeTypes = ['quiz', 'gap text', 'hangman'];
+const mediaScale = scaleOrdinal()
+  .domain([ARTICLE, PHOTO, GIF, VIDEO])
+  .range([Icon.AlignLeft, Icon.Image, Icon.Image, Icon.Film]);
+
+console.log(
+  'mediaScale',
+  ARTICLE,
+  PHOTO,
+  GIF,
+  VIDEO,
+  Icon.AlignLeft,
+  Icon.Image,
+  Icon.Image,
+  Icon.Film,
+  mediaScale(ARTICLE)
+);
 
 const SearchIcon = ({ style, className }) => (
   <i
@@ -76,8 +94,8 @@ export const FieldSet = ({
         width: '100%',
         height: '100%',
         padding: 10,
+        overflow: 'hidden',
         ...bodyStyle
-
         // overflow: 'hidden'
       }}
     >
@@ -87,7 +105,7 @@ export const FieldSet = ({
         }}
       >
         <div onClick={onClick}>
-          <h5 className={cxx.hover} style={legendStyle}>
+          <h5 style={legendStyle}>
             <span>
               {legend}{' '}
               {!edit ? (
@@ -189,7 +207,10 @@ const DescriptionField = ({
   borderColor,
   edit
 }) => (
-  <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
+  <div
+    style={{ ...style, cursor: 'pointer', overflow: 'hidden' }}
+    onClick={onClick || onEdit}
+  >
     <FieldSet edit={edit} borderColor={borderColor} legend="Description">
       <div
         style={{
@@ -286,20 +307,16 @@ MediaField.defaultProps = {
 
 const PreviewMedia = ({ data, style }) => (
   <div style={style}>
-    <div>
-      {data.map(m => (
-        <div key={m.url}>
-          <div className="mr-1 row">
-            <i
-              style={{ fontSize: '20px' }}
-              className={`fa ${mediaScale(m.type)} col-1`}
-              aria-hidden="true"
-            />
-            <div className={`ml-1 col ${cx.textTrunc}`}>{m.title}</div>
-          </div>
-        </div>
-      ))}
-    </div>
+    {data.map((m, i) => (
+      <div
+        key={m.url}
+        className="mr-1 mb-1"
+        style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}
+      >
+        <div className="mr-1">{React.createElement(mediaScale(m.type))}</div>
+        <div className={` ${cx.textTrunc}`}>{m.title}</div>
+      </div>
+    ))}
   </div>
 );
 

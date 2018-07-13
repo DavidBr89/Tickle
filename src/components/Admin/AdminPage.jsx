@@ -39,6 +39,8 @@ export class ControlledCardStack extends Component {
   }
 }
 
+// async function yeah() {}
+
 class AdminPage extends Component {
   static propTypes = {
     children: PropTypes.node,

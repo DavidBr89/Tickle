@@ -17,6 +17,7 @@ module.exports = {
   entry: [
     // bundle the client for hot reloading
     // only- means to only hot reload for successful updates
+    "babel-polyfill",
     './src/index.jsx' // your app's entry point
   ],
   // TODO: change for production

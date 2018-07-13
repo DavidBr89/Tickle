@@ -9,6 +9,10 @@ const alias = require('./alias');
 
 module.exports = {
   entry: [
+    // TODO
+    // TODO
+    // TODO
+    'babel-polyfill',
     './src/index.jsx' // your app's entry point
   ],
   mode: 'production',

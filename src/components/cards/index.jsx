@@ -1,5 +1,6 @@
 // import 'w3-css';
 
+
 import React from 'react';
 // import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
@@ -152,7 +153,6 @@ class Card extends React.Component {
           onCollect={onCollect}
           flipHandler={flipHandler}
           tagColorScale={tagColorScale}
-          deleteHandler={onSubmit}
           author={author}
           onUpdate={comments => this.setState({ comments })}
           setMapRadius={mapRadius =>
