@@ -84,7 +84,13 @@ const CardDataOverlay = props => {
         }}
         colorScale={tagColorScale}
         preview={d => (
-          <DragSourceCont dragHandler={dragCard} data={d} x={d.x} y={d.y}>
+          <DragSourceCont
+            dragHandler={dragCard}
+            data={d}
+            x={d.x}
+            y={d.y}
+            style={{ zIndex: selectedCardId === d.id ? 5000 : null }}
+          >
             <PreviewMarker
               selected={selectedCardId === d.id}
               template={d.template}

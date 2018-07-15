@@ -24,7 +24,6 @@ import MapViewPage from './MapViewPage';
 
 import withAuthorization from '../withAuthorization';
 
-
 // import mapViewReducer from './reducer';
 
 // Container
@@ -65,6 +64,7 @@ const mapStateToProps = state => {
     ...state.MapView,
     ...state.Cards,
     ...state.DataView,
+    uid,
     selectedCard,
     selectedTags,
     selectedCardId,
@@ -93,15 +93,27 @@ const mapDispatchToProps = dispatch =>
 // });
 
 const mergeProps = (state, dispatcherProps) => {
-  const { selectedCardId } = state;
-  const { selectCard, extendSelectedCard } = dispatcherProps;
+  const { selectedCardId, uid } = state;
+  const {
+    selectCard,
+    extendSelectedCard,
+    fetchReadableCards,
+    fetchCreatedCards
+  } = dispatcherProps;
 
   const previewCardAction = d =>
     selectedCardId === d.id ? extendSelectedCard(d.id) : selectCard(d.id);
+
+  const fetchCards = () => {
+    // fetchReadableCards(uid);
+    fetchCreatedCards(uid);
+  };
+
   return {
     ...state,
     ...dispatcherProps,
-    previewCardAction
+    previewCardAction,
+    fetchCards
   };
 };
 

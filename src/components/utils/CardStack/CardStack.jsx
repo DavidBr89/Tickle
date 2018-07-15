@@ -22,12 +22,18 @@ function centerLayout(nextProps) {
   const leftScale = j => leftPos(j);
   // center - slotSize > slotSize ? bufferLeft(j) + leftPos(j) : leftPos(j);
 
-  const bufferRight = index => slotSize / (rightLen - index);
   const rightPos = j =>
     center + slotSize / 2 + ((rightLen - j) * rightSize) / rightLen;
 
-  // TODO: not correct, fix bufferRight
-  const rightScale = j => rightPos(j);
+  // TODO: not correct, fix
+  const rightScale = j => {
+    switch (true) {
+      case data.length > 3:
+        return rightPos(j);
+      // case data.length === 1:
+      //   center - slotSize / 2;
+    }
+  };
   // rightPos(j) - bufferRight(j) >= center + slotSize / 2
   //   ? rightPos(j) - bufferRight(j)
   //   : rightPos(j);

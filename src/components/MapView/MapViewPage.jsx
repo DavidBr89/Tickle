@@ -109,37 +109,45 @@ SpeechBubble.propTypes = {};
 @DragDropContextProvider
 class MapViewPage extends Component {
   static propTypes = {
-    cards: PropTypes.array.isRequired,
-    defaultCards: PropTypes.array.isRequired,
-    mapZoom: PropTypes.number.isRequired,
-    userLocation: PropTypes.array.isRequired,
-    selectedCardId: PropTypes.string.isRequired,
-    selectedCard: PropTypes.object.isRequired,
-    extCardId: PropTypes.string.isRequired,
-    tagListView: PropTypes.bool.isRequired,
-    tsneView: PropTypes.bool.isRequired,
-    // centerLocation: PropTypes.object.isRequired,
-    width: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired,
-    cardChallengeOpen: PropTypes.bool.isRequired,
-    AppOpenFirstTime: PropTypes.bool.isRequired,
-    mapViewport: PropTypes.shape({
-      width: PropTypes.number,
-      height: PropTypes.number,
-      zoom: PropTypes.number,
-      latitude: PropTypes.number,
-      longitude: PropTypes.number
-    }).isRequired,
-
-    userMove: PropTypes.func.isRequired,
-    changeMapViewport: PropTypes.func.isRequired,
-    selectCard: PropTypes.func.isRequired,
-    extCard: PropTypes.func.isRequired,
-    toggleCardChallenge: PropTypes.func.isRequired,
-    flyToUserAction: PropTypes.func.isRequired,
-    screenResize: PropTypes.func.isRequired
+    cards: PropTypes.array,
+    cardSets: PropTypes.array,
+    selectedTags: PropTypes.array,
+    selectedCardId: PropTypes.oneOf([PropTypes.string, null]),
+    width: PropTypes.number,
+    height: PropTypes.number,
+    authEnv: PropTypes.boolean,
+    dataView: PropTypes.boolean,
+    previewCardAction: PropTypes.func,
+    selectCard: PropTypes.func,
+    filterCards: PropTypes.func,
+    addCardFilter: PropTypes.func,
+    setDataView: PropTypes.func,
+    filterSet: PropTypes.func,
+    toggleAuthEnv: PropTypes.func,
+    tagColorScale: PropTypes.func,
+    screenResize: PropTypes.func,
+    fetchCards: PropTypes.func
   };
 
+  static defaultProps = {
+    cards: [],
+    cardSets: [],
+    selectedTags: [],
+    selectedCardId: null,
+    width: 500,
+    height: 500,
+    authEnv: false,
+    dataView: 'geo',
+    previewCardAction: d => d,
+    selectCard: d => d,
+    filterCards: d => d,
+    addCardFilter: d => d,
+    setDataView: d => d,
+    filterSet: d => d,
+    toggleAuthEnv: d => d,
+    tagColorScale: () => 'green',
+    screenResize: d => d
+  };
   constructor(props) {
     super(props);
 
@@ -171,7 +179,9 @@ class MapViewPage extends Component {
   }
 
   componentDidMount() {
-    const { screenResize, getUserCards } = this.props;
+    const { screenResize, getUserCards, fetchCards } = this.props;
+
+    fetchCards();
     screenResize({
       width: this.cont.offsetWidth,
       height: this.cont.offsetHeight
@@ -205,54 +215,21 @@ class MapViewPage extends Component {
   render() {
     const {
       cards,
-      // defaultCards,
-      zoom,
-      userLocation,
       selectedCardId,
-      // latitude,
-      // longitude,
-      width,
+      // width,
       height,
-      extCardId,
-      selectedCard,
-      gridView,
-      tsneView,
-      tagListView,
-      isSearching,
-      isCardDragging,
       authEnv,
-      authUser,
-
       previewCardAction,
-      tagColors,
-      cardChallengeOpen,
-      changeMapViewport,
       selectCard,
-      extendSelectedCard,
-      toggleCardChallenge,
-      fetchDirection,
       filterCards,
       addCardFilter,
-      removeCardFilter,
       dataView,
-      // toggleTagList,
-      toggleTsneView,
-      toggleGrid,
-      toggleSearch,
-      dragCard,
-      onCardUpdate,
-      changeViewport,
-      toggleCardAuthoring,
       setDataView,
       filterSet,
-      onCardDrop,
-      cardAction,
       toggleAuthEnv,
       tagColorScale,
       cardSets,
       selectedTags
-      // getUserCards
-      // navigateFirstTimeAction
     } = this.props;
 
     const slotSize = 100 / 3.5;
@@ -325,7 +302,7 @@ class MapViewPage extends Component {
                   width={cardStackWidth}
                   height={100}
                   unit="%"
-                  slotSize={cardStackWidth< 100 ? 100 : slotSize}
+                  slotSize={cardStackWidth < 100 ? 100 : slotSize}
                   style={{
                     // width: '100%',
                     zIndex: dataView === 'geo' && 1000
@@ -460,8 +437,6 @@ class MapViewPage extends Component {
     );
   }
 }
-
-const authCondition = authUser => !!authUser;
 
 export default MapViewPage;
 // export default withAuthorization(authCondition)(MapViewPage);

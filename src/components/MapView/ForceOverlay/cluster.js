@@ -16,18 +16,15 @@ export default function dobbyscan({
 }) {
   if (!x) x = defaultX;
   if (!y) y = defaultY;
+  // let i = 0;
 
   const pointIds = new Uint32Array(points.length);
-  for (var i = 0; i < points.length; i++) {
+  for (let i = 0; i < points.length; i++) {
     pointIds[i] = i;
   }
 
-  function getX(i) {
-    return x(points[i]);
-  }
-  function getY(i) {
-    return y(points[i]);
-  }
+  const getX = index => x(points[index]);
+  const getY = index => y(points[index]);
 
   const index = kdbush(pointIds, getX, getY);
 
@@ -38,7 +35,7 @@ export default function dobbyscan({
     return !clustered[i];
   }
 
-  for (i = 0; i < points.length; i++) {
+  for (let i = 0; i < points.length; i++) {
     if (clustered[i]) continue;
 
     const cluster = [];
@@ -50,23 +47,8 @@ export default function dobbyscan({
       cluster.push(points[j]);
 
       const unclusteredNeighbors = index
-        .within(
-          getX(j),
-          getY(j),
-          Math.max(radius(points[i])),
-          radius(points[j])
-        )
+        .within(getX(j), getY(j), radius(points[i]), radius(points[j]))
         .filter(isUnclustered);
-      // .filter(c => {
-      //   const tagsA = points[c].tags;
-      //   const tagsB = points[i].tags;
-      //   const is = intersection(tagsA, tagsB);
-      //   console.log('is', tagsA, tagsB, is);
-      //   return is.length > 0;
-      // });
-      // .map((id) => points[id]);
-      //   geokdbush.around(
-      //     index, getX(j), getY(j), Infinity, radius, isUnclustered);
 
       for (let k = 0; k < unclusteredNeighbors.length; k++) {
         const q = unclusteredNeighbors[k];

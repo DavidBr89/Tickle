@@ -15,7 +15,8 @@ const CardHeader = ({
   style,
   background,
   placeholder,
-  uiColor
+  uiColor,
+  edit
   // id
 }) => {
   const btnStyle = {
@@ -42,13 +43,14 @@ const CardHeader = ({
         className="mb-2 pr-2"
         style={{
           display: 'flex',
+          alignItems: 'center',
           // TODO stick to left
           justifyContent: 'space-between',
           width: '100%'
         }}
       >
         {editButton}
-        <div style={{ display: 'inline-flex', maxWidth: '65%' }}>
+        <div style={{ display: 'inline-flex', maxWidth: edit ? '80%' : '90%' }}>
           <h3 className="text-truncate" style={{ marginBottom: '10px' }}>
             {title === null ? (
               <span style={{ fontStyle: editButton ? 'italic' : null }}>
@@ -75,6 +77,7 @@ CardHeader.propTypes = {
   // img: PropTypes.string,
   // flipHandler: PropTypes.func,
   background: PropTypes.string,
+  edit: PropTypes.boolean,
   children: PropTypes.node,
   style: PropTypes.object,
   onClose: PropTypes.func,

@@ -4,14 +4,16 @@ import PropTypes from 'prop-types';
 import * as Icon from 'react-feather';
 
 import PhotoUpload from 'Utils/PhotoUpload';
+import EditPhoto from './EditPhoto';
 
 import { isEqual } from 'lodash';
 
 import PhotoChallenge from 'Src/components/Challenges/MatchPhotoChallenge';
+import ChallengeAuthorModalBody from 'Src/components/ChallengeAuthor';
+import { extractCardFields } from 'Constants/cardFields';
 
 import { Modal, ModalBody } from 'Utils/Modal';
 import { MediaSearch, MediaOverview } from '../MediaSearch';
-import ChallengeAuthorModalBody from 'Src/components/ChallengeAuthor';
 import { cardLayout, coverPhotoStyle } from '../styles';
 
 import {
@@ -45,31 +47,6 @@ const FooterBtn = ({ onClick, children, disabled, className, style = {} }) => (
 );
 // {id: null, floorX: 0.5, floorY: 0.5, img: null, loc: { latitude: 50.85146, longitude: 4.315483 }, media: null, title: null, tags: null, challenge: null,
 // }
-const extractCardFields = ({
-  id,
-  uid,
-  floorX = 0.5,
-  floorY = 0.5,
-  img = null,
-  loc: { latitude = 50.85146, longitude = 4.315483 },
-  tags = [],
-  media = null,
-  title = null,
-  challenge = null,
-  description = ''
-}) => ({
-  id,
-  uid,
-  floorX,
-  floorY,
-  img,
-  loc: { longitude, latitude },
-  tags,
-  media,
-  title,
-  challenge,
-  description
-});
 //
 const defaultProps = {
   title: null,
@@ -244,11 +221,11 @@ class EditCardFront extends PureComponent {
       case 'Photo':
         return (
           <ModalBody footer={closeBtn}>
-            <PhotoUpload
-              uiColor={uiColor}
+            <EditPhoto
+              uiColor="grey"
               imgUrl={img ? img.url : null}
               onChange={imgObj => {
-                console.log('img OBJ', imgObj);
+                console.log('onChange', imgObj);
                 this.setFieldState({ img: imgObj, dialog: null });
               }}
             />
@@ -320,6 +297,7 @@ class EditCardFront extends PureComponent {
         onClose={onClose}
         background={background}
         uiColor={uiColor}
+        edit
         editButton={
           <EditButton
             onClick={() =>

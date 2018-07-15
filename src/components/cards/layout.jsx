@@ -306,12 +306,23 @@ MediaField.defaultProps = {
 };
 
 const PreviewMedia = ({ data, style }) => (
-  <div style={style}>
+  <div
+    style={{
+      style,
+      display: 'flex',
+      alignItems: 'center',
+      flexWrap: 'wrap'
+    }}
+  >
     {data.map((m, i) => (
       <div
         key={m.url}
-        className="mr-1 mb-1"
-        style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}
+        className="mr-3 mb-1"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          flexWrap: 'wrap'
+        }}
       >
         <div className="mr-1">{React.createElement(mediaScale(m.type))}</div>
         <div className={` ${cx.textTrunc}`}>{m.title}</div>

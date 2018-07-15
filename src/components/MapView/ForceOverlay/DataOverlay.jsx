@@ -174,6 +174,7 @@ class DataOverlay extends Component {
         y={extCardId === c.id ? height / 2 : c.y}
         extended={extCardId === c.id}
         preview={preview(c)}
+        style={{ zIndex: selectedCardId === c.id ? 5000 : null }}
       >
         {children(c)}
       </ExtendableMarker>
@@ -215,8 +216,8 @@ class DataOverlay extends Component {
               ...style
             }}
           >
-            <Map disabled={disabled} nodes={data} colorScale={colorScale}>
-              {d => draggable({ ...d })}
+            <Map disabled={disabled} nodes={data} colorScale={colorScale} preview={nonDraggable}>
+              {draggable}
             </Map>
           </div>
         );

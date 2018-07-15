@@ -73,7 +73,7 @@ class Cluster extends Component {
     const clusters = dobbyscan({
       points: [...nodes],
       // TODO find real function
-      radius: () => radius,
+      radius,
       x: n => n.x,
       y: n => n.y
     }).map((values, i) => {

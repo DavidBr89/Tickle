@@ -3,10 +3,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { firebase } from 'Firebase';
 
-import {
-  fetchReadableCards,
-  fetchCreatedCards
-} from 'Reducers/Cards/async_actions';
+// import {
+//   fetchReadableCards,
+//   fetchCreatedCards
+// } from 'Reducers/Cards/async_actions';
 
 import { fetchUserInfo } from 'Reducers/Session/async_actions';
 import { setAuthUser } from 'Reducers/Session/actions';
@@ -34,8 +34,8 @@ const withAuthentication = Component => {
           // TODO: change
           // TODO: change
           // TODO: change
-          getReadableCards(uid);
-          getCreatedCards(uid);
+          // getReadableCards(uid);
+          // getCreatedCards(uid);
           fetchUserInfo(uid);
         } else {
           onSetAuthUser({ authUser: null });
@@ -58,8 +58,8 @@ const withAuthentication = Component => {
       dispatch(setAuthUser(authUser));
     },
     fetchUserInfo: uid => dispatch(fetchUserInfo(uid)),
-    getReadableCards: uid => dispatch(fetchReadableCards(uid)),
-    getCreatedCards: uid => dispatch(fetchCreatedCards(uid))
+    // getReadableCards: uid => dispatch(fetchReadableCards(uid)),
+    // getCreatedCards: uid => dispatch(fetchCreatedCards(uid))
   });
 
   return connect(

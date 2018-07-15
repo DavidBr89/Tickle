@@ -1,4 +1,7 @@
 import { union, difference } from 'lodash';
+
+import { TEMPLATE_ID } from 'Constants/cardTemplate';
+
 import {
   SET_DATA_VIEW,
   TOGGLE_AUTH_ENV,
@@ -99,7 +102,7 @@ export default function dataViewReducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         authEnv: !state.authEnv,
-        selectedCardId: null
+        selectedCardId: !state.authEnv ? TEMPLATE_ID : null
       };
     }
     default:

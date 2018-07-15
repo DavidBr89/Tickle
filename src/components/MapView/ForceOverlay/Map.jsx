@@ -52,53 +52,86 @@ const PreviewMarker = ({
   />
 );
 
-function ClusterSurrogate({
+function ClusterPlaceholder({
   coords: [x, y],
   colorScale,
   tags,
   centroid: [cx, cy],
   size,
-  ...props
+  transition
+  // ...props
 }) {
   return (
     <div
       key={tags.join('-')}
       style={{
         position: 'absolute',
-        transition: 'left 500ms, top 500ms',
+        transition: `left ${transition}ms, top ${transition}ms, width ${transition}ms, height ${transition}ms`,
         width: size,
         height: size,
         left: x,
         top: y,
         transform: `translate(-50%,-50%)`,
-        borderRadius: '50%',
-        background: 'white',
+        // background: 'white',
         zIndex: 100,
-        // maxWidth: '20vw',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         boxShadow: '3px 3px #24292e',
-        border: '#24292e solid 1px'
+        border: '#24292e solid 1px',
+        borderRadius: '100%'
+        // overflow: 'hidden'
       }}
     >
-      <div className="m-1">
+      <div
+        style={{
+          zIndex: -1,
+          background: 'whitesmoke',
+          opacity: 0.8,
+          width: '100%',
+          height: '100%',
+          position: 'absolute',
+          borderRadius: '100%'
+        }}
+      />
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          padding: '10.65%'
+          // padding: '14.65%'
+        }}
+      >
         <div
           style={{
-            // width: '100%',
-            // borderRadius: '30%',
-            display: 'inline-flex',
+            width: '100%',
+            height: '100%',
+            overflowY: 'hidden',
+            display: 'flex',
             justifyContent: 'center',
-            flexWrap: 'wrap',
-            overflow: 'hidden'
+            flexWrap: 'wrap'
           }}
         >
           {tags.map(t => (
             <div
-              className="mr-1"
-              style={{ fontSize: 14, background: colorScale(t) }}
+              className="mb-1 mr-1"
+              style={{
+                fontSize: 14,
+                background: colorScale(t),
+                maxWidth: '100%'
+              }}
             >
-              {`${t} `}{' '}
+              <div
+                style={{
+                  // width: '150%',
+                  maxWidth: '100%',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }}
+              >
+                {t}
+              </div>
             </div>
           ))}
         </div>
@@ -106,8 +139,8 @@ function ClusterSurrogate({
     </div>
   );
 }
-ClusterSurrogate.defaultProps = {};
-ClusterSurrogate.propTypes = {};
+ClusterPlaceholder.propTypes = { transition: PropTypes.array };
+ClusterPlaceholder.defaultProps = { transition: 500 };
 
 class Map extends Component {
   static propTypes = {
@@ -152,12 +185,12 @@ class Map extends Component {
       children,
       maxZoom,
       viewport,
-      userLocation
+      userLocation,
+      preview
     } = this.props;
 
     const { width, height, latitude, longitude, zoom } = viewport;
 
-    console.log('nodes', nodes);
     const vp = new PerspectiveMercatorViewport({ ...viewport });
 
     const locNodes = nodes.reduce((acc, n) => {
@@ -173,7 +206,6 @@ class Map extends Component {
         mapStyle={mapStyleUrl}
         onViewportChange={newViewport => {
           if (!disabled) {
-            // this.setState({ ...viewport });
             this.props.changeMapViewport({ ...newViewport });
           }
         }}
@@ -186,7 +218,10 @@ class Map extends Component {
         <UserOverlay {...this.props} location={userLocation} />
 
         <Cluster
-          radius={40}
+          radius={d =>
+            // console.log('d', d);
+            80
+          }
           nodes={locNodes}
           width={width}
           height={height}
@@ -198,16 +233,18 @@ class Map extends Component {
                 {children}
               </ForceCollide>
             ) : (
-              <ClusterSurrogate
+              <ClusterPlaceholder
                 coords={[x, y]}
                 centroid={[x, y]}
-                size={Math.min(90, 30 + d.values.length * 10)}
+                size={Math.min(160, Math.max(40, 30 + d.tags.length * 9))}
                 colorScale={colorScale}
                 tags={d.tags}
               />
             )
           }
         </Cluster>
+        {zoom < maxZoom &&
+          locNodes.map(d => preview({ ...d, x: width / 2, y: height / 2 }))}
       </MapGL>
     );
   }
