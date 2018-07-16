@@ -2,9 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import chroma from 'chroma-js';
+import { css } from 'aphrodite/no-important';
+
+import { ThemeConsumer } from 'Src/styles/ThemeContext';
 
 // const ddg = new DDG('tickle');
-
 
 const Modal = ({
   visible,
@@ -134,31 +136,28 @@ Modal.defaultProps = {
 
 // TODO: fix padding bottom
 // TODO: access child state
-const ModalBody = ({ children, footer, uiColor, styles }) => (
-  <div
-    style={{
-      width: '100%',
-      // height: '90%',
-      // TODO: outsource
-      maxHeight: 800,
-      // height: '100%',
-      // height: '30vh',
-      overflow: 'hidden',
+const ModalBody = ({ children, footer, styles }) => (
+  <ThemeConsumer>
+    {({ stylesheet }) => (
+      <div
+        style={{
+          width: '100%',
+          // height: '90%',
+          // TODO: outsource
+          maxHeight: 800,
+          // height: '100%',
+          // height: '30vh',
+          overflow: 'hidden',
 
-      ...styles
-    }}
-  >
-    <div className="modal-body">{children}</div>
+          ...styles
+        }}
+      >
+        <div className="modal-body">{children}</div>
 
-    <div
-      className="modal-footer"
-      style={{
-        borderTop: `1px solid ${uiColor}`
-      }}
-    >
-      {footer}
-    </div>
-  </div>
+        <div className={css(stylesheet.modalFooter)}>{footer}</div>
+      </div>
+    )}
+  </ThemeConsumer>
 );
 
 ModalBody.propTypes = {

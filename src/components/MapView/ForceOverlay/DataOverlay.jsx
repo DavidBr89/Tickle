@@ -216,7 +216,12 @@ class DataOverlay extends Component {
               ...style
             }}
           >
-            <Map disabled={disabled} nodes={data} colorScale={colorScale} preview={nonDraggable}>
+            <Map
+              disabled={disabled}
+              nodes={data}
+              colorScale={colorScale}
+              preview={nonDraggable}
+            >
               {draggable}
             </Map>
           </div>
@@ -240,7 +245,7 @@ class DataOverlay extends Component {
       }
       default: {
         return (
-          <div style={{ ...style, height: '86%' }}>
+          <div style={{ ...style, height: '100%' }}>
             <DimWrapper>
               {(w, h) => (
                 <TreeMapCluster

@@ -11,6 +11,8 @@ import MatchPhotoChallenge from 'Src/components/Challenges/MatchPhotoChallenge';
 import { TagInput, PreviewTags } from 'Utils/Tag';
 import { Modal, ModalBody } from 'Utils/Modal';
 
+import { ThemeConsumer } from 'Src/styles/ThemeContext';
+
 import { MediaOverview } from '../MediaSearch';
 import { cardLayout, coverPhotoStyle } from '../styles';
 
@@ -147,7 +149,14 @@ class ReadCardFront extends Component {
 
     // TODO: modal color
     return (
-      <div className={cardLayout}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '90%',
+          justifyContent: 'space-between'
+        }}
+      >
         <Modal
           visible={modalVisible}
           title={dialogTitle}
@@ -155,7 +164,6 @@ class ReadCardFront extends Component {
         >
           {this.modalReadContent(dialogTitle)}
         </Modal>
-
         <ImgOverlay src={img ? img.url : null} style={coverPhotoStyle}>
           <div style={{ display: 'flex', width: '70%', maxWidth: '80%' }}>
             {/* TODO: fix width */}
@@ -182,7 +190,7 @@ class ReadCardFront extends Component {
           }
         />
         <MediaField
-          style={{ height: '20%' }}
+          style={{ maxHeight: '20%' }}
           media={media}
           borderColor={uiColor}
           onClick={() =>

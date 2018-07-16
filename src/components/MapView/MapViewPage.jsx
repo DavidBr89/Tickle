@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 // import * as d3 from 'd3';
 
-import 'mapbox-gl/dist/mapbox-gl.css';
 // import { Motion, spring } from 'react-motion';
 import * as Icon from 'react-feather';
 import Spinner from 'react-loader-spinner';
@@ -346,90 +345,6 @@ class MapViewPage extends Component {
                 selectedTags={selectedTags}
                 style={{ height: '65%' }}
               />
-              <div
-                className="fixed-bottom-right"
-                style={{
-                  display: 'flex',
-                  justifyContent: 'right',
-                  alignItems: 'flex-end'
-                }}
-              >
-                <button
-                  className={`btn mb-3 mr-2 ${dataView === 'geo' &&
-                    'btn-active'}`}
-                  style={
-                    {
-                      // position: 'absolute',
-                      // zIndex: 1000,
-                      // background: dataView === 'geo' && 'whitesmoke'
-                    }
-                  }
-                  onClick={() => setDataView('geo')}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      height: 30,
-                      width: 44,
-                      fontWeight: 'bold'
-                    }}
-                  >
-                    {'Map'}
-                  </div>
-                </button>
-                <button
-                  className={`btn mb-3 ${dataView === 'floorplan' &&
-                    'btn-active'}`}
-                  onClick={() => setDataView('floorplan')}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      height: 30,
-                      fontWeight: 'bold'
-                    }}
-                  >
-                    {'Floor'}
-                  </div>
-                </button>
-
-                <div
-                  style={{
-                    // height: 200,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'flex-end'
-                  }}
-                >
-                  <button
-                    className={`btn mb-3 mr-3 ml-2 ${dataView === 'topic' &&
-                      'btn-active'}`}
-                    style={
-                      {
-                        // position: 'absolute',
-                        // zIndex: 1000
-                        // background: dataView === 'som' && 'grey',
-                      }
-                    }
-                    onClick={() => setDataView('topic')}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: 30
-                      }}
-                    >
-                      <div style={{ fontWeight: 'bold' }}>Topic</div>
-                    </div>
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
         </div>

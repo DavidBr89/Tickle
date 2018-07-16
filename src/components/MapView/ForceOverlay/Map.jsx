@@ -16,6 +16,8 @@ import ForceCollide from './MiniForceCollide';
 
 import { changeMapViewport } from 'Reducers/Map/actions';
 
+import 'mapbox-gl/dist/mapbox-gl.css';
+
 const mapStyleUrl = 'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l';
 
 const defaultLocation = {

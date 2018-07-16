@@ -22,7 +22,7 @@ const Routes = () => (
         exact
         path={routes.MAP}
         render={() => (
-          <DefaultLayout>
+          <DefaultLayout activePath={routes.MAP}>
             <MapView />
           </DefaultLayout>
         )}
@@ -31,7 +31,7 @@ const Routes = () => (
         exact
         path={routes.LANDING}
         render={() => (
-          <DefaultLayout>
+          <DefaultLayout activePath={routes.LANDING}>
             <LandingPage />
           </DefaultLayout>
         )}
@@ -40,7 +40,7 @@ const Routes = () => (
         exact
         path={routes.SIGN_UP}
         component={() => (
-          <DefaultLayout>
+          <DefaultLayout activePath={routes.SIGN_UP}>
             <SignUp />
           </DefaultLayout>
         )}
@@ -49,7 +49,7 @@ const Routes = () => (
         exact
         path={routes.SIGN_IN}
         component={() => (
-          <DefaultLayout>
+          <DefaultLayout activePath={routes.SIGN_IN}>
             <SignIn />
           </DefaultLayout>
         )}
@@ -58,7 +58,7 @@ const Routes = () => (
         exact
         path={routes.HOME}
         component={() => (
-          <DefaultLayout>
+          <DefaultLayout activePath={routes.HOME}>
             <Home />
           </DefaultLayout>
         )}

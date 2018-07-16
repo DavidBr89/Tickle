@@ -5,10 +5,8 @@ import { Link } from 'react-router-dom';
 
 // import { Link } from 'react-router-dom';
 
-import SignOutButton from '../SignOut';
-import * as routes from 'Constants/routes';
+// import SignOutButton from '../SignOut';
 
-import AuthUserContext from '../AuthUserContext';
 import Navigation from '../Navigation';
 
 // import DocumentMeta from 'react-document-meta';
@@ -65,7 +63,8 @@ function Menu({ style, children }) {
 
 export default class MainLayout extends Component {
   static propTypes = {
-    children: PropTypes.node.isRequired
+    children: PropTypes.node.isRequired,
+    activePath: PropTypes.string
   };
 
   constructor(props) {
@@ -83,14 +82,14 @@ export default class MainLayout extends Component {
   }
 
   render() {
-    const { children } = this.props;
+    const { children, activePath } = this.props;
 
     return (
       <div id="main">
         <div className="layout__content">
           <div id="content-container">
             <Menu style={{ position: 'absolute' }}>
-              <Navigation>
+              <Navigation activePath={activePath}>
                 {(r, name) => (
                   <Link className="btn mb-2" to={r}>
                     {name}

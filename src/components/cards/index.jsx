@@ -1,28 +1,22 @@
 // import 'w3-css';
 
-
 import React from 'react';
 // import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import chroma from 'chroma-js';
 
-// import cxs from 'cxs';
-// import ClampLines from 'react-clamp-lines';
-// import 'react-tagsinput/react-tagsinput.css'; // If using WebPack and style-loader.
+import { StyleSheet } from 'aphrodite/no-important';
+
 import cx from './Card.scss';
-// import placeholderImg from './placeholder.png';
-// TODO: rename
-// import { Modal, ModalBody } from '../utils/modal';
-// import { MediaSearch, MediaOverview } from './MediaSearch';
 import CardBack from './CardBack';
 import CardFront from './CardFront';
 
 import PreviewCard from './PreviewCard';
 import CardMarker from './CardMarker';
 
-import { db } from 'Firebase';
+import { colorScale } from './styles';
 
-import { colorScale, UIthemeContext } from './styles';
+import { ThemeProvider, btnStyle } from 'Src/styles/ThemeContext';
 
 // ReadCardBack.defaultProps = {
 //   key: 'asa',
@@ -101,10 +95,41 @@ class Card extends React.Component {
     frontView: true
   };
 
+  makeStylesheet = () => {
+    const { uiColor, background } = this.props;
+    return StyleSheet.create({
+      uiColor,
+      btn: {
+        ...btnStyle,
+        borderColor: uiColor,
+        ':hover': {
+          boxShadow: `4px 4px ${uiColor}`
+        }
+      },
+      btnActive: {
+        ...btnStyle,
+        background: uiColor,
+        color: 'whitesmoke'
+        // borderColor: uiColor
+      },
+      background: { background },
+      modalFooter: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        padding: '1rem',
+        borderTop: `1px solid ${uiColor}`
+      }
+    });
+  };
+
   // componentDidMount() {
   //   const { uid } = this.props;
   //   db.getUserInfo(uid).then(usr => console.log('yeah', usr));
   // }
+  //
+  //
+  //
 
   render() {
     const {
@@ -115,7 +140,9 @@ class Card extends React.Component {
       type,
       tagColorScale,
       onSubmit,
-      author
+      author,
+      background,
+      uiColor
     } = this.props;
     const { frontView } = this.state;
     // const { onClose } = this.props;
@@ -126,10 +153,10 @@ class Card extends React.Component {
         frontView: !oldState.frontView
       }));
     };
-    const background = colorScale(type);
-    const uiColor = chroma(background).darken(1);
-    const focusColor = chroma(background).darken(3);
-
+    // const background = colorScale(type);
+    // const uiColor = chroma(background).darken(1);
+    // const focusColor = chroma(background).darken(3);
+    const stylesheet = this.makeStylesheet();
     const togglecard = () => {
       if (frontView)
         return (
@@ -176,9 +203,9 @@ class Card extends React.Component {
             background
           }}
         >
-          <UIthemeContext.Provider value={{ background, uiColor, focusColor }}>
+          <ThemeProvider value={{ stylesheet, uiColor }}>
             {togglecard()}
-          </UIthemeContext.Provider>
+          </ThemeProvider>
         </div>
       </div>
     );

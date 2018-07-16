@@ -24,6 +24,7 @@
     "@tensorflow/tfjs": "^0.11.6",
     "@tensorflow/tfjs-tsne": "^0.1.0",
     "add": "^2.0.6",
+    "aphrodite": "^2.2.2",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",

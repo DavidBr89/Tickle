@@ -16,6 +16,7 @@ import { Modal, ModalBody } from 'Utils/Modal';
 import { MediaSearch, MediaOverview } from '../MediaSearch';
 import { cardLayout, coverPhotoStyle } from '../styles';
 
+
 import {
   // FieldSet,
   // PreviewMedia,
@@ -137,8 +138,8 @@ class EditCardFront extends PureComponent {
     // ...ReadCardFront.propTypes,
     template: PropTypes.bool,
     onAttrUpdate: PropTypes.func,
-    onSubmit: PropTypes.func,
-    allChallenges: PropTypes.array
+    onSubmit: PropTypes.func
+    // allChallenges: PropTypes.array
   };
   static defaultProps = {
     // ...ReadCardFront.defaultProps,
@@ -193,7 +194,7 @@ class EditCardFront extends PureComponent {
   modalWriteContent(modalTitle) {
     const { data } = this.state;
     const { challenge } = data;
-    const { uiColor, tagColorScale } = this.props;
+    const { uiColor, tagColorScale, stylesheet } = this.props;
 
     // console.log('tagColorScale', tagColorScale);
     // TODO: img
@@ -224,6 +225,7 @@ class EditCardFront extends PureComponent {
             <EditPhoto
               uiColor="grey"
               imgUrl={img ? img.url : null}
+              stylesheet={stylesheet}
               onChange={imgObj => {
                 console.log('onChange', imgObj);
                 this.setFieldState({ img: imgObj, dialog: null });
@@ -253,6 +255,7 @@ class EditCardFront extends PureComponent {
           <ModalBody footer={closeBtn}>
             <MediaSearch
               selectedMedia={media}
+              stylesheet={stylesheet}
               onChange={mediaItems => {
                 this.setFieldState({ media: mediaItems });
               }}
@@ -395,11 +398,10 @@ class EditCardFront extends PureComponent {
                   width: '100%'
                 }}
               >
-                <div style={{ display: 'inline-flex', width: '85%' }}>
+                <div style={{ width: '80%', display: 'flex' }}>
                   {template && (
                     <BigButton
-                      className={added ? 'bg-danger' : 'bg-success'}
-                      color={uiColor}
+                      className="mr-2"
                       edit
                       onClick={() => {
                         this.setState({ added: !added });
@@ -411,7 +413,6 @@ class EditCardFront extends PureComponent {
                         );
 
                         if (message) {
-                          console.log('create card data', data);
                           onSubmit(data);
                         }
                       }}
@@ -419,9 +420,8 @@ class EditCardFront extends PureComponent {
                       {added ? 'Remove Card' : 'Create Card'}
                     </BigButton>
                   )}
+
                   <BigButton
-                    className="ml-2"
-                    color={uiColor}
                     edit
                     onClick={() =>
                       this.setState({
@@ -433,7 +433,7 @@ class EditCardFront extends PureComponent {
                   </BigButton>
                 </div>
                 <FlipButton
-                  style={{ width: '16%' }}
+                  style={{ width: '20%' }}
                   color={uiColor}
                   onClick={flipHandler}
                   className="ml-3"

@@ -7,6 +7,7 @@ import { WithContext as ReactTags } from 'react-tag-input';
 import { ARTICLE, PHOTO, GIF, VIDEO } from 'Constants/mediaTypes';
 import { profileSrc, colorClass, colorScaleRandom } from './styles';
 import cxx from './layout.scss';
+import { css } from 'aphrodite/no-important';
 
 // TODO: remove
 // import { ModalBody } from '../utils/Modal';
@@ -16,23 +17,12 @@ import cx from './Card.scss';
 
 import placeholderImgSrc from './placeholder.png';
 
+import { ThemeConsumer } from 'Src/styles/ThemeContext';
+
 const challengeTypes = ['quiz', 'gap text', 'hangman'];
 const mediaScale = scaleOrdinal()
   .domain([ARTICLE, PHOTO, GIF, VIDEO])
   .range([Icon.AlignLeft, Icon.Image, Icon.Image, Icon.Film]);
-
-console.log(
-  'mediaScale',
-  ARTICLE,
-  PHOTO,
-  GIF,
-  VIDEO,
-  Icon.AlignLeft,
-  Icon.Image,
-  Icon.Image,
-  Icon.Film,
-  mediaScale(ARTICLE)
-);
 
 const SearchIcon = ({ style, className }) => (
   <i
@@ -86,40 +76,48 @@ export const FieldSet = ({
   legendStyle,
   bodyStyle
 }) => (
-  <div style={{ ...style }}>
-    <div
-      style={{
-        border: `1px solid ${borderColor}`,
-        marginTop: '4px',
-        width: '100%',
-        height: '100%',
-        padding: 10,
-        overflow: 'hidden',
-        ...bodyStyle
-        // overflow: 'hidden'
-      }}
-    >
-      <div
-        style={{
-          position: 'relative'
-        }}
-      >
-        <div onClick={onClick}>
-          <h5 style={legendStyle}>
-            <span>
-              {legend}{' '}
-              {!edit ? (
-                <SearchIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
-              ) : (
-                <EditIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
-              )}
-            </span>
-          </h5>
+  <ThemeConsumer>
+    {({ stylesheet, uiColor }) => (
+      <div style={{ ...style }}>
+        <div
+          style={{
+            border: `1px solid ${uiColor}`,
+            marginTop: '4px',
+            width: '100%',
+            height: '100%',
+            padding: 10,
+            overflow: 'hidden',
+            ...bodyStyle
+            // overflow: 'hidden'
+          }}
+        >
+          <div
+            style={{
+              position: 'relative'
+            }}
+          >
+            <div onClick={onClick}>
+              <h5 style={legendStyle}>
+                <span>
+                  {legend}{' '}
+                  {!edit ? (
+                    <SearchIcon
+                      style={{ cursor: 'pointer', fontSize: '1.2rem' }}
+                    />
+                  ) : (
+                    <EditIcon
+                      style={{ cursor: 'pointer', fontSize: '1.2rem' }}
+                    />
+                  )}
+                </span>
+              </h5>
+            </div>
+          </div>
+          {children}
         </div>
       </div>
-      {children}
-    </div>
-  </div>
+    )}
+  </ThemeConsumer>
 );
 
 FieldSet.propTypes = {
@@ -149,32 +147,35 @@ export const ChallengeField = ({
   onClick,
   placeholder,
   style,
-  borderColor,
   edit
 }) => (
-  <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
-    <FieldSet edit={edit} borderColor={borderColor} legend="Challenge">
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          height: '100%'
-        }}
-      >
-        <div
-          className={cx.textClamp}
-          style={{ height: '100%', overflow: 'hidden' }}
-        >
-          {text !== null ? (
-            text
-          ) : (
-            <span style={{ fontStyle: 'italic' }}>{placeholder}</span>
-          )}
-        </div>
+  <ThemeConsumer>
+    {({ uiColor }) => (
+      <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
+        <FieldSet edit={edit} borderColor={uiColor} legend="Challenge">
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              height: '100%'
+            }}
+          >
+            <div
+              className={cx.textClamp}
+              style={{ height: '100%', overflow: 'hidden' }}
+            >
+              {text !== null ? (
+                text
+              ) : (
+                <span style={{ fontStyle: 'italic' }}>{placeholder}</span>
+              )}
+            </div>
+          </div>
+        </FieldSet>
       </div>
-    </FieldSet>
-  </div>
+    )}
+  </ThemeConsumer>
 );
 
 ChallengeField.propTypes = {
@@ -183,7 +184,6 @@ ChallengeField.propTypes = {
   onEdit: PropTypes.func,
   onClick: PropTypes.func,
   placeholder: PropTypes.string,
-  borderColor: PropTypes.string,
   style: PropTypes.object,
   edit: PropTypes.bool
 };
@@ -192,7 +192,6 @@ ChallengeField.defaultProps = {
   text: null,
   onEdit: null,
   onClick: null,
-  borderColor: null,
   placeholder: 'Add a challenge to your Card',
   style: {},
   edit: false
@@ -204,35 +203,38 @@ const DescriptionField = ({
   onClick,
   placeholder,
   style,
-  borderColor,
   edit
 }) => (
-  <div
-    style={{ ...style, cursor: 'pointer', overflow: 'hidden' }}
-    onClick={onClick || onEdit}
-  >
-    <FieldSet edit={edit} borderColor={borderColor} legend="Description">
+  <ThemeConsumer>
+    {({ uiColor }) => (
       <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          height: '100%'
-        }}
+        style={{ ...style, cursor: 'pointer', overflow: 'hidden' }}
+        onClick={onClick || onEdit}
       >
-        <div
-          className={cx.textClamp}
-          style={{ height: '100%', overflow: 'hidden' }}
-        >
-          {text !== null ? (
-            text
-          ) : (
-            <span style={{ fontStyle: 'italic' }}>{placeholder}</span>
-          )}
-        </div>
+        <FieldSet edit={edit} borderColor={uiColor} legend="Description">
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              height: '100%'
+            }}
+          >
+            <div
+              className={cx.textClamp}
+              style={{ height: '100%', overflow: 'hidden' }}
+            >
+              {text !== null ? (
+                text
+              ) : (
+                <span style={{ fontStyle: 'italic' }}>{placeholder}</span>
+              )}
+            </div>
+          </div>
+        </FieldSet>
       </div>
-    </FieldSet>
-  </div>
+    )}
+  </ThemeConsumer>
 );
 
 DescriptionField.propTypes = {
@@ -241,7 +243,6 @@ DescriptionField.propTypes = {
   onEdit: PropTypes.func,
   onClick: PropTypes.func,
   placeholder: PropTypes.string,
-  borderColor: PropTypes.string,
   style: PropTypes.object,
   edit: PropTypes.bool
 };
@@ -250,39 +251,34 @@ DescriptionField.defaultProps = {
   text: null,
   onEdit: null,
   onClick: null,
-  borderColor: null,
   placeholder:
     'Add a description for your card to give hints how to succeed the Challenge',
   style: {},
   edit: false
 };
 
-const MediaField = ({
-  media,
-  onEdit,
-  onClick,
-  style,
-  placeholder,
-  borderColor,
-  edit
-}) => (
-  <div
-    style={{ ...style, cursor: 'pointer', overflow: 'hidden' }}
-    onClick={onClick || onEdit}
-  >
-    <FieldSet edit={edit} legend="Media" borderColor={borderColor}>
-      <div style={{ display: 'flex', alignContent: 'end' }}>
-        {Array.isArray(media) && media.length > 0 ? (
-          <PreviewMedia
-            data={media.slice(0, 4)}
-            style={{ width: '100%', height: '100%' }}
-          />
-        ) : (
-          <div style={{ fontStyle: 'italic' }}>{placeholder}</div>
-        )}
+const MediaField = ({ media, onEdit, onClick, style, placeholder, edit }) => (
+  <ThemeConsumer>
+    {({ uiColor }) => (
+      <div
+        style={{ ...style, cursor: 'pointer', overflow: 'hidden' }}
+        onClick={onClick || onEdit}
+      >
+        <FieldSet edit={edit} legend="Media" borderColor={uiColor}>
+          <div style={{ display: 'flex', alignContent: 'end' }}>
+            {Array.isArray(media) && media.length > 0 ? (
+              <PreviewMedia
+                data={media.slice(0, 4)}
+                style={{ width: '100%', height: '100%' }}
+              />
+            ) : (
+              <div style={{ fontStyle: 'italic' }}>{placeholder}</div>
+            )}
+          </div>
+        </FieldSet>
       </div>
-    </FieldSet>
-  </div>
+    )}
+  </ThemeConsumer>
 );
 
 MediaField.propTypes = {
@@ -290,7 +286,6 @@ MediaField.propTypes = {
   onEdit: PropTypes.func,
   onClick: PropTypes.func,
   placeholder: PropTypes.string,
-  borderColor: PropTypes.string,
   style: PropTypes.object,
   edit: PropTypes.bool
 };
@@ -301,7 +296,6 @@ MediaField.defaultProps = {
   onClick: null,
   placeholder: 'Add a video, webpage or a sound snippet',
   style: {},
-  borderColor: 'grey',
   edit: false
 };
 
@@ -413,36 +407,32 @@ export const BigButton = ({
   collected,
   onClick,
   expPoints,
-  color,
   style,
   edit,
   children,
   className
 }) => (
-  <button
-    className={`btn btn-active btn-lg btn-block ${className}`}
-    disabled={collected}
-    style={{
-      width: '100%',
-      alignSelf: 'flex-end',
-      background: color,
-      fontWeight: 'bold',
-      ...style
-    }}
-    onClick={onClick}
-  >
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
-      <span style={{ display: 'inline-flex' }}>
-        {children}
-        {edit && (
-          <EditIcon
-            className="ml-1"
-            style={{ color: 'white', fontSize: '2rem' }}
-          />
-        )}
-      </span>
-    </div>
-  </button>
+  <ThemeConsumer>
+    {({ uiColor, stylesheet }) => (
+      <button
+        className={`${className} ${css(stylesheet.btn)}`}
+        disabled={collected}
+        style={{
+          width: '100%',
+          // display: 'inline-flex',
+          // justifyContent: 'center',
+          // alignItems: 'center',
+          ...style
+        }}
+        onClick={onClick}
+      >
+        <div style={{ fontWeight: 'bold', fontSize: 'large' }}>
+          {children}
+          {edit && <EditIcon className="ml-1" />}
+        </div>
+      </button>
+    )}
+  </ThemeConsumer>
 );
 
 BigButton.propTypes = {

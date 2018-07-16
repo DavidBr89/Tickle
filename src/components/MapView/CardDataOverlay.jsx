@@ -21,6 +21,8 @@ import {
 import { changeMapViewport } from 'Reducers/Map/actions';
 import DataOverlay from './ForceOverlay/DataOverlay';
 
+import { colorScale } from 'Cards/styles';
+
 import { Card } from 'Cards';
 
 import { updateCardTemplate, dragCard } from 'Reducers/Cards/actions';
@@ -117,6 +119,8 @@ const CardDataOverlay = props => {
             tagColorScale={tagColorScale}
             onUpdate={d => onCardUpdate({ ...d, x, y })}
             onSubmitChallenge={onSubmitChallenge}
+            uiColor="grey"
+            background="whitesmoke"
             style={{ zIndex: 4000 }}
           />
         )}
