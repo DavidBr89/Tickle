@@ -65,7 +65,7 @@ class SignUpForm extends Component {
                 this.setState(() => ({ ...INITIAL_STATE }));
                 onSetAuthUser(userProfile);
                 // Jump to page
-                history.push(routes.MAP);
+                history.push(routes.DATAVIEW);
               })
               .catch(error => {
                 this.setState(byPropKey('error', error));

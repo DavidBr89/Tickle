@@ -223,7 +223,7 @@ class MapViewPage extends Component {
       filterCards,
       addCardFilter,
       dataView,
-      setDataView,
+      // setDataView,
       filterSet,
       toggleAuthEnv,
       tagColorScale,
@@ -304,7 +304,7 @@ class MapViewPage extends Component {
                   slotSize={cardStackWidth < 100 ? 100 : slotSize}
                   style={{
                     // width: '100%',
-                    zIndex: dataView === 'geo' && 1000
+                    zIndex: 1000
                   }}
                 >
                   {d => (
@@ -340,6 +340,8 @@ class MapViewPage extends Component {
               </div>
 
               <CardDataOverlay
+                dataView={dataView}
+                authEnv={authEnv}
                 cards={cards}
                 cardSets={cardSets}
                 selectedTags={selectedTags}

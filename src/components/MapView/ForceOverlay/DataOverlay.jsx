@@ -11,6 +11,7 @@ import ExtendableMarker from 'Utils/ExtendableMarker';
 
 // import { dragCard } from 'Reducers/Cards/actions';
 import { changeMapViewport } from 'Reducers/Map/actions';
+import { GEO, TAGS, FLOORPLAN } from 'Constants/dataViews';
 
 // import│ {shallowEqualProps} from'shallow-equal-props';
 
@@ -80,7 +81,7 @@ class DataOverlay extends Component {
       top: PropTypes.number,
       bottom: PropTypes.number
     }),
-    mode: PropTypes.oneOf(['geo', 'tsne', 'som', 'grid', 'floorplan']),
+    mode: PropTypes.oneOf([GEO, TAGS, FLOORPLAN]),
     colorScale: PropTypes.func,
     labels: PropTypes.bool
   };
@@ -103,40 +104,11 @@ class DataOverlay extends Component {
     colorScale: () => 'green',
     labels: false
   };
-
-  // constructor(props) {
-  //   super(props);
-  //   const { data } = props;
-  //   const { width, height, onMapViewportChange, userLocation } = props;
-  //
-  //   const initPos = data.map(() => [width / 2, height / 2]);
-  //
-  //   // data.map(d => ([width/2, height/2]));
-  //   const nodes = data.map(d => ({ ...d, x: width / 2, y: height / 2 }));
-  // }
-  //
   componentWillUnmount() {
     // clearTimeout(this.id);
     // this.ids.map(clearTimeout);
   }
 
-  // static getDerivedStateFromProps(nextProps, prevState) {
-  //   const { width, height, userLocation } = nextProps;
-  //   const { viewport } = prevState;
-  //   // if (nextProps.selectedCardId !== null) {
-  //   //
-  //   // const { loc } = data.find(n => n.id === selectedCardId) || {};
-  //   const newVp = offsetMapViewport({
-  //     ...viewport,
-  //     ...userLocation,
-  //     zoom: 8,
-  //     width,
-  //     height,
-  //     offset: [0, height / 4]
-  //   });
-  //   // }
-  //   return { viewport: newVp };
-  // }
   selectComp = () => {
     const {
       mode,
@@ -201,7 +173,7 @@ class DataOverlay extends Component {
     };
 
     switch (mode) {
-      case 'geo': {
+      case GEO: {
         return (
           <div
             className={className}
@@ -227,7 +199,7 @@ class DataOverlay extends Component {
           </div>
         );
       }
-      case 'floorplan': {
+      case FLOORPLAN: {
         return (
           <DimWrapper>
             {(w, h) => (
@@ -243,7 +215,7 @@ class DataOverlay extends Component {
           </DimWrapper>
         );
       }
-      default: {
+      case TAGS: {
         return (
           <div style={{ ...style, height: '100%' }}>
             <DimWrapper>
@@ -266,6 +238,9 @@ class DataOverlay extends Component {
             </DimWrapper>
           </div>
         );
+      }
+      default: {
+        return <div>Unknown dataView {mode}</div>;
       }
     }
   };
@@ -300,7 +275,7 @@ class DataOverlay extends Component {
 
 function mapStateToProps({
   // Cards: { isCardDragging },
-  DataView: { extCardId, selectedCardId }
+  DataView: { extCardId, selectedCardId, authEnv }
 }) {
   return { extCardId, selectedCardId };
 }

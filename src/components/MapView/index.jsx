@@ -35,7 +35,7 @@ const mapStateToProps = state => {
   // TODO: own dim reducer
   const { width, height, userLocation } = state.MapView;
 
-  const { authEnv } = state.DataView;
+  // const { authEnv } = state.DataView;
   const {
     authUser: { uid, username }
   } = state.Session;
@@ -48,30 +48,20 @@ const mapStateToProps = state => {
     tags: tmpCard.tags.length > 0 ? tmpCard.tags : [username]
   };
 
-  const cards = authEnv ? [templateCard, ...createdCards] : createdCards;
-  const filteredCards = cards.filter(
-    d =>
-      filterSet.length === 0 ||
-      intersection(d.tags, filterSet).length === filterSet.length
-  );
-  const cardSets = setify(filteredCards);
-  const selectedCard = filteredCards.find(d => d.id === selectedCardId) || null;
-
-  const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
-
   return {
     // TODO: make more specific
     ...state.MapView,
-    ...state.Cards,
     ...state.DataView,
     uid,
-    selectedCard,
-    selectedTags,
-    selectedCardId,
-    cardSets,
-    filterSet,
+    // selectedCard,
     // selectedTags,
-    cards: filteredCards
+    selectedCardId,
+    // cardSets,
+    filterSet,
+    templateCard,
+    ...state.Cards
+    // selectedTags,
+    // cards: filteredCards
     // authUser
   };
 };
@@ -92,8 +82,9 @@ const mapDispatchToProps = dispatch =>
 
 // });
 
-const mergeProps = (state, dispatcherProps) => {
-  const { selectedCardId, uid } = state;
+const mergeProps = (state, dispatcherProps, ownProps) => {
+  const { selectedCardId, uid, templateCard, createdCards, filterSet } = state;
+  console.log('createdCards', createdCards);
   const {
     selectCard,
     extendSelectedCard,
@@ -109,11 +100,29 @@ const mergeProps = (state, dispatcherProps) => {
     fetchCreatedCards(uid);
   };
 
+  const { authEnv } = ownProps;
+
+  const cards = authEnv ? [templateCard, ...createdCards] : createdCards;
+  const filteredCards = cards.filter(
+    d =>
+      filterSet.length === 0 ||
+      intersection(d.tags, filterSet).length === filterSet.length
+  );
+  const cardSets = setify(filteredCards);
+  const selectedCard = filteredCards.find(d => d.id === selectedCardId) || null;
+
+  const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
+
   return {
     ...state,
     ...dispatcherProps,
     previewCardAction,
-    fetchCards
+    fetchCards,
+    cardSets,
+    selectedTags,
+    authEnv,
+    cards,
+    ...ownProps,
   };
 };
 

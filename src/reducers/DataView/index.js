@@ -16,8 +16,8 @@ import {
 } from './actions';
 
 const INITIAL_STATE = {
-  dataView: 'topic',
-  authEnv: false,
+  // dataView: 'topic',
+  // authEnv: false,
   selectedCardId: null,
   extCard: null,
   filterSet: []
@@ -97,14 +97,14 @@ export default function dataViewReducer(state = INITIAL_STATE, action) {
     //   return { ...state, filterSet };
     // }
 
-    case TOGGLE_AUTH_ENV: {
-      // const filterSet = action.options;
-      return {
-        ...state,
-        authEnv: !state.authEnv,
-        selectedCardId: !state.authEnv ? TEMPLATE_ID : null
-      };
-    }
+    // case TOGGLE_AUTH_ENV: {
+    //   // const filterSet = action.options;
+    //   return {
+    //     ...state,
+    //     authEnv: !state.authEnv,
+    //     selectedCardId: !state.authEnv ? TEMPLATE_ID : null
+    //   };
+    // }
     default:
       return state;
   }

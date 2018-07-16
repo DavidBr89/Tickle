@@ -13,6 +13,8 @@ import withAuthentication from './components/withAuthentication';
 import AuthUserContext from './components/AuthUserContext';
 
 import * as routes from 'Constants/routes';
+import { TAGS, GEO, FLOORPLAN } from 'Constants/dataViews';
+
 // import Login from './components/Login';
 
 const Routes = () => (
@@ -20,10 +22,73 @@ const Routes = () => (
     <Switch>
       <Route
         exact
-        path={routes.MAP}
+        path={routes.AUTH_ENV}
         render={() => (
-          <DefaultLayout activePath={routes.MAP}>
-            <MapView />
+          <DefaultLayout activePath={routes.AUTH_ENV_TAGS}>
+            <MapView dataView={TAGS} authEnv />
+          </DefaultLayout>
+        )}
+      />
+      <Route
+        exact
+        path={routes.AUTH_ENV_GEO}
+        render={() => (
+          <DefaultLayout activePath={routes.AUTH_ENV_GEO}>
+            <MapView dataView={GEO} authEnv />
+          </DefaultLayout>
+        )}
+      />
+      <Route
+        exact
+        path={routes.AUTH_ENV_TAGS}
+        render={() => (
+          <DefaultLayout activePath={routes.AUTH_ENV_TAGS}>
+            <MapView dataView={TAGS} authEnv />
+          </DefaultLayout>
+        )}
+      />
+      <Route
+        exact
+        path={routes.AUTH_ENV_FLOORPLAN}
+        render={() => (
+          <DefaultLayout activePath={routes.AUTH_ENV_FLOORPLAN}>
+            <MapView dataView={FLOORPLAN} authEnv />
+          </DefaultLayout>
+        )}
+      />
+      <Route
+        exact
+        path={routes.DATAVIEW_GEO}
+        render={() => (
+          <DefaultLayout activePath={routes.DATAVIEW_GEO}>
+            <MapView dataView={GEO} />
+          </DefaultLayout>
+        )}
+      />
+      <Route
+        exact
+        path={`${routes.DATAVIEW}`}
+        render={() => (
+          <DefaultLayout activePath={routes.DATAVIEW_TAGS}>
+            <MapView dataView={TAGS} />
+          </DefaultLayout>
+        )}
+      />
+      <Route
+        exact
+        path={routes.DATAVIEW_TAGS}
+        render={() => (
+          <DefaultLayout activePath={routes.DATAVIEW_TAGS}>
+            <MapView dataView={TAGS} />
+          </DefaultLayout>
+        )}
+      />
+      <Route
+        exact
+        path={routes.DATAVIEW_FLOORPLAN}
+        render={() => (
+          <DefaultLayout activePath={routes.DATAVIEW_FLOORPLAN}>
+            <MapView dataView={FLOORPLAN} />
           </DefaultLayout>
         )}
       />

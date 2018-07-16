@@ -44,7 +44,7 @@ class SignInForm extends Component {
       // password !== null &&
       password !== prevState.password
     )
-      history.push(routes.MAP);
+      history.push(routes.DATAVIEW);
   }
 
   onSubmit = event => {
@@ -58,7 +58,7 @@ class SignInForm extends Component {
       .then(() => {
         // this.setState(() => ({ ...INITIAL_STATE }));
         console.log('onSubmit', email, password);
-        history.push(routes.MAP);
+        history.push(routes.DATAVIEW);
       })
       .catch(error => {
         this.setState(byPropKey('error', error));

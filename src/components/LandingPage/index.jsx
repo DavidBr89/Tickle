@@ -19,9 +19,9 @@ const Navigation = () => (
 const NavigationAuth = () => (
   <ul>
     <div className="mt-3">
-      <Link to={routes.MAP}>
+      <Link to={routes.DATAVIEW}>
         <button className="btn" style={styleButton}>
-          <h1>Map</h1>
+          <h1>DataView</h1>
         </button>
       </Link>
     </div>
