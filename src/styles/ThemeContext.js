@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { StyleSheet } from 'aphrodite/no-important';
+
 const btnStyle = {
   borderRadius: 0,
   padding: '0.375rem',
@@ -23,9 +25,10 @@ const btnStyle = {
   cursor: 'pointer'
 };
 
+
 const {
   Provider: ThemeProvider,
   Consumer: ThemeConsumer
-} = React.createContext({});
+} = React.createContext({globalStylesheet: StyleSheet.create({background: 'green'})});
 
 export { ThemeProvider, ThemeConsumer, btnStyle };

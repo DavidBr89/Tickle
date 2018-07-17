@@ -126,8 +126,12 @@ $black: #24292e;//#3c3c3c;
   box-shadow: $sw $sw white;
 }
 
+.boxShadow {
+  box-shadow: $sw $sw grey;
+}
+
 .btn:hover {
-  box-shadow: $sw $sw #3c3c3c;
+  @extend .boxShadow;
 }
 
 .nav-link {
@@ -238,6 +242,15 @@ body {
     }
 }
 
+.navList {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+  color: unset;
+}
 
 
 // @media only screen and (min-width: 568px) {

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 // import * as d3 from 'd3';
 
 // import { Motion, spring } from 'react-motion';
-import * as Icon from 'react-feather';
+// import * as Icon from 'react-feather';
 import Spinner from 'react-loader-spinner';
 import * as d3 from 'd3';
 import { intersection, union } from 'lodash';
@@ -17,29 +17,24 @@ import {
   DragSourceCont,
   DropTargetCont,
   DragDropContextProvider
-} from './DragAndDrop/DragSourceTarget';
+} from '../DragAndDrop/DragSourceTarget';
 
-import PreviewMarker from './PreviewMarker';
+import PreviewMarker from '../PreviewMarker';
+
+import { colorScale, cardTypeColorScale } from 'Cards/styles';
+
+import { Card, CardMarker, PreviewCard } from 'Cards';
+import CardStack from '../CardStack';
+import ExtendableMarker from 'Utils/ExtendableMarker';
+import { Modal, ModalBody } from 'Utils/Modal';
 
 import { TagInput, DropDown } from 'Utils/TagInput';
 
-import withAuthorization from '../withAuthorization';
+import CardAuthorOverlay from './CardAuthorOverlay';
 
-import { colorScale, cardTypeColorScale } from '../cards/styles';
+// import DragLayer from './DragAndDrop/DragLayer';
 
-import { Card, CardMarker, PreviewCard } from '../cards';
-import CardStack from 'Utils/CardStack';
-import CardDataOverlay from './CardDataOverlay';
-
-import PhotoChallenge from '../Challenges/MatchPhotoChallenge';
-
-import { UserOverlay } from '../utils/map-layers/DivOverlay';
-import ExtendableMarker from '../utils/ExtendableMarker';
-import { Modal, ModalBody } from 'Utils/Modal';
-
-import DragLayer from './DragAndDrop/DragLayer';
-
-import { StyledButton } from 'Utils/StyledComps';
+// import { StyledButton } from 'Utils/StyledComps';
 
 //   [
 //   '#7fcdbb',
@@ -160,31 +155,37 @@ class MapViewPage extends Component {
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    window.addEventListener('resize', () => {
-      screenResize({
-        width: this.cont.offsetWidth || window.innerWidth,
-        height: this.cont.offsetHeight || window.innerHeight
-      });
-    });
+    // screenResize({
+    //   width: this.cont.offsetWidth || window.innerWidth,
+    //   height: this.cont.offsetHeight || window.innerHeight
+    // });
+    // window.addEventListener('resize', () => {
+    //   screenResize({
+    //     width: this.cont.offsetWidth || window.innerWidth,
+    //     height: this.cont.offsetHeight || window.innerHeight
+    //   });
+    // });
 
     // screenResize({
     //   width,
     //   height
     // });
-
-    this.scrollTo = scrollTo.bind(this);
-    // this.node = null;
-    this.fullscreen = false;
   }
 
   componentDidMount() {
-    const { screenResize, getUserCards, fetchCards } = this.props;
+    const {
+      screenResize,
+      getUserCards,
+      fetchCards,
+      preSelectCardId
+    } = this.props;
 
     fetchCards();
     screenResize({
       width: this.cont.offsetWidth,
       height: this.cont.offsetHeight
     });
+    preSelectCardId();
 
     // TODO: update
     navigator.geolocation.watchPosition(
@@ -204,7 +205,7 @@ class MapViewPage extends Component {
   }
 
   componentWillUnmount() {
-    window.addEventListener('resize', () => {});
+    // window.addEventListener('resize', () => {});
     navigator.geolocation.watchPosition(() => {}, () => {}, { timeout: 1 });
     navigator.geolocation.getCurrentPosition(() => {}, () => {}, {
       timeout: 1
@@ -234,123 +235,79 @@ class MapViewPage extends Component {
     const slotSize = 100 / 3.5;
     const cardStackWidth =
       slotSize / cards.length < slotSize ? 100 : slotSize * cards.length;
+
     return (
-      <React.Fragment>
+      <div
+        className="w-100 h-100"
+        style={{ position: 'relative', overflow: 'hidden' }}
+      >
         <div
           className="w-100 h-100"
-          style={{ position: 'relative', overflow: 'hidden' }}
-          ref={node => (this.domCont = node)}
+          ref={cont => (this.cont = cont)}
+          style={{
+            position: 'absolute'
+          }}
         >
-          <div
-            className="w-100 h-100"
-            ref={cont => (this.cont = cont)}
-            style={{
-              position: 'absolute'
-            }}
-          >
-            <div className="h-100">
-              <div
-                className="input-group mt-2"
+          <div className="h-100">
+            <div
+              className="input-group mt-2"
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                zIndex: 100
+              }}
+            >
+              <DropDown
+                key={filterSet.join(',')}
+                onChange={filterCards}
+                onSelect={() => selectCard(null)}
                 style={{
                   display: 'flex',
+                  // position: 'absolute',
                   justifyContent: 'flex-end',
-                  zIndex: 100
+                  marginTop: 10,
+                  marginRight: 10
                 }}
-              >
-                <button
-                  className="btn mr-2"
-                  style={{ background: 'whitesmoke', fontWeight: 'bold' }}
-                  onClick={toggleAuthEnv}
-                >
-                  <span>{authEnv ? 'View Cards' : 'Author Card'}</span>
-                </button>
-
-                <DropDown
-                  key={filterSet.join(',')}
-                  onChange={filterCards}
-                  onSelect={() => selectCard(null)}
-                  style={{
-                    display: 'flex',
-                    // position: 'absolute',
-                    justifyContent: 'flex-end',
-                    marginTop: 10,
-                    marginRight: 10
-                  }}
-                  onClick={addCardFilter}
-                  data={filterSet}
-                />
-              </div>
-              <div
-                className="mb-3 mt-3"
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  // opacity: gridView ? 1 : 0,
-                  // display: !gridView ? 'none' : null,
-                  transition: 'opacity 0.5s',
-                  height: '25%'
-                  // marginTop: 30
-                }}
-              >
-                <CardStack
-                  data={cards}
-                  className="ml-1 mr-2"
-                  duration={600}
-                  centered={selectedCardId !== null}
-                  selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
-                  width={cardStackWidth}
-                  height={100}
-                  unit="%"
-                  slotSize={cardStackWidth < 100 ? 100 : slotSize}
-                  style={{
-                    // width: '100%',
-                    zIndex: 1000
-                  }}
-                >
-                  {d => (
-                    <PreviewCard
-                      {...d}
-                      onClick={() => previewCardAction(d)}
-                      tagColorScale={tagColorScale}
-                      key={d.id}
-                      edit={d.template}
-                      selected={selectedCardId === d.id}
-                      style={{
-                        transition: `transform 1s`,
-                        // TODO: change later
-                        height: height / 4,
-                        // TODO
-                        // TODO
-                        // TODO
-                        // TODO
-                        // TODO
-                        // height: '100%',
-                        transform: selectedCardId === d.id && 'scale(1.2)',
-                        // zIndex: selectedCardId === d.id && 5000,
-                        opacity: d.template && 0.8
-
-                        // width: '100%',
-                        // height: '100%',
-                        // width: '100%'
-                        // maxWidth: '200px'
-                      }}
-                    />
-                  )}
-                </CardStack>
-              </div>
-
-              <CardDataOverlay
-                dataView={dataView}
-                authEnv={authEnv}
-                cards={cards}
-                cardSets={cardSets}
-                selectedTags={selectedTags}
-                style={{ height: '65%' }}
+                onClick={addCardFilter}
+                data={filterSet}
               />
             </div>
+            <div
+              className="mb-3 mt-3"
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                transition: 'opacity 0.5s',
+                height: '25%'
+              }}
+            >
+              <CardStack
+                cards={cards}
+                selectedCardId={selectedCardId}
+                duration={600}
+                className="ml-1 mr-2"
+                width={cardStackWidth}
+                height={100}
+                cardHeight={height / 4}
+                unit="%"
+                onClick={previewCardAction}
+                tagColorScale={tagColorScale}
+                slotSize={cardStackWidth < 100 ? 100 : slotSize}
+                style={{
+                  zIndex: 1000
+                }}
+              />
+            </div>
+            <CardAuthorOverlay
+              dataView={dataView}
+              cards={cards}
+              cardSets={cardSets}
+              selectedTags={selectedTags}
+              style={{ height: '65%' }}
+            />
           </div>
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 }

@@ -17,12 +17,6 @@ import { GEO, TAGS, FLOORPLAN } from 'Constants/dataViews';
 
 // import louvain from './jlouvain';
 
-import {
-  DragSourceCont,
-  DropTargetCont,
-  DragDropContextProvider
-} from '../DragAndDrop/DragSourceTarget';
-
 import Map from './Map';
 import Floorplan from './Floorplan';
 import TreeMapCluster from './TreeMapCluster';
@@ -135,6 +129,7 @@ class DataOverlay extends Component {
 
     // x={extCardId === c.id ? width / 2 : x}
     // y={extCardId === c.id ? height / 2 : y}
+    // TODO: join
     const draggable = c => (
       <ExtendableMarker
         key={c.id}
@@ -152,10 +147,10 @@ class DataOverlay extends Component {
       </ExtendableMarker>
     );
 
-    const nonDraggable = c => (
+    const noPreview = c => (
       <ExtendableMarker
         key={c.id}
-        delay={10}
+        delay={100}
         width={extCardId === c.id ? width : 25}
         height={extCardId === c.id ? height : 30}
         center={[width / 2, height / 2]}
@@ -192,7 +187,7 @@ class DataOverlay extends Component {
               disabled={disabled}
               nodes={data}
               colorScale={colorScale}
-              preview={nonDraggable}
+              preview={noPreview}
             >
               {draggable}
             </Map>
@@ -232,7 +227,7 @@ class DataOverlay extends Component {
                   colorScale={colorScale}
                   padding={padding}
                 >
-                  {nonDraggable}
+                  {noPreview}
                 </TreeMapCluster>
               )}
             </DimWrapper>
@@ -283,7 +278,7 @@ function mapStateToProps({
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      // dragCard,
+      // TODO: change
       changeMapViewport
     },
     dispatch

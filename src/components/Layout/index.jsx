@@ -16,50 +16,53 @@ import Navigation from '../Navigation';
 // import userPic from './user.png';
 // import cx from './MainLayout.scss';
 
-function Menu({ style, children }) {
-  return (
-    <div style={style}>
-      <nav
-        className="navbar navbar-light"
-        style={{
-          zIndex: 4000
-          // filter: 'blur(10px)',
+const Menu = ({ style, children }) => (
+  <div style={{ ...style, minWidth: 200 }}>
+    <nav
+      className="navbar navbar-light"
+      style={{
+        zIndex: 4000,
+        minWidth: '30%'
+        // filter: 'blur(10px)',
 
-          // display: 'flex'
-        }}
+        // display: 'flex'
+      }}
+    >
+      <button
+        style={{ background: 'whitesmoke' }}
+        className="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#submenu"
+        aria-controls="submenu"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
       >
-        <button
-          style={{ background: 'whitesmoke' }}
-          className="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#submenu"
-          aria-controls="submenu"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon" />
-        </button>
-      </nav>
+        <span className="navbar-toggler-icon" />
+      </button>
+    </nav>
+    <div
+      className="collapse w-100"
+      id="submenu"
+      style={{
+        position: 'relative',
+        zIndex: 4000,
+        background: 'whitesmoke'
+      }}
+    >
       <div
-        className="collapse w-100"
-        id="submenu"
+        className="p-3"
         style={{
-          position: 'relative',
-          zIndex: 4000,
-          background: 'whitesmoke'
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center'
         }}
       >
-        <div
-          className="p-3"
-          style={{ display: 'flex', flexDirection: 'column' }}
-        >
-          {children}
-        </div>
+        {children}
       </div>
     </div>
-  );
-}
+  </div>
+);
 
 export default class MainLayout extends Component {
   static propTypes = {

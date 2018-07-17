@@ -3,6 +3,8 @@ import {
   PerspectiveMercatorViewport
 } from 'viewport-mercator-project';
 
+import { GEO, TAGS, FLOORPLAN } from 'Constants/dataViews';
+
 function updCardLoc(cardData, mapViewport) {
   const { x, y, tx, ty, vx, vy, ...restData } = cardData;
 
@@ -25,11 +27,11 @@ function updCardFloorLoc(cardData, width, height) {
   };
 }
 
-function updCardTopic(cardData) {
+function updCardTags(cardData) {
   return { ...cardData };
 }
 
-export function updCard({ rawData, viewport, dataView }) {
+export default function updCardDataDim({ rawData, viewport, dataView }) {
   const { width, height } = viewport;
   const cardData = {
     ...rawData
@@ -37,13 +39,13 @@ export function updCard({ rawData, viewport, dataView }) {
   };
 
   switch (dataView) {
-    case 'geo':
+    case GEO:
       return updCardLoc(cardData, viewport);
-    case 'topic':
-      return updCardTopic(cardData);
-    case 'floorplan':
+    case TAGS:
+      return updCardTags(cardData);
+    case FLOORPLAN:
       return updCardFloorLoc(cardData, width, height);
     default:
-      return updCardLoc(cardData, viewport);
+      throw Error(`could not find data dimension to update ${dataView}`);
   }
 }

@@ -234,13 +234,10 @@ export const onceGetUsers = () =>
       );
     });
 
-export const doCreateCard = (uid, card) =>
+export const doCreateCard = card =>
   uploadImgFields(card).then(imgFields => {
-    console.log('uid', imgFields);
-    // TODO
     if (card.id === 'temp') {
-      console.log('temp to create');
-      throw 'error: temp card to create';
+      throw Error('error: temp card to create');
     } else {
       const newCard = pruneFields({ ...card, ...imgFields });
       // TODO: make explicit

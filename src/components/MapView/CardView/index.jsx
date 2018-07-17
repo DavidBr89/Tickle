@@ -18,12 +18,9 @@ import * as cardActions from 'Reducers/Cards/actions';
 import * as asyncActions from 'Reducers/Cards/async_actions';
 import * as dataViewActions from 'Reducers/DataView/actions';
 
-// import { fetchDirection } from 'Reducers/Map/async_actions';
+import withAuthorization from 'Src/components/withAuthorization';
 
-import MapViewPage from './MapViewPage';
-
-import withAuthorization from '../withAuthorization';
-
+import CardViewPage from './CardViewPage';
 // import mapViewReducer from './reducer';
 
 // Container
@@ -37,32 +34,29 @@ const mapStateToProps = state => {
 
   // const { authEnv } = state.DataView;
   const {
-    authUser: { uid, username }
+    authUser: { uid }
   } = state.Session;
 
-  // const { userLocation } = state.MapView;
+  const filteredCards = createdCards.filter(
+    d =>
+      filterSet.length === 0 ||
+      intersection(d.tags, filterSet).length === filterSet.length
+  );
+  const cardSets = setify(filteredCards);
+  const selectedCard = filteredCards.find(d => d.id === selectedCardId) || null;
 
-  const templateCard = {
-    ...tmpCard,
-    uid,
-    tags: tmpCard.tags.length > 0 ? tmpCard.tags : [username]
-  };
-
+  const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
   return {
     // TODO: make more specific
     ...state.MapView,
     ...state.DataView,
     uid,
-    // selectedCard,
-    // selectedTags,
     selectedCardId,
-    // cardSets,
     filterSet,
-    templateCard,
-    ...state.Cards
-    // selectedTags,
-    // cards: filteredCards
-    // authUser
+    ...state.Cards,
+    cardSets,
+    cards: filteredCards,
+    selectedTags
   };
 };
 
@@ -83,46 +77,33 @@ const mapDispatchToProps = dispatch =>
 // });
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const { selectedCardId, uid, templateCard, createdCards, filterSet } = state;
-  console.log('createdCards', createdCards);
+  const { selectedCardId, uid } = state;
   const {
     selectCard,
     extendSelectedCard,
-    fetchReadableCards,
+    // fetchReadableCards,
     fetchCreatedCards
   } = dispatcherProps;
+
+  const { dataView } = ownProps;
 
   const previewCardAction = d =>
     selectedCardId === d.id ? extendSelectedCard(d.id) : selectCard(d.id);
 
   const fetchCards = () => {
-    // fetchReadableCards(uid);
+    // TODO
     fetchCreatedCards(uid);
   };
 
-  const { authEnv } = ownProps;
-
-  const cards = authEnv ? [templateCard, ...createdCards] : createdCards;
-  const filteredCards = cards.filter(
-    d =>
-      filterSet.length === 0 ||
-      intersection(d.tags, filterSet).length === filterSet.length
-  );
-  const cardSets = setify(filteredCards);
-  const selectedCard = filteredCards.find(d => d.id === selectedCardId) || null;
-
-  const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
+  const preSelectCardId = () => selectCard(null);
 
   return {
     ...state,
     ...dispatcherProps,
     previewCardAction,
     fetchCards,
-    cardSets,
-    selectedTags,
-    authEnv,
-    cards,
-    ...ownProps,
+    preSelectCardId,
+    dataView
   };
 };
 
@@ -135,4 +116,4 @@ export default compose(
     mapDispatchToProps,
     mergeProps
   )
-)(MapViewPage);
+)(CardViewPage);

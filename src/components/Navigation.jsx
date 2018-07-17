@@ -14,8 +14,6 @@ import { css } from 'aphrodite/no-important';
 
 import { setDataView } from 'Reducers/DataView/actions';
 
-console.log('authRoutes', authRoutes[Object.keys(authRoutes)[0]]);
-
 // const zip= rows=>rows[0].map((_,c)=>rows.map(row=>row[c]))
 
 // const authRoutes = [routes.LANDING, routes.DATAVIEW, routes.ADMIN];
@@ -28,47 +26,68 @@ const DataViewSubList = ({ stylesheet, setDataView }) => (
   </div>
 );
 const Navigation = ({ authUser, ...props }) => (
-  <ThemeConsumer>
-    {({ stylesheet, uiColor }) =>
-      authUser ? (
-        <NavigationAuth stylesheet={stylesheet} uiColor={uiColor} {...props} />
-      ) : (
-        <NavigationNonAuth
-          stylesheet={stylesheet}
-          uiColor={uiColor}
-          {...props}
-        />
-      )
-    }
-  </ThemeConsumer>
+  <div>
+    {authUser ? (
+      <NavigationAuth {...props} />
+    ) : (
+      <NavigationNonAuth {...props} />
+    )}
+  </div>
 );
 
-const InnerLi = ({ name, path, active, uiColor, subRoutes = [] }) => (
-  <li style={{ background: uiColor }}>
-    <Link className="btn mb-2" to={path}>
+const InnerLi = ({ name, path, hash, active, subRoutes = [] }) => (
+  <li className="mb-2">
+    <Link
+      className=" nav-link btn mb-1"
+      style={{ background: hash.includes(path) && 'lightgrey' }}
+      to={path}
+    >
       {name}
     </Link>
-    <ul>{subRoutes.map(d => <li><Link to={d.path}>{d.name}</Link></li>)}</ul>
+    <ul>
+      {subRoutes.map(d => (
+        <li>
+          <Link to={d.path} style={{background: hash.includes(d.path) && 'lightgrey'}}>{d.name}</Link>
+        </li>
+      ))}
+    </ul>
   </li>
 );
 
-const NavigationAuth = ({ activePath, stylesheet, uiColor, setDataView }) => (
-  <ul>
-    {Object.keys(authRoutes).map(key => <InnerLi {...authRoutes[key]} />)}
+const NavigationAuth = ({
+  activePath,
+  stylesheet,
+  uiColor,
+  pathName,
+  location
+}) => (
+  <ul className="navList">
+    {Object.keys(authRoutes).map(key => (
+      <InnerLi
+        {...authRoutes[key]}
+        hash={location.hash}
+      />
+    ))}
     <li>
       <SignOutButton />
     </li>
   </ul>
 );
 
-const NavigationNonAuth = ({ activePath, stylesheet, uiColor }) => (
-  <React.Fragment>
-    {Object.keys(nonAuthRoutes).map(key => <Link className="btn mb-2" to="" />)}
-  </React.Fragment>
+const NavigationNonAuth = ({ activePath, stylesheet, uiColor, location }) => (
+  <ul className="navList">
+    {Object.keys(nonAuthRoutes).map(key => (
+      <InnerLi
+        {...nonAuthRoutes[key]}
+        hash={location.hash}
+      />
+    ))}
+  </ul>
 );
 
 const mapStateToProps = state => ({
-  authUser: state.Session.authUser
+  authUser: state.Session.authUser,
+  ...state.router
 });
 
 const mapDispatchToProps = dispatch =>

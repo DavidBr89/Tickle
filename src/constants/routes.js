@@ -28,8 +28,9 @@ const LANDING_ROUTE = {
 };
 const DATAVIEW_ROUTE = {
   DATAVIEW: {
-    name: 'DataView',
-    path: DATAVIEW,
+    name: 'Card View',
+    // TODO: change later
+    path: DATAVIEW_GEO,
     subRoutes: [
       { name: 'Geo', path: DATAVIEW_GEO },
       { name: 'FloorPlan', path: DATAVIEW_FLOORPLAN },
@@ -41,7 +42,8 @@ const DATAVIEW_ROUTE = {
 const AUTH_ENV_ROUTE = {
   AUTH_ENV: {
     name: 'Author Cards',
-    path: AUTH_ENV,
+    // TODO: change later
+    path: AUTH_ENV_GEO,
     subRoutes: [
       { name: 'Geo', path: AUTH_ENV_GEO },
       { name: 'FloorPlan', path: AUTH_ENV_FLOORPLAN },
@@ -70,16 +72,17 @@ export const Routes = {
 
 export const authRoutes = {
   ...HOME_ROUTE,
-  ...LANDING_ROUTE,
+  // ...LANDING_ROUTE,
   ...DATAVIEW_ROUTE,
   ...AUTH_ENV_ROUTE,
-  ...PASSWORD_FORGET_ROUTE,
-  ...ADMIN_ROUTE,
+  // TODO: change
+  // ...ADMIN_ROUTE,
   ...ACCOUNT_ROUTE
 };
 
 export const nonAuthRoutes = {
-  SIGN_IN: { name: 'Sign In', path: SIGN_IN },
-  LANDING: { name: 'Landing', path: LANDING },
-  PASSWORD_FORGET: { name: 'Forget Password ?', path: PASSWORD_FORGET }
+  ...HOME_ROUTE,
+  ...SIGN_IN_ROUTE,
+  ...LANDING_ROUTE,
+  ...PASSWORD_FORGET_ROUTE
 };

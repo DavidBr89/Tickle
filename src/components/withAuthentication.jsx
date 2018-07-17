@@ -52,19 +52,29 @@ const withAuthentication = Component => {
     }
   }
 
+  const mergeProps = (stateProps, dispatchProps, ownProps) => {
+    console.log('ownProps', stateProps, dispatchProps, ownProps);
+    return {
+      ...stateProps,
+      ...dispatchProps,
+      ...ownProps
+    };
+  };
+
   const mapDispatchToProps = dispatch => ({
     // TODO: import sessionreducer
     onSetAuthUser: authUser => {
       dispatch(setAuthUser(authUser));
     },
-    fetchUserInfo: uid => dispatch(fetchUserInfo(uid)),
+    fetchUserInfo: uid => dispatch(fetchUserInfo(uid))
     // getReadableCards: uid => dispatch(fetchReadableCards(uid)),
     // getCreatedCards: uid => dispatch(fetchCreatedCards(uid))
   });
 
   return connect(
     null,
-    mapDispatchToProps
+    mapDispatchToProps,
+    mergeProps
   )(WithAuthentication);
 };
 

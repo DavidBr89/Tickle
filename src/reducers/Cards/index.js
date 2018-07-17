@@ -8,7 +8,7 @@
 // import { getBoundingBox } from './utils';
 // import { intersection } from 'lodash';
 
-import { updCard } from './helper';
+import updCardDataDim from './updateDataDimension';
 import setify from 'Utils/setify';
 import * as d3 from 'd3';
 import * as chromatic from 'd3-scale-chromatic';
@@ -40,7 +40,7 @@ import {
   DRAG_CARD,
   LOADING_CARDS,
   TOGGLE_TSNE_VIEW,
-  SUBMIT_CHALLENGE,
+  SUBMIT_CHALLENGE
   // ADD_CARD_FILTER,
   // REMOVE_CARD_FILTER,
   // FILTER_CARDS
@@ -274,7 +274,7 @@ function reducer(state = INITIAL_STATE, action) {
       const { cardData, viewport, dataView } = action.options;
 
       console.log('viewport', viewport);
-      const updatedTemplate = updCard({
+      const updatedTemplate = updCardDataDim({
         rawData: { ...cardData, template: true },
         viewport,
         dataView

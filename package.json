@@ -34,6 +34,7 @@
     "colors.css": "^3.0.0",
     "concaveman": "^1.1.1",
     "connected-components": "^1.0.0",
+    "connected-react-router": "^4.3.0",
     "cross-fetch": "^1.1.1",
     "cxs": "^6.1.0",
     "d3": "^5.1.0",

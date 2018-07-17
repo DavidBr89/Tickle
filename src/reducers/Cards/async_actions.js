@@ -1,7 +1,7 @@
 import generate from 'firebase-auto-ids';
 
 import fetch from 'cross-fetch';
-import { updCard } from './helper';
+import updateDataDim from './updateDataDimension';
 
 import {
   receivePlaces,
@@ -165,12 +165,12 @@ export function asyncRemoveCard(cid) {
   };
 }
 
-export function asyncUpdateCard({ uid, cardData, viewport, dataView }) {
-  const updatedCard = updCard({ rawData: cardData, viewport, dataView });
+export function asyncUpdateCard({ cardData, viewport, dataView }) {
+  const updatedCard = updateDataDim({ rawData: cardData, viewport, dataView });
   return function(dispatch) {
     dispatch(updateCard(updatedCard));
     return db
-      .doUpdateCard(uid, updatedCard)
+      .doUpdateCard(updatedCard)
       .then(() => {
         dispatch(updateCardSuccess(updatedCard));
       })

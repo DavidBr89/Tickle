@@ -5,13 +5,14 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { createLogger } from 'redux-logger';
 import { Provider } from 'react-redux';
 
+import { connectRouter, routerMiddleware } from 'connected-react-router';
+
 import { hot } from 'react-hot-loader';
 // import withAuthentication from './components/withAuthentication';oo
 // import AuthUserContext from './components/AuthUserContext';
 
 // import { firebase } from 'Firebase';
 
-import md5 from 'blueimp-md5';
 import rootReducer from './reducers';
 import Routes from './Routes';
 import * as chromatic from 'd3-scale-chromatic';
@@ -27,11 +28,7 @@ import {
   fetchNearByPlaces
 } from './reducers/Cards/async_actions';
 
-function gravatar(email) {
-  const base = 'http://www.gravatar.com/avatar/';
-  const hash = md5(email.trim().toLowerCase());
-  return base + hash;
-}
+import history from './BrowserHistory';
 
 const defaultLocation = {
   latitude: 50.85146,
@@ -58,7 +55,7 @@ const defaultState = {
   user: {
     name: 'jan',
     email: 'jmaushag@gmail.com',
-    img: gravatar('jmaushag@gmail.com'),
+    // img: gravatar('jmaushag@gmail.com'),
     userLocation: defaultLocation
   },
   Login: {
@@ -92,23 +89,34 @@ const defaultState = {
   // }
 };
 
+const composeEnhancers =
+  typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+      // Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
+    })
+    : compose;
+
 function configureStore(rootReducer, initialState) {
   // TODO: remove for production
-  const composeEnhancers =
-    typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-      ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-        // Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
-      })
-      : compose;
+  const setMiddleWare = () => {
+    const loggerMiddleware = createLogger();
+    if (process.env.NODE_ENV === 'development') {
+      return applyMiddleware(
+        thunkMiddleware,
+        loggerMiddleware,
+        routerMiddleware(history)
+      );
+    }
+    return applyMiddleware(thunkMiddleware, routerMiddleware(history));
+  };
 
-  const loggerMiddleware = createLogger();
-  const enhancer = composeEnhancers(
-    process.env.NODE_ENV === 'development'
-      ? applyMiddleware(thunkMiddleware, loggerMiddleware)
-      : applyMiddleware(thunkMiddleware)
+  const enhancer = composeEnhancers(setMiddleWare());
+
+  const store = createStore(
+    connectRouter(history)(rootReducer),
+    initialState,
+    enhancer
   );
-
-  const store = createStore(rootReducer, initialState, enhancer);
 
   if (module.hot) {
     // Enable Webpack hot module replacement for reducers
@@ -167,7 +175,7 @@ const store = configureStore(rootReducer, defaultState);
 
 const App = () => (
   <Provider store={store}>
-    <Routes />
+    <Routes history={history} />
   </Provider>
 );
 

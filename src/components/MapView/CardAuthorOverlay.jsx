@@ -62,7 +62,11 @@ const CardDataOverlay = props => {
     asyncRemoveCard
   } = props;
   return (
-    <div style={style}>
+    <DropTargetCont
+      dropHandler={onCardDrop}
+      dragged={isCardDragging}
+      style={style}
+    >
       <DataOverlay
         disabled={isCardDragging}
         width={width}
@@ -76,42 +80,52 @@ const CardDataOverlay = props => {
         mode={dataView}
         padding={{
           bottom: height / 5,
-            top: height / 5,
-            left: width / 5,
-            right: width / 5
+          top: height / 5,
+          left: width / 5,
+          right: width / 5
         }}
         colorScale={tagColorScale}
         preview={d => (
-          <PreviewMarker
+          <DragSourceCont
+            dragHandler={dragCard}
+            data={d}
             x={d.x}
             y={d.y}
             style={{ zIndex: selectedCardId === d.id ? 5000 : null }}
-            selected={selectedCardId === d.id}
-            template={d.template}
-            color="whitesmoke"
-          />
+          >
+            <PreviewMarker
+              selected={selectedCardId === d.id}
+              template={d.template}
+              color="whitesmoke"
+            />
+          </DragSourceCont>
         )}
       >
         {({ x, y, ...c }) => (
           <Card
             {...c}
             key={c.id}
-            edit={false}
+            edit
             onClose={() => extendSelectedCard(null)}
+            onSubmit={d => {
+              createCard({ ...d, x, y });
+            }}
+            onDelete={() => asyncRemoveCard(c.id)}
             onCollect={() =>
               toggleCardChallenge({
                 cardChallengeOpen: true
               })
-              }
-              tagColorScale={tagColorScale}
-              onSubmitChallenge={onSubmitChallenge}
-              uiColor="grey"
-              background="whitesmoke"
-              style={{ zIndex: 4000 }}
+            }
+            tagColorScale={tagColorScale}
+            onUpdate={d => onCardUpdate({ ...d, x, y })}
+            onSubmitChallenge={onSubmitChallenge}
+            uiColor="grey"
+            background="whitesmoke"
+            style={{ zIndex: 4000 }}
           />
         )}
-    </DataOverlay>
-    </div>
+      </DataOverlay>
+    </DropTargetCont>
   );
 };
 
@@ -129,26 +143,60 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       // dragCard,
+      updateCardTemplate,
       ...dataViewActions,
+      dragCard,
+      asyncUpdateCard,
       asyncSubmitChallenge,
+      asyncCreateCard,
+      asyncRemoveCard,
       changeMapViewport
     },
     dispatch
   );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const { authUser } = state;
+  const { selectedCardId, mapViewport, width, height, authUser } = state;
   const { uid } = authUser;
 
-  const { asyncSubmitChallenge } = dispatcherProps;
+  const { dataView } = ownProps;
+
+  const {
+    asyncUpdateCard,
+    updateCardTemplate,
+    asyncCreateCard,
+    asyncRemoveCard,
+    asyncSubmitChallenge
+  } = dispatcherProps;
+
+  const viewport = { ...mapViewport, width, height };
+  const onCardDrop = cardData => {
+    // TODO: here bug,bugbugbugbugbugbug
+    console.log('dataview', uid, dataView);
+    return selectedCardId === 'temp'
+      ? updateCardTemplate({ uid, cardData, viewport, dataView })
+      : asyncUpdateCard({ cardData, viewport, dataView });
+  };
+
+  const createCard = cardData =>
+    asyncCreateCard({ uid, cardData, viewport, dataView });
+
+  const onCardUpdate = cardData =>
+    selectedCardId === 'temp'
+      ? updateCardTemplate({ cardData, viewport, dataView })
+      : asyncUpdateCard({ uid, cardData, viewport, dataView });
 
   const onSubmitChallenge = challengeSubmission => {
     asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
   };
+  // TODO: change
 
   return {
     ...state,
     ...dispatcherProps,
+    onCardDrop,
+    onCardUpdate,
+    createCard,
     onSubmitChallenge,
     ...ownProps
   };

@@ -23,8 +23,8 @@ const CardDrag = ({ width, height, left, top, fill }) => (
     style={{
       position: !(left === null || top === null) ? 'absolute' : null,
       border: '1px dashed gray',
-      left: `${left}px`,
-      top: `${top}px`
+      left: left,
+      top: top
       // zIndex: 2000
     }}
   />
@@ -166,7 +166,7 @@ export class DropTargetCont extends PureComponent {
   componentDidUpdate(prevProps) {
     const { dropHandler, children } = this.props;
     const { left, top, data } = this.state;
-    console.log('left top', left, top);
+    // console.log('left top', left, top);
     // console.log('yeah dropHandler', this.props);
     // const newid = Math.random() * 100;
     // console.log('dropped', dropped, 'prevDropped', prevState.dropped);
@@ -185,7 +185,7 @@ export class DropTargetCont extends PureComponent {
   }
 
   drop(data, left, top, dropped) {
-    console.log('left', left, 'top', top);
+    // console.log('left', left, 'top', top);
     this.setState({ data, left, top, dropped });
   }
 
