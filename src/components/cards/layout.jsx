@@ -17,22 +17,22 @@ import cx from './Card.scss';
 
 import placeholderImgSrc from './placeholder.png';
 
-import { ThemeConsumer } from 'Src/styles/ThemeContext';
+import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
 const challengeTypes = ['quiz', 'gap text', 'hangman'];
 const mediaScale = scaleOrdinal()
   .domain([ARTICLE, PHOTO, GIF, VIDEO])
   .range([Icon.AlignLeft, Icon.Image, Icon.Image, Icon.Film]);
 
-const SearchIcon = ({ style, className }) => (
+export const ZoomIcon = ({ style, className }) => (
   <i
     className={`fa fa-search ${className} ${cxx.icon}`}
     style={{ cursor: 'pointer', opacity: 0.75, fontSize: '1rem', ...style }}
   />
 );
 
-SearchIcon.propTypes = { style: PropTypes.object, className: PropTypes.string };
-SearchIcon.defaultProps = { style: {}, className: '' };
+ZoomIcon.propTypes = { style: PropTypes.object, className: PropTypes.string };
+ZoomIcon.defaultProps = { style: {}, className: '' };
 
 const EditIcon = ({ style, className }) => (
   <i
@@ -66,74 +66,72 @@ Legend.propTypes = {
 
 Legend.defaultProps = { style: {}, children: null };
 
+// TODO: later
+// !edit ? (
+//               <SearchIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
+//             ) : (
+//               <EditIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
+//             )
+
 export const FieldSet = ({
   children,
   legend,
   style,
   edit,
-  borderColor,
+  uiColor,
   onClick,
   legendStyle,
-  bodyStyle
+  bodyStyle,
+  className,
+  icon
 }) => (
-  <ThemeConsumer>
-    {({ stylesheet, uiColor }) => (
-      <div style={{ ...style }}>
-        <div
-          style={{
-            border: `1px solid ${uiColor}`,
-            marginTop: '4px',
-            width: '100%',
-            height: '100%',
-            padding: 10,
-            overflow: 'hidden',
-            ...bodyStyle
-            // overflow: 'hidden'
-          }}
-        >
-          <div
-            style={{
-              position: 'relative'
-            }}
-          >
-            <div onClick={onClick}>
-              <h5 style={legendStyle}>
-                <span>
-                  {legend}{' '}
-                  {!edit ? (
-                    <SearchIcon
-                      style={{ cursor: 'pointer', fontSize: '1.2rem' }}
-                    />
-                  ) : (
-                    <EditIcon
-                      style={{ cursor: 'pointer', fontSize: '1.2rem' }}
-                    />
-                  )}
-                </span>
-              </h5>
-            </div>
-          </div>
-          {children}
-        </div>
+  <div
+    className={className}
+    onClick={onClick}
+    style={{
+      // border: `1px solid ${uiColor}`,
+      marginTop: '4px',
+      width: '100%',
+      height: '100%',
+      padding: 10,
+      overflow: 'hidden',
+      ...style
+      // overflow: 'hidden'
+    }}
+  >
+    <div
+      style={{
+        position: 'relative',
+        ...bodyStyle
+      }}
+    >
+      <div>
+        <h5 style={legendStyle}>
+          <span>
+            {legend} {icon}
+          </span>
+        </h5>
       </div>
-    )}
-  </ThemeConsumer>
+    </div>
+    {children}
+  </div>
 );
 
 FieldSet.propTypes = {
-  borderColor: PropTypes.string,
+  uiColor: PropTypes.string,
   legend: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
   edit: PropTypes.bool,
   style: PropTypes.object,
   onClick: PropTypes.oneOf([null, PropTypes.func]),
   legendStyle: PropTypes.object,
-  bodyStyle: PropTypes.object
+  bodyStyle: PropTypes.object,
+  icon: PropTypes.oneOf([PropTypes.node, null])
 };
 
 FieldSet.defaultProps = {
   edit: false,
-  borderColor: 'grey',
+  uiColor: 'grey',
   classname: '',
   onClick: null,
   style: {},
@@ -149,10 +147,16 @@ export const ChallengeField = ({
   style,
   edit
 }) => (
-  <ThemeConsumer>
-    {({ uiColor }) => (
+  <CardThemeConsumer>
+    {({ uiColor, stylesheet: { shallowBg, fieldSetBorder } }) => (
       <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
-        <FieldSet edit={edit} borderColor={uiColor} legend="Challenge">
+        <FieldSet
+          edit={edit}
+          uiColor={uiColor}
+          legend="Challenge"
+          className={`${css(shallowBg)} ${css(fieldSetBorder)}`}
+          icon={edit ? <EditIcon /> : <ZoomIcon />}
+        >
           <div
             style={{
               display: 'flex',
@@ -175,7 +179,7 @@ export const ChallengeField = ({
         </FieldSet>
       </div>
     )}
-  </ThemeConsumer>
+  </CardThemeConsumer>
 );
 
 ChallengeField.propTypes = {
@@ -205,13 +209,15 @@ const DescriptionField = ({
   style,
   edit
 }) => (
-  <ThemeConsumer>
-    {({ uiColor }) => (
-      <div
-        style={{ ...style, cursor: 'pointer', overflow: 'hidden' }}
-        onClick={onClick || onEdit}
-      >
-        <FieldSet edit={edit} borderColor={uiColor} legend="Description">
+  <CardThemeConsumer>
+    {({ uiColor, stylesheet: { shallowBg, fieldSetBorder } }) => (
+      <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
+        <FieldSet
+          uiColor={uiColor}
+          className={`${css(shallowBg)} ${css(fieldSetBorder)}`}
+          legend="Description"
+          icon={edit ? <EditIcon /> : <ZoomIcon />}
+        >
           <div
             style={{
               display: 'flex',
@@ -234,7 +240,7 @@ const DescriptionField = ({
         </FieldSet>
       </div>
     )}
-  </ThemeConsumer>
+  </CardThemeConsumer>
 );
 
 DescriptionField.propTypes = {
@@ -258,13 +264,18 @@ DescriptionField.defaultProps = {
 };
 
 const MediaField = ({ media, onEdit, onClick, style, placeholder, edit }) => (
-  <ThemeConsumer>
-    {({ uiColor }) => (
+  <CardThemeConsumer>
+    {({ uiColor, stylesheet: { shallowBg, fieldSetBorder } }) => (
       <div
         style={{ ...style, cursor: 'pointer', overflow: 'hidden' }}
         onClick={onClick || onEdit}
       >
-        <FieldSet edit={edit} legend="Media" borderColor={uiColor}>
+        <FieldSet
+          icon={edit ? <EditIcon /> : <ZoomIcon />}
+          className={`${css(shallowBg)} ${css(fieldSetBorder)}`}
+          legend="Media"
+          uiColor={uiColor}
+        >
           <div style={{ display: 'flex', alignContent: 'end' }}>
             {Array.isArray(media) && media.length > 0 ? (
               <PreviewMedia
@@ -278,7 +289,7 @@ const MediaField = ({ media, onEdit, onClick, style, placeholder, edit }) => (
         </FieldSet>
       </div>
     )}
-  </ThemeConsumer>
+  </CardThemeConsumer>
 );
 
 MediaField.propTypes = {
@@ -412,7 +423,7 @@ export const BigButton = ({
   children,
   className
 }) => (
-  <ThemeConsumer>
+  <CardThemeConsumer>
     {({ uiColor, stylesheet }) => (
       <button
         className={`${className} ${css(stylesheet.btn)}`}
@@ -432,7 +443,7 @@ export const BigButton = ({
         </div>
       </button>
     )}
-  </ThemeConsumer>
+  </CardThemeConsumer>
 );
 
 BigButton.propTypes = {

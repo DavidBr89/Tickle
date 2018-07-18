@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { scaleLinear, extent, range, scaleOrdinal } from 'd3';
+import { css } from 'aphrodite/no-important';
 
 import { db } from 'Firebase';
 
@@ -10,15 +11,18 @@ import CardMarker from '../CardMarker';
 import { FieldSet } from '../layout';
 import setify from 'Utils/setify';
 
+import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
+
 const profileSrc = () => {
   const gender = Math.random() < 0.5 ? 'men' : 'women';
   const i = Math.round(Math.random() * 100);
   return `https://randomuser.me/api/portraits/thumb/${gender}/${i}.jpg`;
 };
 
-const SkillBar = ({ data, tagColorScale }) => {
+const SkillBar = ({ sets, tagColorScale, acc = d => d.values.length }) => {
+  console.log('sets', sets);
   const scale = scaleLinear()
-    .domain(extent(data, d => d.count))
+    .domain(extent(sets, acc))
     // TODO
     .range([50, 100]);
 
@@ -26,10 +30,10 @@ const SkillBar = ({ data, tagColorScale }) => {
 
   return (
     <div style={{ display: 'flex' }}>
-      {data.map(d => (
+      {sets.map(d => (
         <div
           style={{
-            width: `${scale(d.level)}%`,
+            width: `${scale(acc(d))}%`,
             height: '30px',
             display: 'inline-flex',
             justifyContent: 'center',
@@ -48,6 +52,7 @@ SkillBar.propTypes = { data: PropTypes.array, tagColorScale: PropTypes.func };
 
 SkillBar.defaultProps = { data: [], tagColorScale: () => 'purple' };
 
+// TODO: fix it later
 const CardStack = ({ number }) => (
   // const scale = d3
   //   .scaleLinear()
@@ -72,6 +77,9 @@ CardStack.propTypes = {
 
 CardStack.defaultProps = { number: 0 };
 
+const noBorderStyle = { border: null };
+const legendStyle = { fontSize: '16px' };
+
 const ExtendedAuthor = ({
   onClose,
   color,
@@ -86,37 +94,65 @@ const ExtendedAuthor = ({
   numCreatedCards,
   ...authorPreviewProps
 }) => (
-  <div
-    style={{
-      display: 'flex',
-      position: 'relative',
-      justifyContent: 'center',
-      // alignItems: 'center',
-      flexDirection: 'column',
-      ...style
-    }}
-  >
-    <AuthorPreview {...authorPreviewProps} />
+  <CardThemeConsumer>
+    {({ stylesheet }) => (
+      <div
+        style={{
+          display: 'flex',
+          position: 'relative',
+          justifyContent: 'center',
+          // alignItems: 'center',
+          flexDirection: 'column',
+          ...style
+        }}
+      >
+        <AuthorPreview {...authorPreviewProps} />
 
-    <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
-      Personal
-    </div>
-    <FieldSet legend="Interests:">
-      <SkillBar data={interests} tagColorScale={tagColorScale} />
-    </FieldSet>
-    <FieldSet legend="skills:">
-      <SkillBar data={skills} tagColorScale={tagColorScale} />
-    </FieldSet>
-    <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
-      Activity
-    </div>
-    <FieldSet legend="Collected Cards">
-      <CardStack number={numCollectedCards} />
-    </FieldSet>
-    <FieldSet legend="Created Cards">
-      <CardStack number={numCreatedCards} />
-    </FieldSet>
-  </div>
+        <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
+          Personal
+        </div>
+        <FieldSet
+          legend="Interests:"
+          className={css(stylesheet.shallowBg)}
+          style={noBorderStyle}
+          legendStyle={legendStyle}
+        >
+          <SkillBar
+            sets={interests}
+            acc={d => d.count}
+            tagColorScale={tagColorScale}
+          />
+        </FieldSet>
+        <FieldSet
+          legend="skills:"
+          style={noBorderStyle}
+          className={css(stylesheet.shallowBg)}
+          legendStyle={legendStyle}
+        >
+          <SkillBar sets={skills} tagColorScale={tagColorScale} />
+        </FieldSet>
+        <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
+          Activity
+        </div>
+        <FieldSet
+          legend="Collected Cards"
+          className={css(stylesheet.shallowBg)}
+          style={noBorderStyle}
+          legendStyle={legendStyle}
+        >
+          <CardStack number={numCollectedCards} />
+        </FieldSet>
+        <FieldSet
+          legend="Created Cards"
+          className={css(stylesheet.shallowBg)}
+          style={noBorderStyle}
+          legendStyle={legendStyle}
+        >
+          <CardStack number={numCreatedCards} />
+        </FieldSet>
+      </div>
+    )}
+  </CardThemeConsumer>
 );
 
 const AuthorPreview = ({ photoURL, style, username, name, email }) => (
@@ -173,9 +209,10 @@ class Author extends React.Component {
         collectedCards,
         ...userDetails
       } = res;
-      console.log('author', res);
+
       const interests = plainInterests.map(key => ({ key, count: 10 }));
-      const skills = setify([...createdCards, ...collectedCards]);
+      const skills = setify([...createdCards, ...collectedCards]).slice(0, 5);
+
       const numCollectedCards = collectedCards.length;
       const numCreatedCards = createdCards.length;
 

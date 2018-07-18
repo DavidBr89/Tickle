@@ -5,7 +5,7 @@ import PhotoUpload from 'Utils/PhotoUpload';
 import TabNav from 'Utils/TabNav';
 import { css } from 'aphrodite';
 
-import { ThemeConsumer } from 'Src/styles/ThemeContext';
+import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
 class AddUrl extends Component {
   static propTypes = {
@@ -30,7 +30,7 @@ class AddUrl extends Component {
     const { imgUrl } = this.state;
 
     return (
-      <ThemeConsumer>
+      <CardThemeConsumer>
         {({ stylesheet }) => (
           <div
             className={className}
@@ -101,7 +101,7 @@ class AddUrl extends Component {
             </div>
           </div>
         )}
-      </ThemeConsumer>
+      </CardThemeConsumer>
     );
   }
 }

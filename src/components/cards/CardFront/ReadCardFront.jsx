@@ -11,7 +11,7 @@ import MatchPhotoChallenge from 'Src/components/Challenges/MatchPhotoChallenge';
 import { TagInput, PreviewTags } from 'Utils/Tag';
 import { Modal, ModalBody } from 'Utils/Modal';
 
-import { ThemeConsumer } from 'Src/styles/ThemeContext';
+import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
 import { MediaOverview } from '../MediaSearch';
 import { cardLayout, coverPhotoStyle } from '../styles';
@@ -25,6 +25,7 @@ import {
   EditButton,
   Img,
   ImgOverlay,
+  ZoomIcon,
   // Tags,
   // SmallPreviewTags,
   BigButton,
@@ -167,18 +168,12 @@ class ReadCardFront extends Component {
         <ImgOverlay src={img ? img.url : null} style={coverPhotoStyle}>
           <div style={{ display: 'flex', width: '70%', maxWidth: '80%' }}>
             {/* TODO: fix width */}
-            <PreviewTags
-              colorScale={tagColorScale}
-              uiColor={uiColor}
-              data={tags}
-            />
+            <PreviewTags colorScale={tagColorScale} data={tags} />
           </div>
         </ImgOverlay>
         <DescriptionField
           style={{ maxHeight: '20%' }}
           text={description}
-          borderColor={uiColor}
-          edit
           onEdit={() =>
             this.setState({
               dialog: {
@@ -192,7 +187,6 @@ class ReadCardFront extends Component {
         <MediaField
           style={{ maxHeight: '20%' }}
           media={media}
-          borderColor={uiColor}
           onClick={() =>
             this.setState({ dialog: { key: 'Media', data: media } })
           }
@@ -204,7 +198,6 @@ class ReadCardFront extends Component {
                 dialog: { key: 'Challenge', data: media }
               })
             }
-            color={uiColor}
             style={{ width: '80%' }}
           >
             {'Collect Card'}{' '}

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { css } from 'aphrodite';
 
-import { ThemeConsumer } from 'Src/styles/ThemeContext';
+import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
 export default class TabNav extends React.Component {
   static propTypes = {
@@ -47,7 +47,7 @@ export default class TabNav extends React.Component {
     const updState = sel => () => this.setState({ selected: sel });
 
     return (
-      <ThemeConsumer>
+      <CardThemeConsumer>
         {({ stylesheet }) => (
           <div style={{ width: '100%' }}>
             <div
@@ -86,7 +86,7 @@ export default class TabNav extends React.Component {
             </div>
           </div>
         )}
-      </ThemeConsumer>
+      </CardThemeConsumer>
     );
   }
 }

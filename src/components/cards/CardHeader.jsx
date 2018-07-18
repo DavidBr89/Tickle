@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 // import { EditButton } from './layout';
 import { css } from 'aphrodite/no-important';
-import { ThemeConsumer } from 'Src/styles/ThemeContext';
+import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
 import { shadowStyle } from './styles';
 
@@ -31,7 +31,7 @@ const CardHeader = ({
 
   // TODO: change cardMini2 class
   return (
-    <ThemeConsumer>
+    <CardThemeConsumer>
       {({ stylesheet }) => (
         <div
           className="pl-2 pr-2 pt-3"
@@ -78,7 +78,7 @@ const CardHeader = ({
           {children}
         </div>
       )}
-    </ThemeConsumer>
+    </CardThemeConsumer>
   );
 };
 

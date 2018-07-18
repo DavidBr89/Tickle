@@ -25,10 +25,9 @@ const btnStyle = {
   cursor: 'pointer'
 };
 
-
 const {
-  Provider: ThemeProvider,
-  Consumer: ThemeConsumer
-} = React.createContext({globalStylesheet: StyleSheet.create({background: 'green'})});
+  Provider: CardThemeProvider,
+  Consumer: CardThemeConsumer
+} = React.createContext({});
 
-export { ThemeProvider, ThemeConsumer, btnStyle };
+export { CardThemeProvider, CardThemeConsumer, btnStyle };

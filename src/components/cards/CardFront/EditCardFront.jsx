@@ -16,7 +16,6 @@ import { Modal, ModalBody } from 'Utils/Modal';
 import { MediaSearch, MediaOverview } from '../MediaSearch';
 import { cardLayout, coverPhotoStyle } from '../styles';
 
-
 import {
   // FieldSet,
   // PreviewMedia,
@@ -290,7 +289,16 @@ class EditCardFront extends PureComponent {
       template
     } = this.props;
     const { data, added, dialog } = this.state;
-    const { title, tags, img, description, media, children, challenge } = data;
+    const {
+      id,
+      title,
+      tags,
+      img,
+      description,
+      media,
+      children,
+      challenge
+    } = data;
     const modalVisible = dialog !== null;
     const dialogTitle = dialog !== null ? dialog.title : null;
 

@@ -16,7 +16,7 @@ import CardMarker from './CardMarker';
 
 import { colorScale } from './styles';
 
-import { ThemeProvider, btnStyle } from 'Src/styles/ThemeContext';
+import { CardThemeProvider, btnStyle } from 'Src/styles/CardThemeContext';
 
 // ReadCardBack.defaultProps = {
 //   key: 'asa',
@@ -98,7 +98,7 @@ class Card extends React.Component {
   makeStylesheet = () => {
     const { uiColor, background } = this.props;
     return StyleSheet.create({
-      uiColor,
+      boxShadow: { boxShadow: `4px 4px ${uiColor}` },
       btn: {
         ...btnStyle,
         borderColor: uiColor,
@@ -106,11 +106,26 @@ class Card extends React.Component {
           boxShadow: `4px 4px ${uiColor}`
         }
       },
+      shallowBg: {
+        background: chroma(uiColor)
+          .brighten(2.2)
+          .hex()
+      },
       btnActive: {
         ...btnStyle,
         background: uiColor,
         color: 'whitesmoke'
         // borderColor: uiColor
+      },
+      fieldSetBorder: {
+        border: `${chroma(uiColor)
+          .brighten(1.8)
+          .hex()} solid 1px`
+      },
+      fieldSetLegend: {
+        ':hover': {
+          boxShadow: `4px 4px ${uiColor}`
+        }
       },
       background: { background },
       modalFooter: {
@@ -142,7 +157,8 @@ class Card extends React.Component {
       onSubmit,
       author,
       background,
-      uiColor
+      uiColor,
+      template
     } = this.props;
     const { frontView } = this.state;
     // const { onClose } = this.props;
@@ -174,7 +190,7 @@ class Card extends React.Component {
       return (
         <CardBack
           {...this.props}
-          edit={edit}
+          edit={!template}
           background={background}
           uiColor={uiColor}
           onCollect={onCollect}
@@ -203,9 +219,9 @@ class Card extends React.Component {
             background
           }}
         >
-          <ThemeProvider value={{ stylesheet, uiColor }}>
+          <CardThemeProvider value={{ stylesheet, uiColor }}>
             {togglecard()}
-          </ThemeProvider>
+          </CardThemeProvider>
         </div>
       </div>
     );

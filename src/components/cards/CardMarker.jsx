@@ -53,11 +53,12 @@ class CardMarker extends Component {
       shadow,
       // tags,
       barHeight = '12%',
-      barColor = 'black'
+      barColor = 'black',
+      className
     } = this.props;
     return (
       <div
-        className="cardmarker"
+        className={className}
         style={{
           pointerEvents: 'none',
           // padding: '15%',

@@ -9,7 +9,7 @@ import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 import DimWrapper from 'Utils/DimensionsWrapper';
 import ExtendableMarker from 'Utils/ExtendableMarker';
 
-import PreviewMarker from '../PreviewMarker';
+import CardPreviewMarker from '../PreviewMarker';
 
 import {
   DragSourceCont,
@@ -93,7 +93,7 @@ const CardDataOverlay = props => {
             y={d.y}
             style={{ zIndex: selectedCardId === d.id ? 5000 : null }}
           >
-            <PreviewMarker
+            <CardPreviewMarker
               selected={selectedCardId === d.id}
               template={d.template}
               color="whitesmoke"
@@ -106,7 +106,7 @@ const CardDataOverlay = props => {
             {...c}
             key={c.id}
             onClose={() => extendSelectedCard(null)}
-            edit={authEnv}
+            edit
             onSubmit={d => {
               createCard({ ...d, x, y });
             }}

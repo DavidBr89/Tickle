@@ -208,15 +208,17 @@ export const getUser = uid =>
 export const getDetailedUserInfo = uid =>
   getUser(uid)
     .then(
-      usr =>
+      usr => getShallowCards(uid).then(createdCards =>
         new Promise(resolve =>
           resolve({
             ...usr,
             readableCards: [],
-            createdCards: [],
+            createdCards,
             collectedCards: []
           })
         )
+
+      )
     )
     .catch(err => console.log('err i getUser'));
 

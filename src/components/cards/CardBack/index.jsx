@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'aphrodite';
 
 // import cx from './Card.scss';
+
+import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
 import { FieldSet, FlipButton } from '../layout';
 import Comments from './Comments';
@@ -21,6 +24,17 @@ const DeleteButton = ({ style, onClick, color, className }) => (
   >
     <i className="fa fa-trash fa-2x" aria-hidden="true" />
   </button>
+);
+
+const BackField = ({ ...props }) => (
+  <CardThemeConsumer>
+    {({ stylesheet: { shallowBg, fieldSetBorder } }) => (
+      <FieldSet
+        {...props}
+        className={`${css(shallowBg)} ${css(fieldSetBorder)}`}
+      />
+    )}
+  </CardThemeConsumer>
 );
 
 DeleteButton.propTypes = {
@@ -79,14 +93,16 @@ class CardBackSkeleton extends Component {
 
   state = { extended: null };
 
+  // TODO: check
   shouldComponentUpdate(nextProps, nextState) {
     return this.state.extended !== nextState.extended;
   }
 
-  selectField = field =>
+  selectField = field => {
     this.setState(({ extended: prevExtended }) => ({
       extended: prevExtended !== field ? field : null
     }));
+  };
 
   render() {
     const {
@@ -111,11 +127,21 @@ class CardBackSkeleton extends Component {
       extended: extended === field && extended !== null
     });
 
-    const display = field => {
-      const h = extended === field ? { height: '90%' } : {};
+    const displayStyle = field => {
+      const defaultStyle = { transition: 'height 0s', marginBottom: 10 };
+      const isExt = extended === field;
+      console.log('field', field, isExt);
+      if (extended !== null) {
+        return {
+          ...defaultStyle,
+          height: isExt ? '100%' : '7%',
+          overflow: isExt ? 'scroll' : 'hidden'
+        };
+      }
       return {
-        display: isHidden(field) ? 'none' : null,
-        ...h
+        height: '30%',
+        // background: null,
+        ...defaultStyle
       };
     };
 
@@ -127,14 +153,14 @@ class CardBackSkeleton extends Component {
           height: '90%',
           display: 'flex',
           alignContent: 'center',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          // justifyContent: 'space-around'
           // pointerEvents: 'all'
         }}
       >
-        <FieldSet
+        <BackField
           legend="Author"
-          borderColor={uiColor}
-          style={{ ...display('author'), transition: 'all 1s' }}
+          style={displayStyle('author')}
           onClick={() => this.selectField('author')}
         >
           <Author
@@ -146,13 +172,12 @@ class CardBackSkeleton extends Component {
               // console.log('onCLose');
             }}
           />
-        </FieldSet>
-        <FieldSet
-          style={{ width: '100%', height: '30%', ...display('map') }}
+        </BackField>
+        <BackField
+          style={{ ...displayStyle('map'), padding: 0 }}
           edit={edit}
           legend="Location"
-          legendStyle={{ position: 'absolute', zIndex: 100, margin: 10 }}
-          bodyStyle={{ padding: 0 }}
+          legendStyle={{ position: 'absolute', margin: 10, zIndex: 1000 }}
           borderColor={uiColor}
           onClick={() => this.selectField('map')}
         >
@@ -165,13 +190,15 @@ class CardBackSkeleton extends Component {
             radius={mapRadius}
             edit={edit}
           />
-        </FieldSet>
-        <FieldSet
-          onClick={() => this.selectField('comments')}
-          legend="Comments"
-          style={display('comments')}
-          borderColor={uiColor}
-        />
+        </BackField>
+        {edit && (
+          <BackField
+            onClick={() => this.selectField('comments')}
+            legend="Comments"
+            style={displayStyle('comments')}
+            borderColor={uiColor}
+          />
+        )}
         <div
           className="mt-2"
           style={{
@@ -189,7 +216,7 @@ class CardBackSkeleton extends Component {
             />
           )}
           <FlipButton
-            className="ml-2"
+            className={edit ? 'ml-2' : null}
             color={uiColor}
             onClick={flipHandler}
             style={{ width: edit ? '20%' : '100%' }}

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import chroma from 'chroma-js';
 import { css } from 'aphrodite/no-important';
 
-import { ThemeConsumer } from 'Src/styles/ThemeContext';
+import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
 // const ddg = new DDG('tickle');
 
@@ -137,7 +137,7 @@ Modal.defaultProps = {
 // TODO: fix padding bottom
 // TODO: access child state
 const ModalBody = ({ children, footer, styles }) => (
-  <ThemeConsumer>
+  <CardThemeConsumer>
     {({ stylesheet }) => (
       <div
         style={{
@@ -157,7 +157,7 @@ const ModalBody = ({ children, footer, styles }) => (
         <div className={css(stylesheet.modalFooter)}>{footer}</div>
       </div>
     )}
-  </ThemeConsumer>
+  </CardThemeConsumer>
 );
 
 ModalBody.propTypes = {
