@@ -52,6 +52,7 @@ const CardDataOverlay = props => {
     tagColorScale,
     authEnv,
     extendSelectedCard,
+    extCardId,
     dragCard,
     createCard,
     toggleCardChallenge,
@@ -64,23 +65,13 @@ const CardDataOverlay = props => {
   return (
     <div style={style}>
       <DataOverlay
-        disabled={isCardDragging}
-        width={width}
-        height={height}
-        data={cards}
-        sets={cardSets}
-        selectedTags={selectedTags}
-        selectedCardId={selectedCardId}
-        filterSet={filterSet}
-        userLocation={userLocation}
-        mode={dataView}
+        {...props}
         padding={{
           bottom: height / 5,
-            top: height / 5,
-            left: width / 5,
-            right: width / 5
+          top: height / 5,
+          left: width / 5,
+          right: width / 5
         }}
-        colorScale={tagColorScale}
         preview={d => (
           <PreviewMarker
             x={d.x}
@@ -102,26 +93,28 @@ const CardDataOverlay = props => {
               toggleCardChallenge({
                 cardChallengeOpen: true
               })
-              }
-              tagColorScale={tagColorScale}
-              onSubmitChallenge={onSubmitChallenge}
-              uiColor="grey"
-              background="whitesmoke"
-              style={{ zIndex: 4000 }}
+            }
+            tagColorScale={tagColorScale}
+            onSubmitChallenge={onSubmitChallenge}
+            uiColor="grey"
+            background="whitesmoke"
+            style={{ zIndex: 4000 }}
           />
         )}
-    </DataOverlay>
+      </DataOverlay>
     </div>
   );
 };
 
 function mapStateToProps(state) {
+  console.log('State Screen', state.Screen);
   return {
     ...state.MapView,
     ...state.Cards,
     ...state.DataView,
     userLocation: state.MapView.userLocation,
-    ...state.Session
+    ...state.Session,
+    ...state.Screen
   };
 }
 
@@ -140,8 +133,6 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const { authUser } = state;
   const { uid } = authUser;
 
-  const { asyncSubmitChallenge } = dispatcherProps;
-
   const onSubmitChallenge = challengeSubmission => {
     asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
   };
@@ -154,10 +145,10 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   };
 };
 
-const ConnectedCardDataOverlay = connect(
+const ConnectedCardViewDataOverlay = connect(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps
 )(CardDataOverlay);
 
-export default ConnectedCardDataOverlay;
+export default ConnectedCardViewDataOverlay;

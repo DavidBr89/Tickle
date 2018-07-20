@@ -9,7 +9,7 @@ import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 import DimWrapper from 'Utils/DimensionsWrapper';
 import ExtendableMarker from 'Utils/ExtendableMarker';
 
-import CardPreviewMarker from '../PreviewMarker';
+import PreviewMarker from '../PreviewMarker';
 
 import {
   DragSourceCont,
@@ -36,7 +36,7 @@ import {
 
 import * as dataViewActions from 'Reducers/DataView/actions';
 
-const CardAuthorOverlay = props => {
+const CardDataOverlay = props => {
   const {
     onCardDrop,
     isCardDragging,
@@ -51,6 +51,7 @@ const CardAuthorOverlay = props => {
     changeMapViewport,
     tagColorScale,
     authEnv,
+    extCardId,
     extendSelectedCard,
     dragCard,
     createCard,
@@ -61,12 +62,9 @@ const CardAuthorOverlay = props => {
     onSubmitChallenge,
     asyncRemoveCard
   } = props;
+
   return (
-    <DropTargetCont
-      dropHandler={onCardDrop}
-      dragged={isCardDragging}
-      style={style}
-    >
+    <div style={style}>
       <DataOverlay
         disabled={isCardDragging}
         width={width}
@@ -75,6 +73,7 @@ const CardAuthorOverlay = props => {
         sets={cardSets}
         selectedTags={selectedTags}
         selectedCardId={selectedCardId}
+        extCardId={extCardId}
         filterSet={filterSet}
         userLocation={userLocation}
         mode={dataView}
@@ -86,38 +85,28 @@ const CardAuthorOverlay = props => {
         }}
         colorScale={tagColorScale}
         preview={d => (
-          <DragSourceCont
-            dragHandler={dragCard}
-            data={d}
+          <PreviewMarker
             x={d.x}
             y={d.y}
             style={{ zIndex: selectedCardId === d.id ? 5000 : null }}
-          >
-            <CardPreviewMarker
-              selected={selectedCardId === d.id}
-              template={d.template}
-              color="whitesmoke"
-            />
-          </DragSourceCont>
+            selected={selectedCardId === d.id}
+            template={d.template}
+            color="whitesmoke"
+          />
         )}
       >
         {({ x, y, ...c }) => (
           <Card
             {...c}
             key={c.id}
+            edit={false}
             onClose={() => extendSelectedCard(null)}
-            edit
-            onSubmit={d => {
-              createCard({ ...d, x, y });
-            }}
-            onDelete={() => asyncRemoveCard(c.id)}
             onCollect={() =>
               toggleCardChallenge({
                 cardChallengeOpen: true
               })
             }
             tagColorScale={tagColorScale}
-            onUpdate={d => onCardUpdate({ ...d, x, y })}
             onSubmitChallenge={onSubmitChallenge}
             uiColor="grey"
             background="whitesmoke"
@@ -125,17 +114,13 @@ const CardAuthorOverlay = props => {
           />
         )}
       </DataOverlay>
-    </DropTargetCont>
+    </div>
   );
 };
 
 function mapStateToProps(state) {
+  console.log('State Screen', state.Screen);
   return {
-    ...state.MapView,
-    ...state.Cards,
-    ...state.DataView,
-    ...state.Screen,
-    userLocation: state.MapView.userLocation,
     ...state.Session
   };
 }
@@ -144,69 +129,34 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       // dragCard,
-      updateCardTemplate,
       ...dataViewActions,
-      dragCard,
-      asyncUpdateCard,
       asyncSubmitChallenge,
-      asyncCreateCard,
-      asyncRemoveCard,
       changeMapViewport
     },
     dispatch
   );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const { selectedCardId, mapViewport, width, height, authUser } = state;
+  const { authUser } = state;
   const { uid } = authUser;
 
-  const { dataView } = ownProps;
-
-  const {
-    asyncUpdateCard,
-    updateCardTemplate,
-    asyncCreateCard,
-    asyncRemoveCard,
-    asyncSubmitChallenge
-  } = dispatcherProps;
-
-  const viewport = { ...mapViewport, width, height };
-  const onCardDrop = cardData => {
-    // TODO: here bug,bugbugbugbugbugbug
-    console.log('dataview', uid, dataView);
-    return selectedCardId === 'temp'
-      ? updateCardTemplate({ uid, cardData, viewport, dataView })
-      : asyncUpdateCard({ cardData, viewport, dataView });
-  };
-
-  const createCard = cardData =>
-    asyncCreateCard({ uid, cardData, viewport, dataView });
-
-  const onCardUpdate = cardData =>
-    selectedCardId === 'temp'
-      ? updateCardTemplate({ cardData, viewport, dataView })
-      : asyncUpdateCard({ uid, cardData, viewport, dataView });
+  const { asyncSubmitChallenge } = dispatcherProps;
 
   const onSubmitChallenge = challengeSubmission => {
     asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
   };
-  // TODO: change
 
   return {
-    ...state,
     ...dispatcherProps,
-    onCardDrop,
-    onCardUpdate,
-    createCard,
     onSubmitChallenge,
     ...ownProps
   };
 };
 
-const ConnectedCardAuthorOverlay = connect(
+const ConnectedCardDataOverlay = connect(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps
-)(CardAuthorOverlay);
+)(CardDataOverlay);
 
-export default ConnectedCardAuthorOverlay;
+export default ConnectedCardDataOverlay;

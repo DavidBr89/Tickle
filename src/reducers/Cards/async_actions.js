@@ -129,9 +129,6 @@ export function fetchCardTemplates(uid) {
 }
 
 export function asyncCreateCard({ cardData, uid, viewport, dataView }) {
-  console.log('asyncCreateCard', { cardData, uid, viewport, dataView });
-  // const { floorX, floorY, img, loc, media, title, tags, challenge } = cardData;
-
   const newCard = {
     ...cardData,
     id: idGenerate(),
@@ -146,7 +143,7 @@ export function asyncCreateCard({ cardData, uid, viewport, dataView }) {
     dispatch(selectCard(newCard.id));
 
     return db
-      .doCreateCard(uid, newCard)
+      .doCreateCard(newCard)
       .then(() => dispatch(createCardSuccess(newCard)));
   };
 }

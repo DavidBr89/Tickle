@@ -252,11 +252,13 @@ class Map extends Component {
   }
 }
 
+// TODO: change this later
 const mapStateToProps = ({
   MapView: { mapViewport, userLocation, width, height },
-  DataView: { selectedCardId }
+  DataView: { selectedCardId },
+  Screen
 }) => ({
-  viewport: { ...mapViewport, width, height },
+  viewport: { ...mapViewport, ...Screen },
   userLocation,
   selectedCardId
 });

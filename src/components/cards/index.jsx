@@ -97,24 +97,47 @@ class Card extends React.Component {
 
   makeStylesheet = () => {
     const { uiColor, background } = this.props;
+
+    const shallowBg = chroma(uiColor)
+      .brighten(2.2)
+      .hex();
+
+    const littleShallowColor = chroma(uiColor)
+      .brighten(1.2)
+      .hex();
+
+    const extraShallowBg = chroma(uiColor)
+      .brighten(2.3)
+      .hex();
+
     return StyleSheet.create({
       boxShadow: { boxShadow: `4px 4px ${uiColor}` },
+      border: { border: `1px solid ${uiColor}` },
+      bigBoxShadow: {
+        border: `1px solid ${littleShallowColor}`,
+        boxShadow: `6px 6px ${littleShallowColor}`
+      },
       btn: {
         ...btnStyle,
         borderColor: uiColor,
+        background: shallowBg,
         ':hover': {
           boxShadow: `4px 4px ${uiColor}`
         }
       },
       shallowBg: {
-        background: chroma(uiColor)
-          .brighten(2.2)
-          .hex()
+        background: shallowBg
+      },
+      extraShallowBg: {
+        background: extraShallowBg
       },
       btnActive: {
         ...btnStyle,
         background: uiColor,
-        color: 'whitesmoke'
+        color: 'whitesmoke',
+        display: 'inline-flex',
+        justifyContent: 'center',
+        alignItems: 'center'
         // borderColor: uiColor
       },
       fieldSetBorder: {
@@ -173,6 +196,11 @@ class Card extends React.Component {
     // const uiColor = chroma(background).darken(1);
     // const focusColor = chroma(background).darken(3);
     const stylesheet = this.makeStylesheet();
+
+    const darkerUiColor = chroma(uiColor)
+      .darken(1)
+      .hex();
+
     const togglecard = () => {
       if (frontView)
         return (
@@ -211,7 +239,7 @@ class Card extends React.Component {
     return (
       <div
         className={`${cx.flipContainer} ${sideToggler}`}
-        style={{ ...style, maxWidth: '500px', maxHeight: '800px' }}
+        style={{ ...style, maxWidth: 500, maxHeight: 800 }}
       >
         <div
           className={`${cx.flipper} ${sideToggler}`}
@@ -219,7 +247,7 @@ class Card extends React.Component {
             background
           }}
         >
-          <CardThemeProvider value={{ stylesheet, uiColor }}>
+          <CardThemeProvider value={{ stylesheet, uiColor, darkerUiColor }}>
             {togglecard()}
           </CardThemeProvider>
         </div>

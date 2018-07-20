@@ -30,7 +30,7 @@ import { Modal, ModalBody } from 'Utils/Modal';
 
 import { TagInput, DropDown } from 'Utils/TagInput';
 
-import CardAuthorOverlay from './CardAuthorOverlay';
+import CardDragAuthorOverlay from './CardDragAuthorOverlay';
 
 // import DragLayer from './DragAndDrop/DragLayer';
 
@@ -101,7 +101,7 @@ SpeechBubble.defaultProps = {};
 SpeechBubble.propTypes = {};
 
 @DragDropContextProvider
-class MapViewPage extends Component {
+class CardAuthorPage extends Component {
   static propTypes = {
     cards: PropTypes.array,
     cardSets: PropTypes.array,
@@ -146,14 +146,14 @@ class MapViewPage extends Component {
     super(props);
 
     // TODO put into container element
-    const { screenResize } = props;
+    // const { screenResize } = props;
 
     // this._onChangeViewport = this._onChangeViewport.bind(this);
     // this._userMove = this._userMove.bind(this);
     // this.gridSpan = this.gridSpan.bind(this);
 
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    // const width = window.innerWidth;
+    // const height = window.innerHeight;
 
     // screenResize({
     //   width: this.cont.offsetWidth || window.innerWidth,
@@ -181,27 +181,29 @@ class MapViewPage extends Component {
     } = this.props;
 
     fetchCards();
+
     screenResize({
       width: this.cont.offsetWidth,
       height: this.cont.offsetHeight
     });
+
     preSelectCardId();
 
-    // TODO: update
-    navigator.geolocation.watchPosition(
-      pos => {
-        const userLocation = {
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude
-        };
-
-        // TODO:
-        // const centerLocation = { ...userLocation };
-      },
-      // 50.846749, 4.352349
-      d => console.log('error watch pos', d),
-      { timeout: 1000000 }
-    );
+    // // TODO: update
+    // navigator.geolocation.watchPosition(
+    //   pos => {
+    //     const userLocation = {
+    //       latitude: pos.coords.latitude,
+    //       longitude: pos.coords.longitude
+    //     };
+    //
+    //     // TODO:
+    //     // const centerLocation = { ...userLocation };
+    //   },
+    //   // 50.846749, 4.352349
+    //   d => console.log('error watch pos', d),
+    //   { timeout: 1000000 }
+    // );
   }
 
   componentWillUnmount() {
@@ -298,7 +300,7 @@ class MapViewPage extends Component {
                 }}
               />
             </div>
-            <CardAuthorOverlay
+            <CardDragAuthorOverlay
               dataView={dataView}
               cards={cards}
               cardSets={cardSets}
@@ -312,7 +314,7 @@ class MapViewPage extends Component {
   }
 }
 
-export default MapViewPage;
-// export default withAuthorization(authCondition)(MapViewPage);
+export default CardAuthorPage;
+// export default withAuthorization(authCondition)(CardAuthorPage);
 
 // export default MapView;

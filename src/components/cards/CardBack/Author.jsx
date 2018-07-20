@@ -155,6 +155,10 @@ const ExtendedAuthor = ({
   </CardThemeConsumer>
 );
 
+// <div className="mb-1">
+//         <span style={{ fontWeight: 'bold' }}>name: </span>
+//         {name}
+//       </div>
 const AuthorPreview = ({ photoURL, style, username, name, email }) => (
   <div
     style={{
@@ -171,10 +175,6 @@ const AuthorPreview = ({ photoURL, style, username, name, email }) => (
         <div className="mb-1">
           <span style={{ fontWeight: 'bold' }}>username: </span>
           {username}
-        </div>
-        <div className="mb-1">
-          <span style={{ fontWeight: 'bold' }}>name: </span>
-          {name}
         </div>
         <div className="mb-1">
           <span style={{ fontWeight: 'bold' }}>email: </span> {email}
@@ -266,7 +266,6 @@ Author.defaultProps = {
   placeholderImgUrl:
     'http://sunfieldfarm.org/wp-content/uploads/2014/02/profile-placeholder.png',
   // profile: {
-  name: 'jan',
   skills: [
     { key: 'arts', level: 22 },
     { key: 'music', level: 14 },

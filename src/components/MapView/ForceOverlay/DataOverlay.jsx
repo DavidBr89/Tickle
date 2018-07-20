@@ -126,6 +126,7 @@ class DataOverlay extends Component {
       // isCardDragging,
       preview
     } = this.props;
+    console.log('DataOverlay Data', data);
 
     // x={extCardId === c.id ? width / 2 : x}
     // y={extCardId === c.id ? height / 2 : y}
@@ -184,6 +185,8 @@ class DataOverlay extends Component {
             }}
           >
             <Map
+              width={width}
+              height={height}
               disabled={disabled}
               nodes={data}
               colorScale={colorScale}
@@ -196,18 +199,9 @@ class DataOverlay extends Component {
       }
       case FLOORPLAN: {
         return (
-          <DimWrapper>
-            {(w, h) => (
-              <Floorplan
-                {...this.props}
-                width={width}
-                height={height}
-                data={data}
-              >
-                {draggable}
-              </Floorplan>
-            )}
-          </DimWrapper>
+          <Floorplan {...this.props} width={width} height={height} data={data}>
+            {draggable}
+          </Floorplan>
         );
       }
       case TAGS: {
@@ -268,25 +262,4 @@ class DataOverlay extends Component {
   }
 }
 
-function mapStateToProps({
-  // Cards: { isCardDragging },
-  DataView: { extCardId, selectedCardId, authEnv }
-}) {
-  return { extCardId, selectedCardId };
-}
-
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      // TODO: change
-      changeMapViewport
-    },
-    dispatch
-  );
-
-const ConnectedDataOverlay = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(DataOverlay);
-
-export default ConnectedDataOverlay;
+export default DataOverlay;

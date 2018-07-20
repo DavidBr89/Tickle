@@ -223,7 +223,7 @@ class ChallengeAuthorModalBody extends React.Component {
     const btnClass = `btn ${challenge === null && 'disabled'}`;
 
     const btnDisabled =
-      challenge.description === null || challenge.title === null;
+      challenge.description === null
     // TODO
     // challenge.img.url === null;
 

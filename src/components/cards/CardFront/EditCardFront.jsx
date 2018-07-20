@@ -7,14 +7,18 @@ import PhotoUpload from 'Utils/PhotoUpload';
 import EditPhoto from './EditPhoto';
 
 import { isEqual } from 'lodash';
+import { css } from 'aphrodite/no-important';
 
 import PhotoChallenge from 'Src/components/Challenges/MatchPhotoChallenge';
 import ChallengeAuthorModalBody from 'Src/components/ChallengeAuthor';
 import { extractCardFields } from 'Constants/cardFields';
+import { MODAL_FULL_HEIGHT } from 'Constants/styleDimensions';
 
 import { Modal, ModalBody } from 'Utils/Modal';
 import { MediaSearch, MediaOverview } from '../MediaSearch';
 import { cardLayout, coverPhotoStyle } from '../styles';
+
+import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
 import {
   // FieldSet,
@@ -35,15 +39,19 @@ import { TagInput, PreviewTags } from 'Utils/Tag';
 
 import CardHeader from '../CardHeader';
 
-const FooterBtn = ({ onClick, children, disabled, className, style = {} }) => (
-  <button
-    className={`${'btn '}${className}`}
-    style={{ ...style, fontWeight: 'bold' }}
-    onClick={onClick}
-    disabled={disabled}
-  >
-    {children}
-  </button>
+const FooterBtn = ({ onClick, children, disabled, style = {} }) => (
+  <CardThemeConsumer>
+    {({ stylesheet: { btn } }) => (
+      <button
+        className={css(btn)}
+        style={{ ...style, fontWeight: 'bold' }}
+        onClick={onClick}
+        disabled={disabled}
+      >
+        {children}
+      </button>
+    )}
+  </CardThemeConsumer>
 );
 // {id: null, floorX: 0.5, floorY: 0.5, img: null, loc: { latitude: 50.85146, longitude: 4.315483 }, media: null, title: null, tags: null, challenge: null,
 // }
@@ -193,7 +201,7 @@ class EditCardFront extends PureComponent {
   modalWriteContent(modalTitle) {
     const { data } = this.state;
     const { challenge } = data;
-    const { uiColor, tagColorScale, stylesheet } = this.props;
+    const { uiColor, tagColorScale, stylesheet, height } = this.props;
 
     // console.log('tagColorScale', tagColorScale);
     // TODO: img
@@ -251,7 +259,7 @@ class EditCardFront extends PureComponent {
         );
       case 'Media':
         return (
-          <ModalBody footer={closeBtn}>
+          <ModalBody footer={closeBtn} style={{ height: '100%' }}>
             <MediaSearch
               selectedMedia={media}
               stylesheet={stylesheet}
@@ -324,10 +332,13 @@ class EditCardFront extends PureComponent {
         <div className={cardLayout} style={{ height: '100%' }}>
           <Modal
             visible={modalVisible}
-            title={modalVisible ? dialog.title : ''}
+            title={dialogTitle}
             onClose={this.onCloseModal}
             uiColor={uiColor}
             background={background}
+            style={
+              dialogTitle === 'Media' ? { height: MODAL_FULL_HEIGHT } : null
+            }
           >
             {this.modalWriteContent(dialogTitle)}
           </Modal>

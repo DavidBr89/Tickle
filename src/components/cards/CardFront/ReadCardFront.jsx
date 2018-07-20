@@ -92,6 +92,8 @@ class ReadCardFront extends Component {
       onSubmitChallenge
     } = this.props;
 
+    console.log('challengeSubmission', challengeSubmission);
+
     switch (field) {
       case 'Title':
         return <p style={{ width: '100%' }}>{title}</p>;
@@ -115,7 +117,7 @@ class ReadCardFront extends Component {
         return (
           <MatchPhotoChallenge
             key={id}
-            data={challengeSubmission}
+            challengeSubmission={challengeSubmission}
             onChange={d => {
               onSubmitChallenge({
                 cardId: id,

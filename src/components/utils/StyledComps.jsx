@@ -50,3 +50,21 @@ export class StyledButton extends Component {
     );
   }
 }
+
+export const NewTabLink = ({ href, className, style, children }) => (
+  <a className={className} target="_blank" href={href} rel="noopener">
+    {children}
+  </a>
+);
+
+NewTabLink.propTypes = {
+  href: PropTypes.string,
+  style: PropTypes.object,
+  children: PropTypes.oneOf([ PropTypes.node, null])
+};
+
+NewTabLink.defaultProps = {
+  href: '',
+  style: {},
+  children: null
+};

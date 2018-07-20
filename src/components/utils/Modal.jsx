@@ -22,8 +22,6 @@ const Modal = ({
       style={{
         width: '100%',
         height: '100%',
-        // height: '90vh',
-        // overflow: 'hidden',
         background: 'rgba(0, 0, 0, 0.5)',
         opacity: visible ? 1 : 0,
         transition: 'opacity 1s',
@@ -31,8 +29,6 @@ const Modal = ({
         left: 0,
         top: 0,
         position: 'absolute'
-        // maxWidth: width,
-        // maxHeight: height
       }}
     >
       <div
@@ -45,23 +41,27 @@ const Modal = ({
           opacity: visible ? 1 : 0,
           display: visible ? 'block' : 'none',
           width: '100%',
-          height: '100%',
-          ...style
+          height: '100%'
         }}
       >
         <div className="modal-dialog" role="document">
           <div
             className={`modal-content ${!title && 'pb-2 pt-2'}`}
-            style={
-              {
-                // TODO: why to check
-                // background:
-                //   uiColor &&
-                //   chroma(uiColor)
-                //     .brighten(1.6)
-                //     .desaturate(0.6)
-              }
-            }
+            style={{
+              // TODO: fix later
+              // TODO: fix later
+              // TODO: fix later
+              // TODO: fix later CONSTANT
+              // height: '97vh',
+              maxHeight: 800,
+              ...style
+              // TODO: why to check
+              // background:
+              //   uiColor &&
+              //   chroma(uiColor)
+              //     .brighten(1.6)
+              //     .desaturate(0.6)
+            }}
           >
             {title ? (
               <div
@@ -136,23 +136,24 @@ Modal.defaultProps = {
 
 // TODO: fix padding bottom
 // TODO: access child state
-const ModalBody = ({ children, footer, styles }) => (
+const ModalBody = ({ children, footer, style }) => (
   <CardThemeConsumer>
     {({ stylesheet }) => (
       <div
         style={{
           width: '100%',
-          // height: '90%',
           // TODO: outsource
-          maxHeight: 800,
-          // height: '100%',
-          // height: '30vh',
           overflow: 'hidden',
 
-          ...styles
+          ...style
         }}
       >
-        <div className="modal-body">{children}</div>
+        <div
+          className="modal-body"
+          style={{ height: '90%', overflow: 'hidden' }}
+        >
+          {children}
+        </div>
 
         <div className={css(stylesheet.modalFooter)}>{footer}</div>
       </div>

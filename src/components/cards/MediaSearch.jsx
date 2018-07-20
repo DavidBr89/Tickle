@@ -3,22 +3,25 @@ import PropTypes from 'prop-types';
 import { ajax } from 'jquery';
 
 import * as Icon from 'react-feather';
+import { css } from 'aphrodite';
 
 import { uniqBy } from 'lodash';
 
 // import MyGrid from 'mygrid/dist';
 import cxs from 'cxs';
 import giphyReq from 'giphy-api';
+import DimWrapper from 'Components/utils/DimensionsWrapper';
 // import fetchJsonp from 'fetch-jsonp';
 
 // import { DDG } from 'node-ddg-api';
 
-import { ScrollView, ScrollElement } from '../utils/ScrollView';
+import { ScrollView, ScrollElement } from 'Utils/ScrollView';
 import gapi from './gapi';
 
 import { createShadowStyle } from './styles';
 
-import { UIthemeContext } from 'Cards/styles';
+import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
+import { NewTabLink } from 'Components/utils/StyledComps';
 
 const giphy = giphyReq({ https: true });
 
@@ -45,8 +48,6 @@ const flickrUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.se
   process.env.FlickrAccessToken
 }`;
 
-console.log('flickrUrl', flickrUrl);
-
 const searchFlickr = (q = 'dragon') =>
   // new Promise(resolve => {
   //
@@ -63,7 +64,7 @@ const searchFlickr = (q = 'dragon') =>
       per_page: 25
     }
   }).then(({ photos: { photo: rawResult } }) => {
-    console.log('rawResult', rawResult);
+    // console.log('rawResult', rawResult);
 
     const results = rawResult.map(
       ({ title, farm, server, id, url_m: imgSrc, secret, tags }) => {
@@ -200,9 +201,9 @@ const Article = ({ url, title, descr, onClick }) => (
       overflow: 'hidden'
     }}
   >
-    <div style={{ fontSize: '18px' }}>
-      <a href={url}>{title} </a>
-    </div>
+    <h3>
+      <NewTabLink href={url}>{title} </NewTabLink>
+    </h3>
     <small>{url}</small>
     <div>{descr}</div>
   </div>
@@ -261,16 +262,19 @@ const ThumbNailSwitchDetail = ({
         style={{
           fontSize: '18px',
           overflow: 'hidden',
+          width: '90%',
           zIndex: 2
         }}
       >
-        <span
-          style={{
-            background: 'whitesmoke'
-          }}
-        >
-          {selected ? <a href={url}>{title} </a> : title}
-        </span>
+        <h3>
+          <span
+            style={{
+              background: 'whitesmoke'
+            }}
+          >
+            {selected ? <NewTabLink href={url}>{title}</NewTabLink> : title}
+          </span>
+        </h3>
         <div
           className="mt-2"
           style={{
@@ -292,9 +296,9 @@ const ThumbNailSwitchDetail = ({
           height: '100%'
         }}
       >
-        <div style={{ fontSize: '18px' }}>
-          <a href={url}>{title} </a>
-        </div>
+        <h3>
+          <NewTabLink href={url}>{title} </NewTabLink>
+        </h3>
         <p>{descr}</p>
       </div>
     )}
@@ -314,27 +318,32 @@ ThumbNailSwitchDetail.defaultProps = {
   uiColor: 'grey',
   focusColor: 'black'
 };
-
-const ThumbCell = ({ children, className, focusColor, uiColor, ...props }) => (
-  <div
-    className={`p-3 mb-3 ${className}`}
-    style={{
-      // height: '40vh',
-      width: '100%',
-      ...props.style,
-      cursor: 'pointer',
-      position: 'relative',
-      ...createShadowStyle(props.selected ? focusColor : uiColor)
-    }}
-  >
-    <div
-      className="mr-3"
-      style={{ position: 'absolute', zIndex: 300, right: 0 }}
-    >
-      <div>{children}</div>
-    </div>
-    <ThumbNailSwitchDetail {...props} />
-  </div>
+// props.selected ? css(stylesheet.bigBoxShadow) : css(stylesheet.border)}
+const ThumbCell = ({ children, className, focusColor, ...props }) => (
+  <CardThemeConsumer>
+    {({ stylesheet }) => (
+      <div
+        className={`p-3 mb-3 ${css(stylesheet.extraShallowBg)} ${
+          props.selected ? css(stylesheet.bigBoxShadow) : css(stylesheet.border)
+        }`}
+        style={{
+          // height: '40vh',
+          width: '100%',
+          ...props.style,
+          cursor: 'pointer',
+          position: 'relative'
+        }}
+      >
+        <div
+          className="mr-3"
+          style={{ position: 'absolute', zIndex: 300, right: 0 }}
+        >
+          <div>{children}</div>
+        </div>
+        <ThumbNailSwitchDetail {...props} />
+      </div>
+    )}
+  </CardThemeConsumer>
 );
 
 ThumbCell.propTypes = {
@@ -359,6 +368,12 @@ ThumbCell.defaultProps = {
   uiColor: 'grey',
   focusColor: 'black'
 };
+
+// const CardThemeHoc = ({ children, ...props }) => (
+//   <CardThemeConsumer>
+//     {({ stylesheet }) => React.cloneElement(children, { ...props, stylesheet })}
+//   </CardThemeConsumer>
+// );
 
 class UrlMedia extends Component {
   static propTypes = {
@@ -410,77 +425,106 @@ class UrlMedia extends Component {
     const { url, title, descr, data } = this.state;
 
     return (
-      <div className="w-100">
-        <div className="mb-3">
-          <form className="form-horizontal" onSubmit={this.onSubmit}>
-            <div className="form-group">
-              <div>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Title"
-                  value={title}
-                  onChange={event => {
-                    this.setState({ title: event.target.value });
-                  }}
-                />
-              </div>
-            </div>
-            <div className="form-group">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Description"
-                value={descr}
-                onChange={event => this.setState({ descr: event.target.value })}
-              />
-            </div>
-            <div className="form-group">
-              <input
-                type="url"
-                placeholder="Url"
-                className="form-control"
-                value={url}
-                onChange={event => this.setState({ url: event.target.value })}
-              />
-            </div>
-            <button type="submit" className="btn">
-              Add Link
-            </button>
-          </form>
-        </div>
-
-        {data.length > 0 ? (
-          <ScrollList data={data} style={{ height: '90%' }}>
-            {(d, isSelected) => (
-              <div
-                className="mb-3 p-3"
-                selected={isSelected}
-                style={{
-                  height: 150,
-                  ...createShadowStyle(isSelected ? focusColor : uiColor)
-                }}
-              >
-                <div
-                  style={{ display: 'flex', justifyContent: 'space-between' }}
-                >
-                  <h3>{d.title}</h3>
-                  <ActiveBtn selected onClick={() => this.removeItem(d.id)} />
+      <CardThemeConsumer>
+        {({ stylesheet }) => (
+          <div className="w-100" style={{ height: '100%' }}>
+            <div className="mb-3">
+              <form className="form-horizontal" onSubmit={this.onSubmit}>
+                <div className="form-group">
+                  <div>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Title"
+                      value={title}
+                      onChange={event => {
+                        this.setState({ title: event.target.value });
+                      }}
+                    />
+                  </div>
                 </div>
-                <small>{d.url}</small>
-                <div>{d.descr}</div>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Description"
+                    value={descr}
+                    onChange={event =>
+                      this.setState({ descr: event.target.value })
+                    }
+                  />
+                </div>
+                <div className="form-group">
+                  <input
+                    type="url"
+                    placeholder="Url"
+                    className="form-control"
+                    value={url}
+                    onChange={event =>
+                      this.setState({ url: event.target.value })
+                    }
+                  />
+                </div>
+                <button type="submit" className={css(stylesheet.btn)}>
+                  Add Link
+                </button>
+              </form>
+            </div>
+            {data.length > 0 ? (
+              <div style={{ width: '100%', height: '100%' }}>
+                <ScrollList
+                  data={data}
+                  style={{ maxHeight: 300, position: 'relative' }}
+                >
+                  {(d, isSelected) => (
+                    <div
+                      className={` mb-3 p-3 ${css(
+                        stylesheet.border
+                      )} ${isSelected && css(stylesheet.bigBoxShadow)}`}
+                      selected={isSelected}
+                      style={{
+                        height: 150,
+                        // width: '100%',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between'
+                        }}
+                      >
+                        <h3
+                          style={{
+                            overflow: 'hidden',
+                            whiteSpace: 'no-wrap',
+                            textOverflow: 'ellipsis'
+                          }}
+                        >
+                          {d.title}
+                        </h3>
+                        <MediaBtn
+                          selected
+                          onClick={() => this.removeItem(d.id)}
+                        />
+                      </div>
+                      <small>{d.url}</small>
+                      <div>{d.descr}</div>
+                    </div>
+                  )}
+                </ScrollList>
               </div>
+            ) : (
+              <div className="m-3">No Urls added</div>
             )}
-          </ScrollList>
-        ) : (
-          <div className="m-3">No Urls added</div>
+          </div>
         )}
-      </div>
+      </CardThemeConsumer>
     );
   }
 }
 
-class MediaSearch extends Component {
+class UnstyledMediaSearch extends Component {
   static propTypes = {
     onChange: PropTypes.func
   };
@@ -496,7 +540,7 @@ class MediaSearch extends Component {
     const selGIFs = selectedMedia.filter(m => m.type === 'gif');
     const selPhotos = selectedMedia.filter(m => m.type === 'photo');
     const selURLs = selectedMedia.filter(m => m.type === 'url');
-    console.log('selectedMedia', selectedMedia);
+    // console.log('selectedMedia', selectedMedia);
 
     switch (sel) {
       case 'overview':
@@ -596,133 +640,102 @@ class MediaSearch extends Component {
   };
 
   render() {
-    const { selectedMedia, onChange } = this.props;
+    const { selectedMedia, stylesheet, onChange } = this.props;
     const { selected } = this.state;
 
-    const btnStyle = (sel, uiColor) => ({
-      background: sel ? uiColor : null,
-      display: 'inline-flex',
-      color: sel ? 'white' : null
-    });
+    const btnClass = sel =>
+      sel === selected ? css(stylesheet.btnActive) : css(stylesheet.btn);
 
     const updState = sel => () => this.setState({ selected: sel });
 
     return (
-      <UIthemeContext.Consumer>
-        {({ uiColor }) => (
-          <div style={{ width: '100%', maxHeight: 600 }}>
-            <div
-              className="mb-3 nav"
-              style={{ display: 'flex', justifyContent: 'space-between' }}
-              role="tablist"
+      <div style={{ width: '100%', height: '100%' }}>
+        <div
+          className="mb-3 nav"
+          style={{ display: 'flex', justifyContent: 'space-between' }}
+          role="tablist"
+        >
+          <button
+            className={btnClass('wikipedia')}
+            type="button"
+            onClick={updState('wikipedia')}
+            id="wikipedia"
+          >
+            <i
+              className="fa fa-wikipedia-w fa-1x"
+              style={{ fontSize: '19px' }}
+              aria-hidden="true"
+            />
+          </button>
+          <button
+            className={btnClass('youtube')}
+            type="button"
+            onClick={updState('youtube')}
+            id="youtube"
+          >
+            <i
+              className="fa fa-youtube fa-1x"
+              style={{ fontSize: '19px' }}
+              aria-hidden="true"
+            />
+          </button>
+          <button
+            className={btnClass('giphy')}
+            type="button"
+            onClick={updState('giphy')}
+            id="giphy"
+          >
+            <small
+              style={{
+                paddingLeft: '13px',
+                paddingRight: '13px',
+                fontWeight: 'bold'
+              }}
             >
-              <button
-                className="btn"
-                type="button"
-                onClick={updState('wikipedia')}
-                style={btnStyle(selected === 'wikipedia', uiColor)}
-                id="wikipedia"
-              >
-                <i
-                  className="fa fa-wikipedia-w fa-1x col-1"
-                  style={{ fontSize: '19px' }}
-                  aria-hidden="true"
-                />
-              </button>
-              <button
-                type="button"
-                className="btn"
-                onClick={updState('youtube')}
-                style={btnStyle(selected === 'youtube', uiColor)}
-                id="youtube"
-              >
-                <i
-                  className="fa fa-youtube fa-1x col-1"
-                  style={{ fontSize: '19px' }}
-                  aria-hidden="true"
-                />
-              </button>
-              <button
-                type="button"
-                className="btn"
-                onClick={updState('giphy')}
-                style={btnStyle(selected === 'giphy', uiColor)}
-                id="giphy"
-              >
-                <small
-                  style={{
-                    paddingLeft: '13px',
-                    paddingRight: '13px',
-                    fontWeight: 'bold'
-                  }}
-                >
-                  GIF
-                </small>
-              </button>
-              <button
-                type="button"
-                className="btn"
-                onClick={updState('url')}
-                style={btnStyle(selected === 'url', uiColor)}
-                id="giphy"
-              >
-                <small
-                  style={{
-                    paddingLeft: '13px',
-                    paddingRight: '13px',
-                    fontWeight: 'bold'
-                  }}
-                >
-                  URL
-                </small>
-              </button>
-              {
-                // <button
-                //   type="button"
-                //   className="btn"
-                //   onClick={updState('flickr')}
-                //   style={btnStyle(selected === 'flickr', uiColor)}
-                //   id="flickr"
-                // >
-                //   <small
-                //     style={{
-                //       paddingLeft: '13px',
-                //         paddingRight: '13px',
-                //         fontWeight: 'bold'
-                //     }}
-                //   >
-                //     Flickr
-                //   </small>
-                // </button>
-              }
-              <button
-                type="button"
-                className="btn"
-                onClick={updState('overview')}
-                style={btnStyle(selected === 'overview', uiColor)}
-                id="overview"
-              >
-                <span style={{ fontWeight: 'bold', fontSize: 'large' }}>
-                  Overview
-                </span>
-                {
-                  // <i
-                  // className="fa fa-link fa-1x col-1"
-                  // style={{ fontSize: '19px' }}
-                  // aria-hidden="true"
-                  // />
-                }
-              </button>
-            </div>
-            <div className="tab-content">
-              {/* TODO: check fade */}
-              <div className={` ${fullDim}`} role="tabpanel">
-                {this.activeTab(selected)}
-              </div>
-            </div>
+              GIF
+            </small>
+          </button>
+          <button
+            className={btnClass('url')}
+            type="button"
+            onClick={updState('url')}
+            id="giphy"
+          >
+            <small
+              style={{
+                paddingLeft: '13px',
+                paddingRight: '13px',
+                fontWeight: 'bold'
+              }}
+            >
+              URL
+            </small>
+          </button>
+          <button
+            type="button"
+            className={btnClass('overview')}
+            onClick={updState('overview')}
+            id="overview"
+          >
+            <span style={{ fontWeight: 'bold', fontSize: 'large' }}>
+              Overview
+            </span>
+            {
+              // <i
+              // className="fa fa-link fa-1x col-1"
+              // style={{ fontSize: '19px' }}
+              // aria-hidden="true"
+              // />
+            }
+          </button>
+        </div>
+        <div className="tab-content">
+          {/* TODO: check fade */}
+          <div style={{ width: '100%', height: '100%' }} role="tabpanel">
+            {this.activeTab(selected)}
           </div>
-        )}
-      </UIthemeContext.Consumer>
+        </div>
+      </div>
     );
   }
 }
@@ -805,18 +818,26 @@ function SearchBar({ onSearch }) {
   );
 }
 
-function ActiveBtn({ selected, onClick }) {
+function MediaBtn({ selected, onClick }) {
   return (
-    <UIthemeContext.Consumer>
-      {({ focusColor }) => (
+    <CardThemeConsumer>
+      {({ darkerUiColor }) => (
         <div
-          style={{ color: selected ? 'tomato' : focusColor, lineHeight: 0 }}
+          style={{
+            color: selected ? 'tomato' : darkerUiColor
+          }}
           onClick={onClick}
         >
-          {selected ? <Icon.Trash2 size={40} /> : <Icon.PlusSquare size={40} />}
+          <span>
+            {selected ? (
+              <Icon.Trash2 fill="whitesmoke" size={40} />
+            ) : (
+              <Icon.PlusSquare fill="whitesmoke" size={40} />
+            )}
+          </span>
         </div>
       )}
-    </UIthemeContext.Consumer>
+    </CardThemeConsumer>
   );
 }
 
@@ -831,7 +852,7 @@ class MetaSearch extends Component {
 
   static defaultProps = {
     searchFn: null,
-    defaultQuery: 'dragon',
+    defaultQuery: 'news',
     type: null,
     onAdd: d => d,
     selected: null,
@@ -878,10 +899,10 @@ class MetaSearch extends Component {
     const { type, searchFn, onChange } = this.props;
     const { data, selectedIds } = this.state;
 
-    console.log('data', data, 'selectedIds', selectedIds);
+    // console.log('data', data, 'selectedIds', selectedIds);
     if (selectedIds.length !== prevState.selectedIds.length) {
       const newData = data.filter(d => selectedIds.includes(d.id));
-      console.log('newData', newData);
+      // console.log('newData', newData);
       onChange(newData);
     }
 
@@ -930,13 +951,12 @@ class MetaSearch extends Component {
 
     // TODO: fix view height
     return (
-      <div>
+      <div style={{ width: '100%', height: '100%' }}>
         <div style={{ width: '100%' }}>
           <div className="mb-3 w-100">
             <input
               type="text"
               placeholder="Search..."
-              defaultValue={defaultQuery}
               onChange={evt => this.onSearch(evt.target.value)}
             />
           </div>
@@ -949,13 +969,15 @@ class MetaSearch extends Component {
               style={{ height: '40vh', maxHeight: 300 }}
               {...d}
             >
-              <ActiveBtn
+              <MediaBtn
                 selected={selectedIds.includes(d.id)}
-                onClick={() => {
-                  console.log('add item', d.id);
+                onClick={e => {
+                  e.stopPropagation();
+                  // if (isSelected) {
                   selectedIds.includes(d.id)
                     ? this.removeItem(d.id)
                     : this.addItem(d.id);
+                  // }
                 }}
               />
             </ThumbCell>
@@ -1022,17 +1044,9 @@ class MediaOverview extends Component {
         {data.length === 0 && <h3>{'No media added to this Card!'} </h3>}
         <ScrollList data={data}>
           {(d, selected) => (
-            <ThumbCell
-              {...d}
-              selected={selected === d.url}
-              onClick={() =>
-                this.setState(oldState => ({
-                  data: oldState.data !== d.url ? d.url : null
-                }))
-              }
-            >
+            <ThumbCell {...d} selected={selected === d.url}>
               {edit && (
-                <ActiveBtn selected onClick={() => this.removeItem(d.id)} />
+                <MediaBtn selected onClick={() => this.removeItem(d.id)} />
               )}
             </ThumbCell>
           )}
@@ -1117,5 +1131,13 @@ class ChallengeSearch extends Component {
     );
   }
 }
+
+const MediaSearch = ({ ...props }) => (
+  <CardThemeConsumer>
+    {({ stylesheet }) => (
+      <UnstyledMediaSearch {...props} stylesheet={stylesheet} />
+    )}
+  </CardThemeConsumer>
+);
 
 export { MediaSearch, MediaOverview, ChallengeSearch };

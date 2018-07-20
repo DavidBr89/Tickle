@@ -29,7 +29,7 @@ import { colorScale, cardTypeColorScale } from 'Cards/styles';
 
 import { Card, CardMarker, PreviewCard } from 'Cards';
 import CardStack from '../CardStack';
-import CardDataOverlay from '../CardDataOverlay';
+import CardDataOverlay from './CardDataOverlay';
 
 import PhotoChallenge from 'Src/components/Challenges/MatchPhotoChallenge';
 
@@ -70,7 +70,7 @@ SpeechBubble.defaultProps = {};
 SpeechBubble.propTypes = {};
 
 @DragDropContextProvider
-class MapViewPage extends Component {
+class CardViewPage extends Component {
   static propTypes = {
     cards: PropTypes.array,
     cardSets: PropTypes.array,
@@ -269,11 +269,7 @@ class MapViewPage extends Component {
               />
             </div>
             <CardDataOverlay
-              dataView={dataView}
-              authEnv={authEnv}
-              cards={cards}
-              cardSets={cardSets}
-              selectedTags={selectedTags}
+              {...this.props}
               style={{ height: '60%' }}
             />
           </div>
@@ -283,7 +279,7 @@ class MapViewPage extends Component {
   }
 }
 
-export default MapViewPage;
-// export default withAuthorization(authCondition)(MapViewPage);
+export default CardViewPage;
+// export default withAuthorization(authCondition)(CardViewPage);
 
 // export default MapView;

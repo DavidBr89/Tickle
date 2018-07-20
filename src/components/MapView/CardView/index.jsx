@@ -42,6 +42,7 @@ const mapStateToProps = state => {
       filterSet.length === 0 ||
       intersection(d.tags, filterSet).length === filterSet.length
   );
+  console.log('UPD UPD card to filter', filteredCards);
   const cardSets = setify(filteredCards);
   const selectedCard = filteredCards.find(d => d.id === selectedCardId) || null;
 
@@ -55,8 +56,9 @@ const mapStateToProps = state => {
     filterSet,
     ...state.Cards,
     cardSets,
-    cards: filteredCards,
-    selectedTags
+    selectedTags,
+    ...state.Screen,
+    cards: filteredCards
   };
 };
 
@@ -78,6 +80,7 @@ const mapDispatchToProps = dispatch =>
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
   const { selectedCardId, uid } = state;
+  console.log('selectedCard', selectedCardId);
   const {
     selectCard,
     extendSelectedCard,
@@ -90,6 +93,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const previewCardAction = d =>
     selectedCardId === d.id ? extendSelectedCard(d.id) : selectCard(d.id);
 
+  console.log('mergeCards', state.cards);
   const fetchCards = () => {
     // TODO
     fetchCreatedCards(uid);

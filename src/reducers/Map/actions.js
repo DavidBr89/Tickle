@@ -42,9 +42,9 @@ export function changeMapViewport(options) {
 //   return { type: CLICK_CARD, options };
 // }
 
-export function screenResize(options) {
-  return { type: SCREEN_RESIZE, options };
-}
+// export function screenResize(options) {
+//   return { type: SCREEN_RESIZE, options };
+// }
 
 // TODO: remove
 export function navigateAppFirstTime(options) {

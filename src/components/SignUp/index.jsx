@@ -24,6 +24,7 @@ const SignUpPage = ({ ...props }) => (
 const INITIAL_STATE = {
   username: '',
   email: '',
+  fullname: null,
   passwordOne: '',
   passwordTwo: '',
   error: null,
@@ -40,7 +41,14 @@ class SignUpForm extends Component {
   state = INITIAL_STATE;
 
   onSubmit = event => {
-    const { username, email, passwordOne, img, interests } = this.state;
+    const {
+      username,
+      email,
+      fullname,
+      passwordOne,
+      img,
+      interests
+    } = this.state;
 
     const { history, onSetAuthUser } = this.props;
 
@@ -50,10 +58,11 @@ class SignUpForm extends Component {
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then(authUser => {
         // Create a user in your own accessible Firebase Database too
-        db.addImgToStorage(img.file)
+        db.addImgToStorage({ file: img.file, path: `usr/${authUser.uid}` })
           .then(imgUrl => {
             const userProfile = {
               uid: authUser.uid,
+              fullname,
               username,
               photoURL: imgUrl,
               email,
@@ -63,9 +72,9 @@ class SignUpForm extends Component {
             db.doCreateUser(userProfile)
               .then(() => {
                 this.setState(() => ({ ...INITIAL_STATE }));
-                onSetAuthUser(userProfile);
+                onSetAuthUser({ authUser: userProfile });
                 // Jump to page
-                history.push(routes.DATAVIEW);
+                history.push(routes.AUTH_ENV_GEO);
               })
               .catch(error => {
                 this.setState(byPropKey('error', error));
@@ -97,7 +106,8 @@ class SignUpForm extends Component {
       passwordTwo,
       error,
       img,
-      loading
+      loading,
+      fullname
     } = this.state;
 
     const isInvalid =
@@ -110,6 +120,20 @@ class SignUpForm extends Component {
     return (
       <form onSubmit={this.onSubmit}>
         <div className="form-group">
+          <label htmlFor="fullname">Full name:</label>
+          <div>
+            <input
+              className="form-control"
+              value={fullname || ''}
+              onChange={event =>
+                this.setState(byPropKey('fullname', event.target.value))
+              }
+              type="text"
+              placeholder="Full Name"
+            />
+          </div>
+        </div>
+        <div className="form-group">
           <label htmlFor="username">Username:</label>
           <div>
             <input
@@ -119,7 +143,7 @@ class SignUpForm extends Component {
                 this.setState(byPropKey('username', event.target.value))
               }
               type="text"
-              placeholder="Full Name"
+              placeholder="Username"
             />
           </div>
         </div>
@@ -140,7 +164,13 @@ class SignUpForm extends Component {
 
         <div className="form-group">
           <label htmlFor="pwd">User Photo:</label>
-          <PhotoUpload onChange={img => this.setState({ img })} />
+          <PhotoUpload
+            imgUrl={img !== null ? img.url : null}
+            onChange={img => {
+              console.log('new img', img);
+              this.setState(byPropKey('img', img));
+            }}
+          />
         </div>
         <div>
           <div className="form-group">

@@ -52,6 +52,7 @@ const CardAuthorOverlay = props => {
     tagColorScale,
     authEnv,
     extendSelectedCard,
+    extCardId,
     dragCard,
     createCard,
     toggleCardChallenge,
@@ -68,13 +69,14 @@ const CardAuthorOverlay = props => {
       style={style}
     >
       <DataOverlay
+        data={cards}
         disabled={isCardDragging}
+        sets={cardSets}
         width={width}
         height={height}
-        data={cards}
-        sets={cardSets}
         selectedTags={selectedTags}
         selectedCardId={selectedCardId}
+        extCardId={extCardId}
         filterSet={filterSet}
         userLocation={userLocation}
         mode={dataView}

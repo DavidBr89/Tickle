@@ -109,11 +109,11 @@ function reducer(state = INITIAL_STATE, action) {
       return { ...state, mapViewport };
     }
 
-    case SCREEN_RESIZE: {
-      const { width, height } = action.options;
-      console.log('SCREEN_RESIZE', width, height);
-      return { ...state, width, height };
-    }
+    // case SCREEN_RESIZE: {
+    //   const { width, height } = action.options;
+    //   console.log('SCREEN_RESIZE', width, height);
+    //   return { ...state, width, height };
+    // }
 
     case USER_MOVE: {
       const options = action.options;

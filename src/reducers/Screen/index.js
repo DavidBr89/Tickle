@@ -27,7 +27,6 @@ function reducer(state = INITIAL_STATE, action) {
   switch (action.type) {
     case SCREEN_RESIZE: {
       const { width, height } = action.options;
-      console.log('SCREEN_RESIZE', width, height);
       return { ...state, width, height };
     }
     default:

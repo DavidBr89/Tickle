@@ -41,6 +41,7 @@ class Floorplan extends Component {
   };
 
   forceLayout = () => {
+    // TODO: untangle nodes from DATA
     const { width, height, data } = this.props;
     const forceNodes = [...data].map(d => {
       const [wantedX, wantedY] = this.posCache(d);
@@ -80,6 +81,7 @@ class Floorplan extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { data: oldData } = prevProps;
     const { data } = this.props;
+    // TODO create real compare Function
     const compare = (a, b) => a.floorX === b.floorX && a.floorY === b.floorY;
 
     const diffList = differenceWith(data, oldData, compare);
@@ -99,7 +101,7 @@ class Floorplan extends Component {
   // }
 
   render() {
-    const { width, height, children } = this.props;
+    const { width, data, height, children } = this.props;
     const { nodes } = this.state;
     return (
       <div
@@ -112,9 +114,11 @@ class Floorplan extends Component {
           // position: 'relative'
         }}
       >
-        {nodes.map(n =>
+        {nodes.map((n, i) =>
           children({
-            ...n
+            ...data[i],
+            floorX: n.floorX,
+            floorY: n.floorY
           })
         )}
       </div>

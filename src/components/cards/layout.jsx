@@ -316,21 +316,29 @@ const PreviewMedia = ({ data, style }) => (
       style,
       display: 'flex',
       alignItems: 'center',
-      flexWrap: 'wrap'
+      flexWrap: 'wrap',
+      width: '100%'
     }}
   >
-    {data.map((m, i) => (
+    {data.map(m => (
       <div
         key={m.url}
         className="mr-3 mb-1"
         style={{
           display: 'flex',
-          alignItems: 'center',
-          flexWrap: 'wrap'
+          maxWidth: `${Math.max(100 / data.length, 40)}%`
         }}
       >
         <div className="mr-1">{React.createElement(mediaScale(m.type))}</div>
-        <div className={` ${cx.textTrunc}`}>{m.title}</div>
+        <div
+          style={{
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
+          }}
+        >
+          {m.title}
+        </div>
       </div>
     ))}
   </div>

@@ -31,6 +31,7 @@ const mapStateToProps = state => {
   const { createdCards, tmpCard } = state.Cards;
 
   const { selectedCardId, filterSet } = state.DataView;
+  console.log('selectedCardid', selectedCardId);
 
   // TODO: own dim reducer
   const { width, height, userLocation } = state.MapView;
@@ -62,11 +63,12 @@ const mapStateToProps = state => {
   return {
     ...state.MapView,
     ...state.DataView,
+    ...state.Cards,
+    ...state.Screen,
     uid,
     selectedCardId,
     filterSet,
     templateCard,
-    ...state.Cards,
     cardSets,
     cards: filteredCards,
     selectedTags
@@ -91,6 +93,7 @@ const mapDispatchToProps = dispatch =>
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
   const { selectedCardId, uid, templateCard, createdCards, filterSet } = state;
+  console.log('card author state', state);
   const {
     selectCard,
     extendSelectedCard,
@@ -114,7 +117,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     previewCardAction,
     fetchCards,
     preSelectCardId,
-    dataView
+    dataView,
+    selectedCardId
   };
 };
 

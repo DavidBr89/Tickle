@@ -58,7 +58,7 @@ class SignInForm extends Component {
       .then(() => {
         // this.setState(() => ({ ...INITIAL_STATE }));
         console.log('onSubmit', email, password);
-        history.push(routes.DATAVIEW);
+        history.push(routes.DATAVIEW_GEO);
       })
       .catch(error => {
         this.setState(byPropKey('error', error));

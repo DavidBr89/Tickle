@@ -168,7 +168,7 @@ export default class PhotoUpload extends Component {
   // shouldComponentUpdate(nextProps, nextState) {
   //   return (
   //     this.state.imgUrl !== nextState.imgUrl ||
-  //     this.props.defaultImgUrl !== nextProps.defaultImgUrl
+  //     this.props.iefaultImgUrl !== nextProps.defaultImgUrl
   //   );
   // }
 
@@ -198,10 +198,7 @@ export default class PhotoUpload extends Component {
     } = this.props;
 
     return (
-      <div
-        className={className}
-        style={{ width: '100%', height: '100%', ...style }}
-      >
+      <div className={className} style={{ width: '100%', height: '100%' }}>
         <div
           style={{
             overflow: 'hidden',
@@ -218,6 +215,7 @@ export default class PhotoUpload extends Component {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
+              ...style
             }}
           >
             {imgUrl ? (
@@ -225,7 +223,7 @@ export default class PhotoUpload extends Component {
                 style={{
                   overflow: 'hidden',
                   width: '100%',
-              maxHeight: 300,
+                  maxHeight: 300
                   // height: this.contHeight
                 }}
               >
@@ -234,7 +232,11 @@ export default class PhotoUpload extends Component {
             ) : (
               <h1
                 className="pl-2 pr-2"
-                style={{ background: uiColor, color: 'black', margin: '20%' }}
+                style={{
+                  background: uiColor,
+                  color: 'black',
+                  margin: '20%'
+                }}
               >
                 {'No Image'}
               </h1>

@@ -23,7 +23,7 @@ class TextChallengeAuthor extends Component {
     title: null
   };
 
-  state = { title: '', description: '', id: idGenerate(), ...this.props };
+  state = { description: '', id: idGenerate(), ...this.props };
 
   componentDidUpdate(prevProps, prevState) {
     const { description, title, id } = this.state;
@@ -54,15 +54,6 @@ class TextChallengeAuthor extends Component {
         className={className}
         style={{ width: '100%', height: '100%', ...styles }}
       >
-        <div>
-          <h4>Title</h4>
-          <input
-            value={title}
-            placeholder={placeholder}
-            onChange={e => this.setState({ title: e.target.value })}
-            style={{ width: '100%', minHeight: 50, height: 50 }}
-          />
-        </div>
         <div>
           <h4>Description</h4>
           <textarea

@@ -169,8 +169,6 @@ function reducer(state = INITIAL_STATE, action) {
         ...state,
         tmpCards: newCards,
         createdCards: [newCard, ...createdCards],
-        selectedCardId: newCard.id,
-        extCardId: null,
         tmpCard: defaultCardTemplate
       };
     }
@@ -210,16 +208,10 @@ function reducer(state = INITIAL_STATE, action) {
     case SUBMIT_CHALLENGE: {
       const { createdCards } = state;
 
-      const {
-        playerId,
-        cardId,
-        authorId,
-        ...challengeSubmission
-      } = action.options;
-      console.log('challengeSubmission', challengeSubmission);
+      const challengeSubmission = action.options;
 
       const updatedCards = createdCards.map(c => {
-        if (c.id === cardId) {
+        if (c.id === challengeSubmission.cardId) {
           return { ...c, challengeSubmission };
         }
         return c;
