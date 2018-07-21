@@ -51,7 +51,6 @@ class Floorplan extends Component {
     });
 
     const tmpNodes = forceNodes.map(({ tx, ty }, i) => ({
-      ...data[i],
       x: tx,
       y: ty
     }));
@@ -68,7 +67,7 @@ class Floorplan extends Component {
       .force('y', d3.forceY(d => d.ty).strength(0.3))
       .force('coll', d3.forceCollide(20))
       .on('end', () => {
-        const nodes = forceNodes.map(({ x, y }, i) => ({ ...data[i], x, y }));
+        const nodes = forceNodes.map(({ x, y }) => ({ x, y }));
         this.setState({
           nodes
         });
@@ -100,9 +99,13 @@ class Floorplan extends Component {
   // }
 
   render() {
-    const { children } = this.props;
+    const { children, data } = this.props;
     const { nodes } = this.state;
-    return <React.Fragment>{nodes.map(children)}</React.Fragment>;
+    return (
+      <React.Fragment>
+        {nodes.map((n, i) => children({ ...data[i], ...n }))}
+      </React.Fragment>
+    );
   }
 }
 
