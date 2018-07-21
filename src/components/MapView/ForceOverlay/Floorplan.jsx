@@ -70,7 +70,7 @@ class Floorplan extends Component {
       .force('y', d3.forceY(d => d.ty).strength(1))
       .force('coll', d3.forceCollide(20))
       .on('end', () => {
-        const nodes = forceNodes.map(({ x, y }, i) => ({ ...data[i], x, y }));
+        const nodes = forceNodes.map(({ x, y }) => ({ x, y }));
         this.setState({
           nodes
         });
@@ -117,8 +117,7 @@ class Floorplan extends Component {
         {nodes.map((n, i) =>
           children({
             ...data[i],
-            floorX: n.floorX,
-            floorY: n.floorY
+            ...n
           })
         )}
       </div>

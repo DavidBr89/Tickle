@@ -43,7 +43,7 @@ export default class DataUpload extends Component {
 
   // TODO: remove
   contHeight = 300;
-
+// video#<{(|,image#<{(|
   render() {
     const { className, style, onChange, uiColor } = this.props;
 
@@ -52,7 +52,7 @@ export default class DataUpload extends Component {
         className={className}
         style={{ border: `${uiColor} 1px solid`, overflow: 'hidden', ...style }}
         type="file"
-        accept="video/*,image/*"
+        accept="*"
         capture="environment"
         onChange={e => {
           onChange({
