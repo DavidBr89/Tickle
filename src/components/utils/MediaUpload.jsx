@@ -53,7 +53,6 @@ class DataUploadForm extends Component {
         />
         <button
           className={`${css(btn)} ml-2`}
-          style={{ height: '100%' }}
           onClick={() => file && onChange({ imgUrl, file })}
           disabled={!file}
         >
@@ -180,13 +179,31 @@ class MediaUpload extends Component {
     const allMedia = [...media, ...pendingMedia];
     const maxHeight = 200;
     return (
-      <div style={style}>
-        <div style={{ height: maxHeight }}>
+      <div>
+        <DataUploadForm
+          className="mt-3"
+          style={{ width: '100%' }}
+          stylesheet={stylesheet}
+          onChange={this.addMediaItem}
+        />
+        <div
+          className="mt-3"
+          style={{
+            height: maxHeight
+            // display: 'flex',
+            // flexDirection: 'column',
+            // justifyContent: 'space-between'
+          }}
+        >
           {allMedia.length > 0 ? (
             <ScrollList
               data={allMedia}
               maxHeight={maxHeight}
-              style={{ justifyContent: 'center', alignItems: 'center' }}
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                ...style
+              }}
             >
               {d => (
                 <MediaItem
@@ -211,12 +228,6 @@ class MediaUpload extends Component {
             </div>
           )}
         </div>
-        <DataUploadForm
-          className="mt-3"
-          style={{ width: '100%' }}
-          stylesheet={stylesheet}
-          onChange={this.addMediaItem}
-        />
       </div>
     );
   }

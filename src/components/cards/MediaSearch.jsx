@@ -24,24 +24,34 @@ import MediaUpload from 'Utils/MediaUpload';
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 import { NewTabLink } from 'Components/utils/StyledComps';
 
+const GIF = 'gif';
+const TEXT = 'text';
+const VIDEO = 'video';
+const IMAGE = 'Image';
+const URL = 'url';
+const USER_CONTENT = 'USER_CONTENT';
 const userContentUploadPath = id => `media/${id}`;
 
 const UploadUserContent = ({ onChange, ...props }) => (
   <CardThemeConsumer>
     {({ stylesheet }) => (
-      <MediaUpload
-        style={{ width: '100%' }}
-        {...props}
-        stylesheet={stylesheet}
-        nodeWrapper={({ url, name, loading }) => (
-          <div style={{ fontSize: 'large' }}>{!loading? name : 'loading'}</div>
-        )}
-        onChange={media =>
-          onChange(
-            media.map(m => ({ ...m, title: m.name, type: USER_CONTENT }))
-          )
-        }
-      />
+      <div style={{ height: '100%' }}>
+        <MediaUpload
+          style={{ width: '100%', height: '60%' }}
+          {...props}
+          stylesheet={stylesheet}
+          nodeWrapper={({ url, name, loading }) => (
+            <div style={{ fontSize: 'large' }}>
+              {!loading ? name : 'loading'}
+            </div>
+          )}
+          onChange={media =>
+            onChange(
+              media.map(m => ({ ...m, title: m.name, type: USER_CONTENT }))
+            )
+          }
+        />
+      </div>
     )}
   </CardThemeConsumer>
 );
@@ -55,13 +65,6 @@ const SpanBG = ({ children, style }) => (
     )}
   </CardThemeConsumer>
 );
-
-const GIF = 'gif';
-const TEXT = 'text';
-const VIDEO = 'video';
-const IMAGE = 'Image';
-const URL = 'url';
-const USER_CONTENT = 'USER_CONTENT';
 
 const giphy = giphyReq({ https: true });
 
@@ -699,7 +702,6 @@ class UnstyledMediaSearch extends Component {
             }}
             preSelected={selVideos}
             searchFn={searchYoutube}
-            key="youtube"
           />
         );
       default:
@@ -813,7 +815,7 @@ class UnstyledMediaSearch extends Component {
             }
           </button>
         </div>
-        <div className="tab-content">
+        <div className="tab-content" style={{ height: '100%' }}>
           {/* TODO: check fade */}
           <div style={{ width: '100%', height: '100%' }} role="tabpanel">
             {this.activeTab(selected)}
@@ -1100,7 +1102,20 @@ class MediaOverview extends Component {
 
     return (
       <div style={{ width: '100%', height: '60vh' }}>
-        {data.length === 0 && <h3>{'No media added to this Card!'} </h3>}
+        {data.length === 0 && (
+          <div
+            style={{
+              height: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <div>
+              <h3 className="text-muted">{'No media added to this Card!'} </h3>
+            </div>
+          </div>
+        )}
         <ScrollList data={data}>
           {(d, selected) => (
             <CellWrapper {...d} selected={selected === d.url}>

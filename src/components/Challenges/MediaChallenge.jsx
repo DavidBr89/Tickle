@@ -77,7 +77,7 @@ class MediaChallenge extends Component {
             onChange={e => this.setState({ response: e.target.value })}
           />
           <MediaUpload
-            style={{width: '100%'}}
+            style={{ width: '100%' }}
             uploadPath={id => `challengeSubmissionFiles/${id}`}
             {...this.props}
             stylesheet={stylesheet}
