@@ -1,42 +1,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-// import * as d3 from 'd3';
 
-// import { Motion, spring } from 'react-motion';
-import * as Icon from 'react-feather';
-import Spinner from 'react-loader-spinner';
-import * as d3 from 'd3';
-import { intersection, union } from 'lodash';
-
-// TODO: { LinearInterpolator, FlyToInterpolator }
-// import { default as TouchBackend } from 'react-dnd-touch-backend';
-// import HTML5Backend from 'react-dnd-html5-backend';
-// import { DragDropContextProvider } from 'react-dnd';
+import { DropDown } from 'Utils/TagInput';
+import { PreviewCard } from 'Components/cards';
+import CardStack from '../CardStack';
 
 import {
   DragSourceCont,
   DropTargetCont,
   DragDropContextProvider
 } from '../DragAndDrop/DragSourceTarget';
-
-import PreviewMarker from '../PreviewMarker';
-
-import { TagInput, DropDown } from 'Utils/TagInput';
-
-import withAuthorization from 'Src/components/withAuthorization';
-
-import { colorScale, cardTypeColorScale } from 'Cards/styles';
-
-import { Card, CardMarker, PreviewCard } from 'Cards';
-import CardStack from '../CardStack';
 import CardDataOverlay from './CardDataOverlay';
 
-import PhotoChallenge from 'Src/components/Challenges/MatchPhotoChallenge';
-
-import ExtendableMarker from 'Utils/ExtendableMarker';
-import { Modal, ModalBody } from 'Utils/Modal';
-
-import { StyledButton } from 'Utils/StyledComps';
+// import { StyledButton } from 'Utils/StyledComps';
 
 function SpeechBubble({ ...props }) {
   return (
@@ -268,10 +244,7 @@ class CardViewPage extends Component {
                 }}
               />
             </div>
-            <CardDataOverlay
-              {...this.props}
-              style={{ height: '60%' }}
-            />
+            <CardDataOverlay {...this.props} style={{ height: '60%' }} />
           </div>
         </div>
       </div>

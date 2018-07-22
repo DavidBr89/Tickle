@@ -9,7 +9,7 @@ import EditPhoto from './EditPhoto';
 import { isEqual } from 'lodash';
 import { css } from 'aphrodite/no-important';
 
-import PhotoChallenge from 'Src/components/Challenges/MatchPhotoChallenge';
+// import PhotoChallenge from 'Src/components/Challenges/MatchPhotoChallenge';
 import ChallengeAuthorModalBody from 'Src/components/ChallengeAuthor';
 import { extractCardFields } from 'Constants/cardFields';
 import { MODAL_FULL_HEIGHT } from 'Constants/styleDimensions';

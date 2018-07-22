@@ -148,13 +148,13 @@ export const ChallengeField = ({
   edit
 }) => (
   <CardThemeConsumer>
-    {({ uiColor, stylesheet: { shallowBg, fieldSetBorder } }) => (
+    {({ uiColor, stylesheet: { shallowBg, shallowBorder } }) => (
       <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
         <FieldSet
           edit={edit}
           uiColor={uiColor}
           legend="Challenge"
-          className={`${css(shallowBg)} ${css(fieldSetBorder)}`}
+          className={`${css(shallowBg)} ${css(shallowBorder)}`}
           icon={edit ? <EditIcon /> : <ZoomIcon />}
         >
           <div
@@ -210,11 +210,11 @@ const DescriptionField = ({
   edit
 }) => (
   <CardThemeConsumer>
-    {({ uiColor, stylesheet: { shallowBg, fieldSetBorder } }) => (
+    {({ uiColor, stylesheet: { shallowBg, shallowBorder } }) => (
       <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
         <FieldSet
           uiColor={uiColor}
-          className={`${css(shallowBg)} ${css(fieldSetBorder)}`}
+          className={`${css(shallowBg)} ${css(shallowBorder)}`}
           legend="Description"
           icon={edit ? <EditIcon /> : <ZoomIcon />}
         >
@@ -265,14 +265,14 @@ DescriptionField.defaultProps = {
 
 const MediaField = ({ media, onEdit, onClick, style, placeholder, edit }) => (
   <CardThemeConsumer>
-    {({ uiColor, stylesheet: { shallowBg, fieldSetBorder } }) => (
+    {({ uiColor, stylesheet: { shallowBg, shallowBorder } }) => (
       <div
         style={{ ...style, cursor: 'pointer', overflow: 'hidden' }}
         onClick={onClick || onEdit}
       >
         <FieldSet
           icon={edit ? <EditIcon /> : <ZoomIcon />}
-          className={`${css(shallowBg)} ${css(fieldSetBorder)}`}
+          className={`${css(shallowBg)} ${css(shallowBorder)}`}
           legend="Media"
           uiColor={uiColor}
         >

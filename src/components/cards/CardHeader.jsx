@@ -22,8 +22,8 @@ const CardHeader = ({
 }) => {
   const btnStyle = {
     fontSize: '1.5rem',
-    marginBottom: 10,
-    padding: '0.4rem 0.6rem 0.4rem 0.6rem'
+    // marginBottom: 10,
+    // padding: '0.4rem 0.6rem 0.4rem 0.6rem'
     //
     // width: '10%'
     // color: 'whitesmoke'
@@ -54,9 +54,9 @@ const CardHeader = ({
               width: '100%'
             }}
           >
-            {editButton}
-            <div style={{ maxWidth: edit ? '80%' : '90%' }}>
-              <h3 className="text-truncate">
+            <div>{editButton}</div>
+            <div style={{ maxWidth: edit ? '75%' : '85%' }}>
+              <h3 style={{ marginBottom: 0 }} className="text-truncate">
                 {title === null ? (
                   <span style={{ fontStyle: editButton ? 'italic' : null }}>
                     {placeholder}
@@ -66,14 +66,16 @@ const CardHeader = ({
                 )}
               </h3>
             </div>
-            <button
-              className={css(stylesheet.btn)}
-              style={btnStyle}
-              onClick={onClose}
-            >
-              {/* TODO: fix button height */}
-              <i className="fa fa-times fa-lg" aria-hidden="true" />
-            </button>
+            <div>
+              <button
+                className={css(stylesheet.btn)}
+                style={btnStyle}
+                onClick={onClose}
+              >
+                {/* TODO: fix button height */}
+                <i className="fa fa-times fa-lg" aria-hidden="true" />
+              </button>
+            </div>
           </div>
           {children}
         </div>

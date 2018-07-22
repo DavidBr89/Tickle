@@ -141,7 +141,8 @@ export const addFileToStorage = ({ file, path }) => {
 export const removeFromStorage = path => {
   const imgRef = storageRef.child(path);
   return imgRef.delete().catch(error => {
-    throw new Error(`erro in deleting file${path} ${error}`);
+    console.log('error', error);
+    throw new Error(`error in deleting file${path} ${error}`);
   });
 };
 

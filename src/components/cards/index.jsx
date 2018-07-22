@@ -16,7 +16,8 @@ import CardMarker from './CardMarker';
 
 import { colorScale } from './styles';
 
-import { CardThemeProvider, btnStyle } from 'Src/styles/CardThemeContext';
+import { CardThemeProvider } from 'Src/styles/CardThemeContext';
+import { btnStyle } from 'Src/styles/helperStyles';
 
 // ReadCardBack.defaultProps = {
 //   key: 'asa',
@@ -140,7 +141,7 @@ class Card extends React.Component {
         alignItems: 'center'
         // borderColor: uiColor
       },
-      fieldSetBorder: {
+      shallowBorder: {
         border: `${chroma(uiColor)
           .brighten(1.8)
           .hex()} solid 1px`

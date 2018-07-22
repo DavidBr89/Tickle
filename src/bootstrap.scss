@@ -68,6 +68,13 @@ $black: #24292e;//#3c3c3c;
   border: 1px solid grey;
 };
 
+.form-control {
+  @extend .form-control;
+  border-radius: 0;
+
+}
+
+
 .btn {
   @extend .btn;
   border-radius: 0;

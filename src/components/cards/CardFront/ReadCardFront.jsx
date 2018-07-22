@@ -5,15 +5,15 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 // import chroma from 'chroma-js';
-import * as Icon from 'react-feather';
+// import * as Icon from 'react-feather';
 
-import MatchPhotoChallenge from 'Src/components/Challenges/MatchPhotoChallenge';
+import MediaChallenge from 'Components/Challenges/MediaChallenge';
 import { TagInput, PreviewTags } from 'Utils/Tag';
 import { Modal, ModalBody } from 'Utils/Modal';
 
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
-import { MediaOverview } from '../MediaSearch';
+import { MediaPreview } from 'Components/cards/MediaSearch';
 import { cardLayout, coverPhotoStyle } from '../styles';
 
 import {
@@ -73,10 +73,7 @@ class ReadCardFront extends Component {
     tagColorScale: () => 'green'
   };
 
-  constructor(props) {
-    super(props);
-    this.state = { dialog: null };
-  }
+  state = { dialog: null };
 
   modalReadContent(field) {
     const {
@@ -91,8 +88,6 @@ class ReadCardFront extends Component {
       challengeSubmission,
       onSubmitChallenge
     } = this.props;
-
-    console.log('challengeSubmission', challengeSubmission);
 
     switch (field) {
       case 'Title':
@@ -110,14 +105,15 @@ class ReadCardFront extends Component {
       case 'Media':
         return (
           <ModalBody>
-            <MediaOverview data={media || []} uiColor={uiColor} />
+            <MediaPreview data={media || []} uiColor={uiColor} />
           </ModalBody>
         );
       case 'Challenge':
         return (
-          <MatchPhotoChallenge
+          <MediaChallenge
+            {...challenge}
             key={id}
-            challengeSubmission={challengeSubmission}
+            {...challengeSubmission}
             onChange={d => {
               onSubmitChallenge({
                 cardId: id,
@@ -125,6 +121,7 @@ class ReadCardFront extends Component {
                 ...challengeSubmission,
                 ...d
               });
+              this.setState({ dialog: null });
             }}
           />
         );

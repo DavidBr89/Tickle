@@ -8,24 +8,71 @@ import { css } from 'aphrodite';
 import { uniqBy } from 'lodash';
 
 // import MyGrid from 'mygrid/dist';
-import cxs from 'cxs';
 import giphyReq from 'giphy-api';
-import DimWrapper from 'Components/utils/DimensionsWrapper';
+import ScrollList from 'Components/utils/ScrollList';
 // import fetchJsonp from 'fetch-jsonp';
 
 // import { DDG } from 'node-ddg-api';
+import { db } from 'Firebase';
 
-import { ScrollView, ScrollElement } from 'Utils/ScrollView';
 import gapi from './gapi';
 
-import { createShadowStyle } from './styles';
+import MediaUpload from 'Utils/MediaUpload';
+
+// import { createShadowStyle } from './styles';
 
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 import { NewTabLink } from 'Components/utils/StyledComps';
 
+const userContentUploadPath = id => `media/${id}`;
+
+const UploadUserContent = ({ onChange, ...props }) => (
+  <CardThemeConsumer>
+    {({ stylesheet }) => (
+      <MediaUpload
+        style={{ width: '100%' }}
+        {...props}
+        stylesheet={stylesheet}
+        nodeWrapper={({ url, name, loading }) => (
+          <div style={{ fontSize: 'large' }}>{!loading? name : 'loading'}</div>
+        )}
+        onChange={media =>
+          onChange(
+            media.map(m => ({ ...m, title: m.name, type: USER_CONTENT }))
+          )
+        }
+      />
+    )}
+  </CardThemeConsumer>
+);
+
+const SpanBG = ({ children, style }) => (
+  <CardThemeConsumer>
+    {({ stylesheet: { shallowBg } }) => (
+      <span className={`${css(shallowBg)} p-1 pr-2 pl-2`} style={style}>
+        {children}
+      </span>
+    )}
+  </CardThemeConsumer>
+);
+
+const GIF = 'gif';
+const TEXT = 'text';
+const VIDEO = 'video';
+const IMAGE = 'Image';
+const URL = 'url';
+const USER_CONTENT = 'USER_CONTENT';
+
 const giphy = giphyReq({ https: true });
 
-const fullDim = cxs({ width: '100%', height: '100%' });
+const fullDim = { width: '100%', height: '100%' };
+
+const truncateStyle = {
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  width: '100%'
+};
 
 gapi.load('client', () => {
   const discoveryUrl =
@@ -75,7 +122,7 @@ const searchFlickr = (q = 'dragon') =>
           thumbnail: imgSrc,
           url,
           id,
-          type: 'photo'
+          type: IMAGE
         };
       }
     );
@@ -100,7 +147,7 @@ const searchWikipedia = q =>
       thumbnail: d.thumbnail ? d.thumbnail.source : null, // d.thumbnail.source,
       url: d.fullurl,
       id: d.fullurl,
-      type: 'article'
+      type: TEXT
     }));
 
     return new Promise(resolve => resolve(results));
@@ -111,7 +158,7 @@ const searchYoutube = (q = 'dragon') =>
     gapi.client.youtube.search
       .list({
         part: 'snippet',
-        type: 'video',
+        type: VIDEO,
         q,
         maxResults: 20,
         order: 'viewCount',
@@ -125,7 +172,7 @@ const searchYoutube = (q = 'dragon') =>
           title: d.snippet.title,
           descr: d.snippet.description,
           thumbnail: d.snippet.thumbnails.default.url,
-          type: 'video'
+          type: VIDEO
         }));
         resolve(res);
       })
@@ -142,7 +189,7 @@ const searchGiphy = (q = 'pokemon') =>
           descr: '',
           thumbnail: d.images.downsized_still.url,
           gifurl: d.url,
-          type: 'gif'
+          type: GIF
         }))
       )
     )
@@ -154,14 +201,14 @@ const pinterestUrl =
 //
 const Iframe = ({ title, url, onClick, edit, style }) => (
   <div
-    className={fullDim}
     style={{
       position: 'relative',
-      ...style
+      ...style,
+      ...fullDim
       // border: '10px tomato solid'
     }}
   >
-    <div className={fullDim} style={{ position: 'absolute' }}>
+    <div style={{ position: 'absolute', ...fullDim }}>
       <iframe
         title={title}
         type="text/html"
@@ -223,7 +270,7 @@ Article.defaultProps = {
   onClick: d => d
 };
 
-const ThumbNailSwitchDetail = ({
+const CellDetail = ({
   selected,
   type,
   thumbnail,
@@ -232,94 +279,88 @@ const ThumbNailSwitchDetail = ({
   url,
   onClick
 }) => (
-  // if (selected && (type === 'video' || type === 'gif'))
-  //   return (
-  //     <Iframe edit url={url} title={title} descr={descr} onClick={onClick} />
-  //   );
-
-  // if (type === 'challenge')
-  //   return (
-  //     <div onClick={onClick} className={fullDim}>
-  //       <Iframe url={url} title={title} descr={descr} style={{ zIndex: 0 }} />
-  //     </div>
-  //   );
-
-  <div
-    onClick={onClick}
-    className={fullDim}
-    style={{
-      overflow: 'hidden',
-      backgroundImage: thumbnail !== null && `url('${thumbnail}')`,
-      backgroundRepeat: thumbnail !== null && 'no-repeat',
-      backgroundSize: thumbnail !== null && '100% 100%',
-      minHeight: 150,
-      maxHeight: 300
-    }}
-  >
-    {thumbnail ? (
+  <CardThemeConsumer>
+    {({ stylesheet: { shallowBg } }) => (
       <div
-        className="mt-1 ml-1 p-1"
+        onClick={onClick}
         style={{
-          fontSize: '18px',
           overflow: 'hidden',
-          width: '90%',
-          zIndex: 2
+          backgroundImage: thumbnail !== null && `url('${thumbnail}')`,
+          backgroundRepeat: thumbnail !== null && 'no-repeat',
+          backgroundSize: thumbnail !== null && '100% 100%',
+          ...fullDim,
+          minHeight: type !== USER_CONTENT ? 150 : 100,
+          maxHeight: 300
         }}
       >
-        <h3>
-          <span
+        {thumbnail ? (
+          <div
+            className="mt-1 ml-1 p-1"
             style={{
-              background: 'whitesmoke'
+              fontSize: '18px',
+              overflow: 'hidden',
+              maxHeight: '90%',
+              width: '85%',
+              zIndex: 2
             }}
           >
-            {selected ? <NewTabLink href={url}>{title}</NewTabLink> : title}
-          </span>
-        </h3>
-        <div
-          className="mt-2"
-          style={{
-            maxWidth: '80%',
-            // TODO: fix line break
-            maxHeight: 80,
-            background: 'whitesmoke'
-            // fontSize: 'small'
-          }}
-        >
-          {descr}
-        </div>
-      </div>
-    ) : (
-      <div
-        style={{
-          position: 'relative',
-          width: '90%',
-          height: '100%'
-        }}
-      >
-        <h3>
-          <NewTabLink href={url}>{title} </NewTabLink>
-        </h3>
-        <p>{descr}</p>
+            <h3
+              style={{
+                ...(type === GIF || type === VIDEO ? truncateStyle : null)
+              }}
+            >
+              <SpanBG>
+                {selected ? <NewTabLink href={url}>{title}</NewTabLink> : title}
+              </SpanBG>
+            </h3>
+            {type === TEXT && (
+              <div
+                className={`${css(shallowBg)} p-2 mt-2`}
+                style={{
+                  maxWidth: '80%'
+                  // TODO: fix line break
+                  // maxHeight: 80
+                  // fontSize: 'small'
+                }}
+              >
+                {descr}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div
+            style={{
+              position: 'relative',
+              width: '90%',
+              height: '100%'
+            }}
+          >
+            <h3>
+              <NewTabLink href={url}>{title}</NewTabLink>
+            </h3>
+            <p>{descr}</p>
+          </div>
+        )}
       </div>
     )}
-  </div>
+  </CardThemeConsumer>
 );
 
-ThumbNailSwitchDetail.propTypes = {
+CellDetail.propTypes = {
   className: PropTypes.string,
   children: PropTypes.any,
   uiColor: PropTypes.string,
   focusColor: PropTypes.string
 };
 
-ThumbNailSwitchDetail.defaultProps = {
+CellDetail.defaultProps = {
   className: '',
   children: null,
   uiColor: 'grey',
   focusColor: 'black'
 };
 // props.selected ? css(stylesheet.bigBoxShadow) : css(stylesheet.border)}
-const ThumbCell = ({ children, className, focusColor, ...props }) => (
+const CellWrapper = ({ children, className, focusColor, ...props }) => (
   <CardThemeConsumer>
     {({ stylesheet }) => (
       <div
@@ -329,7 +370,6 @@ const ThumbCell = ({ children, className, focusColor, ...props }) => (
         style={{
           // height: '40vh',
           width: '100%',
-          ...props.style,
           cursor: 'pointer',
           position: 'relative'
         }}
@@ -340,13 +380,13 @@ const ThumbCell = ({ children, className, focusColor, ...props }) => (
         >
           <div>{children}</div>
         </div>
-        <ThumbNailSwitchDetail {...props} />
+        <CellDetail {...props} />
       </div>
     )}
   </CardThemeConsumer>
 );
 
-ThumbCell.propTypes = {
+CellWrapper.propTypes = {
   children: PropTypes.node,
   className: PropTypes.string,
   style: PropTypes.object,
@@ -355,7 +395,7 @@ ThumbCell.propTypes = {
   focusColor: PropTypes.string
 };
 
-ThumbCell.defaultProps = {
+CellWrapper.defaultProps = {
   children: null,
   url: '',
   thumbnail: null,
@@ -474,7 +514,8 @@ class UrlMedia extends Component {
               <div style={{ width: '100%', height: '100%' }}>
                 <ScrollList
                   data={data}
-                  style={{ maxHeight: 300, position: 'relative' }}
+                  maxHeight={300}
+                  style={{ paddingLeft: '5%', paddingRight: '5%' }}
                 >
                   {(d, isSelected) => (
                     <div
@@ -515,7 +556,9 @@ class UrlMedia extends Component {
                 </ScrollList>
               </div>
             ) : (
-              <div className="m-3">No Urls added</div>
+              <div className="m-3 text-muted">
+                <h3>No Urls added</h3>
+              </div>
             )}
           </div>
         )}
@@ -535,12 +578,12 @@ class UnstyledMediaSearch extends Component {
 
   activeTab = sel => {
     const { selectedMedia, onChange } = this.props;
-    const selArticles = selectedMedia.filter(m => m.type === 'article');
-    const selVideos = selectedMedia.filter(m => m.type === 'video');
-    const selGIFs = selectedMedia.filter(m => m.type === 'gif');
-    const selPhotos = selectedMedia.filter(m => m.type === 'photo');
-    const selURLs = selectedMedia.filter(m => m.type === 'url');
-    // console.log('selectedMedia', selectedMedia);
+    const selArticles = selectedMedia.filter(m => m.type === TEXT);
+    const selVideos = selectedMedia.filter(m => m.type === VIDEO);
+    const selGIFs = selectedMedia.filter(m => m.type === GIF);
+    const selPhotos = selectedMedia.filter(m => m.type === IMAGE);
+    const selURLs = selectedMedia.filter(m => m.type === URL);
+    const selUserContent = selectedMedia.filter(m => m.type === USER_CONTENT);
 
     switch (sel) {
       case 'overview':
@@ -554,12 +597,13 @@ class UnstyledMediaSearch extends Component {
                 ...selVideos,
                 ...selGIFs,
                 ...selPhotos,
-                ...selURLs
+                ...selURLs,
+                ...selUserContent
               ])
             }
             preSelected={selArticles}
             searchFn={searchWikipedia}
-            type="Article"
+            type={TEXT}
             key="wikipedia"
           />
         );
@@ -572,12 +616,13 @@ class UnstyledMediaSearch extends Component {
                 ...selArticles,
                 ...selGIFs,
                 ...selPhotos,
-                ...selURLs
+                ...selURLs,
+                ...selUserContent
               ])
             }
             preSelected={selVideos}
             searchFn={searchYoutube}
-            type="Video"
+            type={VIDEO}
             key="youtube"
           />
         );
@@ -591,11 +636,12 @@ class UnstyledMediaSearch extends Component {
                 ...selArticles,
                 ...selVideos,
                 ...selPhotos,
-                ...selURLs
+                ...selURLs,
+                ...selUserContent
               ])
             }
             searchFn={searchGiphy}
-            type="GIF"
+            type={GIF}
             key="giphy"
           />
         );
@@ -609,11 +655,12 @@ class UnstyledMediaSearch extends Component {
                 ...selArticles,
                 ...selVideos,
                 ...selGIFs,
-                ...selURLs
+                ...selURLs,
+                ...selUserContent
               ])
             }
             searchFn={searchFlickr}
-            type="Photo"
+            type={IMAGE}
             key="flickr"
           />
         );
@@ -627,11 +674,32 @@ class UnstyledMediaSearch extends Component {
                 ...selArticles,
                 ...selVideos,
                 ...selGIFs,
-                ...selPhotos
+                ...selPhotos,
+                ...selUserContent
               ])
             }
-            type="url"
-            key="url"
+            type={URL}
+            key={URL}
+          />
+        );
+      case 'upload':
+        return (
+          <UploadUserContent
+            media={selUserContent}
+            uploadPath={userContentUploadPath}
+            onChange={newUserContent => {
+              onChange([
+                ...selVideos,
+                ...selArticles,
+                ...selGIFs,
+                ...selPhotos,
+                ...selURLs,
+                ...newUserContent
+              ]);
+            }}
+            preSelected={selVideos}
+            searchFn={searchYoutube}
+            key="youtube"
           />
         );
       default:
@@ -712,6 +780,22 @@ class UnstyledMediaSearch extends Component {
             </small>
           </button>
           <button
+            className={btnClass('upload')}
+            type="button"
+            onClick={updState('upload')}
+            id="giphy"
+          >
+            <small
+              style={{
+                paddingLeft: '13px',
+                paddingRight: '13px',
+                fontWeight: 'bold'
+              }}
+            >
+              Upload
+            </small>
+          </button>
+          <button
             type="button"
             className={btnClass('overview')}
             onClick={updState('overview')}
@@ -740,71 +824,6 @@ class UnstyledMediaSearch extends Component {
   }
 }
 
-class ScrollList extends Component {
-  static propTypes = {
-    data: PropTypes.array,
-    className: PropTypes.string,
-    children: PropTypes.func,
-    style: PropTypes.object
-  };
-
-  static defaultProps = {
-    data: [],
-    style: {},
-    className: '',
-    children: d => d
-  };
-
-  state = { selected: null };
-
-  componentDidUpdate() {
-    const { selected } = this.state;
-
-    this.scrollTo(selected);
-  }
-
-  scrollTo = name => {
-    this._scroller.scrollTo(name);
-  };
-
-  render() {
-    const { data, children, className, style } = this.props;
-    const { selected } = this.state;
-    return (
-      <div
-        style={{
-          width: '100%',
-          // height: data.length > 0 ? '50vh' : null,
-          maxHeight: 500,
-          overflowY: 'scroll',
-          ...style
-        }}
-      >
-        <ScrollView ref={scroller => (this._scroller = scroller)}>
-          <div
-            className={className}
-            style={{ paddingRight: '5%', height: '400%', ...style }}
-          >
-            {data.map(d => (
-              <ScrollElement name={d.url}>
-                <div
-                  onClick={() =>
-                    this.setState(oldState => ({
-                      selected: oldState.selected !== d.url ? d.url : null
-                    }))
-                  }
-                >
-                  {children(d, d.url === selected)}
-                </div>
-              </ScrollElement>
-            ))}
-          </div>
-        </ScrollView>
-      </div>
-    );
-  }
-}
-
 function SearchBar({ onSearch }) {
   return (
     <form style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -821,8 +840,9 @@ function SearchBar({ onSearch }) {
 function MediaBtn({ selected, onClick }) {
   return (
     <CardThemeConsumer>
-      {({ darkerUiColor }) => (
+      {({ darkerUiColor, shallowBg }) => (
         <div
+          className={css(shallowBg)}
           style={{
             color: selected ? 'tomato' : darkerUiColor
           }}
@@ -961,12 +981,20 @@ class MetaSearch extends Component {
             />
           </div>
         </div>
-        <ScrollList data={data}>
+        <ScrollList
+          data={data}
+          itemStyle={{ paddingRight: '10%', paddingLeft: '5%' }}
+        >
           {(d, isSelected) => (
-            <ThumbCell
+            <CellWrapper
               className="mb-3"
               selected={isSelected}
-              style={{ height: '40vh', maxHeight: 300 }}
+              style={{
+                height: '40vh',
+                maxHeight: 300,
+                paddingLeft: '5%',
+                paddingRight: '10%'
+              }}
               {...d}
             >
               <MediaBtn
@@ -980,7 +1008,7 @@ class MetaSearch extends Component {
                   // }
                 }}
               />
-            </ThumbCell>
+            </CellWrapper>
           )}
         </ScrollList>
       </div>
@@ -995,6 +1023,31 @@ class MetaSearch extends Component {
 //     }).then(r => resolve(r))
 //   );
 //
+//
+//
+export class MediaPreview extends Component {
+  static propTypes = {};
+  static defaultProps = {
+    data: [],
+    edit: false
+  };
+
+  render() {
+    const { data } = this.props;
+
+    return (
+      <div style={{ width: '100%', height: '60vh' }}>
+        {data.length === 0 && <h3>{'No media added to this Card!'} </h3>}
+        <ScrollList data={data}>
+          {(d, selected) => (
+            <CellWrapper {...d} selected={selected === d.url} />
+          )}
+        </ScrollList>
+      </div>
+    );
+  }
+}
+
 class MediaOverview extends Component {
   static propTypes = {};
   static defaultProps = {
@@ -1023,10 +1076,16 @@ class MediaOverview extends Component {
     // this.scrollTo(this.state.selected);
   }
 
-  removeItem = id =>
+  removeItem = m => {
+    if (m.type === USER_CONTENT) {
+      db.removeFromStorage(userContentUploadPath(m.id)).then(() =>
+        console.log('removedMediaItem Success', m.id)
+      );
+    }
     this.setState(oldState => ({
-      data: oldState.data.filter(d => d.id !== id)
+      data: oldState.data.filter(d => d.id !== m.id)
     }));
+  };
 
   render() {
     const { data } = this.state;
@@ -1044,11 +1103,9 @@ class MediaOverview extends Component {
         {data.length === 0 && <h3>{'No media added to this Card!'} </h3>}
         <ScrollList data={data}>
           {(d, selected) => (
-            <ThumbCell {...d} selected={selected === d.url}>
-              {edit && (
-                <MediaBtn selected onClick={() => this.removeItem(d.id)} />
-              )}
-            </ThumbCell>
+            <CellWrapper {...d} selected={selected === d.url}>
+              {edit && <MediaBtn selected onClick={() => this.removeItem(d)} />}
+            </CellWrapper>
           )}
         </ScrollList>
       </div>
