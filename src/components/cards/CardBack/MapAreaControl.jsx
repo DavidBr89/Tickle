@@ -182,38 +182,34 @@ class MapAreaControl extends Component {
     //   </div>
     // )}
 
-                // <MapAreaRadius
-                //   userLocation={userLocation}
-                //   mapViewport={mapViewport(width, height)}
-                //   cardPosition={{ ...loc }}
-                //   radius={radius}
-                // />
+    // <MapAreaRadius
+    //   userLocation={userLocation}
+    //   mapViewport={mapViewport(width, height)}
+    //   cardPosition={{ ...loc }}
+    //   radius={radius}
+    // />
     return (
-      <div style={{ height: '100%', width: '100%' }}>
-        <div style={{ height: '100%', width: '100%' }}>
-          <DimWrapper extended={extended}>
-            {(width, height) => (
-              <MapGL {...mapViewport(width, height)}>
-                <DivOverlay {...mapViewport(width, height)} data={[{ loc }]}>
-                  {(_, [left, top]) => (
-                    <div
-                      style={{
-                        position: 'absolute',
-                        left: left - markerWidth / 2,
-                        top: top - markerHeight / 2,
-                        width: markerWidth,
-                        height: markerHeight
-                      }}
-                    >
-                      <CardMarker />
-                    </div>
-                  )}
-                </DivOverlay>
-              </MapGL>
-            )}
-          </DimWrapper>
-        </div>
-      </div>
+      <DimWrapper delay={200}>
+        {(width, height) => (
+          <MapGL {...mapViewport(width, height)}>
+            <DivOverlay {...mapViewport(width, height)} data={[{ loc }]}>
+              {(_, [left, top]) => (
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: left - markerWidth / 2,
+                    top: top - markerHeight / 2,
+                    width: markerWidth,
+                    height: markerHeight
+                  }}
+                >
+                  <CardMarker />
+                </div>
+              )}
+            </DivOverlay>
+          </MapGL>
+        )}
+      </DimWrapper>
     );
   }
 }

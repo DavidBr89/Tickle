@@ -100,8 +100,9 @@ export const FieldSet = ({
   >
     <div
       style={{
-        margin: 10
-        // overflow: 'hidden'
+        margin: 10,
+        width: '100%',
+        height: '100%'
       }}
     >
       <div

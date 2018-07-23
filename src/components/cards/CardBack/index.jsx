@@ -129,9 +129,8 @@ class CardBackSkeleton extends Component {
     });
 
     const displayStyle = field => {
-      const defaultStyle = { transition: 'height 0s', marginBottom: 10 };
+      const defaultStyle = { transition: 'height 200ms', marginBottom: 10 };
       const isExt = extended === field;
-      console.log('field', field, isExt);
       if (extended !== null) {
         return {
           ...defaultStyle,
@@ -141,6 +140,7 @@ class CardBackSkeleton extends Component {
       }
       return {
         height: '30%',
+        cursor: 'pointer',
         // background: null,
         ...defaultStyle
       };

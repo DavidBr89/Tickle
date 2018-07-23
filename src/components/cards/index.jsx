@@ -225,7 +225,7 @@ class Card extends React.Component {
                 top: 0,
                 left: 0,
                 backfaceVisibility: 'hidden',
-                transformStyle: 'preserve-3d',
+                transformStyle: 'preserve-3d'
               }}
               edit={edit}
               onCollect={onCollect}

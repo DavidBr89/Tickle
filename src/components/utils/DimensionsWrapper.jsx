@@ -3,7 +3,11 @@ import PropTypes from 'prop-types';
 
 class DimensionsWrapper extends React.Component {
   static propTypes = {
-    children: PropTypes.func.isRequired
+    children: PropTypes.func.isRequired,
+    delay: PropTypes.oneOf([null, PropTypes.number])
+  };
+  static defaultProps = {
+    delay: null
   };
 
   constructor(props) {
@@ -12,19 +16,35 @@ class DimensionsWrapper extends React.Component {
   }
 
   componentDidMount() {
+    const { delay } = this.props;
     const width = this.node.offsetWidth;
     const height = this.node.offsetHeight;
-    console.log('DIM', width, height);
-    this.setState({ width, height });
+    console.log('INITIAL DIM', width, height);
+
+    if (delay !== null) {
+      setTimeout(() => this.updateDim(), delay);
+    } else {
+      this.updateDim();
+    }
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  updateDim = (prevState = { width: 0, height: 0 }) => {
     const width = this.node.offsetWidth;
     const height = this.node.offsetHeight;
 
     console.log('UPDATE DIM', width, height);
     if (prevState.width !== width || prevState.height !== height) {
       this.setState({ width, height });
+    }
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    const { delay } = this.props;
+
+    if (delay !== null) {
+      setTimeout(() => this.updateDim(prevState), delay);
+    } else {
+      this.updateDim(prevState);
     }
   }
 
