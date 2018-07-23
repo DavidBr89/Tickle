@@ -1,7 +1,7 @@
 import React, { Component, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 // import chroma from 'chroma-js';
-import * as Icon from 'react-feather';
+// import * as Icon from 'react-feather';
 
 import PhotoUpload from 'Utils/PhotoUpload';
 import EditPhoto from './EditPhoto';

@@ -12,6 +12,7 @@ import ScrollList from 'Utils/ScrollList';
 import { GlobalThemeConsumer } from 'Src/styles/GlobalThemeContext';
 
 import { db } from 'Firebase';
+import { TEXT, IMG, VIDEO } from 'Constants/mediaTypes';
 
 import { stylesheet as defaultStylesheet } from 'Src/styles/GlobalThemeContext';
 
@@ -25,7 +26,7 @@ class DataUploadForm extends Component {
     stylesheet: defaultStylesheet
   };
 
-  state = { description: null };
+  state = { description: null, imgUrl: null, file: null, type: TEXT };
 
   render() {
     const {
@@ -34,7 +35,7 @@ class DataUploadForm extends Component {
       className
     } = this.props;
 
-    const { imgUrl, file } = this.state;
+    const { imgUrl, file, type } = this.state;
     return (
       <div
         className={className}
@@ -51,9 +52,20 @@ class DataUploadForm extends Component {
             this.setState({ imgUrl: url, file: newFile });
           }}
         />
+        <select
+          className={`${css(btn)} ml-2`}
+          style={{ width: '20%', fontWeight: 'bold' }}
+          onChange={e => this.setState({ type: e.target.value })}
+        >
+          <option>{TEXT}</option>
+          <option>{IMG}</option>
+          <option>{VIDEO}</option>
+        </select>
+
         <button
           className={`${css(btn)} ml-2`}
-          onClick={() => file && onChange({ imgUrl, file })}
+          style={{ fontWeight: 'bold' }}
+          onClick={() => file && onChange({ imgUrl, file, type })}
           disabled={!file}
         >
           Add
@@ -127,9 +139,9 @@ class MediaUpload extends Component {
 
   state = { media: [], pendingMedia: [], ...this.props };
 
-  addMediaItem = ({ url, file }) => {
+  addMediaItem = ({ url, file, type }) => {
     const { media } = this.state;
-    const pendingMediaItem = { file, id: file.name, url: null };
+    const pendingMediaItem = { file, id: file.name, url: null, type };
 
     if (media.filter(m => m.id === pendingMediaItem.id).length === 0) {
       this.setState(({ pendingMedia: oldPendingMedia }) => ({

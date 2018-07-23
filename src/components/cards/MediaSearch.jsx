@@ -24,12 +24,14 @@ import MediaUpload from 'Utils/MediaUpload';
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 import { NewTabLink } from 'Components/utils/StyledComps';
 
-const GIF = 'gif';
-const TEXT = 'text';
-const VIDEO = 'video';
-const IMAGE = 'Image';
-const URL = 'url';
-const USER_CONTENT = 'USER_CONTENT';
+import { GIF, TEXT, VIDEO, IMG, URL } from 'Constants/mediaTypes';
+
+const WIKIPEDIA = 'wikipedia';
+const GIPHY = 'giphy';
+const YOUTUBE = 'youtube';
+const FLICKR = 'flickr';
+const USER_CONTENT = 'user-content';
+
 const userContentUploadPath = id => `media/${id}`;
 
 const UploadUserContent = ({ onChange, ...props }) => (
@@ -45,11 +47,17 @@ const UploadUserContent = ({ onChange, ...props }) => (
               {!loading ? name : 'loading'}
             </div>
           )}
-          onChange={media =>
+          onChange={media => {
             onChange(
-              media.map(m => ({ ...m, title: m.name, type: USER_CONTENT }))
-            )
-          }
+              media.map(m => ({
+                ...m,
+                title: m.name,
+                thumbnail: m.url,
+                source: USER_CONTENT,
+                date: new Date()
+              }))
+            );
+          }}
         />
       </div>
     )}
@@ -125,7 +133,7 @@ const searchFlickr = (q = 'dragon') =>
           thumbnail: imgSrc,
           url,
           id,
-          type: IMAGE
+          source: IMG
         };
       }
     );
@@ -150,6 +158,7 @@ const searchWikipedia = q =>
       thumbnail: d.thumbnail ? d.thumbnail.source : null, // d.thumbnail.source,
       url: d.fullurl,
       id: d.fullurl,
+      source: WIKIPEDIA,
       type: TEXT
     }));
 
@@ -161,7 +170,7 @@ const searchYoutube = (q = 'dragon') =>
     gapi.client.youtube.search
       .list({
         part: 'snippet',
-        type: VIDEO,
+        source: YOUTUBE,
         q,
         maxResults: 20,
         order: 'viewCount',
@@ -175,6 +184,7 @@ const searchYoutube = (q = 'dragon') =>
           title: d.snippet.title,
           descr: d.snippet.description,
           thumbnail: d.snippet.thumbnails.default.url,
+          source: YOUTUBE,
           type: VIDEO
         }));
         resolve(res);
@@ -192,7 +202,8 @@ const searchGiphy = (q = 'pokemon') =>
           descr: '',
           thumbnail: d.images.downsized_still.url,
           gifurl: d.url,
-          type: GIF
+          source: GIPHY,
+          type: IMG
         }))
       )
     )
@@ -275,6 +286,7 @@ Article.defaultProps = {
 
 const CellDetail = ({
   selected,
+  source,
   type,
   thumbnail,
   title,
@@ -292,8 +304,8 @@ const CellDetail = ({
           backgroundRepeat: thumbnail !== null && 'no-repeat',
           backgroundSize: thumbnail !== null && '100% 100%',
           ...fullDim,
-          minHeight: type !== USER_CONTENT ? 150 : 100,
-          maxHeight: 300
+          // height: 200
+          width: '80%'
         }}
       >
         {thumbnail ? (
@@ -309,7 +321,7 @@ const CellDetail = ({
           >
             <h3
               style={{
-                ...(type === GIF || type === VIDEO ? truncateStyle : null)
+                ...(type === IMG || type === VIDEO ? truncateStyle : null)
               }}
             >
               <SpanBG>
@@ -371,7 +383,7 @@ const CellWrapper = ({ children, className, focusColor, ...props }) => (
           props.selected ? css(stylesheet.bigBoxShadow) : css(stylesheet.border)
         }`}
         style={{
-          // height: '40vh',
+          height: 200,
           width: '100%',
           cursor: 'pointer',
           position: 'relative'
@@ -437,8 +449,17 @@ class UrlMedia extends Component {
     event.preventDefault();
 
     const { url, title, descr } = this.state;
-    const urlItem = { id: url, url, title, descr, type: 'url' };
+    const urlItem = {
+      id: url,
+      url,
+      title,
+      descr,
+      source: URL,
+      type: TEXT,
+      date: new Date()
+    };
 
+    // TODO: check later
     this.setState(({ data: oldData }) => ({
       data: uniqBy([urlItem, ...oldData], 'id'),
       title: '',
@@ -518,7 +539,7 @@ class UrlMedia extends Component {
                 <ScrollList
                   data={data}
                   maxHeight={300}
-                  style={{ paddingLeft: '5%', paddingRight: '5%' }}
+                  style={{ paddingLeft: '5%', paddingRight: '10%' }}
                 >
                   {(d, isSelected) => (
                     <div
@@ -581,12 +602,15 @@ class UnstyledMediaSearch extends Component {
 
   activeTab = sel => {
     const { selectedMedia, onChange } = this.props;
-    const selArticles = selectedMedia.filter(m => m.type === TEXT);
-    const selVideos = selectedMedia.filter(m => m.type === VIDEO);
-    const selGIFs = selectedMedia.filter(m => m.type === GIF);
-    const selPhotos = selectedMedia.filter(m => m.type === IMAGE);
-    const selURLs = selectedMedia.filter(m => m.type === URL);
-    const selUserContent = selectedMedia.filter(m => m.type === USER_CONTENT);
+    const selArticles = selectedMedia.filter(m => m.source === WIKIPEDIA);
+    const selVideos = selectedMedia.filter(m => m.source === YOUTUBE);
+    const selGIFs = selectedMedia.filter(m => m.source === GIPHY);
+    const selPhotos = selectedMedia.filter(m => m.source === FLICKR);
+    const selURLs = selectedMedia.filter(m => m.source === URL);
+    const selUserContent = selectedMedia.filter(m => m.source === USER_CONTENT);
+
+    const sortByDate = arr =>
+      arr.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     switch (sel) {
       case 'overview':
@@ -595,17 +619,20 @@ class UnstyledMediaSearch extends Component {
         return (
           <MetaSearch
             onChange={newArticles =>
-              onChange([
-                ...newArticles,
-                ...selVideos,
-                ...selGIFs,
-                ...selPhotos,
-                ...selURLs,
-                ...selUserContent
-              ])
+              onChange(
+                sortByDate([
+                  ...newArticles,
+                  ...selVideos,
+                  ...selGIFs,
+                  ...selPhotos,
+                  ...selURLs,
+                  ...selUserContent
+                ])
+              )
             }
             preSelected={selArticles}
             searchFn={searchWikipedia}
+            source={WIKIPEDIA}
             type={TEXT}
             key="wikipedia"
           />
@@ -614,17 +641,20 @@ class UnstyledMediaSearch extends Component {
         return (
           <MetaSearch
             onChange={newVideos =>
-              onChange([
-                ...newVideos,
-                ...selArticles,
-                ...selGIFs,
-                ...selPhotos,
-                ...selURLs,
-                ...selUserContent
-              ])
+              onChange(
+                sortByDate([
+                  ...newVideos,
+                  ...selArticles,
+                  ...selGIFs,
+                  ...selPhotos,
+                  ...selURLs,
+                  ...selUserContent
+                ])
+              )
             }
             preSelected={selVideos}
             searchFn={searchYoutube}
+            source={YOUTUBE}
             type={VIDEO}
             key="youtube"
           />
@@ -634,17 +664,20 @@ class UnstyledMediaSearch extends Component {
           <MetaSearch
             preSelected={selGIFs}
             onChange={newGIFs =>
-              onChange([
-                ...newGIFs,
-                ...selArticles,
-                ...selVideos,
-                ...selPhotos,
-                ...selURLs,
-                ...selUserContent
-              ])
+              onChange(
+                sortByDate([
+                  ...newGIFs,
+                  ...selArticles,
+                  ...selVideos,
+                  ...selPhotos,
+                  ...selURLs,
+                  ...selUserContent
+                ])
+              )
             }
             searchFn={searchGiphy}
-            type={GIF}
+            source={GIPHY}
+            type={VIDEO}
             key="giphy"
           />
         );
@@ -653,17 +686,20 @@ class UnstyledMediaSearch extends Component {
           <MetaSearch
             preSelected={selPhotos}
             onChange={newPhotos =>
-              onChange([
-                ...newPhotos,
-                ...selArticles,
-                ...selVideos,
-                ...selGIFs,
-                ...selURLs,
-                ...selUserContent
-              ])
+              onChange(
+                sortByDate([
+                  ...newPhotos,
+                  ...selArticles,
+                  ...selVideos,
+                  ...selGIFs,
+                  ...selURLs,
+                  ...selUserContent
+                ])
+              )
             }
             searchFn={searchFlickr}
-            type={IMAGE}
+            source={FLICKR}
+            type={IMG}
             key="flickr"
           />
         );
@@ -672,16 +708,19 @@ class UnstyledMediaSearch extends Component {
           <UrlMedia
             preSelected={selURLs}
             onChange={newUrls =>
-              onChange([
-                ...newUrls,
-                ...selArticles,
-                ...selVideos,
-                ...selGIFs,
-                ...selPhotos,
-                ...selUserContent
-              ])
+              onChange(
+                sortByDate([
+                  ...newUrls,
+                  ...selArticles,
+                  ...selVideos,
+                  ...selGIFs,
+                  ...selPhotos,
+                  ...selUserContent
+                ])
+              )
             }
-            type={URL}
+            source={URL}
+            type={TEXT}
             key={URL}
           />
         );
@@ -691,16 +730,19 @@ class UnstyledMediaSearch extends Component {
             media={selUserContent}
             uploadPath={userContentUploadPath}
             onChange={newUserContent => {
-              onChange([
-                ...selVideos,
-                ...selArticles,
-                ...selGIFs,
-                ...selPhotos,
-                ...selURLs,
-                ...newUserContent
-              ]);
+              onChange(
+                sortByDate([
+                  ...selVideos,
+                  ...selArticles,
+                  ...selGIFs,
+                  ...selPhotos,
+                  ...selURLs,
+                  ...newUserContent
+                ])
+              );
             }}
             preSelected={selVideos}
+            source={USER_CONTENT}
             searchFn={searchYoutube}
           />
         );
@@ -869,7 +911,9 @@ class MetaSearch extends Component {
     type: PropTypes.string,
     onAdd: PropTypes.func,
     preSelected: PropTypes.array,
-    defaultQuery: PropTypes.string
+    defaultQuery: PropTypes.string,
+    source: PropTypes.string,
+    type: PropTypes.string
   };
 
   static defaultProps = {
@@ -901,30 +945,14 @@ class MetaSearch extends Component {
     );
   }
 
-  // static getDerivedStateFromProps(nextProps, prevState) {
-  //   const { searchFn, defaultQuery } = this.props;
-  //   searchFn(defaultQuery).then(
-  //     data => this.mounted && this.setState({ data })
-  //   );
-  // }
-
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   return true;
-  // }
-  // componentWillReceiveProps(nextProps) {
-  //   nextProps.search().then(results => {
-  //     this.setState({ results });
-  //   });
-  // }
-
   componentDidUpdate(prevProps, prevState) {
-    const { type, searchFn, onChange } = this.props;
+    const { onChange } = this.props;
     const { data, selectedIds } = this.state;
 
-    // console.log('data', data, 'selectedIds', selectedIds);
     if (selectedIds.length !== prevState.selectedIds.length) {
-      const newData = data.filter(d => selectedIds.includes(d.id));
-      // console.log('newData', newData);
+      const newData = data
+        .filter(d => selectedIds.includes(d.id))
+        .map(d => ({ ...d, date: new Date() }));
       onChange(newData);
     }
 
@@ -938,9 +966,9 @@ class MetaSearch extends Component {
   }
 
   onSearch = searchStr => {
-    const { searchFn } = this.props;
+    const { searchFn, source, type } = this.props;
     searchFn(searchStr).then(items => {
-      this.setState({ data: items });
+      this.setState({ data: items.map(d => ({ ...d, source, type })) });
     });
     // else {
     //   this.setState({
@@ -963,7 +991,6 @@ class MetaSearch extends Component {
   };
 
   render() {
-    const { onSelect, search, type, onAdd, defaultQuery } = this.props;
     const { data, selectedIds } = this.state;
     // let GoogleAuth;
     // const SCOPE = 'https://www.googleapis.com/auth/youtube.force-ssl';
@@ -994,7 +1021,7 @@ class MetaSearch extends Component {
               style={{
                 height: '40vh',
                 maxHeight: 300,
-                paddingLeft: '5%',
+                marginLeft: '5%',
                 paddingRight: '10%'
               }}
               {...d}
@@ -1079,7 +1106,7 @@ class MediaOverview extends Component {
   }
 
   removeItem = m => {
-    if (m.type === USER_CONTENT) {
+    if (m.source === USER_CONTENT) {
       db.removeFromStorage(userContentUploadPath(m.id)).then(() =>
         console.log('removedMediaItem Success', m.id)
       );
@@ -1105,7 +1132,7 @@ class MediaOverview extends Component {
         {data.length === 0 && (
           <div
             style={{
-              height: '100%',
+              // height: '100%',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center'
@@ -1116,7 +1143,10 @@ class MediaOverview extends Component {
             </div>
           </div>
         )}
-        <ScrollList data={data}>
+        <ScrollList
+          data={data}
+          itemStyle={{ paddingRight: '10%', paddingLeft: '5%' }}
+        >
           {(d, selected) => (
             <CellWrapper {...d} selected={selected === d.url}>
               {edit && <MediaBtn selected onClick={() => this.removeItem(d)} />}
@@ -1124,82 +1154,6 @@ class MediaOverview extends Component {
           )}
         </ScrollList>
       </div>
-    );
-  }
-}
-
-class ChallengeSearch extends Component {
-  static propTypes = {
-    data: PropTypes.array,
-    selected: PropTypes.string,
-    onChange: PropTypes.func
-  };
-
-  static defaultProps = {
-    data: [],
-    selected: '',
-    onChange: d => d
-  };
-
-  constructor(props) {
-    super(props);
-    this.state = { defaultData: [] };
-  }
-
-  componentDidMount() {
-    const { data } = this.props;
-
-    // TODO: fetch thumbnails
-    setTimeout(() => {
-      const defaultData = data.map(d => ({
-        url: d.url,
-        title: d.url,
-        descr: '',
-        thumbnail: null,
-        type: 'hangman'
-      }));
-      this.setState({ defaultData });
-    }, 1);
-    // Promise.all(
-    //   data.map(d =>
-    //     fetchJsonp(
-    //         d.url
-    //       }&r=http://your-homepage.com/computer-news.php&e=7jnoaudset42xsp5s&t=json`
-    //     )
-    //   )
-    // )
-    //   .then(results => {
-    //     const defaultData = data.map((d, i) => ({
-    //       url: d.url,
-    //       title: results[i].title,
-    //       descr: '',
-    //       thumbnail: results[i].img,
-    //       type: 'hangman'
-    //     }));
-    //     this.setState({ defaultData });
-    //   })
-    //   .catch(() => {
-    //     const defaultData = data.map(d => ({
-    //       url: d.url,
-    //       title: d.url,
-    //       descr: '',
-    //       thumbnail: null,
-    //       type: 'hangman'
-    //     }));
-    //     this.setState({ defaultData });
-    //   });
-  }
-
-  render() {
-    const { selected, onChange } = this.props;
-    const { defaultData } = this.state;
-    return (
-      <MetaSearch
-        onSelect={([ch]) => onChange(ch)}
-        selected={selected}
-        type="Challenge"
-        defaultData={defaultData}
-      />
     );
   }
 }
@@ -1212,4 +1166,4 @@ const MediaSearch = ({ ...props }) => (
   </CardThemeConsumer>
 );
 
-export { MediaSearch, MediaOverview, ChallengeSearch };
+export { MediaSearch, MediaOverview };
