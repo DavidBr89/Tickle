@@ -93,27 +93,33 @@ export const FieldSet = ({
       marginTop: '4px',
       width: '100%',
       height: '100%',
-      padding: 10,
-      overflow: 'hidden',
-      ...style
-      // overflow: 'hidden'
+      // padding: 10,
+      ...style,
+      overflow: 'hidden'
     }}
   >
     <div
       style={{
-        position: 'relative',
-        ...bodyStyle
+        margin: 10
+        // overflow: 'hidden'
       }}
     >
-      <div>
-        <h5 style={legendStyle}>
-          <span>
-            {legend} {icon}
-          </span>
-        </h5>
+      <div
+        style={{
+          position: 'relative',
+          ...bodyStyle
+        }}
+      >
+        <div>
+          <h5 style={legendStyle}>
+            <span>
+              {legend} {icon}
+            </span>
+          </h5>
+        </div>
       </div>
+      {children}
     </div>
-    {children}
   </div>
 );
 
@@ -266,10 +272,7 @@ DescriptionField.defaultProps = {
 const MediaField = ({ media, onEdit, onClick, style, placeholder, edit }) => (
   <CardThemeConsumer>
     {({ uiColor, stylesheet: { shallowBg, shallowBorder } }) => (
-      <div
-        style={{ ...style, cursor: 'pointer', overflow: 'hidden' }}
-        onClick={onClick || onEdit}
-      >
+      <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
         <FieldSet
           icon={edit ? <EditIcon /> : <ZoomIcon />}
           className={`${css(shallowBg)} ${css(shallowBorder)}`}
@@ -374,7 +377,6 @@ const Img = ({ src, style }) => (
   <div
     className="mt-1 mb-1"
     style={{
-      border: '1px solid var(--black)',
       width: '100%',
       height: '100%',
       ...style
@@ -395,8 +397,8 @@ Img.propTypes = {
 
 Img.defaultProps = { src: null, style: {} };
 
-export const ImgOverlay = ({ src, style, children, footer }) => (
-  <div style={{ position: 'relative', ...style }}>
+export const ImgOverlay = ({ src, className, style, children, footer }) => (
+  <div className={className} style={{ position: 'relative', ...style }}>
     <Img src={src} />
     <div
       className="m-2 "
@@ -412,14 +414,16 @@ ImgOverlay.propTypes = {
   src: PropTypes.string,
   style: PropTypes.object,
   children: PropTypes.node,
-  footer: PropTypes.node
+  footer: PropTypes.node,
+  className: PropTypes.string
 };
 
 ImgOverlay.defaultProps = {
   src: placeholderImgSrc,
   style: {},
   children: null,
-  footer: null
+  footer: null,
+  className: ''
 };
 
 export const BigButton = ({

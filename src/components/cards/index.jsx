@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import chroma from 'chroma-js';
 
-import { StyleSheet } from 'aphrodite/no-important';
+import { StyleSheet, css } from 'aphrodite/no-important';
 
 import cx from './Card.scss';
 import CardBack from './CardBack';
@@ -16,7 +16,7 @@ import CardMarker from './CardMarker';
 
 import { colorScale } from './styles';
 
-import { CardThemeProvider } from 'Src/styles/CardThemeContext';
+import { CardThemeProvider, makeStylesheet } from 'Src/styles/CardThemeContext';
 import { btnStyle } from 'Src/styles/helperStyles';
 
 // ReadCardBack.defaultProps = {
@@ -185,9 +185,11 @@ class Card extends React.Component {
       template
     } = this.props;
     const { frontView } = this.state;
-    // const { onClose } = this.props;
-    const sideToggler = frontView ? cx.flipAnim : null;
     const { onCollect } = this.props;
+
+    const stylesheet = makeStylesheet({ uiColor, background });
+    const { flipper, flipAnim, flipContainer } = stylesheet;
+    // const { onClose } = this.props;
     const flipHandler = () => {
       this.setState(oldState => ({
         frontView: !oldState.frontView
@@ -196,60 +198,66 @@ class Card extends React.Component {
     // const background = colorScale(type);
     // const uiColor = chroma(background).darken(1);
     // const focusColor = chroma(background).darken(3);
-    const stylesheet = this.makeStylesheet();
 
+    // TODO: remove
     const darkerUiColor = chroma(uiColor)
       .darken(1)
       .hex();
 
-    const togglecard = () => {
-      if (frontView)
-        return (
-          <CardFront
-            {...this.props}
-            edit={edit}
-            onCollect={onCollect}
-            background={background}
-            flipHandler={flipHandler}
-            uiColor={uiColor}
-            tagColorScale={tagColorScale}
-            onUpdate={onUpdate}
-          />
-        );
-      return (
-        <CardBack
-          {...this.props}
-          edit={!template}
-          background={background}
-          uiColor={uiColor}
-          onCollect={onCollect}
-          flipHandler={flipHandler}
-          tagColorScale={tagColorScale}
-          author={author}
-          onUpdate={comments => this.setState({ comments })}
-          setMapRadius={mapRadius =>
-            // onUpdate({ ...this.props, mapRadius });
-            null
-          }
-        />
-      );
-    };
-
-    // console.log('ToggleCard', ToggleCard);
+    const togglecard = () => <React.Fragment />;
 
     return (
       <div
-        className={`${cx.flipContainer} ${sideToggler}`}
+        className={`${cx.flipContainer}`}
         style={{ ...style, maxWidth: 500, maxHeight: 800 }}
       >
         <div
-          className={`${cx.flipper} ${sideToggler}`}
+          className={`${cx.flipper} ${!frontView ? css(flipAnim) : null}`}
           style={{
             background
           }}
         >
           <CardThemeProvider value={{ stylesheet, uiColor, darkerUiColor }}>
-            {togglecard()}
+            <CardFront
+              {...this.props}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                backfaceVisibility: 'hidden',
+                transformStyle: 'preserve-3d',
+              }}
+              edit={edit}
+              onCollect={onCollect}
+              background={background}
+              flipHandler={flipHandler}
+              uiColor={uiColor}
+              tagColorScale={tagColorScale}
+              onUpdate={onUpdate}
+            />
+            <CardBack
+              {...this.props}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                backfaceVisibility: 'hidden',
+                transformStyle: 'preserve-3d',
+                transform: 'rotateY(180deg)'
+              }}
+              edit={!template}
+              background={background}
+              uiColor={uiColor}
+              onCollect={onCollect}
+              flipHandler={flipHandler}
+              tagColorScale={tagColorScale}
+              author={author}
+              onUpdate={comments => this.setState({ comments })}
+              setMapRadius={mapRadius =>
+                // onUpdate({ ...this.props, mapRadius });
+                null
+              }
+            />
           </CardThemeProvider>
         </div>
       </div>

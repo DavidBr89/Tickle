@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 import { css } from 'aphrodite/no-important';
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
+import * as Icon from 'react-feather';
+//
 import { shadowStyle } from './styles';
 
 const CardHeader = ({
@@ -22,6 +24,7 @@ const CardHeader = ({
 }) => {
   const btnStyle = {
     fontSize: '1.5rem',
+    height: '100%'
     // marginBottom: 10,
     // padding: '0.4rem 0.6rem 0.4rem 0.6rem'
     //
@@ -34,50 +37,53 @@ const CardHeader = ({
     <CardThemeConsumer>
       {({ stylesheet }) => (
         <div
-          className="pl-2 pr-2 pt-3"
           style={{
-            background,
-            overflow: 'hidden',
+            width: '100%',
             height: '100%',
-            backfaceVisibility: 'hidden',
-            ...style,
-            ...shadowStyle
+            ...style
           }}
         >
           <div
-            className="mb-2 pr-2"
+            className="pl-2 pr-2 pt-2"
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              // TODO stick to left
-              justifyContent: 'space-between',
-              width: '100%'
+              background,
+              overflow: 'hidden',
+              height: '100%',
+              width: '100%',
+              ...shadowStyle
             }}
           >
-            <div>{editButton}</div>
-            <div style={{ maxWidth: edit ? '75%' : '85%' }}>
-              <h3 style={{ marginBottom: 0 }} className="text-truncate">
-                {title === null ? (
-                  <span style={{ fontStyle: editButton ? 'italic' : null }}>
-                    {placeholder}
-                  </span>
-                ) : (
-                  title
-                )}
-              </h3>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                position: 'relative',
+                width: '100%'
+              }}
+            >
+              <div>{editButton}</div>
+              <div className="ml-1" style={{ maxWidth: edit ? '75%' : '85%' }}>
+                <h1 style={{ marginBottom: 0 }} className="text-truncate">
+                  {title === null ? (
+                    <span className="text-muted">{placeholder}</span>
+                  ) : (
+                    title
+                  )}
+                </h1>
+              </div>
+              <div style={{ position: 'absolute', right: 0 }}>
+                <button
+                  className={css(stylesheet.btn)}
+                  style={btnStyle}
+                  onClick={onClose}
+                >
+                  {/* TODO: fix button height */}
+                  <Icon.X size={30} />
+                </button>
+              </div>
             </div>
-            <div>
-              <button
-                className={css(stylesheet.btn)}
-                style={btnStyle}
-                onClick={onClose}
-              >
-                {/* TODO: fix button height */}
-                <i className="fa fa-times fa-lg" aria-hidden="true" />
-              </button>
-            </div>
+            {children}
           </div>
-          {children}
         </div>
       )}
     </CardThemeConsumer>

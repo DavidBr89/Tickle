@@ -12,7 +12,7 @@ module.exports = {
     // TODO
     // TODO
     // TODO
-    'babel-polyfill',
+    // 'babel-polyfill',
     './src/index.jsx' // your app's entry point
   ],
   mode: 'production',

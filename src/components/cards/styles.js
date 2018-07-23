@@ -1,10 +1,8 @@
-import cxs from 'cxs';
 import React from 'react';
 
 import { scaleOrdinal, scaleLinear, range } from 'd3';
 import * as chromatic from 'd3-scale-chromatic';
 import chroma from 'chroma-js';
-
 
 import colorClasses from '../utils/colorClasses';
 
@@ -69,13 +67,6 @@ export const profileSrc = () => {
   return `https://randomuser.me/api/portraits/thumb/${gender}/${i}.jpg`;
 };
 
-export const cardLayout = cxs({
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-between',
-  height: '90%'
-});
-
 export const shadowStyle = {
   boxShadow: '0.2rem 0.2rem 0.1rem grey'
   // border: '1px solid black'
@@ -117,12 +108,6 @@ export const cardTypeColorScale = scaleOrdinal()
 // };
 //
 //
-export const shadowStyleSelect = (color = 'grey') =>
-  cxs({
-    border: `1px solid ${color}`,
-    boxShadow: `6px 6px ${color}`
-  });
-
 export const createShadowStyle = (color = 'grey') => ({
   border: `1px solid ${color}`,
   boxShadow: `6px 6px ${color}`
@@ -130,8 +115,7 @@ export const createShadowStyle = (color = 'grey') => ({
 
 export const modalBorder = color => ({ borderTop: `1px solid ${color}` });
 
-
-export const coverPhotoStyle = { height: '50%', maxHeight: 400, width: '100%' };
+// export const coverPhotoStyle = { height: '50%', maxHeight: 400, width: '100%' };
 
 export const UIthemeContext = React.createContext({
   uiColor: 'orange',

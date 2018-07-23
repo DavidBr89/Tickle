@@ -16,7 +16,7 @@ import { MODAL_FULL_HEIGHT } from 'Constants/styleDimensions';
 
 import { Modal, ModalBody } from 'Utils/Modal';
 import { MediaSearch, MediaOverview } from '../MediaSearch';
-import { cardLayout, coverPhotoStyle } from '../styles';
+import { coverPhotoStyle } from '../styles';
 
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
@@ -294,9 +294,11 @@ class EditCardFront extends PureComponent {
       uiColor,
       tagColorScale,
       onSubmit,
-      template
+      template,
+      stylesheet
     } = this.props;
     const { data, added, dialog } = this.state;
+    const { cardLayout, coverPhoto } = stylesheet;
     const {
       id,
       title,
@@ -312,6 +314,10 @@ class EditCardFront extends PureComponent {
 
     return (
       <CardHeader
+        style={{
+          zIndex: 4000,
+          ...style
+        }}
         title={title}
         onClose={onClose}
         background={background}
@@ -327,9 +333,8 @@ class EditCardFront extends PureComponent {
           />
         }
         flipHandler={flipHandler}
-        style={style}
       >
-        <div className={cardLayout} style={{ height: '100%' }}>
+        <div className={css(cardLayout)} style={{ height: '100%' }}>
           <Modal
             visible={modalVisible}
             title={dialogTitle}
@@ -342,10 +347,10 @@ class EditCardFront extends PureComponent {
           >
             {this.modalWriteContent(dialogTitle)}
           </Modal>
-          <div className={cardLayout}>
+          <div className={css(cardLayout)}>
             <ImgOverlay
               src={img && img.url}
-              style={coverPhotoStyle}
+              className={css(coverPhoto)}
               footer={
                 <EditButton
                   style={{
@@ -469,4 +474,10 @@ class EditCardFront extends PureComponent {
 
 EditCardFront.defaultProps = defaultProps;
 
-export default EditCardFront;
+const StyledEditCardFront = props => (
+  <CardThemeConsumer>
+    {({ stylesheet }) => <EditCardFront {...props} stylesheet={stylesheet} />}
+  </CardThemeConsumer>
+);
+
+export default StyledEditCardFront;

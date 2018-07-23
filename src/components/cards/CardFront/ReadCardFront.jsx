@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { css } from 'aphrodite';
 
 // import chroma from 'chroma-js';
 // import * as Icon from 'react-feather';
@@ -14,7 +15,8 @@ import { Modal, ModalBody } from 'Utils/Modal';
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
 import { MediaPreview } from 'Components/cards/MediaSearch';
-import { cardLayout, coverPhotoStyle } from '../styles';
+
+import CardHeader from '../CardHeader';
 
 import {
   // FieldSet,
@@ -32,7 +34,7 @@ import {
   FlipButton
 } from '../layout';
 
-import CardHeader from '../CardHeader';
+// import CardHeader from '../CardHeader';
 
 const defaultProps = {};
 
@@ -140,79 +142,96 @@ class ReadCardFront extends Component {
       uiColor,
       flipHandler,
       // background,
-      tagColorScale
+      stylesheet,
+      tagColorScale,
+      style
     } = this.props;
 
     const { dialog } = this.state;
     const modalVisible = dialog !== null;
     const dialogTitle = dialog !== null ? dialog.key : null;
+    const { coverPhoto } = stylesheet;
 
     // TODO: modal color
     return (
-      <div
+      <CardHeader
+        {...this.props}
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '90%',
-          justifyContent: 'space-between'
+          zIndex: 4000,
+          ...style
         }}
       >
-        <Modal
-          visible={modalVisible}
-          title={dialogTitle}
-          onClose={() => this.setState({ dialog: null })}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '90%',
+            justifyContent: 'space-between'
+          }}
         >
-          {this.modalReadContent(dialogTitle)}
-        </Modal>
-        <ImgOverlay src={img ? img.url : null} style={coverPhotoStyle}>
-          <div style={{ display: 'flex', width: '70%', maxWidth: '80%' }}>
-            {/* TODO: fix width */}
-            <PreviewTags colorScale={tagColorScale} data={tags} />
-          </div>
-        </ImgOverlay>
-        <DescriptionField
-          style={{ maxHeight: '20%' }}
-          text={description}
-          onEdit={() =>
-            this.setState({
-              dialog: {
-                key: 'Description',
-                id: 'description',
-                data: description
-              }
-            })
-          }
-        />
-        <MediaField
-          style={{ maxHeight: '20%' }}
-          media={media}
-          onClick={() =>
-            this.setState({ dialog: { key: 'Media', data: media } })
-          }
-        />
-        <div className="p-1 pt-3" style={{ display: 'flex' }}>
-          <BigButton
-            onClick={() =>
+          <Modal
+            visible={modalVisible}
+            title={dialogTitle}
+            onClose={() => this.setState({ dialog: null })}
+          >
+            {this.modalReadContent(dialogTitle)}
+          </Modal>
+          <ImgOverlay src={img ? img.url : null} className={css(coverPhoto)}>
+            <div style={{ display: 'flex', width: '70%', maxWidth: '80%' }}>
+              {/* TODO: fix width */}
+              <PreviewTags colorScale={tagColorScale} data={tags} />
+            </div>
+          </ImgOverlay>
+          <DescriptionField
+            style={{ maxHeight: '20%' }}
+            text={description}
+            onEdit={() =>
               this.setState({
-                dialog: { key: 'Challenge', data: media }
+                dialog: {
+                  key: 'Description',
+                  id: 'description',
+                  data: description
+                }
               })
             }
-            style={{ width: '80%' }}
-          >
-            {'Collect Card'}{' '}
-          </BigButton>
-
-          <FlipButton
-            color={uiColor}
-            onClick={flipHandler}
-            style={{ width: '20%' }}
-            className="ml-2"
           />
+          <MediaField
+            style={{ maxHeight: '20%' }}
+            media={media}
+            onClick={() =>
+              this.setState({ dialog: { key: 'Media', data: media } })
+            }
+          />
+          <div className="p-1 pt-3" style={{ display: 'flex' }}>
+            <BigButton
+              onClick={() =>
+                this.setState({
+                  dialog: { key: 'Challenge', data: media }
+                })
+              }
+              style={{ width: '80%' }}
+            >
+              {'Collect Card'}{' '}
+            </BigButton>
+
+            <FlipButton
+              color={uiColor}
+              onClick={flipHandler}
+              style={{ width: '20%' }}
+              className="ml-2"
+            />
+          </div>
         </div>
-      </div>
+      </CardHeader>
     );
   }
 }
+
+const StyledReadCardFront = props => (
+  <CardThemeConsumer>
+    {({ stylesheet }) => <ReadCardFront {...props} stylesheet={stylesheet} />}
+  </CardThemeConsumer>
+);
 
 // const mapStateToProps = state => ({ authUserId: state.Session.uid });
 
@@ -224,6 +243,6 @@ class ReadCardFront extends Component {
 //     dispatch
 //   );
 //
-export default ReadCardFront;
+export default StyledReadCardFront;
 // mapStateToProps
 // mapDispatchToProps

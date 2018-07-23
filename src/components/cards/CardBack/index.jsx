@@ -116,7 +116,8 @@ class CardBackSkeleton extends Component {
       tagColorScale,
       template,
       id: cardId,
-      uid
+      uid,
+      style
     } = this.props;
 
     // /TODO: card template update
@@ -153,7 +154,8 @@ class CardBackSkeleton extends Component {
           height: '90%',
           display: 'flex',
           alignContent: 'center',
-          flexDirection: 'column',
+          flexDirection: 'column'
+          // ...style
           // justifyContent: 'space-around'
           // pointerEvents: 'all'
         }}
@@ -227,12 +229,13 @@ class CardBackSkeleton extends Component {
   }
 }
 
-const CardBack = props => (
+const CardBack = ({ style, ...props }) => (
   <CardHeader
     onClose={props.onClose}
     background={props.background}
     title={props.title}
     uiColor={props.uiColor}
+    style={style}
   >
     <CardBackSkeleton {...props} />
   </CardHeader>

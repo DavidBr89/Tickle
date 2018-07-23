@@ -5,13 +5,7 @@ import EditCardFront from './EditCardFront';
 import CardHeader from '../CardHeader';
 
 const CardFront = props =>
-  props.edit ? (
-    <EditCardFront {...props} />
-  ) : (
-    <CardHeader {...props}>
-      <ReadCardFront {...props} />
-    </CardHeader>
-  );
+  props.edit ? <EditCardFront {...props} /> : <ReadCardFront {...props} />;
 
 CardFront.propTypes = {
   edit: PropTypes.bool,
