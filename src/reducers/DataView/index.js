@@ -50,8 +50,8 @@ export default function dataViewReducer(state = INITIAL_STATE, action) {
 
       return {
         ...state,
-        filterSet: [...filterSet, tag]
-        // selectedCardId: null
+        filterSet: [...filterSet, tag],
+        selectedCardId: null
       };
     }
 
@@ -61,14 +61,17 @@ export default function dataViewReducer(state = INITIAL_STATE, action) {
 
       return {
         ...state,
-        filterSet: difference(filterSet, [tag])
-        // selectedCardId: null
+        filterSet: difference(filterSet, [tag]),
+        selectedCardId: null
       };
     }
 
     case FILTER_CARDS: {
       const filterSet = action.options;
-      return { ...state, filterSet };
+      return { ...state, filterSet,
+
+        selectedCardId: null
+      };
     }
     // case ADD_CARD_FILTER: {
     //   const { filterSet } = state;

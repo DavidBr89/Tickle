@@ -5,7 +5,7 @@ import updateDataDim from './updateDataDimension';
 
 import {
   receivePlaces,
-  receiveReadableCards,
+  receiveCollectibleCards,
   receiveCreatedCards,
   receiveCardTemplates,
   createCard,
@@ -84,14 +84,18 @@ gapi.load('client', () => {
     );
 });
 
-export function fetchReadableCards(uid) {
+export function fetchCollectibleCards(uid) {
   // Thunk middleware knows how to handle functions.
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
   return function(dispatch) {
     // TODO: change later
     return db.readCards(uid, 'createdCards').then(data => {
-      dispatch(receiveReadableCards(data));
+      dispatch(
+        receiveCollectibleCards(
+          data.filter(d => d.challengeSubmission === null)
+        )
+      );
     });
   };
 }

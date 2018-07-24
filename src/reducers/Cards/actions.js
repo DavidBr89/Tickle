@@ -3,9 +3,9 @@ export function receivePlaces(options) {
   return { type: RECEIVE_PLACES, options };
 }
 
-export const RECEIVE_READABLE_CARDS = 'RECEIVE_READABLE_CARDS';
-export function receiveReadableCards(options) {
-  return { type: RECEIVE_READABLE_CARDS, options };
+export const RECEIVE_COLLECTIBLE_CARDS = 'RECEIVE_COLLECTIBLE_CARDS';
+export function receiveCollectibleCards(options) {
+  return { type: RECEIVE_COLLECTIBLE_CARDS, options };
 }
 
 export const RECEIVE_CREATED_CARDS = 'RECEIVE_CREATED_CARDS';

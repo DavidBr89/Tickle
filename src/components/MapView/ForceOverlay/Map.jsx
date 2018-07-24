@@ -170,9 +170,11 @@ class Map extends Component {
       selectedCardId !== null &&
       prevProps.selectedCardId !== selectedCardId
     ) {
+      console.log('NODES', nodes, 'selectedCardId', selectedCardId);
+      const selectedNode = nodes.find(n => selectedCardId === n.id);
       const {
         loc: { longitude, latitude }
-      } = nodes.find(n => selectedCardId === n.id);
+      } = selectedNode;
 
       const vp = { ...this.state, longitude, latitude, zoom: maxZoom };
       this.props.changeMapViewport({ ...vp });

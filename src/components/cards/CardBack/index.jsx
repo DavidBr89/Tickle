@@ -120,10 +120,8 @@ class CardBackSkeleton extends Component {
       style
     } = this.props;
 
-    // /TODO: card template update
     const { extended } = this.state;
 
-    const isHidden = field => extended !== null && extended !== field;
     const isExtended = field => ({
       extended: extended === field && extended !== null
     });

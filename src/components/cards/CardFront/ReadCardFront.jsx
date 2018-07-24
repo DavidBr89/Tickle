@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'aphrodite';
 
+import * as Icon from 'react-feather';
+
 // import chroma from 'chroma-js';
 // import * as Icon from 'react-feather';
 
@@ -59,7 +61,7 @@ class ReadCardFront extends Component {
   static defaultProps = {
     title: null,
     challenge: null,
-    challengeSubmission: {},
+    challengeSubmission: null,
     // date: '28/04/2012 10:00',
     tags: null,
     img: null,
@@ -115,8 +117,9 @@ class ReadCardFront extends Component {
           <MediaChallenge
             {...challenge}
             key={id}
-            {...challengeSubmission}
+            challengeSubmission={challengeSubmission}
             onChange={d => {
+              console.log('challenge SUBMISSION', d);
               onSubmitChallenge({
                 cardId: id,
                 authorId: uid,
@@ -142,6 +145,7 @@ class ReadCardFront extends Component {
       uiColor,
       flipHandler,
       // background,
+      challengeSubmission,
       stylesheet,
       tagColorScale,
       style
@@ -211,7 +215,11 @@ class ReadCardFront extends Component {
               }
               style={{ width: '80%' }}
             >
-              {'Collect Card'}{' '}
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                {challengeSubmission !== null
+                  ? 'Challenge submitted!'
+                  : 'Collect Card'}
+              </div>
             </BigButton>
 
             <FlipButton
@@ -227,6 +235,9 @@ class ReadCardFront extends Component {
   }
 }
 
+// <span className="ml-1">
+//                 <Icon.Lock />
+//               </span>
 const StyledReadCardFront = props => (
   <CardThemeConsumer>
     {({ stylesheet }) => <ReadCardFront {...props} stylesheet={stylesheet} />}

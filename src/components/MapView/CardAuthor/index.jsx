@@ -47,16 +47,17 @@ const mapStateToProps = state => {
     tags: tmpCard.tags.length > 0 ? tmpCard.tags : [username]
   };
 
-  const cards = [templateCard, ...createdCards];
-
-  const filteredCards = cards.filter(
+  const filteredCards = createdCards.filter(
     d =>
       filterSet.length === 0 ||
       intersection(d.tags, filterSet).length === filterSet.length
   );
-  const cardSets = setify(filteredCards);
 
-  const selectedCard = filteredCards.find(d => d.id === selectedCardId) || null;
+  const cards = [templateCard, ...filteredCards];
+
+  const cardSets = setify(cards);
+
+  const selectedCard = cards.find(d => d.id === selectedCardId) || null;
 
   const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
 
@@ -70,7 +71,7 @@ const mapStateToProps = state => {
     filterSet,
     templateCard,
     cardSets,
-    cards: filteredCards,
+    cards,
     selectedTags
   };
 };
@@ -92,7 +93,14 @@ const mapDispatchToProps = dispatch =>
 // });
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const { selectedCardId, uid, templateCard, createdCards, filterSet } = state;
+  const {
+    selectedCardId,
+    uid,
+    templateCard,
+    createdCards,
+    cards,
+    filterSet
+  } = state;
   console.log('card author state', state);
   const {
     selectCard,

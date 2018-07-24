@@ -9,6 +9,7 @@ import Home from './components/Home';
 import CardView from './components/MapView/CardView';
 import CardAuthor from './components/MapView/CardAuthor';
 import Admin from './components/Admin';
+import Account from './components/Account';
 import DefaultLayout from './components/Layout';
 
 import withAuthentication from './components/withAuthentication';
@@ -140,6 +141,15 @@ const Routes = () => (
             component={() => (
               <DefaultLayout>
                 <Admin />
+              </DefaultLayout>
+            )}
+          />
+          <Route
+            exact
+            path={routes.ACCOUNT}
+            component={() => (
+              <DefaultLayout>
+                <Account />
               </DefaultLayout>
             )}
           />

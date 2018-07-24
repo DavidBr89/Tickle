@@ -180,6 +180,7 @@ class CardViewPage extends Component {
     const slotSize = 100 / 3.5;
     const cardStackWidth =
       slotSize / cards.length < slotSize ? 100 : slotSize * cards.length;
+    console.log('cardStackWidth', cardStackWidth);
     return (
       <div
         className="w-100 h-100"

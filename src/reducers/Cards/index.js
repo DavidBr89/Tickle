@@ -24,7 +24,7 @@ import {
   UPDATE_CARD,
   UPDATE_CARD_SUCCESS,
   UPDATE_CARD_TEMPLATE,
-  RECEIVE_READABLE_CARDS,
+  RECEIVE_COLLECTIBLE_CARDS,
   RECEIVE_CREATED_CARDS,
   CREATE_CARD,
   SUCCESS_CREATE_CARD,
@@ -84,7 +84,7 @@ const tagColors = chromatic.schemeSet3
 const INITIAL_STATE = {
   cardTemplateId,
   tagColors,
-  readableCards: [],
+  collectibleCards: [],
   createdCards: [],
   tmpCards: [],
   // TODO: update
@@ -97,6 +97,12 @@ const INITIAL_STATE = {
   //
   // TODO: adapt colors
 };
+
+const makeColorScale = cardSets =>
+  d3
+    .scaleOrdinal()
+    .domain(cardSets.map(s => s.key))
+    .range(tagColors);
 
 // const cardTemplateId = 'temp';
 function reducer(state = INITIAL_STATE, action) {
@@ -118,28 +124,25 @@ function reducer(state = INITIAL_STATE, action) {
 
       const cardSets = setify(cards);
 
-      const tagColorScale = d3
-        .scaleOrdinal()
-        .domain(cardSets.map(s => s.key))
-        .range(tagColors);
-
       return {
         ...state,
         createdCards,
         loadingCards: false,
-        tagColorScale
+        tagColorScale: makeColorScale(cardSets)
         // cards
         // isCardDragging
       };
     }
 
-    case RECEIVE_READABLE_CARDS: {
+    case RECEIVE_COLLECTIBLE_CARDS: {
       const cards = action.options;
 
+      const cardSets = setify(cards);
       return {
         ...state,
-        readableCards: cards.map(c => ({ ...c, edit: false })),
-        loadingCards: false
+        collectibleCards: cards,
+        loadingCards: false,
+        tagColorScale: makeColorScale(cardSets)
         // defaultCards: cards
         // isCardDragging
       };
@@ -206,11 +209,11 @@ function reducer(state = INITIAL_STATE, action) {
     }
 
     case SUBMIT_CHALLENGE: {
-      const { createdCards } = state;
+      const { collectibleCards } = state;
 
       const challengeSubmission = action.options;
 
-      const updatedCards = createdCards.map(c => {
+      const updatedCards = collectibleCards.map(c => {
         if (c.id === challengeSubmission.cardId) {
           return { ...c, challengeSubmission };
         }
@@ -221,7 +224,7 @@ function reducer(state = INITIAL_STATE, action) {
         ...state,
         // TODO: remove
         // tmpCards: updatedCards,
-        createdCards: updatedCards
+        collectibleCards: updatedCards
       };
       // const tmpCards = [...createdCards];
 

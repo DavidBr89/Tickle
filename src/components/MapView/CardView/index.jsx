@@ -25,7 +25,7 @@ import CardViewPage from './CardViewPage';
 
 // Container
 const mapStateToProps = state => {
-  const { readableCards, createdCards, cardTemplateId, tmpCard } = state.Cards;
+  const { collectibleCards, createdCards } = state.Cards;
 
   const { selectedCardId, filterSet } = state.DataView;
 
@@ -37,7 +37,7 @@ const mapStateToProps = state => {
     authUser: { uid }
   } = state.Session;
 
-  const filteredCards = createdCards.filter(
+  const filteredCards = collectibleCards.filter(
     d =>
       filterSet.length === 0 ||
       intersection(d.tags, filterSet).length === filterSet.length
@@ -80,12 +80,11 @@ const mapDispatchToProps = dispatch =>
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
   const { selectedCardId, uid } = state;
-  console.log('selectedCard', selectedCardId);
   const {
     selectCard,
     extendSelectedCard,
     // fetchReadableCards,
-    fetchCreatedCards
+    fetchCollectibleCards
   } = dispatcherProps;
 
   const { dataView } = ownProps;
@@ -93,10 +92,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const previewCardAction = d =>
     selectedCardId === d.id ? extendSelectedCard(d.id) : selectCard(d.id);
 
-  console.log('mergeCards', state.cards);
   const fetchCards = () => {
     // TODO
-    fetchCreatedCards(uid);
+    fetchCollectibleCards(uid);
   };
 
   const preSelectCardId = () => selectCard(null);

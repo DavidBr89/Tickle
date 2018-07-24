@@ -204,15 +204,15 @@ class Card extends React.Component {
       .darken(1)
       .hex();
 
-    const togglecard = () => <React.Fragment />;
-
     return (
       <div
-        className={`${cx.flipContainer}`}
+        className={`${css(stylesheet.flipContainer)}`}
         style={{ ...style, maxWidth: 500, maxHeight: 800 }}
       >
         <div
-          className={`${cx.flipper} ${!frontView ? css(flipAnim) : null}`}
+          className={`${css(stylesheet.flipper)} ${
+            !frontView ? css(flipAnim) : null
+          }`}
           style={{
             background
           }}

@@ -14,6 +14,7 @@ class DimensionsWrapper extends React.Component {
     super(props);
     this.state = { width: 0, height: 0 };
   }
+  timeout = null;
 
   componentDidMount() {
     const { delay } = this.props;
@@ -22,7 +23,7 @@ class DimensionsWrapper extends React.Component {
     console.log('INITIAL DIM', width, height);
 
     if (delay !== null) {
-      setTimeout(() => this.updateDim(), delay);
+      this.timeout = setTimeout(() => this.updateDim(), delay);
     } else {
       this.updateDim();
     }
@@ -46,6 +47,10 @@ class DimensionsWrapper extends React.Component {
     } else {
       this.updateDim(prevState);
     }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timeout);
   }
 
   render() {

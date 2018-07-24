@@ -434,13 +434,14 @@ export const BigButton = ({
   style,
   edit,
   children,
+  disabled,
   className
 }) => (
   <CardThemeConsumer>
     {({ uiColor, stylesheet }) => (
       <button
         className={`${className} ${css(stylesheet.btn)}`}
-        disabled={collected}
+        disabled={disabled}
         style={{
           width: '100%',
           // display: 'inline-flex',
@@ -460,7 +461,7 @@ export const BigButton = ({
 );
 
 BigButton.propTypes = {
-  collected: PropTypes.bool,
+  disabled: PropTypes.bool,
   edit: PropTypes.bool,
   onClick: PropTypes.func,
   expPoints: PropTypes.number,
@@ -469,7 +470,7 @@ BigButton.propTypes = {
 };
 
 BigButton.defaultProps = {
-  collected: false,
+  disabled: false,
   toggleCardChallenge: d => d,
   expPoints: 60,
   color: 'black',

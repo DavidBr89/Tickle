@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { ajax } from 'jquery';
 
 import * as Icon from 'react-feather';
-import { css } from 'aphrodite';
+import { css } from 'aphrodite/no-important';
 
 import { uniqBy } from 'lodash';
 
@@ -31,6 +31,64 @@ const GIPHY = 'giphy';
 const YOUTUBE = 'youtube';
 const FLICKR = 'flickr';
 const USER_CONTENT = 'user-content';
+
+const OVERVIEW = 'Overview';
+
+const navIcons = [
+  {
+    key: WIKIPEDIA,
+    node: (
+      <i
+        className="fa fa-wikipedia-w fa-1x"
+        style={{ fontSize: '19px' }}
+        aria-hidden="true"
+      />
+    )
+  },
+  {
+    key: YOUTUBE,
+    node: (
+      <i
+        className="fa fa-youtube fa-1x"
+        style={{ fontSize: '19px' }}
+        aria-hidden="true"
+      />
+    )
+  },
+  {
+    key: GIPHY,
+    node: (
+      <small
+        style={{
+          paddingLeft: '13px',
+          paddingRight: '13px',
+          fontWeight: 'bold'
+        }}
+      >
+        GIF
+      </small>
+    )
+  },
+
+  {
+    key: USER_CONTENT,
+    node: (
+      <div
+        style={{
+          fontweight: 'bold'
+        }}
+      >
+        upload
+      </div>
+    )
+  },
+  {
+    key: OVERVIEW,
+    node: (
+      <span style={{ fontWeight: 'bold', fontSize: 'large' }}>Overview</span>
+    )
+  }
+];
 
 const userContentUploadPath = id => `media/${id}`;
 
@@ -300,61 +358,32 @@ const CellDetail = ({
         onClick={onClick}
         style={{
           overflow: 'hidden',
-          backgroundImage: thumbnail !== null && `url('${thumbnail}')`,
-          backgroundRepeat: thumbnail !== null && 'no-repeat',
-          backgroundSize: thumbnail !== null && '100% 100%',
+          // backgroundImage: thumbnail !== null && `url('${thumbnail}')`,
+          // backgroundRepeat: thumbnail !== null && 'no-repeat',
+          // backgroundSize: thumbnail !== null && '100% 100%',
           ...fullDim,
           // height: 200
-          width: '80%'
+          width: '100%'
         }}
       >
+        <h3 style={{ ...truncateStyle }}>
+          <NewTabLink href={url}>{title}</NewTabLink>
+        </h3>
         {thumbnail ? (
           <div
-            className="mt-1 ml-1 p-1"
+            onClick={onClick}
             style={{
-              fontSize: '18px',
               overflow: 'hidden',
-              maxHeight: '90%',
-              width: '85%',
-              zIndex: 2
+              backgroundImage: thumbnail !== null && `url('${thumbnail}')`,
+              backgroundRepeat: thumbnail !== null && 'no-repeat',
+              backgroundSize: thumbnail !== null && '100% 100%',
+              ...fullDim
+              // height: 200
+              // width: '80%'
             }}
-          >
-            <h3
-              style={{
-                ...(type === IMG || type === VIDEO ? truncateStyle : null)
-              }}
-            >
-              <SpanBG>
-                {selected ? <NewTabLink href={url}>{title}</NewTabLink> : title}
-              </SpanBG>
-            </h3>
-            {type === TEXT && (
-              <div
-                className={`${css(shallowBg)} p-2 mt-2`}
-                style={{
-                  maxWidth: '80%'
-                  // TODO: fix line break
-                  // maxHeight: 80
-                  // fontSize: 'small'
-                }}
-              >
-                {descr}
-              </div>
-            )}
-          </div>
+          />
         ) : (
-          <div
-            style={{
-              position: 'relative',
-              width: '90%',
-              height: '100%'
-            }}
-          >
-            <h3>
-              <NewTabLink href={url}>{title}</NewTabLink>
-            </h3>
-            <p>{descr}</p>
-          </div>
+          <p>{descr}</p>
         )}
       </div>
     )}
@@ -375,7 +404,7 @@ CellDetail.defaultProps = {
   focusColor: 'black'
 };
 // props.selected ? css(stylesheet.bigBoxShadow) : css(stylesheet.border)}
-const CellWrapper = ({ children, className, focusColor, ...props }) => (
+const CellWrapper = ({ btn, className, focusColor, ...props }) => (
   <CardThemeConsumer>
     {({ stylesheet }) => (
       <div
@@ -383,19 +412,15 @@ const CellWrapper = ({ children, className, focusColor, ...props }) => (
           props.selected ? css(stylesheet.bigBoxShadow) : css(stylesheet.border)
         }`}
         style={{
-          height: 200,
+          height: 250,
           width: '100%',
           cursor: 'pointer',
-          position: 'relative'
+          position: 'relative',
+          display: 'flex'
         }}
       >
-        <div
-          className="mr-3"
-          style={{ position: 'absolute', zIndex: 300, right: 0 }}
-        >
-          <div>{children}</div>
-        </div>
         <CellDetail {...props} />
+        <div className="ml-3">{btn}</div>
       </div>
     )}
   </CardThemeConsumer>
@@ -613,9 +638,9 @@ class UnstyledMediaSearch extends Component {
       arr.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     switch (sel) {
-      case 'overview':
+      case OVERVIEW:
         return <MediaOverview data={selectedMedia} edit onChange={onChange} />;
-      case 'wikipedia':
+      case WIKIPEDIA:
         return (
           <MetaSearch
             onChange={newArticles =>
@@ -637,7 +662,7 @@ class UnstyledMediaSearch extends Component {
             key="wikipedia"
           />
         );
-      case 'youtube':
+      case YOUTUBE:
         return (
           <MetaSearch
             onChange={newVideos =>
@@ -659,7 +684,7 @@ class UnstyledMediaSearch extends Component {
             key="youtube"
           />
         );
-      case 'giphy':
+      case GIPHY:
         return (
           <MetaSearch
             preSelected={selGIFs}
@@ -681,7 +706,7 @@ class UnstyledMediaSearch extends Component {
             key="giphy"
           />
         );
-      case 'flickr':
+      case FLICKR:
         return (
           <MetaSearch
             preSelected={selPhotos}
@@ -703,7 +728,7 @@ class UnstyledMediaSearch extends Component {
             key="flickr"
           />
         );
-      case 'url':
+      case URL:
         return (
           <UrlMedia
             preSelected={selURLs}
@@ -724,7 +749,7 @@ class UnstyledMediaSearch extends Component {
             key={URL}
           />
         );
-      case 'upload':
+      case USER_CONTENT:
         return (
           <UploadUserContent
             media={selUserContent}
@@ -758,7 +783,16 @@ class UnstyledMediaSearch extends Component {
     const btnClass = sel =>
       sel === selected ? css(stylesheet.btnActive) : css(stylesheet.btn);
 
-    const updState = sel => () => this.setState({ selected: sel });
+    const navBtn = ({ key, node }) => (
+      <button
+        className={btnClass(key)}
+        type="button"
+        onClick={() => this.setState({ selected: key })}
+        id={key}
+      >
+        {node}
+      </button>
+    );
 
     return (
       <div style={{ width: '100%', height: '100%' }}>
@@ -767,95 +801,7 @@ class UnstyledMediaSearch extends Component {
           style={{ display: 'flex', justifyContent: 'space-between' }}
           role="tablist"
         >
-          <button
-            className={btnClass('wikipedia')}
-            type="button"
-            onClick={updState('wikipedia')}
-            id="wikipedia"
-          >
-            <i
-              className="fa fa-wikipedia-w fa-1x"
-              style={{ fontSize: '19px' }}
-              aria-hidden="true"
-            />
-          </button>
-          <button
-            className={btnClass('youtube')}
-            type="button"
-            onClick={updState('youtube')}
-            id="youtube"
-          >
-            <i
-              className="fa fa-youtube fa-1x"
-              style={{ fontSize: '19px' }}
-              aria-hidden="true"
-            />
-          </button>
-          <button
-            className={btnClass('giphy')}
-            type="button"
-            onClick={updState('giphy')}
-            id="giphy"
-          >
-            <small
-              style={{
-                paddingLeft: '13px',
-                paddingRight: '13px',
-                fontWeight: 'bold'
-              }}
-            >
-              GIF
-            </small>
-          </button>
-          <button
-            className={btnClass('url')}
-            type="button"
-            onClick={updState('url')}
-            id="giphy"
-          >
-            <small
-              style={{
-                paddingLeft: '13px',
-                paddingRight: '13px',
-                fontWeight: 'bold'
-              }}
-            >
-              URL
-            </small>
-          </button>
-          <button
-            className={btnClass('upload')}
-            type="button"
-            onClick={updState('upload')}
-            id="giphy"
-          >
-            <small
-              style={{
-                paddingLeft: '13px',
-                paddingRight: '13px',
-                fontWeight: 'bold'
-              }}
-            >
-              Upload
-            </small>
-          </button>
-          <button
-            type="button"
-            className={btnClass('overview')}
-            onClick={updState('overview')}
-            id="overview"
-          >
-            <span style={{ fontWeight: 'bold', fontSize: 'large' }}>
-              Overview
-            </span>
-            {
-              // <i
-              // className="fa fa-link fa-1x col-1"
-              // style={{ fontSize: '19px' }}
-              // aria-hidden="true"
-              // />
-            }
-          </button>
+          {navIcons.map(navBtn)}
         </div>
         <div className="tab-content" style={{ height: '100%' }}>
           {/* TODO: check fade */}
@@ -866,19 +812,6 @@ class UnstyledMediaSearch extends Component {
       </div>
     );
   }
-}
-
-function SearchBar({ onSearch }) {
-  return (
-    <form style={{ display: 'flex', justifyContent: 'space-between' }}>
-      <input
-        ref={searchBar => (this.searchBar = searchBar)}
-        type="text"
-        placeholder="Search..."
-        onChange={onSearch}
-      />
-    </form>
-  );
 }
 
 function MediaBtn({ selected, onClick }) {
@@ -1025,19 +958,20 @@ class MetaSearch extends Component {
                 paddingRight: '10%'
               }}
               {...d}
-            >
-              <MediaBtn
-                selected={selectedIds.includes(d.id)}
-                onClick={e => {
-                  e.stopPropagation();
-                  // if (isSelected) {
-                  selectedIds.includes(d.id)
-                    ? this.removeItem(d.id)
-                    : this.addItem(d.id);
-                  // }
-                }}
-              />
-            </CellWrapper>
+              btn={
+                <MediaBtn
+                  selected={selectedIds.includes(d.id)}
+                  onClick={e => {
+                    e.stopPropagation();
+                    // if (isSelected) {
+                    selectedIds.includes(d.id)
+                      ? this.removeItem(d.id)
+                      : this.addItem(d.id);
+                    // }
+                  }}
+                />
+              }
+            />
           )}
         </ScrollList>
       </div>
@@ -1148,9 +1082,13 @@ class MediaOverview extends Component {
           itemStyle={{ paddingRight: '10%', paddingLeft: '5%' }}
         >
           {(d, selected) => (
-            <CellWrapper {...d} selected={selected === d.url}>
-              {edit && <MediaBtn selected onClick={() => this.removeItem(d)} />}
-            </CellWrapper>
+            <CellWrapper
+              {...d}
+              selected={selected === d.url}
+              btn={
+                edit && <MediaBtn selected onClick={() => this.removeItem(d)} />
+              }
+            />
           )}
         </ScrollList>
       </div>

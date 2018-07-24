@@ -5,7 +5,6 @@ import * as Icon from 'react-feather';
 import { uniqBy } from 'lodash';
 import { css } from 'aphrodite/no-important';
 
-import FileUpload from 'Utils/FileUpload';
 import { ModalBody } from 'Utils/Modal';
 import MediaUpload from 'Utils/MediaUpload';
 // import ScrollList from 'Utils/ScrollList';
@@ -35,12 +34,14 @@ class MediaChallenge extends Component {
     description: PropTypes.string,
     styles: PropTypes.object,
     onChange: PropTypes.func,
-    stylesheet: PropTypes.object
+    stylesheet: PropTypes.object,
+    challengeSubmission: PropTypes.oneOf([PropTypes.object, null])
   };
 
   static defaultProps = {
     className: '',
-    description: 'Upload a photo to win the challenge',
+    description: 'placeholder challenge',
+    challengeSubmission: null,
     onChange: d => d,
     data: {},
     styles: {},
@@ -79,7 +80,7 @@ class MediaChallenge extends Component {
           <MediaUpload
             style={{ width: '100%' }}
             uploadPath={id => `challengeSubmissionFiles/${id}`}
-            {...this.props}
+            media={media}
             stylesheet={stylesheet}
             onChange={newMedia => {
               this.setState({ media: newMedia });
