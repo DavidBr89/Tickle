@@ -10,11 +10,10 @@ import {
   changeViewport
 } from 'Reducers/Map/actions';
 
-import setify from 'Utils/setify';
-
+import setify from 'Utils/setify'; // eslint-disable-line
+import { makeTagColorScale } from 'Src/styles/GlobalThemeContext'; // eslint-disable-line
 import { screenResize } from 'Reducers/Screen/actions';
 import * as cardActions from 'Reducers/Cards/actions';
-
 import * as asyncActions from 'Reducers/Cards/async_actions';
 import * as dataViewActions from 'Reducers/DataView/actions';
 
@@ -57,6 +56,8 @@ const mapStateToProps = state => {
 
   const cardSets = setify(cards);
 
+  const tagColorScale = makeTagColorScale(cardSets);
+
   const selectedCard = cards.find(d => d.id === selectedCardId) || null;
 
   const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
@@ -72,7 +73,8 @@ const mapStateToProps = state => {
     templateCard,
     cardSets,
     cards,
-    selectedTags
+    selectedTags,
+    tagColorScale
   };
 };
 

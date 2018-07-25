@@ -44,7 +44,7 @@ const getShallowCards = (uid, collectionName = 'readableCards') =>
       );
     });
 
-export const readCards = (uid, collectionName = 'readableCards') =>
+export const readCards = uid =>
   getShallowCards(uid).then(data => {
     const pendingPromises = data.map(d =>
       getOneChallengeSubmission(d.id, uid).then(
@@ -229,14 +229,16 @@ export const getUser = uid =>
 export const getDetailedUserInfo = uid =>
   getUser(uid)
     .then(usr =>
-      getShallowCards(uid).then(
-        createdCards =>
+      readCards(uid).then(
+        cards =>
           new Promise(resolve =>
             resolve({
               ...usr,
               readableCards: [],
-              createdCards,
-              collectedCards: []
+              createdCards: cards.filter(c => c.uid === uid),
+              // TODO
+              collectedCards: cards.filter(c => c.challengeSubmission !== null),
+              submittedCards: cards.filter(c => c.challengeSubmission !== null)
             })
           )
       )

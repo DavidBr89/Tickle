@@ -6,7 +6,8 @@ import { css } from 'aphrodite';
 
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
-import { FieldSet, FlipButton } from '../layout';
+import { FlipButton } from '../layout';
+import { FieldSet } from 'Components/utils/StyledComps';
 import Comments from './Comments';
 import CardHeader from '../CardHeader';
 import Author from './Author';
@@ -49,6 +50,12 @@ DeleteButton.defaultProps = {
   color: 'black',
   className: ''
 };
+
+const StyledAuthor = ({ ...props }) => (
+  <CardThemeConsumer>
+    {({ stylesheet }) => <Author {...props} stylesheet={stylesheet} />}
+  </CardThemeConsumer>
+);
 
 class CardBackSkeleton extends Component {
   static propTypes = {
@@ -163,14 +170,10 @@ class CardBackSkeleton extends Component {
           style={displayStyle('author')}
           onClick={() => this.selectField('author')}
         >
-          <Author
+          <StyledAuthor
             uid={uid}
             extended={extended === 'author'}
             tagColorScale={tagColorScale}
-            onClose={() => {
-              // TODO
-              // console.log('onCLose');
-            }}
           />
         </BackField>
         <BackField

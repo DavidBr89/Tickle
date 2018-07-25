@@ -237,7 +237,10 @@ class EditCardFront extends PureComponent {
   }
 
   updateFieldAndCloseModal(field) {
-    this.setState(oldState => ({ data: { ...oldState.data, ...field } }));
+    this.setState(oldState => ({
+      data: { ...oldState.data, ...field },
+      dialog: null
+    }));
   }
 
   modalWriteContent() {
@@ -306,7 +309,7 @@ class EditCardFront extends PureComponent {
             {...modalProps}
             text={description}
             onUpdate={newDescr => {
-              this.updateField(
+              this.updateFieldAndCloseModal(
                 {
                   description: newDescr
                 },

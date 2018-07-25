@@ -7,6 +7,7 @@ import Session from './Session';
 import DataView from './DataView';
 import Screen from './Screen';
 import Admin from './Admin';
+import Account from './Account';
 // import Login from './components/Login/reducer';
 
 // TODO: write my own combineReducer
@@ -17,7 +18,8 @@ export default combineReducers({
   Session,
   DataView,
   Admin,
-  Screen
+  Screen,
+  Account
 });
 // export default MapView;
 // export default CardCreator;

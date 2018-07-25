@@ -305,6 +305,7 @@ class CardAuthorPage extends Component {
               cards={cards}
               cardSets={cardSets}
               selectedTags={selectedTags}
+              tagColorScale={tagColorScale}
               style={{ height: '65%' }}
             />
           </div>

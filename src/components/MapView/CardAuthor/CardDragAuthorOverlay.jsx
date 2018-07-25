@@ -67,6 +67,7 @@ const CardAuthorOverlay = props => {
       dropHandler={onCardDrop}
       dragged={isCardDragging}
       style={style}
+      colorScale={tagColorScale}
     >
       <DataOverlay
         data={cards}

@@ -2,22 +2,21 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { scaleOrdinal } from 'd3';
 import * as Icon from 'react-feather';
+import { css } from 'aphrodite/no-important';
 // import Grid from 'mygrid/dist';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { TEXT, IMG, GIF, VIDEO } from 'Constants/mediaTypes';
 import { profileSrc, colorClass, colorScaleRandom } from './styles';
-import cxx from './layout.scss';
-import { css } from 'aphrodite/no-important';
+
+import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
+import { FieldSet } from 'Components/utils/StyledComps';
 
 // TODO: remove
-// import { ModalBody } from '../utils/Modal';
-// import placeholderImgSrc from './placeholder.png';
+import cxx from './layout.scss';
 
 import cx from './Card.scss';
 
 import placeholderImgSrc from './placeholder.png';
-
-import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
 const challengeTypes = ['quiz', 'gap text', 'hangman'];
 const mediaScale = scaleOrdinal()
@@ -34,6 +33,10 @@ export const ZoomIcon = ({ style, className }) => (
 ZoomIcon.propTypes = { style: PropTypes.object, className: PropTypes.string };
 ZoomIcon.defaultProps = { style: {}, className: '' };
 
+// TODO: remove SASS dependence
+// TODO: remove SASS dependence
+// TODO: remove SASS dependence
+// TODO: remove SASS dependence
 const EditIcon = ({ style, className }) => (
   <i
     className={`fa fa-pencil-square-o ${className} ${cxx.icon}`}
@@ -72,79 +75,6 @@ Legend.defaultProps = { style: {}, children: null };
 //             ) : (
 //               <EditIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
 //             )
-
-export const FieldSet = ({
-  children,
-  legend,
-  style,
-  edit,
-  uiColor,
-  onClick,
-  legendStyle,
-  bodyStyle,
-  className,
-  icon
-}) => (
-  <div
-    className={className}
-    onClick={onClick}
-    style={{
-      // border: `1px solid ${uiColor}`,
-      marginTop: '4px',
-      width: '100%',
-      height: '100%',
-      // padding: 10,
-      ...style,
-      overflow: 'hidden'
-    }}
-  >
-    <div
-      style={{
-        margin: 10,
-        width: '100%',
-        height: '100%'
-      }}
-    >
-      <div
-        style={{
-          position: 'relative',
-          ...bodyStyle
-        }}
-      >
-        <div>
-          <h5 style={legendStyle}>
-            <span>
-              {legend} {icon}
-            </span>
-          </h5>
-        </div>
-      </div>
-      {children}
-    </div>
-  </div>
-);
-
-FieldSet.propTypes = {
-  uiColor: PropTypes.string,
-  legend: PropTypes.string.isRequired,
-  children: PropTypes.node.isRequired,
-  edit: PropTypes.bool,
-  style: PropTypes.object,
-  onClick: PropTypes.oneOf([null, PropTypes.func]),
-  legendStyle: PropTypes.object,
-  bodyStyle: PropTypes.object,
-  icon: PropTypes.oneOf([PropTypes.node, null])
-};
-
-FieldSet.defaultProps = {
-  edit: false,
-  uiColor: 'grey',
-  classname: '',
-  onClick: null,
-  style: {},
-  legendStyle: {},
-  bodyStyle: {}
-};
 
 export const ChallengeField = ({
   text,

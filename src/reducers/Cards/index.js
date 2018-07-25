@@ -10,9 +10,6 @@
 
 import updCardDataDim from './updateDataDimension';
 import setify from 'Utils/setify';
-import * as d3 from 'd3';
-import * as chromatic from 'd3-scale-chromatic';
-import chroma from 'chroma-js';
 
 import { union, difference } from 'lodash';
 
@@ -77,13 +74,8 @@ const defaultCardTemplate = {
   floorY: 0.5
 };
 
-const tagColors = chromatic.schemeSet3
-  .reverse()
-  .map(c => chroma(c).alpha(0.04));
-
 const INITIAL_STATE = {
   cardTemplateId,
-  tagColors,
   collectibleCards: [],
   createdCards: [],
   tmpCards: [],
@@ -97,12 +89,6 @@ const INITIAL_STATE = {
   //
   // TODO: adapt colors
 };
-
-const makeColorScale = cardSets =>
-  d3
-    .scaleOrdinal()
-    .domain(cardSets.map(s => s.key))
-    .range(tagColors);
 
 // const cardTemplateId = 'temp';
 function reducer(state = INITIAL_STATE, action) {
@@ -118,17 +104,17 @@ function reducer(state = INITIAL_STATE, action) {
     }
 
     case RECEIVE_CREATED_CARDS: {
-      const { tagColors } = state;
       const cards = action.options;
       const createdCards = cards.map(c => ({ ...c, edit: true }));
 
       const cardSets = setify(cards);
+      // const tagColorScale = makeColorScale(cardSets);
 
       return {
         ...state,
         createdCards,
-        loadingCards: false,
-        tagColorScale: makeColorScale(cardSets)
+        loadingCards: false
+        // tagColorScale
         // cards
         // isCardDragging
       };
@@ -138,11 +124,12 @@ function reducer(state = INITIAL_STATE, action) {
       const cards = action.options;
 
       const cardSets = setify(cards);
+      // const tagColorScale = makeColorScale(cardSets);
       return {
         ...state,
         collectibleCards: cards,
-        loadingCards: false,
-        tagColorScale: makeColorScale(cardSets)
+        loadingCards: false
+        // tagColorScale
         // defaultCards: cards
         // isCardDragging
       };

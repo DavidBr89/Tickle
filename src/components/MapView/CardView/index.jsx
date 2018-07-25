@@ -11,6 +11,8 @@ import {
 } from 'Reducers/Map/actions';
 
 import setify from 'Utils/setify';
+// rename path
+import { makeTagColorScale } from 'Src/styles/GlobalThemeContext';
 
 import { screenResize } from 'Reducers/Screen/actions';
 import * as cardActions from 'Reducers/Cards/actions';
@@ -44,6 +46,7 @@ const mapStateToProps = state => {
   );
   console.log('UPD UPD card to filter', filteredCards);
   const cardSets = setify(filteredCards);
+  const tagColorScale = makeTagColorScale(cardSets);
   const selectedCard = filteredCards.find(d => d.id === selectedCardId) || null;
 
   const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
@@ -58,7 +61,8 @@ const mapStateToProps = state => {
     cardSets,
     selectedTags,
     ...state.Screen,
-    cards: filteredCards
+    cards: filteredCards,
+    tagColorScale
   };
 };
 

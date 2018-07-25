@@ -66,6 +66,7 @@ const CardDataOverlay = props => {
     <div style={style}>
       <DataOverlay
         {...props}
+        colorScale={tagColorScale}
         padding={{
           bottom: height / 5,
           top: height / 5,

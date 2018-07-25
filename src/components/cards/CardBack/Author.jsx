@@ -8,7 +8,7 @@ import { db } from 'Firebase';
 
 // import { skillTypes } from '../../dummyData';
 import CardMarker from '../CardMarker';
-import { FieldSet } from '../layout';
+import { FieldSet } from 'Components/utils/StyledComps';
 import setify from 'Utils/setify';
 
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
@@ -89,70 +89,67 @@ const ExtendedAuthor = ({
   skills,
   activity,
   interests,
+  stylesheet,
   placeholderImgUrl,
   numCollectedCards,
   numCreatedCards,
   ...authorPreviewProps
 }) => (
-  <CardThemeConsumer>
-    {({ stylesheet }) => (
-      <div
-        style={{
-          display: 'flex',
-          position: 'relative',
-          justifyContent: 'center',
-          // alignItems: 'center',
-          flexDirection: 'column',
-          ...style
-        }}
-      >
-        <AuthorPreview {...authorPreviewProps} />
+  <div
+    style={{
+      display: 'flex',
+      position: 'relative',
+      justifyContent: 'center',
+      // alignItems: 'center',
+      flexDirection: 'column',
+      ...style
+    }}
+  >
+    <AuthorPreview {...authorPreviewProps} />
 
-        <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
-          Personal
-        </div>
-        <FieldSet
-          legend="Interests:"
-          className={css(stylesheet.shallowBg)}
-          style={noBorderStyle}
-          legendStyle={legendStyle}
-        >
-          <SkillBar
-            sets={interests}
-            acc={d => d.count}
-            tagColorScale={tagColorScale}
-          />
-        </FieldSet>
-        <FieldSet
-          legend="skills:"
-          style={noBorderStyle}
-          className={css(stylesheet.shallowBg)}
-          legendStyle={legendStyle}
-        >
-          <SkillBar sets={skills} tagColorScale={tagColorScale} />
-        </FieldSet>
-        <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
-          Activity
-        </div>
-        <FieldSet
-          legend="Collected Cards"
-          className={css(stylesheet.shallowBg)}
-          style={noBorderStyle}
-          legendStyle={legendStyle}
-        >
-          <CardStack number={numCollectedCards} />
-        </FieldSet>
-        <FieldSet
-          legend="Created Cards"
-          className={css(stylesheet.shallowBg)}
-          style={noBorderStyle}
-          legendStyle={legendStyle}
-        >
-          <CardStack number={numCreatedCards} />
-        </FieldSet>
-      </div>
-    )}
-  </CardThemeConsumer>
+    <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
+      Personal
+    </div>
+    <FieldSet
+      legend="Interests:"
+      className={css(stylesheet.shallowBg)}
+      style={noBorderStyle}
+      legendStyle={legendStyle}
+    >
+      <SkillBar
+        sets={interests}
+        acc={d => d.count}
+        tagColorScale={tagColorScale}
+      />
+    </FieldSet>
+    <FieldSet
+      legend="skills:"
+      style={noBorderStyle}
+      className={css(stylesheet.shallowBg)}
+      legendStyle={legendStyle}
+    >
+      <SkillBar sets={skills} tagColorScale={tagColorScale} />
+    </FieldSet>
+    <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
+      Activity
+    </div>
+    <FieldSet
+      legend="Collected Cards"
+      className={css(stylesheet.shallowBg)}
+      style={noBorderStyle}
+      legendStyle={legendStyle}
+    >
+      <CardStack number={numCollectedCards} />
+    </FieldSet>
+    <FieldSet
+      legend="Created Cards"
+      className={css(stylesheet.shallowBg)}
+      style={noBorderStyle}
+      legendStyle={legendStyle}
+    >
+      <CardStack number={numCreatedCards} />
+    </FieldSet>
+  </div>
 );
 
 // <div className="mb-1">
@@ -229,12 +226,12 @@ class Author extends React.Component {
   }
 
   render() {
-    const { extended, uid } = this.props;
+    const { extended, stylesheet, uid } = this.props;
 
     return extended ? (
-      <ExtendedAuthor {...this.state} key={uid} />
+      <ExtendedAuthor {...this.state} stylesheet={stylesheet} key={uid} />
     ) : (
-      <AuthorPreview {...this.state} key={uid} />
+      <AuthorPreview {...this.state} stylesheet={stylesheet} key={uid} />
     );
   }
 }

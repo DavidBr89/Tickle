@@ -60,11 +60,84 @@ export const NewTabLink = ({ href, className, style, children }) => (
 NewTabLink.propTypes = {
   href: PropTypes.string,
   style: PropTypes.object,
-  children: PropTypes.oneOf([ PropTypes.node, null])
+  children: PropTypes.oneOf([PropTypes.node, null])
 };
 
 NewTabLink.defaultProps = {
   href: '',
   style: {},
   children: null
+};
+
+export const FieldSet = ({
+  children,
+  legend,
+  style,
+  edit,
+  uiColor,
+  onClick,
+  legendStyle,
+  bodyStyle,
+  className,
+  icon
+}) => (
+  <div
+    className={className}
+    onClick={onClick}
+    style={{
+      // border: `1px solid ${uiColor}`,
+      marginTop: '4px',
+      width: '100%',
+      height: '100%',
+      // padding: 10,
+      ...style,
+      overflow: 'hidden'
+    }}
+  >
+    <div
+      style={{
+        margin: 10,
+        width: '100%',
+        height: '100%'
+      }}
+    >
+      <div
+        style={{
+          position: 'relative',
+          ...bodyStyle
+        }}
+      >
+        <div>
+          <h5 style={legendStyle}>
+            <span>
+              {legend} {icon}
+            </span>
+          </h5>
+        </div>
+      </div>
+      {children}
+    </div>
+  </div>
+);
+
+FieldSet.propTypes = {
+  uiColor: PropTypes.string,
+  legend: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
+  edit: PropTypes.bool,
+  style: PropTypes.object,
+  onClick: PropTypes.oneOf([null, PropTypes.func]),
+  legendStyle: PropTypes.object,
+  bodyStyle: PropTypes.object,
+  icon: PropTypes.oneOf([PropTypes.node, null])
+};
+
+FieldSet.defaultProps = {
+  edit: false,
+  uiColor: 'grey',
+  classname: '',
+  onClick: null,
+  style: {},
+  legendStyle: {},
+  bodyStyle: {}
 };

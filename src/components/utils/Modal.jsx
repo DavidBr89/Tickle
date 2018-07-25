@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import chroma from 'chroma-js';
+// import chroma from 'chroma-js';
 import { css } from 'aphrodite/no-important';
 
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
+import { stylesheet as defaultStylesheet } from 'Src/styles/GlobalThemeContext';
 
 // const ddg = new DDG('tickle');
 
@@ -136,27 +137,35 @@ Modal.defaultProps = {
 
 // TODO: fix padding bottom
 // TODO: access child state
+export const UnstyledModalBody = ({
+  children,
+  footer,
+  style,
+  stylesheet = defaultStylesheet
+}) => (
+  <div
+    style={{
+      width: '100%',
+      // TODO: outsource
+      overflow: 'hidden',
+
+      ...style
+    }}
+  >
+    <div className="modal-body" style={{ height: '90%', overflow: 'hidden' }}>
+      {children}
+    </div>
+
+    <div className={css(stylesheet.modalFooter)}>{footer}</div>
+  </div>
+);
+
 const ModalBody = ({ children, footer, style }) => (
   <CardThemeConsumer>
     {({ stylesheet }) => (
-      <div
-        style={{
-          width: '100%',
-          // TODO: outsource
-          overflow: 'hidden',
-
-          ...style
-        }}
-      >
-        <div
-          className="modal-body"
-          style={{ height: '90%', overflow: 'hidden' }}
-        >
-          {children}
-        </div>
-
-        <div className={css(stylesheet.modalFooter)}>{footer}</div>
-      </div>
+      <UnstyledModalBody stylesheet={stylesheet} footer={footer} style={style}>
+        {children}
+      </UnstyledModalBody>
     )}
   </CardThemeConsumer>
 );

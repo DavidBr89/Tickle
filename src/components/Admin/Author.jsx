@@ -10,7 +10,7 @@ import * as Icon from 'react-feather';
 // import { skillTypes } from '../../dummyData';
 // import setify from 'Utils/setify';
 import CardMarker from 'Cards/CardMarker';
-import { FieldSet } from 'Cards/layout';
+import { FieldSet } from 'Components/utils/StyledComps';
 
 const profileSrc = () => {
   const gender = Math.random() < 0.5 ? 'men' : 'women';
