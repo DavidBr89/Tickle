@@ -4,8 +4,8 @@ import { compose } from 'recompose';
 
 import withAuthorization from '../withAuthorization';
 import AccountPage from './AccountPage';
-import { getUserInfo } from 'Reducers/Account/async_actions';
 import * as actions from 'Reducers/Account/actions';
+import { changeAuthUserInfo } from 'Reducers/Session/async_actions';
 
 import { makeTagColorScale } from 'Src/styles/GlobalThemeContext'; // eslint-disable-line
 
@@ -18,13 +18,13 @@ const mapStateToProps = state => {
   const { cardSets } = state.Account;
   const tagColorScale = makeTagColorScale(cardSets);
   return {
-    ...state.Session,
+    ...state.Session.authUser,
     ...state.Account,
     tagColorScale
   };
 };
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ getUserInfo, ...actions }, dispatch);
+  bindActionCreators({ changeAuthUserInfo, ...actions }, dispatch);
 
 // const mergeProps = (stateProps, dispatchProps, ownProps) => ({
 //   ...stateProps,

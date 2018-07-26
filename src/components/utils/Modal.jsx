@@ -5,11 +5,14 @@ import PropTypes from 'prop-types';
 import { css } from 'aphrodite/no-important';
 
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
-import { stylesheet as defaultStylesheet } from 'Src/styles/GlobalThemeContext';
+import {
+  stylesheet as defaultStylesheet,
+  uiColor as defaultUiColor
+} from 'Src/styles/GlobalThemeContext';
 
 // const ddg = new DDG('tickle');
 
-const Modal = ({
+export const Modal = ({
   visible,
   title,
   children,
@@ -56,53 +59,8 @@ const Modal = ({
               // height: '97vh',
               maxHeight: 800,
               ...style
-              // TODO: why to check
-              // background:
-              //   uiColor &&
-              //   chroma(uiColor)
-              //     .brighten(1.6)
-              //     .desaturate(0.6)
             }}
           >
-            {title ? (
-              <div
-                className="modal-header"
-                style={{ borderBottom: `1px solid ${uiColor}` }}
-              >
-                <h3 className="modal-title" id="exampleModalLabel">
-                  {title}
-                </h3>
-                <button
-                  type="button"
-                  className="close"
-                  data-dismiss="modal"
-                  aria-label="Close"
-                  onClick={onClose}
-                >
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-            ) : (
-              <div
-                style={{
-                  position: 'absolute',
-                  zIndex: '8000',
-                  right: 10,
-                  top: 10
-                }}
-              >
-                <button
-                  type="button"
-                  className="close "
-                  style={{ width: '20px', height: '20px' }}
-                  data-dismiss="modal"
-                  aria-label="Close"
-                  onClick={onClose}
-                >
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-            )}
             {children}
           </div>
         </div>
@@ -137,35 +95,47 @@ Modal.defaultProps = {
 
 // TODO: fix padding bottom
 // TODO: access child state
-export const UnstyledModalBody = ({
+export const ModalBody = ({
   children,
   footer,
   style,
-  stylesheet = defaultStylesheet
+  title,
+  stylesheet = defaultStylesheet,
+  uiColor = defaultUiColor,
+  onClose
 }) => (
-  <div
-    style={{
-      width: '100%',
-      // TODO: outsource
-      overflow: 'hidden',
-
-      ...style
-    }}
-  >
-    <div className="modal-body" style={{ height: '90%', overflow: 'hidden' }}>
+  <React.Fragment>
+    <div
+      className="modal-header"
+      style={{ borderBottom: `1px solid ${uiColor}` }}
+    >
+      <h3 className="modal-title" id="exampleModalLabel">
+        {title}
+      </h3>
+      <button
+        type="button"
+        className="close"
+        data-dismiss="modal"
+        aria-label="Close"
+        onClick={onClose}
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div className="modal-body" style={{ height: '80%', overflow: 'hidden' }}>
       {children}
     </div>
 
     <div className={css(stylesheet.modalFooter)}>{footer}</div>
-  </div>
+  </React.Fragment>
 );
 
-const ModalBody = ({ children, footer, style }) => (
+export const StyledModalBody = ({ children, ...props }) => (
   <CardThemeConsumer>
     {({ stylesheet }) => (
-      <UnstyledModalBody stylesheet={stylesheet} footer={footer} style={style}>
+      <ModalBody stylesheet={stylesheet} {...props}>
         {children}
-      </UnstyledModalBody>
+      </ModalBody>
     )}
   </CardThemeConsumer>
 );
@@ -185,5 +155,3 @@ ModalBody.defaultProps = {
   uiColor: 'grey',
   styles: {}
 };
-
-export { Modal, ModalBody };

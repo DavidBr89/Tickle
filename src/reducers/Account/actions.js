@@ -17,3 +17,8 @@ export const EXTEND_USER_INFO = 'EXTEND_USER_INFO';
 export function extendUserInfo(options) {
   return { type: EXTEND_USER_INFO, options };
 }
+
+export const UPDATE_PERSONAL_INFO = 'UPDATE_PERSONAL_INFO';
+export function updatePersonalInfo(options) {
+  return { type: UPDATE_PERSONAL_INFO, options };
+}

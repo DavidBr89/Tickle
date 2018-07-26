@@ -14,7 +14,7 @@ import ChallengeAuthorModalBody from 'Src/components/ChallengeAuthor';
 import { extractCardFields } from 'Constants/cardFields';
 import { MODAL_FULL_HEIGHT } from 'Constants/styleDimensions';
 
-import { Modal, ModalBody } from 'Utils/Modal';
+import { Modal, StyledModalBody } from 'Utils/Modal';
 import { MediaSearch, MediaOverview } from '../MediaSearch';
 import { coverPhotoStyle } from '../styles';
 
@@ -84,26 +84,26 @@ class TextAreaModal extends Component {
     const { text } = this.state;
 
     return (
-      <Modal {...this.props} onClose={() => onUpdate(text)}>
-        <ModalBody
-          footer={<FooterBtn onClick={() => onUpdate(text)}>Update</FooterBtn>}
-        >
-          <div className="form-group">
-            <textarea
-              onChange={e =>
-                this.setState({
-                  text: e.target.value || null
-                })
-              }
-              rows={5}
-              style={{ width: '100%' }}
-              placeholder={'<Please insert your description>'}
-            >
-              {text}
-            </textarea>
-          </div>
-        </ModalBody>
-      </Modal>
+      <StyledModalBody
+        {...this.props}
+        onClose={() => onUpdate(text)}
+        footer={<FooterBtn onClick={() => onUpdate(text)}>Update</FooterBtn>}
+      >
+        <div className="form-group">
+          <textarea
+            onChange={e =>
+              this.setState({
+                text: e.target.value || null
+              })
+            }
+            rows={5}
+            style={{ width: '100%' }}
+            placeholder={'<Please insert your description>'}
+          >
+            {text}
+          </textarea>
+        </div>
+      </StyledModalBody>
     );
   }
 }
@@ -122,23 +122,23 @@ class TitleModal extends Component {
     const { text } = this.state;
 
     return (
-      <Modal {...this.props} onClose={() => onUpdate(text)}>
-        <ModalBody
-          footer={<FooterBtn onClick={() => onUpdate(text)}>Update</FooterBtn>}
-        >
-          <div className="form-group">
-            <input
-              onChange={e =>
-                this.setState({
-                  text: e.target.value || null
-                })
-              }
-              style={{ width: '100%' }}
-              value={text}
-            />
-          </div>
-        </ModalBody>
-      </Modal>
+      <StyledModalBody
+        {...this.props}
+        onClose={() => onUpdate(text)}
+        footer={<FooterBtn onClick={() => onUpdate(text)}>Update</FooterBtn>}
+      >
+        <div className="form-group">
+          <input
+            onChange={e =>
+              this.setState({
+                text: e.target.value || null
+              })
+            }
+            style={{ width: '100%' }}
+            value={text}
+          />
+        </div>
+      </StyledModalBody>
     );
   }
 }
@@ -157,23 +157,23 @@ class DescriptionModal extends Component {
     const { text } = this.state;
 
     return (
-      <Modal {...this.props} onClose={() => onUpdate(text)}>
-        <ModalBody
-          footer={<FooterBtn onClick={() => onUpdate(text)}>Update</FooterBtn>}
-        >
-          <div className="form-group">
-            <input
-              onChange={e =>
-                this.setState({
-                  title: e.target.value || null
-                })
-              }
-              style={{ width: '100%' }}
-              value={text}
-            />
-          </div>
-        </ModalBody>
-      </Modal>
+      <StyledModalBody
+        {...this.props}
+        onClose={() => onUpdate(text)}
+        footer={<FooterBtn onClick={() => onUpdate(text)}>Update</FooterBtn>}
+      >
+        <div className="form-group">
+          <input
+            onChange={e =>
+              this.setState({
+                title: e.target.value || null
+              })
+            }
+            style={{ width: '100%' }}
+            value={text}
+          />
+        </div>
+      </StyledModalBody>
     );
   }
 }
@@ -270,38 +270,39 @@ class EditCardFront extends PureComponent {
         );
       case 'Tags':
         return (
-          <Modal {...modalProps} onClose={this.onCloseModal}>
-            <ModalBody footer={closeBtn}>
-              <TagInput
-                tags={tags}
-                colorScale={tagColorScale}
-                uiColor={uiColor}
-                onChange={newTags => this.updateField({ tags: [...newTags] })}
-              />
-            </ModalBody>
-          </Modal>
+          <StyledModalBody
+            onClose={this.onCloseModal}
+            {...modalProps}
+            footer={closeBtn}
+          >
+            <TagInput
+              tags={tags}
+              colorScale={tagColorScale}
+              uiColor={uiColor}
+              onChange={newTags => this.updateField({ tags: [...newTags] })}
+            />
+          </StyledModalBody>
         );
       case 'Photo':
         return (
-          <Modal
+          <StyledModalBody
             {...modalProps}
             onClose={this.onCloseModal}
+            footer={closeBtn}
             style={
               dialogTitle === 'Media' ? { height: MODAL_FULL_HEIGHT } : null
             }
           >
-            <ModalBody footer={closeBtn}>
-              <EditPhoto
-                uiColor="grey"
-                imgUrl={img ? img.url : null}
-                stylesheet={stylesheet}
-                onChange={imgObj => {
-                  console.log('onChange', imgObj);
-                  this.updateField({ img: imgObj, dialog: null });
-                }}
-              />
-            </ModalBody>
-          </Modal>
+            <EditPhoto
+              uiColor="grey"
+              imgUrl={img ? img.url : null}
+              stylesheet={stylesheet}
+              onChange={imgObj => {
+                console.log('onChange', imgObj);
+                this.updateField({ img: imgObj, dialog: null });
+              }}
+            />
+          </StyledModalBody>
         );
       case 'Description':
         return (
@@ -320,36 +321,35 @@ class EditCardFront extends PureComponent {
         );
       case 'Media':
         return (
-          <Modal
+          <StyledModalBody
+            footer={closeBtn}
             {...modalProps}
             onClose={this.onCloseModal}
             style={
               dialogTitle === 'Media' ? { height: MODAL_FULL_HEIGHT } : null
             }
           >
-            <ModalBody footer={closeBtn} style={{ height: '100%' }}>
-              <MediaSearch
-                selectedMedia={media}
-                stylesheet={stylesheet}
-                onChange={mediaItems => {
-                  this.updateField({ media: mediaItems });
-                }}
-              />
-            </ModalBody>
-          </Modal>
+            <MediaSearch
+              selectedMedia={media}
+              stylesheet={stylesheet}
+              onChange={mediaItems => {
+                this.updateField({ media: mediaItems });
+              }}
+            />
+          </StyledModalBody>
         );
       case 'Challenge':
         return (
-          <Modal {...modalProps} onClose={this.onCloseModal}>
-            <ChallengeAuthorModalBody
-              uiColor={uiColor}
-              key={challenge ? challenge.id : 'newChallenge'}
-              challenge={challenge}
-              onChange={ch => {
-                this.updateField({ challenge: ch });
-              }}
-            />
-          </Modal>
+          <ChallengeAuthorModalBody
+            {...modalProps}
+            onClose={this.onCloseModal}
+            uiColor={uiColor}
+            key={challenge ? challenge.id : 'newChallenge'}
+            challenge={challenge}
+            onChange={ch => {
+              this.updateField({ challenge: ch });
+            }}
+          />
         );
       default:
         return null;
@@ -366,9 +366,10 @@ class EditCardFront extends PureComponent {
       tagColorScale,
       onSubmit,
       template,
-      stylesheet
+      stylesheet,
     } = this.props;
     const { data, added, dialog } = this.state;
+    const modalVisible = dialog !== null;
     const { cardLayout, coverPhoto } = stylesheet;
     const {
       id,
@@ -404,7 +405,7 @@ class EditCardFront extends PureComponent {
         flipHandler={flipHandler}
       >
         <div className={css(cardLayout)} style={{ height: '100%' }}>
-          {this.modalWriteContent()}
+          <Modal visible={modalVisible}>{this.modalWriteContent()}</Modal>
           <div className={css(cardLayout)}>
             <ImgOverlay
               src={img && img.url}

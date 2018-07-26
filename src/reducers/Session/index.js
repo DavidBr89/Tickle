@@ -12,8 +12,7 @@ function sessionReducer(state = INITIAL_STATE, action) {
     }
     case SET_AUTH_USER_INFO: {
       const { options } = action;
-
-      return { ...state, ...options };
+      return { ...state, authUser: { ...state.authUser, ...options } };
     }
     default:
       return state;

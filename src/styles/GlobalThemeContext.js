@@ -11,13 +11,13 @@ const uiColor = 'grey';
 const rawCSS = StyleSheet.create({
   btn: btnStyle,
   boxShadow: { boxShadow: `3px 3px ${uiColor}` },
-    modalFooter: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-      padding: '1rem',
-      borderTop: `1px solid ${uiColor}`
-    },
+  modalFooter: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: '1rem',
+    borderTop: `1px solid ${uiColor}`
+  }
 });
 
 const tagColors = chromatic.schemeSet3
@@ -40,5 +40,6 @@ export {
   GlobalThemeProvider,
   GlobalThemeConsumer,
   stylesheet,
+  uiColor,
   makeTagColorScale
 };

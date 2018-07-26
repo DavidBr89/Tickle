@@ -8,8 +8,12 @@ export function setAuthUserInfo(options) {
   return { type: SET_AUTH_USER_INFO, options };
 }
 
+export const UPDATE_USER_PERSONAL_INFO = 'UPDATE_PERSONAL_INFO';
+export function updatePersonalInfo(options) {
+  return { type: UPDATE_USER_PERSONAL_INFO, options };
+}
+
 export const SET_USERS = 'SET_USERS';
 export function setUsers(options) {
   return { type: SET_USERS, options };
 }
-

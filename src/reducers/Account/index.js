@@ -6,12 +6,12 @@ import {
 } from './actions';
 
 const INITIAL_STATE = {
-  skills: [],
-  collectedCards: [],
-  createdCards: [],
-  submittedCards: [],
-  numCollectedCards: 0,
-  numCreatedCards: 0,
+  // skills: [],
+  // collectedCards: [],
+  // createdCards: [],
+  // submittedCards: [],
+  // numCollectedCards: 0,
+  // numCreatedCards: 0,
   cardSets: [],
   cards: [],
   modalActive: false,
@@ -30,7 +30,6 @@ function reducer(state = INITIAL_STATE, action) {
       return { ...state, selectedCardId };
     }
     case EXTEND_USER_INFO: {
-      console.log('userInfoExtended', !state.userInfoExtended);
       return { ...state, userInfoExtended: !state.userInfoExtended };
     }
     case EXTEND_CARD_ID: {

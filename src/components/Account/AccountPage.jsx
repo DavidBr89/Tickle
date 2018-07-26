@@ -5,7 +5,8 @@ import { scaleLinear, extent, range, scaleOrdinal } from 'd3';
 import { css } from 'aphrodite/no-important';
 
 import { db } from 'Firebase';
-import { Modal, UnstyledModalBody } from 'Utils/Modal';
+import { Modal, ModalBody } from 'Utils/Modal';
+import PhotoUpload from 'Components/utils/PhotoUpload';
 
 // import { skillTypes } from '../../dummyData';
 import CardMarker from 'Cards/CardMarker';
@@ -16,13 +17,7 @@ import { GlobalThemeConsumer, stylesheet } from 'Src/styles/GlobalThemeContext';
 
 import CardStack from 'Components/MapView/CardStack';
 
-const profileSrc = () => {
-  const gender = Math.random() < 0.5 ? 'men' : 'women';
-  const i = Math.round(Math.random() * 100);
-  return `https://randomuser.me/api/portraits/thumb/${gender}/${i}.jpg`;
-};
-
-const SkillBar = ({ sets, tagColorScale, acc = d => d.values.length }) => {
+const TagList = ({ sets, tagColorScale, acc = d => d.values.length }) => {
   console.log('sets', sets);
   const scale = scaleLinear()
     .domain(extent(sets, acc))
@@ -52,46 +47,122 @@ const SkillBar = ({ sets, tagColorScale, acc = d => d.values.length }) => {
   );
 };
 
-SkillBar.propTypes = { data: PropTypes.array, tagColorScale: PropTypes.func };
+TagList.propTypes = { data: PropTypes.array, tagColorScale: PropTypes.func };
 
-SkillBar.defaultProps = { data: [], tagColorScale: () => 'purple' };
-
-// TODO: fix it later
-// const CardStack = ({ number }) => (
-//   // const scale = d3
-//   //   .scaleLinear()
-//   //   .domain([0])
-//   //   .range([30, 100]);
-//
-//   <div style={{ display: 'flex' }}>
-//     {range(0, number).map(() => (
-//       <div style={{ width: `${2}%` }}>
-//         <div style={{ width: 25, height: 30, opacity: 0.9 }}>
-//           <CardMarker />
-//         </div>
-//       </div>
-//     ))}
-//     {number === 0 && <div>No Cards!</div>}
-//   </div>
-// );
-//
-// CardStack.propTypes = {
-//   number: PropTypes.number
-// };
+TagList.defaultProps = { data: [], tagColorScale: () => 'purple' };
 
 CardStack.defaultProps = { number: 0 };
 
-const noBorderStyle = { border: null };
-const legendStyle = { fontSize: '16px' };
+class EditUserPhoto extends React.Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string
+  };
 
-const UserInfoModal = ({ ...props }) => (
-  <Modal {...props}>
-    <UnstyledModalBody footer={<button>close</button>}>
-      USER INFO
-    </UnstyledModalBody>
-  </Modal>
+  state = { url: this.props.url };
+
+  render() {
+    const { onChange, path } = this.props;
+    const { url } = this.state;
+    return (
+      <PhotoUpload
+        {...this.props}
+        imgUrl={url}
+        onChange={({ url, file }) => {
+          db.addImgToStorage({ file, path }).then(url => onChange(url));
+          this.setState({ url });
+          onChange(url);
+        }}
+      />
+    );
+  }
+}
+
+const UserInfoModalBody = ({
+  onClose,
+  title,
+  username,
+  name,
+  email,
+  photoURL,
+  onChange,
+  uid,
+  ...props
+}) => (
+  <ModalBody
+    onClose={onClose}
+    title={title}
+    footer={
+      <button className={css(stylesheet.btn)} onClick={onClose}>
+        close
+      </button>
+    }
+  >
+    <div className="mb-3">
+      <div className="form-group">
+        <label htmlFor="fullname">User Photo:</label>
+        <div
+          style={{ display: 'flex', width: '100%', justifyContent: 'center' }}
+        >
+          <EditUserPhoto
+            style={{ width: 200 }}
+            path={`usr/${uid}`}
+            url={photoURL}
+            onChange={photoURL => {
+
+              console.log('new photo url', photoURL);
+              onChange({ photoURL }) }}
+          />
+        </div>
+      </div>
+    </div>
+    <div className="mb-3">
+      <div className="form-group">
+        <label htmlFor="fullname">Full name:</label>
+        <div>
+          <input
+            className="form-control"
+            value={name || ''}
+            onChange={e => onChange({ name: e.target.value })}
+            type="text"
+            placeholder="Full Name"
+          />
+        </div>
+      </div>
+      <div className="form-group">
+        <label htmlFor="username">Username:</label>
+        <div>
+          <input
+            className="form-control"
+            value={username}
+            onChange={e => onChange({ username: e.target.value })}
+            type="text"
+            placeholder="Username"
+          />
+        </div>
+      </div>
+    </div>
+  </ModalBody>
 );
 
+/*
+      <div className="form-group">
+        <label htmlFor="pwd">Email:</label>
+        <div>
+          <input
+            value={email}
+            className="form-control"
+            onChange={
+              e => e
+              // this.setState(byPropKey('email', event.target.value))
+            }
+            type="text"
+            placeholder="Email Address"
+          />
+        </div>
+      </div>
+
+*/
 class UserDetailedInfo extends React.Component {
   static propTypes = {
     children: PropTypes.node,
@@ -108,17 +179,14 @@ class UserDetailedInfo extends React.Component {
       color,
       style,
       tagColorScale,
-      name,
       skills,
       activity,
       interests,
       stylesheet,
       placeholderImgUrl,
+      uid,
       numCollectedCards,
       numCreatedCards,
-      photoURL,
-      username,
-      email,
       createdCards,
       submittedCards,
       selectedCardId,
@@ -126,15 +194,32 @@ class UserDetailedInfo extends React.Component {
       extendCard,
       selectCard,
       userInfoExtended,
-      extendUserInfo
+      extendUserInfo,
+      name,
+      username,
+      email,
+      photoURL,
+      changeAuthUserInfo
     } = this.props;
     return (
       <div className="content-block">
-        <UserInfoModal
-          title="User Info"
-          visible={userInfoExtended}
-          onClose={() => extendUserInfo()}
-        />
+        <Modal visible={userInfoExtended}>
+          <UserInfoModalBody
+            title="User Info"
+            onClose={extendUserInfo}
+            onChange={usr =>
+              changeAuthUserInfo(uid, {
+                uid,
+                Interests: [],
+                username,
+                email,
+                photoURL,
+                ...usr
+              })
+            }
+            {...this.props}
+          />
+        </Modal>
         <div
           style={{
             display: 'flex',
@@ -181,7 +266,7 @@ class UserDetailedInfo extends React.Component {
 
                 <div>
                   <h5>Interests</h5>
-                  <SkillBar
+                  <TagList
                     sets={interests}
                     acc={d => d.count}
                     tagColorScale={tagColorScale}
@@ -195,7 +280,7 @@ class UserDetailedInfo extends React.Component {
           </section>
           <section className="mb-1">
             <h4>Skills</h4>
-            <SkillBar sets={skills} tagColorScale={tagColorScale} />
+            <TagList sets={skills} tagColorScale={tagColorScale} />
           </section>
           <section>
             <h4>Created Cards ({createdCards.length})</h4>
@@ -215,7 +300,7 @@ class UserDetailedInfo extends React.Component {
             </div>
           </section>
           <section className="mb-3">
-            <h4>Submitted Cards ({submittedCards.length})</h4>
+            <h4>Submitted Challenges ({submittedCards.length})</h4>
             <div style={{ height: 200 }}>
               <CardStack
                 className=""
@@ -294,15 +379,6 @@ class User extends React.Component {
     numCreatedCards: 0
   };
 
-  componentDidMount() {
-    const {
-      authUser: { uid },
-      getUserInfo
-    } = this.props;
-
-    getUserInfo(uid);
-  }
-
   render() {
     return <UserDetailedInfo {...this.props} />;
   }
@@ -319,33 +395,5 @@ User.defaultProps = {
   style: {},
   extended: false
 };
-
-const Profile = ({ data }) => (
-  <div className="media mt-3">
-    <img
-      className="d-flex mr-3"
-      width={64}
-      height={64}
-      src={profileSrc()}
-      alt="alt"
-    />
-    <div className="media-body">
-      <div>{data.comment}</div>
-      <div>
-        <small className="font-italic">- {data.name}</small>
-      </div>
-    </div>
-  </div>
-);
-
-Profile.propTypes = {
-  data: PropTypes.object.isRequired
-};
-Profile.defaultProps = {
-  data: {}
-};
-
-// TODO; rempve
-Profile.defaultProps = { name: 'jan', comment: 'yeah' };
 
 export default User;

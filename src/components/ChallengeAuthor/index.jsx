@@ -5,7 +5,7 @@ import * as Icon from 'react-feather';
 import { UIthemeContext, modalBorder, createShadowStyle } from 'Cards/styles'; // eslint-disable-line
 import TextChallengeAuthor from './TextChallengeAuthor';
 
-import { Modal, ModalBody } from 'Utils/Modal';
+import { Modal, StyledModalBody } from 'Utils/Modal';
 
 // import LearningObject from './LearningObject';
 
@@ -203,12 +203,14 @@ class ChallengeAuthorModalBody extends React.Component {
     children: PropTypes.node,
     className: PropTypes.string,
     onChange: PropTypes.func,
-    uiColor: PropTypes.string
+    uiColor: PropTypes.string,
+    onClose: PropTypes.func
   };
   static defaultProps = {
     children: <div />,
     className: '',
     onChange: d => d,
+    onClose: d => d,
     uiColor: 'black'
   };
 
@@ -218,18 +220,19 @@ class ChallengeAuthorModalBody extends React.Component {
   };
 
   render() {
-    const { uiColor, onChange } = this.props;
+    const { uiColor, onClose, title, onChange } = this.props;
     const { challenge, added } = this.state;
     const btnClass = `btn ${challenge === null && 'disabled'}`;
 
-    const btnDisabled =
-      challenge.description === null
+    const btnDisabled = challenge.description === null;
     // TODO
     // challenge.img.url === null;
 
     return (
-      <ModalBody
+      <StyledModalBody
         uiColor={uiColor}
+        onClose={onClose}
+        title={title}
         footer={
           <button
             className="btn"
@@ -257,7 +260,7 @@ class ChallengeAuthorModalBody extends React.Component {
             });
           }}
         />
-      </ModalBody>
+      </StyledModalBody>
     );
   }
 }

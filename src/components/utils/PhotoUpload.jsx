@@ -198,63 +198,63 @@ export default class PhotoUpload extends Component {
     } = this.props;
 
     return (
-      <div className={className} style={{ width: '100%', height: '100%' }}>
+      <div className={className} style={{ height: '100%' }}>
         <div
           style={{
-            overflow: 'hidden',
+            // overflow: 'hidden',
             height: '100%'
           }}
         >
-          <div
-            style={{
-              // TODO: outsource
-              height: '100%',
-              width: '100%',
-              // minHeight: 80,
-              border: `dashed 3px ${uiColor}`,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              ...style
-            }}
-          >
-            {imgUrl ? (
-              <div
-                style={{
-                  overflow: 'hidden',
-                  width: '100%',
-                  maxHeight: 300
-                  // height: this.contHeight
-                }}
-              >
-                <img src={imgUrl} width="100%" alt="test" />
-              </div>
-            ) : (
-              <h1
-                className="pl-2 pr-2"
-                style={{
-                  background: uiColor,
-                  color: 'black',
-                  margin: '20%'
-                }}
-              >
-                {'No Image'}
-              </h1>
-            )}
+          <div style={{ ...style }}>
+            <div
+              style={{
+                // TODO: outsource
+                height: '100%',
+                width: '100%',
+                // overflow: 'hidden',
+                // minHeight: 80,
+                border: `dashed 3px ${uiColor}`,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              {imgUrl ? (
+                <div
+                  style={{
+                    // overflow: 'hidden',
+                    width: '100%',
+                    maxHeight: 300
+                    // height: this.contHeight
+                  }}
+                >
+                  <img src={imgUrl} width="100%" alt="test" />
+                </div>
+              ) : (
+                <h1
+                  className="pl-2 pr-2 text-muted"
+                  style={{
+                    margin: '20%'
+                  }}
+                >
+                  {'No Image'}
+                </h1>
+              )}
+            </div>
+            <input
+              className="mt-3"
+              style={{ border: `${uiColor} 1px solid` }}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={e => {
+                onChange({
+                  url: convertToImgSrc(e.target.files),
+                  file: e.target.files[0]
+                });
+              }}
+            />
           </div>
-          <input
-            className="mt-3"
-            style={{ border: `${uiColor} 1px solid` }}
-            type="file"
-            accept="image/*"
-            capture="environment"
-            onChange={e => {
-              onChange({
-                url: convertToImgSrc(e.target.files),
-                file: e.target.files[0]
-              });
-            }}
-          />
         </div>
       </div>
     );
