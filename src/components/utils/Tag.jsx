@@ -231,7 +231,7 @@ export const PreviewTags = ({
       // position: 'absolute',
       // TODO: adapt
       // maxWidth: '60%',
-      flexWrap: extended && 'wrap',
+      // flexWrap: 'wrap',
       ...style,
       ...tagsStyle
       // overflowY: 'visible'

@@ -8,6 +8,12 @@ export function setAuthUserInfo(options) {
   return { type: SET_AUTH_USER_INFO, options };
 }
 
+export const SUBMIT_USER_INFO_TO_DB_SUCCESS =
+  'SUBMIT_USER_INFO_TO_DB_SUCCESS';
+export function submitUserInfoToDBSuccess(options) {
+  return { type: SUBMIT_USER_INFO_TO_DB_SUCCESS, options };
+}
+
 export const UPDATE_USER_PERSONAL_INFO = 'UPDATE_PERSONAL_INFO';
 export function updatePersonalInfo(options) {
   return { type: UPDATE_USER_PERSONAL_INFO, options };

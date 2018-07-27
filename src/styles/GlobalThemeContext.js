@@ -8,8 +8,19 @@ import { StyleSheet } from 'aphrodite/no-important';
 import { btnStyle } from './helperStyles';
 
 const uiColor = 'grey';
-const rawCSS = StyleSheet.create({
-  btn: btnStyle,
+const shallowBg = chroma(uiColor)
+  .brighten(2.2)
+  .hex();
+
+const rawCSS = {
+  btn: {
+    ...btnStyle,
+    borderColor: uiColor,
+    background: shallowBg,
+    ':hover': {
+      boxShadow: `4px 4px ${uiColor}`
+    }
+  },
   boxShadow: { boxShadow: `3px 3px ${uiColor}` },
   modalFooter: {
     display: 'flex',
@@ -18,7 +29,7 @@ const rawCSS = StyleSheet.create({
     padding: '1rem',
     borderTop: `1px solid ${uiColor}`
   }
-});
+};
 
 const tagColors = chromatic.schemeSet3
   .reverse()
@@ -26,8 +37,8 @@ const tagColors = chromatic.schemeSet3
 
 const makeTagColorScale = cardSets =>
   scaleOrdinal()
-    .domain(cardSets.map(s => s.key))
-    .range(tagColors);
+    .domain(cardSets.map(s => s.key).sort())
+    .range(tagColors.sort());
 
 const stylesheet = StyleSheet.create(rawCSS);
 

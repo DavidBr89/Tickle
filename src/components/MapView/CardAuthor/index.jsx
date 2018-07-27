@@ -56,7 +56,7 @@ const mapStateToProps = state => {
 
   const cardSets = setify(cards);
 
-  const tagColorScale = makeTagColorScale(cardSets);
+  // const tagColorScale = makeTagColorScale(cardSets);
 
   const selectedCard = cards.find(d => d.id === selectedCardId) || null;
 
@@ -73,8 +73,8 @@ const mapStateToProps = state => {
     templateCard,
     cardSets,
     cards,
-    selectedTags,
-    tagColorScale
+    selectedTags
+    // tagColorScale
   };
 };
 
@@ -116,9 +116,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const previewCardAction = d =>
     selectedCardId === d.id ? extendSelectedCard(d.id) : selectCard(d.id);
 
-  const fetchCards = () => {
-    fetchCreatedCards(uid);
-  };
+  const fetchCards = () => fetchCreatedCards(uid);
   const preSelectCardId = () => selectCard(templateCard.id);
 
   return {

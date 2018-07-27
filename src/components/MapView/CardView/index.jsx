@@ -46,7 +46,7 @@ const mapStateToProps = state => {
   );
   console.log('UPD UPD card to filter', filteredCards);
   const cardSets = setify(filteredCards);
-  const tagColorScale = makeTagColorScale(cardSets);
+  // const tagColorScale = makeTagColorScale(cardSets);
   const selectedCard = filteredCards.find(d => d.id === selectedCardId) || null;
 
   const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
@@ -61,8 +61,8 @@ const mapStateToProps = state => {
     cardSets,
     selectedTags,
     ...state.Screen,
-    cards: filteredCards,
-    tagColorScale
+    cards: filteredCards
+    // tagColorScale
   };
 };
 

@@ -35,7 +35,7 @@ import {
   FlipButton
 } from '../layout';
 
-import { TagInput, PreviewTags } from 'Utils/Tag';
+import { TagInput, PreviewTags } from 'Components/utils/Tag';
 
 import CardHeader from '../CardHeader';
 
@@ -366,7 +366,7 @@ class EditCardFront extends PureComponent {
       tagColorScale,
       onSubmit,
       template,
-      stylesheet,
+      stylesheet
     } = this.props;
     const { data, added, dialog } = this.state;
     const modalVisible = dialog !== null;

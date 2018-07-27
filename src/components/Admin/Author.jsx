@@ -146,7 +146,7 @@ const AuthorPreview = ({
         <img width="40%" height="80%" src={photoURL} alt="alt" />
       ) : (
         //TODO:change
-        <Icon.user />
+        <Icon.User />
       )}
 
       <div className="ml-3">

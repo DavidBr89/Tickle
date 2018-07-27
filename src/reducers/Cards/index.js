@@ -1,20 +1,9 @@
-// import generate from 'firebase-auto-ids';
-// import { combineReducers } from 'redux';
-// import cards from './cards';
-// import visibilityFilter from './visibilityFilter';
-// import turf from 'turf';
-// import booleanWithin from '@turf/boolean-within';
-
-// import { getBoundingBox } from './utils';
-// import { intersection } from 'lodash';
-
 import updCardDataDim from './updateDataDimension';
 import setify from 'Utils/setify';
 
 import { union, difference } from 'lodash';
 
-// import setBBox from './fitbounds';
-// import mapboxgl from 'mapbox-gl';
+import { makeTagColorScale } from 'Src/styles/GlobalThemeContext';
 
 import {
   RECEIVE_PLACES,
@@ -108,13 +97,13 @@ function reducer(state = INITIAL_STATE, action) {
       const createdCards = cards.map(c => ({ ...c, edit: true }));
 
       const cardSets = setify(cards);
-      // const tagColorScale = makeColorScale(cardSets);
+      const tagColorScale = makeTagColorScale(cardSets);
 
       return {
         ...state,
         createdCards,
-        loadingCards: false
-        // tagColorScale
+        loadingCards: false,
+        tagColorScale
         // cards
         // isCardDragging
       };
@@ -124,12 +113,12 @@ function reducer(state = INITIAL_STATE, action) {
       const cards = action.options;
 
       const cardSets = setify(cards);
-      // const tagColorScale = makeColorScale(cardSets);
+      const tagColorScale = makeTagColorScale(cardSets);
       return {
         ...state,
         collectibleCards: cards,
-        loadingCards: false
-        // tagColorScale
+        loadingCards: false,
+        tagColorScale
         // defaultCards: cards
         // isCardDragging
       };

@@ -1,7 +1,13 @@
-import { setAuthUser, setAuthUserInfo } from './actions';
+import {
+  setAuthUser,
+  setAuthUserInfo,
+  submitUserInfoToDBSuccess
+} from './actions';
 
 import { db } from 'Firebase';
 import setify from 'Utils/setify';
+
+import { userFields } from 'Constants/userFields';
 
 export function fetchUserInfo(uid) {
   // Thunk middleware knows how to handle functions.
@@ -12,23 +18,18 @@ export function fetchUserInfo(uid) {
       .getDetailedUserInfo(uid)
       .then(usrInfo => {
         const {
-          interests: plainInterests,
+          interests,
           createdCards,
           collectedCards,
           ...userDetails
         } = usrInfo;
-
-        const interests = plainInterests.map(key => ({
-          key,
-          count: 10,
-          values: []
-        }));
 
         const cardSets = setify([...createdCards, ...collectedCards]);
 
         const numCollectedCards = collectedCards.length;
         const numCreatedCards = createdCards.length;
 
+        console.log('userDetails', userDetails);
         const detailInfo = {
           ...userDetails,
           interests,
@@ -46,12 +47,15 @@ export function fetchUserInfo(uid) {
   };
 }
 
-export function changeAuthUserInfo(uid, userInfo) {
+export function submitUserInfoToDB(userInfo) {
   return function(dispatch) {
-    dispatch(setAuthUserInfo(userInfo));
-    console.log('userInfo', userInfo);
+    console.log('dispatch userInfo', userInfo);
+    // dispatch(setAuthUserInfo(userInfo));
 
-    // db.doCreateUser(userInfo).then(() => console.log('user update'));
+    const usr = userFields(userInfo);
+    db.doCreateUser(usr).then(() => {
+      dispatch(submitUserInfoToDBSuccess(usr));
+    });
     // return db
     //   .getUser(uid)
     //   .then(usrInfo => {

@@ -2,23 +2,28 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { scaleLinear, extent, range, scaleOrdinal } from 'd3';
-import { css } from 'aphrodite/no-important';
+import { css } from 'aphrodite';
+import * as Icon from 'react-feather';
 
 import { db } from 'Firebase';
 import { Modal, ModalBody } from 'Utils/Modal';
 import PhotoUpload from 'Components/utils/PhotoUpload';
+import { TagInput, PreviewTags } from 'Components/utils/Tag';
 
 // import { skillTypes } from '../../dummyData';
 import CardMarker from 'Cards/CardMarker';
 import { FieldSet } from 'Components/utils/StyledComps';
 import setify from 'Utils/setify';
 
-import { GlobalThemeConsumer, stylesheet } from 'Src/styles/GlobalThemeContext';
+import {
+  GlobalThemeConsumer,
+  stylesheet as defaultStylesheet
+} from 'Src/styles/GlobalThemeContext';
 
 import CardStack from 'Components/MapView/CardStack';
+import { userFields, compareUserFields } from 'Constants/userFields';
 
 const TagList = ({ sets, tagColorScale, acc = d => d.values.length }) => {
-  console.log('sets', sets);
   const scale = scaleLinear()
     .domain(extent(sets, acc))
     // TODO
@@ -78,72 +83,118 @@ class EditUserPhoto extends React.Component {
   }
 }
 
-const UserInfoModalBody = ({
-  onClose,
-  title,
-  username,
-  name,
-  email,
-  photoURL,
-  onChange,
-  uid,
-  ...props
-}) => (
-  <ModalBody
-    onClose={onClose}
-    title={title}
-    footer={
-      <button className={css(stylesheet.btn)} onClick={onClose}>
-        close
-      </button>
-    }
-  >
-    <div className="mb-3">
-      <div className="form-group">
-        <label htmlFor="fullname">User Photo:</label>
-        <div
-          style={{ display: 'flex', width: '100%', justifyContent: 'center' }}
-        >
-          <EditUserPhoto
-            style={{ width: 200 }}
-            path={`usr/${uid}`}
-            url={photoURL}
-            onChange={photoURL => {
+class UserInfoModalBody extends React.Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string
+  };
 
-              console.log('new photo url', photoURL);
-              onChange({ photoURL }) }}
-          />
+  state = { userUpdated: false };
+
+  condSubmit = () => {
+    const { userUpdated } = this.state;
+    const { authUser, onSubmit, onClose } = this.props;
+
+    if (userUpdated) {
+      onSubmit();
+      this.setState({ userUpdated: false });
+    }
+    onClose();
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    const { authUser: oldUser } = prevProps;
+    const { authUser } = this.props;
+
+    if (!compareUserFields(oldUser, authUser)) {
+      this.setState({ userUpdated: true });
+    }
+  }
+
+  render() {
+    const { onChange, tagColorScale} = this.props;
+    const {
+      onSubmit,
+      title,
+      username,
+      name,
+      email,
+      photoURL,
+      interests,
+      uid,
+    } = this.props.authUser;
+
+    return (
+      <ModalBody
+        onClose={this.condSubmit}
+        title={title}
+        footer={
+          <button
+            className={css(defaultStylesheet.btn)}
+            onClick={this.condSubmit}
+          >
+            close
+          </button>
+        }
+      >
+        <div className="mb-3">
+          <div className="form-group">
+            <label htmlFor="fullname">User Photo:</label>
+            <div
+              style={{
+                display: 'flex',
+                width: '100%',
+                justifyContent: 'center'
+              }}
+            >
+              <EditUserPhoto
+                style={{ width: 200 }}
+                path={`usr/${uid}`}
+                url={photoURL}
+                onChange={photoURL => onChange({ photoURL })}
+              />
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    <div className="mb-3">
-      <div className="form-group">
-        <label htmlFor="fullname">Full name:</label>
-        <div>
-          <input
-            className="form-control"
-            value={name || ''}
-            onChange={e => onChange({ name: e.target.value })}
-            type="text"
-            placeholder="Full Name"
-          />
+        <div className="mb-3">
+          <div className="form-group">
+            <label htmlFor="fullname">Full name:</label>
+            <div>
+              <input
+                className="form-control"
+                value={name || ''}
+                onChange={e => onChange({ name: e.target.value })}
+                type="text"
+                placeholder="Full Name"
+              />
+            </div>
+          </div>
+          <div className="form-group">
+            <label htmlFor="username">Username:</label>
+            <div>
+              <input
+                className="form-control"
+                value={username}
+                onChange={e => onChange({ username: e.target.value })}
+                type="text"
+                placeholder="Username"
+              />
+            </div>
+          </div>
+          <div className="form-group">
+            <label htmlFor="username">Interests:</label>
+            <TagInput
+              tags={interests}
+              colorScale={tagColorScale}
+              uiColor="grey"
+              onChange={newInterests => onChange({ interests: newInterests })}
+            />
+          </div>
         </div>
-      </div>
-      <div className="form-group">
-        <label htmlFor="username">Username:</label>
-        <div>
-          <input
-            className="form-control"
-            value={username}
-            onChange={e => onChange({ username: e.target.value })}
-            type="text"
-            placeholder="Username"
-          />
-        </div>
-      </div>
-    </div>
-  </ModalBody>
-);
+      </ModalBody>
+    );
+  }
+}
 
 /*
       <div className="form-group">
@@ -163,15 +214,15 @@ const UserInfoModalBody = ({
       </div>
 
 */
-class UserDetailedInfo extends React.Component {
+export default class UserDetailedInfo extends React.Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string
   };
 
-  static defaultProps = {
-    stylesheet
-  };
+  // static defaultProps = {
+  //   stylesheet
+  // };
 
   render() {
     const {
@@ -179,44 +230,54 @@ class UserDetailedInfo extends React.Component {
       color,
       style,
       tagColorScale,
-      skills,
-      activity,
-      interests,
-      stylesheet,
-      placeholderImgUrl,
-      uid,
-      numCollectedCards,
-      numCreatedCards,
-      createdCards,
-      submittedCards,
+      // stylesheet,
+      authUser,
       selectedCardId,
       extendedCardId,
       extendCard,
       selectCard,
       userInfoExtended,
       extendUserInfo,
+      submitUserInfoToDB,
+      setAuthUserInfo
+    } = this.props;
+
+    console.log('stylesheet', defaultStylesheet);
+
+    const {
+      skills,
+      interests,
+      uid,
+      createdCards,
+      submittedCards,
       name,
       username,
       email,
-      photoURL,
-      changeAuthUserInfo
-    } = this.props;
+      photoURL
+    } = authUser;
     return (
       <div className="content-block">
         <Modal visible={userInfoExtended}>
           <UserInfoModalBody
             title="User Info"
             onClose={extendUserInfo}
+            tagColorScale={tagColorScale}
+            onSubmit={() => {
+              console.log('Submit');
+              submitUserInfoToDB(authUser);
+            }}
             onChange={usr =>
-              changeAuthUserInfo(uid, {
+              setAuthUserInfo({
                 uid,
-                Interests: [],
+                interests,
                 username,
+                name,
                 email,
                 photoURL,
                 ...usr
               })
             }
+            authUser={authUser}
             {...this.props}
           />
         </Modal>
@@ -263,18 +324,21 @@ class UserDetailedInfo extends React.Component {
                   <h5>email: </h5>
                   {email}
                 </div>
-
                 <div>
                   <h5>Interests</h5>
-                  <TagList
-                    sets={interests}
-                    acc={d => d.count}
-                    tagColorScale={tagColorScale}
-                  />
+                  <PreviewTags data={interests} tagColorScale={tagColorScale} />
                 </div>
               </div>
-              <div>
-                <button onClick={() => extendUserInfo()}>Edit</button>
+              <div
+                className="ml-2"
+                style={{ display: 'flex', alignItems: 'end' }}
+              >
+                <button
+                  className={css(defaultStylesheet.btn)}
+                  onClick={() => extendUserInfo()}
+                >
+                  <Icon.Edit />
+                </button>
               </div>
             </div>
           </section>
@@ -326,74 +390,37 @@ class UserDetailedInfo extends React.Component {
   }
 }
 
-UserDetailedInfo.defaultProps = {
-  stylesheet
-};
-
 // <div className="mb-1">
 //         <span style={{ fontWeight: 'bold' }}>name: </span>
 //         {name}
 //       </div>
-const BasicUserInfo = ({ photoURL, style, username, name, email }) => (
-  <div
-    style={{
-      display: 'flex',
-      justifyContent: 'center',
-      // alignItems: 'center',
-      width: '100%',
-      height: '100%',
-      ...style
-    }}
-  >
-    <div style={{ display: 'flex' }}>
-      <div style={{ border: 'solid 1px grey', width: '50%', height: '100%' }}>
-        <img width="100%" height="100%" src={photoURL} alt="alt" />
-      </div>
-      <div className="ml-3">
-        <div className="mb-1">
-          <span style={{ fontWeight: 'bold' }}>username: </span>
-          {username}
-        </div>
-        <div className="mb-1">
-          <span style={{ fontWeight: 'bold' }}>email: </span> {email}
-        </div>
-      </div>
-    </div>
-    <div>
-      <button>Edit</button>
-    </div>
-  </div>
-);
-
-class User extends React.Component {
-  static propTypes = {
-    children: PropTypes.node,
-    className: PropTypes.string
-  };
-
-  state = {
-    ...this.props,
-    submittedCards: [],
-    createdCards: [],
-    numCollectedCards: 0,
-    numCreatedCards: 0
-  };
-
-  render() {
-    return <UserDetailedInfo {...this.props} />;
-  }
-}
-
-User.defaultProps = {
-  // TODO: check
-  placeholderImgUrl:
-    'http://sunfieldfarm.org/wp-content/uploads/2014/02/profile-placeholder.png',
-  // profile: {
-  skills: [],
-  interests: [],
-  // },
-  style: {},
-  extended: false
-};
-
-export default User;
+// const BasicUserInfo = ({ photoURL, style, username, name, email }) => (
+//   <div
+//     style={{
+//       display: 'flex',
+//       justifyContent: 'center',
+//       // alignItems: 'center',
+//       width: '100%',
+//       height: '100%',
+//       ...style
+//     }}
+//   >
+//     <div style={{ display: 'flex' }}>
+//       <div style={{ border: 'solid 1px grey', width: '50%', height: '100%' }}>
+//         <img width="100%" height="100%" src={photoURL} alt="alt" />
+//       </div>
+//       <div className="ml-3">
+//         <div className="mb-1">
+//           <span style={{ fontWeight: 'bold' }}>username: </span>
+//           {username}
+//         </div>
+//         <div className="mb-1">
+//           <span style={{ fontWeight: 'bold' }}>email: </span> {email}
+//         </div>
+//       </div>
+//     </div>
+//     <div>
+//       <button>Edit</button>
+//     </div>
+//   </div>
+// );
