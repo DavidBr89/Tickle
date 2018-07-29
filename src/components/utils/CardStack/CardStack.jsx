@@ -191,7 +191,7 @@ class CardStack extends Component {
     // );
   };
 
-  hoverLayout = (index = null) => {
+  hoverLayout = () => {
     const {
       slotSize,
       direction,
@@ -203,6 +203,7 @@ class CardStack extends Component {
       className,
       children,
       unit,
+      selectedIndex,
       // slotSize,
       // centered,
       // selectedIndex,
@@ -218,28 +219,28 @@ class CardStack extends Component {
       .domain([0, data.length - 1])
       .range([0, size - slotSize]);
 
-    if (index === null || index < 0) {
+    if (selectedIndex === null || selectedIndex < 0) {
       return data.map((c, i) => ({ ...c, pos: scale(i) }));
     }
 
     const xFirstLeft = d3
       .scaleLinear()
-      .domain([0, index - 1])
-      .range([0, d3.max([scale(index) - slotSize, 0])]);
+      .domain([0, selectedIndex - 1])
+      .range([0, d3.max([scale(selectedIndex) - slotSize, 0])]);
 
     const xFirstRight = d3
       .scaleLinear()
-      .domain([index + 1, data.length - 1])
-      .range([d3.min([scale(index) + slotSize, size]), width]);
+      .domain([selectedIndex + 1, data.length - 1])
+      .range([d3.min([scale(selectedIndex) + slotSize, size]), width]);
 
     return data.map((c, i) => {
-      if (index < i) {
+      if (selectedIndex < i) {
         return { ...c, pos: xFirstRight(i) };
       }
-      if (index > i) {
+      if (selectedIndex > i) {
         return { ...c, pos: xFirstLeft(i) };
       }
-      if (index === i) {
+      if (selectedIndex === i || selectedIndex === data.length - 1) {
         return { ...c, pos: scale(i) };
       }
       return c;

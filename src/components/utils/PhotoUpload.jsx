@@ -222,7 +222,7 @@ export default class PhotoUpload extends Component {
               {imgUrl ? (
                 <div
                   style={{
-                    // overflow: 'hidden',
+                    overflow: 'hidden',
                     width: '100%',
                     maxHeight: 300
                     // height: this.contHeight
@@ -243,7 +243,13 @@ export default class PhotoUpload extends Component {
             </div>
             <input
               className="mt-3"
-              style={{ border: `${uiColor} 1px solid` }}
+              style={{
+                border: `${uiColor} 1px solid`,
+                width: '100%',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis'
+              }}
               type="file"
               accept="image/*"
               capture="environment"

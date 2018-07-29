@@ -87,6 +87,8 @@ class Card extends React.Component {
     style: {},
     edit: false,
     onCollect: d => d,
+    uiColor: 'grey',
+    background: 'whitesmoke',
     onUpdate: d => d,
     tagColorScale: () => 'gold',
     author: { username: 'defaultUser', email: 'defaultEmail' }
@@ -95,80 +97,6 @@ class Card extends React.Component {
   state = {
     frontView: true
   };
-
-  makeStylesheet = () => {
-    const { uiColor, background } = this.props;
-
-    const shallowBg = chroma(uiColor)
-      .brighten(2.2)
-      .hex();
-
-    const littleShallowColor = chroma(uiColor)
-      .brighten(1.2)
-      .hex();
-
-    const extraShallowBg = chroma(uiColor)
-      .brighten(2.3)
-      .hex();
-
-    return StyleSheet.create({
-      boxShadow: { boxShadow: `4px 4px ${uiColor}` },
-      border: { border: `1px solid ${uiColor}` },
-      bigBoxShadow: {
-        border: `1px solid ${littleShallowColor}`,
-        boxShadow: `6px 6px ${littleShallowColor}`
-      },
-      btn: {
-        ...btnStyle,
-        borderColor: uiColor,
-        background: shallowBg,
-        ':hover': {
-          boxShadow: `4px 4px ${uiColor}`
-        }
-      },
-      shallowBg: {
-        background: shallowBg
-      },
-      extraShallowBg: {
-        background: extraShallowBg
-      },
-      btnActive: {
-        ...btnStyle,
-        background: uiColor,
-        color: 'whitesmoke',
-        display: 'inline-flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-        // borderColor: uiColor
-      },
-      shallowBorder: {
-        border: `${chroma(uiColor)
-          .brighten(1.8)
-          .hex()} solid 1px`
-      },
-      fieldSetLegend: {
-        ':hover': {
-          boxShadow: `4px 4px ${uiColor}`
-        }
-      },
-      background: { background },
-      modalFooter: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-        padding: '1rem',
-        borderTop: `1px solid ${uiColor}`
-      }
-    });
-  };
-
-  // componentDidMount() {
-  //   const { uid } = this.props;
-  //   db.getUserInfo(uid).then(usr => console.log('yeah', usr));
-  // }
-  //
-  //
-  //
 
   render() {
     const {

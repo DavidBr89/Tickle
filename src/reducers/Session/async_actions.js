@@ -1,10 +1,11 @@
 import {
   setAuthUser,
   setAuthUserInfo,
-  submitUserInfoToDBSuccess
+  submitUserInfoToDBSuccess,
+  errorSubmitUser
 } from './actions';
 
-import { db } from 'Firebase';
+import { db, auth } from 'Firebase';
 import setify from 'Utils/setify';
 
 import { userFields } from 'Constants/userFields';
@@ -29,7 +30,6 @@ export function fetchUserInfo(uid) {
         const numCollectedCards = collectedCards.length;
         const numCreatedCards = createdCards.length;
 
-        console.log('userDetails', userDetails);
         const detailInfo = {
           ...userDetails,
           interests,
@@ -49,13 +49,45 @@ export function fetchUserInfo(uid) {
 
 export function submitUserInfoToDB(userInfo) {
   return function(dispatch) {
-    console.log('dispatch userInfo', userInfo);
     // dispatch(setAuthUserInfo(userInfo));
 
+    console.log('userInfo', userInfo);
     const usr = userFields(userInfo);
-    db.doCreateUser(usr).then(() => {
+    if (auth.getEmail() !== usr.email) {
+      return auth
+        .doEmailUpdate(usr.email)
+        .then(() => {
+          db.doCreateUser(usr).then(() => {
+            dispatch(submitUserInfoToDBSuccess(usr));
+          });
+        })
+        .catch(error => {
+          console.log('error', error.message);
+          dispatch(errorSubmitUser(error.message));
+        });
+    }
+
+    if (userInfo.passwordOne && userInfo.passwordTwo) {
+      if (userInfo.passwordOne === userInfo.passwordTwo) {
+      return auth
+        .doPasswordUpdate(userInfo.passwordOne)
+        .then(() => {
+          db.doCreateUser(usr).then(() => {
+            dispatch(submitUserInfoToDBSuccess(usr));
+          });
+        })
+        .catch(error => {
+          console.log('error', error.message);
+          dispatch(errorSubmitUser(error.message));
+        });
+      }
+      return dispatch(errorSubmitUser('Passwords are not matching'));
+    }
+
+    return db.doCreateUser(usr).then(() => {
       dispatch(submitUserInfoToDBSuccess(usr));
     });
+
     // return db
     //   .getUser(uid)
     //   .then(usrInfo => {

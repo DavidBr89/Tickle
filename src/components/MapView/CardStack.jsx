@@ -14,7 +14,8 @@ function CardStack({
   slotSize,
   onClick,
   cardHeight,
-  unit
+  unit,
+  ...props
 }) {
   return (
     <Stack
@@ -30,6 +31,7 @@ function CardStack({
       style={{
         zIndex: 1000
       }}
+      {...props}
     >
       {d => (
         <PreviewCard
@@ -44,6 +46,7 @@ function CardStack({
             // TODO: change later
             height: cardHeight,
             transform: selectedCardId === d.id && 'scale(1.2)',
+            // zIndex: selectedCardId === d.id && 2000,
             opacity: d.template && 0.8
           }}
         />

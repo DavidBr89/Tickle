@@ -4,9 +4,9 @@ import { compose } from 'recompose';
 
 import withAuthorization from '../withAuthorization';
 import AccountPage from './AccountPage';
-import * as actions from 'Reducers/Account/actions';
 import { submitUserInfoToDB } from 'Reducers/Session/async_actions';
-import { setAuthUserInfo } from 'Reducers/Session/actions';
+import * as actions from 'Reducers/Session/actions';
+import { screenResize } from 'Reducers/Screen/actions';
 
 import { makeTagColorScale } from 'Src/styles/GlobalThemeContext'; // eslint-disable-line
 
@@ -17,18 +17,18 @@ exampleAction: authUser => {
 */
 const mapStateToProps = state => {
   const { cardSets } = state.Account;
-  // const { tagColorScale } = state.Cards;
-  const tagColorScale = makeTagColorScale(cardSets);
+  const { tagColorScale } = state.Cards;
+  // const tagColorScale = makeTagColorScale(cardSets);
   return {
     authUser: state.Session.authUser,
-    ...state.Account,
+    ...state.Screen,
     tagColorScale
   };
 };
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
-    { submitUserInfoToDB, setAuthUserInfo, ...actions },
+    { submitUserInfoToDB, screenResize, ...actions },
     dispatch
   );
 

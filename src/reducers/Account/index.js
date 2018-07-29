@@ -14,6 +14,8 @@ const INITIAL_STATE = {
   // numCreatedCards: 0,
   cardSets: [],
   cards: [],
+  createdCards: [],
+  submittedCards: [],
   modalActive: false,
   selectedCardId: null,
   extendedCardId: null,

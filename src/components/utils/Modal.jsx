@@ -12,6 +12,36 @@ import {
 
 // const ddg = new DDG('tickle');
 
+export const BareModal = ({
+  visible,
+  title,
+  children,
+  onClose,
+  style,
+  uiColor
+  // background,
+}) =>
+  ReactDOM.createPortal(
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        background: 'rgba(0, 0, 0, 0.5)',
+        opacity: visible ? 1 : 0,
+        transition: 'opacity 1s',
+        zIndex: visible ? '100000' : '-10',
+        left: 0,
+        top: 0,
+        position: 'absolute'
+      }}
+    >
+      <div className="modal-dialog" style={{ height: '100%', style }}>
+        {children}
+      </div>
+    </div>,
+    document.querySelector('body')
+  );
+
 export const Modal = ({
   visible,
   title,
@@ -50,7 +80,7 @@ export const Modal = ({
       >
         <div className="modal-dialog" role="document">
           <div
-            className={`modal-content ${!title && 'pb-2 pt-2'}`}
+            className="modal-content"
             style={{
               // TODO: fix later
               // TODO: fix later
@@ -122,7 +152,7 @@ export const ModalBody = ({
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-    <div className="modal-body" style={{ height: '80%', overflow: 'hidden' }}>
+    <div className="modal-body" style={{ height: '80%' }}>
       {children}
     </div>
 

@@ -23,7 +23,9 @@ export const compareUserFields = (
     name: nameA,
     username: usernameA,
     email: emailA,
-    photoURL: photoURLA
+    photoURL: photoURLA,
+    passwordOne: passwordOneA,
+    passwordTwo: passwordTwoA
   },
   {
     interests: interestsB,
@@ -31,7 +33,9 @@ export const compareUserFields = (
     uid: uidB,
     username: usernameB,
     email: emailB,
-    photoURL: photoURLB
+    photoURL: photoURLB,
+    passwordOne: passwordOneB,
+    passwordTwo: passwordTwoB
   }
 ) => {
   if (!isEqual(interestsA, interestsB)) {
@@ -57,5 +61,13 @@ export const compareUserFields = (
     // console.log('photo unequal');
     return false;
   }
+  // if (passwordOneA !== passwordOneB) {
+  //   // console.log('photo unequal');
+  //   return false;
+  // }
+  // if (passwordTwoA !== passwordTwoB) {
+  //   // console.log('photo unequal');
+  //   return false;
+  // }
   return true;
 };

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 
@@ -28,6 +29,15 @@ const INITIAL_STATE = {
 };
 
 class SignInForm extends Component {
+  static propTypes = {
+    onAuthenticate: PropTypes.func
+  };
+
+  static defaultProps = {
+    onAuthenticate: history => history.push(routes.DATAVIEW),
+    history: null
+  };
+
   constructor(props) {
     super(props);
 
@@ -35,30 +45,28 @@ class SignInForm extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { history } = this.props;
+    const { history, onAuthenticate } = this.props;
     const { email, password, error } = this.state;
-    if (
-      error === null &&
-      // email !== null &&
-      email !== prevState.email &&
-      // password !== null &&
-      password !== prevState.password
-    )
-      history.push(routes.DATAVIEW);
+    // if (
+    //   error === null &&
+    //   // email !== null &&
+    //   email !== prevState.email &&
+    //   // password !== null &&
+    //   password !== prevState.password
+    // )
+    //   onAuthenticate(history);
   }
 
   onSubmit = event => {
     const { email, password } = this.state;
 
-    const { history } = this.props;
+    const { history, onAuthenticate } = this.props;
     // console.log('auth', auth);
 
     auth
       .doSignInWithEmailAndPassword(email, password)
       .then(() => {
-        // this.setState(() => ({ ...INITIAL_STATE }));
-        console.log('onSubmit', email, password);
-        history.push(routes.DATAVIEW_GEO);
+        onAuthenticate(history);
       })
       .catch(error => {
         this.setState(byPropKey('error', error));
@@ -69,7 +77,6 @@ class SignInForm extends Component {
 
   render() {
     const { email, password, error } = this.state;
-    console.log('auth', this.state);
 
     const isInvalid = password === '' || email === '';
 

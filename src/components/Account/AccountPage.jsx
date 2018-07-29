@@ -5,15 +5,17 @@ import { scaleLinear, extent, range, scaleOrdinal } from 'd3';
 import { css } from 'aphrodite';
 import * as Icon from 'react-feather';
 
-import { db } from 'Firebase';
-import { Modal, ModalBody } from 'Utils/Modal';
+import { db, auth } from 'Firebase';
+import { BareModal, Modal, ModalBody } from 'Utils/Modal';
 import PhotoUpload from 'Components/utils/PhotoUpload';
+import { SignInForm } from 'Components/SignIn';
 import { TagInput, PreviewTags } from 'Components/utils/Tag';
 
 // import { skillTypes } from '../../dummyData';
-import CardMarker from 'Cards/CardMarker';
-import { FieldSet } from 'Components/utils/StyledComps';
-import setify from 'Utils/setify';
+import { Card } from 'Components/cards';
+import ExtendableMarker from 'Components/utils/ExtendableMarker';
+// import { FieldSet } from 'Components/utils/StyledComps';
+// import setify from 'Utils/setify';
 
 import {
   GlobalThemeConsumer,
@@ -89,9 +91,17 @@ class UserInfoModalBody extends React.Component {
     className: PropTypes.string
   };
 
-  state = { userUpdated: false };
+  static defaultProps = {
+    errorMsg: null
+  };
 
-  condSubmit = () => {
+  state = {
+    cachedUser: this.props.authUser,
+    userUpdated: false,
+    authenticated: false
+  };
+
+  conditionalSubmit = () => {
     const { userUpdated } = this.state;
     const { authUser, onSubmit, onClose } = this.props;
 
@@ -99,52 +109,52 @@ class UserInfoModalBody extends React.Component {
       onSubmit();
       this.setState({ userUpdated: false });
     }
-    onClose();
+    // onClose();
   };
 
   componentDidUpdate(prevProps, prevState) {
     const { authUser: oldUser } = prevProps;
     const { authUser } = this.props;
 
-    if (!compareUserFields(oldUser, authUser)) {
+    const { passwordOne, passwordTwo } = authUser;
+    const { passwordOne: oldPwOne, passwordTwo: oldPwTwo } = oldUser;
+    console.log(oldUser, authUser);
+    if (
+      !compareUserFields(oldUser, authUser) ||
+      (passwordOne !== oldPwOne ||
+        passwordTwo !== oldPwTwo
+        )
+
+      // ||
+      //   passwordOne === passwordTwo)
+    ) {
+      // if (authUser.passwordOne === authUser.passwordTwo)
       this.setState({ userUpdated: true });
     }
   }
 
-  render() {
-    const { onChange, tagColorScale} = this.props;
+  renderUpdateUserModal = () => {
+    const { onChange, tagColorScale, title } = this.props;
     const {
       onSubmit,
-      title,
       username,
       name,
       email,
       photoURL,
       interests,
-      uid,
+      uid
     } = this.props.authUser;
 
     return (
-      <ModalBody
-        onClose={this.condSubmit}
-        title={title}
-        footer={
-          <button
-            className={css(defaultStylesheet.btn)}
-            onClick={this.condSubmit}
-          >
-            close
-          </button>
-        }
-      >
+      <React.Fragment>
         <div className="mb-3">
           <div className="form-group">
             <label htmlFor="fullname">User Photo:</label>
             <div
               style={{
                 display: 'flex',
-                width: '100%',
-                justifyContent: 'center'
+                width: '100%'
+                // justifyContent: 'center'
               }}
             >
               <EditUserPhoto
@@ -153,12 +163,50 @@ class UserInfoModalBody extends React.Component {
                 url={photoURL}
                 onChange={photoURL => onChange({ photoURL })}
               />
+
+              <div className="ml-3">
+                <div className="form-group">
+                  <label htmlFor="username">Username:</label>
+                  <div>
+                    <input
+                      className="form-control"
+                      value={username || ''}
+                      onChange={e => onChange({ username: e.target.value })}
+                      type="text"
+                      placeholder="Full Name"
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="username">Interests:</label>
+                  <TagInput
+                    tags={interests}
+                    colorScale={tagColorScale}
+                    uiColor="grey"
+                    onChange={newInterests =>
+                      onChange({ interests: newInterests })
+                    }
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
         <div className="mb-3">
           <div className="form-group">
-            <label htmlFor="fullname">Full name:</label>
+            <label htmlFor="email">Email:</label>
+            <div>
+              <input
+                className="form-control"
+                value={email || ''}
+                onChange={e => onChange({ email: e.target.value })}
+                type="text"
+                placeholder="Full Name"
+              />
+            </div>
+          </div>
+          <div className="form-group">
+            <label htmlFor="name">Name:</label>
             <div>
               <input
                 className="form-control"
@@ -169,28 +217,76 @@ class UserInfoModalBody extends React.Component {
               />
             </div>
           </div>
+
           <div className="form-group">
-            <label htmlFor="username">Username:</label>
+            <label htmlFor="pwd">Password:</label>
             <div>
               <input
                 className="form-control"
-                value={username}
-                onChange={e => onChange({ username: e.target.value })}
-                type="text"
-                placeholder="Username"
+                onChange={e => onChange({ passwordOne: e.target.value })}
+                type="password"
+                placeholder="Password"
               />
             </div>
-          </div>
-          <div className="form-group">
-            <label htmlFor="username">Interests:</label>
-            <TagInput
-              tags={interests}
-              colorScale={tagColorScale}
-              uiColor="grey"
-              onChange={newInterests => onChange({ interests: newInterests })}
+            <input
+              className="form-control"
+              onChange={e => onChange({ passwordTwo: e.target.value })}
+              type="password"
+              placeholder="Confirm Password"
             />
           </div>
         </div>
+      </React.Fragment>
+    );
+  };
+
+  render() {
+    const { onChange, tagColorScale, title, errorMsg, onClose } = this.props;
+    const { authenticated, cachedUser, userUpdated } = this.state;
+    const {
+      onSubmit,
+      username,
+      name,
+      email,
+      photoURL,
+      interests,
+      uid,
+      passwordOne,
+      passwordTwo
+    } = this.props.authUser;
+
+    return (
+      <ModalBody
+        onClose={() => {
+          onChange(cachedUser);
+          onClose();
+        }}
+        title={title}
+        footer={
+          authenticated && (
+            <React.Fragment>
+              <div className="mr-1">{errorMsg}</div>
+              <button
+                className={css(defaultStylesheet.btn)}
+                onClick={this.conditionalSubmit}
+                disabled={!userUpdated}
+              >
+                Update
+              </button>
+            </React.Fragment>
+          )
+        }
+      >
+        {!authenticated ? (
+          <div>
+            <p>Please sign in again!</p>
+            <SignInForm
+              onAuthenticate={() => this.setState({ authenticated: true })}
+            />
+          </div>
+        ) : (
+          this.renderUpdateUserModal()
+        )}
       </ModalBody>
     );
   }
@@ -214,12 +310,55 @@ class UserInfoModalBody extends React.Component {
       </div>
 
 */
+
+const ExtendableCard = props => {
+  const {
+    width,
+    height,
+    authUser,
+    selectedCardId,
+    onClick,
+    extendedCardId,
+    onClose
+  } = props;
+
+  const { createdCards, submittedCards } = authUser;
+  const cards = [...createdCards, ...submittedCards];
+  const selected =
+    extendedCardId !== null &&
+    selectedCardId !== null &&
+    extendedCardId === selectedCardId;
+
+  const selectedCard = selected ? cards.find(c => c.id === selectedCardId) : {};
+
+  return (
+    <BareModal key={selectedCard ? selectedCard.id : null} visible={selected}
+    >
+      {selected && (
+        <Card
+          {...selectedCard}
+          width={width}
+          height={height}
+          onClick={onClick}
+          onClose={onClose}
+        />
+      )}
+    </BareModal>
+  );
+};
+
 export default class UserDetailedInfo extends React.Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string
   };
 
+  componentDidMount() {
+    this.props.screenResize({
+      width: this.cont.offsetWidth,
+      height: this.cont.offsetHeight
+    });
+  }
   // static defaultProps = {
   //   stylesheet
   // };
@@ -239,10 +378,9 @@ export default class UserDetailedInfo extends React.Component {
       userInfoExtended,
       extendUserInfo,
       submitUserInfoToDB,
-      setAuthUserInfo
+      setAuthUserInfo,
+      errorUpdateUserMsg
     } = this.props;
-
-    console.log('stylesheet', defaultStylesheet);
 
     const {
       skills,
@@ -255,15 +393,34 @@ export default class UserDetailedInfo extends React.Component {
       email,
       photoURL
     } = authUser;
+    const onCardClick = d =>
+      d.id !== selectedCardId ? selectCard(d.id) : extendCard(d.id);
+
+    const selectedIdCreated = createdCards.find(c => c.id === selectedCardId)
+      ? selectedCardId
+      : null;
+
+    const selectedIdSubmitted = submittedCards.find(
+      c => c.id === selectedCardId
+    )
+      ? selectedCardId
+      : null;
+
     return (
-      <div className="content-block">
+      <div
+        className="content-block"
+        style={{ position: 'relative' }}
+        ref={c => (this.cont = c)}
+      >
+        <ExtendableCard {...this.props} onClose={() => extendCard(null)} />
+
         <Modal visible={userInfoExtended}>
           <UserInfoModalBody
-            title="User Info"
+            title="Update User Info"
             onClose={extendUserInfo}
             tagColorScale={tagColorScale}
+            errorMsg={errorUpdateUserMsg}
             onSubmit={() => {
-              console.log('Submit');
               submitUserInfoToDB(authUser);
             }}
             onChange={usr =>
@@ -343,7 +500,7 @@ export default class UserDetailedInfo extends React.Component {
             </div>
           </section>
           <section className="mb-1">
-            <h4>Skills</h4>
+            <h4>My Tags</h4>
             <TagList sets={skills} tagColorScale={tagColorScale} />
           </section>
           <section>
@@ -352,14 +509,14 @@ export default class UserDetailedInfo extends React.Component {
               <CardStack
                 className=""
                 cards={createdCards}
-                selectedCardId={null}
+                selectedCardId={selectedIdCreated}
                 tagColorScale={tagColorScale}
                 width={100}
                 height={100}
                 slotSize={100 / 5}
-                onClick={d => d}
                 cardHeight={180}
                 unit="%"
+                onClick={onCardClick}
               />
             </div>
           </section>
@@ -369,7 +526,7 @@ export default class UserDetailedInfo extends React.Component {
               <CardStack
                 className=""
                 cards={submittedCards}
-                selectedCardId={null}
+                selectedCardId={selectedIdSubmitted}
                 tagColorScale={tagColorScale}
                 width={100}
                 height={100}
@@ -377,6 +534,7 @@ export default class UserDetailedInfo extends React.Component {
                 onClick={d => d}
                 cardHeight={180}
                 unit="%"
+                onClick={onCardClick}
               />
             </div>
           </section>
