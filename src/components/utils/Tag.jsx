@@ -1,5 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'aphrodite';
+
+import {
+  stylesheet as defaultStylesheet,
+  uiColor as defaultUIColor
+} from 'Src/styles/GlobalThemeContext';
 
 const tagsStyle = { display: 'flex', marginBottom: 4 };
 const tagStyle = {
@@ -20,7 +26,8 @@ export class TagList extends Component {
     handleAddition: PropTypes.func,
     data: PropTypes.array,
     uiColor: PropTypes.string,
-    colorScale: PropTypes.func
+    colorScale: PropTypes.func,
+    style: PropTypes.object
   };
 
   static defaultProps = {
@@ -28,8 +35,9 @@ export class TagList extends Component {
     handleDelete: d => d,
     handleAddition: d => d,
     data: [],
-    uiColor: 'black',
-    colorScale: () => 'gold'
+    uiColor: defaultUIColor,
+    colorScale: () => defaultUIColor,
+    style: {}
   };
 
   constructor(props) {
@@ -49,18 +57,22 @@ export class TagList extends Component {
       colorScale,
       handleDelete,
       handleAddition,
-      className
+      className,
+      style,
+      stylesheet
     } = this.props;
     const { value } = this.state;
     return (
-      <div className={className}>
+      <div className={className} style={style}>
         <div className="mb-1" style={{ display: 'flex' }}>
           <input
+            className="form-control"
+            style={{ width: '70%' }}
             value={value}
             onChange={({ target }) => this.setState({ value: target.value })}
           />
           <button
-            className="btn btn-active ml-2"
+            className={`${css(stylesheet.btn)} ml-2`}
             style={{ background: uiColor }}
             onClick={event => {
               this.setState({ value: '' });
@@ -91,7 +103,9 @@ export class TagInput extends React.Component {
     onChange: PropTypes.func,
     tags: PropTypes.oneOf([PropTypes.arrayOf(PropTypes.string), null]),
     uiColor: PropTypes.string,
-    colorScale: PropTypes.func
+    colorScale: PropTypes.func,
+    style: PropTypes.object,
+    stylesheet: PropTypes.object
   };
 
   static defaultProps = {
@@ -99,7 +113,10 @@ export class TagInput extends React.Component {
     tags: [],
     onChange: d => d,
     uiColor: '',
-    colorScale: () => 'gold'
+    colorScale: () => defaultUIColor,
+    stylesheet: defaultStylesheet,
+    className: '',
+    style: {}
   };
 
   constructor(props) {
@@ -127,19 +144,19 @@ export class TagInput extends React.Component {
   }
 
   handleAddition(tag) {
-    const tags = this.state.tags;
+    if (!tag) return;
+    const { tags } = this.state;
     const newTags = [...new Set([...tags, tag])];
-    console.log('tags', tags, 'newTags', newTags, tag);
     this.setState({ tags: newTags });
   }
 
   render() {
     const { tags } = this.state;
-    const { uiColor, colorScale } = this.props;
+    const { uiColor, colorScale, className, style } = this.props;
 
     return (
       <TagList
-        uiColor={uiColor}
+        {...this.props}
         data={tags}
         colorScale={colorScale}
         handleDelete={this.handleDelete}
@@ -183,7 +200,11 @@ const Tag = ({ title, onClick, edit, small, color }) => {
     return (
       <small
         key={title}
-        style={{ ...tagStyle, background: color }}
+        style={{
+          ...tagStyle,
+          background: color,
+          cursor: 'pointer'
+        }}
         onClick={onClick}
       >
         {/* TODO: put small out */}
@@ -193,7 +214,7 @@ const Tag = ({ title, onClick, edit, small, color }) => {
   return (
     <div
       key={title}
-      style={{ ...tagStyle, background: color }}
+      style={{ ...tagStyle, background: color, cursor: 'pointer' }}
       onClick={onClick}
     >
       {children}
@@ -222,8 +243,7 @@ export const PreviewTags = ({
   style,
   placeholder,
   small,
-  colorScale,
-  extended
+  colorScale
 }) => (
   <div
     style={{
@@ -266,5 +286,5 @@ PreviewTags.defaultProps = {
   style: {},
   placeholder: 'Please add a tag',
   small: false,
-  colorScale: () => 'red'
+  colorScale: () => defaultUIColor
 };

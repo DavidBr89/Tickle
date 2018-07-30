@@ -50,6 +50,7 @@ export const TagInput = class TagInput extends Component {
           }}
         >
           <input
+            className="form-control"
             type="text"
             placeholder="Search by Tag"
             onSelect={onSelect}

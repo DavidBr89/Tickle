@@ -126,8 +126,8 @@ class DataOverlay extends Component {
       // isCardDragging,
       preview
     } = this.props;
-    console.log('DataOverlay Data', data);
 
+    console.log('selectedCardId', selectedCardId);
     // x={extCardId === c.id ? width / 2 : x}
     // y={extCardId === c.id ? height / 2 : y}
     // TODO: join

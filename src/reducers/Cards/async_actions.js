@@ -31,7 +31,6 @@ import NearbyPlaces from '../places.json';
 import { db, firebase } from 'Firebase';
 import idGenerate from 'Src/idGenerator';
 
-import gapi from './gapi';
 
 // export const REQUEST_CHALLENGES = 'REQUEST_CHALLENGES';
 // function requestChallenges(subreddit) {
@@ -54,35 +53,35 @@ import gapi from './gapi';
 //   return { type: SCREEN_RESIZE, options };
 // }
 
-// TODO: remove
-gapi.load('client', () => {
-  const discoveryUrl =
-    'https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest';
-
-  // Initialize the gapi.client object, which app uses to make API requests.
-  // Get API key and client ID from API Console.
-  // 'scope' field specifies space-delimited list of access scopes.
-  gapi.client
-    .init({
-      apiKey: process.env.GoogleAccessToken,
-      discoveryUrl
-      // discoveryDocs: [discoveryUrl]
-      // clientId:
-      //   '655124348640-ip7r33kh1vt5lbc2h5rij96mku6unreu.apps.googleusercontent.com',
-      // scope: SCOPE
-    })
-    .then(() =>
-      gapi.client
-        .request({
-          path: 'https://maps.googleapis.com/maps/api/place/nearbysearch/json',
-          params: {}
-        })
-        .execute(
-          d => console.log('hey rexxxx', d),
-          err => console.log('err', err)
-        )
-    );
-});
+// // TODO: remove
+// gapi.load('client', () => {
+//   const discoveryUrl =
+//     'https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest';
+//
+//   // Initialize the gapi.client object, which app uses to make API requests.
+//   // Get API key and client ID from API Console.
+//   // 'scope' field specifies space-delimited list of access scopes.
+//   gapi.client
+//     .init({
+//       apiKey: process.env.GoogleAccessToken,
+//       discoveryUrl
+//       // discoveryDocs: [discoveryUrl]
+//       // clientId:
+//       //   '655124348640-ip7r33kh1vt5lbc2h5rij96mku6unreu.apps.googleusercontent.com',
+//       // scope: SCOPE
+//     })
+//     .then(() =>
+//       gapi.client
+//         .request({
+//           path: 'https://maps.googleapis.com/maps/api/place/nearbysearch/json',
+//           params: {}
+//         })
+//         .execute(
+//           d => console.log('hey rexxxx', d),
+//           err => console.log('err', err)
+//         )
+//     );
+// });
 
 export function fetchCollectibleCards(uid) {
   // Thunk middleware knows how to handle functions.

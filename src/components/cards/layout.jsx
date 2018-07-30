@@ -4,7 +4,6 @@ import { scaleOrdinal } from 'd3';
 import * as Icon from 'react-feather';
 import { css } from 'aphrodite/no-important';
 // import Grid from 'mygrid/dist';
-import { WithContext as ReactTags } from 'react-tag-input';
 import { TEXT, IMG, GIF, VIDEO } from 'Constants/mediaTypes';
 import { profileSrc, colorClass, colorScaleRandom } from './styles';
 

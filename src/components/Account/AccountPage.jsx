@@ -5,11 +5,11 @@ import { scaleLinear, extent, range, scaleOrdinal } from 'd3';
 import { css } from 'aphrodite';
 import * as Icon from 'react-feather';
 
-import { db, auth } from 'Firebase';
+import { db } from 'Firebase';
 import { BareModal, Modal, ModalBody } from 'Utils/Modal';
 import PhotoUpload from 'Components/utils/PhotoUpload';
 import { SignInForm } from 'Components/SignIn';
-import { TagInput, PreviewTags } from 'Components/utils/Tag';
+import { TagInput, PreviewTags, Tag } from 'Components/utils/Tag';
 
 // import { skillTypes } from '../../dummyData';
 import { Card } from 'Components/cards';
@@ -39,7 +39,6 @@ const TagList = ({ sets, tagColorScale, acc = d => d.values.length }) => {
         <div
           className="m-1"
           style={{
-            // width: `${scale(acc(d))}%`,
             height: '30px',
             display: 'flex',
             justifyContent: 'center',
@@ -118,19 +117,14 @@ class UserInfoModalBody extends React.Component {
 
     const { passwordOne, passwordTwo } = authUser;
     const { passwordOne: oldPwOne, passwordTwo: oldPwTwo } = oldUser;
-    console.log(oldUser, authUser);
     if (
       !compareUserFields(oldUser, authUser) ||
-      (passwordOne !== oldPwOne ||
-        passwordTwo !== oldPwTwo
-        )
-
-      // ||
-      //   passwordOne === passwordTwo)
+      (passwordOne !== oldPwOne || passwordTwo !== oldPwTwo)
     ) {
-      // if (authUser.passwordOne === authUser.passwordTwo)
       this.setState({ userUpdated: true });
     }
+    if (prevState.userUpdated && compareUserFields(oldUser, authUser))
+      this.setState({ userUpdated: false });
   }
 
   renderUpdateUserModal = () => {
@@ -170,6 +164,7 @@ class UserInfoModalBody extends React.Component {
                   <div>
                     <input
                       className="form-control"
+                      style={{ width: 'unset' }}
                       value={username || ''}
                       onChange={e => onChange({ username: e.target.value })}
                       type="text"
@@ -178,8 +173,9 @@ class UserInfoModalBody extends React.Component {
                   </div>
                 </div>
                 <div className="form-group">
-                  <label htmlFor="username">Interests:</label>
+                  <label htmlFor="interests">Interests:</label>
                   <TagInput
+                    className="form-group"
                     tags={interests}
                     colorScale={tagColorScale}
                     uiColor="grey"
@@ -219,7 +215,7 @@ class UserInfoModalBody extends React.Component {
           </div>
 
           <div className="form-group">
-            <label htmlFor="pwd">Password:</label>
+            <label htmlFor="pwd">Change Password:</label>
             <div>
               <input
                 className="form-control"

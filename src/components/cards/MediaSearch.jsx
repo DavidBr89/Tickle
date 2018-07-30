@@ -143,26 +143,14 @@ const truncateStyle = {
   width: '100%'
 };
 
-gapi.load('client', () => {
-  const discoveryUrl =
-    'https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest';
-
-  // Initialize the gapi.client object, which app uses to make API requests.
-  // Get API key and client ID from API Console.
-  // 'scope' field specifies space-delimited list of access scopes.
-  gapi.client.init({
-    // TODO: put in config
-    apiKey: 'AIzaSyBgA3WQwm6X8arx4X5sLSXuoM9_TSucgdI',
-    discoveryDocs: [discoveryUrl]
-    // clientId:
-    //   '655124348640-ip7r33kh1vt5lbc2h5rij96mku6unreu.apps.googleusercontent.com',
-    // scope: SCOPE
-  });
-});
-
 const flickrUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${
   process.env.FlickrAccessToken
 }`;
+
+const youtubeUrl = ({ part, q, type, maxResults, order }) =>
+  `https://www.googleapis.com/youtube/v3/search?part=${part}&q=${q}&type=${type}&maxResult=${maxResults}&order=${order}&key=${
+    process.env.youtube
+  }`;
 
 const searchFlickr = (q = 'dragon') =>
   // new Promise(resolve => {
@@ -223,19 +211,20 @@ const searchWikipedia = q =>
     return new Promise(resolve => resolve(results));
   });
 
-const searchYoutube = (q = 'dragon') =>
+const searchYoutube = (q = '') =>
   new Promise(resolve =>
-    gapi.client.youtube.search
-      .list({
+    fetch(
+      youtubeUrl({
         part: 'snippet',
-        source: YOUTUBE,
         q,
+        type: 'video',
         maxResults: 20,
-        order: 'viewCount',
-        // TODO: change
-        publishedAfter: '2015-01-01T00:00:00Z'
+        order: 'viewCount'
+        // publishedAfter: '2015-01-01T00:00:00Z'
       })
-      .execute(({ items }) => {
+    )
+      .then(res => res.json())
+      .then(({ items }) => {
         const res = items.map(d => ({
           url: `http://www.youtube.com/embed/${d.id.videoId}`,
           id: d.id.videoId,
@@ -625,6 +614,25 @@ class UnstyledMediaSearch extends Component {
 
   state = { selected: 'wikipedia', mySelectedMedia: [] };
 
+  // componentDidMount() {
+  //   gapi.load('client', () => {
+  //     const discoveryUrl =
+  //       'https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest';
+  //
+  //     // Initialize the gapi.client object, which app uses to make API requests.
+  //     // Get API key and client ID from API Console.
+  //     // 'scope' field specifies space-delimited list of access scopes.
+  //     gapi.client.init({
+  //       // TODO: put in config
+  //       apiKey: 'AIzaSyBgA3WQwm6X8arx4X5sLSXuoM9_TSucgdI',
+  //       discoveryDocs: [discoveryUrl]
+  //       // clientId:
+  //       //   '655124348640-ip7r33kh1vt5lbc2h5rij96mku6unreu.apps.googleusercontent.com',
+  //       // scope: SCOPE
+  //     });
+  //   });
+  // }
+
   activeTab = sel => {
     const { selectedMedia, onChange } = this.props;
     const selArticles = selectedMedia.filter(m => m.source === WIKIPEDIA);
@@ -851,7 +859,7 @@ class MetaSearch extends Component {
 
   static defaultProps = {
     searchFn: null,
-    defaultQuery: 'news',
+    defaultQuery: 'Belgium',
     type: null,
     onAdd: d => d,
     selected: null,
@@ -925,6 +933,7 @@ class MetaSearch extends Component {
 
   render() {
     const { data, selectedIds } = this.state;
+    const { defaultQuery } = this.props;
     // let GoogleAuth;
     // const SCOPE = 'https://www.googleapis.com/auth/youtube.force-ssl';
     // Load the API's client and auth2 modules.
@@ -938,7 +947,8 @@ class MetaSearch extends Component {
           <div className="mb-3 w-100">
             <input
               type="text"
-              placeholder="Search..."
+              className="form-control"
+              placeholder={`Search...for instance ${defaultQuery}`}
               onChange={evt => this.onSearch(evt.target.value)}
             />
           </div>
@@ -999,7 +1009,7 @@ export class MediaPreview extends Component {
     const { data } = this.props;
 
     return (
-      <div style={{ width: '100%', height: '60vh' }}>
+      <div style={{ width: '100%' }}>
         {data.length === 0 && <h3>{'No media added to this Card!'} </h3>}
         <ScrollList data={data}>
           {(d, selected) => (
@@ -1042,6 +1052,7 @@ class MediaOverview extends Component {
   removeItem = m => {
     if (m.source === USER_CONTENT) {
       db.removeFromStorage(userContentUploadPath(m.id)).then(() =>
+        // TODO: action
         console.log('removedMediaItem Success', m.id)
       );
     }
@@ -1062,7 +1073,7 @@ class MediaOverview extends Component {
     // TODO: fix view height
 
     return (
-      <div style={{ width: '100%', height: '60vh' }}>
+      <div style={{ width: '100%' }}>
         {data.length === 0 && (
           <div
             style={{

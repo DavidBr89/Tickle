@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'aphrodite';
 
+import {
+  GlobalThemeConsumer,
+  stylesheet as defaultStylesheet,
+  uiColor as defaultUIColor
+} from 'Src/styles/GlobalThemeContext';
 // import { DimWrapper } from 'Utils';
 
 // import { createShadowStyle, UIthemeContext } from 'Cards/style';
@@ -34,33 +40,60 @@ export default class DataUpload extends Component {
     className: '',
     style: {},
     onChange: d => d,
-    uiColor: 'grey',
+    uiColor: defaultUIColor,
     placeholder: 'Add your description',
+    stylesheet: defaultStylesheet,
     defaultImg: null,
     width: 250,
-    height: 250
+    height: 250,
+    className: ''
   };
+  state = { fileName: null };
 
   // TODO: remove
   contHeight = 300;
-// video#<{(|,image#<{(|
+  // video#<{(|,image#<{(|
   render() {
-    const { className, style, onChange, uiColor } = this.props;
+    const { className, style, onChange, uiColor, stylesheet } = this.props;
+    const { fileName } = this.state;
 
     return (
-      <input
+      <div
         className={className}
-        style={{ border: `${uiColor} 1px solid`, overflow: 'hidden', ...style }}
-        type="file"
-        accept="*"
-        capture="environment"
-        onChange={e => {
-          onChange({
-            url: convertToImgSrc(e.target.files),
-            file: e.target.files[0]
-          });
-        }}
-      />
+        style={{ display: 'flex', alignItems: 'center', ...style }}
+      >
+        <div clasName="mr-3" style={{ width: '100%' }}>
+          {fileName || 'No File selected'}
+        </div>
+        <div>
+          <label
+            htmlFor="all-file-upload"
+            className={`${css(stylesheet.btn)} ml-2 mt-2 `}
+          >
+            Choose File
+          </label>
+          <input
+            id="all-file-upload"
+            className={className}
+            style={{
+              border: `${uiColor} 1px solid`,
+              overflow: 'hidden',
+              ...style
+            }}
+            type="file"
+            accept="*"
+            capture="environment"
+            onChange={e => {
+              const file = e.target.files[0];
+              this.setState({ fileName: file.name });
+              onChange({
+                url: convertToImgSrc(e.target.files),
+                file
+              });
+            }}
+          />
+        </div>
+      </div>
     );
   }
 }

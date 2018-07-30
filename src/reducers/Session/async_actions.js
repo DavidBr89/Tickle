@@ -67,19 +67,19 @@ export function submitUserInfoToDB(userInfo) {
         });
     }
 
-    if (userInfo.passwordOne && userInfo.passwordTwo) {
-      if (userInfo.passwordOne === userInfo.passwordTwo) {
-      return auth
-        .doPasswordUpdate(userInfo.passwordOne)
-        .then(() => {
-          db.doCreateUser(usr).then(() => {
-            dispatch(submitUserInfoToDBSuccess(usr));
+    const { passwordOne, passwordTwo } = userInfo;
+    if (passwordOne || passwordTwo) {
+      if (passwordOne === passwordTwo) {
+        return auth
+          .doPasswordUpdate(userInfo.passwordOne)
+          .then(() => {
+            db.doCreateUser(usr).then(() => {
+              dispatch(submitUserInfoToDBSuccess(usr));
+            });
+          })
+          .catch(error => {
+            dispatch(errorSubmitUser(error.message));
           });
-        })
-        .catch(error => {
-          console.log('error', error.message);
-          dispatch(errorSubmitUser(error.message));
-        });
       }
       return dispatch(errorSubmitUser('Passwords are not matching'));
     }

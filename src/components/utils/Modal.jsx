@@ -119,7 +119,7 @@ Modal.defaultProps = {
   onSave: () => null,
   style: {},
   background: 'green',
-  uiColor: 'grey',
+  uiColor: defaultUiColor,
   footer: null
 };
 
@@ -152,7 +152,7 @@ export const ModalBody = ({
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-    <div className="modal-body" style={{ height: '80%' }}>
+    <div className="modal-body" style={{ height: '80%', ...style }}>
       {children}
     </div>
 

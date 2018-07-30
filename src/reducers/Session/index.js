@@ -53,7 +53,7 @@ function sessionReducer(state = INITIAL_STATE, action) {
     }
     case SUBMIT_USER_INFO_TO_DB_SUCCESS: {
       // const { options } = action;
-      return { ...state, userInfoExtended: false };
+      return { ...state, userInfoExtended: false, errorUpdateUserMsg: null };
     }
     default:
       return state;

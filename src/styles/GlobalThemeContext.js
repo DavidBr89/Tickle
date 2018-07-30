@@ -7,6 +7,7 @@ import chroma from 'chroma-js';
 import { StyleSheet } from 'aphrodite/no-important';
 import { btnStyle } from './helperStyles';
 
+// const uiColor = '#6c757d';
 const uiColor = 'grey';
 const shallowBg = chroma(uiColor)
   .brighten(2.2)

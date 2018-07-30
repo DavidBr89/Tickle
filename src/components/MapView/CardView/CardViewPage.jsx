@@ -245,7 +245,11 @@ class CardViewPage extends Component {
                 }}
               />
             </div>
-            <CardDataOverlay {...this.props} style={{ height: '60%' }} colorScale={tagColorScale}/>
+            <CardDataOverlay
+              {...this.props}
+              style={{ height: '60%' }}
+              colorScale={tagColorScale}
+            />
           </div>
         </div>
       </div>

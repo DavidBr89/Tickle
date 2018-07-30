@@ -42,7 +42,7 @@ class DataUploadForm extends Component {
         style={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          // justifyContent: 'space-between',
           height: '100%'
         }}
       >
@@ -52,24 +52,27 @@ class DataUploadForm extends Component {
             this.setState({ imgUrl: url, file: newFile });
           }}
         />
-        <select
-          className={`${css(btn)} ml-2`}
-          style={{ width: '20%', fontWeight: 'bold' }}
-          onChange={e => this.setState({ type: e.target.value })}
-        >
-          <option>{TEXT}</option>
-          <option>{IMG}</option>
-          <option>{VIDEO}</option>
-        </select>
+        <div className={`${css(btn)} ml-2`}>
+          <select
+            style={{ border: 'unset', fontSize: 18, padding: 1 }}
+            onChange={e => this.setState({ type: e.target.value })}
+          >
+            <option>{TEXT}</option>
+            <option>{IMG}</option>
+            <option>{VIDEO}</option>
+          </select>
+        </div>
 
-        <button
-          className={`${css(btn)} ml-2`}
-          style={{ fontWeight: 'bold' }}
-          onClick={() => file && onChange({ imgUrl, file, type })}
-          disabled={!file}
-        >
-          Add
-        </button>
+        <div>
+          <button
+            className={`${css(btn)} ml-2`}
+            style={{ fontWeight: 'bold' }}
+            onClick={() => file && onChange({ imgUrl, file, type })}
+            disabled={!file}
+          >
+            Add
+          </button>
+        </div>
       </div>
     );
   }

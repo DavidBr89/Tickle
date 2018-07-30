@@ -325,9 +325,7 @@ class EditCardFront extends PureComponent {
             footer={closeBtn}
             {...modalProps}
             onClose={this.onCloseModal}
-            style={
-              dialogTitle === 'Media' ? { height: MODAL_FULL_HEIGHT } : null
-            }
+            style={{ height: MODAL_FULL_HEIGHT }}
           >
             <MediaSearch
               selectedMedia={media}
