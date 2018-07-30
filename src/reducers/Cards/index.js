@@ -5,6 +5,8 @@ import { union, difference } from 'lodash';
 
 import { makeTagColorScale } from 'Src/styles/GlobalThemeContext';
 
+import { tagColor } from 'Src/styles/GlobalThemeContext';
+
 import {
   RECEIVE_PLACES,
   UPDATE_CARD,
@@ -72,7 +74,9 @@ const INITIAL_STATE = {
   tmpCard: defaultCardTemplate,
   challenges: [],
   cardChallengeOpen: false,
-  selectedTags: []
+  selectedTags: [],
+  // TODO: change later
+  tagColorScale: () => tagColor
   // filterSet: []
   // TODO: outsource
   //
@@ -81,9 +85,6 @@ const INITIAL_STATE = {
 
 // const cardTemplateId = 'temp';
 function reducer(state = INITIAL_STATE, action) {
-  // console.log('action', action);
-  // const { selectedCardId } = state;
-
   switch (action.type) {
     case LOADING_CARDS: {
       return {
@@ -96,14 +97,14 @@ function reducer(state = INITIAL_STATE, action) {
       const cards = action.options;
       const createdCards = cards.map(c => ({ ...c, edit: true }));
 
-      const cardSets = setify(cards);
-      const tagColorScale = makeTagColorScale(cardSets);
+      // const cardSets = setify(cards);
+      // const tagColorScale = makeTagColorScale(cardSets);
 
       return {
         ...state,
         createdCards,
-        loadingCards: false,
-        tagColorScale
+        loadingCards: false
+        // tagColorScale
         // cards
         // isCardDragging
       };
@@ -112,13 +113,13 @@ function reducer(state = INITIAL_STATE, action) {
     case RECEIVE_COLLECTIBLE_CARDS: {
       const cards = action.options;
 
-      const cardSets = setify(cards);
-      const tagColorScale = makeTagColorScale(cardSets);
+      // const cardSets = setify(cards);
+      // const tagColorScale = makeTagColorScale(cardSets);
       return {
         ...state,
         collectibleCards: cards,
-        loadingCards: false,
-        tagColorScale
+        loadingCards: false
+        // tagColorScale
         // defaultCards: cards
         // isCardDragging
       };
@@ -160,11 +161,9 @@ function reducer(state = INITIAL_STATE, action) {
       const { createdCards } = state;
 
       const updatedCard = action.options;
-      console.log('updatedCard', updatedCard);
 
       const updatedCards = createdCards.map(c => {
         if (c.id === updatedCard.id) {
-          console.log('change', updatedCard);
           return updatedCard;
         }
         return c;

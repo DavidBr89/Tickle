@@ -27,7 +27,7 @@ import CardViewPage from './CardViewPage';
 
 // Container
 const mapStateToProps = state => {
-  const { collectibleCards, createdCards } = state.Cards;
+  const { collectibleCards } = state.Cards;
 
   const { selectedCardId, filterSet } = state.DataView;
 
@@ -87,6 +87,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const {
     selectCard,
     extendSelectedCard,
+    fetchAllCards,
     // fetchReadableCards,
     fetchCollectibleCards
   } = dispatcherProps;

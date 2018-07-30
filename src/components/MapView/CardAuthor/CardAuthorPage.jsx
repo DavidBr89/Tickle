@@ -115,7 +115,6 @@ class CardAuthorPage extends Component {
     selectCard: PropTypes.func,
     filterCards: PropTypes.func,
     addCardFilter: PropTypes.func,
-    setDataView: PropTypes.func,
     filterSet: PropTypes.func,
     toggleAuthEnv: PropTypes.func,
     tagColorScale: PropTypes.func,
@@ -136,49 +135,16 @@ class CardAuthorPage extends Component {
     selectCard: d => d,
     filterCards: d => d,
     addCardFilter: d => d,
-    setDataView: d => d,
     filterSet: d => d,
     toggleAuthEnv: d => d,
     tagColorScale: () => 'green',
-    screenResize: d => d
+    screenResize: d => d,
+    fetchCards: d => d,
+    preSelectCardId: d => d
   };
-  constructor(props) {
-    super(props);
-
-    // TODO put into container element
-    // const { screenResize } = props;
-
-    // this._onChangeViewport = this._onChangeViewport.bind(this);
-    // this._userMove = this._userMove.bind(this);
-    // this.gridSpan = this.gridSpan.bind(this);
-
-    // const width = window.innerWidth;
-    // const height = window.innerHeight;
-
-    // screenResize({
-    //   width: this.cont.offsetWidth || window.innerWidth,
-    //   height: this.cont.offsetHeight || window.innerHeight
-    // });
-    // window.addEventListener('resize', () => {
-    //   screenResize({
-    //     width: this.cont.offsetWidth || window.innerWidth,
-    //     height: this.cont.offsetHeight || window.innerHeight
-    //   });
-    // });
-
-    // screenResize({
-    //   width,
-    //   height
-    // });
-  }
 
   componentDidMount() {
-    const {
-      screenResize,
-      getUserCards,
-      fetchCards,
-      preSelectCardId
-    } = this.props;
+    const { screenResize, fetchCards, preSelectCardId } = this.props;
 
     fetchCards();
 
@@ -186,28 +152,10 @@ class CardAuthorPage extends Component {
       width: this.cont.offsetWidth,
       height: this.cont.offsetHeight
     });
-
     preSelectCardId();
-
-    // // TODO: update
-    // navigator.geolocation.watchPosition(
-    //   pos => {
-    //     const userLocation = {
-    //       latitude: pos.coords.latitude,
-    //       longitude: pos.coords.longitude
-    //     };
-    //
-    //     // TODO:
-    //     // const centerLocation = { ...userLocation };
-    //   },
-    //   // 50.846749, 4.352349
-    //   d => console.log('error watch pos', d),
-    //   { timeout: 1000000 }
-    // );
   }
 
   componentWillUnmount() {
-    // window.addEventListener('resize', () => {});
     navigator.geolocation.watchPosition(() => {}, () => {}, { timeout: 1 });
     navigator.geolocation.getCurrentPosition(() => {}, () => {}, {
       timeout: 1
@@ -226,7 +174,6 @@ class CardAuthorPage extends Component {
       filterCards,
       addCardFilter,
       dataView,
-      // setDataView,
       filterSet,
       toggleAuthEnv,
       tagColorScale,

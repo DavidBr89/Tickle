@@ -13,6 +13,25 @@ const shallowBg = chroma(uiColor)
   .brighten(2.2)
   .hex();
 
+// const tagColor = 'gold';
+
+// '#eeeee5',
+// '#6c843e',
+// '#dc383a',
+// '#687d99',
+// '#705f84',
+// '#fc9a1a',
+// '#aa3a33',
+// '#9c4257'
+
+const tagColor = chroma('#a5b1c2')
+  .brighten(0.5)
+  .hex();
+
+// chroma('gold')
+// .darken(0.5)
+// .hex();
+
 const rawCSS = {
   btn: {
     ...btnStyle,
@@ -46,12 +65,13 @@ const stylesheet = StyleSheet.create(rawCSS);
 const {
   Provider: GlobalThemeProvider,
   Consumer: GlobalThemeConsumer
-} = React.createContext({ uiColor, stylesheet });
+} = React.createContext({ uiColor, tagColor, stylesheet });
 
 export {
   GlobalThemeProvider,
   GlobalThemeConsumer,
   stylesheet,
   uiColor,
-  makeTagColorScale
+  makeTagColorScale,
+  tagColor
 };

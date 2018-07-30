@@ -380,6 +380,8 @@ class EditCardFront extends PureComponent {
       challenge
     } = data;
 
+    const invalid = tags === null || tags.length === 0;
+
     return (
       <CardHeader
         style={{
@@ -430,7 +432,7 @@ class EditCardFront extends PureComponent {
                 className="m-2"
                 style={{ position: 'absolute', zIndex: 200, left: 0, top: 0 }}
               >
-                <div style={{ display: 'flex' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
                   <PreviewTags colorScale={tagColorScale} data={tags} />
                   <EditButton
                     className="mr-3"
@@ -483,6 +485,7 @@ class EditCardFront extends PureComponent {
                   {template && (
                     <BigButton
                       className="mr-2"
+                      disabled={invalid}
                       edit
                       onClick={() => {
                         // TODO
@@ -503,6 +506,7 @@ class EditCardFront extends PureComponent {
                   )}
                   <BigButton
                     edit
+                    disabled={invalid}
                     onClick={() =>
                       this.setState({
                         dialog: { title: 'Challenge', data: challenge }

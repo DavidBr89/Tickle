@@ -4,7 +4,8 @@ import { css } from 'aphrodite';
 
 import {
   stylesheet as defaultStylesheet,
-  uiColor as defaultUIColor
+  uiColor as defaultUIColor,
+  tagColor
 } from 'Src/styles/GlobalThemeContext';
 
 const tagsStyle = { display: 'flex', marginBottom: 4 };
@@ -235,7 +236,7 @@ Tag.defaultProps = {
   onClick: d => d,
   edit: false,
   small: false,
-  color: 'red'
+  color: tagColor
 };
 
 export const PreviewTags = ({
@@ -248,6 +249,7 @@ export const PreviewTags = ({
   <div
     style={{
       display: 'flex',
+      // alignItems: data.length === 0 || data === null ? 'baseline' : null,
       // position: 'absolute',
       // TODO: adapt
       // maxWidth: '60%',
@@ -261,13 +263,16 @@ export const PreviewTags = ({
   >
     {data !== null &&
       data.length > 0 &&
-      data.map(t => <Tag title={t} color={colorScale(t)} small={small} />)}
+      data.map(t => <Tag title={t} color={tagColor} small={small} />)}
 
     {data !== null &&
       data.length === 0 && (
-        <div>
-          <Tag title="No Tag" color="grey" small={small} />
-        </div>
+        <div
+        className="alert alert-danger"
+        style={{ /* TODO change */ width: 300 }}
+      >
+        <strong>Error!</strong> Please add at least one tag to your card!
+      </div>
       )}
     {data === null && <div style={{ fontStyle: 'italic' }}>{placeholder}</div>}
   </div>
@@ -286,5 +291,5 @@ PreviewTags.defaultProps = {
   style: {},
   placeholder: 'Please add a tag',
   small: false,
-  colorScale: () => defaultUIColor
+  colorScale: () => tagColor
 };

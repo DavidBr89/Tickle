@@ -15,8 +15,6 @@ import ScrollList from 'Components/utils/ScrollList';
 // import { DDG } from 'node-ddg-api';
 import { db } from 'Firebase';
 
-import gapi from './gapi';
-
 import MediaUpload from 'Utils/MediaUpload';
 
 // import { createShadowStyle } from './styles';

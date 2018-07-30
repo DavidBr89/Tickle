@@ -31,7 +31,6 @@ import NearbyPlaces from '../places.json';
 import { db, firebase } from 'Firebase';
 import idGenerate from 'Src/idGenerator';
 
-
 // export const REQUEST_CHALLENGES = 'REQUEST_CHALLENGES';
 // function requestChallenges(subreddit) {
 //   return {
@@ -108,6 +107,18 @@ export function fetchCreatedCards(uid) {
 
     return db.readCards(uid, 'createdCards').then(data => {
       dispatch(receiveCreatedCards(data));
+    });
+  };
+}
+
+export function fetchAllCards(uid) {
+  return function(dispatch) {
+    dispatch(loadingCards());
+    return db.readCards(uid, 'collectibleCards').then(collectibleCards => {
+      dispatch(receiveCollectibleCards(collectibleCards));
+      db.readCards(uid, 'createdCards').then(createdCards =>
+        dispatch(receiveCreatedCards(createdCards))
+      );
     });
   };
 }

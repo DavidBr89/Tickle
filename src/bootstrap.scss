@@ -271,6 +271,13 @@ input[type="file"] {
     cursor: pointer;
 }
 
+.alert {
+  @extend .form-control;
+  border-radius: unset;
+  border: unset;
+}
+
+
 // @media only screen and (min-width: 568px) {
 //     #content-container {
 //         height: 100vh;

@@ -8,7 +8,7 @@ import * as Icon from 'react-feather';
 import { db } from 'Firebase';
 import { BareModal, Modal, ModalBody } from 'Utils/Modal';
 import PhotoUpload from 'Components/utils/PhotoUpload';
-import { SignInForm } from 'Components/SignIn';
+import { SignInForm, SignInModalBody } from 'Components/SignIn';
 import { TagInput, PreviewTags, Tag } from 'Components/utils/Tag';
 
 // import { skillTypes } from '../../dummyData';
@@ -25,33 +25,24 @@ import {
 import CardStack from 'Components/MapView/CardStack';
 import { userFields, compareUserFields } from 'Constants/userFields';
 
-const TagList = ({ sets, tagColorScale, acc = d => d.values.length }) => {
-  const scale = scaleLinear()
-    .domain(extent(sets, acc))
-    // TODO
-    .range([50, 100]);
-
-  // console.log('scale', scale.domain());
-
-  return (
-    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-      {sets.map(d => (
-        <div
-          className="m-1"
-          style={{
-            height: '30px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            background: tagColorScale(d.key)
-          }}
-        >
-          <span className="p-3 ">{d.key}</span>
-        </div>
-      ))}
-    </div>
-  );
-};
+const TagList = ({ sets, tagColorScale, acc = d => d.values.length }) => (
+  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+    {sets.map(d => (
+      <div
+        className="m-1"
+        style={{
+          height: '30px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          background: tagColorScale(d.key)
+        }}
+      >
+        <span className="p-3 ">{d.key}</span>
+      </div>
+    ))}
+  </div>
+);
 
 TagList.propTypes = { data: PropTypes.array, tagColorScale: PropTypes.func };
 
@@ -123,8 +114,9 @@ class UserInfoModalBody extends React.Component {
     ) {
       this.setState({ userUpdated: true });
     }
-    if (prevState.userUpdated && compareUserFields(oldUser, authUser))
-      this.setState({ userUpdated: false });
+
+    // if (prevState.userUpdated && compareUserFields(oldUser, authUser))
+    //   this.setState({ userUpdated: false });
   }
 
   renderUpdateUserModal = () => {
@@ -259,31 +251,35 @@ class UserInfoModalBody extends React.Component {
         }}
         title={title}
         footer={
-          authenticated && (
-            <React.Fragment>
-              <div className="mr-1">{errorMsg}</div>
-              <button
-                className={css(defaultStylesheet.btn)}
-                onClick={this.conditionalSubmit}
-                disabled={!userUpdated}
-              >
-                Update
-              </button>
-            </React.Fragment>
-          )
+          <React.Fragment>
+            <div className="mr-1">{errorMsg}</div>
+            <button
+              className={css(defaultStylesheet.btn)}
+              onClick={this.conditionalSubmit}
+              disabled={!userUpdated}
+            >
+              Update
+            </button>
+          </React.Fragment>
         }
       >
-        {!authenticated ? (
-          <div>
-            <p>Please sign in again!</p>
-            <SignInForm
-              onAuthenticate={() => this.setState({ authenticated: true })}
-            />
-          </div>
-        ) : (
-          this.renderUpdateUserModal()
-        )}
+        {this.renderUpdateUserModal()}
       </ModalBody>
+    );
+  }
+}
+
+class ModalBodyWrapper extends React.Component {
+  state = { authenticated: false };
+  render() {
+    const { authenticated } = this.state;
+    if (authenticated) return <UserInfoModalBody {...this.props} />;
+    return (
+      <SignInModalBody
+        onClose={this.props.onClose}
+        title="User Sign-In"
+        onAuthenticate={() => this.setState({ authenticated: true })}
+      />
     );
   }
 }
@@ -328,8 +324,8 @@ const ExtendableCard = props => {
   const selectedCard = selected ? cards.find(c => c.id === selectedCardId) : {};
 
   return (
-    <BareModal key={selectedCard ? selectedCard.id : null} visible={selected}
-    >
+    <BareModal
+key={selectedCard ? selectedCard.id : null} visible={selected}>
       {selected && (
         <Card
           {...selectedCard}
@@ -411,7 +407,7 @@ export default class UserDetailedInfo extends React.Component {
         <ExtendableCard {...this.props} onClose={() => extendCard(null)} />
 
         <Modal visible={userInfoExtended}>
-          <UserInfoModalBody
+          <ModalBodyWrapper
             title="Update User Info"
             onClose={extendUserInfo}
             tagColorScale={tagColorScale}
@@ -479,7 +475,7 @@ export default class UserDetailedInfo extends React.Component {
                 </div>
                 <div>
                   <h5>Interests</h5>
-                  <PreviewTags data={interests} tagColorScale={tagColorScale} />
+                  <PreviewTags data={interests} colorScale={tagColorScale} />
                 </div>
               </div>
               <div

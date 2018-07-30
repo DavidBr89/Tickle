@@ -405,15 +405,17 @@ BigButton.defaultProps = {
   color: 'black',
   onClick: d => d,
   edit: false,
-  style: {}
+  style: {},
+  disabled: false
 };
 
-export const FlipButton = ({ style, onClick, color, className }) => (
+export const FlipButton = ({ style, onClick, color, disabled, className }) => (
   <BigButton
     onClick={onClick}
     color={color}
     style={style}
     className={className}
+    disabled={disabled}
   >
     <i
       className="fa fa-retweet fa-2x"
