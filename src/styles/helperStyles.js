@@ -7,7 +7,7 @@ export const btnStyle = {
   alignItems: 'center',
   minWidth: '62px',
   overflow: 'hidden',
-  // fontWeight: 400,
+  fontWeight: 'bold',
   textAlign: 'center',
   whiteSpace: 'nowrap',
   justifyContent: 'center',

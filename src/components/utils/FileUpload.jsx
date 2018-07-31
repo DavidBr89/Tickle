@@ -46,53 +46,66 @@ export default class DataUpload extends Component {
     defaultImg: null,
     width: 250,
     height: 250,
-    className: ''
+    className: '',
+    fileName: null
   };
-  state = { fileName: null };
 
   // TODO: remove
   contHeight = 300;
   // video#<{(|,image#<{(|
   render() {
-    const { className, style, onChange, uiColor, stylesheet } = this.props;
-    const { fileName } = this.state;
+    const {
+      className,
+      fileName,
+      style,
+      onChange,
+      uiColor,
+      stylesheet
+    } = this.props;
 
     return (
       <div
-        className={className}
-        style={{ display: 'flex', alignItems: 'center', ...style }}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          width: '100%',
+          ...style
+        }}
       >
-        <div clasName="mr-3" style={{ width: '100%' }}>
-          {fileName || 'No File selected'}
-        </div>
-        <div>
-          <label
-            htmlFor="all-file-upload"
-            className={`${css(stylesheet.btn)} ml-2 mt-2 `}
-          >
-            Choose File
-          </label>
-          <input
-            id="all-file-upload"
-            className={className}
+        <label
+          htmlFor="all-file-upload"
+          style={{ width: '100%' }}
+          className={`${css(stylesheet.btn)} mt-2 `}
+        >
+          <div
             style={{
-              border: `${uiColor} 1px solid`,
-              overflow: 'hidden',
-              ...style
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+              overflow: 'hidden'
             }}
-            type="file"
-            accept="*"
-            capture="environment"
-            onChange={e => {
-              const file = e.target.files[0];
-              this.setState({ fileName: file.name });
-              onChange({
-                url: convertToImgSrc(e.target.files),
-                file
-              });
-            }}
-          />
-        </div>
+          >
+            {fileName || 'Choose File'}
+          </div>
+        </label>
+        <input
+          id="all-file-upload"
+          className={className}
+          style={{
+            border: `${uiColor} 1px solid`,
+            overflow: 'hidden',
+            ...style
+          }}
+          type="file"
+          accept="*"
+          capture="environment"
+          onChange={e => {
+            const file = e.target.files[0];
+            onChange({
+              url: convertToImgSrc(e.target.files),
+              file
+            });
+          }}
+        />
       </div>
     );
   }

@@ -47,19 +47,31 @@ export function fetchUserInfo(uid) {
   };
 }
 
-export function submitUserInfoToDB(userInfo) {
+export function submitUserInfoToDB(userData) {
   return function(dispatch) {
     // dispatch(setAuthUserInfo(userInfo));
 
-    console.log('userInfo', userInfo);
-    const usr = userFields(userInfo);
+    const usr = userFields(userData);
+    const submitUserDispatchWrapper = () => {
+      const { file, uid } = userData;
+      const path = `usr/${uid}`;
+      if (file) {
+        return db.addImgToStorage({ file, path }).then(photoUrl => {
+          db.doCreateUser(usr).then(() => {
+            dispatch(submitUserInfoToDBSuccess({ usr, ...photoUrl }));
+          });
+        });
+      }
+      return db.doCreateUser(usr).then(() => {
+        dispatch(submitUserInfoToDBSuccess(usr));
+      });
+    };
+
     if (auth.getEmail() !== usr.email) {
       return auth
         .doEmailUpdate(usr.email)
         .then(() => {
-          db.doCreateUser(usr).then(() => {
-            dispatch(submitUserInfoToDBSuccess(usr));
-          });
+          submitUserDispatchWrapper();
         })
         .catch(error => {
           console.log('error', error.message);
@@ -67,15 +79,13 @@ export function submitUserInfoToDB(userInfo) {
         });
     }
 
-    const { passwordOne, passwordTwo } = userInfo;
+    const { passwordOne, passwordTwo } = userData;
     if (passwordOne || passwordTwo) {
       if (passwordOne === passwordTwo) {
         return auth
-          .doPasswordUpdate(userInfo.passwordOne)
+          .doPasswordUpdate(userData.passwordOne)
           .then(() => {
-            db.doCreateUser(usr).then(() => {
-              dispatch(submitUserInfoToDBSuccess(usr));
-            });
+            submitUserDispatchWrapper();
           })
           .catch(error => {
             dispatch(errorSubmitUser(error.message));
@@ -84,10 +94,7 @@ export function submitUserInfoToDB(userInfo) {
       return dispatch(errorSubmitUser('Passwords are not matching'));
     }
 
-    return db.doCreateUser(usr).then(() => {
-      dispatch(submitUserInfoToDBSuccess(usr));
-    });
-
+    return submitUserDispatchWrapper();
     // return db
     //   .getUser(uid)
     //   .then(usrInfo => {

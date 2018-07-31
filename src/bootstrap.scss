@@ -258,7 +258,7 @@ body {
 }
 
 /* a { */
-/*   color: unset; */
+/*    color: #a5b1c2; */
 /* } */
 
 input[type="file"] {
@@ -275,6 +275,13 @@ input[type="file"] {
   @extend .form-control;
   border-radius: unset;
   border: unset;
+  padding: 5px;
+  margin-bottom: unset;
+  width: unset;
+  // padding-left: 0.2rem;
+  // padding-right: 0.2rem;
+  // padding-top: 0;
+  // padding-bottom: 0;
 }
 
 

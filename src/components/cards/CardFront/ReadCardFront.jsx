@@ -14,11 +14,17 @@ import MediaChallenge from 'Components/Challenges/MediaChallenge';
 import { TagInput, PreviewTags } from 'Utils/Tag';
 import { Modal, ModalBody } from 'Utils/Modal';
 
+import { MODAL_FULL_HEIGHT } from 'Constants/styleDimensions';
+
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
-import { MediaPreview } from 'Components/cards/MediaSearch';
+import { MediaOverview } from 'Components/cards/MediaSearch';
 
 import CardHeader from '../CardHeader';
+
+import { Btn } from 'Components/cards/layout';
+
+// todo
 
 import {
   // FieldSet,
@@ -79,6 +85,8 @@ class ReadCardFront extends Component {
 
   state = { dialog: null };
 
+  closeModal = () => this.setState({ dialog: null });
+
   modalReadContent(field) {
     const {
       title,
@@ -93,33 +101,42 @@ class ReadCardFront extends Component {
       onSubmitChallenge
     } = this.props;
 
+    const FooterBtn = () => <Btn onClick={this.onClose}>Close</Btn>;
+
     switch (field) {
       case 'Title':
         return <p style={{ width: '100%' }}>{title}</p>;
       case 'Tags':
         return <p style={{ width: '100%' }}>{tags}</p>;
-      case 'Photo':
-        return <div>photo</div>;
       case 'Description':
         return (
-          <ModalBody>
+          <ModalBody
+            onClose={this.closeModal}
+            title="Description"
+            footer={<FooterBtn />}
+          >
             <p style={{ width: '100%' }}>{description}</p>
           </ModalBody>
         );
       case 'Media':
         return (
-          <ModalBody>
-            <MediaPreview data={media || []} uiColor={uiColor} />
+          <ModalBody
+            onClose={this.closeModal}
+            title="Media"
+            footer={<FooterBtn />}
+          >
+            <MediaOverview edit={false} data={media || []} uiColor={uiColor} />
           </ModalBody>
         );
       case 'Challenge':
         return (
           <MediaChallenge
             {...challenge}
+            title="Challenge"
             key={id}
             challengeSubmission={challengeSubmission}
+            onClose={this.closeModal}
             onChange={d => {
-              console.log('challenge SUBMISSION', d);
               onSubmitChallenge({
                 cardId: id,
                 authorId: uid,
@@ -181,10 +198,7 @@ class ReadCardFront extends Component {
             {this.modalReadContent(dialogTitle)}
           </Modal>
           <ImgOverlay src={img ? img.url : null} className={css(coverPhoto)}>
-            <div style={{ display: 'flex', width: '70%', maxWidth: '80%' }}>
-              {/* TODO: fix width */}
-              <PreviewTags colorScale={tagColorScale} data={tags} />
-            </div>
+            <PreviewTags colorScale={tagColorScale} data={tags} />
           </ImgOverlay>
           <DescriptionField
             style={{ maxHeight: '20%' }}

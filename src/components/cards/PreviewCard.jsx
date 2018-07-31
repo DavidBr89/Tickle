@@ -108,7 +108,7 @@ class PreviewCard extends Component {
           height: '100%',
           background: colorScale(type),
           ...shadowStyle,
-          ...style,
+          ...style
           // minWidth: '100px'
           // maxHeight: '120px'
         }}
@@ -127,7 +127,12 @@ class PreviewCard extends Component {
           <PlaceholderField text="Title" style={{ fontSize: '18px' }} />
         )}
         {Array.isArray(tags) && tags.length > 0 ? (
-          <PreviewTags small colorScale={tagColorScale} data={tags} />
+          <PreviewTags
+            small
+            colorScale={tagColorScale}
+            data={tags}
+            style={{ flexWrap: null }}
+          />
         ) : (
           <PlaceholderField text="Tags" style={{ fontSize: '80%' }} />
         )}

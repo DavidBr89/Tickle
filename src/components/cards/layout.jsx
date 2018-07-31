@@ -328,11 +328,20 @@ Img.propTypes = {
 Img.defaultProps = { src: null, style: {} };
 
 export const ImgOverlay = ({ src, className, style, children, footer }) => (
-  <div className={className} style={{ position: 'relative', ...style }}>
+  <div
+    className={className}
+    style={{ position: 'relative', width: '100%', ...style }}
+  >
     <Img src={src} />
     <div
       className="m-2 "
-      style={{ position: 'absolute', zIndex: 200, left: 0, top: 0 }}
+      style={{
+        position: 'absolute',
+        width: '100%',
+        zIndex: 200,
+        left: 0,
+        top: 0
+      }}
     >
       {children}
     </div>
@@ -380,10 +389,7 @@ export const BigButton = ({
         }}
         onClick={onClick}
       >
-        <div style={{ fontWeight: 'bold', fontSize: 'large' }}>
-          {children}
-          {edit && <EditIcon className="ml-1" />}
-        </div>
+        <div style={{ fontWeight: 'bold', fontSize: 'large' }}>{children}</div>
       </button>
     )}
   </CardThemeConsumer>
@@ -509,6 +515,28 @@ Comments.defaultProps = {
   ],
   extended: false
 };
+
+export const Btn = ({
+  onClick,
+  children,
+  disabled,
+  className,
+  style = {},
+  stylesheet = stylesheet
+}) => (
+  <CardThemeConsumer>
+    {({ stylesheet: { btn } }) => (
+      <button
+        className={css(btn)}
+        style={{ ...style }}
+        onClick={onClick}
+        disabled={disabled}
+      >
+        {children}
+      </button>
+    )}
+  </CardThemeConsumer>
+);
 
 export {
   DescriptionField,

@@ -239,44 +239,30 @@ Tag.defaultProps = {
   color: tagColor
 };
 
-export const PreviewTags = ({
-  data,
-  style,
-  placeholder,
-  small,
-  colorScale
-}) => (
-  <div
-    style={{
-      display: 'flex',
-      // alignItems: data.length === 0 || data === null ? 'baseline' : null,
-      // position: 'absolute',
-      // TODO: adapt
-      // maxWidth: '60%',
-      // flexWrap: 'wrap',
-      ...style,
-      ...tagsStyle
-      // overflowY: 'visible'
-      // flexWrap: 'no-wrap'
-      // alignItems: 'center'
-    }}
-  >
-    {data !== null &&
-      data.length > 0 &&
-      data.map(t => <Tag title={t} color={tagColor} small={small} />)}
-
-    {data !== null &&
-      data.length === 0 && (
-        <div
-        className="alert alert-danger"
-        style={{ /* TODO change */ width: 300 }}
-      >
-        <strong>Error!</strong> Please add at least one tag to your card!
-      </div>
-      )}
-    {data === null && <div style={{ fontStyle: 'italic' }}>{placeholder}</div>}
-  </div>
-);
+export const PreviewTags = ({ data, style, placeholder, small, colorScale }) =>
+  data !== null && data.length === 0 ? (
+    <div className="alert alert-danger">
+      <strong>No Tag!</strong> Please add at least one tag!
+    </div>
+  ) : (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        overflow: 'hidden',
+        ...style,
+        ...tagsStyle
+        // overflowY: 'visible'
+        // flexWrap: 'no-wrap'
+        // alignItems: 'center'
+      }}
+    >
+      {data !== null &&
+        data.length > 0 &&
+        data.map(t => <Tag title={t} color={tagColor} small={small} />)}
+    </div>
+  );
 
 PreviewTags.propTypes = {
   data: PropTypes.oneOfType([PropTypes.array, null]),

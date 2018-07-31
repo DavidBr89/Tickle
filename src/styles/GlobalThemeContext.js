@@ -36,10 +36,29 @@ const rawCSS = {
   btn: {
     ...btnStyle,
     borderColor: uiColor,
+    border: `1px solid ${shallowBg}`,
     background: shallowBg,
     ':hover': {
       boxShadow: `4px 4px ${uiColor}`
     }
+  },
+  imgUploadBtn: {
+    ...btnStyle,
+    display: null,
+    borderColor: uiColor,
+    border: `1px solid ${shallowBg}`,
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    background: shallowBg,
+    ':hover': {
+      boxShadow: `4px 4px ${uiColor}`
+    }
+  },
+  truncate: {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
   },
   boxShadow: { boxShadow: `3px 3px ${uiColor}` },
   modalFooter: {
@@ -65,7 +84,7 @@ const stylesheet = StyleSheet.create(rawCSS);
 const {
   Provider: GlobalThemeProvider,
   Consumer: GlobalThemeConsumer
-} = React.createContext({ uiColor, tagColor, stylesheet });
+} = React.createContext({ uiColor, tagColor, stylesheet, rawCSS });
 
 export {
   GlobalThemeProvider,
@@ -73,5 +92,6 @@ export {
   stylesheet,
   uiColor,
   makeTagColorScale,
-  tagColor
+  tagColor,
+  rawCSS
 };

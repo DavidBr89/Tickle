@@ -119,7 +119,7 @@ class EditPhoto extends Component {
 
   renderSelected = key => {
     switch (key) {
-      case 'Upload Photo': {
+      case 'Upload Image': {
         return <PhotoUpload {...this.props} />;
       }
       case 'Url':
@@ -135,7 +135,7 @@ class EditPhoto extends Component {
           uiColor={uiColor}
           stylesheet={stylesheet}
           preSelected="Url"
-          keys={['Upload Photo', 'Url']}
+          keys={['Upload Image', 'Url']}
         >
           {selected => this.renderSelected(selected)}
         </TabNav>

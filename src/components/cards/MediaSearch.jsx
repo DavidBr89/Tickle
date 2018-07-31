@@ -16,6 +16,7 @@ import ScrollList from 'Components/utils/ScrollList';
 import { db } from 'Firebase';
 
 import MediaUpload from 'Utils/MediaUpload';
+import DimWrapper from 'Utils/DimensionsWrapper';
 
 // import { createShadowStyle } from './styles';
 
@@ -550,7 +551,7 @@ class UrlMedia extends Component {
               <div style={{ width: '100%', height: '100%' }}>
                 <ScrollList
                   data={data}
-                  maxHeight={300}
+                  maxHeight="90%"
                   style={{ paddingLeft: '5%', paddingRight: '10%' }}
                 >
                   {(d, isSelected) => (
@@ -649,6 +650,7 @@ class UnstyledMediaSearch extends Component {
       case WIKIPEDIA:
         return (
           <MetaSearch
+            style={{ height: '90%' }}
             onChange={newArticles =>
               onChange(
                 sortByDate([
@@ -671,6 +673,7 @@ class UnstyledMediaSearch extends Component {
       case YOUTUBE:
         return (
           <MetaSearch
+            style={{ height: '90%' }}
             onChange={newVideos =>
               onChange(
                 sortByDate([
@@ -693,6 +696,7 @@ class UnstyledMediaSearch extends Component {
       case GIPHY:
         return (
           <MetaSearch
+            style={{ height: '90%' }}
             preSelected={selGIFs}
             onChange={newGIFs =>
               onChange(
@@ -715,6 +719,7 @@ class UnstyledMediaSearch extends Component {
       case FLICKR:
         return (
           <MetaSearch
+            style={{ height: '90%' }}
             preSelected={selPhotos}
             onChange={newPhotos =>
               onChange(
@@ -737,6 +742,7 @@ class UnstyledMediaSearch extends Component {
       case URL:
         return (
           <UrlMedia
+            style={{ height: '90%' }}
             preSelected={selURLs}
             onChange={newUrls =>
               onChange(
@@ -758,6 +764,7 @@ class UnstyledMediaSearch extends Component {
       case USER_CONTENT:
         return (
           <UploadUserContent
+            style={{ height: '90%' }}
             media={selUserContent}
             uploadPath={userContentUploadPath}
             onChange={newUserContent => {
@@ -791,7 +798,7 @@ class UnstyledMediaSearch extends Component {
 
     const navBtn = ({ key, node }) => (
       <button
-        className={btnClass(key)}
+        className={`${btnClass(key)} m-1`}
         type="button"
         onClick={() => this.setState({ selected: key })}
         id={key}
@@ -802,18 +809,11 @@ class UnstyledMediaSearch extends Component {
 
     return (
       <div style={{ width: '100%', height: '100%' }}>
-        <div
-          className="mb-3 nav"
-          style={{ display: 'flex', justifyContent: 'space-between' }}
-          role="tablist"
-        >
-          {navIcons.map(navBtn)}
+        <div className="mb-3" role="tablist">
+          <div style={{ display: 'flex' }}>{navIcons.map(navBtn)}</div>
         </div>
         <div className="tab-content" style={{ height: '100%' }}>
-          {/* TODO: check fade */}
-          <div style={{ width: '100%', height: '100%' }} role="tabpanel">
-            {this.activeTab(selected)}
-          </div>
+          {this.activeTab(selected)}
         </div>
       </div>
     );
@@ -852,7 +852,8 @@ class MetaSearch extends Component {
     preSelected: PropTypes.array,
     defaultQuery: PropTypes.string,
     source: PropTypes.string,
-    type: PropTypes.string
+    type: PropTypes.string,
+    style: PropTypes.object
   };
 
   static defaultProps = {
@@ -861,7 +862,8 @@ class MetaSearch extends Component {
     type: null,
     onAdd: d => d,
     selected: null,
-    preSelected: []
+    preSelected: [],
+    style: {}
   };
 
   constructor(props) {
@@ -931,7 +933,7 @@ class MetaSearch extends Component {
 
   render() {
     const { data, selectedIds } = this.state;
-    const { defaultQuery } = this.props;
+    const { defaultQuery, style } = this.props;
     // let GoogleAuth;
     // const SCOPE = 'https://www.googleapis.com/auth/youtube.force-ssl';
     // Load the API's client and auth2 modules.
@@ -940,7 +942,7 @@ class MetaSearch extends Component {
 
     // TODO: fix view height
     return (
-      <div style={{ width: '100%', height: '100%' }}>
+      <div style={{ width: '100%', height: '100%', ...style }} role="tabpanel">
         <div style={{ width: '100%' }}>
           <div className="mb-3 w-100">
             <input
@@ -953,6 +955,7 @@ class MetaSearch extends Component {
         </div>
         <ScrollList
           data={data}
+          maxHeight="90%"
           itemStyle={{ paddingRight: '10%', paddingLeft: '5%' }}
         >
           {(d, isSelected) => (
@@ -1028,23 +1031,12 @@ class MediaOverview extends Component {
 
   state = { data: this.props.data };
 
-  componentDidMount() {
-    // $.ajax(options)
-    //   .then(resolve)
-    //   .fail(reject),
-    // ddg.instantAnswer('megaman', {}, (err, response) => {
-    //   console.log(response);
-    // });
-  }
-
   componentDidUpdate(_, { data: oldData }) {
     const { data } = this.state;
     const { onChange } = this.props;
     if (oldData.length !== data.length) {
       onChange(data);
     }
-
-    // this.scrollTo(this.state.selected);
   }
 
   removeItem = m => {
@@ -1062,20 +1054,14 @@ class MediaOverview extends Component {
   render() {
     const { data } = this.state;
     const { edit } = this.props;
-    // let GoogleAuth;
-    // const SCOPE = 'https://www.googleapis.com/auth/youtube.force-ssl';
-    // Load the API's client and auth2 modules.
-    // Call the initClient function after the modules load.
-    // }
 
     // TODO: fix view height
 
     return (
-      <div style={{ width: '100%' }}>
+      <div style={{ width: '100%', height: '100%' }}>
         {data.length === 0 && (
           <div
             style={{
-              // height: '100%',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center'
@@ -1088,6 +1074,7 @@ class MediaOverview extends Component {
         )}
         <ScrollList
           data={data}
+          maxHeight="100%"
           itemStyle={{ paddingRight: '10%', paddingLeft: '5%' }}
         >
           {(d, selected) => (

@@ -51,10 +51,9 @@ class ScrollList extends Component {
         style={{
           width: '100%',
           // height: data.length > 0 ? '50vh' : null,
-          maxHeight: 500,
+          maxHeight,
           overflowY: 'scroll',
-          ...style,
-          maxHeight
+          ...style
         }}
       >
         <ScrollView ref={scroller => (this._scroller = scroller)}>

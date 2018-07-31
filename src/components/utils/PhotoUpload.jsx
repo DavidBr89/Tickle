@@ -6,7 +6,7 @@ import {
   uiColor as defaultUIColor
 } from 'Src/styles/GlobalThemeContext';
 
-import { css } from 'aphrodite';
+import { css } from 'aphrodite/no-important';
 
 // import { DimWrapper } from 'Utils';
 
@@ -33,7 +33,8 @@ export default class PhotoUpload extends Component {
     style: PropTypes.object,
     onChange: PropTypes.func,
     placeholder: PropTypes.string,
-    defaultImg: PropTypes.any
+    defaultImg: PropTypes.any,
+    imgName: PropTypes.string
   };
 
   static defaultProps = {
@@ -45,7 +46,10 @@ export default class PhotoUpload extends Component {
     defaultImg: null,
     width: 250,
     height: 250,
-    stylesheet: defaultStylesheet
+    maxHeight: 300,
+    stylesheet: defaultStylesheet,
+    imgName: null,
+    title: 'Choose Image'
   };
 
   render() {
@@ -57,9 +61,12 @@ export default class PhotoUpload extends Component {
       uiColor,
       defaultImg,
       stylesheet,
+      title,
+      maxHeight,
       // width,
       // height,
-      imgUrl
+      imgUrl,
+      imgName
     } = this.props;
 
     return (
@@ -89,7 +96,7 @@ export default class PhotoUpload extends Component {
                   style={{
                     overflow: 'hidden',
                     width: '100%',
-                    maxHeight: 300
+                    maxHeight
                   }}
                 >
                   <img src={imgUrl} width="100%" alt="test" />
@@ -107,10 +114,16 @@ export default class PhotoUpload extends Component {
             </div>
             <label
               htmlFor="file-upload"
-              className={`${css(stylesheet.btn)} mt-2`}
-              style={{ width: '100%' }}
+              className={`${css(stylesheet.imgUploadBtn)} mt-2`}
+              style={{
+                width: '100%',
+                display: null,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }}
             >
-              Image Upload
+              {imgName ? `Edit: ${imgName}` : title}
             </label>
             <input
               id="file-upload"

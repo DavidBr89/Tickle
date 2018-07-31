@@ -78,16 +78,23 @@ export const Modal = ({
           height: '100%'
         }}
       >
-        <div className="modal-dialog" role="document">
+        <div
+          className="modal-dialog"
+          role="document"
+          style={{
+            height: '97.5vh',
+            maxHeight: 800
+          }}
+        >
           <div
             className="modal-content"
             style={{
+              width: '100%',
+              height: '100%',
               // TODO: fix later
               // TODO: fix later
               // TODO: fix later
               // TODO: fix later CONSTANT
-              // height: '97vh',
-              maxHeight: 800,
               ...style
             }}
           >
@@ -152,7 +159,7 @@ export const ModalBody = ({
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-    <div className="modal-body" style={{ height: '80%', ...style }}>
+    <div className="modal-body" style={{ height: '70%', ...style }}>
       {children}
     </div>
 

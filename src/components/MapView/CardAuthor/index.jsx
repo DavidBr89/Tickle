@@ -43,7 +43,6 @@ const mapStateToProps = state => {
   const templateCard = {
     ...tmpCard,
     uid,
-    tags: tmpCard.tags.length > 0 ? tmpCard.tags : [username]
   };
 
   const filteredCards = createdCards.filter(

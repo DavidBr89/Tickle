@@ -41,13 +41,14 @@ class DataUploadForm extends Component {
         className={className}
         style={{
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'center'
           // justifyContent: 'space-between',
-          height: '100%'
+          // height: '100%'
         }}
       >
         <FileUpload
-          style={{ width: '70%' }}
+          style={{ width: '40%' }}
+          fileName={file ? file.name : null}
           onChange={({ url, file: newFile }) => {
             this.setState({ imgUrl: url, file: newFile });
           }}
@@ -67,7 +68,10 @@ class DataUploadForm extends Component {
           <button
             className={`${css(btn)} ml-2`}
             style={{ fontWeight: 'bold' }}
-            onClick={() => file && onChange({ imgUrl, file, type })}
+            onClick={() => {
+              onChange({ imgUrl, file, type });
+              this.setState({ imgUrl: null, file: null });
+            }}
             disabled={!file}
           >
             Add
@@ -82,7 +86,7 @@ const MediaItem = ({
   url,
   name,
   onRemove,
-  stylesheet: { shallowBg, shallowBorder, btn, boxShadow },
+  stylesheet: { shallowBg, shallowBorder, btn, boxShadow, truncate },
   children = null
 }) => {
   const label = url ? name : 'loading';
@@ -100,7 +104,9 @@ const MediaItem = ({
       }}
     >
       {children === null ? (
-        <div>{label}</div>
+        <div className={css(truncate)} style={{}}>
+          {label}
+        </div>
       ) : (
         children({ url, name, loading: url === null })
       )}
@@ -192,9 +198,9 @@ class MediaUpload extends Component {
     const { media, pendingMedia } = this.state;
     const { nodeWrapper, style, stylesheet } = this.props;
     const allMedia = [...media, ...pendingMedia];
-    const maxHeight = 200;
+    const maxHeight = '30%';
     return (
-      <div>
+      <div style={{ height: '100%' }}>
         <DataUploadForm
           className="mt-3"
           style={{ width: '100%' }}
@@ -202,7 +208,7 @@ class MediaUpload extends Component {
           onChange={this.addMediaItem}
         />
         <div
-          className="mt-3"
+          className={`mt-3 ${css(stylesheet.border)}`}
           style={{
             height: maxHeight
             // display: 'flex',
@@ -213,7 +219,7 @@ class MediaUpload extends Component {
           {allMedia.length > 0 ? (
             <ScrollList
               data={allMedia}
-              maxHeight={maxHeight}
+              maxHeight="100%"
               style={{
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -225,9 +231,7 @@ class MediaUpload extends Component {
                   {...d}
                   stylesheet={stylesheet}
                   onRemove={() => this.removeMediaItem(d.id)}
-                >
-                  {nodeWrapper}
-                </MediaItem>
+                />
               )}
             </ScrollList>
           ) : (

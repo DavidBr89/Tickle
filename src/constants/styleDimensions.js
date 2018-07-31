@@ -1,1 +1,1 @@
-export const MODAL_FULL_HEIGHT = '97vh';
+export const MODAL_FULL_HEIGHT = '75vh';

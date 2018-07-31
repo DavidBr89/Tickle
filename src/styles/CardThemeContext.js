@@ -2,6 +2,7 @@ import React from 'react';
 import chroma from 'chroma-js';
 
 import { StyleSheet } from 'aphrodite/no-important';
+import { rawCSS } from './GlobalThemeContext';
 
 import { btnStyle } from './helperStyles';
 
@@ -19,6 +20,7 @@ const makeStylesheet = ({ uiColor, background }) => {
     .hex();
 
   return StyleSheet.create({
+    ...rawCSS,
     boxShadow: { boxShadow: `4px 4px ${uiColor}` },
     border: { border: `1px solid ${uiColor}` },
     bigBoxShadow: {

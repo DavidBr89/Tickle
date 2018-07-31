@@ -44,7 +44,7 @@ const FooterBtn = ({ onClick, children, disabled, style = {} }) => (
     {({ stylesheet: { btn } }) => (
       <button
         className={css(btn)}
-        style={{ ...style, fontWeight: 'bold' }}
+        style={{ ...style, zIndex: 5000, /* TODO: hack */ fontWeight: 'bold' }}
         onClick={onClick}
         disabled={disabled}
       >
@@ -296,9 +296,9 @@ class EditCardFront extends PureComponent {
             <EditPhoto
               uiColor="grey"
               imgUrl={img ? img.url : null}
+              imgName={img && img.file ? img.file.name : null}
               stylesheet={stylesheet}
               onChange={imgObj => {
-                console.log('onChange', imgObj);
                 this.updateField({ img: imgObj, dialog: null });
               }}
             />
@@ -325,7 +325,6 @@ class EditCardFront extends PureComponent {
             footer={closeBtn}
             {...modalProps}
             onClose={this.onCloseModal}
-            style={{ height: MODAL_FULL_HEIGHT }}
           >
             <MediaSearch
               selectedMedia={media}
@@ -404,7 +403,10 @@ class EditCardFront extends PureComponent {
         }
         flipHandler={flipHandler}
       >
-        <div className={css(cardLayout)} style={{ height: '100%' }}>
+        <div
+          className={css(cardLayout)}
+          style={{ height: '100%', width: '100%' }}
+        >
           <Modal visible={modalVisible}>{this.modalWriteContent()}</Modal>
           <div className={css(cardLayout)}>
             <ImgOverlay
@@ -430,9 +432,21 @@ class EditCardFront extends PureComponent {
             >
               <div
                 className="m-2"
-                style={{ position: 'absolute', zIndex: 200, left: 0, top: 0 }}
+                style={{
+                  position: 'absolute',
+                  zIndex: 200,
+                  left: 0,
+                  top: 0,
+                  width: '100%'
+                }}
               >
-                <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: '100%'
+                  }}
+                >
                   <PreviewTags colorScale={tagColorScale} data={tags} />
                   <EditButton
                     className="mr-3"

@@ -26,7 +26,14 @@ import CardStack from 'Components/MapView/CardStack';
 import { userFields, compareUserFields } from 'Constants/userFields';
 
 const TagList = ({ sets, tagColorScale, acc = d => d.values.length }) => (
-  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+  <div
+    style={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      maxHeight: 200,
+      overflow: 'hidden'
+    }}
+  >
     {sets.map(d => (
       <div
         className="m-1"
@@ -59,16 +66,16 @@ class EditUserPhoto extends React.Component {
   state = { url: this.props.url };
 
   render() {
-    const { onChange, path } = this.props;
-    const { url } = this.state;
+    const { url, imgName } = this.state;
     return (
       <PhotoUpload
         {...this.props}
+        title="Change Image"
         imgUrl={url}
+        imgName={imgName}
+        maxHeight={200}
         onChange={({ url, file }) => {
-          db.addImgToStorage({ file, path }).then(url => onChange(url));
-          this.setState({ url });
-          onChange(url);
+          this.setState({ url, imgName: file.name });
         }}
       />
     );
@@ -86,25 +93,26 @@ class UserInfoModalBody extends React.Component {
   };
 
   state = {
-    cachedUser: this.props.authUser,
+    authUser: this.props.authUser,
     userUpdated: false,
     authenticated: false
   };
 
   conditionalSubmit = () => {
-    const { userUpdated } = this.state;
-    const { authUser, onSubmit, onClose } = this.props;
+    const { userUpdated, authUser } = this.state;
+    const { onSubmit, onClose } = this.props;
 
     if (userUpdated) {
-      onSubmit();
+      onSubmit(authUser);
       this.setState({ userUpdated: false });
     }
     // onClose();
   };
 
   componentDidUpdate(prevProps, prevState) {
-    const { authUser: oldUser } = prevProps;
-    const { authUser } = this.props;
+    const { onChange } = this.props;
+    const { authUser: oldUser } = prevState;
+    const { authUser } = this.state;
 
     const { passwordOne, passwordTwo } = authUser;
     const { passwordOne: oldPwOne, passwordTwo: oldPwTwo } = oldUser;
@@ -113,6 +121,7 @@ class UserInfoModalBody extends React.Component {
       (passwordOne !== oldPwOne || passwordTwo !== oldPwTwo)
     ) {
       this.setState({ userUpdated: true });
+      // onChange(authUser);
     }
 
     // if (prevState.userUpdated && compareUserFields(oldUser, authUser))
@@ -129,7 +138,12 @@ class UserInfoModalBody extends React.Component {
       photoURL,
       interests,
       uid
-    } = this.props.authUser;
+    } = this.state.authUser;
+
+    const setUserField = field =>
+      this.setState(({ authUser: oldAuthUser }) => ({
+        authUser: { ...oldAuthUser, ...field }
+      }));
 
     return (
       <React.Fragment>
@@ -145,9 +159,10 @@ class UserInfoModalBody extends React.Component {
             >
               <EditUserPhoto
                 style={{ width: 200 }}
-                path={`usr/${uid}`}
                 url={photoURL}
-                onChange={photoURL => onChange({ photoURL })}
+                onChange={newPhotoURL =>
+                  setUserField({ photoURL: newPhotoURL })
+                }
               />
 
               <div className="ml-3">
@@ -158,7 +173,7 @@ class UserInfoModalBody extends React.Component {
                       className="form-control"
                       style={{ width: 'unset' }}
                       value={username || ''}
-                      onChange={e => onChange({ username: e.target.value })}
+                      onChange={e => setUserField({ username: e.target.value })}
                       type="text"
                       placeholder="Full Name"
                     />
@@ -172,7 +187,7 @@ class UserInfoModalBody extends React.Component {
                     colorScale={tagColorScale}
                     uiColor="grey"
                     onChange={newInterests =>
-                      onChange({ interests: newInterests })
+                      setUserField({ interests: newInterests })
                     }
                   />
                 </div>
@@ -187,7 +202,7 @@ class UserInfoModalBody extends React.Component {
               <input
                 className="form-control"
                 value={email || ''}
-                onChange={e => onChange({ email: e.target.value })}
+                onChange={e => setUserField({ email: e.target.value })}
                 type="text"
                 placeholder="Full Name"
               />
@@ -199,7 +214,7 @@ class UserInfoModalBody extends React.Component {
               <input
                 className="form-control"
                 value={name || ''}
-                onChange={e => onChange({ name: e.target.value })}
+                onChange={e => setUserField({ name: e.target.value })}
                 type="text"
                 placeholder="Full Name"
               />
@@ -211,14 +226,14 @@ class UserInfoModalBody extends React.Component {
             <div>
               <input
                 className="form-control"
-                onChange={e => onChange({ passwordOne: e.target.value })}
+                onChange={e => setUserField({ passwordOne: e.target.value })}
                 type="password"
                 placeholder="Password"
               />
             </div>
             <input
               className="form-control"
-              onChange={e => onChange({ passwordTwo: e.target.value })}
+              onChange={e => setUserField({ passwordTwo: e.target.value })}
               type="password"
               placeholder="Confirm Password"
             />
@@ -246,7 +261,7 @@ class UserInfoModalBody extends React.Component {
     return (
       <ModalBody
         onClose={() => {
-          onChange(cachedUser);
+          // onChange(cachedUser);
           onClose();
         }}
         title={title}
@@ -412,20 +427,10 @@ export default class UserDetailedInfo extends React.Component {
             onClose={extendUserInfo}
             tagColorScale={tagColorScale}
             errorMsg={errorUpdateUserMsg}
-            onSubmit={() => {
-              submitUserInfoToDB(authUser);
+            onSubmit={usr => {
+              setAuthUserInfo(usr);
+              submitUserInfoToDB(usr);
             }}
-            onChange={usr =>
-              setAuthUserInfo({
-                uid,
-                interests,
-                username,
-                name,
-                email,
-                photoURL,
-                ...usr
-              })
-            }
             authUser={authUser}
             {...this.props}
           />
@@ -447,6 +452,8 @@ export default class UserDetailedInfo extends React.Component {
               className="ml-2 mb-3"
               style={{
                 display: 'flex',
+                // justifyContent: 'center',
+                flexWrap: 'wrap',
                 width: '100%',
                 // justifyContent: 'center',
                 // alignItems: 'center',
@@ -454,17 +461,26 @@ export default class UserDetailedInfo extends React.Component {
               }}
             >
               <div
+                className="mb-2 mr-3"
                 style={{
                   border: 'solid 1px grey',
                   height: '100%',
                   width: '100%',
+                  maxWidth: 200,
                   maxHeight: 200,
-                  maxWidth: 200
+                  overflow: 'hidden'
                 }}
               >
-                <img width="200" height="100%" src={photoURL} alt="alt" />
+                <img
+                  style={{
+                    width: '100%',
+                    height: '100%'
+                  }}
+                  src={photoURL}
+                  alt="alt"
+                />
               </div>
-              <div className="ml-3">
+              <div>
                 <div className="mb-1">
                   <h5>Username</h5>
                   {username}
@@ -505,8 +521,8 @@ export default class UserDetailedInfo extends React.Component {
                 tagColorScale={tagColorScale}
                 width={100}
                 height={100}
-                slotSize={100 / 5}
-                cardHeight={180}
+                slotSize={100 / 4}
+                cardHeight={140}
                 unit="%"
                 onClick={onCardClick}
               />
@@ -522,9 +538,9 @@ export default class UserDetailedInfo extends React.Component {
                 tagColorScale={tagColorScale}
                 width={100}
                 height={100}
-                slotSize={100 / 5}
+                slotSize={100 / 4}
                 onClick={d => d}
-                cardHeight={180}
+                cardHeight={140}
                 unit="%"
                 onClick={onCardClick}
               />
