@@ -650,7 +650,7 @@ class UnstyledMediaSearch extends Component {
       case WIKIPEDIA:
         return (
           <MetaSearch
-            style={{ height: '90%' }}
+            style={{ height: '85%' }}
             onChange={newArticles =>
               onChange(
                 sortByDate([
@@ -673,7 +673,7 @@ class UnstyledMediaSearch extends Component {
       case YOUTUBE:
         return (
           <MetaSearch
-            style={{ height: '90%' }}
+            style={{ height: '85%' }}
             onChange={newVideos =>
               onChange(
                 sortByDate([
@@ -696,7 +696,7 @@ class UnstyledMediaSearch extends Component {
       case GIPHY:
         return (
           <MetaSearch
-            style={{ height: '90%' }}
+            style={{ height: '85%' }}
             preSelected={selGIFs}
             onChange={newGIFs =>
               onChange(
@@ -719,7 +719,7 @@ class UnstyledMediaSearch extends Component {
       case FLICKR:
         return (
           <MetaSearch
-            style={{ height: '90%' }}
+            style={{ height: '85%' }}
             preSelected={selPhotos}
             onChange={newPhotos =>
               onChange(
@@ -742,7 +742,7 @@ class UnstyledMediaSearch extends Component {
       case URL:
         return (
           <UrlMedia
-            style={{ height: '90%' }}
+            style={{ height: '85%' }}
             preSelected={selURLs}
             onChange={newUrls =>
               onChange(
@@ -764,7 +764,7 @@ class UnstyledMediaSearch extends Component {
       case USER_CONTENT:
         return (
           <UploadUserContent
-            style={{ height: '90%' }}
+            style={{ height: '65%' }}
             media={selUserContent}
             uploadPath={userContentUploadPath}
             onChange={newUserContent => {

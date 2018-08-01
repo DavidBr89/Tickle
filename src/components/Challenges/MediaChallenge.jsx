@@ -38,32 +38,48 @@ class MediaChallenge extends Component {
     const {
       className,
       description,
-      onChange,
+      onUpdate,
       onClose,
       styles,
       stylesheet,
-      title
+      title,
+      onSubmit,
+      challengeSubmission
     } = this.props;
-    const { media, response } = this.state;
+    const { media, response, completed } = this.state;
 
     // const isUploading = media.filter(m => m.url === null).length > 0;
     return (
       <ModalBody
-        onClose={onClose}
+        onClose={() => {
+          onClose();
+          if (response !== challengeSubmission.response)
+            onUpdate({ response, completed });
+        }}
         title={title}
         footer={
           <Btn
+            disabled={completed}
             onClick={() => {
-              onChange({ media, response });
+              onSubmit({ media, response, completed: true });
             }}
           >
-            Submit Challenge
+            <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+              <div className="mr-1">
+                {completed ? 'Challenge submitted' : 'Submit Challenge'}
+              </div>
+              {completed && (
+                <div>
+                  <Icon.Lock />
+                </div>
+              )}
+            </div>
           </Btn>
         }
       >
         <div
           className={className}
-          style={{ width: '100%', height: '100%', ...styles }}
+          style={{ width: '100%', height: '70%', ...styles }}
         >
           <h4>Task</h4>
           <p style={{ width: '100%' }}>{description}</p>
@@ -73,15 +89,21 @@ class MediaChallenge extends Component {
             rows="3"
             placeholder="write your response"
             value={response}
-            onChange={e => this.setState({ response: e.target.value })}
+            onChange={e => {
+              this.setState({
+                response: e.target.value,
+                completed: false
+              });
+            }}
           />
           <MediaUpload
-            style={{ width: '100%' }}
+            style={{ width: '100%', height: '60%' }}
             uploadPath={id => `challengeSubmissionFiles/${id}`}
             media={media}
             stylesheet={stylesheet}
             onChange={newMedia => {
-              this.setState({ media: newMedia });
+              this.setState({ media: newMedia, completed: false });
+              onUpdate({ media: newMedia, completed: false });
             }}
           />
         </div>

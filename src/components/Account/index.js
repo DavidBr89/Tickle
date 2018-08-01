@@ -5,6 +5,14 @@ import { compose } from 'recompose';
 import withAuthorization from '../withAuthorization';
 import AccountPage from './AccountPage';
 import { submitUserInfoToDB } from 'Reducers/Session/async_actions';
+
+import {
+  asyncUpdateCard,
+  asyncCreateCard,
+  asyncRemoveCard,
+  asyncSubmitChallenge
+} from 'Reducers/Cards/async_actions';
+
 import * as actions from 'Reducers/Session/actions';
 import { screenResize } from 'Reducers/Screen/actions';
 
@@ -28,7 +36,17 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
-    { submitUserInfoToDB, screenResize, ...actions },
+    {
+      submitUserInfoToDB,
+      screenResize,
+
+      asyncUpdateCard,
+      asyncCreateCard,
+      asyncRemoveCard,
+      asyncSubmitChallenge,
+
+      ...actions
+    },
     dispatch
   );
 

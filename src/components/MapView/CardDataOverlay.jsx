@@ -90,11 +90,6 @@ const CardDataOverlay = props => {
             key={c.id}
             edit={false}
             onClose={() => extendSelectedCard(null)}
-            onCollect={() =>
-              toggleCardChallenge({
-                cardChallengeOpen: true
-              })
-            }
             tagColorScale={tagColorScale}
             onSubmitChallenge={onSubmitChallenge}
             uiColor="grey"
@@ -137,6 +132,10 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const onSubmitChallenge = challengeSubmission => {
     asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
   };
+
+  // const onUpdateChallengeSubmission = challengeSubmission => {
+  //   asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
+  // };
 
   return {
     ...state,

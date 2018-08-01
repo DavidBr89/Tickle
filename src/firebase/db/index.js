@@ -1,5 +1,7 @@
 import { firestore, storageRef } from '../firebase';
 
+const isDefined = a => a !== null && a !== undefined;
+
 const pruneFields = fields => {
   const isNotFileOrFunc = val =>
     !(val instanceof File) && !(val instanceof Function);
@@ -237,13 +239,26 @@ export const getDetailedUserInfo = uid =>
               readableCards: [],
               createdCards: cards.filter(c => c.uid === uid),
               // TODO
-              collectedCards: cards.filter(c => c.challengeSubmission !== null),
-              submittedCards: cards.filter(c => c.challengeSubmission !== null)
+              collectedCards: cards.filter(
+                c =>
+                  isDefined(c.challengeSubmission) &&
+                  c.challengeSubmission.accomplished
+              ),
+              submittedCards: cards.filter(
+                c =>
+                  isDefined(c.challengeSubmission) &&
+                  c.challengeSubmission.completed
+              ),
+              startedCards: cards.filter(
+                c =>
+                  isDefined(c.challengeSubmission) &&
+                  !c.challengeSubmission.completed
+              )
             })
           )
       )
     )
-    .catch(err => console.log('err i getUser'));
+    .catch(err => console.log('err i getUser', err));
 
 export const onceGetUsers = () =>
   firestore

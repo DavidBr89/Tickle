@@ -23,7 +23,8 @@ class DataUploadForm extends Component {
   };
 
   defaultProps: {
-    stylesheet: defaultStylesheet
+    stylesheet: defaultStylesheet,
+    style: {}
   };
 
   state = { description: null, imgUrl: null, file: null, type: TEXT };
@@ -32,7 +33,8 @@ class DataUploadForm extends Component {
     const {
       onChange,
       stylesheet: { btn },
-      className
+      className,
+      style
     } = this.props;
 
     const { imgUrl, file, type } = this.state;
@@ -41,13 +43,15 @@ class DataUploadForm extends Component {
         className={className}
         style={{
           display: 'flex',
-          alignItems: 'center'
+          alignItems: 'center',
+          width: '70%',
+          ...style
           // justifyContent: 'space-between',
           // height: '100%'
         }}
       >
         <FileUpload
-          style={{ width: '40%' }}
+          style={{}}
           fileName={file ? file.name : null}
           onChange={({ url, file: newFile }) => {
             this.setState({ imgUrl: url, file: newFile });
@@ -198,9 +202,9 @@ class MediaUpload extends Component {
     const { media, pendingMedia } = this.state;
     const { nodeWrapper, style, stylesheet } = this.props;
     const allMedia = [...media, ...pendingMedia];
-    const maxHeight = '30%';
+    const maxHeight = '100%';
     return (
-      <div style={{ height: '100%' }}>
+      <div style={{ height: '100%', ...style }}>
         <DataUploadForm
           className="mt-3"
           style={{ width: '100%' }}
@@ -210,7 +214,7 @@ class MediaUpload extends Component {
         <div
           className={`mt-3 ${css(stylesheet.border)}`}
           style={{
-            height: maxHeight
+            height: '100%'
             // display: 'flex',
             // flexDirection: 'column',
             // justifyContent: 'space-between'
@@ -219,11 +223,10 @@ class MediaUpload extends Component {
           {allMedia.length > 0 ? (
             <ScrollList
               data={allMedia}
-              maxHeight="100%"
+              maxHeight={maxHeight}
               style={{
                 justifyContent: 'center',
-                alignItems: 'center',
-                ...style
+                alignItems: 'center'
               }}
             >
               {d => (

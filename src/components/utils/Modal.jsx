@@ -26,16 +26,19 @@ export const BareModal = ({
       style={{
         width: '100%',
         height: '100%',
-        background: 'rgba(0, 0, 0, 0.5)',
+        // background: 'rgba(0, 0, 0, 0.5)',
         opacity: visible ? 1 : 0,
         transition: 'opacity 1s',
-        zIndex: visible ? '100000' : '-10',
+        zIndex: visible ? '1000' : '-10',
         left: 0,
         top: 0,
         position: 'absolute'
       }}
     >
-      <div className="modal-dialog" style={{ height: '100%', style }}>
+      <div
+        className="modal-dialog"
+        style={{ height: '100%', style, pointerEvents: 'unset' }}
+      >
         {children}
       </div>
     </div>,

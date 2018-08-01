@@ -21,7 +21,7 @@ const Menu = ({ style, children }) => (
     <nav
       className="navbar navbar-light"
       style={{
-        zIndex: 4000,
+        zIndex: 1000,
         minWidth: '30%'
         // filter: 'blur(10px)',
 

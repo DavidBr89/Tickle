@@ -83,7 +83,15 @@ class ReadCardFront extends Component {
     tagColorScale: () => 'green'
   };
 
-  state = { dialog: null };
+  state = {
+    dialog: null,
+    challengeSubmitted:
+      this.props.challengeSubmission !== null &&
+      this.props.challengeSubmission.completed,
+    challengeStarted:
+      this.props.challengeSubmission !== null &&
+      this.props.challengeSubmission.completed
+  };
 
   closeModal = () => this.setState({ dialog: null });
 
@@ -136,14 +144,32 @@ class ReadCardFront extends Component {
             key={id}
             challengeSubmission={challengeSubmission}
             onClose={this.closeModal}
-            onChange={d => {
+            onUpdate={d => {
               onSubmitChallenge({
                 cardId: id,
                 authorId: uid,
                 ...challengeSubmission,
                 ...d
+                // completed: false
               });
-              this.setState({ dialog: null });
+              this.setState({
+                challengeSubmitted: false,
+                challengeStarted: true
+              });
+            }}
+            onSubmit={d => {
+              onSubmitChallenge({
+                cardId: id,
+                authorId: uid,
+                ...challengeSubmission,
+                ...d
+                // completed: true
+              });
+              this.setState({
+                dialog: null,
+                challengeSubmitted: true,
+                challengeStarted: false
+              });
             }}
           />
         );
@@ -151,6 +177,17 @@ class ReadCardFront extends Component {
         return <div>error</div>;
     }
   }
+
+  btnText = () => {
+    const { challengeStarted, challengeSubmitted } = this.state;
+    if (challengeSubmitted) {
+      return 'Challenge submitted';
+    }
+    if (challengeStarted) {
+      return 'Challenge started';
+    }
+    return 'Do Challenge';
+  };
 
   render() {
     const {
@@ -168,7 +205,7 @@ class ReadCardFront extends Component {
       style
     } = this.props;
 
-    const { dialog } = this.state;
+    const { dialog, challengeSubmitted } = this.state;
     const modalVisible = dialog !== null;
     const dialogTitle = dialog !== null ? dialog.key : null;
     const { coverPhoto } = stylesheet;
@@ -230,9 +267,7 @@ class ReadCardFront extends Component {
               style={{ width: '80%' }}
             >
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                {challengeSubmission !== null
-                  ? 'Challenge submitted!'
-                  : 'Collect Card'}
+                {this.btnText()}
               </div>
             </BigButton>
 

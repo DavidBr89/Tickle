@@ -7,31 +7,36 @@ import * as Icon from 'react-feather';
 
 import { db } from 'Firebase';
 import { BareModal, Modal, ModalBody } from 'Utils/Modal';
-import PhotoUpload from 'Components/utils/PhotoUpload';
-import { SignInForm, SignInModalBody } from 'Components/SignIn';
+import { SignInModalBody } from 'Components/SignIn';
 import { TagInput, PreviewTags, Tag } from 'Components/utils/Tag';
 
 // import { skillTypes } from '../../dummyData';
 import { Card } from 'Components/cards';
 import ExtendableMarker from 'Components/utils/ExtendableMarker';
+
+import { PreviewCard } from 'Cards';
+import Stack from 'Utils/CardStack';
+
 // import { FieldSet } from 'Components/utils/StyledComps';
 // import setify from 'Utils/setify';
+
+import { ScrollView, ScrollElement } from 'Utils/ScrollView';
 
 import {
   GlobalThemeConsumer,
   stylesheet as defaultStylesheet
 } from 'Src/styles/GlobalThemeContext';
 
-import CardStack from 'Components/MapView/CardStack';
-import { userFields, compareUserFields } from 'Constants/userFields';
+import EditUserInfo from './EditUserInfo';
 
 const TagList = ({ sets, tagColorScale, acc = d => d.values.length }) => (
   <div
     style={{
       display: 'flex',
       flexWrap: 'wrap',
-      maxHeight: 200,
-      overflow: 'hidden'
+      maxWidth: 400
+      // maxHeight: 200,
+      // overflow: 'hidden'
     }}
   >
     {sets.map(d => (
@@ -55,246 +60,40 @@ TagList.propTypes = { data: PropTypes.array, tagColorScale: PropTypes.func };
 
 TagList.defaultProps = { data: [], tagColorScale: () => 'purple' };
 
-CardStack.defaultProps = { number: 0 };
-
-class EditUserPhoto extends React.Component {
+class ExpSection extends React.Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string
   };
 
-  state = { url: this.props.url };
-
+  state = { exp: false };
   render() {
-    const { url, imgName } = this.state;
+    const { children, className, title } = this.props;
+    const { exp } = this.state;
     return (
-      <PhotoUpload
-        {...this.props}
-        title="Change Image"
-        imgUrl={url}
-        imgName={imgName}
-        maxHeight={200}
-        onChange={({ url, file }) => {
-          this.setState({ url, imgName: file.name });
-        }}
-      />
-    );
-  }
-}
-
-class UserInfoModalBody extends React.Component {
-  static propTypes = {
-    children: PropTypes.node,
-    className: PropTypes.string
-  };
-
-  static defaultProps = {
-    errorMsg: null
-  };
-
-  state = {
-    authUser: this.props.authUser,
-    userUpdated: false,
-    authenticated: false
-  };
-
-  conditionalSubmit = () => {
-    const { userUpdated, authUser } = this.state;
-    const { onSubmit, onClose } = this.props;
-
-    if (userUpdated) {
-      onSubmit(authUser);
-      this.setState({ userUpdated: false });
-    }
-    // onClose();
-  };
-
-  componentDidUpdate(prevProps, prevState) {
-    const { onChange } = this.props;
-    const { authUser: oldUser } = prevState;
-    const { authUser } = this.state;
-
-    const { passwordOne, passwordTwo } = authUser;
-    const { passwordOne: oldPwOne, passwordTwo: oldPwTwo } = oldUser;
-    if (
-      !compareUserFields(oldUser, authUser) ||
-      (passwordOne !== oldPwOne || passwordTwo !== oldPwTwo)
-    ) {
-      this.setState({ userUpdated: true });
-      // onChange(authUser);
-    }
-
-    // if (prevState.userUpdated && compareUserFields(oldUser, authUser))
-    //   this.setState({ userUpdated: false });
-  }
-
-  renderUpdateUserModal = () => {
-    const { onChange, tagColorScale, title } = this.props;
-    const {
-      onSubmit,
-      username,
-      name,
-      email,
-      photoURL,
-      interests,
-      uid
-    } = this.state.authUser;
-
-    const setUserField = field =>
-      this.setState(({ authUser: oldAuthUser }) => ({
-        authUser: { ...oldAuthUser, ...field }
-      }));
-
-    return (
-      <React.Fragment>
-        <div className="mb-3">
-          <div className="form-group">
-            <label htmlFor="fullname">User Photo:</label>
-            <div
-              style={{
-                display: 'flex',
-                width: '100%'
-                // justifyContent: 'center'
-              }}
-            >
-              <EditUserPhoto
-                style={{ width: 200 }}
-                url={photoURL}
-                onChange={newPhotoURL =>
-                  setUserField({ photoURL: newPhotoURL })
-                }
-              />
-
-              <div className="ml-3">
-                <div className="form-group">
-                  <label htmlFor="username">Username:</label>
-                  <div>
-                    <input
-                      className="form-control"
-                      style={{ width: 'unset' }}
-                      value={username || ''}
-                      onChange={e => setUserField({ username: e.target.value })}
-                      type="text"
-                      placeholder="Full Name"
-                    />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label htmlFor="interests">Interests:</label>
-                  <TagInput
-                    className="form-group"
-                    tags={interests}
-                    colorScale={tagColorScale}
-                    uiColor="grey"
-                    onChange={newInterests =>
-                      setUserField({ interests: newInterests })
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="mb-3">
-          <div className="form-group">
-            <label htmlFor="email">Email:</label>
-            <div>
-              <input
-                className="form-control"
-                value={email || ''}
-                onChange={e => setUserField({ email: e.target.value })}
-                type="text"
-                placeholder="Full Name"
-              />
-            </div>
-          </div>
-          <div className="form-group">
-            <label htmlFor="name">Name:</label>
-            <div>
-              <input
-                className="form-control"
-                value={name || ''}
-                onChange={e => setUserField({ name: e.target.value })}
-                type="text"
-                placeholder="Full Name"
-              />
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="pwd">Change Password:</label>
-            <div>
-              <input
-                className="form-control"
-                onChange={e => setUserField({ passwordOne: e.target.value })}
-                type="password"
-                placeholder="Password"
-              />
-            </div>
-            <input
-              className="form-control"
-              onChange={e => setUserField({ passwordTwo: e.target.value })}
-              type="password"
-              placeholder="Confirm Password"
-            />
-          </div>
-        </div>
-      </React.Fragment>
-    );
-  };
-
-  render() {
-    const { onChange, tagColorScale, title, errorMsg, onClose } = this.props;
-    const { authenticated, cachedUser, userUpdated } = this.state;
-    const {
-      onSubmit,
-      username,
-      name,
-      email,
-      photoURL,
-      interests,
-      uid,
-      passwordOne,
-      passwordTwo
-    } = this.props.authUser;
-
-    return (
-      <ModalBody
-        onClose={() => {
-          // onChange(cachedUser);
-          onClose();
-        }}
-        title={title}
-        footer={
-          <React.Fragment>
-            <div className="mr-1">{errorMsg}</div>
+      <section className="mb-3" style={{ width: '100%' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%'
+          }}
+        >
+          <div>{title}</div>
+          <div>
             <button
               className={css(defaultStylesheet.btn)}
-              onClick={this.conditionalSubmit}
-              disabled={!userUpdated}
+              onClick={() =>
+                this.setState(({ exp: oldExp }) => ({ exp: !oldExp }))
+              }
             >
-              Update
+              <Icon.Maximize2 />
             </button>
-          </React.Fragment>
-        }
-      >
-        {this.renderUpdateUserModal()}
-      </ModalBody>
-    );
-  }
-}
-
-class ModalBodyWrapper extends React.Component {
-  state = { authenticated: false };
-  render() {
-    const { authenticated } = this.state;
-    if (authenticated) return <UserInfoModalBody {...this.props} />;
-    return (
-      <SignInModalBody
-        onClose={this.props.onClose}
-        title="User Sign-In"
-        onAuthenticate={() => this.setState({ authenticated: true })}
-      />
+          </div>
+        </div>
+        {exp && children}
+      </section>
     );
   }
 }
@@ -326,21 +125,39 @@ const ExtendableCard = props => {
     selectedCardId,
     onClick,
     extendedCardId,
-    onClose
+    onClose,
+    source,
+    asyncRemoveCard,
+    asyncSubmitChallenge
   } = props;
 
-  const { createdCards, submittedCards } = authUser;
-  const cards = [...createdCards, ...submittedCards];
+  const makeEditable = d => {
+    d.edit = true;
+    return d;
+  };
+
+  const {
+    createdCards,
+    submittedCards,
+    startedCards,
+    collectedCards
+  } = authUser;
+  const cards = [
+    ...createdCards.map(makeEditable),
+    ...submittedCards,
+    ...startedCards,
+    ...collectedCards
+  ];
   const selected =
     extendedCardId !== null &&
     selectedCardId !== null &&
     extendedCardId === selectedCardId;
 
   const selectedCard = selected ? cards.find(c => c.id === selectedCardId) : {};
+  const { id, uid } = selectedCard;
 
   return (
-    <BareModal
-key={selectedCard ? selectedCard.id : null} visible={selected}>
+    <BareModal key={selectedCard ? selectedCard.id : null} visible={selected}>
       {selected && (
         <Card
           {...selectedCard}
@@ -348,13 +165,64 @@ key={selectedCard ? selectedCard.id : null} visible={selected}>
           height={height}
           onClick={onClick}
           onClose={onClose}
+          edit={source === 'created'}
+          onDelete={() => asyncRemoveCard(id)}
+          selected={selected === id}
+          onSubmitChallenge={challengeSubmission => {
+            asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
+          }}
         />
       )}
     </BareModal>
   );
 };
 
-export default class UserDetailedInfo extends React.Component {
+const StyledCardStack = ({ cards, selected, onClick, edit, uid, ...props }) => (
+  <Stack
+    data={cards}
+    duration={600}
+    centered={selected !== null}
+    selectedIndex={cards.findIndex(c => c.id === selected)}
+    width={100}
+    height={100}
+    unit="%"
+    slotSize={100 / 4}
+    style={{
+      zIndex: 1000
+    }}
+    {...props}
+  >
+    {d => (
+      <PreviewCard
+        {...d}
+        onClick={() => onClick(d)}
+        key={d.id}
+        style={{
+          transition: `transform 1s`,
+          // TODO: change later
+          height: 140,
+          transform: selected === d.id && 'scale(1.2)',
+          // zIndex: selectedCardId === d.id && 2000,
+          opacity: d.template && 0.8
+        }}
+      />
+    )}
+  </Stack>
+);
+
+const CardSection = ({ cards, selected, title, onClick, ...props }) => (
+  <ExpSection title={<h5>{title}</h5>}>
+    <div style={{ height: 200 }} className="mt-3">
+      <StyledCardStack
+        cards={cards}
+        selected={selected}
+        onClick={onClick}
+        {...props}
+      />
+    </div>
+  </ExpSection>
+);
+export default class AccountPage extends React.Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string
@@ -369,6 +237,10 @@ export default class UserDetailedInfo extends React.Component {
   // static defaultProps = {
   //   stylesheet
   // };
+
+  scrollTo = name => {
+    this._scroller.scrollTo(name);
+  };
 
   render() {
     const {
@@ -395,13 +267,19 @@ export default class UserDetailedInfo extends React.Component {
       uid,
       createdCards,
       submittedCards,
+      collectedCards,
+      startedCards,
       name,
       username,
       email,
       photoURL
     } = authUser;
-    const onCardClick = d =>
-      d.id !== selectedCardId ? selectCard(d.id) : extendCard(d.id);
+    const onCardClick = (d, source) => {
+      if (d.id !== selectedCardId) {
+        return selectCard(d.id);
+      }
+      return extendCard({ id: d.id, source });
+    };
 
     const selectedIdCreated = createdCards.find(c => c.id === selectedCardId)
       ? selectedCardId
@@ -413,16 +291,62 @@ export default class UserDetailedInfo extends React.Component {
       ? selectedCardId
       : null;
 
+    const selectedIdCollected = collectedCards.find(
+      c => c.id === selectedCardId
+    )
+      ? selectedCardId
+      : null;
+
+    const selectedIdStarted = startedCards.find(c => c.id === selectedCardId)
+      ? selectedCardId
+      : null;
+
+    // const Title = ({ children }) => <h4 style={{ margin: 0 }}>{children}</h4>;
+
+    const cardData = [
+      {
+        id: 'created',
+        cards: createdCards,
+        selected: selectedIdCreated,
+        title: `Created Cards (${createdCards.length})`
+      },
+      {
+        id: 'started',
+        cards: startedCards,
+        selected: selectedIdStarted,
+        title: `Started Cards (${startedCards.length})`
+      },
+      {
+        id: 'submitted',
+        cards: submittedCards,
+        selected: selectedIdSubmitted,
+        title: `Submitted Cards (${submittedCards.length})`
+      },
+      {
+        id: 'collected',
+        cards: collectedCards,
+        selected: selectedIdCollected,
+        title: `Collected Cards (${collectedCards.length})`
+      }
+    ];
+
     return (
       <div
         className="content-block"
-        style={{ position: 'relative' }}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
+        }}
         ref={c => (this.cont = c)}
       >
-        <ExtendableCard {...this.props} onClose={() => extendCard(null)} />
+        <ExtendableCard
+          {...this.props}
+          onClose={() => extendCard({ id: null, source: null })}
+        />
 
         <Modal visible={userInfoExtended}>
-          <ModalBodyWrapper
+          <EditUserInfo
             title="Update User Info"
             onClose={extendUserInfo}
             tagColorScale={tagColorScale}
@@ -435,158 +359,91 @@ export default class UserDetailedInfo extends React.Component {
             {...this.props}
           />
         </Modal>
-        <div
-          style={{
-            display: 'flex',
-            position: 'relative',
-            justifyContent: 'center',
-            flexDirection: 'column',
-            height: '100%',
-            width: '100%',
-            ...style
-          }}
-        >
-          <section className="mb-3">
-            <h4>Personal</h4>
-            <div
-              className="ml-2 mb-3"
-              style={{
-                display: 'flex',
-                // justifyContent: 'center',
-                flexWrap: 'wrap',
-                width: '100%',
-                // justifyContent: 'center',
-                // alignItems: 'center',
-                ...style
-              }}
-            >
+        <ScrollView ref={scroller => (this._scroller = scroller)}>
+          <div>
+            <section className="mb-3">
+              <h3>Personal</h3>
               <div
-                className="mb-2 mr-3"
+                className="ml-2 mb-3"
                 style={{
-                  border: 'solid 1px grey',
-                  height: '100%',
+                  display: 'flex',
+                  flexWrap: 'wrap',
                   width: '100%',
-                  maxWidth: 200,
-                  maxHeight: 200,
-                  overflow: 'hidden'
+                  // justifyContent: 'center',
+                  // alignItems: 'center',
+                  ...style
                 }}
               >
-                <img
+                <div
+                  className="mb-2 mr-3"
                   style={{
+                    border: 'solid 1px grey',
+                    height: '100%',
                     width: '100%',
-                    height: '100%'
+                    width: 200,
+                    height: 200,
+                    borderRadius: '50%',
+                    overflow: 'hidden'
                   }}
-                  src={photoURL}
-                  alt="alt"
-                />
-              </div>
-              <div>
-                <div className="mb-1">
-                  <h5>Username</h5>
-                  {username}
-                </div>
-                <div className="mb-1">
-                  <h5>email: </h5>
-                  {email}
+                >
+                  <img
+                    style={{
+                      width: '100%',
+                      height: '100%'
+                    }}
+                    src={photoURL}
+                    alt="alt"
+                  />
                 </div>
                 <div>
-                  <h5>Interests</h5>
-                  <PreviewTags data={interests} colorScale={tagColorScale} />
+                  <div className="mb-1">
+                    <h5>Username</h5>
+                    {username}
+                  </div>
+                  <div className="mb-1">
+                    <h5>email: </h5>
+                    {email}
+                  </div>
+                  <div>
+                    <h5>Interests</h5>
+                    <PreviewTags data={interests} colorScale={tagColorScale} />
+                  </div>
+                </div>
+                <div
+                  className="ml-2"
+                  style={{ display: 'flex', alignItems: 'end' }}
+                >
+                  <button
+                    className={css(defaultStylesheet.btn)}
+                    onClick={() => extendUserInfo()}
+                  >
+                    <Icon.Edit />
+                  </button>
                 </div>
               </div>
-              <div
-                className="ml-2"
-                style={{ display: 'flex', alignItems: 'end' }}
-              >
-                <button
-                  className={css(defaultStylesheet.btn)}
-                  onClick={() => extendUserInfo()}
-                >
-                  <Icon.Edit />
-                </button>
+            </section>
+            <div onClick={() => this.scrollTo('myTags')}>
+              <ScrollElement name="myTags">
+                <ExpSection title={<h5>My Tags</h5>} className="mb-1">
+                  <TagList sets={skills} tagColorScale={tagColorScale} />
+                </ExpSection>
+              </ScrollElement>
+            </div>
+            {cardData.map(c => (
+              <div onClick={() => this.scrollTo(c.title)}>
+                <ScrollElement name={c.title}>
+                  <CardSection
+                    {...c}
+                    onClick={d => onCardClick(d, c.id)}
+                    uid={uid}
+                    edit
+                  />
+                </ScrollElement>
               </div>
-            </div>
-          </section>
-          <section className="mb-1">
-            <h4>My Tags</h4>
-            <TagList sets={skills} tagColorScale={tagColorScale} />
-          </section>
-          <section>
-            <h4>Created Cards ({createdCards.length})</h4>
-            <div style={{ height: 200 }}>
-              <CardStack
-                className=""
-                cards={createdCards}
-                selectedCardId={selectedIdCreated}
-                tagColorScale={tagColorScale}
-                width={100}
-                height={100}
-                slotSize={100 / 4}
-                cardHeight={140}
-                unit="%"
-                onClick={onCardClick}
-              />
-            </div>
-          </section>
-          <section className="mb-3">
-            <h4>Submitted Challenges ({submittedCards.length})</h4>
-            <div style={{ height: 200 }}>
-              <CardStack
-                className=""
-                cards={submittedCards}
-                selectedCardId={selectedIdSubmitted}
-                tagColorScale={tagColorScale}
-                width={100}
-                height={100}
-                slotSize={100 / 4}
-                onClick={d => d}
-                cardHeight={140}
-                unit="%"
-                onClick={onCardClick}
-              />
-            </div>
-          </section>
-          <section className="mb-3">
-            <h4>Collected Cards (TODO)</h4>
-            <div style={{ height: 200 }}>TODO</div>
-          </section>
-        </div>
+            ))}
+          </div>
+        </ScrollView>
       </div>
     );
   }
 }
-
-// <div className="mb-1">
-//         <span style={{ fontWeight: 'bold' }}>name: </span>
-//         {name}
-//       </div>
-// const BasicUserInfo = ({ photoURL, style, username, name, email }) => (
-//   <div
-//     style={{
-//       display: 'flex',
-//       justifyContent: 'center',
-//       // alignItems: 'center',
-//       width: '100%',
-//       height: '100%',
-//       ...style
-//     }}
-//   >
-//     <div style={{ display: 'flex' }}>
-//       <div style={{ border: 'solid 1px grey', width: '50%', height: '100%' }}>
-//         <img width="100%" height="100%" src={photoURL} alt="alt" />
-//       </div>
-//       <div className="ml-3">
-//         <div className="mb-1">
-//           <span style={{ fontWeight: 'bold' }}>username: </span>
-//           {username}
-//         </div>
-//         <div className="mb-1">
-//           <span style={{ fontWeight: 'bold' }}>email: </span> {email}
-//         </div>
-//       </div>
-//     </div>
-//     <div>
-//       <button>Edit</button>
-//     </div>
-//   </div>
-// );

@@ -50,9 +50,6 @@ export default class DataUpload extends Component {
     fileName: null
   };
 
-  // TODO: remove
-  contHeight = 300;
-  // video#<{(|,image#<{(|
   render() {
     const {
       className,
@@ -84,7 +81,7 @@ export default class DataUpload extends Component {
               overflow: 'hidden'
             }}
           >
-            {fileName || 'Choose File'}
+            {fileName || 'Browse File'}
           </div>
         </label>
         <input

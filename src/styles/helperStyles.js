@@ -5,7 +5,7 @@ export const btnStyle = {
   backgroundImage: 'none',
   display: 'inline-flex',
   alignItems: 'center',
-  minWidth: '62px',
+  // minWidth: '62px',
   overflow: 'hidden',
   fontWeight: 'bold',
   textAlign: 'center',

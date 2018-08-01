@@ -91,7 +91,7 @@ export function fetchCollectibleCards(uid) {
     return db.readCards(uid, 'createdCards').then(data => {
       dispatch(
         receiveCollectibleCards(
-          data.filter(d => d.challengeSubmission === null)
+          data//.filter(d => d.challengeSubmission === null || d.challengeSubmission.completed)
         )
       );
     });

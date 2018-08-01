@@ -32,8 +32,8 @@ function sessionReducer(state = INITIAL_STATE, action) {
       return { ...state, userInfoExtended: !state.userInfoExtended };
     }
     case EXTEND_CARD_ID: {
-      const extendedCardId = action.options;
-      return { ...state, extendedCardId };
+      const { id, source } = action.options;
+      return { ...state, extendedCardId: id, source};
     }
     case RECEIVE_USER_INFO: {
       const userInfo = action.options;
