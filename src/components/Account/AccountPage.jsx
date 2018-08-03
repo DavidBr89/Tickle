@@ -229,10 +229,10 @@ export default class AccountPage extends React.Component {
   };
 
   componentDidMount() {
-    this.props.screenResize({
-      width: this.cont.offsetWidth,
-      height: this.cont.offsetHeight
-    });
+    // this.props.screenResize({
+    //   width: this.cont.offsetWidth,
+    //   height: this.cont.offsetHeight
+    // });
   }
   // static defaultProps = {
   //   stylesheet

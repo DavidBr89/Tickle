@@ -243,7 +243,7 @@ function reducer(state = INITIAL_STATE, action) {
     case UPDATE_CARD_TEMPLATE: {
       const { cardData, viewport, dataView } = action.options;
 
-      console.log('viewport', viewport);
+      console.log('viewport', cardData);
       const updatedTemplate = updCardDataDim({
         rawData: { ...cardData, template: true },
         viewport,

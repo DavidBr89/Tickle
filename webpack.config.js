@@ -17,7 +17,7 @@ module.exports = {
   entry: [
     // bundle the client for hot reloading
     // only- means to only hot reload for successful updates
-    // "babel-polyfill",
+    // 'babel-polyfill',
     './src/index.jsx' // your app's entry point
   ],
   // TODO: change for production
@@ -69,7 +69,8 @@ module.exports = {
     }),
     new webpack.EnvironmentPlugin(apiTokens),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('development')
+      'process.env.NODE_ENV': JSON.stringify('development'),
+      // 'process.env.BABEL_ENV': JSON.stringify('development')
     }),
     new ErrorOverlayPlugin()
   ]

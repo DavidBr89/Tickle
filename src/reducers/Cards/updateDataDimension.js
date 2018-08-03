@@ -8,10 +8,14 @@ import { GEO, TAGS, FLOORPLAN } from 'Constants/dataViews';
 function updCardLoc(cardData, mapViewport) {
   const { x, y, tx, ty, vx, vy, ...restData } = cardData;
 
+  console.log('viewport', x, y, mapViewport);
   const vp = new PerspectiveMercatorViewport(mapViewport);
 
-  const [longitude, latitude] = vp.unproject([x, y]);
-  console.log('loc', longitude, latitude);
+  //TODO:
+  const [longitude, latitude] = vp.unproject([
+    x || mapViewport.width / 2,
+    y || mapViewport.height / 2
+  ]);
   const updatedCard = {
     ...restData,
     loc: { latitude, longitude }

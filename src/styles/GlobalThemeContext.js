@@ -86,6 +86,8 @@ const {
   Consumer: GlobalThemeConsumer
 } = React.createContext({ uiColor, tagColor, stylesheet, rawCSS });
 
+const calcDataViewHeight = isSmartphone => (isSmartphone ? '60%' : '65%');
+
 export {
   GlobalThemeProvider,
   GlobalThemeConsumer,
@@ -93,5 +95,6 @@ export {
   uiColor,
   makeTagColorScale,
   tagColor,
-  rawCSS
+  rawCSS,
+  calcDataViewHeight
 };

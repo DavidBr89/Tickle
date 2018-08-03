@@ -44,8 +44,9 @@ export const TagInput = class TagInput extends Component {
           style={{
             display: 'flex',
             flexWrap: 'no-wrap',
-            position: 'relative',
-            zIndex: 2000
+            justifyContent: 'space-between'
+            // position: 'relative',
+            // zIndex: 2000
             // width: 250
           }}
         >

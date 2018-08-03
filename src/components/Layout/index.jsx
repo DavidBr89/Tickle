@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
-
+import { connect } from 'react-redux';
 // import { Link } from 'react-router-dom';
 
 // import SignOutButton from '../SignOut';
@@ -64,7 +64,7 @@ const Menu = ({ style, children }) => (
   </div>
 );
 
-export default class MainLayout extends Component {
+class MainLayout extends Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
     activePath: PropTypes.string
@@ -85,25 +85,40 @@ export default class MainLayout extends Component {
   }
 
   render() {
-    const { children, activePath } = this.props;
+    const { children, activePath, isAndroid } = this.props;
 
+    // style={{ height: isAndroid ? '100vh' : '100vh' }}
     return (
-      <div id="main">
-        <div className="layout__content">
-          <div id="content-container">
-            <Menu style={{ position: 'absolute' }}>
-              <Navigation activePath={activePath}>
-                {(r, name) => (
-                  <Link className="btn mb-2" to={r}>
-                    {name}
-                  </Link>
-                )}
-              </Navigation>
-            </Menu>
-            {children}
-          </div>
-        </div>
+      <div id="content-container" >
+        <Menu style={{ position: 'absolute' }}>
+          <Navigation activePath={activePath}>
+            {(r, name) => (
+              <Link className="btn mb-2" to={r}>
+                {name}
+              </Link>
+            )}
+          </Navigation>
+        </Menu>
+        {children}
       </div>
     );
   }
 }
+
+const mapStateToProps = state => ({ ...state.Screen });
+
+/*
+exampleAction: authUser => {
+    dispatch(setAuthUser(authUser));
+  }
+*/
+const mergeProps = (stateProps, _, ownProps) => ({
+  ...stateProps,
+  ...ownProps
+});
+
+export default connect(
+  mapStateToProps,
+  null,
+  mergeProps
+)(MainLayout);

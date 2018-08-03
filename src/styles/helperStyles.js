@@ -5,6 +5,7 @@ export const btnStyle = {
   backgroundImage: 'none',
   display: 'inline-flex',
   alignItems: 'center',
+  zIndex: 2000,
   // minWidth: '62px',
   overflow: 'hidden',
   fontWeight: 'bold',

@@ -6,35 +6,35 @@ import { bindActionCreators } from 'redux';
 
 import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 
-import DimWrapper from 'Utils/DimensionsWrapper';
-import ExtendableMarker from 'Utils/ExtendableMarker';
+// import DimWrapper from 'Utils/DimensionsWrapper';
+// import ExtendableMarker from 'Utils/ExtendableMarker';
 
 import PreviewMarker from './PreviewMarker';
 
-import {
-  DragSourceCont,
-  DropTargetCont
-  // DragDropContextProvider
-} from './DragAndDrop/DragSourceTarget';
+// import {
+//   DragSourceCont,
+//   DropTargetCont
+//   // DragDropContextProvider
+// } from './DragAndDrop/DragSourceTarget';
 
 // import { dragCard } from 'Reducers/Cards/actions';
 import { changeMapViewport } from 'Reducers/Map/actions';
 import DataOverlay from './ForceOverlay/DataOverlay';
 
-import { colorScale } from 'Cards/styles';
+// import { colorScale } from 'Cards/styles';
 
 import { Card } from 'Cards';
 
-import { updateCardTemplate, dragCard } from 'Reducers/Cards/actions';
+// import { updateCardTemplate, dragCard } from 'Reducers/Cards/actions';
 
-import {
-  asyncUpdateCard,
-  asyncCreateCard,
-  asyncRemoveCard,
-  asyncSubmitChallenge
-} from 'Reducers/Cards/async_actions';
+// import {
+//   asyncUpdateCard,
+//   asyncCreateCard,
+//   asyncRemoveCard,
+//   asyncSubmitChallenge
+// } from 'Reducers/Cards/async_actions';
 
-import * as dataViewActions from 'Reducers/DataView/actions';
+// import * as dataViewActions from 'Reducers/DataView/actions';
 
 const CardDataOverlay = props => {
   const {
@@ -103,7 +103,6 @@ const CardDataOverlay = props => {
 };
 
 function mapStateToProps(state) {
-  console.log('State Screen', state.Screen);
   return {
     ...state.MapView,
     ...state.Cards,

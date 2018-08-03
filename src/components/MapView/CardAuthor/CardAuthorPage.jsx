@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 
 // import { Motion, spring } from 'react-motion';
 // import * as Icon from 'react-feather';
-import Spinner from 'react-loader-spinner';
-import * as d3 from 'd3';
-import { intersection, union } from 'lodash';
+// import Spinner from 'react-loader-spinner';
+// import * as d3 from 'd3';
+// import { intersection, union } from 'lodash';
 
 // TODO: { LinearInterpolator, FlyToInterpolator }
 // import { default as TouchBackend } from 'react-dnd-touch-backend';
@@ -21,14 +21,15 @@ import {
 
 import PreviewMarker from '../PreviewMarker';
 
-import { colorScale, cardTypeColorScale } from 'Cards/styles';
+// import { colorScale, cardTypeColorScale } from 'Cards/styles';
 
-import { Card, CardMarker, PreviewCard } from 'Cards';
+// import { Card, CardMarker, PreviewCard } from 'Cards';
 import CardStack from '../CardStack';
-import ExtendableMarker from 'Utils/ExtendableMarker';
-import { Modal, ModalBody } from 'Utils/Modal';
+// import ExtendableMarker from 'Utils/ExtendableMarker';
+// import { Modal, ModalBody } from 'Utils/Modal';
 
-import { TagInput, DropDown } from 'Utils/TagInput';
+import { DropDown } from 'Utils/TagInput';
+import { calcDataViewHeight } from 'Src/styles/GlobalThemeContext';
 
 import CardDragAuthorOverlay from './CardDragAuthorOverlay';
 
@@ -148,18 +149,14 @@ class CardAuthorPage extends Component {
 
     fetchCards();
 
-    screenResize({
-      width: this.cont.offsetWidth,
-      height: this.cont.offsetHeight
-    });
+    // screenResize({
+    //   width: this.cont.offsetWidth,
+    //   height: this.cont.offsetHeight
+    // });
     preSelectCardId();
   }
 
   componentWillUnmount() {
-    navigator.geolocation.watchPosition(() => {}, () => {}, { timeout: 1 });
-    navigator.geolocation.getCurrentPosition(() => {}, () => {}, {
-      timeout: 1
-    });
   }
 
   render() {
@@ -178,7 +175,8 @@ class CardAuthorPage extends Component {
       toggleAuthEnv,
       tagColorScale,
       cardSets,
-      selectedTags
+      selectedTags,
+      isSmartphone
     } = this.props;
 
     const slotSize = 100 / 3.5;
@@ -254,7 +252,7 @@ class CardAuthorPage extends Component {
               selectedTags={selectedTags}
               tagColorScale={tagColorScale}
               selectedCardId={selectedCardId}
-              style={{ height: '65%' }}
+              style={{ height: calcDataViewHeight(isSmartphone) }}
             />
           </div>
         </div>

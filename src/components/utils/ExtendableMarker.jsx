@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
 const CardImg = ({ width, height }) => (
@@ -67,6 +66,7 @@ class ExtendableMarker extends Component {
           // position: extended ? 'fixed' 'absolute',
           position: 'absolute',
           maxWidth: 500,
+          // minWidth: 320,
           left: x,
           top: y,
           transform: 'translate(-50%, -50%)',
@@ -75,7 +75,7 @@ class ExtendableMarker extends Component {
           width,
           height,
           zIndex: extended && 4000,
-          transition: `transform ${delay}ms, left ${delay}ms, top ${delay}ms, width ${delay}ms, height ${delay}ms`,
+          // transition: `transform ${delay}ms, left ${delay}ms, top ${delay}ms, width ${delay}ms, height ${delay}ms`,
           ...style
         }}
       >

@@ -133,19 +133,16 @@ class Card extends React.Component {
       .hex();
 
     return (
-      <div
-        className={`${css(stylesheet.flipContainer)}`}
-        style={{ ...style, maxWidth: 500, maxHeight: 800 }}
-      >
-        <div
-          className={`${css(stylesheet.flipper)} ${
-            !frontView ? css(flipAnim) : null
-          }`}
-          style={{
-            background
-          }}
-        >
-          <CardThemeProvider value={{ stylesheet, uiColor, darkerUiColor }}>
+      <CardThemeProvider value={{ stylesheet, uiColor, darkerUiColor }}>
+        <div className={`${css(stylesheet.flipContainer)}`} style={{}}>
+          <div
+            className={`${css(stylesheet.flipper)} `}
+            style={{
+              background,
+              transform: !frontView && `rotateY(180deg)`
+              // 'webkit-transform': !frontView && `rotateY(180deg)`
+            }}
+          >
             <CardFront
               {...this.props}
               style={{
@@ -153,7 +150,18 @@ class Card extends React.Component {
                 top: 0,
                 left: 0,
                 backfaceVisibility: 'hidden',
-                transformStyle: 'preserve-3d'
+                // transform: 'rotateY(0deg)',
+                pointerEvents: !frontView && 'none',
+
+                // '-webkit-perspective': 1000,
+                // perspective: '1000px',
+                // transformStyle: 'preserve-3d',
+                // '-webkit-transform': 'perspective(1000px)',
+                // '-webkit-transform-style': 'preserve-3d',
+                // '-ms-transform-style': 'preserve-3d',
+
+                zIndex: frontView ? 5000 : -10
+                // transformStyle: 'preserve-3d'
               }}
               edit={edit}
               onCollect={onCollect}
@@ -170,8 +178,20 @@ class Card extends React.Component {
                 top: 0,
                 left: 0,
                 backfaceVisibility: 'hidden',
-                transformStyle: 'preserve-3d',
-                transform: 'rotateY(180deg)'
+                // transformStyle: 'preserve-3d',
+                // 'webkit-transform': 'rotateY(180deg)',
+                transform: 'rotateY(180deg)',
+                pointerEvents: frontView && 'none'
+                // '-webkit-perspective': 1000,
+                // '-moz-perspective': 1000,
+                // '-ms-perspective': 1000,
+                // perspective: '1000px'
+                // '-ms-transform': 'perspective(1000px)',
+                // '-moz-transform': 'perspective(1000px)',
+                // '-webkit-transform': 'perspective(1000px)',
+                // '-moz-transform-style': 'preserve-3d',
+                // '-webkit-transform-style': 'preserve-3d',
+                // '-ms-transform-style': 'preserve-3d'
               }}
               edit={!template}
               background={background}
@@ -186,9 +206,9 @@ class Card extends React.Component {
                 null
               }
             />
-          </CardThemeProvider>
+          </div>
         </div>
-      </div>
+      </CardThemeProvider>
     );
   }
 }

@@ -309,6 +309,7 @@ const Img = ({ src, style }) => (
     style={{
       width: '100%',
       height: '100%',
+      // pointerEvents: 'none',
       ...style
     }}
   >
@@ -334,11 +335,11 @@ export const ImgOverlay = ({ src, className, style, children, footer }) => (
   >
     <Img src={src} />
     <div
-      className="m-2 "
+      className="m-2"
       style={{
         position: 'absolute',
         width: '100%',
-        zIndex: 200,
+        // zIndex: 200,
         left: 0,
         top: 0
       }}
@@ -423,11 +424,13 @@ export const FlipButton = ({ style, onClick, color, disabled, className }) => (
     className={className}
     disabled={disabled}
   >
-    <i
-      className="fa fa-retweet fa-2x"
-      style={{ fontSize: 32 }}
-      aria-hidden="true"
-    />
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <i
+        className="fa fa-retweet fa-2x"
+        style={{ fontSize: 32 }}
+        aria-hidden="true"
+      />
+    </div>
   </BigButton>
 );
 

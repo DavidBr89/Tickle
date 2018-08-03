@@ -53,7 +53,7 @@ class MediaChallenge extends Component {
       <ModalBody
         onClose={() => {
           onClose();
-          if (response !== challengeSubmission.response)
+          if (challengeSubmission && response !== challengeSubmission.response)
             onUpdate({ response, completed });
         }}
         title={title}

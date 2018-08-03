@@ -24,7 +24,8 @@ const CardHeader = ({
 }) => {
   const btnStyle = {
     fontSize: '1.5rem',
-    height: '100%'
+    height: '100%',
+    cursor: 'pointer'
     // marginBottom: 10,
     // padding: '0.4rem 0.6rem 0.4rem 0.6rem'
     //

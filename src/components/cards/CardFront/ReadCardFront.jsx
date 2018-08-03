@@ -208,7 +208,7 @@ class ReadCardFront extends Component {
     const { dialog, challengeSubmitted } = this.state;
     const modalVisible = dialog !== null;
     const dialogTitle = dialog !== null ? dialog.key : null;
-    const { coverPhoto } = stylesheet;
+    const { coverPhoto, cardLayout } = stylesheet;
 
     // TODO: modal color
     return (
@@ -219,14 +219,7 @@ class ReadCardFront extends Component {
           ...style
         }}
       >
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            height: '90%',
-            justifyContent: 'space-between'
-          }}
-        >
+        <div className={css(cardLayout)}>
           <Modal
             visible={modalVisible}
             title={dialogTitle}
@@ -266,12 +259,10 @@ class ReadCardFront extends Component {
               }
               style={{ width: '80%' }}
             >
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                {this.btnText()}
-              </div>
+              {this.btnText()}
             </BigButton>
 
-            <FlipButton
+            <BigButton
               color={uiColor}
               onClick={flipHandler}
               style={{ width: '20%' }}

@@ -13,6 +13,8 @@ import ExtendableMarker from 'Utils/ExtendableMarker';
 import { changeMapViewport } from 'Reducers/Map/actions';
 import { GEO, TAGS, FLOORPLAN } from 'Constants/dataViews';
 
+import { Modal, BareModal, ModalBody } from 'Utils/Modal';
+
 // import│ {shallowEqualProps} from'shallow-equal-props';
 
 // import louvain from './jlouvain';
@@ -21,37 +23,37 @@ import Map from './Map';
 import Floorplan from './Floorplan';
 import TreeMapCluster from './TreeMapCluster';
 
-const offsetMapViewport = ({
-  width,
-  height,
-  zoom,
-  latitude,
-  longitude,
-  offset: [offsetX = 0, offsetY = 0]
-}) => {
-  const vp = new PerspectiveMercatorViewport({
-    width,
-    height,
-    zoom,
-    latitude,
-    longitude
-  });
-
-  const [offsetLng, offsetLat] = vp.unproject([
-    offsetX ? width / 2 - offsetX : width / 2,
-    offsetY ? height / 2 - offsetY : height / 2
-  ]);
-
-  const ret = new PerspectiveMercatorViewport({
-    width,
-    height,
-    zoom,
-    latitude: offsetLat,
-    longitude: offsetLng
-  });
-  // console.log('return', longitude, latitude, offsetLng, offsetLat);
-  return ret;
-};
+// const offsetMapViewport = ({
+//   width,
+//   height,
+//   zoom,
+//   latitude,
+//   longitude,
+//   offset: [offsetX = 0, offsetY = 0]
+// }) => {
+//   const vp = new PerspectiveMercatorViewport({
+//     width,
+//     height,
+//     zoom,
+//     latitude,
+//     longitude
+//   });
+//
+//   const [offsetLng, offsetLat] = vp.unproject([
+//     offsetX ? width / 2 - offsetX : width / 2,
+//     offsetY ? height / 2 - offsetY : height / 2
+//   ]);
+//
+//   const ret = new PerspectiveMercatorViewport({
+//     width,
+//     height,
+//     zoom,
+//     latitude: offsetLat,
+//     longitude: offsetLng
+//   });
+//   // console.log('return', longitude, latitude, offsetLng, offsetLat);
+//   return ret;
+// };
 
 class DataOverlay extends Component {
   static propTypes = {
@@ -127,46 +129,37 @@ class DataOverlay extends Component {
       preview
     } = this.props;
 
-    console.log('selectedCardId', selectedCardId);
-    // x={extCardId === c.id ? width / 2 : x}
-    // y={extCardId === c.id ? height / 2 : y}
     // TODO: join
     const draggable = c => (
       <ExtendableMarker
         key={c.id}
         delay={100}
-        width={extCardId === c.id ? width : 25}
-        height={extCardId === c.id ? height : 30}
-        center={[width / 2, height / 2]}
-        x={extCardId === c.id ? width / 2 : c.x}
-        y={extCardId === c.id ? height / 2 : c.y}
-        extended={extCardId === c.id}
+        width={25}
+        height={30}
+        x={c.x || width / 2}
+        y={c.y || height / 2}
+        extended={false}
         preview={preview(c)}
-        style={{ zIndex: selectedCardId === c.id ? 5000 : null }}
       >
-        {children(c)}
+        {null}
       </ExtendableMarker>
     );
 
+    // TODO: remove
     const noPreview = c => (
       <ExtendableMarker
         key={c.id}
         delay={100}
-        width={extCardId === c.id ? width : 25}
-        height={extCardId === c.id ? height : 30}
+        width={25}
+        height={30}
         center={[width / 2, height / 2]}
-        x={extCardId === c.id ? width / 2 : c.x}
-        y={extCardId === c.id ? height / 2 : c.y}
-        extended={extCardId === c.id}
         preview={null}
+        x={width / 2}
+        y={height / 2}
       >
         {children(c)}
       </ExtendableMarker>
     );
-
-    const { loc } = data.find(d => d.id === selectedCardId) || {
-      loc: userLocation
-    };
 
     switch (mode) {
       case GEO: {
@@ -180,7 +173,6 @@ class DataOverlay extends Component {
               overflow: 'hidden',
               left: 0,
               top: 0,
-              // pointerEvents: 'none',
               ...style
             }}
           >
@@ -206,7 +198,15 @@ class DataOverlay extends Component {
       }
       case TAGS: {
         return (
-          <div style={{ ...style, height: '100%' }}>
+          <div
+            style={{
+              ...style,
+              height: '100%',
+              // TODO: check later
+              paddingLeft: 7,
+              paddingRight: 15
+            }}
+          >
             <DimWrapper>
               {(w, h) => (
                 <TreeMapCluster
@@ -221,7 +221,7 @@ class DataOverlay extends Component {
                   colorScale={colorScale}
                   padding={padding}
                 >
-                  {noPreview}
+                  {d => null}
                 </TreeMapCluster>
               )}
             </DimWrapper>
@@ -241,6 +241,7 @@ class DataOverlay extends Component {
       className,
       mode,
       selectedCardId,
+      extCardId,
       // center,
       sets,
       colorScale,
@@ -257,8 +258,19 @@ class DataOverlay extends Component {
     } = this.props;
 
     const comp = this.selectComp();
+    const selected =
+      extCardId && selectedCardId && extCardId === selectedCardId;
 
-    return comp;
+    const cardData = data.find(d => d.id === selectedCardId);
+    console.log('cardData', cardData);
+    return (
+      <React.Fragment>
+        <BareModal visible={selected}>
+          {selected && children(cardData)}
+        </BareModal>
+        {comp}
+      </React.Fragment>
+    );
   }
 }
 

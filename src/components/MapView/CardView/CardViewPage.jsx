@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { DropDown } from 'Utils/TagInput';
-import { PreviewCard } from 'Components/cards';
+// import { PreviewCard } from 'Components/cards';
 import CardStack from '../CardStack';
 
 import {
@@ -12,6 +12,8 @@ import {
 } from '../DragAndDrop/DragSourceTarget';
 
 import CardDataOverlay from './CardDataOverlay';
+
+import { calcDataViewHeight } from 'Src/styles/GlobalThemeContext';
 
 // import { StyledButton } from 'Utils/StyledComps';
 
@@ -127,35 +129,15 @@ class CardViewPage extends Component {
     } = this.props;
 
     fetchCards();
-    screenResize({
-      width: this.cont.offsetWidth,
-      height: this.cont.offsetHeight
-    });
+    // screenResize({
+    //   width: this.cont.offsetWidth,
+    //   height: this.cont.offsetHeight
+    // });
     preSelectCardId();
-
-    // TODO: update
-    navigator.geolocation.watchPosition(
-      pos => {
-        const userLocation = {
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude
-        };
-
-        // TODO:
-        // const centerLocation = { ...userLocation };
-      },
-      // 50.846749, 4.352349
-      d => console.log('error watch pos', d),
-      { timeout: 1000000 }
-    );
   }
 
   componentWillUnmount() {
     // window.addEventListener('resize', () => {});
-    navigator.geolocation.watchPosition(() => {}, () => {}, { timeout: 1 });
-    navigator.geolocation.getCurrentPosition(() => {}, () => {}, {
-      timeout: 1
-    });
   }
 
   render() {
@@ -175,7 +157,8 @@ class CardViewPage extends Component {
       toggleAuthEnv,
       tagColorScale,
       cardSets,
-      selectedTags
+      selectedTags,
+      isSmartphone
     } = this.props;
 
     const slotSize = 100 / 3.5;
@@ -248,7 +231,7 @@ class CardViewPage extends Component {
             </div>
             <CardDataOverlay
               {...this.props}
-              style={{ height: '60%' }}
+              style={{ height: calcDataViewHeight(isSmartphone) }}
               colorScale={tagColorScale}
             />
           </div>

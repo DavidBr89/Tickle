@@ -139,7 +139,7 @@ function mapStateToProps(state) {
     ...state.DataView,
     ...state.Screen,
     userLocation: state.MapView.userLocation,
-    ...state.Session
+    authUser: state.Session.authUser
   };
 }
 
@@ -174,6 +174,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   } = dispatcherProps;
 
   const viewport = { ...mapViewport, width, height };
+
+  // TODO: here bug,bugbugbugbugbugbug
+  console.log('selectedCardId', selectedCardId, uid, dataView);
   const onCardDrop = cardData => {
     // TODO: here bug,bugbugbugbugbugbug
     console.log('dataview', uid, dataView);

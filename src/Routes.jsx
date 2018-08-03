@@ -24,138 +24,136 @@ import history from './BrowserHistory';
 
 const Routes = () => (
   <ConnectedRouter history={history}>
-    <div>
-      <HashRouter>
-        <Switch>
-          <Route
-            exact
-            path={routes.AUTH_ENV}
-            render={() => (
-              <DefaultLayout>
-                <CardAuthor dataView={TAGS} />
-              </DefaultLayout>
-            )}
-          />
-          <Route
-            exact
-            path={routes.AUTH_ENV_GEO}
-            render={() => (
-              <DefaultLayout>
-                <CardAuthor dataView={GEO} />
-              </DefaultLayout>
-            )}
-          />
-          <Route
-            exact
-            path={routes.AUTH_ENV_TAGS}
-            render={() => (
-              <DefaultLayout>
-                <CardAuthor dataView={TAGS} />
-              </DefaultLayout>
-            )}
-          />
-          <Route
-            exact
-            path={routes.AUTH_ENV_FLOORPLAN}
-            render={() => (
-              <DefaultLayout>
-                <CardAuthor dataView={FLOORPLAN} />
-              </DefaultLayout>
-            )}
-          />
-          <Route
-            exact
-            path={routes.DATAVIEW_GEO}
-            render={() => (
-              <DefaultLayout>
-                <CardView dataView={GEO} />
-              </DefaultLayout>
-            )}
-          />
-          <Route
-            exact
-            path={routes.DATAVIEW}
-            render={() => (
-              <DefaultLayout>
-                <CardView dataView={TAGS} />
-              </DefaultLayout>
-            )}
-          />
-          <Route
-            exact
-            path={routes.DATAVIEW_TAGS}
-            render={() => (
-              <DefaultLayout>
-                <CardView dataView={TAGS} />
-              </DefaultLayout>
-            )}
-          />
-          <Route
-            exact
-            path={routes.DATAVIEW_FLOORPLAN}
-            render={() => (
-              <DefaultLayout>
-                <CardView dataView={FLOORPLAN} />
-              </DefaultLayout>
-            )}
-          />
-          <Route
-            exact
-            path={routes.LANDING}
-            render={() => (
-              <DefaultLayout>
-                <LandingPage />
-              </DefaultLayout>
-            )}
-          />
-          <Route
-            exact
-            path={routes.SIGN_UP}
-            component={() => (
-              <DefaultLayout>
-                <SignUp />
-              </DefaultLayout>
-            )}
-          />
-          <Route
-            exact
-            path={routes.SIGN_IN}
-            component={() => (
-              <DefaultLayout>
-                <SignIn />
-              </DefaultLayout>
-            )}
-          />
-          <Route
-            exact
-            path={routes.HOME}
-            component={() => (
-              <DefaultLayout>
-                <Home />
-              </DefaultLayout>
-            )}
-          />
-          <Route
-            exact
-            path={routes.ADMIN}
-            component={() => (
-              <DefaultLayout>
-                <Admin />
-              </DefaultLayout>
-            )}
-          />
-          <Route
-            exact
-            path={routes.ACCOUNT}
-            component={() => (
-              <DefaultLayout>
-                <Account />
-              </DefaultLayout>
-            )}
-          />
-        </Switch>
-      </HashRouter>
-    </div>
+    <HashRouter>
+      <Switch>
+        <Route
+          exact
+          path={routes.AUTH_ENV}
+          render={() => (
+            <DefaultLayout>
+              <CardAuthor dataView={TAGS} />
+            </DefaultLayout>
+          )}
+        />
+        <Route
+          exact
+          path={routes.AUTH_ENV_GEO}
+          render={() => (
+            <DefaultLayout>
+              <CardAuthor dataView={GEO} />
+            </DefaultLayout>
+          )}
+        />
+        <Route
+          exact
+          path={routes.AUTH_ENV_TAGS}
+          render={() => (
+            <DefaultLayout>
+              <CardAuthor dataView={TAGS} />
+            </DefaultLayout>
+          )}
+        />
+        <Route
+          exact
+          path={routes.AUTH_ENV_FLOORPLAN}
+          render={() => (
+            <DefaultLayout>
+              <CardAuthor dataView={FLOORPLAN} />
+            </DefaultLayout>
+          )}
+        />
+        <Route
+          exact
+          path={routes.DATAVIEW_GEO}
+          render={() => (
+            <DefaultLayout>
+              <CardView dataView={GEO} />
+            </DefaultLayout>
+          )}
+        />
+        <Route
+          exact
+          path={routes.DATAVIEW}
+          render={() => (
+            <DefaultLayout>
+              <CardView dataView={TAGS} />
+            </DefaultLayout>
+          )}
+        />
+        <Route
+          exact
+          path={routes.DATAVIEW_TAGS}
+          render={() => (
+            <DefaultLayout>
+              <CardView dataView={TAGS} />
+            </DefaultLayout>
+          )}
+        />
+        <Route
+          exact
+          path={routes.DATAVIEW_FLOORPLAN}
+          render={() => (
+            <DefaultLayout>
+              <CardView dataView={FLOORPLAN} />
+            </DefaultLayout>
+          )}
+        />
+        <Route
+          exact
+          path={routes.LANDING}
+          render={() => (
+            <DefaultLayout>
+              <LandingPage />
+            </DefaultLayout>
+          )}
+        />
+        <Route
+          exact
+          path={routes.SIGN_UP}
+          component={() => (
+            <DefaultLayout>
+              <SignUp />
+            </DefaultLayout>
+          )}
+        />
+        <Route
+          exact
+          path={routes.SIGN_IN}
+          component={() => (
+            <DefaultLayout>
+              <SignIn />
+            </DefaultLayout>
+          )}
+        />
+        <Route
+          exact
+          path={routes.HOME}
+          component={() => (
+            <DefaultLayout>
+              <Home />
+            </DefaultLayout>
+          )}
+        />
+        <Route
+          exact
+          path={routes.ADMIN}
+          component={() => (
+            <DefaultLayout>
+              <Admin />
+            </DefaultLayout>
+          )}
+        />
+        <Route
+          exact
+          path={routes.ACCOUNT}
+          component={() => (
+            <DefaultLayout>
+              <Account />
+            </DefaultLayout>
+          )}
+        />
+      </Switch>
+    </HashRouter>
   </ConnectedRouter>
 );
 

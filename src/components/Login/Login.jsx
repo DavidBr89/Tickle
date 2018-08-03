@@ -24,10 +24,10 @@ class Login extends Component {
     super(props);
     const { screenResizeAction } = props;
 
-    screenResizeAction({
-      width: window.innerWidth,
-      height: window.innerHeight
-    });
+    // screenResizeAction({
+    //   width: window.innerWidth,
+    //   height: window.innerHeight
+    // });
   }
 
   // componentDidMount() {

@@ -116,17 +116,6 @@ class MapAreaControl extends Component {
     // if (!prevState.extended) onChange(radius);
   }
 
-  // componentDidMount() {
-  //   navigator.geolocation.getCurrentPosition(pos => {
-  //     this.setState({
-  //       userLocation: {
-  //         latitude: pos.coords.latitude,
-  //         longitude: pos.coords.longitude
-  //       }
-  //     });
-  //   });
-  // }
-
   render() {
     const {
       latitude,

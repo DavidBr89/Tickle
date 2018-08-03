@@ -2,12 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 // import tsnejs from 'tsne';
-import _ from 'lodash';
+// import _ from 'lodash';
+import { connect } from 'react-redux';
 
-import ReactDom from 'react-dom';
+// import ReactDom from 'react-dom';
 // import sketchy from '../utils/d3.sketchy';
-
-import cxx from './TagCloud.scss';
 
 import { CardMarker } from 'Cards';
 
@@ -78,7 +77,8 @@ class Tag extends React.Component {
       onClick,
       key,
       children,
-      transition
+      transition,
+      small
     } = this.props;
 
     const st = {
@@ -90,7 +90,7 @@ class Tag extends React.Component {
       transition: `left ${transition}ms, top ${transition}ms, width ${transition}ms, height ${transition}ms`,
       cursor: 'pointer',
       background: highlighted && color,
-      border: selected ? 'grey dashed 4px' : `${color} solid 8px`,
+      border: selected ? 'grey dashed 4px' : `${color} solid 4px`,
       display: 'flex',
       alignItems: 'center'
       // paddingTop: height / 4,
@@ -116,7 +116,8 @@ class Tag extends React.Component {
             <div
               className="mr-2"
               style={{
-                fontSize: '2vh',
+                fontSize: small ? '100%' : '200%',
+
                 // width: '100%',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
@@ -125,9 +126,11 @@ class Tag extends React.Component {
             >
               #{children}
             </div>
-            <div className="pl-1 pr-1" style={{ maxWidth: '100%' }}>
-              <CardStack number={count} />
-            </div>
+            {!small && (
+              <div className="pl-1 pr-1" style={{ maxWidth: '100%' }}>
+                <CardStack number={count} />
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -152,6 +155,9 @@ class TagCloud extends React.Component {
       selectedTags,
       // addCardFilter,
       // removeCardFilter,
+      //
+      //
+      isSmartphone,
       tagFilter,
       filterSet
     } = this.props;
@@ -159,10 +165,11 @@ class TagCloud extends React.Component {
     const treemap = data.map((d, i) => (
       <Tag
         {...d}
+        small={isSmartphone}
         {...d.data}
         key={d.data.key}
         filterSet={filterSet}
-        onClick={tag => tagFilter({ tag, filterSet})}
+        onClick={tag => tagFilter({ tag, filterSet })}
         color={colorScale(d.data.key)}
         highlighted={selectedTags.includes(d.data.key)}
         selected={filterSet.includes(d.data.key)}
@@ -185,4 +192,15 @@ TagCloud.defaultProps = {
   getCoords: d => d
 };
 
-export default TagCloud;
+const mapStateToProps = state => ({ ...state.Screen });
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => ({
+  ...stateProps,
+  ...ownProps
+});
+
+export default connect(
+  mapStateToProps,
+  null,
+  mergeProps
+)(TagCloud);

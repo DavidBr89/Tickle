@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 // import chroma from 'chroma-js';
 // import * as Icon from 'react-feather';
 
-import PhotoUpload from 'Utils/PhotoUpload';
+// import PhotoUpload from 'Utils/PhotoUpload';
 import EditPhoto from './EditPhoto';
 
 import { isEqual } from 'lodash';
@@ -403,143 +403,138 @@ class EditCardFront extends PureComponent {
         }
         flipHandler={flipHandler}
       >
-        <div
-          className={css(cardLayout)}
-          style={{ height: '100%', width: '100%' }}
-        >
+        <div className={css(cardLayout)}>
           <Modal visible={modalVisible}>{this.modalWriteContent()}</Modal>
-          <div className={css(cardLayout)}>
-            <ImgOverlay
-              src={img && img.url}
-              className={css(coverPhoto)}
-              footer={
-                <EditButton
-                  style={{
-                    position: 'absolute',
-                    bottom: 5,
-                    right: 5,
-                    width: 40,
-                    height: 40,
-                    zIndex: 3000
-                  }}
-                  onClick={() => {
-                    this.setState({
-                      dialog: { title: 'Photo', data: tags }
-                    });
-                  }}
-                />
-              }
-            >
-              <div
-                className="m-2"
+          <ImgOverlay
+            src={img && img.url}
+            className={css(coverPhoto)}
+            footer={
+              <EditButton
                 style={{
                   position: 'absolute',
-                  zIndex: 200,
-                  left: 0,
-                  top: 0,
-                  width: '100%'
+                  bottom: 5,
+                  right: 5,
+                  width: 40,
+                  height: 40,
+                  zIndex: 3000
                 }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    width: '100%'
-                  }}
-                >
-                  <PreviewTags colorScale={tagColorScale} data={tags} />
-                  <EditButton
-                    className="mr-3"
-                    onClick={() => {
-                      this.setState({
-                        dialog: { title: 'Tags', data: tags }
-                      });
-                    }}
-                  />
-                </div>
-              </div>
-            </ImgOverlay>
-
-            <DescriptionField
-              style={{ maxHeight: '20%' }}
-              text={description}
-              borderColor={uiColor}
-              edit
-              onEdit={() =>
-                this.setState({
-                  dialog: {
-                    title: 'Description',
-                    id: 'description',
-                    data: description
-                  }
-                })
-              }
-            />
-            <MediaField
-              style={{ maxHeight: '20%' }}
-              media={media}
-              borderColor={uiColor}
-              edit
-              onEdit={() =>
-                this.setState({
-                  dialog: { title: 'Media', data: media }
-                })
-              }
-            />
-
-            <div className="p-1 pt-3">
+                onClick={() => {
+                  this.setState({
+                    dialog: { title: 'Photo', data: tags }
+                  });
+                }}
+              />
+            }
+          >
+            <div
+              className="m-2"
+              style={{
+                position: 'absolute',
+                zIndex: 200,
+                left: 0,
+                top: 0,
+                width: '100%'
+              }}
+            >
               <div
                 style={{
                   display: 'flex',
-                  justifyContent: 'space-between',
+                  alignItems: 'center',
                   width: '100%'
                 }}
               >
-                <div style={{ width: '80%', display: 'flex' }}>
-                  {template && (
-                    <BigButton
-                      className="mr-2"
-                      disabled={invalid}
-                      edit
-                      onClick={() => {
-                        // TODO
-                        const message = window.confirm(
-                          `Are you sure you wish to ${
-                            added ? 'remove' : 'create'
-                          } this card?`
-                        );
-
-                        if (message) {
-                          onSubmit(data);
-                          this.setState({ added: !added });
-                        }
-                      }}
-                    >
-                      {added ? 'Remove Card' : 'Create Card'}
-                    </BigButton>
-                  )}
-                  <BigButton
-                    edit
-                    disabled={invalid}
-                    onClick={() =>
-                      this.setState({
-                        dialog: { title: 'Challenge', data: challenge }
-                      })
-                    }
-                  >
-                    {template ? 'Add Chall.' : 'Update Challenge'}
-                  </BigButton>
-                </div>
-                <FlipButton
-                  style={{ width: '20%' }}
-                  color={uiColor}
-                  onClick={flipHandler}
-                  className="ml-3"
+                <PreviewTags colorScale={tagColorScale} data={tags} />
+                <EditButton
+                  className="mr-3"
+                  onClick={() => {
+                    this.setState({
+                      dialog: { title: 'Tags', data: tags }
+                    });
+                  }}
                 />
               </div>
             </div>
-            {children}
+          </ImgOverlay>
+
+          <DescriptionField
+            style={{ maxHeight: '20%' }}
+            text={description}
+            borderColor={uiColor}
+            edit
+            onEdit={() =>
+              this.setState({
+                dialog: {
+                  title: 'Description',
+                  id: 'description',
+                  data: description
+                }
+              })
+            }
+          />
+          <MediaField
+            style={{ maxHeight: '20%' }}
+            media={media}
+            borderColor={uiColor}
+            edit
+            onEdit={() =>
+              this.setState({
+                dialog: { title: 'Media', data: media }
+              })
+            }
+          />
+
+          <div className="p-1 pt-3">
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                width: '100%'
+              }}
+            >
+              <div style={{ width: '80%', display: 'flex' }}>
+                {template && (
+                  <BigButton
+                    className="mr-2"
+                    disabled={invalid}
+                    edit
+                    onClick={() => {
+                      // TODO
+                      const message = window.confirm(
+                        `Are you sure you wish to ${
+                          added ? 'remove' : 'create'
+                        } this card?`
+                      );
+
+                      if (message) {
+                        onSubmit(data);
+                        this.setState({ added: !added });
+                      }
+                    }}
+                  >
+                    {added ? 'Remove Card' : 'Create Card'}
+                  </BigButton>
+                )}
+                <BigButton
+                  edit
+                  disabled={invalid}
+                  onClick={() =>
+                    this.setState({
+                      dialog: { title: 'Challenge', data: challenge }
+                    })
+                  }
+                >
+                  {template ? 'Add Chall.' : 'Update Challenge'}
+                </BigButton>
+              </div>
+              <FlipButton
+                style={{ width: '20%' }}
+                color={uiColor}
+                onClick={flipHandler}
+                className="ml-3"
+              />
+            </div>
           </div>
+          {children}
         </div>
       </CardHeader>
     );

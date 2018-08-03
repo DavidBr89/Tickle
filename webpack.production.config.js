@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const path = require('path');
 const loaders = require('./webpack.loaders');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
@@ -27,8 +28,23 @@ module.exports = {
   module: {
     rules: loaders
   },
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+        cache: true,
+        parallel: true,
+        uglifyOptions: {
+          compress: false,
+          ecma: 6,
+          mangle: { safari10: true }
+        },
+        sourceMap: false
+      })
+    ]
+  },
   plugins: [
     new CleanWebpackPlugin(['dist/*.*']),
+
     new HtmlWebpackPlugin({
       template: './src/template.html'
     }),

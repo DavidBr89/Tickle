@@ -22,11 +22,13 @@ import chroma from 'chroma-js';
 
 // import { dummyCards } from './dummyData';
 
-import {
-  fetchCards,
-  fetchAuthoredCards,
-  fetchNearByPlaces
-} from './reducers/Cards/async_actions';
+// import {
+//   fetchCards,
+//   fetchAuthoredCards,
+//   fetchNearByPlaces
+// } from './reducers/Cards/async_actions';
+
+import { screenResize } from 'Reducers/Screen/actions';
 
 import history from './BrowserHistory';
 
@@ -131,15 +133,30 @@ function configureStore(rootReducer, initialState) {
 
 const store = configureStore(rootReducer, defaultState);
 
-// window.addEventListener('load', () => {
+window.addEventListener('load', () => {
+  const cont = document.querySelector('#content-container');
+  const isAndroid = /(android)/i.test(navigator.userAgent);
+  store.dispatch(
+    screenResize({
+      width: cont.offsetWidth,
+      height: cont.offsetHeight,
+      isAndroid
+    })
+  );
+});
+//
+// window.addEventListener('resize', () => {
+//   const cont = document.querySelector('#content-container');
+//   console.log('resize');
+//   const isAndroid = /(android)/i.test(navigator.userAgent);
 //   store.dispatch(
-//     actions.screenResize({
-//       width: window.innerWidth,
-//       height: window.innerHeight
+//     screenResize({
+//       width: cont.offsetWidth,
+//       height: cont.offsetHeight,
+//       isAndroid
 //     })
 //   );
 // });
-//
 
 // store.dispatch(fetchAuthoredCards(0));
 // store.dispatch(fetchNearByPlaces());
@@ -173,10 +190,14 @@ const store = configureStore(rootReducer, defaultState);
 //     }
 //   };
 
+
+
 const App = () => (
   <Provider store={store}>
     <Routes history={history} />
   </Provider>
 );
+
+
 
 export default hot(module)(App);

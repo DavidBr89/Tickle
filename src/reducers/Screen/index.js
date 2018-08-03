@@ -26,8 +26,11 @@ function reducer(state = INITIAL_STATE, action) {
 
   switch (action.type) {
     case SCREEN_RESIZE: {
-      const { width, height } = action.options;
-      return { ...state, width, height };
+      const { width, height, isAndroid } = action.options;
+
+      const isSmartphone = width < 450;
+
+      return { ...state, width, height, isSmartphone, isAndroid};
     }
     default:
       return state;

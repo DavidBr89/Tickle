@@ -190,12 +190,14 @@ class Map extends Component {
       maxZoom,
       viewport,
       userLocation,
-      preview
+      preview,
+      width,
+      height
     } = this.props;
 
-    const { width, height, latitude, longitude, zoom } = viewport;
+    const { latitude, longitude, zoom } = viewport;
 
-    const vp = new PerspectiveMercatorViewport({ ...viewport });
+    const vp = new PerspectiveMercatorViewport({ ...viewport, width, height });
 
     const locNodes = nodes.reduce((acc, n) => {
       const [x, y] = vp.project([n.loc.longitude, n.loc.latitude]);

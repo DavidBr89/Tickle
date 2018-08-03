@@ -30,14 +30,15 @@ function distance(a, b) {
 }
 
 function makeTreemap({ data, width, height, padX, padY }) {
-  const ratio = 2;
+  const ratio = 3;
   const sorted = data.sort((a, b) => b.values.length - a.count);
   const treemap = d3
     .treemap()
     .size([width / ratio, height])
     .paddingInner(0)
-    .round(true)
-    .tile(SpiralTile);
+    .paddingOuter(0)
+    .round(true);
+  // .tile(SpiralTile);
 
   const size = d3
     .scaleLinear()
@@ -111,6 +112,7 @@ class Cluster extends Component {
       data: sets,
       width,
       height,
+      // TODO
       padX: 10,
       padY: 10
     });
