@@ -13,8 +13,8 @@ import CardPreviewMarker from '../PreviewMarker';
 
 import {
   DragSourceCont,
-  DropTargetCont
-  // DragDropContextProvider
+  DropTargetCont,
+  DragDropContextProvider
 } from '../DragAndDrop/DragSourceTarget';
 
 // import { dragCard } from 'Reducers/Cards/actions';
@@ -36,7 +36,7 @@ import {
 
 import * as dataViewActions from 'Reducers/DataView/actions';
 
-const CardAuthorOverlay = props => {
+const CardAuthorOverlay = DragDropContextProvider(props => {
   const {
     onCardDrop,
     isCardDragging,
@@ -111,6 +111,7 @@ const CardAuthorOverlay = props => {
             onClose={() => extendSelectedCard(null)}
             edit
             onSubmit={d => {
+              console.log('onSubmit', { ...d, x, y });
               createCard({ ...d, x, y });
             }}
             onDelete={() => asyncRemoveCard(c.id)}
@@ -120,7 +121,10 @@ const CardAuthorOverlay = props => {
               })
             }
             tagColorScale={tagColorScale}
-            onUpdate={d => onCardUpdate({ ...d, x, y })}
+            onUpdate={d => {
+              console.log('ONUPDATE', { ...d, x, y });
+              onCardUpdate({ ...d, x, y });
+            }}
             onSubmitChallenge={onSubmitChallenge}
             uiColor="grey"
             background="whitesmoke"
@@ -130,7 +134,7 @@ const CardAuthorOverlay = props => {
       </DataOverlay>
     </DropTargetCont>
   );
-};
+});
 
 function mapStateToProps(state) {
   return {
@@ -176,10 +180,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const viewport = { ...mapViewport, width, height };
 
   // TODO: here bug,bugbugbugbugbugbug
-  console.log('selectedCardId', selectedCardId, uid, dataView);
   const onCardDrop = cardData => {
     // TODO: here bug,bugbugbugbugbugbug
-    console.log('dataview', uid, dataView);
+    console.log('DROP update data', uid, dataView, cardData, viewport);
     return selectedCardId === 'temp'
       ? updateCardTemplate({ uid, cardData, viewport, dataView })
       : asyncUpdateCard({ cardData, viewport, dataView });

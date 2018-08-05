@@ -1,23 +1,19 @@
 // import 'w3-css';
-
 import React from 'react';
 // import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import chroma from 'chroma-js';
 
-import { StyleSheet, css } from 'aphrodite/no-important';
+import { css } from 'aphrodite/no-important';
 
-import cx from './Card.scss';
 import CardBack from './CardBack';
 import CardFront from './CardFront';
 
 import PreviewCard from './PreviewCard';
 import CardMarker from './CardMarker';
 
-import { colorScale } from './styles';
-
 import { CardThemeProvider, makeStylesheet } from 'Src/styles/CardThemeContext';
-import { btnStyle } from 'Src/styles/helperStyles';
+// import { btnStyle } from 'Src/styles/helperStyles';
 
 // ReadCardBack.defaultProps = {
 //   key: 'asa',
@@ -134,34 +130,31 @@ class Card extends React.Component {
 
     return (
       <CardThemeProvider value={{ stylesheet, uiColor, darkerUiColor }}>
-        <div className={`${css(stylesheet.flipContainer)}`} style={{}}>
+        <div
+          className={`${css(stylesheet.flipContainer)}`}
+          style={{
+            transform: !frontView && `rotateY(180deg)`
+          }}
+        >
           <div
             className={`${css(stylesheet.flipper)} `}
             style={{
-              background,
-              transform: !frontView && `rotateY(180deg)`
+              // background,
+              // transform: !frontView && `rotateY(180deg)`
               // 'webkit-transform': !frontView && `rotateY(180deg)`
             }}
           >
             <CardFront
               {...this.props}
               style={{
+                width: '100%',
+                height: '100%',
+                zIndex: 2, // frontView ? 4000 : 0,
                 position: 'absolute',
                 top: 0,
                 left: 0,
                 backfaceVisibility: 'hidden',
-                // transform: 'rotateY(0deg)',
-                pointerEvents: !frontView && 'none',
-
-                // '-webkit-perspective': 1000,
-                // perspective: '1000px',
-                // transformStyle: 'preserve-3d',
-                // '-webkit-transform': 'perspective(1000px)',
-                // '-webkit-transform-style': 'preserve-3d',
-                // '-ms-transform-style': 'preserve-3d',
-
-                zIndex: frontView ? 5000 : -10
-                // transformStyle: 'preserve-3d'
+                transform: 'rotateY(0deg)'
               }}
               edit={edit}
               onCollect={onCollect}
@@ -174,21 +167,27 @@ class Card extends React.Component {
             <CardBack
               {...this.props}
               style={{
+                width: '100%',
+                height: '100%',
                 position: 'absolute',
                 top: 0,
                 left: 0,
-                backfaceVisibility: 'hidden',
-                // transformStyle: 'preserve-3d',
-                // 'webkit-transform': 'rotateY(180deg)',
-                transform: 'rotateY(180deg)',
-                pointerEvents: frontView && 'none'
                 // '-webkit-perspective': 1000,
+                // 'webkit-transform': 'rotateY(180deg)',
+                transform: 'rotateY(180deg)'
+
+                // position: 'absolute',
+                // top: 0,
+                // left: 0,
+                // zIndex: 100,
+                // // transformStyle: 'preserve-3d',
+                // // 'webkit-transform': 'rotateY(180deg)',
+                // pointerEvents: frontView && 'none'
                 // '-moz-perspective': 1000,
                 // '-ms-perspective': 1000,
                 // perspective: '1000px'
                 // '-ms-transform': 'perspective(1000px)',
                 // '-moz-transform': 'perspective(1000px)',
-                // '-webkit-transform': 'perspective(1000px)',
                 // '-moz-transform-style': 'preserve-3d',
                 // '-webkit-transform-style': 'preserve-3d',
                 // '-ms-transform-style': 'preserve-3d'

@@ -3,6 +3,10 @@
   "version": "0.0.3",
   "description": "TickleClient",
   "main": "''",
+  "sideEffects": [
+    "*.css",
+    "*.scss"
+  ],
   "scripts": {
     "build": "webpack --config webpack.production.config.js",
     "start": "webpack-dev-server --config webpack.config.js",

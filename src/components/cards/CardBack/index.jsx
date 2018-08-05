@@ -159,7 +159,8 @@ class CardBackSkeleton extends Component {
           height: '90%',
           display: 'flex',
           alignContent: 'center',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          zIndex: 10000
           // ...style
           // justifyContent: 'space-around'
           // pointerEvents: 'all'

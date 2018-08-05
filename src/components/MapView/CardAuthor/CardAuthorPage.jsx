@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 
 import {
   DragSourceCont,
-  DropTargetCont,
+  // DropTargetCont,
   DragDropContextProvider
 } from '../DragAndDrop/DragSourceTarget';
 
@@ -101,7 +101,6 @@ SpeechBubble.defaultProps = {};
 
 SpeechBubble.propTypes = {};
 
-@DragDropContextProvider
 class CardAuthorPage extends Component {
   static propTypes = {
     cards: PropTypes.array,
@@ -156,8 +155,7 @@ class CardAuthorPage extends Component {
     preSelectCardId();
   }
 
-  componentWillUnmount() {
-  }
+  componentWillUnmount() {}
 
   render() {
     const {

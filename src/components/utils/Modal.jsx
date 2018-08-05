@@ -37,7 +37,12 @@ export const BareModal = ({
     >
       <div
         className="modal-dialog"
-        style={{ height: '100%', style, pointerEvents: 'unset' }}
+        style={{
+          height: '100%',
+          style,
+          pointerEvents: 'unset',
+          maxHeight: 800
+        }}
       >
         {children}
       </div>

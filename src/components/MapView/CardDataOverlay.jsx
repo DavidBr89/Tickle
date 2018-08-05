@@ -27,14 +27,14 @@ import { Card } from 'Cards';
 
 // import { updateCardTemplate, dragCard } from 'Reducers/Cards/actions';
 
-// import {
-//   asyncUpdateCard,
-//   asyncCreateCard,
-//   asyncRemoveCard,
-//   asyncSubmitChallenge
-// } from 'Reducers/Cards/async_actions';
+import {
+  asyncUpdateCard,
+  asyncCreateCard,
+  asyncRemoveCard,
+  asyncSubmitChallenge
+} from 'Reducers/Cards/async_actions';
 
-// import * as dataViewActions from 'Reducers/DataView/actions';
+import * as dataViewActions from 'Reducers/DataView/actions';
 
 const CardDataOverlay = props => {
   const {

@@ -24,6 +24,7 @@ module.exports = {
   mode: 'development',
   output: {
     path: path.join(__dirname, 'dist'),
+    pathinfo: false,
     filename: 'main.js'
   },
   resolve: {
@@ -33,7 +34,7 @@ module.exports = {
   module: {
     rules: loaders
   },
-  devtool: 'eval',
+  devtool: 'cheap-module-eval-source-map',
   devServer: {
     contentBase: './public',
     overlay: true,
@@ -69,7 +70,7 @@ module.exports = {
     }),
     new webpack.EnvironmentPlugin(apiTokens),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('development'),
+      'process.env.NODE_ENV': JSON.stringify('development')
       // 'process.env.BABEL_ENV': JSON.stringify('development')
     }),
     new ErrorOverlayPlugin()

@@ -1,4 +1,5 @@
 import { firestore, storageRef } from '../firebase';
+import { extractCardFields } from 'Constants/cardFields';
 
 const isDefined = a => a !== null && a !== undefined;
 
@@ -279,7 +280,7 @@ export const doCreateCard = card =>
     if (card.id === 'temp') {
       throw Error('error: temp card to create');
     } else {
-      const newCard = pruneFields({ ...card, ...imgFields });
+      const newCard = extractCardFields({ ...card, ...imgFields });
       console.log('newCard', newCard);
       // TODO: make explicit
       // const cardData = {floorX, floorY, id, img, loc, media, title, tags}

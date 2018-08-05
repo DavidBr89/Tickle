@@ -262,7 +262,7 @@ class ReadCardFront extends Component {
               {this.btnText()}
             </BigButton>
 
-            <BigButton
+            <FlipButton
               color={uiColor}
               onClick={flipHandler}
               style={{ width: '20%' }}

@@ -23,38 +23,6 @@ import Map from './Map';
 import Floorplan from './Floorplan';
 import TreeMapCluster from './TreeMapCluster';
 
-// const offsetMapViewport = ({
-//   width,
-//   height,
-//   zoom,
-//   latitude,
-//   longitude,
-//   offset: [offsetX = 0, offsetY = 0]
-// }) => {
-//   const vp = new PerspectiveMercatorViewport({
-//     width,
-//     height,
-//     zoom,
-//     latitude,
-//     longitude
-//   });
-//
-//   const [offsetLng, offsetLat] = vp.unproject([
-//     offsetX ? width / 2 - offsetX : width / 2,
-//     offsetY ? height / 2 - offsetY : height / 2
-//   ]);
-//
-//   const ret = new PerspectiveMercatorViewport({
-//     width,
-//     height,
-//     zoom,
-//     latitude: offsetLat,
-//     longitude: offsetLng
-//   });
-//   // console.log('return', longitude, latitude, offsetLng, offsetLat);
-//   return ret;
-// };
-
 class DataOverlay extends Component {
   static propTypes = {
     children: PropTypes.func,
@@ -130,36 +98,40 @@ class DataOverlay extends Component {
     } = this.props;
 
     // TODO: join
-    const draggable = c => (
-      <ExtendableMarker
-        key={c.id}
-        delay={100}
-        width={25}
-        height={30}
-        x={c.x || width / 2}
-        y={c.y || height / 2}
-        extended={false}
-        preview={preview(c)}
-      >
-        {null}
-      </ExtendableMarker>
-    );
+    const draggable = c =>
+      extCardId === c.id ? (
+        <div
+          style={{
+            // zIndex: 4000,
+            position: 'absolute',
+            // left: 0,
+            // top: 0,
+            height: '100%',
+            width: '100%'
+          }}
+        >
+          {children({ ...c })}
+        </div>
+      ) : (
+        <ExtendableMarker
+          key={c.id}
+          delay={100}
+          width={25}
+          height={30}
+          x={c.x || width / 2}
+          y={c.y || height / 2}
+          extended={false}
+          preview={preview(c)}
+        >
+          {children(c)}
+        </ExtendableMarker>
+      );
 
     // TODO: remove
-    const noPreview = c => (
-      <ExtendableMarker
-        key={c.id}
-        delay={100}
-        width={25}
-        height={30}
-        center={[width / 2, height / 2]}
-        preview={null}
-        x={width / 2}
-        y={height / 2}
-      >
-        {children(c)}
-      </ExtendableMarker>
-    );
+    const noPreview = c =>
+      extCardId === c.id ? (
+        <BareModal visible>{children({ ...c })}</BareModal>
+      ) : null;
 
     switch (mode) {
       case GEO: {
@@ -221,7 +193,7 @@ class DataOverlay extends Component {
                   colorScale={colorScale}
                   padding={padding}
                 >
-                  {d => null}
+                  {noPreview}
                 </TreeMapCluster>
               )}
             </DimWrapper>
@@ -263,14 +235,7 @@ class DataOverlay extends Component {
 
     const cardData = data.find(d => d.id === selectedCardId);
     console.log('cardData', cardData);
-    return (
-      <React.Fragment>
-        <BareModal visible={selected}>
-          {selected && children(cardData)}
-        </BareModal>
-        {comp}
-      </React.Fragment>
-    );
+    return <React.Fragment>{comp}</React.Fragment>;
   }
 }
 

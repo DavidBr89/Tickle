@@ -1,4 +1,3 @@
-
 export const extractCardFields = ({
   id,
   uid,
