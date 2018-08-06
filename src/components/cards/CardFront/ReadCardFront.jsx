@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'aphrodite';
 
-import * as Icon from 'react-feather';
+// import * as Icon from 'react-feather';
 
 // import chroma from 'chroma-js';
 // import * as Icon from 'react-feather';
@@ -250,7 +250,7 @@ class ReadCardFront extends Component {
               this.setState({ dialog: { key: 'Media', data: media } })
             }
           />
-          <div className="p-1 pt-3" style={{ display: 'flex' }}>
+          <div className="" style={{ display: 'flex' }}>
             <BigButton
               onClick={() =>
                 this.setState({
@@ -265,7 +265,6 @@ class ReadCardFront extends Component {
             <FlipButton
               color={uiColor}
               onClick={flipHandler}
-              style={{ width: '20%' }}
               className="ml-2"
             />
           </div>

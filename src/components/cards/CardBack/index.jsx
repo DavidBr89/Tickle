@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'aphrodite';
-
-// import cx from './Card.scss';
+import { css } from 'aphrodite/no-important';
 
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
+
+import * as Icon from 'react-feather';
 
 import { FlipButton } from '../layout';
 import { FieldSet } from 'Components/utils/StyledComps';
@@ -13,18 +13,27 @@ import CardHeader from '../CardHeader';
 import Author from './Author';
 import { MapAreaControl } from './MapAreaControl';
 
+//
 const DeleteButton = ({ style, onClick, color, className }) => (
-  <button
-    className={`btn ${className}`}
-    style={{
-      background: color,
-      color: 'whitesmoke',
-      ...style
-    }}
-    onClick={onClick}
-  >
-    <i className="fa fa-trash fa-2x" aria-hidden="true" />
-  </button>
+  <CardThemeConsumer>
+    {({ stylesheet: { btn, shallowBg, fieldSetBorder } }) => (
+      <button
+        className={`${css(btn)} bg-danger`}
+        style={{
+          background: color,
+          alignItems: 'center',
+          // display: 'flex',
+          // color: 'whitesmoke',
+          ...style
+        }}
+        onClick={onClick}
+      >
+        <div>
+          <Icon.Trash2 size={35} color="white" />
+        </div>
+      </button>
+    )}
+  </CardThemeConsumer>
 );
 
 const BackField = ({ ...props }) => (
@@ -159,8 +168,8 @@ class CardBackSkeleton extends Component {
           height: '90%',
           display: 'flex',
           alignContent: 'center',
-          flexDirection: 'column',
-          zIndex: 10000
+          flexDirection: 'column'
+          // zIndex: 10000
           // ...style
           // justifyContent: 'space-around'
           // pointerEvents: 'all'
@@ -214,7 +223,6 @@ class CardBackSkeleton extends Component {
           {edit && (
             <DeleteButton
               onClick={onDelete}
-              className="bg-danger"
               color={uiColor}
               style={{ width: '20%' }}
             />

@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "tickle-194510"
+    "default": "tickle-194510",
+    "staging": "tickle-staging",
+    "production": "tickle-194510"
   }
 }

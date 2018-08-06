@@ -167,14 +167,17 @@ const AuthorPreview = ({ photoURL, style, username, name, email }) => (
     }}
   >
     <div style={{ display: 'flex' }}>
-      <img width="40%" height="80%" src={photoURL} alt="alt" />
+      <img
+        width="30%"
+        height="100%"
+        src={photoURL}
+        alt="alt"
+        style={{ borderRadius: '100%' }}
+      />
       <div className="ml-3">
         <div className="mb-1">
           <span style={{ fontWeight: 'bold' }}>username: </span>
           {username}
-        </div>
-        <div className="mb-1">
-          <span style={{ fontWeight: 'bold' }}>email: </span> {email}
         </div>
       </div>
     </div>

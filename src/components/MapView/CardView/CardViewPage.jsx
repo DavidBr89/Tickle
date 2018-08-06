@@ -48,7 +48,6 @@ SpeechBubble.defaultProps = {};
 
 SpeechBubble.propTypes = {};
 
-@DragDropContextProvider
 class CardViewPage extends Component {
   static propTypes = {
     cards: PropTypes.array,
@@ -162,9 +161,8 @@ class CardViewPage extends Component {
     } = this.props;
 
     const slotSize = 100 / 3.5;
-    const cardStackWidth =
-      slotSize / cards.length < slotSize ? 100 : slotSize * cards.length;
-    console.log('cardStackWidth', cardStackWidth);
+    const cardStackWidth = 100;
+    // slotSize / cards.length < slotSize ? 100 : slotSize * cards.length;
     return (
       <div
         className="w-100 h-100"
@@ -223,7 +221,7 @@ class CardViewPage extends Component {
                 unit="%"
                 onClick={previewCardAction}
                 tagColorScale={tagColorScale}
-                slotSize={cardStackWidth < 100 ? 100 : slotSize}
+                slotSize={slotSize}
                 style={{
                   zIndex: 1000
                 }}

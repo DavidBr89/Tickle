@@ -8,18 +8,41 @@ import * as d3 from 'd3';
 // import chroma from 'chroma-js';
 // import polylabel from '@mapbox/polylabel';
 
-import { getBoundingBox, bounds, setify } from '../utils';
-import { groupPoints } from './utils';
 
 import { intersection, union, uniqBy, uniq, flatten } from 'lodash';
-import TopicAnnotationOverlay from './TopicAnnotationOverlay';
+// import TopicAnnotationOverlay from './TopicAnnotationOverlay';
 import dobbyscan from './cluster';
 
-const euclDist = (x1, y1, x2, y2) => Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+function getBoundingBox(coords, acc = d => [d[0], d[1]]) {
+  const bounds = { minX: Infinity, maxX: 0, minY: Infinity, maxY: 0 };
 
-function distance(a, b) {
-  return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
+  for (let j = 0; j < coords.length; j++) {
+    const [x, y] = acc(coords[j]);
+
+    bounds.minX = bounds.minX < x ? bounds.minX : x;
+    bounds.maxX = bounds.maxX > x ? bounds.maxX : x;
+    bounds.minY = bounds.minY < y ? bounds.minY : y;
+    bounds.maxY = bounds.maxY > y ? bounds.maxY : y;
+  }
+
+  // const { leftTop, leftBottom, rightTop, rightBottom } = bounds;
+  // }
+  return [
+    [bounds.minX, bounds.minY],
+    [bounds.maxX, bounds.maxY],
+    {
+      leftTop: [bounds.minX, bounds.maxY],
+      leftBottom: [bounds.minX, bounds.minY],
+      rightTop: [bounds.maxX, bounds.maxY],
+      rightBottom: [bounds.maxX, bounds.minY]
+    }
+  ];
 }
+// const euclDist = (x1, y1, x2, y2) => Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+
+// function distance(a, b) {
+// return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
+// }
 
 // function rects(quadtree) {
 //   const nodes = [];
@@ -33,6 +56,32 @@ function distance(a, b) {
 //   return nodes;
 // }
 //
+// , setify
+//
+function circle([x, y], offsetX, offsetY) {
+  return [
+    // "0.7071" scale the sine and cosine of 45 degree for corner points.
+    [x, y + offsetY],
+    [x + 0.7071 * offsetX, y + 0.7071 * offsetY],
+    [x + offsetX, y],
+    [x + 0.7071 * offsetX, y - 0.7071 * offsetY],
+    [x, y - offsetX],
+    [x - 0.7071 * offsetX, y - 0.7071 * offsetY],
+    [x - offsetX, y],
+    [x - 0.7071 * offsetX, y + 0.7071 * offsetY]
+  ];
+}
+function groupPoints(
+  nodes,
+  offsetX = 0,
+  offsetY = 0,
+  accessor = d => [d[0], d[1]]
+) {
+  return nodes.reduce(
+    (acc, d) => acc.concat(circle(accessor(d), offsetX, offsetY)),
+    []
+  );
+}
 function findCenterPos(values) {
   const bbox = getBoundingBox(values, d => [d.x, d.y]);
   const poly = hull(

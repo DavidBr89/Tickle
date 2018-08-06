@@ -11,7 +11,8 @@
     "build": "webpack --config webpack.production.config.js",
     "start": "webpack-dev-server --config webpack.config.js",
     "start:dev": "webpack-serve --config webpack.config.js",
-    "analyze": "webpack --config webpack.production.config.js --json > stats.json"
+    "analyze": "webpack --config webpack.production.config.js --json > stats.json",
+    "tunnel": "./ngrok http 3000"
   },
   "repository": {
     "type": "git",
@@ -98,6 +99,7 @@
     "react-router-dom": "^4.2.2",
     "react-router-redux": "^5.0.0-alpha.8",
     "react-scroll-to-component": "^1.0.1",
+    "react-scrolllock": "^3.0.1",
     "react-tag-input": "^4.7.2",
     "react-throttle": "^0.3.0",
     "react-timeout": "^1.0.1",

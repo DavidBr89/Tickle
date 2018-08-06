@@ -268,12 +268,7 @@ class CardStack extends Component {
     // const { cardStacks } = this.state;
 
     // TODO: change later
-    const allCards =
-      centered && data.length > 3
-        ? centerLayout(this.props)
-        : selectedIndex !== null
-          ? this.hoverLayout()
-          : this.baseLayout();
+    const allCards = centered ? centerLayout(this.props) : this.baseLayout();
 
     // const allCards = [...leftCards, ...centerCard, ...rightCards];
 

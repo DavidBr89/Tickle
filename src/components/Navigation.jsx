@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { intersection } from 'lodash';
+// import { intersection } from 'lodash';
 
 import SignOutButton from './SignOut';
 import * as routes from 'Constants/routes';
@@ -11,7 +11,7 @@ import * as routes from 'Constants/routes';
 import AuthUserContext from './AuthUserContext';
 
 import { DATAVIEW, authRoutes, nonAuthRoutes } from 'Constants/routes';
-// import { ThemeConsumer } from 'Src/styles/ThemeContext';
+import { stylesheet } from 'Src/styles/GlobalThemeContext';
 import { css } from 'aphrodite/no-important';
 
 import { setDataView } from 'Reducers/DataView/actions';
@@ -57,7 +57,7 @@ const includePath = (pathA, pathB) => {
 const InnerLi = ({ name, path, hash, active, subRoutes = [] }) => (
   <li className="mb-2">
     <Link
-      className=" nav-link btn mb-1"
+      className={`nav-link ${css(stylesheet.btn)} mb-1`}
       style={{ background: includePath(path, hash) && 'lightgrey' }}
       to={path}
     >

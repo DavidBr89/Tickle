@@ -13,7 +13,7 @@ export const btnStyle = {
   whiteSpace: 'nowrap',
   justifyContent: 'center',
   verticalAlign: 'middle',
-  userSelect: 'none',
+  // userSelect: 'none',
   border: '1px solid transparent',
   // fontSize: '1rem',
   lineHeight: 1.5,

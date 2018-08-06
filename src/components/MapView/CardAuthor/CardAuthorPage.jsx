@@ -178,8 +178,8 @@ class CardAuthorPage extends Component {
     } = this.props;
 
     const slotSize = 100 / 3.5;
-    const cardStackWidth =
-      slotSize / cards.length < slotSize ? 100 : slotSize * cards.length;
+    const cardStackWidth = 100;
+    // slotSize / cards.length < slotSize ? 100 : slotSize * cards.length;
 
     return (
       <div
@@ -237,7 +237,7 @@ class CardAuthorPage extends Component {
                 unit="%"
                 onClick={previewCardAction}
                 tagColorScale={tagColorScale}
-                slotSize={cardStackWidth < 100 ? 100 : slotSize}
+                slotSize={slotSize}
                 style={{
                   zIndex: 1000
                 }}

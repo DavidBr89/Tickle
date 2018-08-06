@@ -29,9 +29,11 @@ const pruneFields = fields => {
   }, {});
 };
 
+const CARDS = 'cards';
+
 const getShallowCards = (uid, collectionName = 'readableCards') =>
   firestore
-    .collection('cards')
+    .collection(CARDS)
     .where('uid', '==', uid)
     .get()
     .then(querySnapshot => {
@@ -65,10 +67,9 @@ export const readCards = uid =>
   });
 
 export const readCopyOlga = () => {
+  console.log('readCopyOlga');
   firestore
-    .collection('users')
-    .doc('PbQiWWDMJgYCnl6vhK8fkMhWe4y2')
-    .collection('createdCards')
+    .collection('cards')
     .get()
     .then(querySnapshot => {
       const data = [];
@@ -79,7 +80,7 @@ export const readCopyOlga = () => {
 
       data.forEach(d =>
         firestore
-          .collection('cards')
+          .collection('tmpCards')
           .doc(d.id)
           .set(d)
       );
@@ -88,7 +89,7 @@ export const readCopyOlga = () => {
 
 function getAllChallengeSubmissions(cid) {
   const chSub = firestore
-    .collection('cards')
+    .collection(CARDS)
     .doc(cid)
     .collection('challengeSubmissions');
 
@@ -104,7 +105,7 @@ function getAllChallengeSubmissions(cid) {
 
 function getOneChallengeSubmission(cid, playerId) {
   return firestore
-    .collection('cards')
+    .collection(CARDS)
     .doc(cid)
     .collection('challengeSubmissions')
     .doc(playerId)
@@ -164,7 +165,7 @@ export const addImgToStorage = ({ file, path }) => {
 
 // TODO: error handling
 const uploadImgFields = card => {
-  console.log('card db', card);
+  // console.log('card db', card);
   const cardImgFile = card.img ? card.img.file : null;
   const cardChallengeFile =
     card.challenge !== null && card.challenge.img
@@ -285,7 +286,7 @@ export const doCreateCard = card =>
       // TODO: make explicit
       // const cardData = {floorX, floorY, id, img, loc, media, title, tags}
       return firestore
-        .collection('cards')
+        .collection(CARDS)
         .doc(newCard.id)
         .set(newCard);
     }
@@ -296,7 +297,7 @@ export const doUpdateCard = doCreateCard;
 
 export const doDeleteCard = cid =>
   firestore
-    .collection('cards')
+    .collection(CARDS)
     .doc(cid)
     .delete();
 
@@ -344,7 +345,7 @@ export const addChallengeSubmission = ({
     challengeData
   );
   return firestore
-    .collection('cards')
+    .collection(CARDS)
     .doc(cardId)
     .collection('challengeSubmissions')
     .doc(playerId)

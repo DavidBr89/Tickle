@@ -207,19 +207,27 @@ fieldset {
   fill-opacity: 0.5;
 }
 
-body {
+html, body {
+  height: 100%;
   background: lightyellow;
   // overflow: hidden;
-  // height: 400px;
+  position: relative;
 }
+
+
+/* body.noscroll { */
+/*   // overflow: auto; */
+/*   overflow: hidden; */
+/*   // height: 400px; */
+/* } */
 
 //TODO: unround form input
 
 #content-container {
   @extend .container;
   padding: 0;
-  // overflow: scroll;
   background: blanchedalmond;
+  // overflow: hidden;
 }
 
 .content-block {
@@ -243,11 +251,10 @@ body {
 /*         width: 800px; */
 /*     } */
 /* } */
-
 #app {
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
+  height: 100%;
+  // overflow: hidden;
+  // position: relative;
 }
 
 @media only screen and (min-width: 592px) {
@@ -287,12 +294,12 @@ input[type="file"] {
     cursor: pointer;
 }
 
- button {
-   z-index: 5000 !important;
-   pointer-events: all !important;
-  cursor: pointer !important;
-   // width: 100%; */
- }
+/*  button { */
+/*    z-index: 5000 !important; */
+/*    pointer-events: all !important; */
+/*   cursor: pointer !important; */
+/*    // width: 100%; */
+/*  } */
 
 
 

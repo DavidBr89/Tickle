@@ -11,7 +11,7 @@ import { hot } from 'react-hot-loader';
 // import withAuthentication from './components/withAuthentication';oo
 // import AuthUserContext from './components/AuthUserContext';
 
-// import { firebase } from 'Firebase';
+import { db } from 'Firebase';
 
 import rootReducer from './reducers';
 import Routes from './Routes';
@@ -190,14 +190,12 @@ window.addEventListener('load', () => {
 //     }
 //   };
 
-
-
 const App = () => (
   <Provider store={store}>
     <Routes history={history} />
   </Provider>
 );
 
-
+// db.readCopyOlga();
 
 export default hot(module)(App);

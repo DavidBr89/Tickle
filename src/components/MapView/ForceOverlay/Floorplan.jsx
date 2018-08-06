@@ -4,7 +4,7 @@ import * as d3 from 'd3';
 
 import { differenceWith } from 'lodash';
 
-import floorplanImg from './floorplan.png';
+import floorplanImg from './schatkaart.png';
 
 class Floorplan extends Component {
   static propTypes = {
@@ -106,14 +106,17 @@ class Floorplan extends Component {
     return (
       <div
         style={{
-          backgroundImage: `url(${floorplanImg})`,
-          // backgroundRepeat: 'round',
-          backgroundSize: 'cover',
           width,
-          height
+          height,
           // position: 'relative'
         }}
       >
+        <img
+          width={width}
+          height={height}
+          src={floorplanImg}
+          style={{ position: 'absolute', left: 0, top: 0 }}
+        />
         {nodes.map((n, i) =>
           children({
             ...data[i],

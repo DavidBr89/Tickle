@@ -14,14 +14,14 @@ import * as d3 from 'd3';
 // import chroma from 'chroma-js';
 // import polylabel from '@mapbox/polylabel';
 
-import { getBoundingBox, bounds, setify } from '../utils';
-import { groupPoints } from './utils';
+// import { getBoundingBox, bounds, setify } from '../utils';
+// import { groupPoints } from './utils';
 
 import { intersection, union, uniqBy, uniq, flatten } from 'lodash';
-import TopicAnnotationOverlay from './TopicAnnotationOverlay';
-import dobbyscan from './cluster';
+// import TopicAnnotationOverlay from './TopicAnnotationOverlay';
+// import dobbyscan from './cluster';
 import TagCloud from './TagCloud';
-import SpiralTile from './SpiralTreeMap';
+// import SpiralTile from './SpiralTreeMap';
 
 const euclDist = (x1, y1, x2, y2) => Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 

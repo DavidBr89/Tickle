@@ -12,7 +12,7 @@ import {
 
 // const ddg = new DDG('tickle');
 
-export const BareModal = ({
+export const InlineModal = ({
   visible,
   title,
   children,
@@ -20,33 +20,30 @@ export const BareModal = ({
   style,
   uiColor
   // background,
-}) =>
+}) => (
+  <div
+    className="modal-dialog"
+    style={{
+      width: '100%',
+      height: '100%',
+      opacity: visible ? 1 : 0,
+      transition: 'opacity 1s',
+      zIndex: visible ? '1000' : '-10',
+      margin: 'auto',
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      position: 'fixed'
+    }}
+  >
+    {children}
+  </div>
+);
+
+export const BareModal = props =>
   ReactDOM.createPortal(
-    <div
-      style={{
-        width: '100%',
-        height: '100%',
-        // background: 'rgba(0, 0, 0, 0.5)',
-        opacity: visible ? 1 : 0,
-        transition: 'opacity 1s',
-        zIndex: visible ? '1000' : '-10',
-        left: 0,
-        top: 0,
-        position: 'absolute'
-      }}
-    >
-      <div
-        className="modal-dialog"
-        style={{
-          height: '100%',
-          style,
-          pointerEvents: 'unset',
-          maxHeight: 800
-        }}
-      >
-        {children}
-      </div>
-    </div>,
+    <InlineModal {...props} />,
     document.querySelector('body')
   );
 
@@ -70,7 +67,8 @@ export const Modal = ({
         zIndex: visible ? '100000' : '-10',
         left: 0,
         top: 0,
-        position: 'absolute'
+        right: 0,
+        position: 'fixed'
       }}
     >
       <div
@@ -83,15 +81,14 @@ export const Modal = ({
           opacity: visible ? 1 : 0,
           display: visible ? 'block' : 'none',
           width: '100%',
-          height: '100%'
+          height: '97%'
         }}
       >
         <div
           className="modal-dialog"
           role="document"
           style={{
-            height: '97.5vh',
-            maxHeight: 800
+            height: '100%'
           }}
         >
           <div
@@ -99,6 +96,7 @@ export const Modal = ({
             style={{
               width: '100%',
               height: '100%',
+              overflow: 'hidden',
               // TODO: fix later
               // TODO: fix later
               // TODO: fix later

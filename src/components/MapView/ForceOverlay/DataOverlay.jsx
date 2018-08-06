@@ -13,7 +13,7 @@ import ExtendableMarker from 'Utils/ExtendableMarker';
 import { changeMapViewport } from 'Reducers/Map/actions';
 import { GEO, TAGS, FLOORPLAN } from 'Constants/dataViews';
 
-import { Modal, BareModal, ModalBody } from 'Utils/Modal';
+import { Modal, InlineModal, BareModal, ModalBody } from 'Utils/Modal';
 
 // import│ {shallowEqualProps} from'shallow-equal-props';
 
@@ -100,26 +100,15 @@ class DataOverlay extends Component {
     // TODO: join
     const draggable = c =>
       extCardId === c.id ? (
-        <div
-          style={{
-            // zIndex: 4000,
-            position: 'absolute',
-            // left: 0,
-            // top: 0,
-            height: '100%',
-            width: '100%'
-          }}
-        >
-          {children({ ...c })}
-        </div>
+        <BareModal visible>{children({ ...c })}</BareModal>
       ) : (
         <ExtendableMarker
           key={c.id}
           delay={100}
           width={25}
           height={30}
-          x={c.x || width / 2}
-          y={c.y || height / 2}
+          x={c.x}
+          y={c.y}
           extended={false}
           preview={preview(c)}
         >
@@ -133,6 +122,7 @@ class DataOverlay extends Component {
         <BareModal visible>{children({ ...c })}</BareModal>
       ) : null;
 
+    // const noPointerEvents = extCardId !== null;
     switch (mode) {
       case GEO: {
         return (
@@ -142,6 +132,7 @@ class DataOverlay extends Component {
               position: 'absolute',
               width: '100%',
               height: '100%',
+              // pointerEvents: noPointerEvents && 'none',
               overflow: 'hidden',
               left: 0,
               top: 0,
@@ -230,11 +221,7 @@ class DataOverlay extends Component {
     } = this.props;
 
     const comp = this.selectComp();
-    const selected =
-      extCardId && selectedCardId && extCardId === selectedCardId;
 
-    const cardData = data.find(d => d.id === selectedCardId);
-    console.log('cardData', cardData);
     return <React.Fragment>{comp}</React.Fragment>;
   }
 }

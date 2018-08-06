@@ -15,7 +15,7 @@ import {
 } from 'react-annotation';
 
 import { getBoundingBox } from '../utils';
-import polyOffset from './polyOffset';
+// import polyOffset from './polyOffset';
 
 // import { colorScale, shadowStyle } from '../cards/styles';
 
@@ -116,7 +116,7 @@ class TopicAnnotationOverlay extends Component {
             y={centerPos[1]}
             dy={-30}
             dx={10}
-            color={'black'}
+            color="black"
             title={`#${i}`}
             label={tagKeys.join(',')}
           />

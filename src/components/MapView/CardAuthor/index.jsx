@@ -30,7 +30,7 @@ const mapStateToProps = state => {
   const { createdCards, tmpCard } = state.Cards;
 
   const { selectedCardId, filterSet } = state.DataView;
-  console.log('selectedCardid', selectedCardId);
+  // console.log('selectedCardid', selectedCardId);
 
   // TODO: own dim reducer
   const { width, height, userLocation } = state.MapView;
@@ -42,7 +42,7 @@ const mapStateToProps = state => {
 
   const templateCard = {
     ...tmpCard,
-    uid,
+    uid
   };
 
   const filteredCards = createdCards.filter(

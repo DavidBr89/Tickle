@@ -76,22 +76,22 @@ const makeStylesheet = ({ uiColor, background }) => {
     },
     coverPhoto: { height: '40%', maxHeight: 400, width: '100%' },
     flipContainer: {
-      // '-webkit-perspective': 1000,
-      // '-moz-perspective': 1000,
-      // '-ms-perspective': 1000,
+      '-webkit-perspective': 1000,
+      '-moz-perspective': 1000,
+      '-ms-perspective': 1000,
       perspective: 1000,
-      // '-ms-transform': 'perspective(1000px)',
-      // '-moz-transform': 'perspective(1000px)',
-      // '-moz-transform-style': 'preserve-3d',
-      // '-ms-transform-style': 'preserve-3d',
-      height: '100%',
-      width: '100%',
-      transition: '0.6s',
+      '-ms-transform': 'perspective(1000px)',
+      '-moz-transform': 'perspective(1000px)',
+      '-webkit-transform': 'perspective(1000px)',
+      '-moz-transform-style': 'preserve-3d',
+      '-ms-transform-style': 'preserve-3d',
+      '-webkit-transform-style': 'preserve-3d',
+      height: '100%'
     },
     flipper: {
       height: '100%',
       transition: '0.6s',
-      // transformStyle: 'preserve-3d',
+      transformStyle: 'preserve-3d',
       position: 'relative'
     },
     flipAnim: {

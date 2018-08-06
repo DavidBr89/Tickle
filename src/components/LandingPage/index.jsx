@@ -71,7 +71,7 @@ const LandingPage = ({ onClick }) => {
         zIndex: 3000,
         height: '100vh',
         width: '100vw',
-        background: 'rgba(0, 0, 0, 0.3)'
+        // background: 'rgba(0, 0, 0, 0.3)'
       }}
     >
       <div>
