@@ -6,26 +6,26 @@ import { bindActionCreators } from 'redux';
 
 import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 
-import DimWrapper from 'Utils/DimensionsWrapper';
-import ExtendableMarker from 'Utils/ExtendableMarker';
+// import DimWrapper from 'Utils/DimensionsWrapper';
+// import ExtendableMarker from 'Utils/ExtendableMarker';
 
-import PreviewMarker from '../PreviewMarker';
+import PreviewMarker from 'Utils/PreviewMarker';
 
-import {
-  DragSourceCont,
-  DropTargetCont
-  // DragDropContextProvider
-} from '../DragAndDrop/DragSourceTarget';
+// import {
+//   DragSourceCont,
+//   DropTargetCont
+//   // DragDropContextProvider
+// } from './DragAndDrop/DragSourceTarget';
 
 // import { dragCard } from 'Reducers/Cards/actions';
 import { changeMapViewport } from 'Reducers/Map/actions';
-import DataOverlay from '../ForceOverlay/DataOverlay';
+import DataOverlay from './ForceOverlay/DataOverlay';
 
-import { colorScale } from 'Cards/styles';
+// import { colorScale } from 'Cards/styles';
 
 import { Card } from 'Cards';
 
-import { updateCardTemplate, dragCard } from 'Reducers/Cards/actions';
+// import { updateCardTemplate, dragCard } from 'Reducers/Cards/actions';
 
 import {
   asyncUpdateCard,
@@ -51,8 +51,8 @@ const CardDataOverlay = props => {
     changeMapViewport,
     tagColorScale,
     authEnv,
-    extCardId,
     extendSelectedCard,
+    extCardId,
     dragCard,
     createCard,
     toggleCardChallenge,
@@ -62,28 +62,17 @@ const CardDataOverlay = props => {
     onSubmitChallenge,
     asyncRemoveCard
   } = props;
-
   return (
     <div style={style}>
       <DataOverlay
-        disabled={isCardDragging}
-        width={width}
-        height={height}
-        data={cards}
-        sets={cardSets}
-        selectedTags={selectedTags}
-        selectedCardId={selectedCardId}
-        extCardId={extCardId}
-        filterSet={filterSet}
-        userLocation={userLocation}
-        mode={dataView}
+        {...props}
+        colorScale={tagColorScale}
         padding={{
           bottom: height / 5,
           top: height / 5,
           left: width / 5,
           right: width / 5
         }}
-        colorScale={tagColorScale}
         preview={d => (
           <PreviewMarker
             x={d.x}
@@ -101,11 +90,6 @@ const CardDataOverlay = props => {
             key={c.id}
             edit={false}
             onClose={() => extendSelectedCard(null)}
-            onCollect={() =>
-              toggleCardChallenge({
-                cardChallengeOpen: true
-              })
-            }
             tagColorScale={tagColorScale}
             onSubmitChallenge={onSubmitChallenge}
             uiColor="grey"
@@ -119,9 +103,13 @@ const CardDataOverlay = props => {
 };
 
 function mapStateToProps(state) {
-  console.log('State Screen', state.Screen);
   return {
-    ...state.Session
+    ...state.MapView,
+    ...state.Cards,
+    ...state.DataView,
+    userLocation: state.MapView.userLocation,
+    ...state.Session,
+    ...state.Screen
   };
 }
 
@@ -140,23 +128,26 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const { authUser } = state;
   const { uid } = authUser;
 
-  const { asyncSubmitChallenge } = dispatcherProps;
-
   const onSubmitChallenge = challengeSubmission => {
     asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
   };
 
+  // const onUpdateChallengeSubmission = challengeSubmission => {
+  //   asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
+  // };
+
   return {
+    ...state,
     ...dispatcherProps,
     onSubmitChallenge,
     ...ownProps
   };
 };
 
-const ConnectedCardDataOverlay = connect(
+const ConnectedCardViewDataOverlay = connect(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps
 )(CardDataOverlay);
 
-export default ConnectedCardDataOverlay;
+export default ConnectedCardViewDataOverlay;

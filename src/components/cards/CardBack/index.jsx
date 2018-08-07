@@ -222,6 +222,7 @@ class CardBackSkeleton extends Component {
         >
           {edit && (
             <DeleteButton
+              disabled
               onClick={onDelete}
               color={uiColor}
               style={{ width: '20%' }}

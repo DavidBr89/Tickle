@@ -67,7 +67,8 @@ function circle([x, y], offsetX, offsetY) {
     [x, y - offsetX],
     [x - 0.7071 * offsetX, y - 0.7071 * offsetY],
     [x - offsetX, y],
-    [x - 0.7071 * offsetX, y + 0.7071 * offsetY]
+    [x, y]
+    // [x - 0.7071 * offsetX, y + 0.7071 * offsetY]
   ];
 }
 function groupPoints(
@@ -118,8 +119,11 @@ class Cluster extends Component {
   findClusters = () => {
     const { width, height, nodes, radius } = this.props;
 
+    const offset = [0, 0];
     const clusters = dobbyscan({
-      points: [...nodes],
+      points: [...nodes].filter(
+        d => d.x < width - offset[0] && d.y < height - offset[1]
+      ),
       // TODO find real function
       radius,
       x: n => n.x,
@@ -184,16 +188,8 @@ class Cluster extends Component {
     } = this.props;
 
     const clusters = this.findClusters();
-    // const cells = this.getVoronoiCells(clusters);
-    // console.log('clusters', clusters);
 
-    return (
-      <Fragment>
-        {clusters.map(({ centroid, centerPos, ...d }) =>
-          children({ centroid, centerPos, data: d })
-        )}
-      </Fragment>
-    );
+    return children(clusters);
   }
 }
 

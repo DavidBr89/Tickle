@@ -23,8 +23,8 @@ const CardDrag = ({ width, height, left, top, fill }) => (
     style={{
       position: !(left === null || top === null) ? 'absolute' : null,
       border: '1px dashed gray',
-      left: left,
-      top: top
+      left,
+      top
       // zIndex: 2000
     }}
   />
@@ -171,17 +171,19 @@ export class DropTargetCont extends PureComponent {
     // const newid = Math.random() * 100;
     // console.log('dropped', dropped, 'prevDropped', prevState.dropped);
     // console.log('this.props', this.props);
-    if (prevProps.dragged && !this.props.dragged)
+    if (prevProps.dragged && !this.props.dragged) {
       // TODO: do I need all these fields
+      const inverted = data.zhandler.invert([left, top]);
       dropHandler({
         ...data,
-        x: left,
-        y: top,
-        tx: left,
-        ty: top,
-        vx: left,
-        vy: top
+        x: inverted[0],
+        y: inverted[1]
+        // tx: left,
+        // ty: top,
+        // vx: left,
+        // vy: top
       });
+    }
   }
 
   drop(data, left, top, dropped) {

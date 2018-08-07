@@ -15,12 +15,14 @@ import { GEO, TAGS, FLOORPLAN } from 'Constants/dataViews';
 
 import { Modal, InlineModal, BareModal, ModalBody } from 'Utils/Modal';
 
+import ZoomCont from './ZoomContainer';
+
 // import│ {shallowEqualProps} from'shallow-equal-props';
 
 // import louvain from './jlouvain';
 
 import Map from './Map';
-import Floorplan from './Floorplan';
+import Floorplan from './FloorPlanExp';
 import TreeMapCluster from './TreeMapCluster';
 
 class DataOverlay extends Component {
@@ -93,6 +95,7 @@ class DataOverlay extends Component {
       colorScale,
       // dragCard,
       extCardId,
+      author,
       // isCardDragging,
       preview
     } = this.props;
@@ -109,11 +112,10 @@ class DataOverlay extends Component {
           height={30}
           x={c.x}
           y={c.y}
-          extended={false}
           preview={preview(c)}
-        >
-          {children(c)}
-        </ExtendableMarker>
+          onClick={() => console.log('yeah')}
+          domNode={this.zoomCont}
+        />
       );
 
     // TODO: remove
@@ -154,9 +156,19 @@ class DataOverlay extends Component {
       }
       case FLOORPLAN: {
         return (
-          <Floorplan {...this.props} width={width} height={height} data={data}>
-            {draggable}
-          </Floorplan>
+          <div ref={zc => (this.zoomCont = zc)}>
+            <Floorplan
+              {...this.props}
+              width={width}
+              height={height}
+              data={data}
+              edit={author}
+              colorScale={colorScale}
+              zoom
+            >
+              {draggable}
+            </Floorplan>
+          </div>
         );
       }
       case TAGS: {

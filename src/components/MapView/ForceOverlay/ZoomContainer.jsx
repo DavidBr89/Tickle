@@ -4,32 +4,34 @@ import * as d3 from 'd3';
 
 import { getBoundingBox } from '../utils';
 
-function centerView(props) {
-  const { nodes, width, center, height } = props;
-  if (nodes.length === 1) {
-    console.log('start', center);
-    const { x, y } = nodes[0];
-    const scale = 1;
-
-    return d3.zoomIdentity
-      .translate(width / 2 - x * scale, height / 2 - y * scale)
-      .scale(scale);
-  }
-  // const zoomFactoryCont = this.zoomFactory(props);
-  const bounds = getBoundingBox(nodes, d => [d.x, d.y]);
-  const dx = bounds[1][0] - bounds[0][0];
-  const dy = bounds[1][1] - bounds[0][1];
-  const x = (bounds[0][0] + bounds[1][0]) / 2;
-  const y = (bounds[0][1] + bounds[1][1]) / 2;
-  const scale = Math.max(dx / width, dy / height);
-  // const translate = [width / 2 - scale * x, height / 2 - scale * y];
-
-  const zoomHandler = d3.zoomIdentity
-    .translate(width / 2 - x * scale, center[1] - y * scale)
-    .scale(scale);
-
-  return zoomHandler;
-}
+// function centerView(props) {
+//   const { data, width, center, height } = props;
+//   if (data.length === 1) {
+//     console.log('start', center);
+//     const { x, y } = data[0];
+//     const scale = 1;
+//
+//     return d3.zoomIdentity
+//       .translate(width / 2 - x * scale, height / 2 - y * scale)
+//       .scale(scale);
+//   }
+//   // const zoomFactoryCont = this.zoomFactory(props);
+//   const bounds = getBoundingBox(data, d => [d.x, d.y]);
+//   const dx = bounds[1][0] - bounds[0][0];
+//   const dy = bounds[1][1] - bounds[0][1];
+//   const x = (bounds[0][0] + bounds[1][0]) / 2;
+//   const y = (bounds[0][1] + bounds[1][1]) / 2;
+//   const scale = Math.max(dx / width, dy / height);
+//
+//   console.log('dx', dx, 'dy', dy, 'x', x, 'y', scale);
+//   // const translate = [width / 2 - scale * x, height / 2 - scale * y];
+//
+//   const zoomHandler = d3.zoomIdentity
+//     .translate(width / 2 - x * scale, center[1] - y * scale)
+//     .scale(scale);
+//
+//   return zoomHandler;
+// }
 class ZoomContainer extends Component {
   static propTypes = {
     children: PropTypes.func,
@@ -37,7 +39,7 @@ class ZoomContainer extends Component {
     style: PropTypes.object,
     width: PropTypes.number,
     height: PropTypes.number,
-    nodes: PropTypes.arrayOf(
+    data: PropTypes.arrayOf(
       PropTypes.shape({
         x: PropTypes.number,
         y: PropTypes.number
@@ -55,7 +57,7 @@ class ZoomContainer extends Component {
     height: 100,
     center: [50, 50],
     force: false,
-    nodes: [],
+    data: [],
     delay: 200,
     selectedId: null,
     maxZoomScale: 5
@@ -73,7 +75,7 @@ class ZoomContainer extends Component {
   }
 
   state = {
-    zoomHandler: centerView(this.props)
+    zoomHandler: d3.zoomIdentity // centerView(this.props)
   };
 
   // static getDerivedStateFromProps(nextProps, prevState) {
@@ -81,12 +83,14 @@ class ZoomContainer extends Component {
   // }
 
   componentDidUpdate(prevProps, prevState) {
-    if (
-      this.props.nodes.length > prevProps.nodes.length ||
-      prevProps.width !== this.props.width ||
-      prevProps.height !== this.props.height
-    ) {
-      const zoomHandler = centerView(this.props);
+    const { width, height, center, data, selectedId } = this.props;
+    const scale = 2;
+    if (this.props.selectedId && prevProps.selectedId !== selectedId) {
+      const { x, y } = data.find(n => n.id === selectedId);
+      const zoomHandler = d3.zoomIdentity
+        .translate(center[0] - x * scale, center[1] - y * scale)
+        .scale(scale);
+
       d3.select(this.zoomCont).call(
         this.zoomFactoryCont.transform,
         zoomHandler
@@ -103,10 +107,12 @@ class ZoomContainer extends Component {
 
   componentDidMount() {
     this.zoomFactoryCont = this.zoomFactory(this.props);
-    d3.select(this.zoomCont).call(this.zoomFactoryCont);
+    d3.select(this.zoomCont)
+      .call(this.zoomFactoryCont)
+      .on('dblclick.zoom', null);
 
-    const zoomHandler = centerView(this.props);
-    d3.select(this.zoomCont).call(this.zoomFactoryCont.transform, zoomHandler);
+    // const zoomHandler = centerView(this.props);
+    // d3.select(this.zoomCont).call(this.zoomFactoryCont.transform, zoomHandler);
 
     // d3.select(this.zoomCont).call(
     //   this.zoomFactoryCont.transform,
@@ -118,7 +124,7 @@ class ZoomContainer extends Component {
   }
 
   // componentWillReceiveProps(nextProps) {
-  //   const { selectedId, width, height, nodes, center } = nextProps;
+  //   const { selectedId, width, height, data, center } = nextProps;
   //
   //   // const zoomHandler = this.centerView(this.props);
   //   // this.setState({ zoomHandler });
@@ -128,7 +134,7 @@ class ZoomContainer extends Component {
   //   //
   //   // if (selectedId !== null) {
   //   //   // const zoomFactoryCont = this.zoomFactory(nextProps);
-  //   //   const n = nodes.find(d => d.id === selectedId);
+  //   //   const n = data.find(d => d.id === selectedId);
   //   //   const zoomHandler = d3.zoomIdentity
   //   //     .translate(center[0] - n.x * zoomScale, center[1] - n.y * zoomScale)
   //   //     .scale(zoomScale);
@@ -152,7 +158,7 @@ class ZoomContainer extends Component {
       .wheelDelta(
         () => (-d3.event.deltaY * (d3.event.deltaMode ? 50 : 1)) / 500
       )
-      .scaleExtent([0, maxZoomScale])
+      .scaleExtent([1, maxZoomScale])
       .extent([[0, 0], [width, height]])
       .on('zoom', () => {
         this.setState({
@@ -168,15 +174,17 @@ class ZoomContainer extends Component {
       height,
       style,
       className,
-      nodes,
+      data,
       onZoom
     } = this.props;
     const { zoomHandler } = this.state;
-    const newNodes = nodes.map(d => {
+    const newNodes = data.map(d => {
       const [x, y] = zoomHandler.apply([d.x, d.y]);
       return { ...d, x, y };
     });
     // .filter(({ x, y }) => x > 0 && x < width && y > 0 && y < height);
+    //
+    // console.log('zoomHandler', zoomHandler.k);
 
     return (
       <div

@@ -25,12 +25,13 @@ function centerView(props) {
   const scale = Math.max(dx / width, dy / height);
   // const translate = [width / 2 - scale * x, height / 2 - scale * y];
 
-  const zoomHandler = d3.zoomIdentity
-    .translate(width / 2 - x * scale, center[1] - y * scale)
-    .scale(scale);
+  const zoomHandler = d3.zoomIdentity;
+  // .translate(width / 2 - x * scale, center[1] - y * scale)
+  // .scale(scale);
 
   return zoomHandler;
 }
+
 class ZoomContainer extends Component {
   static propTypes = {
     children: PropTypes.func,
@@ -178,6 +179,7 @@ class ZoomContainer extends Component {
       return { ...d, x, y };
     });
     // .filter(({ x, y }) => x > 0 && x < width && y > 0 && y < height);
+    console.log('newNodes', newNodes);
 
     return (
       <div
@@ -202,7 +204,7 @@ class ZoomContainer extends Component {
           src={floorplanImg}
           style={{ position: 'absolute', left: 0, top: 0 }}
         />
-        {children(newNodes, zoomHandler)}
+        {children(nodes, zoomHandler)}
       </div>
     );
   }

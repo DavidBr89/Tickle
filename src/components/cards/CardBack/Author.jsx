@@ -202,6 +202,7 @@ class Author extends React.Component {
   componentDidMount() {
     const { uid } = this.props;
     console.log('AUTHOR UID', uid);
+    if (!uid) return;
     db.getDetailedUserInfo(uid).then(res => {
       const {
         interests: plainInterests,

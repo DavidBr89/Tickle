@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
 const CardImg = ({ width, height }) => (
@@ -40,7 +41,8 @@ class ExtendableMarker extends Component {
     markerWidth: 30,
     markerHeight: 50,
     children: <div style={{ background: 'blue' }} />,
-    style: {}
+    style: {},
+    domNode: null
   };
 
   render() {
@@ -70,11 +72,11 @@ class ExtendableMarker extends Component {
           left: x,
           top: y,
           transform: 'translate(-50%, -50%)',
-          right: extended && 0,
-          bottom: extended && 0,
+          // right: extended && 0,
+          // bottom: extended && 0,
           width,
           height,
-          zIndex: extended && 4000,
+          // zIndex: extended && 4000,
           // transition: `transform ${delay}ms, left ${delay}ms, top ${delay}ms, width ${delay}ms, height ${delay}ms`,
           ...style
         }}
@@ -86,13 +88,15 @@ class ExtendableMarker extends Component {
             height: '100%'
           }}
         >
-          {extended ? children : preview}
+          {preview}
         </div>
       </div>
     );
 
-    // const teleported = ReactDOM.createPortal(marker, domNode);
-    return marker;
+    const teleported = domNode
+      ? ReactDOM.createPortal(marker, domNode)
+      : marker;
+    return teleported;
   }
 }
 

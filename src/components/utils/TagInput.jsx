@@ -168,7 +168,7 @@ export const DropDown = class DropDown extends Component {
             onTagInputChange={key => this.setState({ curKey: key })}
             inputTag={curKey}
             onAdd={k => {
-              if (k !== '') {
+              if (k && k !== '') {
                 this.setState(({ curSet: oldSet }) => ({
                   curSet: uniq([k, ...oldSet]),
                   curKey: ''

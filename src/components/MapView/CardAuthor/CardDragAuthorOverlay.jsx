@@ -9,7 +9,7 @@ import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 import DimWrapper from 'Utils/DimensionsWrapper';
 import ExtendableMarker from 'Utils/ExtendableMarker';
 
-import CardPreviewMarker from '../PreviewMarker';
+import CardPreviewMarker from 'Utils/PreviewMarker';
 
 import {
   DragSourceCont,
@@ -70,6 +70,7 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
       colorScale={tagColorScale}
     >
       <DataOverlay
+        author
         data={cards}
         disabled={isCardDragging}
         sets={cardSets}

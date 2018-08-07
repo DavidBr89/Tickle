@@ -26,20 +26,16 @@ function centerLayout(nextProps) {
     center + slotSize / 2 + ((rightLen - j) * rightSize) / rightLen;
 
   // TODO: not correct, fix
-  const rightScale = j => {
-    switch (true) {
-      case data.length > 3:
-        return rightPos(j);
-      // case data.length === 1:
-      //   center - slotSize / 2;
-    }
-  };
+  const rightScale = j => rightPos(j); // case data.length === 1:
+  //   center - slotSize / 2;
   // rightPos(j) - bufferRight(j) >= center + slotSize / 2
   //   ? rightPos(j) - bufferRight(j)
   //   : rightPos(j);
 
   const leftCards = data
     .slice(0, selectedIndex)
+    // TODO: change later
+    .slice(selectedIndex > 10 ? 7 : 0, selectedIndex)
     // TODO
     // .reverse()
     .map((c, j) => ({
@@ -66,6 +62,7 @@ function centerLayout(nextProps) {
 
   const rightCards = data
     .slice(selectedIndex + 1, data.length)
+    .slice(0, 10)
     .reverse()
     .map((c, j) => ({
       ...c,
@@ -142,13 +139,18 @@ class CardStack extends Component {
     const transition = `left ${duration}ms, top ${duration}ms, transform ${duration}ms`;
 
     const size = direction === 'horizontal' ? width : height;
+    // TODO: parameterize
+    const len = Math.min(data.length, 20);
     const scale = scaleBand()
-      .domain(range(0, data.length))
+      .domain(range(0, len))
       .paddingInner(1)
       // .align(0.5)
       .range([0, size - slotSize]);
     // i => i * (100 - slotSize * 3 / 4) / data.length;
-    const plotData = data.map((d, i) => ({ ...d, pos: scale(i) }));
+    const plotData = data
+      .slice(0, len)
+      .map((d, i) => ({ ...d, pos: scale(i) }));
+
     const position = d =>
       direction === 'vertical'
         ? { top: `${d.pos}${unit}` }
@@ -307,7 +309,8 @@ class CardStack extends Component {
         >
           {data.map((d, i) => {
             // important for KEY
-            const c = allCards.find(e => e.id === d.id);
+            const c = allCards.find(e => e.id === d.id) || null;
+            if (c === null) return null;
             return (
               <div
                 key={d.id}
@@ -316,7 +319,6 @@ class CardStack extends Component {
                   paddingLeft: `${innerMargin / 2}${unit}`,
                   paddingRight: `${innerMargin / 2}${unit}`,
                   cursor: 'pointer',
-                  // maxWidth: '200px',
                   transition: `left ${duration}ms, top ${duration}ms, transform ${duration}ms`,
                   zIndex: c.zIndex,
                   ...size,

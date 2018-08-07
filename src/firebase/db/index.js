@@ -29,12 +29,12 @@ const pruneFields = fields => {
   }, {});
 };
 
-const CARDS = 'cards';
+const CARDS = 'tmpCards';
 
 const getShallowCards = (uid, collectionName = 'readableCards') =>
   firestore
     .collection(CARDS)
-    .where('uid', '==', uid)
+    // .where('uid', '==', uid)
     .get()
     .then(querySnapshot => {
       const data = [];

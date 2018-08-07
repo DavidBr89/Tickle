@@ -11,7 +11,7 @@ import {
   DragDropContextProvider
 } from '../DragAndDrop/DragSourceTarget';
 
-import CardDataOverlay from './CardDataOverlay';
+import CardViewOverlay from './CardViewOverlay';
 
 import { calcDataViewHeight } from 'Src/styles/GlobalThemeContext';
 
@@ -178,7 +178,7 @@ class CardViewPage extends Component {
         >
           <div className="h-100">
             <div
-              className="input-group mt-2"
+              className="input-group m-2"
               style={{
                 display: 'flex',
                 justifyContent: 'flex-end',
@@ -227,7 +227,7 @@ class CardViewPage extends Component {
                 }}
               />
             </div>
-            <CardDataOverlay
+            <CardViewOverlay
               {...this.props}
               style={{ height: calcDataViewHeight(isSmartphone) }}
               colorScale={tagColorScale}

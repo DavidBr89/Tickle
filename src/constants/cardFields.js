@@ -13,8 +13,8 @@ export const extractCardFields = ({
 }) => ({
   id,
   uid,
-  floorX,
-  floorY,
+  floorX: floorX || 0.5,
+  floorY: floorY || 0.5,
   img,
   loc: { longitude, latitude },
   tags,

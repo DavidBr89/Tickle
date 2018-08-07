@@ -81,7 +81,8 @@ export const Modal = ({
           opacity: visible ? 1 : 0,
           display: visible ? 'block' : 'none',
           width: '100%',
-          height: '97%'
+          height: '97%',
+          maxHeight: 800
         }}
       >
         <div
@@ -95,7 +96,7 @@ export const Modal = ({
             className="modal-content"
             style={{
               width: '100%',
-              height: '100%',
+              height: '95%',
               overflow: 'hidden',
               // TODO: fix later
               // TODO: fix later

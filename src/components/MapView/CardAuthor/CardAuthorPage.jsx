@@ -13,13 +13,7 @@ import PropTypes from 'prop-types';
 // import HTML5Backend from 'react-dnd-html5-backend';
 // import { DragDropContextProvider } from 'react-dnd';
 
-import {
-  DragSourceCont,
-  // DropTargetCont,
-  DragDropContextProvider
-} from '../DragAndDrop/DragSourceTarget';
-
-import PreviewMarker from '../PreviewMarker';
+// import PreviewMarker from 'Components/utils/PreviewMarker';
 
 // import { colorScale, cardTypeColorScale } from 'Cards/styles';
 

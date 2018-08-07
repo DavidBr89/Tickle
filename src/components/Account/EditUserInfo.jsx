@@ -24,6 +24,7 @@ class EditUserPhoto extends React.Component {
 
   render() {
     const { url, imgName } = this.state;
+    const { onChange } = this.props;
     return (
       <PhotoUpload
         {...this.props}
@@ -32,6 +33,7 @@ class EditUserPhoto extends React.Component {
         imgName={imgName}
         maxHeight={200}
         onChange={({ url, file }) => {
+          onChange({ photoURL: url, file });
           this.setState({ url, imgName: file.name });
         }}
       />
@@ -93,8 +95,7 @@ class UserInfoModalBody extends React.Component {
       name,
       email,
       photoURL,
-      interests,
-      uid
+      interests
     } = this.state.authUser;
 
     const setUserField = field =>
@@ -102,6 +103,7 @@ class UserInfoModalBody extends React.Component {
         authUser: { ...oldAuthUser, ...field }
       }));
 
+    console.log('photoURL', photoURL);
     return (
       <React.Fragment>
         <div className="mb-3">
@@ -117,8 +119,8 @@ class UserInfoModalBody extends React.Component {
               <EditUserPhoto
                 style={{ width: 200 }}
                 url={photoURL}
-                onChange={newPhotoURL =>
-                  setUserField({ photoURL: newPhotoURL })
+                onChange={({ file, photoURL: newImgUrl }) =>
+                  setUserField({ file, photoURL: newImgUrl })
                 }
               />
 
@@ -218,7 +220,6 @@ class UserInfoModalBody extends React.Component {
     return (
       <ModalBody
         onClose={() => {
-          // onChange(cachedUser);
           onClose();
         }}
         title={title}

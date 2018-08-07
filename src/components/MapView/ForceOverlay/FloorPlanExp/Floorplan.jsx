@@ -4,8 +4,6 @@ import * as d3 from 'd3';
 
 import { differenceWith } from 'lodash';
 
-import floorplanImg from './schatkaart.png';
-
 class Floorplan extends Component {
   static propTypes = {
     children: PropTypes.node,
@@ -45,6 +43,7 @@ class Floorplan extends Component {
     const { width, height, data } = this.props;
     const forceNodes = [...data].map(d => {
       const [wantedX, wantedY] = this.posCache(d);
+      // TODO: check later
       return {
         tx: wantedX,
         ty: wantedY,
@@ -65,10 +64,10 @@ class Floorplan extends Component {
       .nodes(forceNodes)
       .restart()
       .alpha(1)
-      .alphaMin(0.9)
+      .alphaMin(0.98)
       .force('x', d3.forceX(d => d.tx).strength(1))
       .force('y', d3.forceY(d => d.ty).strength(1))
-      .force('coll', d3.forceCollide(20))
+      .force('coll', d3.forceCollide(5))
       .on('end', () => {
         const nodes = forceNodes.map(({ x, y }) => ({ x, y }));
         this.setState({
@@ -80,11 +79,17 @@ class Floorplan extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { data: oldData } = prevProps;
+    const oldNodes = oldData.map(d => ({
+      ...d,
+      floorX: d.floorX,
+      floorY: d.floorY
+    }));
     const { data } = this.props;
     // TODO create real compare Function
     const compare = (a, b) => a.floorX === b.floorX && a.floorY === b.floorY;
 
-    const diffList = differenceWith(data, oldData, compare);
+    const diffList = differenceWith(data, oldNodes, compare);
+    // console.log('data', data, 'oldData', oldData, diffList);
     if (oldData.length !== data.length || diffList.length > 0) {
       this.forceLayout();
     }
@@ -103,26 +108,19 @@ class Floorplan extends Component {
   render() {
     const { width, data, height, children } = this.props;
     const { nodes } = this.state;
+    const nn = nodes.map((n, i) => ({
+      ...data[i],
+      ...n
+    }));
     return (
       <div
         style={{
           width,
-          height,
+          height
           // position: 'relative'
         }}
       >
-        <img
-          width={width}
-          height={height}
-          src={floorplanImg}
-          style={{ position: 'absolute', left: 0, top: 0 }}
-        />
-        {nodes.map((n, i) =>
-          children({
-            ...data[i],
-            ...n
-          })
-        )}
+        {children(nn)}
       </div>
     );
   }

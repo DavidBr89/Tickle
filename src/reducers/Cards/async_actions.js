@@ -3,6 +3,8 @@ import generate from 'firebase-auto-ids';
 import fetch from 'cross-fetch';
 import updateDataDim from './updateDataDimension';
 
+import { extractCardFields } from 'Constants/cardFields';
+
 import {
   receivePlaces,
   receiveCollectibleCards,
@@ -91,7 +93,7 @@ export function fetchCollectibleCards(uid) {
     return db.readCards(uid, 'createdCards').then(data => {
       dispatch(
         receiveCollectibleCards(
-          data//.filter(d => d.challengeSubmission === null || d.challengeSubmission.completed)
+          data // .filter(d => d.challengeSubmission === null || d.challengeSubmission.completed)
         )
       );
     });
@@ -106,7 +108,7 @@ export function fetchCreatedCards(uid) {
     dispatch(loadingCards());
 
     return db.readCards(uid, 'createdCards').then(data => {
-      dispatch(receiveCreatedCards(data));
+      dispatch(receiveCreatedCards(data.map(extractCardFields)));
     });
   };
 }

@@ -19,7 +19,8 @@ const PreviewMarker = ({
   template,
   color,
   size = 25,
-  offset = 100
+  offset = 100,
+  x,y
 }) => (
   <GlobalThemeConsumer>
     {({ stylesheet: { boxShadow } }) => (
@@ -34,7 +35,9 @@ const PreviewMarker = ({
           // TODO
           boxShadow: selected && '3px 3px grey',
           width: size,
-          height: size // '13vw',
+          height: size,// '13vw',
+          left: x,
+          top: y
         }}
       />
     )}
