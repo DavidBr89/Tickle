@@ -110,6 +110,7 @@ class DataOverlay extends Component {
           delay={100}
           width={25}
           height={30}
+          selected={selectedCardId === c.id}
           x={c.x}
           y={c.y}
           preview={preview(c)}
@@ -165,6 +166,7 @@ class DataOverlay extends Component {
               edit={author}
               colorScale={colorScale}
               zoom
+              noPreview={noPreview}
             >
               {draggable}
             </Floorplan>

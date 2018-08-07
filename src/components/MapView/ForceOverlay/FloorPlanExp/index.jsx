@@ -7,7 +7,7 @@ import floorplanImg from '../floorplan.png';
 import FloorPlan from './Floorplan';
 import ClusteredFloor from './ClusteredFloor';
 
-class FloorWrapper extends Component {
+class FloorEditor extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string
@@ -35,6 +35,7 @@ class FloorWrapper extends Component {
                 transform: `translate(${zHandler.x}px,${zHandler.y}px) scale(${
                   zHandler.k
                 })`,
+                pointerEvents: 'none',
                 transformOrigin: '0 0'
               }}
             />
@@ -79,9 +80,9 @@ class FloorWrapper extends Component {
 
 function index({ edit, children, ...props }) {
   return edit ? (
-    <FloorWrapper {...props}>{children}</FloorWrapper>
+    <FloorEditor {...props}>{children}</FloorEditor>
   ) : (
-    <ClusteredFloor {...props} />
+    <ClusteredFloor {...props}>{children}</ClusteredFloor>
   );
 }
 

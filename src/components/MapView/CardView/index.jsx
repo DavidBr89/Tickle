@@ -29,7 +29,7 @@ import CardViewPage from './CardViewPage';
 const mapStateToProps = state => {
   const { collectibleCards } = state.Cards;
 
-  const { selectedCardId, filterSet } = state.DataView;
+  const { selectedCardId, filterSet, cardPanelVisible } = state.DataView;
 
   // TODO: own dim reducer
   const { width, height, userLocation } = state.MapView;
@@ -57,6 +57,7 @@ const mapStateToProps = state => {
     uid,
     selectedCardId,
     filterSet,
+    cardPanelVisible,
     ...state.Cards,
     cardSets,
     selectedTags,

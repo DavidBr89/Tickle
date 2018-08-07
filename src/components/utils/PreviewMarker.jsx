@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { CardMarker } from 'Cards';
 
 import { GlobalThemeConsumer } from 'Src/styles/GlobalThemeContext';
-import {css} from 'aphrodite'
+import { css } from 'aphrodite';
 
 const shadowStyle = {
   boxShadow: '3px 3px black',
@@ -20,7 +20,8 @@ const PreviewMarker = ({
   color,
   size = 25,
   offset = 100,
-  x,y
+  x,
+  y
 }) => (
   <GlobalThemeConsumer>
     {({ stylesheet: { boxShadow } }) => (
@@ -28,14 +29,14 @@ const PreviewMarker = ({
         color={color}
         className={css(boxShadow)}
         style={{
-          transform: selected && 'scale(1.5)',
-          zIndex: selected && 5000,
+          transform: selected && 'scale(2.5)',
+          zIndex: selected && 10000,
           transition: 'transform 1s',
           position: 'absolute',
           // TODO
           boxShadow: selected && '3px 3px grey',
           width: size,
-          height: size,// '13vw',
+          height: size, // '13vw',
           left: x,
           top: y
         }}

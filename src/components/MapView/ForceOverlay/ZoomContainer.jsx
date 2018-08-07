@@ -4,34 +4,34 @@ import * as d3 from 'd3';
 
 import { getBoundingBox } from '../utils';
 
-// function centerView(props) {
-//   const { data, width, center, height } = props;
-//   if (data.length === 1) {
-//     console.log('start', center);
-//     const { x, y } = data[0];
-//     const scale = 1;
-//
-//     return d3.zoomIdentity
-//       .translate(width / 2 - x * scale, height / 2 - y * scale)
-//       .scale(scale);
-//   }
-//   // const zoomFactoryCont = this.zoomFactory(props);
-//   const bounds = getBoundingBox(data, d => [d.x, d.y]);
-//   const dx = bounds[1][0] - bounds[0][0];
-//   const dy = bounds[1][1] - bounds[0][1];
-//   const x = (bounds[0][0] + bounds[1][0]) / 2;
-//   const y = (bounds[0][1] + bounds[1][1]) / 2;
-//   const scale = Math.max(dx / width, dy / height);
-//
-//   console.log('dx', dx, 'dy', dy, 'x', x, 'y', scale);
-//   // const translate = [width / 2 - scale * x, height / 2 - scale * y];
-//
-//   const zoomHandler = d3.zoomIdentity
-//     .translate(width / 2 - x * scale, center[1] - y * scale)
-//     .scale(scale);
-//
-//   return zoomHandler;
-// }
+function centerView(props) {
+  const { data, width, center, height } = props;
+  if (data.length === 1) {
+    console.log('start', center);
+    const { x, y } = data[0];
+    const scale = 1;
+
+    return d3.zoomIdentity
+      .translate(width / 2 - x * scale, height / 2 - y * scale)
+      .scale(scale);
+  }
+  // const zoomFactoryCont = this.zoomFactory(props);
+  // const bounds = getBoundingBox(data, d => [d.x, d.y]);
+  const dx = (width * 2) / 3;
+  const dy = (height * 1) / 3;
+  const x = center[0];
+  const y = height / 2; // center[1] - 100;
+  const scale = Math.max(dx / width, dy / height);
+
+  console.log('dx', dx, 'dy', dy, 'x', x, 'y', scale);
+  // const translate = [width / 2 - scale * x, height / 2 - scale * y];
+
+  const zoomHandler = d3.zoomIdentity
+    .translate(width / 2 - x * scale, center[1] - y * scale)
+    .scale(scale);
+
+  return zoomHandler;
+}
 class ZoomContainer extends Component {
   static propTypes = {
     children: PropTypes.func,
@@ -75,7 +75,7 @@ class ZoomContainer extends Component {
   }
 
   state = {
-    zoomHandler: d3.zoomIdentity // centerView(this.props)
+    zoomHandler: centerView(this.props) // d3.zoomIdentity //
   };
 
   // static getDerivedStateFromProps(nextProps, prevState) {
@@ -111,8 +111,8 @@ class ZoomContainer extends Component {
       .call(this.zoomFactoryCont)
       .on('dblclick.zoom', null);
 
-    // const zoomHandler = centerView(this.props);
-    // d3.select(this.zoomCont).call(this.zoomFactoryCont.transform, zoomHandler);
+    const zoomHandler = centerView(this.props);
+    d3.select(this.zoomCont).call(this.zoomFactoryCont.transform, zoomHandler);
 
     // d3.select(this.zoomCont).call(
     //   this.zoomFactoryCont.transform,
@@ -158,8 +158,9 @@ class ZoomContainer extends Component {
       .wheelDelta(
         () => (-d3.event.deltaY * (d3.event.deltaMode ? 50 : 1)) / 500
       )
-      .scaleExtent([1, maxZoomScale])
+      .scaleExtent([0.5, maxZoomScale])
       .extent([[0, 0], [width, height]])
+      .filter(() => !d3.event.path[0].classList.contains('no-zoom'))
       .on('zoom', () => {
         this.setState({
           zoomHandler: d3.event.transform || d3.zoomIdentity
@@ -196,7 +197,7 @@ class ZoomContainer extends Component {
           // background: 'wheat',
           width,
           height,
-          // pointerEvents: 'none',
+          pointerEvents: 'all',
           // overflow: 'hidden',
           // zIndex: 0,
           ...style

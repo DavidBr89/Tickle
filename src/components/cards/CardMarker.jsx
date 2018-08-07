@@ -60,7 +60,7 @@ class CardMarker extends Component {
       <div
         className={className}
         style={{
-          pointerEvents: 'none',
+          // pointerEvents: 'none',
           // padding: '15%',
           transition: 'opacity 1s',
           width: '100%',

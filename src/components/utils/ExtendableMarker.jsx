@@ -58,7 +58,8 @@ class ExtendableMarker extends Component {
       preview,
       node,
       style,
-      domNode
+      domNode,
+      selected
     } = this.props;
 
     const marker = (
@@ -76,6 +77,7 @@ class ExtendableMarker extends Component {
           // bottom: extended && 0,
           width,
           height,
+          zIndex: selected && 5000,
           // zIndex: extended && 4000,
           // transition: `transform ${delay}ms, left ${delay}ms, top ${delay}ms, width ${delay}ms, height ${delay}ms`,
           ...style
@@ -85,7 +87,8 @@ class ExtendableMarker extends Component {
           style={{
             position: 'absolute',
             width: '100%',
-            height: '100%'
+            height: '100%',
+            zIndex: selected && 5000
           }}
         >
           {preview}

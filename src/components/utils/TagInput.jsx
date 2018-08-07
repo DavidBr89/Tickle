@@ -146,13 +146,12 @@ export const DropDown = class DropDown extends Component {
       setList.filter(s => intersection(curSet, s).length === curSet.length)
         .length === 0;
 
-    console.log('isCurSetNew', isCurSetNew);
-
     return (
       <div
         style={{
           alignItems: 'center',
-          backgroundColor: '#fff'
+          backgroundColor: '#fff',
+          maxWidth: '50%'
           // border: '2px solid #ccc'
         }}
       >

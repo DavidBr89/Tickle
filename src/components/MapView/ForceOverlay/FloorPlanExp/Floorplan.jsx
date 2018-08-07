@@ -64,10 +64,10 @@ class Floorplan extends Component {
       .nodes(forceNodes)
       .restart()
       .alpha(1)
-      .alphaMin(0.98)
+      .alphaMin(0.97)
       .force('x', d3.forceX(d => d.tx).strength(1))
       .force('y', d3.forceY(d => d.ty).strength(1))
-      .force('coll', d3.forceCollide(5))
+      .force('coll', d3.forceCollide(10).strength(0.1))
       .on('end', () => {
         const nodes = forceNodes.map(({ x, y }) => ({ x, y }));
         this.setState({

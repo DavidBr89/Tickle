@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { DropDown } from 'Utils/TagInput';
+import { css } from 'aphrodite';
 // import { PreviewCard } from 'Components/cards';
 import CardStack from '../CardStack';
 
@@ -13,7 +14,7 @@ import {
 
 import CardViewOverlay from './CardViewOverlay';
 
-import { calcDataViewHeight } from 'Src/styles/GlobalThemeContext';
+import { calcDataViewHeight, stylesheet } from 'Src/styles/GlobalThemeContext';
 
 // import { StyledButton } from 'Utils/StyledComps';
 
@@ -157,7 +158,9 @@ class CardViewPage extends Component {
       tagColorScale,
       cardSets,
       selectedTags,
-      isSmartphone
+      isSmartphone,
+      cardPanelVisible,
+      toggleCardPanel
     } = this.props;
 
     const slotSize = 100 / 3.5;
@@ -167,11 +170,9 @@ class CardViewPage extends Component {
       <div
         className="w-100 h-100"
         style={{ position: 'relative', overflow: 'hidden' }}
-        ref={node => (this.domCont = node)}
       >
         <div
           className="w-100 h-100"
-          ref={cont => (this.cont = cont)}
           style={{
             position: 'absolute'
           }}
@@ -185,6 +186,15 @@ class CardViewPage extends Component {
                 zIndex: 100
               }}
             >
+              <div className="mr-2">
+                <button
+                  onClick={toggleCardPanel}
+                  className={css(stylesheet.btn)}
+                  style={{ height: '100%' }}
+                >
+                  {cardPanelVisible ? 'Hide Cards' : 'Show Cards'}
+                </button>
+              </div>
               <DropDown
                 key={filterSet.join(',')}
                 onChange={filterCards}
@@ -206,7 +216,9 @@ class CardViewPage extends Component {
                 display: 'flex',
                 justifyContent: 'center',
                 transition: 'opacity 0.5s',
-                height: '25%'
+                height: '25%',
+                zIndex: 3000,
+                opacity: cardPanelVisible ? 1 : 0
               }}
             >
               <CardStack

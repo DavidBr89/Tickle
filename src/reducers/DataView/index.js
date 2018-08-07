@@ -9,7 +9,8 @@ import {
   EXTEND_SELECTED_CARD,
   ADD_CARD_FILTER,
   REMOVE_CARD_FILTER,
-  FILTER_CARDS
+  FILTER_CARDS,
+  TOGGLE_CARD_PANEL
   // ADD_CARD_FILTER,
   // REMOVE_CARD_FILTER,
   // FILTER_CARDS
@@ -18,6 +19,7 @@ import {
 const INITIAL_STATE = {
   // dataView: 'topic',
   // authEnv: false,
+  cardPanelVisible: true,
   selectedCardId: null,
   extCard: null,
   filterSet: []
@@ -35,7 +37,6 @@ export default function dataViewReducer(state = INITIAL_STATE, action) {
         selectedCardId
       };
     }
-
     case EXTEND_SELECTED_CARD: {
       // const { selectedCardId } = state;
       const extCardId = action.options;
@@ -68,10 +69,14 @@ export default function dataViewReducer(state = INITIAL_STATE, action) {
 
     case FILTER_CARDS: {
       const filterSet = action.options;
-      return { ...state, filterSet,
-
+      return {
+        ...state,
+        filterSet,
         selectedCardId: null
       };
+    }
+    case TOGGLE_CARD_PANEL: {
+      return { ...state, cardPanelVisible: !state.cardPanelVisible };
     }
     // case ADD_CARD_FILTER: {
     //   const { filterSet } = state;

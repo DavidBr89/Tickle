@@ -37,6 +37,11 @@ export function filterCards(options) {
   return { type: FILTER_CARDS, options };
 }
 
+export const TOGGLE_CARD_PANEL = 'TOGGLE_CARD_PANEL';
+export function toggleCardPanel(options) {
+  return { type: TOGGLE_CARD_PANEL, options };
+}
+
 //
 // export const FILTER = 'FILTER';
 // export function filter(options) {
