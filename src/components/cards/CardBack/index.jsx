@@ -111,7 +111,10 @@ class CardBackSkeleton extends Component {
 
   // TODO: check
   shouldComponentUpdate(nextProps, nextState) {
-    return this.state.extended !== nextState.extended;
+    return (
+      this.state.extended !== nextState.extended ||
+      this.props.visible !== nextProps.visible
+    );
   }
 
   selectField = field => {
@@ -133,7 +136,8 @@ class CardBackSkeleton extends Component {
       template,
       id: cardId,
       uid,
-      style
+      style,
+      visible
     } = this.props;
 
     const { extended } = this.state;
@@ -180,31 +184,35 @@ class CardBackSkeleton extends Component {
           style={displayStyle('author')}
           onClick={() => this.selectField('author')}
         >
-          <StyledAuthor
-            uid={uid}
-            extended={extended === 'author'}
-            tagColorScale={tagColorScale}
-          />
+          {visible && (
+            <StyledAuthor
+              uid={uid}
+              extended={extended === 'author'}
+              tagColorScale={tagColorScale}
+            />
+          )}
         </BackField>
-        <BackField
-          style={{ ...displayStyle('map'), padding: 0 }}
-          edit={edit}
-          legend="Location"
-          legendStyle={{ position: 'absolute', margin: 10, zIndex: 1000 }}
-          borderColor={uiColor}
-          onClick={() => this.selectField('map')}
-        >
-          <MapAreaControl
-            {...this.props}
-            {...loc}
-            {...isExtended('map')}
-            uiColor={uiColor}
-            onChange={r => setMapRadius(r)}
-            radius={mapRadius}
+        {visible && (
+          <BackField
+            style={{ ...displayStyle('map'), padding: 0 }}
             edit={edit}
-          />
-        </BackField>
-        {edit && (
+            legend="Location"
+            legendStyle={{ position: 'absolute', margin: 10, zIndex: 1000 }}
+            borderColor={uiColor}
+            onClick={() => this.selectField('map')}
+          >
+            <MapAreaControl
+              {...this.props}
+              {...loc}
+              {...isExtended('map')}
+              uiColor={uiColor}
+              onChange={r => setMapRadius(r)}
+              radius={mapRadius}
+              edit={edit}
+            />
+          </BackField>
+        )}
+        {visible && (
           <BackField
             onClick={() => this.selectField('comments')}
             legend="Comments"

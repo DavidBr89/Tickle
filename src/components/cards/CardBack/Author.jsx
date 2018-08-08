@@ -192,7 +192,6 @@ class Author extends React.Component {
 
   state = {
     ...this.props,
-
     collectedCards: [],
     createdCards: [],
     numCollectedCards: 0,

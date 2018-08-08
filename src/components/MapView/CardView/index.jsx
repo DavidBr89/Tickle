@@ -27,6 +27,7 @@ import CardViewPage from './CardViewPage';
 
 // Container
 const mapStateToProps = state => {
+  console.log('new Action', 'yeah');
   const { collectibleCards } = state.Cards;
 
   const { selectedCardId, filterSet, cardPanelVisible } = state.DataView;
@@ -39,13 +40,17 @@ const mapStateToProps = state => {
     authUser: { uid }
   } = state.Session;
 
+  console.log('filterSet', filterSet);
   const filteredCards = collectibleCards.filter(
     d =>
       filterSet.length === 0 ||
-      intersection(d.tags, filterSet).length === filterSet.length
+      intersection(
+        d.tags.map(e => e.toLowerCase()),
+        filterSet.map(e => e.toLowerCase())
+      ).length === filterSet.length
   );
-  console.log('UPD UPD card to filter', filteredCards);
   const cardSets = setify(filteredCards);
+  console.log('UPD UPD card to filter', filteredCards, 'cardSets', cardSets);
   // const tagColorScale = makeTagColorScale(cardSets);
   const selectedCard = filteredCards.find(d => d.id === selectedCardId) || null;
 

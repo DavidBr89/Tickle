@@ -168,7 +168,7 @@ class DataOverlay extends Component {
               zoom
               noPreview={noPreview}
             >
-              {draggable}
+              {author ? draggable : noPreview}
             </Floorplan>
           </div>
         );

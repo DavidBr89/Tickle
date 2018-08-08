@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import { intersection } from 'lodash';
+
 import ZoomCont from '../ZoomContainer';
 
 import floorplanImg from '../floorplan.png';
@@ -12,7 +14,7 @@ import PreviewMarker from 'Utils/PreviewMarker';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { filterByCluster } from 'Reducers/DataView/actions';
+import { addCardFilter } from 'Reducers/DataView/actions';
 
 function ClusterPlaceholder({
   coords: [x, y],
@@ -22,7 +24,8 @@ function ClusterPlaceholder({
   size,
   transition,
   onClick,
-  values
+  values,
+  text
   // ...props
 }) {
   return (
@@ -37,9 +40,10 @@ function ClusterPlaceholder({
         height: 80,
         left: x,
         top: y,
-        // transform: `translate(-50%,-50%)`,
+        transform: `translate(-50%,-50%)`,
+        cursor: 'pointer',
         // pointerEvents: 'none',
-        // background: 'white',
+        background: 'white',
         // zIndex: 100,
         display: 'flex',
         justifyContent: 'center',
@@ -105,86 +109,100 @@ class ClusteredFloor extends Component {
       selectedCardId,
       colorScale,
       noPreview,
-      filterByCluster
+      addCardFilter,
+      children,
+      data
     } = this.props;
-    return (
-      <Floorplan {...this.props}>
-        {nn => (
-          <ZoomCont
-            {...this.props}
-            data={nn}
-            center={[width / 2, (height * 2) / 3]}
-            selectedId={selectedCardId}
-          >
-            {(zn, zHandler) => (
-              <div>
-                <img
-                  width={width}
-                  height={(height * 2) / 3}
-                  src={floorplanImg}
-                  style={{
-                    position: 'absolute',
-                    left: 0,
-                    top: 0,
-                    // pointerEvents: 'all',
-                    // zIndex: 100,
-                    transform: `translate(${zHandler.x}px,${
-                      zHandler.y
-                    }px) scale(${zHandler.k})`,
-                    transformOrigin: '0 0'
-                  }}
-                />
 
-                {zn.map(noPreview)}
-                <FloorCluster
-                  radius={d =>
-                    // console.log('d', d);
-                    60
-                  }
-                  nodes={zn}
-                  width={width}
-                  height={height}
-                  colorScale={colorScale}
-                >
-                  {cls => (
-                    <React.Fragment>
-                      {cls.map(
-                        ({ centerPos: [x, y], ...d }) =>
-                          d.values.length === 1 ? (
-                            <PreviewMarker
-                              key={d.id}
-                              delay={100}
-                              width={25}
-                              height={30}
-                              x={x}
-                              y={y}
-                              style={{
-                                transform: selectedCardId === d.id && 'scale(2)'
-                              }}
-                              onClick={() => console.log('yeah')}
-                            />
-                          ) : (
-                            <ClusterPlaceholder
-                              onClick={() => {
-                                console.log('yeah', d.values);
-                                filterByCluster(d.values);
-                              }}
-                              coords={[x, y]}
-                              centroid={[x, y]}
-                              size={50}
-                              colorScale={colorScale}
-                              {...d}
-                            />
-                          )
-                      )}
-                    </React.Fragment>
-                  )}
-                </FloorCluster>
-              </div>
-            )}
-          </ZoomCont>
-        )}
-      </Floorplan>
+    const card = data.filter(n => n.id === selectedCardId).map(children);
+    return (
+      <React.Fragment>
+        {card}
+        <Floorplan {...this.props}>
+          {nn => (
+            <ZoomCont
+              {...this.props}
+              data={nn}
+              center={[width / 2, (height * 2) / 3]}
+              selectedId={selectedCardId}
+            >
+              {(zn, zHandler) => (
+                <div>
+                  <img
+                    width={width}
+                    height={(height * 2) / 3}
+                    src={floorplanImg}
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      top: 0,
+                      // pointerEvents: 'all',
+                      // zIndex: 100,
+                      transform: `translate(${zHandler.x}px,${
+                        zHandler.y
+                      }px) scale(${zHandler.k})`,
+                      transformOrigin: '0 0'
+                    }}
+                  />
+
+                  <FloorCluster
+                    radius={d =>
+                      // console.log('d', d);
+                      50
+                    }
+                    nodes={zn}
+                    width={width}
+                    height={height}
+                    colorScale={colorScale}
+                  >
+                    {cls => (
+                      <React.Fragment>
+                        {cls.map(
+                          ({ centerPos: [x, y], ...d }) =>
+                            d.values.length === 1 ? (
+                              <PreviewMarker
+                                key={d.id}
+                                delay={100}
+                                width={25}
+                                height={30}
+                                x={x}
+                                y={y}
+                                style={{
+                                  transform:
+                                    selectedCardId === d.id && 'scale(2)'
+                                }}
+                                onClick={() => console.log('yeah')}
+                              />
+                            ) : (
+                              <ClusterPlaceholder
+                                onClick={() => {
+                                  console.log('yeah', d.values);
+                                  const commons = intersection(
+                                    ...d.values.map(e => e.tags)
+                                  );
+                                  commons.length > 0 &&
+                                    addCardFilter(commons[0]);
+                                }}
+                                text={intersection(
+                                  ...d.values.map(e => e.tags)[0]
+                                )}
+                                coords={[x, y]}
+                                centroid={[x, y]}
+                                size={40}
+                                colorScale={colorScale}
+                                {...d}
+                              />
+                            )
+                        )}
+                      </React.Fragment>
+                    )}
+                  </FloorCluster>
+                </div>
+              )}
+            </ZoomCont>
+          )}
+        </Floorplan>
+      </React.Fragment>
     );
   }
 }
@@ -194,7 +212,7 @@ const mapStateToProps = state => ({});
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      filterByCluster
+      addCardFilter
     },
     dispatch
   );

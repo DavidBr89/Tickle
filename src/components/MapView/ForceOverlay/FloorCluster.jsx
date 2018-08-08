@@ -61,11 +61,11 @@ function circle([x, y], offsetX, offsetY) {
   return [
     // "0.7071" scale the sine and cosine of 45 degree for corner points.
     [x, y + offsetY],
-    [x + 0.7071 * offsetX, y + 0.7071 * offsetY],
+    // [x + 0.7071 * offsetX, y + 0.7071 * offsetY],
     [x + offsetX, y],
-    [x + 0.7071 * offsetX, y - 0.7071 * offsetY],
+    // [x + 0.7071 * offsetX, y - 0.7071 * offsetY],
     [x, y - offsetX],
-    [x - 0.7071 * offsetX, y - 0.7071 * offsetY],
+    // [x - 0.7071 * offsetX, y - 0.7071 * offsetY],
     [x - offsetX, y],
     [x, y]
     // [x - 0.7071 * offsetX, y + 0.7071 * offsetY]
@@ -93,8 +93,8 @@ function findCenterPos(values) {
         bbox[2].rightBottom
       ],
       // values.map(d => [d.x, d.y]),
-      20,
-      20
+      10,
+      10
     ),
     Infinity,
     Infinity

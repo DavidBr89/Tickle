@@ -173,6 +173,7 @@ class Card extends React.Component {
             />
             <CardBack
               {...this.props}
+              visible={!frontView}
               style={{
                 position: 'absolute',
                 top: 0,
@@ -185,7 +186,7 @@ class Card extends React.Component {
                 // transformStyle: 'preserve-3d',
                 transform: !iOS && 'rotateY(180deg)'
               }}
-              edit={!template}
+              edit={edit && !template}
               background={background}
               uiColor={uiColor}
               onCollect={onCollect}

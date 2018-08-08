@@ -1,4 +1,4 @@
-import { union, difference } from 'lodash';
+import { union, difference, uniq} from 'lodash';
 
 import { TEMPLATE_ID } from 'Constants/cardTemplate';
 
@@ -10,7 +10,8 @@ import {
   ADD_CARD_FILTER,
   REMOVE_CARD_FILTER,
   FILTER_CARDS,
-  TOGGLE_CARD_PANEL
+  TOGGLE_CARD_PANEL,
+  FILTER_BY_CLUSTER
   // ADD_CARD_FILTER,
   // REMOVE_CARD_FILTER,
   // FILTER_CARDS
@@ -22,7 +23,8 @@ const INITIAL_STATE = {
   cardPanelVisible: true,
   selectedCardId: null,
   extCard: null,
-  filterSet: []
+  filterSet: [],
+  clusteredIds: []
 };
 
 export default function dataViewReducer(state = INITIAL_STATE, action) {
@@ -48,10 +50,11 @@ export default function dataViewReducer(state = INITIAL_STATE, action) {
     case ADD_CARD_FILTER: {
       const { filterSet } = state;
       const tag = action.options;
-
+      const newFs = uniq([...filterSet, tag]);
+      console.log('newFs', newFs);
       return {
         ...state,
-        filterSet: [...filterSet, tag],
+        filterSet: newFs,
         selectedCardId: null
       };
     }
@@ -77,6 +80,11 @@ export default function dataViewReducer(state = INITIAL_STATE, action) {
     }
     case TOGGLE_CARD_PANEL: {
       return { ...state, cardPanelVisible: !state.cardPanelVisible };
+    }
+
+    case FILTER_BY_CLUSTER: {
+      const clusteredIds = action.options;
+      return { ...state, clusteredIds };
     }
     // case ADD_CARD_FILTER: {
     //   const { filterSet } = state;

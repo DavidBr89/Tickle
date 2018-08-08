@@ -2,6 +2,6 @@
   "projects": {
     "default": "tickle-194510",
     "staging": "tickle-staging",
-    "production": "tickle-194510"
+    "production": "tickle-vds"
   }
 }
