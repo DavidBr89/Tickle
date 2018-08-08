@@ -10,6 +10,10 @@ import FloorCluster from '../FloorCluster';
 import Floorplan from './Floorplan';
 import PreviewMarker from 'Utils/PreviewMarker';
 
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { filterByCluster } from 'Reducers/DataView/actions';
+
 function ClusterPlaceholder({
   coords: [x, y],
   colorScale,
@@ -17,23 +21,20 @@ function ClusterPlaceholder({
   centroid: [cx, cy],
   size,
   transition,
-  onClick
+  onClick,
+  values
   // ...props
 }) {
   return (
     <div
       className="no-zoom"
       key={tags.join('-')}
-      onClick={e => {
-        // e.stopPropagation();
-        window.event.stopPropagation();
-        console.log('yeah');
-      }}
+      onClick={onClick}
       style={{
         position: 'absolute',
         transition: `left ${transition}ms, top ${transition}ms, width ${transition}ms, height ${transition}ms`,
-        width: size,
-        height: size,
+        width: 80,
+        height: 80,
         left: x,
         top: y,
         // transform: `translate(-50%,-50%)`,
@@ -52,7 +53,7 @@ function ClusterPlaceholder({
       <div
         style={{
           zIndex: -1,
-          // background: 'whitesmoke',
+          background: 'whitesmoke',
           // pointerEvents: 'all',
           opacity: 0.8,
           width: '100%',
@@ -65,16 +66,21 @@ function ClusterPlaceholder({
         style={{
           width: '100%',
           height: '100%',
-          pointerEvents: 'none',
-          padding: '10.65%',
-          background: 'white',
+          // pointerEvents: 'none',
+          background: 'whitesmoke',
+          // padding: '10.65%',
+          // background: 'white',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center'
+          // flexDirection: 'column'
           // padding: '14.65%'
         }}
       >
-        <div>10</div>
+        <div>{values.length}</div>
+        <div className="ml-1" style={{ width: 25, height: 25 }}>
+          <PreviewMarker />
+        </div>
       </div>
     </div>
   );
@@ -93,7 +99,14 @@ class ClusteredFloor extends Component {
   }
 
   render() {
-    const { width, height, selectedCardId, colorScale, noPreview } = this.props;
+    const {
+      width,
+      height,
+      selectedCardId,
+      colorScale,
+      noPreview,
+      filterByCluster
+    } = this.props;
     return (
       <Floorplan {...this.props}>
         {nn => (
@@ -107,7 +120,7 @@ class ClusteredFloor extends Component {
               <div>
                 <img
                   width={width}
-                  height={height}
+                  height={(height * 2) / 3}
                   src={floorplanImg}
                   style={{
                     position: 'absolute',
@@ -137,7 +150,7 @@ class ClusteredFloor extends Component {
                     <React.Fragment>
                       {cls.map(
                         ({ centerPos: [x, y], ...d }) =>
-                          zHandler.k > 3 || d.values.length === 1 ? (
+                          d.values.length === 1 ? (
                             <PreviewMarker
                               key={d.id}
                               delay={100}
@@ -145,16 +158,22 @@ class ClusteredFloor extends Component {
                               height={30}
                               x={x}
                               y={y}
+                              style={{
+                                transform: selectedCardId === d.id && 'scale(2)'
+                              }}
                               onClick={() => console.log('yeah')}
                             />
                           ) : (
                             <ClusterPlaceholder
-                              onClick={d => console.log('click')}
+                              onClick={() => {
+                                console.log('yeah', d.values);
+                                filterByCluster(d.values);
+                              }}
                               coords={[x, y]}
                               centroid={[x, y]}
                               size={50}
                               colorScale={colorScale}
-                              tags={d.tags}
+                              {...d}
                             />
                           )
                       )}
@@ -170,4 +189,23 @@ class ClusteredFloor extends Component {
   }
 }
 
-export default ClusteredFloor;
+const mapStateToProps = state => ({});
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      filterByCluster
+    },
+    dispatch
+  );
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => ({
+  ...dispatchProps,
+  ...ownProps
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
+)(ClusteredFloor);

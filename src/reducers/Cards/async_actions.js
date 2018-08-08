@@ -84,13 +84,14 @@ import idGenerate from 'Src/idGenerator';
 //     );
 // });
 
+const haaike = 'PpNOHOQLtXatZzcaAYVCMQQP5XT2';
 export function fetchCollectibleCards(uid) {
   // Thunk middleware knows how to handle functions.
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
   return function(dispatch) {
     // TODO: change later
-    return db.readCards(uid, 'createdCards').then(data => {
+    return db.readCards(haaike, uid).then(data => {
       dispatch(
         receiveCollectibleCards(
           data // .filter(d => d.challengeSubmission === null || d.challengeSubmission.completed)
@@ -116,7 +117,7 @@ export function fetchCreatedCards(uid) {
 export function fetchAllCards(uid) {
   return function(dispatch) {
     dispatch(loadingCards());
-    return db.readCards(uid, 'collectibleCards').then(collectibleCards => {
+    return db.readCards(haaike, 'collectibleCards').then(collectibleCards => {
       dispatch(receiveCollectibleCards(collectibleCards));
       db.readCards(uid, 'createdCards').then(createdCards =>
         dispatch(receiveCreatedCards(createdCards))

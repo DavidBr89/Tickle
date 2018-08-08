@@ -76,6 +76,7 @@ class CardMarker extends Component {
             width: '100%',
             height: '100%',
             padding: '7%',
+            pointerEvents: 'none',
             // boxShadow: shadow ? 'grey 0.3rem 0.3rem' : null,
             border: '1px solid grey'
             // border: '1px solid grey',
@@ -86,7 +87,8 @@ class CardMarker extends Component {
             style={{
               opacity: 0.5,
               width: '100%',
-              height: '100%'
+              height: '100%',
+              pointerEvents: 'none'
             }}
           >
             <div
@@ -94,7 +96,8 @@ class CardMarker extends Component {
                 width: '100%',
                 height: barHeight,
                 background: barColor,
-                marginTop
+                marginTop,
+                pointerEvents: 'none'
                 // borderRadius: '4px'
               }}
             />
@@ -103,7 +106,8 @@ class CardMarker extends Component {
                 width: '100%',
                 height: barHeight,
                 background: barColor,
-                marginTop
+                marginTop,
+                pointerEvents: 'none'
                 // borderRadius: '4px'
               }}
             />
@@ -112,7 +116,8 @@ class CardMarker extends Component {
                 width: '100%',
                 height: '50%',
                 background: imgColor,
-                marginTop
+                marginTop,
+                pointerEvents: 'none'
                 // borderRadius: '4px'
               }}
             />

@@ -42,6 +42,11 @@ export function toggleCardPanel(options) {
   return { type: TOGGLE_CARD_PANEL, options };
 }
 
+export const FILTER_BY_CLUSTER = 'FILTER_BY_CLUSTER';
+export function filterByCluster(options) {
+  return { type: FILTER_BY_CLUSTER, options };
+}
+
 //
 // export const FILTER = 'FILTER';
 // export function filter(options) {

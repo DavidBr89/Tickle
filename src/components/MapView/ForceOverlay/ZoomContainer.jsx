@@ -17,10 +17,10 @@ function centerView(props) {
   }
   // const zoomFactoryCont = this.zoomFactory(props);
   // const bounds = getBoundingBox(data, d => [d.x, d.y]);
-  const dx = (width * 2) / 3;
-  const dy = (height * 1) / 3;
+  const dx = width;
+  const dy = (height * 2) / 3;
   const x = center[0];
-  const y = height / 2; // center[1] - 100;
+  const y = height - center[1]; // height / 3; // center[1] - 100;
   const scale = Math.max(dx / width, dy / height);
 
   console.log('dx', dx, 'dy', dy, 'x', x, 'y', scale);
@@ -87,14 +87,14 @@ class ZoomContainer extends Component {
     const scale = 2;
     if (this.props.selectedId && prevProps.selectedId !== selectedId) {
       const { x, y } = data.find(n => n.id === selectedId);
-      const zoomHandler = d3.zoomIdentity
-        .translate(center[0] - x * scale, center[1] - y * scale)
-        .scale(scale);
-
-      d3.select(this.zoomCont).call(
-        this.zoomFactoryCont.transform,
-        zoomHandler
-      );
+      // const zoomHandler = d3.zoomIdentity
+      //   .translate(center[0] - x * scale, center[1] - y * scale)
+      //   .scale(scale);
+      //
+      // d3.select(this.zoomCont).call(
+      //   this.zoomFactoryCont.transform,
+      //   zoomHandler
+      // );
     }
     // this.zoomFactoryCont = this.zoomFactory(this.props);
     // d3.select(this.zoomCont).call(this.zoomFactoryCont);
@@ -160,7 +160,7 @@ class ZoomContainer extends Component {
       )
       .scaleExtent([0.5, maxZoomScale])
       .extent([[0, 0], [width, height]])
-      .filter(() => !d3.event.path[0].classList.contains('no-zoom'))
+      .filter(() => !d3.event.target.classList.contains('no-zoom'))
       .on('zoom', () => {
         this.setState({
           zoomHandler: d3.event.transform || d3.zoomIdentity

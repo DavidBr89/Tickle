@@ -17,7 +17,7 @@ import Navigation from '../Navigation';
 // import cx from './MainLayout.scss';
 
 const Menu = ({ style, children }) => (
-  <div style={{ ...style, minWidth: 200 }}>
+  <div style={{ ...style}}>
     <nav
       className="navbar navbar-light"
       style={{

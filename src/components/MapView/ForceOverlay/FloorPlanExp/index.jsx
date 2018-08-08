@@ -19,14 +19,14 @@ class FloorEditor extends Component {
       <ZoomCont
         {...this.props}
         data={nn}
-        center={[width / 2, height / 2]}
+        center={[width / 2, (height * 2) / 3]}
         selectedId={selectedCardId}
       >
         {(zn, zHandler) => (
           <div>
             <img
               width={width}
-              height={height}
+              height={(height * 2) / 3}
               src={floorplanImg}
               style={{
                 position: 'absolute',

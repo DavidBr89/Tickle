@@ -29,12 +29,11 @@ const pruneFields = fields => {
   }, {});
 };
 
-const CARDS = 'tmpCards';
-
-const getShallowCards = (uid, collectionName = 'readableCards') =>
+const CARDS = 'cards';
+const getShallowCards = uid =>
   firestore
     .collection(CARDS)
-    // .where('uid', '==', uid)
+    .where('uid', '==', uid)
     .get()
     .then(querySnapshot => {
       const data = [];
@@ -49,10 +48,10 @@ const getShallowCards = (uid, collectionName = 'readableCards') =>
       );
     });
 
-export const readCards = uid =>
-  getShallowCards(uid).then(data => {
+export const readCards = (fromUID, playerId) =>
+  getShallowCards(fromUID).then(data => {
     const pendingPromises = data.map(d =>
-      getOneChallengeSubmission(d.id, uid).then(
+      getOneChallengeSubmission(d.id, playerId || fromUID).then(
         challengeSubmission =>
           new Promise(resolve => resolve({ ...d, challengeSubmission }))
       )
@@ -230,10 +229,17 @@ export const getUser = uid =>
     .catch(err => console.log('err  getUser'));
 
 // TODO
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+const haaike = 'PpNOHOQLtXatZzcaAYVCMQQP5XT2';
 export const getDetailedUserInfo = uid =>
   getUser(uid)
     .then(usr =>
-      readCards(uid).then(
+      readCards(haaike, uid).then(
         cards =>
           new Promise(resolve =>
             resolve({

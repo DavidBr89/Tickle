@@ -21,7 +21,8 @@ const PreviewMarker = ({
   size = 25,
   offset = 100,
   x,
-  y
+  y,
+  style
 }) => (
   <GlobalThemeConsumer>
     {({ stylesheet: { boxShadow } }) => (
@@ -38,14 +39,15 @@ const PreviewMarker = ({
           width: size,
           height: size, // '13vw',
           left: x,
-          top: y
+          top: y,
+          ...style
         }}
       />
     )}
   </GlobalThemeConsumer>
 );
 
-PreviewMarker.defaultProps = {};
+PreviewMarker.defaultProps = { style: {} };
 
 PreviewMarker.propTypes = {};
 

@@ -82,11 +82,13 @@ class MediaChallenge extends Component {
           style={{ width: '100%', height: '70%', ...styles }}
         >
           <h4>Task</h4>
-          <p style={{ width: '100%' }}>{description}</p>
+          <p style={{ width: '100%', maxHeight: '30%', overflow: 'scroll' }}>
+            {description}
+          </p>
           <h4>Response</h4>
           <textarea
             style={{ width: '100%' }}
-            rows="3"
+            rows="2"
             placeholder="write your response"
             value={response}
             onChange={e => {
@@ -97,10 +99,11 @@ class MediaChallenge extends Component {
             }}
           />
           <MediaUpload
-            style={{ width: '100%', height: '60%' }}
+            style={{ width: '100%', height: '30%' }}
             uploadPath={id => `challengeSubmissionFiles/${id}`}
             media={media}
             stylesheet={stylesheet}
+            buttonStyle={{ width: 30 }}
             onChange={newMedia => {
               this.setState({ media: newMedia, completed: false });
               onUpdate({ media: newMedia, completed: false });

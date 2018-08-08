@@ -65,7 +65,8 @@ export default class DataUpload extends Component {
         style={{
           display: 'flex',
           alignItems: 'center',
-          width: '100%',
+          width: '60%',
+          //TODO: style is not passed down
           ...style
         }}
       >

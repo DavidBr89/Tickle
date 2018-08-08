@@ -22,9 +22,10 @@ class DataUploadForm extends Component {
     stylesheet: PropTypes.object
   };
 
-  defaultProps: {
+  static defaultProps: {
     stylesheet: defaultStylesheet,
-    style: {}
+    style: {},
+    buttonStyle: {}
   };
 
   state = { description: null, imgUrl: null, file: null, type: TEXT };
@@ -34,7 +35,8 @@ class DataUploadForm extends Component {
       onChange,
       stylesheet: { btn },
       className,
-      style
+      style,
+      buttonStyle
     } = this.props;
 
     const { imgUrl, file, type } = this.state;
@@ -51,7 +53,7 @@ class DataUploadForm extends Component {
         }}
       >
         <FileUpload
-          style={{}}
+          style={buttonStyle}
           fileName={file ? file.name : null}
           onChange={({ url, file: newFile }) => {
             this.setState({ imgUrl: url, file: newFile });
