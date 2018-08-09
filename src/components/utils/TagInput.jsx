@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { difference, intersection, uniq } from 'lodash';
 
-import { stylesheet } from 'Src/styles/GlobalThemeContext';
+import { stylesheet, rawCSS } from 'Src/styles/GlobalThemeContext';
 import { css } from 'aphrodite';
 
 export const TagInput = class TagInput extends Component {
@@ -29,10 +29,10 @@ export const TagInput = class TagInput extends Component {
       data,
       style,
       inputTag,
-      onSelect
+      onSelect,
+      vocabulary
     } = this.props;
 
-    const hits = ['test'];
     return (
       <div>
         <div
@@ -50,7 +50,6 @@ export const TagInput = class TagInput extends Component {
               display: 'flex',
               flexWrap: 'no-wrap',
               justifyContent: 'space-between'
-              // position: 'relative',
               // zIndex: 2000
               // width: 250
             }}
@@ -70,7 +69,7 @@ export const TagInput = class TagInput extends Component {
                 onChange={event => onTagInputChange(event.target.value)}
                 style={{
                   position: 'relative',
-                  zIndex: 1000,
+                  // zIndex: 1000,
                   background: 'transparent',
                   border: 0,
                   color: '#777',
@@ -82,7 +81,8 @@ export const TagInput = class TagInput extends Component {
               />
             </form>
             <button
-              className="slim-btn ml-2 mr-2 pl-2 pr-2"
+              className={ `${css( stylesheet.bareBtn )} ml-2 mr-2 pl-2 pr-2` }
+
               type="button"
               style={{ fontWeight: 'bold' }}
               onClick={() => {
@@ -104,7 +104,7 @@ export const TagInput = class TagInput extends Component {
                   style={{
                     position: 'relative',
                     maxWidth: 100,
-                    zIndex: 4000,
+                    // zIndex: 4000,
                     fontSize: 'small',
                     fontWeight: 'bold',
                     display: 'inline-flex'
@@ -120,14 +120,44 @@ export const TagInput = class TagInput extends Component {
             </div>
           </div>
         </div>
-        <Hits data={hits} />
+        <Hits
+          data={vocabulary.filter(
+            t => inputTag && t.toLowerCase().includes(inputTag.toLowerCase())
+          )}
+          onAdd={onAdd}
+        />
       </div>
     );
   }
 };
 
-const Hits = ({ data }) => (
-  <div style={{ background: 'green' }}>{data.map(d => d)}</div>
+const Hits = ({ data, text, onAdd }) => (
+  <div
+    style={{
+      width: '100%',
+      background: 'white',
+      position: 'absolute',
+      borderLeft: rawCSS.border,
+      borderRight: rawCSS.border,
+      borderBottom: rawCSS.border
+    }}
+  >
+    {data.length > 0 && (
+      <div className="m-3">
+        {data.map(d => (
+          <div className="mb-3">
+            <button
+              className={css(stylesheet.bareBtn)}
+              style={{ width: '100%' }}
+              onClick={() => onAdd(d)}
+            >
+              {d}
+            </button>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
 );
 
 export const DropDown = class DropDown extends Component {
@@ -162,8 +192,7 @@ export const DropDown = class DropDown extends Component {
 
   render() {
     const { active, curSet, curKey, setList } = this.state;
-    // const { style } = this.props;
-    const drStyle = { display: active ? 'block' : 'none' };
+
     const isCurSetNew =
       curSet.length > 0 &&
       setList.filter(s => intersection(curSet, s).length === curSet.length)
@@ -174,7 +203,8 @@ export const DropDown = class DropDown extends Component {
         style={{
           alignItems: 'center',
           backgroundColor: '#fff',
-          maxWidth: '80%'
+          maxWidth: '80%',
+          position: 'relative'
           // border: '2px solid #ccc'
         }}
       >
@@ -203,98 +233,6 @@ export const DropDown = class DropDown extends Component {
               }));
             }}
           />
-          <button
-            className="slim-btn m-2"
-            onClick={() => this.setState(st => ({ active: !st.active }))}
-            disabled={curSet.length === 0}
-            style={{ position: 'relative', zIndex: 1000, display: 'none' }}
-          >
-            ▼
-          </button>
-        </div>
-        <div
-          style={{
-            position: 'relative',
-            zIndex: 5000,
-            display: active ? 'block' : 'none'
-            // border: '1px solid lightgrey'
-          }}
-        >
-          <div
-            style={{
-              position: 'absolute',
-              width: '100%'
-            }}
-          >
-            <div
-              className="dropdown-content p-2"
-              style={{
-                background: 'whitesmoke'
-                // border: '2px solid #ccc'
-                // border: '1px solid lightgrey'
-              }}
-            >
-              {isCurSetNew && (
-                <div
-                  style={{
-                    padding: '0.25rem',
-                    pointer: 'cursor',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    position: 'relative',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <div>{curSet.join(', ')}</div>
-                  <button
-                    className="slim-btn m-2"
-                    type="button"
-                    onClick={() =>
-                      this.setState(({ curSet: cl, setList: oldSetList }) => ({
-                        setList: [cl, ...oldSetList],
-                        // curSet: [],
-                        active: false
-                      }))
-                    }
-                    style={{ position: 'relative', zIndex: 1000 }}
-                  >
-                    Add set
-                  </button>
-                </div>
-              )}
-              {[...setList].map(set => (
-                <div
-                  style={{
-                    padding: '0.25rem',
-                    pointer: 'cursor',
-                    display: 'flex',
-                    // justifyContent: 'space-around',
-                    alignItems: 'center',
-                    position: 'relative',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <div
-                    onClick={() => {
-                      this.setState({ curSet: set, active: false });
-                    }}
-                  >
-                    {set.join(', ')}
-                  </div>
-                  <div
-                    style={{
-                      position: 'absolute',
-                      right: 0
-                    }}
-                    onClick={() => this.removeListItem(set)}
-                  >
-                    x
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     );

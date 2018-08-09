@@ -33,6 +33,7 @@ const tagColor = chroma('#a5b1c2')
 // .hex();
 
 const rawCSS = {
+  border: { border: '1px solid lightgrey' },
   btn: {
     ...btnStyle,
     borderColor: uiColor,
@@ -44,6 +45,7 @@ const rawCSS = {
   },
   bareBtn: {
     ...btnStyle,
+    fontWeight: 'inherit',
     background: shallowBg,
     ':hover': {
       boxShadow: `4px 4px ${uiColor}`

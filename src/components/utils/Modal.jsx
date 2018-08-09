@@ -82,6 +82,7 @@ export const Modal = ({
           display: visible ? 'block' : 'none',
           width: '100%',
           height: '97%',
+          minHeight: 400,
           maxHeight: 800
         }}
       >
@@ -96,7 +97,7 @@ export const Modal = ({
             className="modal-content"
             style={{
               width: '100%',
-              height: '95%',
+              height: '100%',
               overflow: 'hidden',
               // TODO: fix later
               // TODO: fix later

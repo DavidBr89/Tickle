@@ -102,7 +102,7 @@ class ZoomContainer extends Component {
     //   this.zoomFactoryCont.transform,
     //   this.state.zoomHandler
     // );
-    // this.props.onZoom(newNodes);
+    // this.props.onZoom(zoomedNodes);
   }
 
   componentDidMount() {
@@ -186,7 +186,12 @@ class ZoomContainer extends Component {
       onZoom
     } = this.props;
     const { zoomHandler } = this.state;
-    const newNodes = data.map(d => {
+
+    const constrainZoom = () => {
+      // t[0] = Math.max(0, Math.min(t[0], width - s * 50));
+      // t[1] = Math.max(0, Math.min(t[1], height - s * 50));
+    };
+    const zoomedNodes = data.map(d => {
       const [x, y] = zoomHandler.apply([d.x, d.y]);
       return { ...d, x, y };
     });
@@ -197,12 +202,12 @@ class ZoomContainer extends Component {
     return (
       <div>
         <div
-          className={className}
+          className="zoom-target"
           style={{
             position: 'absolute',
             left: 0,
             top: 0,
-            background: 'wheat',
+            // background: 'wheat',
             width,
             height,
             pointerEvents: 'all',
@@ -213,24 +218,7 @@ class ZoomContainer extends Component {
           }}
           ref={node => (this.zoomCont = node)}
         >
-          {children(newNodes, zoomHandler)}
-        </div>
-        <div
-          className="zoom-target"
-          style={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            // background: 'wheat',
-            width,
-            height,
-            // pointerEvents: 'all',
-            // overflow: 'hidden',
-            zIndex: 0,
-            ...style
-          }}
-        >
-          {children(newNodes, zoomHandler)}
+          {children(zoomedNodes, zoomHandler)}
         </div>
       </div>
     );

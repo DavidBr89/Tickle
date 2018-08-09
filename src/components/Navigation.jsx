@@ -57,7 +57,7 @@ const includePath = (pathA, pathB) => {
 const InnerLi = ({ name, path, hash, active, subRoutes = [] }) => (
   <li className="mb-2">
     <Link
-      className={`nav-link ${css(stylesheet.btn)} mb-1`}
+      className={`nav-link ${css(stylesheet.bareBtn)} mb-1`}
       style={{ background: includePath(path, hash) && 'lightgrey' }}
       to={path}
     >
@@ -66,7 +66,7 @@ const InnerLi = ({ name, path, hash, active, subRoutes = [] }) => (
     <ul>
       {subRoutes.map(d => (
         <li
-          className={`${css(stylesheet.btn)} mr-2`}
+          className={`${css(stylesheet.bareBtn)} mr-2`}
           style={{
             background: hash.includes(d.path) && 'lightgrey',
             border: 'unset'
@@ -83,12 +83,12 @@ const InnerLi = ({ name, path, hash, active, subRoutes = [] }) => (
 
 const NavigationAuth = ({
   activePath,
-  stylesheet,
+  // stylesheet,
   uiColor,
   pathName,
   location
 }) => (
-  <ul className="navList">
+  <ul className="navList ">
     {Object.keys(authRoutes).map(key => (
       <InnerLi {...authRoutes[key]} hash={location.hash} />
     ))}

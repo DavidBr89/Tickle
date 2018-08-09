@@ -1,7 +1,7 @@
 import updCardDataDim from './updateDataDimension';
 import setify from 'Utils/setify';
 
-import { union, difference } from 'lodash';
+import { union, uniq } from 'lodash';
 
 import { makeTagColorScale } from 'Src/styles/GlobalThemeContext';
 
@@ -70,6 +70,7 @@ const INITIAL_STATE = {
   collectibleCards: [],
   createdCards: [],
   tmpCards: [],
+  allTags: [],
   // TODO: update
   tmpCard: defaultCardTemplate,
   challenges: [],
@@ -112,12 +113,14 @@ function reducer(state = INITIAL_STATE, action) {
 
     case RECEIVE_COLLECTIBLE_CARDS: {
       const cards = action.options;
-
+      const allTags = uniq(cards.reduce((acc, c) => [...acc, ...c.tags], []));
+      console.log('allTags', allTags);
       // const cardSets = setify(cards);
       // const tagColorScale = makeTagColorScale(cardSets);
       return {
         ...state,
         collectibleCards: cards,
+        allTags,
         loadingCards: false
         // tagColorScale
         // defaultCards: cards

@@ -181,12 +181,12 @@ class ReadCardFront extends Component {
   btnText = () => {
     const { challengeStarted, challengeSubmitted } = this.state;
     if (challengeSubmitted) {
-      return 'Challenge submitted';
+      return 'Challenge done';
     }
     if (challengeStarted) {
       return 'Challenge started';
     }
-    return 'Do Challenge';
+    return 'Challenge';
   };
 
   render() {

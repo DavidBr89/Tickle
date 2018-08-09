@@ -81,11 +81,10 @@ class MediaChallenge extends Component {
           className={className}
           style={{ width: '100%', height: '70%', ...styles }}
         >
-          <h4>Task</h4>
           <p style={{ width: '100%', maxHeight: '30%', overflow: 'scroll' }}>
             {description}
           </p>
-          <h4>Response</h4>
+          <h5>Response</h5>
           <textarea
             style={{ width: '100%' }}
             rows="2"
@@ -99,7 +98,7 @@ class MediaChallenge extends Component {
             }}
           />
           <MediaUpload
-            style={{ width: '100%', height: '30%' }}
+            style={{ width: '100%', height: '50%' }}
             uploadPath={id => `challengeSubmissionFiles/${id}`}
             media={media}
             stylesheet={stylesheet}

@@ -280,9 +280,10 @@ html, body {
     padding: 0;
 }
 
-/* a { *hidden
-/*    color: #a5b1c2; */
-/* } */
+a {
+   color: inherit;
+   text-decoration: none;
+ }
 
 input[type="file"] {
     display: none;

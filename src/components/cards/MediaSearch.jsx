@@ -392,7 +392,7 @@ CellDetail.defaultProps = {
   focusColor: 'black'
 };
 // props.selected ? css(stylesheet.bigBoxShadow) : css(stylesheet.border)}
-const CellWrapper = ({ btn, className, focusColor, ...props }) => (
+const CellWrapper = ({ btn, className, focusColor, style, ...props }) => (
   <CardThemeConsumer>
     {({ stylesheet }) => (
       <div
@@ -400,8 +400,9 @@ const CellWrapper = ({ btn, className, focusColor, ...props }) => (
           props.selected ? css(stylesheet.bigBoxShadow) : css(stylesheet.border)
         }`}
         style={{
-          height: 250,
+          height: '100%',
           width: '100%',
+          ...style,
           cursor: 'pointer',
           position: 'relative',
           display: 'flex'
@@ -1084,6 +1085,7 @@ class MediaOverview extends Component {
               btn={
                 edit && <MediaBtn selected onClick={() => this.removeItem(d)} />
               }
+              style={{ height: '30vh', minHeight: 200 }}
             />
           )}
         </ScrollList>

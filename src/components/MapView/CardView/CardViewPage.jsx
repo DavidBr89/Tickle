@@ -146,18 +146,15 @@ class CardViewPage extends Component {
       selectedCardId,
       // width,
       height,
-      authEnv,
       previewCardAction,
       selectCard,
       filterCards,
       addCardFilter,
-      dataView,
+      allTags,
       // setDataView,
       filterSet,
       toggleAuthEnv,
       tagColorScale,
-      cardSets,
-      selectedTags,
       isSmartphone,
       cardPanelVisible,
       toggleCardPanel
@@ -183,7 +180,7 @@ class CardViewPage extends Component {
               style={{
                 display: 'flex',
                 justifyContent: 'flex-end',
-                zIndex: 100,
+                zIndex: 2000,
                 position: 'relative'
               }}
             >
@@ -192,6 +189,7 @@ class CardViewPage extends Component {
                 key={filterSet.join(',')}
                 onChange={filterCards}
                 onSelect={() => selectCard(null)}
+                vocabulary={allTags}
                 style={{
                   display: 'flex',
                   // position: 'absolute',
@@ -240,7 +238,7 @@ class CardViewPage extends Component {
                 zIndex: 2000
               }}
             >
-              <div style={{ position: 'absolute', right: 0, zIndex: 100}}>
+              <div style={{ position: 'absolute', right: 0, zIndex: 100 }}>
                 <button
                   onClick={toggleCardPanel}
                   className={`${css(stylesheet.btn)} mr-1`}
@@ -251,7 +249,7 @@ class CardViewPage extends Component {
             </div>
             <CardViewOverlay
               {...this.props}
-              style={{ height: '60%' }}
+              style={{ height: '55%' }}
               colorScale={tagColorScale}
             />
           </div>

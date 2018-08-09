@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { stylesheet } from 'Src/styles/GlobalThemeContext';
+import { css } from 'aphrodite';
 // import { Link } from 'react-router-dom';
 
 // import SignOutButton from '../SignOut';
@@ -17,12 +19,12 @@ import Navigation from '../Navigation';
 // import cx from './MainLayout.scss';
 
 const Menu = ({ style, children }) => (
-  <div style={{ ...style}}>
+  <div style={{ ...style }}>
     <nav
-      className="navbar navbar-light"
+      className="navbar navbar-light "
       style={{
-        zIndex: 1000,
-        minWidth: '30%'
+        zIndex: 5000
+        // minWidth: '30%'
         // filter: 'blur(10px)',
 
         // display: 'flex'
@@ -47,11 +49,11 @@ const Menu = ({ style, children }) => (
       style={{
         position: 'relative',
         zIndex: 4000,
-        background: 'whitesmoke'
+        background: 'white'
       }}
     >
       <div
-        className="p-3"
+        className={`p-3 ${css(stylesheet.border)}`}
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -89,7 +91,7 @@ class MainLayout extends Component {
 
     // style={{ height: isAndroid ? '100vh' : '100vh' }}
     return (
-      <div id="content-container" >
+      <div id="content-container">
         <Menu style={{ position: 'absolute' }}>
           <Navigation activePath={activePath}>
             {(r, name) => (

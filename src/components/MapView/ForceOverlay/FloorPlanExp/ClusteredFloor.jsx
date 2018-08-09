@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
 
 import { intersection } from 'lodash';
 
@@ -55,7 +55,7 @@ function ClusterPlaceholder({
         border: '#24292e solid 1px',
         borderRadius: '100%',
         overflow: 'hidden',
-        zIndex: 1000
+        zIndex: 100
       }}
     >
       <div
