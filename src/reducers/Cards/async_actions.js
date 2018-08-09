@@ -117,6 +117,8 @@ export function fetchCreatedCards(uid) {
 export function fetchAllCards(uid) {
   return function(dispatch) {
     dispatch(loadingCards());
+    // TODO
+    // TODO
     return db.readCards(haaike, 'collectibleCards').then(collectibleCards => {
       dispatch(receiveCollectibleCards(collectibleCards));
       db.readCards(uid, 'createdCards').then(createdCards =>

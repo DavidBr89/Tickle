@@ -179,23 +179,16 @@ class CardViewPage extends Component {
         >
           <div className="h-100">
             <div
-              className="input-group m-2"
+              className=" m-2"
               style={{
                 display: 'flex',
                 justifyContent: 'flex-end',
-                zIndex: 100
+                zIndex: 100,
+                position: 'relative'
               }}
             >
-              <div className="mr-2">
-                <button
-                  onClick={toggleCardPanel}
-                  className={css(stylesheet.btn)}
-                  style={{ height: '100%' }}
-                >
-                  {cardPanelVisible ? 'Hide Cards' : 'Show Cards'}
-                </button>
-              </div>
               <DropDown
+                className="mr-1"
                 key={filterSet.join(',')}
                 onChange={filterCards}
                 onSelect={() => selectCard(null)}
@@ -239,9 +232,26 @@ class CardViewPage extends Component {
                 }}
               />
             </div>
+            <div
+              className="mr-2"
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                zIndex: 2000
+              }}
+            >
+              <div style={{ position: 'absolute', right: 0, zIndex: 100}}>
+                <button
+                  onClick={toggleCardPanel}
+                  className={`${css(stylesheet.btn)} mr-1`}
+                >
+                  {cardPanelVisible ? 'Hide Cards' : 'Show Cards'}
+                </button>
+              </div>
+            </div>
             <CardViewOverlay
               {...this.props}
-              style={{ height: calcDataViewHeight(isSmartphone) }}
+              style={{ height: '60%' }}
               colorScale={tagColorScale}
             />
           </div>

@@ -12,7 +12,7 @@ import AuthUserContext from './AuthUserContext';
 
 import { DATAVIEW, authRoutes, nonAuthRoutes } from 'Constants/routes';
 import { stylesheet } from 'Src/styles/GlobalThemeContext';
-import { css } from 'aphrodite/no-important';
+import { css } from 'aphrodite';
 
 import { setDataView } from 'Reducers/DataView/actions';
 
@@ -65,11 +65,14 @@ const InnerLi = ({ name, path, hash, active, subRoutes = [] }) => (
     </Link>
     <ul>
       {subRoutes.map(d => (
-        <li>
-          <Link
-            to={d.path}
-            style={{ background: hash.includes(d.path) && 'lightgrey' }}
-          >
+        <li
+          className={`${css(stylesheet.btn)} mr-2`}
+          style={{
+            background: hash.includes(d.path) && 'lightgrey',
+            border: 'unset'
+          }}
+        >
+          <Link to={d.path} style={{}}>
             {d.name}
           </Link>
         </li>
@@ -98,7 +101,7 @@ const NavigationAuth = ({
 const NavigationNonAuth = ({ activePath, stylesheet, uiColor, location }) => (
   <ul className="navList">
     {Object.keys(nonAuthRoutes).map(key => (
-      <InnerLi {...nonAuthRoutes[key]} hash={location.hash} />
+      <InnerLi key={key} {...nonAuthRoutes[key]} hash={location.hash} />
     ))}
   </ul>
 );

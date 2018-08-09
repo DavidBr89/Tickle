@@ -60,7 +60,7 @@ class ZoomContainer extends Component {
     data: [],
     delay: 200,
     selectedId: null,
-    maxZoomScale: 5
+    maxZoomScale: 1.5
   };
 
   constructor(props) {
@@ -110,6 +110,8 @@ class ZoomContainer extends Component {
     d3.select(this.zoomCont)
       .call(this.zoomFactoryCont)
       .on('dblclick.zoom', null);
+    // .duration(0);
+    // .on('.zoom', null);
 
     const zoomHandler = centerView(this.props);
     d3.select(this.zoomCont).call(this.zoomFactoryCont.transform, zoomHandler);
@@ -155,12 +157,17 @@ class ZoomContainer extends Component {
     const { width, height, maxZoomScale } = props;
     return d3
       .zoom()
+      .duration(-2000)
       .wheelDelta(
         () => (-d3.event.deltaY * (d3.event.deltaMode ? 50 : 1)) / 500
       )
-      .scaleExtent([0.5, maxZoomScale])
+      .scaleExtent([1, maxZoomScale])
       .extent([[0, 0], [width, height]])
-      .filter(() => !d3.event.target.classList.contains('no-zoom'))
+      .filter(() => {
+        console.log('yeah', d3.event);
+        // return !d3.event.target.classList.contains('no-zoom');
+        return true;
+      })
       .on('zoom', () => {
         this.setState({
           zoomHandler: d3.event.transform || d3.zoomIdentity
@@ -188,23 +195,43 @@ class ZoomContainer extends Component {
     // console.log('zoomHandler', zoomHandler.k);
 
     return (
-      <div
-        className={className}
-        style={{
-          position: 'absolute',
-          left: 0,
-          top: 0,
-          // background: 'wheat',
-          width,
-          height,
-          pointerEvents: 'all',
-          // overflow: 'hidden',
-          // zIndex: 0,
-          ...style
-        }}
-        ref={node => (this.zoomCont = node)}
-      >
-        {children(newNodes, zoomHandler)}
+      <div>
+        <div
+          className={className}
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            background: 'wheat',
+            width,
+            height,
+            pointerEvents: 'all',
+            zIndex: 10,
+            // overflow: 'hidden',
+            // zIndex: 0,
+            ...style
+          }}
+          ref={node => (this.zoomCont = node)}
+        >
+          {children(newNodes, zoomHandler)}
+        </div>
+        <div
+          className="zoom-target"
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            // background: 'wheat',
+            width,
+            height,
+            // pointerEvents: 'all',
+            // overflow: 'hidden',
+            zIndex: 0,
+            ...style
+          }}
+        >
+          {children(newNodes, zoomHandler)}
+        </div>
       </div>
     );
   }

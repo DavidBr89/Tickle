@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { difference, intersection, uniq } from 'lodash';
 
+import { stylesheet } from 'Src/styles/GlobalThemeContext';
+import { css } from 'aphrodite';
+
 export const TagInput = class TagInput extends Component {
   static propTypes = {
     children: PropTypes.node,
@@ -29,83 +32,103 @@ export const TagInput = class TagInput extends Component {
       onSelect
     } = this.props;
 
+    const hits = ['test'];
     return (
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          backgroundColor: '#fff',
-          overflow: 'hidden',
-          padding: 5
-          // width: 300
-        }}
-      >
+      <div>
         <div
           style={{
             display: 'flex',
-            flexWrap: 'no-wrap',
-            justifyContent: 'space-between'
-            // position: 'relative',
-            // zIndex: 2000
-            // width: 250
+            alignItems: 'center',
+            backgroundColor: '#fff',
+            overflow: 'hidden',
+            padding: 5
+            // width: 300
           }}
         >
-          <input
-            className="form-control"
-            type="text"
-            placeholder="Search by Tag"
-            onSelect={onSelect}
-            value={inputTag}
-            onChange={event => onTagInputChange(event.target.value)}
-            style={{
-              position: 'relative',
-              zIndex: 1000,
-              background: 'transparent',
-              border: 0,
-              color: '#777',
-              outline: 'none',
-              padding: 5
-              // width: 80
-            }}
-          />
-          <button
-            className="slim-btn ml-2 mr-2 pl-2 pr-2"
-            type="button"
-            style={{ fontWeight: 'bold' }}
-            onClick={() => {
-              onAdd(inputTag);
-            }}
-          >
-            +
-          </button>
           <div
             style={{
               display: 'flex',
-              alignItems: 'center',
-              flexWrap: 'no-wrap'
+              flexWrap: 'no-wrap',
+              justifyContent: 'space-between'
+              // position: 'relative',
+              // zIndex: 2000
+              // width: 250
             }}
           >
-            {data.map(key => (
-              <span
-                className="mr-2"
+            <form
+              onSubmit={event => {
+                event.preventDefault();
+                onAdd(inputTag);
+              }}
+            >
+              <input
+                className="form-control"
+                type="text"
+                placeholder="Search by Tag"
+                onSelect={onSelect}
+                value={inputTag}
+                onChange={event => onTagInputChange(event.target.value)}
                 style={{
                   position: 'relative',
-                  zIndex: 4000,
-                  fontSize: 'small',
-                  fontWeight: 'bold'
+                  zIndex: 1000,
+                  background: 'transparent',
+                  border: 0,
+                  color: '#777',
+                  outline: 'none',
+                  padding: 5,
+                  minWidth: 40
+                  // width: 80
                 }}
-                onClick={() => onRemove(key)}
-              >
-                <span>{key}</span>
-                <span> x</span>
-              </span>
-            ))}
+              />
+            </form>
+            <button
+              className="slim-btn ml-2 mr-2 pl-2 pr-2"
+              type="button"
+              style={{ fontWeight: 'bold' }}
+              onClick={() => {
+                onAdd(inputTag);
+              }}
+            >
+              +
+            </button>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                flexWrap: 'no-wrap'
+              }}
+            >
+              {data.map(key => (
+                <button
+                  className={`${css(stylesheet.bareBtn)} mr-1`}
+                  style={{
+                    position: 'relative',
+                    maxWidth: 100,
+                    zIndex: 4000,
+                    fontSize: 'small',
+                    fontWeight: 'bold',
+                    display: 'inline-flex'
+                  }}
+                  onClick={() => onRemove(key)}
+                >
+                  <span className={`mr-1 ${css(stylesheet.truncate)}`}>
+                    {key}
+                  </span>
+                  <span>x</span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
+        <Hits data={hits} />
       </div>
     );
   }
 };
+
+const Hits = ({ data }) => (
+  <div style={{ background: 'green' }}>{data.map(d => d)}</div>
+);
 
 export const DropDown = class DropDown extends Component {
   static propTypes = {
@@ -151,7 +174,7 @@ export const DropDown = class DropDown extends Component {
         style={{
           alignItems: 'center',
           backgroundColor: '#fff',
-          maxWidth: '50%'
+          maxWidth: '80%'
           // border: '2px solid #ccc'
         }}
       >

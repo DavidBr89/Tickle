@@ -42,6 +42,13 @@ const rawCSS = {
       boxShadow: `4px 4px ${uiColor}`
     }
   },
+  bareBtn: {
+    ...btnStyle,
+    background: shallowBg,
+    ':hover': {
+      boxShadow: `4px 4px ${uiColor}`
+    }
+  },
   imgUploadBtn: {
     ...btnStyle,
     display: null,
@@ -86,7 +93,7 @@ const {
   Consumer: GlobalThemeConsumer
 } = React.createContext({ uiColor, tagColor, stylesheet, rawCSS });
 
-const calcDataViewHeight = isSmartphone => (isSmartphone ? '60%' : '65%');
+const calcDataViewHeight = isSmartphone => (isSmartphone ? '60%' : '60%');
 
 export {
   GlobalThemeProvider,

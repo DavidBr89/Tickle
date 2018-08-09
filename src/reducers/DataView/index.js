@@ -1,4 +1,4 @@
-import { union, difference, uniq} from 'lodash';
+import { union, difference, uniq } from 'lodash';
 
 import { TEMPLATE_ID } from 'Constants/cardTemplate';
 
@@ -51,7 +51,6 @@ export default function dataViewReducer(state = INITIAL_STATE, action) {
       const { filterSet } = state;
       const tag = action.options;
       const newFs = uniq([...filterSet, tag]);
-      console.log('newFs', newFs);
       return {
         ...state,
         filterSet: newFs,

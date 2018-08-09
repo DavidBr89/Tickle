@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import * as d3 from 'd3';
+
+import ReactDOM from 'react-dom';
 
 import { intersection } from 'lodash';
 
@@ -14,7 +17,7 @@ import PreviewMarker from 'Utils/PreviewMarker';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { addCardFilter } from 'Reducers/DataView/actions';
+import { addCardFilter, removeCardFilter } from 'Reducers/DataView/actions';
 
 function ClusterPlaceholder({
   coords: [x, y],
@@ -25,11 +28,12 @@ function ClusterPlaceholder({
   transition,
   onClick,
   values,
-  text
+  text,
+  domNode
   // ...props
 }) {
-  return (
-    <div
+  const content = (
+    <button
       className="no-zoom"
       key={tags.join('-')}
       onClick={onClick}
@@ -42,23 +46,23 @@ function ClusterPlaceholder({
         top: y,
         transform: `translate(-50%,-50%)`,
         cursor: 'pointer',
-        // pointerEvents: 'none',
+        pointerEvents: 'all',
         background: 'white',
-        // zIndex: 100,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         boxShadow: '3px 3px #24292e',
         border: '#24292e solid 1px',
         borderRadius: '100%',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        zIndex: 1000
       }}
     >
       <div
         style={{
           zIndex: -1,
           background: 'whitesmoke',
-          // pointerEvents: 'all',
+          pointerEvents: 'none',
           opacity: 0.8,
           width: '100%',
           height: '100%',
@@ -70,24 +74,41 @@ function ClusterPlaceholder({
         style={{
           width: '100%',
           height: '100%',
-          // pointerEvents: 'none',
+          pointerEvents: 'none',
           background: 'whitesmoke',
+          pointerEvents: 'none',
           // padding: '10.65%',
           // background: 'white',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center'
+
           // flexDirection: 'column'
           // padding: '14.65%'
         }}
       >
-        <div>{values.length}</div>
-        <div className="ml-1" style={{ width: 25, height: 25 }}>
-          <PreviewMarker />
+        <div
+          style={{
+            pointerEvents: 'none'
+          }}
+        >
+          {values.length}
+        </div>
+        <div
+          className="ml-1"
+          style={{
+            pointerEvents: 'none'
+          }}
+          style={{ width: 25, height: 25 }}
+        >
+          <PreviewMarker style={{ pointerEvents: 'none' }} />
         </div>
       </div>
-    </div>
+    </button>
   );
+
+  return content;
+  // return ReactDOM.createPortal(content, domNode);
 }
 ClusterPlaceholder.propTypes = { transition: PropTypes.array };
 ClusterPlaceholder.defaultProps = { transition: 500 };
@@ -110,13 +131,15 @@ class ClusteredFloor extends Component {
       colorScale,
       noPreview,
       addCardFilter,
+      removeCardFilter,
       children,
-      data
+      data,
+      filterSet
     } = this.props;
 
     const card = data.filter(n => n.id === selectedCardId).map(children);
     return (
-      <React.Fragment>
+      <div className="yo" ref={e => (this.container = e)}>
         {card}
         <Floorplan {...this.props}>
           {nn => (
@@ -136,8 +159,8 @@ class ClusteredFloor extends Component {
                       position: 'absolute',
                       left: 0,
                       top: 0,
-                      // pointerEvents: 'all',
-                      // zIndex: 100,
+                      pointerEvents: 'none',
+                      // zIndexx: 4000,
                       transform: `translate(${zHandler.x}px,${
                         zHandler.y
                       }px) scale(${zHandler.k})`,
@@ -146,73 +169,60 @@ class ClusteredFloor extends Component {
                   />
 
                   <FloorCluster
-                    radius={d =>
-                      // console.log('d', d);
-                      50
-                    }
+                    radius={() => 50}
                     nodes={zn}
                     width={width}
                     height={height}
                     colorScale={colorScale}
                   >
-                    {cls => (
-                      <React.Fragment>
-                        {cls.map(
-                          ({ centerPos: [x, y], ...d }) =>
-                            d.values.length === 1 ? (
-                              <PreviewMarker
-                                key={d.id}
-                                delay={100}
-                                width={25}
-                                height={30}
-                                x={x}
-                                y={y}
-                                style={{
-                                  transform:
-                                    selectedCardId === d.id && 'scale(2)'
-                                }}
-                                onClick={() => console.log('yeah')}
-                              />
-                            ) : (
-                              <ClusterPlaceholder
-                                onClick={() => {
-                                  console.log('yeah', d.values);
-                                  const commons = intersection(
-                                    ...d.values.map(e => e.tags)
-                                  );
-                                  commons.length > 0 &&
-                                    addCardFilter(commons[0]);
-                                }}
-                                text={intersection(
-                                  ...d.values.map(e => e.tags)[0]
-                                )}
-                                coords={[x, y]}
-                                centroid={[x, y]}
-                                size={40}
-                                colorScale={colorScale}
-                                {...d}
-                              />
+                    {cls =>
+                      cls.map(({ centerPos: [x, y], ...d }) => (
+                        <ClusterPlaceholder
+                          onClick={e => {
+                            e.preventDefault();
+                            console.log('d3.event', d3.event);
+                            // d3.event.stopImmmediatePropagation();
+                            const commons = intersection(
+                              ...d.values.map(e => e.tags)
+                            );
+                            const commonTag =
+                              commons.length > 0 ? commons[0] : null;
+
+                            if (
+                              commonTag !== null &&
+                              !filterSet.includes(commonTag)
                             )
-                        )}
-                      </React.Fragment>
-                    )}
+                              addCardFilter(commonTag);
+                            else {
+                              removeCardFilter(commonTag);
+                            }
+                          }}
+                          coords={[x, y]}
+                          centroid={[x, y]}
+                          size={40}
+                          colorScale={colorScale}
+                          {...d}
+                        />
+                      ))
+                    }
                   </FloorCluster>
                 </div>
               )}
             </ZoomCont>
           )}
         </Floorplan>
-      </React.Fragment>
+      </div>
     );
   }
 }
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({ filterSet: state.DataView.filterSet });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      addCardFilter
+      addCardFilter,
+      removeCardFilter
     },
     dispatch
   );
