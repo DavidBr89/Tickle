@@ -27,6 +27,7 @@ import { calcDataViewHeight } from 'Src/styles/GlobalThemeContext';
 
 import CardDragAuthorOverlay from './CardDragAuthorOverlay';
 
+import CardTagSearch from '../CardTagSearch';
 // import DragLayer from './DragAndDrop/DragLayer';
 
 // import { StyledButton } from 'Utils/StyledComps';
@@ -168,7 +169,8 @@ class CardAuthorPage extends Component {
       tagColorScale,
       cardSets,
       selectedTags,
-      isSmartphone
+      isSmartphone,
+      allTagsCreated
     } = this.props;
 
     const slotSize = 100 / 3.5;
@@ -188,29 +190,15 @@ class CardAuthorPage extends Component {
           }}
         >
           <div className="h-100">
-            <div
-              className="input-group mt-2"
-              style={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                zIndex: 100
-              }}
-            >
-              <DropDown
-                key={filterSet.join(',')}
-                onChange={filterCards}
-                onSelect={() => selectCard(null)}
-                style={{
-                  display: 'flex',
-                  // position: 'absolute',
-                  justifyContent: 'flex-end',
-                  marginTop: 10,
-                  marginRight: 10
-                }}
-                onClick={addCardFilter}
-                data={filterSet}
-              />
-            </div>
+            <CardTagSearch
+              allTags={allTagsCreated}
+              key={filterSet.join(',')}
+              onChange={filterCards}
+              onSelect={() => selectCard(null)}
+              onClick={addCardFilter}
+              data={filterSet}
+            />
+
             <div
               className="mb-3 mt-3"
               style={{

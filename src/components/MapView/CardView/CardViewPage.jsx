@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { DropDown } from 'Utils/TagInput';
 import { css } from 'aphrodite';
 // import { PreviewCard } from 'Components/cards';
 import CardStack from '../CardStack';
+
+import { calcDataViewHeight, stylesheet } from 'Src/styles/GlobalThemeContext';
 
 import {
   DragSourceCont,
@@ -12,9 +13,9 @@ import {
   DragDropContextProvider
 } from '../DragAndDrop/DragSourceTarget';
 
-import CardViewOverlay from './CardViewOverlay';
+import CardTagSearch from '../CardTagSearch';
 
-import { calcDataViewHeight, stylesheet } from 'Src/styles/GlobalThemeContext';
+import CardViewOverlay from './CardViewOverlay';
 
 // import { StyledButton } from 'Utils/StyledComps';
 
@@ -150,7 +151,7 @@ class CardViewPage extends Component {
       selectCard,
       filterCards,
       addCardFilter,
-      allTags,
+      allTagsCollectible,
       // setDataView,
       filterSet,
       toggleAuthEnv,
@@ -175,32 +176,14 @@ class CardViewPage extends Component {
           }}
         >
           <div className="h-100">
-            <div
-              className=" m-2"
-              style={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                zIndex: 2000,
-                position: 'relative'
-              }}
-            >
-              <DropDown
-                className="mr-1"
-                key={filterSet.join(',')}
-                onChange={filterCards}
-                onSelect={() => selectCard(null)}
-                vocabulary={allTags}
-                style={{
-                  display: 'flex',
-                  // position: 'absolute',
-                  justifyContent: 'flex-end',
-                  marginTop: 10,
-                  marginRight: 10
-                }}
-                onClick={addCardFilter}
-                data={filterSet}
-              />
-            </div>
+            <CardTagSearch
+              allTags={allTagsCollectible}
+              key={filterSet.join(',')}
+              onChange={filterCards}
+              onSelect={() => selectCard(null)}
+              onClick={addCardFilter}
+              data={filterSet}
+            />
             <div
               className="mb-3 mt-3"
               style={{
@@ -208,7 +191,7 @@ class CardViewPage extends Component {
                 justifyContent: 'center',
                 transition: 'opacity 0.5s',
                 height: '25%',
-                zIndex: 3000,
+                zIndex: 1000,
                 opacity: cardPanelVisible ? 1 : 0
               }}
             >

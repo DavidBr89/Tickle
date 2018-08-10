@@ -165,7 +165,7 @@ export const DropDown = class DropDown extends Component {
     children: PropTypes.node,
     className: PropTypes.string
   };
-  static defaultProps = { style: {} };
+  static defaultProps = { style: {}, vocabulary: [] };
 
   state = { active: false, curSet: this.props.data, setList: [] };
 

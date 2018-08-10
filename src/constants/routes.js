@@ -32,8 +32,8 @@ const DATAVIEW_ROUTE = {
     // TODO: change later
     path: DATAVIEW_GEO,
     subRoutes: [
-      { name: 'Geo', path: DATAVIEW_GEO },
-      { name: 'FloorPlan', path: DATAVIEW_FLOORPLAN },
+      // { name: 'Geo', path: DATAVIEW_GEO },
+      { name: 'Treasure Map', path: DATAVIEW_FLOORPLAN },
       { name: 'Topic', path: DATAVIEW_TAGS }
     ]
   }

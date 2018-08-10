@@ -96,6 +96,11 @@ function reducer(state = INITIAL_STATE, action) {
 
     case RECEIVE_CREATED_CARDS: {
       const cards = action.options;
+
+      const allTagsCreated = uniq(
+        cards.reduce((acc, c) => [...acc, ...c.tags], [])
+      );
+
       const createdCards = cards.map(c => ({ ...c, edit: true }));
 
       // const cardSets = setify(cards);
@@ -104,7 +109,8 @@ function reducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         createdCards,
-        loadingCards: false
+        loadingCards: false,
+        allTagsCreated,
         // tagColorScale
         // cards
         // isCardDragging
@@ -113,14 +119,15 @@ function reducer(state = INITIAL_STATE, action) {
 
     case RECEIVE_COLLECTIBLE_CARDS: {
       const cards = action.options;
-      const allTags = uniq(cards.reduce((acc, c) => [...acc, ...c.tags], []));
-      console.log('allTags', allTags);
+      const allTagsCollectible = uniq(
+        cards.reduce((acc, c) => [...acc, ...c.tags], [])
+      );
       // const cardSets = setify(cards);
       // const tagColorScale = makeTagColorScale(cardSets);
       return {
         ...state,
         collectibleCards: cards,
-        allTags,
+        allTagsCollectible,
         loadingCards: false
         // tagColorScale
         // defaultCards: cards
