@@ -116,7 +116,8 @@ class Tag extends React.Component {
             <div
               className="mr-2"
               style={{
-                fontSize: small ? '100%' : '200%',
+                // fontSize: small ? '100%' : '200%',
+                fontSize: 'calc(1.5vw + 1.5vh + 1vmin)',
 
                 // width: '100%',
                 whiteSpace: 'nowrap',

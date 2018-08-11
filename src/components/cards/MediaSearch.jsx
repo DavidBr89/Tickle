@@ -14,6 +14,7 @@ import ScrollList from 'Components/utils/ScrollList';
 
 // import { DDG } from 'node-ddg-api';
 import { db } from 'Firebase';
+import { mediaScale } from 'Constants/mediaTypes';
 
 import MediaUpload from 'Utils/MediaUpload';
 import DimWrapper from 'Utils/DimensionsWrapper';
@@ -354,22 +355,24 @@ const CellDetail = ({
           width: '100%'
         }}
       >
-        <h3 style={{ ...truncateStyle, width: '100%' }}>
-          <NewTabLink
-            href={url}
-            style={{
-              display: 'inline-flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              width: '100%'
-            }}
-          >
-            <div className="mr-1" style={{ ...truncateStyle, width: '70%' }}>
-              {title}
-            </div>
-            <Icon.Youtube size={30} />
-          </NewTabLink>
-        </h3>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <h4 style={{ ...truncateStyle, width: '100%' }}>
+            <NewTabLink
+              href={url}
+              style={{
+                display: 'inline-flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                width: '100%'
+              }}
+            >
+              <div className="mr-1" style={{ ...truncateStyle, width: '100%' }}>
+                {title}
+              </div>
+            </NewTabLink>
+          </h4>
+          <div>{React.createElement(mediaScale(type))}</div>
+        </div>
         {thumbnail ? (
           <div
             onClick={onClick}

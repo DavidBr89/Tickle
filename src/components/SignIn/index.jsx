@@ -12,10 +12,7 @@ import { ModalBody } from 'Components/utils/Modal';
 
 import * as routes from 'Constants/routes';
 
-import {
-  GlobalThemeConsumer,
-  stylesheet as defaultStylesheet
-} from 'Src/styles/GlobalThemeContext';
+import { GlobalThemeConsumer, stylesheet } from 'Src/styles/GlobalThemeContext';
 
 const byPropKey = (propertyName, value) => () => ({
   [propertyName]: value
@@ -101,22 +98,29 @@ const SignInPureForm = ({
   onPasswordChange,
   onEmailChange
 }) => (
-  <form onSubmit={onSubmit}>
+  <form className="mb-1" onSubmit={onSubmit}>
     <input
       value={email}
       onChange={onEmailChange}
       type="text"
       placeholder="Email Address"
+      className="form-control mb-1"
     />
     <input
       value={password}
       onChange={onPasswordChange}
       type="password"
       placeholder="Password"
+      className="form-control mb-1"
     />
     {onSubmit && (
       <React.Fragment>
-        <button disabled={isInvalid} type="submit">
+        <button
+          className={css(stylesheet.btn)}
+          disabled={isInvalid}
+          style={{ width: '100%' }}
+          type="submit"
+        >
           Sign In
         </button>
         {error && <p>{error.message}</p>}
@@ -148,20 +152,18 @@ SignInPureForm.defaultProps = {
 export class SignInModalBody extends Component {
   static propTypes = {
     onAuthenticate: PropTypes.func,
-    history: PropTypes.object,
-    stylesheet: PropTypes.object
+    history: PropTypes.object
   };
 
   static defaultProps = {
     onAuthenticate: history => history.push(routes.DATAVIEW),
-    stylesheet: defaultStylesheet,
     history: null
   };
 
   state = { ...INITIAL_STATE };
 
   render() {
-    const { stylesheet, onClose} = this.props;
+    const { onClose } = this.props;
     const { email, password, error } = this.state;
 
     const isInvalid = password === '' || email === '';

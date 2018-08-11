@@ -109,7 +109,9 @@ class ReadCardFront extends Component {
       onSubmitChallenge
     } = this.props;
 
-    const FooterBtn = () => <Btn onClick={this.onClose}>Close</Btn>;
+    const FooterBtn = () => (
+      <Btn onClick={() => this.setState({ dialog: null })}>Close</Btn>
+    );
 
     switch (field) {
       case 'Title':

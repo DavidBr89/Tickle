@@ -6,7 +6,7 @@ import { differenceWith } from 'lodash';
 
 import floorplanImg from './floorplan.png';
 
-class Floorplan extends Component {
+class MiniForce extends Component {
   static propTypes = {
     children: PropTypes.node,
     width: PropTypes.number,
@@ -63,9 +63,9 @@ class Floorplan extends Component {
       .restart()
       .alpha(1)
       .alphaMin(0.7)
-      .force('x', d3.forceX(d => d.tx).strength(0.3))
-      .force('y', d3.forceY(d => d.ty).strength(0.3))
-      .force('coll', d3.forceCollide(20))
+      .force('x', d3.forceX(d => d.tx).strength(0.5))
+      .force('y', d3.forceY(d => d.ty).strength(0.5))
+      .force('coll', d3.forceCollide(40))
       .on('end', () => {
         const nodes = forceNodes.map(({ x, y }) => ({ x, y }));
         this.setState({
@@ -109,4 +109,4 @@ class Floorplan extends Component {
   }
 }
 
-export default Floorplan;
+export default MiniForce;

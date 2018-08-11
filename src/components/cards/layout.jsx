@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { scaleOrdinal } from 'd3';
-import * as Icon from 'react-feather';
 import { css } from 'aphrodite/no-important';
 // import Grid from 'mygrid/dist';
-import { TEXT, IMG, GIF, VIDEO } from 'Constants/mediaTypes';
+import { mediaScale } from 'Constants/mediaTypes';
 import { profileSrc, colorClass, colorScaleRandom } from './styles';
 
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
@@ -18,9 +16,6 @@ import cx from './Card.scss';
 import placeholderImgSrc from './placeholder.png';
 
 const challengeTypes = ['quiz', 'gap text', 'hangman'];
-const mediaScale = scaleOrdinal()
-  .domain([TEXT, IMG, GIF, VIDEO])
-  .range([Icon.AlignLeft, Icon.Image, Icon.Image, Icon.Film]);
 
 export const ZoomIcon = ({ style, className }) => (
   <i

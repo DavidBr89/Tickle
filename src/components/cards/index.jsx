@@ -19,25 +19,6 @@ import { colorScale } from './styles';
 import { CardThemeProvider, makeStylesheet } from 'Src/styles/CardThemeContext';
 import { btnStyle } from 'Src/styles/helperStyles';
 
-// ReadCardBack.defaultProps = {
-//   key: 'asa',
-//   comments: [
-//     {
-//       user: 'Nils',
-//       img:
-//         'https://placeholdit.imgix.net/~text?txtsize=6&txt=50%C3%9750&w=50&h=50',
-//       comment: 'I did not know that he was such a famous composer',
-//       date: '22/04/2016'
-//     },
-//     {
-//       user: 'Babba',
-//       comment: 'What a nice park, strange, that they put a mask on his face!',
-//       date: '22/04/2016'
-//     }
-//   ],
-//   author: { name: 'jan', comment: 'welcome to my super hard challenge!' }
-// };
-
 class Card extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,

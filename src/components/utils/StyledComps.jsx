@@ -53,11 +53,16 @@ export class StyledButton extends Component {
 
 export const NewTabLink = ({ href, className, style, children }) => (
   <a
-    className="badge badge-light"
     target="_blank"
     href={href}
     rel="noopener"
-    style={{ ...style, textDecoration: 'underline'}}
+    style={{
+      ...style,
+      textDecoration: 'underline',
+      cursor: 'pointer',
+      color: '#007bff',
+      backgroundColor: 'transparent'
+    }}
   >
     {children}
   </a>
