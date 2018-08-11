@@ -202,7 +202,8 @@ class ReadCardFront extends Component {
       challengeSubmission,
       stylesheet,
       tagColorScale,
-      style
+      style,
+      smallScreen
     } = this.props;
 
     const { dialog, challengeSubmitted } = this.state;
@@ -245,7 +246,8 @@ class ReadCardFront extends Component {
           />
           <MediaField
             style={{ maxHeight: '20%' }}
-            media={media}
+            smallScreen={smallScreen}
+            media={smallScreen ? media.slice(0, 2) : media.slice(0, 4)}
             onClick={() =>
               this.setState({ dialog: { key: 'Media', data: media } })
             }

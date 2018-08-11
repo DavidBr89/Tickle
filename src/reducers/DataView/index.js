@@ -2,6 +2,7 @@ import { union, difference, uniq } from 'lodash';
 
 import { TEMPLATE_ID } from 'Constants/cardTemplate';
 
+import { CHALLENGE_NOT_SUBMITTED } from 'Constants/cardFields';
 import {
   SET_DATA_VIEW,
   TOGGLE_AUTH_ENV,
@@ -11,7 +12,7 @@ import {
   REMOVE_CARD_FILTER,
   FILTER_CARDS,
   TOGGLE_CARD_PANEL,
-  FILTER_BY_CLUSTER
+  FILTER_BY_CHALLENGE_STATE
   // ADD_CARD_FILTER,
   // REMOVE_CARD_FILTER,
   // FILTER_CARDS
@@ -24,7 +25,8 @@ const INITIAL_STATE = {
   selectedCardId: null,
   extCard: null,
   filterSet: [],
-  clusteredIds: []
+  clusteredIds: [],
+  challengeStateFilter: CHALLENGE_NOT_SUBMITTED
 };
 
 export default function dataViewReducer(state = INITIAL_STATE, action) {
@@ -81,9 +83,9 @@ export default function dataViewReducer(state = INITIAL_STATE, action) {
       return { ...state, cardPanelVisible: !state.cardPanelVisible };
     }
 
-    case FILTER_BY_CLUSTER: {
-      const clusteredIds = action.options;
-      return { ...state, clusteredIds };
+    case FILTER_BY_CHALLENGE_STATE: {
+      const challengeStateFilter = action.options;
+      return { ...state, challengeStateFilter };
     }
     // case ADD_CARD_FILTER: {
     //   const { filterSet } = state;

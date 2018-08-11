@@ -34,6 +34,13 @@ const tagColor = chroma('#a5b1c2')
 
 const rawCSS = {
   border: { border: '1px solid lightgrey' },
+  shallowBg: {background: shallowBg},
+  imgBorder: {
+    boxShadow: '4px 4px lightgrey',
+    background: 'white',
+    padding: 10
+  },
+
   btn: {
     ...btnStyle,
     borderColor: uiColor,

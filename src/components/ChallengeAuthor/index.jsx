@@ -136,6 +136,7 @@ class ChallengeAuthor extends React.Component {
   };
   // }
 
+  //TODO: remove
   challengeMap = {
     PhotoUpload: <PhotoChallengeAuthor {...this.props} />,
     MiniGame: <PhotoChallengeAuthor {...this.props} />

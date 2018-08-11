@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 // import chroma from 'chroma-js';
 import { css } from 'aphrodite/no-important';
+import * as Icon from 'react-feather';
 
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 import {
@@ -28,7 +29,7 @@ export const InlineModal = ({
       height: '100%',
       opacity: visible ? 1 : 0,
       transition: 'opacity 1s',
-      zIndex: visible ? 2000 : -10,
+      zIndex: visible ? 5000 : -10,
       margin: 'auto',
       left: 0,
       top: 0,
@@ -81,8 +82,8 @@ export const Modal = ({
           opacity: visible ? 1 : 0,
           display: visible ? 'block' : 'none',
           width: '100%',
-          height: '97%',
-          minHeight: 400,
+          height: '100%',
+          // minHeight: 400,
           maxHeight: 800
         }}
       >
@@ -90,7 +91,8 @@ export const Modal = ({
           className="modal-dialog"
           role="document"
           style={{
-            height: '100%'
+            height: '97%',
+            ...style
           }}
         >
           <div
@@ -98,12 +100,11 @@ export const Modal = ({
             style={{
               width: '100%',
               height: '100%',
-              overflow: 'hidden',
+              overflow: 'hidden'
               // TODO: fix later
               // TODO: fix later
               // TODO: fix later
               // TODO: fix later CONSTANT
-              ...style
             }}
           >
             {children}
@@ -152,26 +153,26 @@ export const ModalBody = ({
   <React.Fragment>
     <div
       className="modal-header"
-      style={{ borderBottom: `1px solid ${uiColor}` }}
+      style={{
+        borderBottom: `1px solid ${uiColor}`,
+        display: 'flex',
+        alignItems: 'center'
+      }}
     >
       <h3 className="modal-title" id="exampleModalLabel">
         {title}
       </h3>
-      <button
-        type="button"
-        className="close"
-        data-dismiss="modal"
-        aria-label="Close"
-        onClick={onClose}
-      >
-        <span aria-hidden="true">&times;</span>
+      <button className={css(stylesheet.btn)} onClick={onClose}>
+        <Icon.X />
       </button>
     </div>
-    <div className="modal-body" style={{ height: '70%', ...style }}>
+    <div
+      className="modal-body"
+      style={{ height: '70%', overflowY: 'scroll', ...style }}
+    >
       {children}
     </div>
-
-    <div className={css(stylesheet.modalFooter)}>{footer}</div>
+    <div className="modal-footer">{footer}</div>
   </React.Fragment>
 );
 

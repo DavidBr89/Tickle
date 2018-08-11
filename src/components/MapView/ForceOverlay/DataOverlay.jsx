@@ -114,7 +114,6 @@ class DataOverlay extends Component {
           x={c.x}
           y={c.y}
           preview={preview(c)}
-          onClick={() => console.log('yeah')}
           domNode={this.zoomCont}
         />
       );

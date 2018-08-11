@@ -47,5 +47,3 @@ export const EXTEND_USER_INFO = 'EXTEND_USER_INFO';
 export function extendUserInfo(options) {
   return { type: EXTEND_USER_INFO, options };
 }
-
-

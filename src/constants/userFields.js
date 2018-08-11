@@ -6,14 +6,16 @@ export const userFields = ({
   name = null,
   username,
   email,
-  photoURL
+  photoURL,
+  admin = false
 }) => ({
   interests,
   uid,
   name,
   username,
   email,
-  photoURL
+  photoURL,
+  admin: admin || admin
 });
 
 export const compareUserFields = (
@@ -23,9 +25,7 @@ export const compareUserFields = (
     name: nameA,
     username: usernameA,
     email: emailA,
-    photoURL: photoURLA,
-    passwordOne: passwordOneA,
-    passwordTwo: passwordTwoA
+    photoURL: photoURLA
   },
   {
     interests: interestsB,
@@ -33,9 +33,7 @@ export const compareUserFields = (
     uid: uidB,
     username: usernameB,
     email: emailB,
-    photoURL: photoURLB,
-    passwordOne: passwordOneB,
-    passwordTwo: passwordTwoB
+    photoURL: photoURLB
   }
 ) => {
   if (!isEqual(interestsA, interestsB)) {

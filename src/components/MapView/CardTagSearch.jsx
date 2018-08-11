@@ -18,6 +18,7 @@ function CardTagSearch({
         justifyContent: 'flex-end',
         zIndex: 2000,
         position: 'relative'
+        // width: 30
       }}
     >
       <DropDown
@@ -27,11 +28,7 @@ function CardTagSearch({
         onSelect={onSelect}
         vocabulary={allTags}
         style={{
-          display: 'flex',
-          // position: 'absolute',
-          justifyContent: 'flex-end',
-          marginTop: 10,
-          marginRight: 10
+          maxWidth: '70%'
         }}
         onClick={onSubmit}
         data={data}

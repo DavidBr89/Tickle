@@ -70,83 +70,80 @@ export default class PhotoUpload extends Component {
     } = this.props;
 
     return (
-      <div className={className} style={{ height: '100%' }}>
+      <div style={{ ...style }}>
         <div
           style={{
+            // TODO: outsource
+            height: '80%',
+            width: '100%',
             // overflow: 'hidden',
-            height: '100%'
+            // minHeight: 80,
+            overflow: 'hidden',
+            border: `dashed 3px ${uiColor}`,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
           }}
         >
-          <div style={{ ...style }}>
+          {imgUrl ? (
             <div
               style={{
-                // TODO: outsource
-                height: '100%',
-                width: '100%',
-                // overflow: 'hidden',
-                // minHeight: 80,
-                border: `dashed 3px ${uiColor}`,
                 display: 'flex',
                 justifyContent: 'center',
-                alignItems: 'center'
+                width: '100%',
+                maxHeight
               }}
             >
-              {imgUrl ? (
-                <div
-                  style={{
-                    overflow: 'hidden',
-                    width: '100%',
-                    maxHeight
-                  }}
-                >
-                  <img src={imgUrl} width="100%" alt="test" />
-                </div>
-              ) : (
-                <h1
-                  className="pl-2 pr-2 text-muted"
-                  style={{
-                    margin: '20%'
-                  }}
-                >
-                  {'No Image'}
-                </h1>
-              )}
+              <img
+                src={imgUrl}
+                style={{ width: 'auto', maxHeight }}
+                alt="test"
+              />
             </div>
-            <label
-              htmlFor="file-upload"
-              className={`${css(stylesheet.imgUploadBtn)} mt-2`}
+          ) : (
+            <h1
+              className="pl-2 pr-2 text-muted"
               style={{
-                width: '100%',
-                display: null,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis'
+                margin: '20%'
               }}
             >
-              {imgName ? `Edit: ${imgName}` : title}
-            </label>
-            <input
-              id="file-upload"
-              className="mt-3"
-              style={{
-                border: `${uiColor} 1px solid`,
-                width: '100%',
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis'
-              }}
-              type="file"
-              accept="image/*"
-              capture="environment"
-              onChange={e => {
-                onChange({
-                  url: convertToImgSrc(e.target.files),
-                  file: e.target.files[0]
-                });
-              }}
-            />
-          </div>
+              {'No Image'}
+            </h1>
+          )}
         </div>
+        <label
+          htmlFor="file-upload"
+          className={`${css(stylesheet.imgUploadBtn)} mt-2`}
+          style={{
+            width: '100%',
+            display: null,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }}
+        >
+          {imgName ? `Edit: ${imgName}` : title}
+        </label>
+        <input
+          id="file-upload"
+          className="mt-3"
+          style={{
+            border: `${uiColor} 1px solid`,
+            width: '100%',
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis'
+          }}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          onChange={e => {
+            onChange({
+              url: convertToImgSrc(e.target.files),
+              file: e.target.files[0]
+            });
+          }}
+        />
       </div>
     );
   }

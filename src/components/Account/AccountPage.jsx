@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { scaleLinear, extent, range, scaleOrdinal } from 'd3';
 import { css } from 'aphrodite';
 import * as Icon from 'react-feather';
 
@@ -39,7 +38,7 @@ const TagList = ({ sets, tagColorScale, acc = d => d.values.length }) => (
       // overflow: 'hidden'
     }}
   >
-    {sets.map(d => (
+    {sets.map(key => (
       <div
         className="m-1"
         style={{
@@ -47,10 +46,10 @@ const TagList = ({ sets, tagColorScale, acc = d => d.values.length }) => (
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          background: tagColorScale(d.key)
+          background: tagColorScale(key)
         }}
       >
-        <span className="p-3 ">{d.key}</span>
+        <span className="p-2">{key}</span>
       </div>
     ))}
   </div>
@@ -70,14 +69,16 @@ class ExpSection extends React.Component {
   render() {
     const { children, className, title } = this.props;
     const { exp } = this.state;
+    console.log('this.props', this.props);
     return (
-      <section className="mb-3" style={{ width: '100%' }}>
+      <section style={{ width: '100%' }}>
         <div
+          className="mb-3"
           style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            width: '100%'
+            justifyContent: 'space-between'
+            // width: '100%'
           }}
         >
           <div>{title}</div>
@@ -213,12 +214,26 @@ const StyledCardStack = ({ cards, selected, onClick, edit, uid, ...props }) => (
 const CardSection = ({ cards, selected, title, onClick, ...props }) => (
   <ExpSection title={<h5>{title}</h5>}>
     <div style={{ height: 200 }} className="mt-3">
-      <StyledCardStack
-        cards={cards}
-        selected={selected}
-        onClick={onClick}
-        {...props}
-      />
+      {cards.length > 0 ? (
+        <StyledCardStack
+          cards={cards}
+          selected={selected}
+          onClick={onClick}
+          {...props}
+        />
+      ) : (
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          <h3>'No Cards'</h3>
+        </div>
+      )}
     </div>
   </ExpSection>
 );
@@ -229,6 +244,9 @@ export default class AccountPage extends React.Component {
   };
 
   componentDidMount() {
+    const { fetchCards } = this.props;
+    fetchCards();
+    // TODO
     // this.props.screenResize({
     //   width: this.cont.offsetWidth,
     //   height: this.cont.offsetHeight
@@ -272,7 +290,8 @@ export default class AccountPage extends React.Component {
       name,
       username,
       email,
-      photoURL
+      photoURL,
+      userTags
     } = authUser;
     const onCardClick = (d, source) => {
       if (d.id !== selectedCardId) {
@@ -304,12 +323,12 @@ export default class AccountPage extends React.Component {
     // const Title = ({ children }) => <h4 style={{ margin: 0 }}>{children}</h4>;
 
     const cardData = [
-      {
-        id: 'created',
-        cards: createdCards,
-        selected: selectedIdCreated,
-        title: `Created Cards (${createdCards.length})`
-      },
+      // {
+      //   id: 'created',
+      //   cards: createdCards,
+      //   selected: selectedIdCreated,
+      //   title: `Created Cards (${createdCards.length})`
+      // },
       {
         id: 'started',
         cards: startedCards,
@@ -331,15 +350,7 @@ export default class AccountPage extends React.Component {
     ];
 
     return (
-      <div
-        className="content-block"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center'
-        }}
-        ref={c => (this.cont = c)}
-      >
+      <React.Fragment>
         <ExtendableCard
           {...this.props}
           onClose={() => extendCard({ id: null, source: null })}
@@ -360,90 +371,110 @@ export default class AccountPage extends React.Component {
           />
         </Modal>
         <ScrollView ref={scroller => (this._scroller = scroller)}>
-          <div>
-            <section className="mb-3">
-              <h3>Personal</h3>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              height: '100%',
+              overflowY: 'scroll'
+            }}
+            ref={c => (this.cont = c)}
+          >
+            <h3 className="mt-3">Account</h3>
+            <div
+              style={{
+                position: 'relative',
+                height: '65vw',
+                maxHeight: 280,
+                width: 'auto'
+              }}
+              className={`${css(defaultStylesheet.imgBorder)} mb-3`}
+            >
               <div
-                className="ml-2 mb-3"
+                style={{
+                  position: 'absolute',
+                  // left: 0,
+                  // top: 0,
+                  height: '60vw',
+                  maxHeight: 200,
+                  width: 'auto',
+                  padding: '20%'
+                }}
+              />
+              <img
+                className="mb-2"
+                src={photoURL}
+                style={{
+                  height: '60vw',
+                  width: 'auto',
+                  // maxWidth: 200,
+                  maxHeight: 200
+                  // borderRadius: '50%'
+                }}
+                alt="alt"
+              />
+            </div>
+            <div className="mb-3" style={{ width: '90%' }}>
+              <div
+                className="mb-1"
                 style={{
                   display: 'flex',
-                  flexWrap: 'wrap',
-                  width: '100%',
-                  // justifyContent: 'center',
-                  // alignItems: 'center',
-                  ...style
+                  justifyContent: 'space-between'
                 }}
               >
-                <div
-                  className="mb-2 mr-3"
-                  style={{
-                    border: 'solid 1px grey',
-                    height: '100%',
-                    width: '100%',
-                    width: 200,
-                    height: 200,
-                    borderRadius: '50%',
-                    overflow: 'hidden'
-                  }}
-                >
-                  <img
-                    style={{
-                      width: '100%',
-                      height: '100%'
-                    }}
-                    src={photoURL}
-                    alt="alt"
-                  />
-                </div>
-                <div>
-                  <div className="mb-1">
-                    <h5>Username</h5>
-                    {username}
-                  </div>
-                  <div className="mb-1">
-                    <h5>email: </h5>
-                    {email}
-                  </div>
-                  <div>
-                    <h5>Interests</h5>
-                    <PreviewTags data={interests} colorScale={tagColorScale} />
-                  </div>
-                </div>
-                <div
-                  className="ml-2"
-                  style={{ display: 'flex', alignItems: 'end' }}
-                >
-                  <button
-                    className={css(defaultStylesheet.btn)}
-                    onClick={() => extendUserInfo()}
-                  >
-                    <Icon.Edit />
-                  </button>
-                </div>
+                <h5 className="mr-1">Username:</h5>
+                <div>{username}</div>
               </div>
-            </section>
-            <div onClick={() => this.scrollTo('myTags')}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between'
+                }}
+                className="mb-1"
+              >
+                <h5 className="mr-1">email: </h5>
+                <div>{email}</div>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <h5>Interests</h5>
+                <PreviewTags data={interests} colorScale={tagColorScale} />
+              </div>
+              <button
+                style={{ width: '100%' }}
+                className={css(defaultStylesheet.btn)}
+                onClick={() => extendUserInfo()}
+              >
+                <Icon.Edit />
+              </button>
+            </div>
+            <div style={{ width: '90%' }}>
               <ScrollElement name="myTags">
                 <ExpSection title={<h5>My Tags</h5>} className="mb-1">
-                  <TagList sets={skills} tagColorScale={tagColorScale} />
+                  {userTags.length > 0 ? (
+                    <TagList sets={userTags} tagColorScale={tagColorScale} />
+                  ) : (
+                    'No Tags'
+                  )}
                 </ExpSection>
               </ScrollElement>
+              {cardData.map(c => (
+                <div onClick={() => this.scrollTo(c.title)}>
+                  <ScrollElement name={c.title}>
+                    <CardSection
+                      {...c}
+                      onClick={d => onCardClick(d, c.id)}
+                      uid={uid}
+                      disabled={c.cards.length === 0}
+                      edit
+                    />
+                  </ScrollElement>
+                </div>
+              ))}
             </div>
-            {cardData.map(c => (
-              <div onClick={() => this.scrollTo(c.title)}>
-                <ScrollElement name={c.title}>
-                  <CardSection
-                    {...c}
-                    onClick={d => onCardClick(d, c.id)}
-                    uid={uid}
-                    edit
-                  />
-                </ScrollElement>
-              </div>
-            ))}
           </div>
         </ScrollView>
-      </div>
+      </React.Fragment>
     );
   }
 }

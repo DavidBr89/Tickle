@@ -22,15 +22,36 @@ import * as dataViewActions from 'Reducers/DataView/actions';
 
 import withAuthorization from 'Src/components/withAuthorization';
 
+import {
+  CHALLENGE_SUBMITTED,
+  isChallengeSubmitted
+} from 'Constants/cardFields';
+
 import CardViewPage from './CardViewPage';
 // import mapViewReducer from './reducer';
+
+const lowercase = s => s.toLowerCase();
+const filterByTag = (doc, filterSet) =>
+  filterSet.length === 0 ||
+  intersection(doc.tags.map(lowercase), filterSet.map(lowercase)).length ===
+    filterSet.length;
+
+const applyFilter = challengeState => d => {
+  if (challengeState === CHALLENGE_SUBMITTED) return isChallengeSubmitted(d);
+  return !isChallengeSubmitted(d);
+};
 
 // Container
 const mapStateToProps = state => {
   console.log('new Action', 'yeah');
   const { collectibleCards } = state.Cards;
 
-  const { selectedCardId, filterSet, cardPanelVisible } = state.DataView;
+  const {
+    selectedCardId,
+    filterSet,
+    cardPanelVisible,
+    challengeStateFilter
+  } = state.DataView;
 
   // TODO: own dim reducer
   const { width, height, userLocation } = state.MapView;
@@ -40,17 +61,11 @@ const mapStateToProps = state => {
     authUser: { uid }
   } = state.Session;
 
-  console.log('filterSet', filterSet);
-  const filteredCards = collectibleCards.filter(
-    d =>
-      filterSet.length === 0 ||
-      intersection(
-        d.tags.map(e => e.toLowerCase()),
-        filterSet.map(e => e.toLowerCase())
-      ).length === filterSet.length
-  );
+  const filteredCards = collectibleCards
+    .filter(d => filterByTag(d, filterSet))
+    .filter(applyFilter(challengeStateFilter));
+
   const cardSets = setify(filteredCards);
-  console.log('UPD UPD card to filter', filteredCards, 'cardSets', cardSets);
   // const tagColorScale = makeTagColorScale(cardSets);
   const selectedCard = filteredCards.find(d => d.id === selectedCardId) || null;
 

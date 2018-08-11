@@ -77,17 +77,14 @@ class MediaChallenge extends Component {
           </Btn>
         }
       >
-        <div
-          className={className}
-          style={{ width: '100%', height: '70%', ...styles }}
-        >
-          <p style={{ width: '100%', maxHeight: '30%', overflow: 'scroll' }}>
+        <div className={className} style={{ width: '100%', ...styles }}>
+          <p style={{ width: '100%', maxHeight: '100%', overflow: 'scroll' }}>
             {description}
           </p>
           <h5>Response</h5>
           <textarea
             style={{ width: '100%' }}
-            rows="2"
+            rows="4"
             placeholder="write your response"
             value={response}
             onChange={e => {
@@ -97,17 +94,19 @@ class MediaChallenge extends Component {
               });
             }}
           />
-          <MediaUpload
-            style={{ width: '100%', height: '50%' }}
-            uploadPath={id => `challengeSubmissionFiles/${id}`}
-            media={media}
-            stylesheet={stylesheet}
-            buttonStyle={{ width: 30 }}
-            onChange={newMedia => {
-              this.setState({ media: newMedia, completed: false });
-              onUpdate({ media: newMedia, completed: false });
-            }}
-          />
+          <div className="mb-3">
+            <MediaUpload
+              style={{ width: '100%' }}
+              uploadPath={id => `challengeSubmissionFiles/${id}`}
+              media={media}
+              stylesheet={stylesheet}
+              buttonStyle={{ width: 30 }}
+              onChange={newMedia => {
+                this.setState({ media: newMedia, completed: false });
+                onUpdate({ media: newMedia, completed: false });
+              }}
+            />
+          </div>
         </div>
       </ModalBody>
     );

@@ -199,7 +199,15 @@ DescriptionField.defaultProps = {
   edit: false
 };
 
-const MediaField = ({ media, onEdit, onClick, style, placeholder, edit }) => (
+const MediaField = ({
+  media,
+  onEdit,
+  onClick,
+  style,
+  placeholder,
+  edit,
+  smallScreen
+}) => (
   <CardThemeConsumer>
     {({ uiColor, stylesheet: { shallowBg, shallowBorder } }) => (
       <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
@@ -212,7 +220,8 @@ const MediaField = ({ media, onEdit, onClick, style, placeholder, edit }) => (
           <div style={{ display: 'flex', alignContent: 'end' }}>
             {Array.isArray(media) && media.length > 0 ? (
               <PreviewMedia
-                data={media.slice(0, 4)}
+                data={media}
+                smallScreen={smallScreen}
                 style={{ width: '100%', height: '100%' }}
               />
             ) : (
@@ -243,7 +252,7 @@ MediaField.defaultProps = {
   edit: false
 };
 
-const PreviewMedia = ({ data, style }) => (
+const PreviewMedia = ({ data, style, smallScreen }) => (
   <div
     style={{
       style,
@@ -256,10 +265,14 @@ const PreviewMedia = ({ data, style }) => (
     {data.map(m => (
       <div
         key={m.url}
-        className="mr-3 mb-1"
+        className="mr-1 mb-1"
         style={{
           display: 'flex',
-          maxWidth: `${Math.max(100 / data.length, 40)}%`
+          maxWidth: `${
+            smallScreen
+              ? Math.max(80 / data.length, 40)
+              : Math.max(100 / data.length, 45)
+          }%`
         }}
       >
         <div className="mr-1">{React.createElement(mediaScale(m.type))}</div>

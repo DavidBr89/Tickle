@@ -34,6 +34,8 @@ import {
   // FILTER_CARDS
 } from './actions';
 
+const isDefined = a => a !== null && a !== undefined;
+
 // const gen = new generate.Generator();
 
 // const toGeoJSON = points => ({
@@ -110,7 +112,7 @@ function reducer(state = INITIAL_STATE, action) {
         ...state,
         createdCards,
         loadingCards: false,
-        allTagsCreated,
+        allTagsCreated
         // tagColorScale
         // cards
         // isCardDragging
@@ -122,11 +124,11 @@ function reducer(state = INITIAL_STATE, action) {
       const allTagsCollectible = uniq(
         cards.reduce((acc, c) => [...acc, ...c.tags], [])
       );
-      // const cardSets = setify(cards);
-      // const tagColorScale = makeTagColorScale(cardSets);
       return {
         ...state,
         collectibleCards: cards,
+        // submittedCards,
+        // startedCards,
         allTagsCollectible,
         loadingCards: false
         // tagColorScale

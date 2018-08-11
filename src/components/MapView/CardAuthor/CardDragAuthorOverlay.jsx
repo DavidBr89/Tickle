@@ -90,17 +90,12 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
         }}
         colorScale={tagColorScale}
         preview={d => (
-          <DragSourceCont
-            dragHandler={dragCard}
-            data={d}
-            x={d.x}
-            y={d.y}
-            style={{ zIndex: selectedCardId === d.id ? 5000 : null }}
-          >
+          <DragSourceCont dragHandler={dragCard} data={d} x={d.x} y={d.y}>
             <CardPreviewMarker
               selected={selectedCardId === d.id}
               template={d.template}
               color="whitesmoke"
+              style={{ zIndex: selectedCardId === d.id ? 5000 : 100 }}
             />
           </DragSourceCont>
         )}

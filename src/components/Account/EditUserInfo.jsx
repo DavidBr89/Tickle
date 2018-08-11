@@ -107,51 +107,36 @@ class UserInfoModalBody extends React.Component {
     return (
       <React.Fragment>
         <div className="mb-3">
-          <div className="form-group">
-            <label htmlFor="fullname">User Photo:</label>
-            <div
-              style={{
-                display: 'flex',
-                width: '100%'
-                // justifyContent: 'center'
-              }}
-            >
-              <EditUserPhoto
-                style={{ width: 200 }}
-                url={photoURL}
-                onChange={({ file, photoURL: newImgUrl }) =>
-                  setUserField({ file, photoURL: newImgUrl })
-                }
-              />
+          <EditUserPhoto
+            url={photoURL}
+            onChange={({ file, photoURL: newImgUrl }) =>
+              setUserField({ file, photoURL: newImgUrl })
+            }
+          />
 
-              <div className="ml-3">
-                <div className="form-group">
-                  <label htmlFor="username">Username:</label>
-                  <div>
-                    <input
-                      className="form-control"
-                      style={{ width: 'unset' }}
-                      value={username || ''}
-                      onChange={e => setUserField({ username: e.target.value })}
-                      type="text"
-                      placeholder="Full Name"
-                    />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label htmlFor="interests">Interests:</label>
-                  <TagInput
-                    className="form-group"
-                    tags={interests}
-                    colorScale={tagColorScale}
-                    uiColor="grey"
-                    onChange={newInterests =>
-                      setUserField({ interests: newInterests })
-                    }
-                  />
-                </div>
-              </div>
+          <div className="form-group">
+            <label htmlFor="username">Username:</label>
+            <div>
+              <input
+                className="form-control"
+                value={username || ''}
+                onChange={e => setUserField({ username: e.target.value })}
+                type="text"
+                placeholder="Full Name"
+              />
             </div>
+          </div>
+          <div className="form-group">
+            <label htmlFor="interests">Interests:</label>
+            <TagInput
+              className="form-group"
+              tags={interests}
+              colorScale={tagColorScale}
+              uiColor="grey"
+              onChange={newInterests =>
+                setUserField({ interests: newInterests })
+              }
+            />
           </div>
         </div>
         <div className="mb-3">

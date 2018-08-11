@@ -65,6 +65,7 @@ class CardMarker extends Component {
           transition: 'opacity 1s',
           width: '100%',
           height: '100%',
+          zIndex: 100,
           background: 'white',
           ...style
         }}

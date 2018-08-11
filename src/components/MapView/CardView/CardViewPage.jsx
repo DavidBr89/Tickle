@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { css } from 'aphrodite';
+import { css } from 'aphrodite/no-important';
 // import { PreviewCard } from 'Components/cards';
 import CardStack from '../CardStack';
 
 import { calcDataViewHeight, stylesheet } from 'Src/styles/GlobalThemeContext';
+
+import {
+  CHALLENGE_STARTED,
+  CHALLENGE_NOT_SUBMITTED
+} from 'Constants/cardFields';
+
+import ToggleSwitch from 'Utils/ToggleSwitch';
 
 import {
   DragSourceCont,
@@ -158,7 +165,9 @@ class CardViewPage extends Component {
       tagColorScale,
       isSmartphone,
       cardPanelVisible,
-      toggleCardPanel
+      toggleCardPanel,
+      filterByChallengeState,
+      challengeStateFilter
     } = this.props;
 
     const slotSize = 100 / 3.5;
@@ -212,23 +221,6 @@ class CardViewPage extends Component {
                   zIndex: 1000
                 }}
               />
-            </div>
-            <div
-              className="mr-2"
-              style={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                zIndex: 2000
-              }}
-            >
-              <div style={{ position: 'absolute', right: 0, zIndex: 100 }}>
-                <button
-                  onClick={toggleCardPanel}
-                  className={`${css(stylesheet.btn)} mr-1`}
-                >
-                  {cardPanelVisible ? 'Hide Cards' : 'Show Cards'}
-                </button>
-              </div>
             </div>
             <CardViewOverlay
               {...this.props}

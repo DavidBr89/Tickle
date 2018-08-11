@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -10,7 +11,13 @@ import * as routes from 'Constants/routes';
 
 import AuthUserContext from './AuthUserContext';
 
-import { DATAVIEW, authRoutes, nonAuthRoutes } from 'Constants/routes';
+import {
+  DATAVIEW,
+  authRoutes,
+  adminRoutes,
+  nonAuthRoutes
+} from 'Constants/routes';
+
 import { stylesheet } from 'Src/styles/GlobalThemeContext';
 import { css } from 'aphrodite';
 
@@ -27,16 +34,6 @@ import { setDataView } from 'Reducers/DataView/actions';
 //     <button onClick={() => setDataView('topic')}>Topic</button>
 //   </div>
 // );
-
-const Navigation = ({ authUser, ...props }) => (
-  <div>
-    {authUser ? (
-      <NavigationAuth {...props} />
-    ) : (
-      <NavigationNonAuth {...props} />
-    )}
-  </div>
-);
 
 const includePath = (pathA, pathB) => {
   // TODO: find regex
@@ -57,22 +54,20 @@ const includePath = (pathA, pathB) => {
 const InnerLi = ({ name, path, hash, active, subRoutes = [] }) => (
   <li className="mb-2">
     <Link
-      className={`nav-link ${css(stylesheet.bareBtn)} mb-1`}
-      style={{ background: includePath(path, hash) && 'lightgrey' }}
+      className={`nav-link ${css(stylesheet.bareBtn)} ${subRoutes.length > 0 &&
+        'mb-2'}`}
       to={path}
     >
       {name}
     </Link>
     <ul>
       {subRoutes.map(d => (
-        <li
-          className={`${css(stylesheet.bareBtn)} mr-2`}
-          style={{
-            background: hash.includes(d.path) && 'lightgrey',
-            border: 'unset'
-          }}
-        >
-          <Link to={d.path} style={{}}>
+        <li className="mb-1">
+          <Link
+            to={d.path}
+            className={`${css(stylesheet.bareBtn)} nav-link`}
+            style={{ border: includePath(path, hash) && '1px solid grey' }}
+          >
             {d.name}
           </Link>
         </li>
@@ -81,30 +76,67 @@ const InnerLi = ({ name, path, hash, active, subRoutes = [] }) => (
   </li>
 );
 
-const NavigationAuth = ({
+const NavigationHelper = ({
   activePath,
   // stylesheet,
   uiColor,
   pathName,
-  location
+  location,
+  routes,
+  signOut
 }) => (
   <ul className="navList ">
-    {Object.keys(authRoutes).map(key => (
-      <InnerLi {...authRoutes[key]} hash={location.hash} />
+    {Object.keys(routes).map(key => (
+      <InnerLi {...routes[key]} hash={location.hash} />
     ))}
-    <li>
-      <SignOutButton />
-    </li>
+    {signOut && (
+      <li>
+        <SignOutButton />
+      </li>
+    )}
   </ul>
 );
 
-const NavigationNonAuth = ({ activePath, stylesheet, uiColor, location }) => (
-  <ul className="navList">
-    {Object.keys(nonAuthRoutes).map(key => (
-      <InnerLi key={key} {...nonAuthRoutes[key]} hash={location.hash} />
-    ))}
-  </ul>
-);
+NavigationHelper.propTypes = {
+  signOut: PropTypes.boolean
+};
+
+NavigationHelper.defaultProps = {
+  signOut: false
+};
+
+// console.log('adminRoutes', adminRoutes);
+
+// const NavigationAdmin = ({
+//   activePath,
+//   location
+// }) => (
+//   <ul className="navList ">
+//     {Object.keys(adminRoutes).map(key => (
+//       <InnerLi {...authRoutes[key]} hash={location.hash} />
+//     ))}
+//     <li>
+//       <SignOutButton />
+//     </li>
+//   </ul>
+// );
+
+// const NavigationNonAuth = ({ activePath, stylesheet, uiColor, location }) => (
+//   <ul className="navList">
+//     {Object.keys(nonAuthRoutes).map(key => (
+//       <InnerLi key={key} {...nonAuthRoutes[key]} hash={location.hash} />
+//     ))}
+//   </ul>
+// );
+
+const Navigation = ({ authUser, ...props }) => {
+  if (authUser && authUser.admin) {
+    return <NavigationHelper {...props} signOut routes={adminRoutes} />;
+  }
+  if (authUser !== null)
+    return <NavigationHelper {...props} signOut routes={authRoutes} />;
+  return <NavigationHelper {...props} routes={nonAuthRoutes} />;
+};
 
 const mapStateToProps = state => ({
   authUser: state.Session.authUser,

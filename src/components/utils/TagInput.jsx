@@ -49,7 +49,8 @@ export const TagInput = class TagInput extends Component {
             style={{
               display: 'flex',
               flexWrap: 'no-wrap',
-              justifyContent: 'space-between'
+              justifyContent: 'space-between',
+              alignItems: 'center'
               // zIndex: 2000
               // width: 250
             }}
@@ -81,8 +82,7 @@ export const TagInput = class TagInput extends Component {
               />
             </form>
             <button
-              className={ `${css( stylesheet.bareBtn )} ml-2 mr-2 pl-2 pr-2` }
-
+              className={`${css(stylesheet.bareBtn)} ml-2 mr-2 pl-2 pr-2`}
               type="button"
               style={{ fontWeight: 'bold' }}
               onClick={() => {
@@ -145,10 +145,9 @@ const Hits = ({ data, text, onAdd }) => (
     {data.length > 0 && (
       <div className="m-3">
         {data.map(d => (
-          <div className="mb-3">
+          <div className="mb-2">
             <button
               className={css(stylesheet.bareBtn)}
-              style={{ width: '100%' }}
               onClick={() => onAdd(d)}
             >
               {d}
@@ -191,20 +190,22 @@ export const DropDown = class DropDown extends Component {
   };
 
   render() {
-    const { active, curSet, curKey, setList } = this.state;
+    const {style} = this.props;
+    const { active, curSet, curKey, setList} = this.state;
 
-    const isCurSetNew =
-      curSet.length > 0 &&
-      setList.filter(s => intersection(curSet, s).length === curSet.length)
-        .length === 0;
+    // const isCurSetNew =
+    //   curSet.length > 0 &&
+    //   setList.filter(s => intersection(curSet, s).length === curSet.length)
+    //     .length === 0;
 
     return (
       <div
         style={{
           alignItems: 'center',
           backgroundColor: '#fff',
-          maxWidth: '80%',
-          position: 'relative'
+          maxWidth: '60%',
+          position: 'relative',
+          ...style
           // border: '2px solid #ccc'
         }}
       >

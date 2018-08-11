@@ -227,7 +227,7 @@ html, body {
   @extend .container;
   padding: 0;
   background: blanchedalmond;
-  // overflow: hidden;
+  // overflow: scroll;
 }
 
 .content-block {
@@ -280,10 +280,14 @@ html, body {
     padding: 0;
 }
 
-a {
-   color: inherit;
-   text-decoration: none;
- }
+/* a { */
+/*    color: inherit; */
+/*    text-decoration: none; */
+/* } */
+
+a :hover {
+   color: red;
+}
 
 input[type="file"] {
     display: none;
@@ -316,6 +320,16 @@ input[type="file"] {
   // padding-bottom: 0;
 }
 
+.modal-header {
+  @extend .modal-header;
+  padding: 0.5rem;
+}
+
+.modal-footer{
+  @extend .modal-footer;
+  border-top: 1px solid grey;
+  padding: 0.5rem;
+}
 /* body,html{ */
 /*   overflow:hidden */
 /* } */

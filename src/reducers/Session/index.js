@@ -6,7 +6,8 @@ import {
   SELECT_CARD_ID,
   EXTEND_CARD_ID,
   EXTEND_USER_INFO,
-  SUBMIT_USER_INFO_TO_DB_SUCCESS
+  SUBMIT_USER_INFO_TO_DB_SUCCESS,
+  SET_DEVICE
 } from './actions';
 
 const INITIAL_STATE = {
@@ -19,7 +20,8 @@ const INITIAL_STATE = {
   modalActive: false,
   selectedCardId: null,
   extendedCardId: null,
-  userInfoExtended: false
+  userInfoExtended: false,
+  device: { smallScreen: false, iOs: false }
 };
 
 function sessionReducer(state = INITIAL_STATE, action) {
@@ -33,7 +35,7 @@ function sessionReducer(state = INITIAL_STATE, action) {
     }
     case EXTEND_CARD_ID: {
       const { id, source } = action.options;
-      return { ...state, extendedCardId: id, source};
+      return { ...state, extendedCardId: id, source };
     }
     case RECEIVE_USER_INFO: {
       const userInfo = action.options;

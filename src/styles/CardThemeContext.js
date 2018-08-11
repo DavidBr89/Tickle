@@ -71,7 +71,7 @@ const makeStylesheet = ({ uiColor, background }) => {
     cardLayout: {
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'space-between',
+      justifyContent: 'space-around',
       height: '90%'
     },
     coverPhoto: { height: '40%', maxHeight: 400, width: '100%' },

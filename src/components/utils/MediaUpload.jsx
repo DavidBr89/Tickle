@@ -204,7 +204,7 @@ class MediaUpload extends Component {
     const { media, pendingMedia } = this.state;
     const { nodeWrapper, style, stylesheet } = this.props;
     const allMedia = [...media, ...pendingMedia];
-    const maxHeight = '100%';
+    const maxHeight = '200%';
     return (
       <div style={{ height: '100%', ...style }}>
         <DataUploadForm
@@ -214,7 +214,6 @@ class MediaUpload extends Component {
           onChange={this.addMediaItem}
         />
         <div
-          className={`mt-3 ${css(stylesheet.border)}`}
           style={{
             height: '100%'
             // display: 'flex',

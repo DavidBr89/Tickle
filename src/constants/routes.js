@@ -30,7 +30,7 @@ const DATAVIEW_ROUTE = {
   DATAVIEW: {
     name: 'Card View',
     // TODO: change later
-    path: DATAVIEW_GEO,
+    path: DATAVIEW_FLOORPLAN,
     subRoutes: [
       // { name: 'Geo', path: DATAVIEW_GEO },
       { name: 'Treasure Map', path: DATAVIEW_FLOORPLAN },
@@ -72,11 +72,18 @@ export const Routes = {
 
 export const authRoutes = {
   ...HOME_ROUTE,
-  // ...LANDING_ROUTE,
   ...DATAVIEW_ROUTE,
-  ...AUTH_ENV_ROUTE,
+  // ...AUTH_ENV_ROUTE,
   // TODO: change
   // ...ADMIN_ROUTE,
+  ...ACCOUNT_ROUTE
+};
+
+export const adminRoutes = {
+  ...HOME_ROUTE,
+  ...DATAVIEW_ROUTE,
+  ...AUTH_ENV_ROUTE,
+  ...ADMIN_ROUTE,
   ...ACCOUNT_ROUTE
 };
 

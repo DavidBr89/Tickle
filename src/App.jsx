@@ -135,12 +135,16 @@ const store = configureStore(rootReducer, defaultState);
 
 window.addEventListener('load', () => {
   const cont = document.querySelector('#content-container');
-  const isAndroid = /(android)/i.test(navigator.userAgent);
+  const android = /(android)/i.test(navigator.userAgent);
+  const iOS =
+    !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+
   store.dispatch(
     screenResize({
       width: cont.offsetWidth,
       height: cont.offsetHeight,
-      isAndroid
+      android,
+      iOS
     })
   );
 });

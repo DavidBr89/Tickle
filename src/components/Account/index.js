@@ -6,11 +6,14 @@ import withAuthorization from '../withAuthorization';
 import AccountPage from './AccountPage';
 import { submitUserInfoToDB } from 'Reducers/Session/async_actions';
 
+import { uniq } from 'lodash';
+
 import {
-  asyncUpdateCard,
-  asyncCreateCard,
-  asyncRemoveCard,
-  asyncSubmitChallenge
+  // asyncUpdateCard,
+  // asyncCreateCard,
+  // asyncRemoveCard,
+  asyncSubmitChallenge,
+  fetchCollectibleCards
 } from 'Reducers/Cards/async_actions';
 
 import * as actions from 'Reducers/Session/actions';
@@ -18,6 +21,13 @@ import { screenResize } from 'Reducers/Screen/actions';
 
 import { makeTagColorScale } from 'Src/styles/GlobalThemeContext'; // eslint-disable-line
 
+import {
+  isChallengeSucceeded,
+  isChallengeStarted,
+  isChallengeSubmitted
+} from 'Constants/cardFields';
+
+const isDefined = a => a !== null && a !== undefined;
 /*
 exampleAction: authUser => {
     dispatch(setAuthUser(authUser));
@@ -25,10 +35,42 @@ exampleAction: authUser => {
 */
 const mapStateToProps = state => {
   const { cardSets } = state.Account;
-  const { tagColorScale } = state.Cards;
+  const { tagColorScale, collectibleCards } = state.Cards;
+  // console.log('cards');
+  //
   // const tagColorScale = makeTagColorScale(cardSets);
+  //
+  //
+  const collectedCards = collectibleCards.filter(isChallengeSucceeded);
+
+  const submittedCards = collectibleCards.filter(isChallengeSubmitted);
+
+  const startedCards = collectibleCards.filter(isChallengeStarted);
+
+  const userTags = uniq(
+    [...collectedCards, ...submittedCards, ...startedCards].reduce(
+      (acc, c) => [...acc, ...c.tags],
+      []
+    )
+  );
+
+  console.log(
+    'startedCards',
+    startedCards,
+    'submittedCards',
+    submittedCards,
+    'collectedCards',
+    collectedCards
+  );
+
   return {
-    authUser: state.Session.authUser,
+    authUser: {
+      ...state.Session.authUser,
+      collectedCards,
+      submittedCards,
+      startedCards,
+      userTags
+    },
     ...state.Screen,
     tagColorScale
   };
@@ -40,9 +82,10 @@ const mapDispatchToProps = dispatch =>
       submitUserInfoToDB,
       screenResize,
 
-      asyncUpdateCard,
-      asyncCreateCard,
-      asyncRemoveCard,
+      // asyncUpdateCard,
+      // asyncCreateCard,
+      fetchCollectibleCards,
+      // asyncRemoveCard,
       asyncSubmitChallenge,
 
       ...actions
@@ -50,24 +93,24 @@ const mapDispatchToProps = dispatch =>
     dispatch
   );
 
-// const mergeProps = (stateProps, dispatchProps) => {
-//   const { authUser } = stateProps;
-//
-//   const { submitUserInfoToDB } = dispatchProps;
-//
-//   // const changeUserInfoDB =
-//
-//   // const changeUserInfo = ()
-//
-//   return { ...stateProps, ...dispatchProps, submitChangeUserInfo };
-// };
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+  const { authUser } = stateProps;
+
+  const { fetchCollectibleCards } = dispatchProps;
+  console.log('AUTH_USER', authUser);
+  const fetchCards = () => {
+    fetchCollectibleCards(authUser.uid);
+  };
+
+  return { ...ownProps, ...stateProps, ...dispatchProps, fetchCards };
+};
 
 const authCondition = authUser => authUser !== null;
 export default compose(
   withAuthorization(authCondition),
   connect(
     mapStateToProps,
-    mapDispatchToProps
-    // mergeProps
+    mapDispatchToProps,
+    mergeProps
   )
 )(AccountPage);

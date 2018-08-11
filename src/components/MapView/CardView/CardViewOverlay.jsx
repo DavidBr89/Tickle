@@ -60,7 +60,9 @@ const CardViewOverlay = props => {
     cards,
     style,
     onSubmitChallenge,
-    asyncRemoveCard
+    asyncRemoveCard,
+    iOS,
+    smallScreen
   } = props;
 
   return (
@@ -88,7 +90,7 @@ const CardViewOverlay = props => {
           <PreviewMarker
             x={d.x}
             y={d.y}
-            style={{ zIndex: selectedCardId === d.id ? 5000 : null }}
+            style={{ zIndex: selectedCardId === d.id ? 5000 : 100 }}
             selected={selectedCardId === d.id}
             template={d.template}
             color="whitesmoke"
@@ -97,6 +99,8 @@ const CardViewOverlay = props => {
       >
         {({ x, y, ...c }) => (
           <Card
+            iOS={iOS}
+            smallScreen={smallScreen}
             {...c}
             key={c.id}
             edit={false}

@@ -52,7 +52,13 @@ export class StyledButton extends Component {
 }
 
 export const NewTabLink = ({ href, className, style, children }) => (
-  <a className={className} target="_blank" href={href} rel="noopener">
+  <a
+    className="badge badge-light"
+    target="_blank"
+    href={href}
+    rel="noopener"
+    style={{ ...style, textDecoration: 'underline'}}
+  >
     {children}
   </a>
 );
@@ -97,8 +103,9 @@ export const FieldSet = ({
     <div
       style={{
         margin: 10,
-        width: '100%',
-        height: '100%'
+        // width: '100%',
+        overflow: 'hidden',
+        height: '80%'
       }}
     >
       <div

@@ -19,18 +19,25 @@ import { SCREEN_RESIZE } from './actions';
 //     }
 //   }))
 // });
-const INITIAL_STATE = { width: 100, height: 100 };
+
+const INITIAL_STATE = {
+  width: 100,
+  height: 100,
+  iOS: false,
+  smallScreen: false
+};
 function reducer(state = INITIAL_STATE, action) {
   // console.log('action', action);
   // const { selectedCardId } = state;
 
   switch (action.type) {
     case SCREEN_RESIZE: {
-      const { width, height, isAndroid } = action.options;
+      const { width, height, iOS } = action.options;
 
       const isSmartphone = width < 450;
+      const smallScreen = width < 330;
 
-      return { ...state, width, height, isSmartphone, isAndroid};
+      return { ...state, width, height, isSmartphone, smallScreen, iOS };
     }
     default:
       return state;

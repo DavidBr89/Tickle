@@ -31,7 +31,7 @@ const PreviewMarker = ({
         className={css(boxShadow)}
         style={{
           transform: selected && 'scale(2.5)',
-          zIndex: selected && 10000,
+          zIndex: 100,
           transition: 'transform 1s',
           position: 'absolute',
           // TODO

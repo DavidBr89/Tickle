@@ -68,7 +68,7 @@ export class TagList extends Component {
         <div className="mb-1" style={{ display: 'flex' }}>
           <input
             className="form-control"
-            style={{ width: '70%' }}
+            style={{ width: '80%' }}
             value={value}
             onChange={({ target }) => this.setState({ value: target.value })}
           />

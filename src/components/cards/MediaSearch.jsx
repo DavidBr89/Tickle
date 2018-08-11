@@ -309,7 +309,7 @@ const Article = ({ url, title, descr, onClick }) => (
     }}
   >
     <h3>
-      <NewTabLink href={url}>{title} </NewTabLink>
+      <NewTabLink href={url}>{title}</NewTabLink>
     </h3>
     <small>{url}</small>
     <div>{descr}</div>
@@ -354,8 +354,21 @@ const CellDetail = ({
           width: '100%'
         }}
       >
-        <h3 style={{ ...truncateStyle }}>
-          <NewTabLink href={url}>{title}</NewTabLink>
+        <h3 style={{ ...truncateStyle, width: '100%' }}>
+          <NewTabLink
+            href={url}
+            style={{
+              display: 'inline-flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%'
+            }}
+          >
+            <div className="mr-1" style={{ ...truncateStyle, width: '70%' }}>
+              {title}
+            </div>
+            <Icon.Youtube size={30} />
+          </NewTabLink>
         </h3>
         {thumbnail ? (
           <div

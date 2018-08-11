@@ -42,9 +42,9 @@ export function toggleCardPanel(options) {
   return { type: TOGGLE_CARD_PANEL, options };
 }
 
-export const FILTER_BY_CLUSTER = 'FILTER_BY_CLUSTER';
-export function filterByCluster(options) {
-  return { type: FILTER_BY_CLUSTER, options };
+export const FILTER_BY_CHALLENGE_STATE = 'FILTER_BY_CHALLLENGE_STATE';
+export function filterByChallengeState(options) {
+  return { type: FILTER_BY_CHALLENGE_STATE, options };
 }
 
 //
