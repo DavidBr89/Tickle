@@ -1,13 +1,12 @@
 // import { flyToUser } from './actions';
-import Mapbox from 'mapbox';
+// import Mapbox from 'mapbox';
 
 import {
   // WebMercatorViewport,
   PerspectiveMercatorViewport
 } from 'viewport-mercator-project';
-import * as d3 from 'd3';
 
-const client = new Mapbox(process.env.MapboxAccessToken);
+// const client = new Mapbox(process.env.MapboxAccessToken);
 
 export const RETRIEVE_DIRECTION = 'RETRIEVE_DIRECTION';
 export function retrieveDirection(options) {
@@ -30,27 +29,27 @@ export function loadDirection() {
 //   process.env.MapboxAccessToken
 // }`;
 
-export function fetchDirection({ startCoords, destCoords }) {
-  return function(dispatch) {
-    dispatch(loadDirection());
-    // console.log('test', startCoords, destCoords);
-    client.getDirections(
-      [
-        { latitude: startCoords.latitude, longitude: startCoords.longitude },
-        { latitude: destCoords.latitude, longitude: destCoords.longitude }
-      ],
-      {
-        profile: 'walking',
-        instructions: 'html',
-        alternatives: false,
-        geometries: 'geojson'
-      },
-      (err, results) => {
-        // console.log('err', err);
-        dispatch(retrieveDirection(results), error =>
-          console.log('err', error)
-        );
-      }
-    );
-  };
-}
+// export function fetchDirection({ startCoords, destCoords }) {
+//   return function(dispatch) {
+//     dispatch(loadDirection());
+//     // console.log('test', startCoords, destCoords);
+//     client.getDirections(
+//       [
+//         { latitude: startCoords.latitude, longitude: startCoords.longitude },
+//         { latitude: destCoords.latitude, longitude: destCoords.longitude }
+//       ],
+//       {
+//         profile: 'walking',
+//         instructions: 'html',
+//         alternatives: false,
+//         geometries: 'geojson'
+//       },
+//       (err, results) => {
+//         // console.log('err', err);
+//         dispatch(retrieveDirection(results), error =>
+//           console.log('err', error)
+//         );
+//       }
+//     );
+//   };
+// }

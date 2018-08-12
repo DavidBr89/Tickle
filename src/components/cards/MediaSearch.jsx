@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ajax } from 'jquery';
+import fetchJsonp from 'fetch-jsonp';
 
 import * as Icon from 'react-feather';
 import { css } from 'aphrodite/no-important';
@@ -152,64 +152,62 @@ const youtubeUrl = ({ part, q, type, maxResults, order }) =>
     process.env.youtube
   }`;
 
-const searchFlickr = (q = 'dragon') =>
-  // new Promise(resolve => {
-  //
-  ajax({
-    url: flickrUrl,
-    dataType: 'jsonp',
-    jsonp: 'jsoncallback',
-    /* tags: 'kitten',  */
-    data: {
-      text: q,
-      format: 'json',
-      extras: 'url_m,tags,machine_tags',
-      page: 1,
-      per_page: 25
-    }
-  }).then(({ photos: { photo: rawResult } }) => {
-    // console.log('rawResult', rawResult);
-
-    const results = rawResult.map(
-      ({ title, farm, server, id, url_m: imgSrc, secret, tags }) => {
-        const url = `https://farm${farm}.staticflickr.com/${server}/${id}_${secret}.jpg`;
-        return {
-          title,
-          descr: tags,
-          thumbnail: imgSrc,
-          url,
-          id,
-          source: IMG
-        };
-      }
-    );
-    //
-    return new Promise(resolve => resolve(results));
-  });
+// const searchFlickr = (q = 'dragon') =>
+// new Promise(resolve => {
+//
+// ajax({
+//   url: flickrUrl,
+//   dataType: 'jsonp',
+//   jsonp: 'jsoncallback',
+//   #<{(| tags: 'kitten',  |)}>#
+//   data: {
+//     text: q,
+//     format: 'json',
+//     extras: 'url_m,tags,machine_tags',
+//     page: 1,
+//     per_page: 25
+//   }
+// }).then(({ photos: { photo: rawResult } }) => {
+//   // console.log('rawResult', rawResult);
+//
+//   const results = rawResult.map(
+//     ({ title, farm, server, id, url_m: imgSrc, secret, tags }) => {
+//       const url = `https://farm${farm}.staticflickr.com/${server}/${id}_${secret}.jpg`;
+//       return {
+//         title,
+//         descr: tags,
+//         thumbnail: imgSrc,
+//         url,
+//         id,
+//         source: IMG
+//       };
+//     }
+//   );
+//   //
+//   return new Promise(resolve => resolve(results));
+// });
 
 // TODO: add to params
 const wikiUrl = q =>
   `https://en.wikipedia.org/w/api.php?action=query&format=json&generator=prefixsearch&gpssearch=${q}&gpslimit=20&prop=info|pageimages|pageterms|extracts&piprop=thumbnail&pithumbsize=200&pilimit=10&exlimit=max&exintro&inprop=url&explaintext`;
 
 const searchWikipedia = q =>
-  ajax({
-    url: wikiUrl(q),
-    jsonp: 'callback',
-    dataType: 'jsonp'
-  }).then(({ query: { pages } }) => {
-    const values = Object.values(pages);
-    const results = values.map(d => ({
-      title: d.title,
-      descr: d.extract,
-      thumbnail: d.thumbnail ? d.thumbnail.source : null, // d.thumbnail.source,
-      url: d.fullurl,
-      id: d.fullurl,
-      source: WIKIPEDIA,
-      type: TEXT
-    }));
+  fetchJsonp(wikiUrl(q), {})
+    .then(res => res.json())
+    .then(({ query: { pages } }) => {
+      const values = Object.values(pages);
+      const results = values.map(d => ({
+        title: d.title,
+        descr: d.extract,
+        thumbnail: d.thumbnail ? d.thumbnail.source : null, // d.thumbnail.source,
+        url: d.fullurl,
+        id: d.fullurl,
+        source: WIKIPEDIA,
+        type: TEXT
+      }));
 
-    return new Promise(resolve => resolve(results));
-  });
+      return new Promise(resolve => resolve(results));
+    });
 
 const searchYoutube = (q = '') =>
   new Promise(resolve =>
@@ -654,7 +652,7 @@ class UnstyledMediaSearch extends Component {
     const selArticles = selectedMedia.filter(m => m.source === WIKIPEDIA);
     const selVideos = selectedMedia.filter(m => m.source === YOUTUBE);
     const selGIFs = selectedMedia.filter(m => m.source === GIPHY);
-    const selPhotos = selectedMedia.filter(m => m.source === FLICKR);
+    // const selPhotos = selectedMedia.filter(m => m.source === FLICKR);
     const selURLs = selectedMedia.filter(m => m.source === URL);
     const selUserContent = selectedMedia.filter(m => m.source === USER_CONTENT);
 
@@ -733,29 +731,29 @@ class UnstyledMediaSearch extends Component {
             key="giphy"
           />
         );
-      case FLICKR:
-        return (
-          <MetaSearch
-            style={{ height: '85%' }}
-            preSelected={selPhotos}
-            onChange={newPhotos =>
-              onChange(
-                sortByDate([
-                  ...newPhotos,
-                  ...selArticles,
-                  ...selVideos,
-                  ...selGIFs,
-                  ...selURLs,
-                  ...selUserContent
-                ])
-              )
-            }
-            searchFn={searchFlickr}
-            source={FLICKR}
-            type={IMG}
-            key="flickr"
-          />
-        );
+      // case FLICKR:
+      //   return (
+      //     <MetaSearch
+      //       style={{ height: '85%' }}
+      //       preSelected={selPhotos}
+      //       onChange={newPhotos =>
+      //         onChange(
+      //           sortByDate([
+      //             ...newPhotos,
+      //             ...selArticles,
+      //             ...selVideos,
+      //             ...selGIFs,
+      //             ...selURLs,
+      //             ...selUserContent
+      //           ])
+      //         )
+      //       }
+      //       searchFn={searchFlickr}
+      //       source={FLICKR}
+      //       type={IMG}
+      //       key="flickr"
+      //     />
+      //   );
       case URL:
         return (
           <UrlMedia

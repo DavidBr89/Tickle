@@ -6,8 +6,6 @@ import * as routes from 'Constants/routes';
 
 import AuthUserContext from '../AuthUserContext';
 
-import * as d3 from 'd3';
-
 import { css } from 'aphrodite';
 // import SignOutButton from '../SignOut';
 

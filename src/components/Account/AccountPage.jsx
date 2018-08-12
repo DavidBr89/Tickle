@@ -300,9 +300,9 @@ export default class AccountPage extends React.Component {
       return extendCard({ id: d.id, source });
     };
 
-    const selectedIdCreated = createdCards.find(c => c.id === selectedCardId)
-      ? selectedCardId
-      : null;
+    // const selectedIdCreated = createdCards.find(c => c.id === selectedCardId)
+    //   ? selectedCardId
+    //   : null;
 
     const selectedIdSubmitted = submittedCards.find(
       c => c.id === selectedCardId

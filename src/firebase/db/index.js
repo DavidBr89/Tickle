@@ -317,13 +317,10 @@ export const addComment = ({ authorId, cardId, text }) =>
     .collection('comments')
     .add({ text, authorId, date: new Date() });
 
-export const readComments = ({ authorId, cardId }) =>
+export const readComments = (cardId ) =>
   firestore
-    .collection('users')
-    .doc(authorId)
-    .collection('createdCards')
-    .doc(cardId)
     .collection('comments')
+    .where('cardId', '==', cardId)
     .get()
     .then(querySnapshot => {
       const comments = [];

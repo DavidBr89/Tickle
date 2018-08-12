@@ -7,6 +7,7 @@ import { profileSrc, colorClass, colorScaleRandom } from './styles';
 
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 import { FieldSet } from 'Components/utils/StyledComps';
+import flipIconSrc from './flip_icon.png';
 
 // TODO: remove
 import cxx from './layout.scss';
@@ -433,11 +434,7 @@ export const FlipButton = ({ style, onClick, color, disabled, className }) => (
     disabled={disabled}
   >
     <div style={{ display: 'flex', alignItems: 'center' }}>
-      <i
-        className="fa fa-retweet fa-2x"
-        style={{ fontSize: 32 }}
-        aria-hidden="true"
-      />
+      <img src={flipIconSrc} />
     </div>
   </BigButton>
 );

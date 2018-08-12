@@ -218,7 +218,9 @@ class CardBackSkeleton extends Component {
             legend="Comments"
             style={displayStyle('comments')}
             borderColor={uiColor}
-          />
+          >
+            <Comments cardId={cardId} extended={extended === 'author'} />
+          </BackField>
         )}
         <div
           className="mt-2"

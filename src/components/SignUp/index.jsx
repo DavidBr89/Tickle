@@ -67,7 +67,9 @@ class SignUpForm extends Component {
 
     auth
       .doCreateUserWithEmailAndPassword(email, passwordOne)
-      .then(authUser => {
+      .then(res => {
+        console.log('res')
+        const authUser = res.user;
         // Create a user in your own accessible Firebase Database too
         db.addImgToStorage({ file: img.file, path: `usr/${authUser.uid}` })
           .then(imgUrl => {
@@ -85,7 +87,7 @@ class SignUpForm extends Component {
                 this.setState(() => ({ ...INITIAL_STATE }));
                 onSetAuthUser({ authUser: userProfile });
                 // Jump to page
-                history.push(routes.AUTH_ENV_GEO);
+                history.push(routes.DATAVIEW_FLOORPLAN);
               })
               .catch(error => {
                 this.setState(byPropKey('error', error));
@@ -213,7 +215,10 @@ class SignUpForm extends Component {
               placeholder="Confirm Password"
             />
           </div>
-          <div className="mb-3">
+          <div
+            className="mb-3"
+            style={{ display: 'flex', alignItems: 'center' }}
+          >
             <button
               className={css(stylesheet.btn)}
               disabled={isInvalid}
@@ -221,9 +226,16 @@ class SignUpForm extends Component {
             >
               Sign Up {loading && <span>loading</span>}
             </button>
+            {error && (
+              <div className="ml-2 alert alert-danger">{error.message}</div>
+            )}
+            {!error &&
+              loading && (
+              <div clasName="ml-2" style={{ fontSize: 'large' }}>
+                  Loading...
+              </div>
+            )}
           </div>
-
-          {error && <p>{error.message}</p>}
         </form>
       </div>
     );

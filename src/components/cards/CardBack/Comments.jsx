@@ -18,10 +18,8 @@ class CommentsWrapper extends Component {
   state = { comments: [], extended: false };
 
   componentDidMount() {
-    const { author, cardId } = this.props;
-    const { uid: authorId } = author;
-    db.readComments({ authorId, cardId }).then(comments => {
-      console.log('comments', comments);
+    const { cardId } = this.props;
+    db.readComments(cardId).then(comments => {
       this.setState({ comments });
     });
   }
@@ -119,7 +117,7 @@ Comment.defaultProps = {
 
 const AddComment = ({ uid, onClick }) => (
   <div className="mt-3">
-    <input type="text" />{' '}
+    <input className="form-control" type="text" />{' '}
     <button onClick={() => onClick('testcomment')}>Submit</button>
   </div>
 );
@@ -130,7 +128,20 @@ const mapDispatchToProps = dispatch => ({
   }
 });
 
-export default CommentsWrapper;
+const mapStateToProps = state => ({ author: state.Session.authUser });
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => ({
+  ...stateProps,
+  ...dispatchProps,
+  ...ownProps
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
+)(CommentsWrapper);
+
 // const CommentsCont = connect(
 //   null,
 //   mapDispatchToProps

@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 
 import DimWrapper from 'Utils/DimensionsWrapper';
+// TODO: change
 import ExtendableMarker from 'Utils/ExtendableMarker';
 
 // import { dragCard } from 'Reducers/Cards/actions';

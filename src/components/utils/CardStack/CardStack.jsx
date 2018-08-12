@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { range, scaleBand } from 'd3';
-import * as d3 from 'd3';
+import { range, scaleBand, min, max, scaleLinear } from 'd3';
 // import VisibilitySensor from 'react-visibility-sensor/visibility-sensor.js';
 
 function centerLayout(nextProps) {
@@ -44,6 +43,7 @@ function centerLayout(nextProps) {
       i: 0,
       j,
       pos: leftScale(j),
+      // TODO: important
       zIndex: j
       // j
     }));
@@ -216,8 +216,7 @@ class CardStack extends Component {
 
     const size = direction === 'horizontal' ? width : height;
 
-    const scale = d3
-      .scaleLinear()
+    const scale = scaleLinear()
       .domain([0, data.length - 1])
       .range([0, size - slotSize]);
 
@@ -225,15 +224,13 @@ class CardStack extends Component {
       return data.map((c, i) => ({ ...c, pos: scale(i) }));
     }
 
-    const xFirstLeft = d3
-      .scaleLinear()
+    const xFirstLeft = scaleLinear()
       .domain([0, selectedIndex - 1])
-      .range([0, d3.max([scale(selectedIndex) - slotSize, 0])]);
+      .range([0, max([scale(selectedIndex) - slotSize, 0])]);
 
-    const xFirstRight = d3
-      .scaleLinear()
+    const xFirstRight = scaleLinear()
       .domain([selectedIndex + 1, data.length - 1])
-      .range([d3.min([scale(selectedIndex) + slotSize, size]), width]);
+      .range([min([scale(selectedIndex) + slotSize, size]), width]);
 
     return data.map((c, i) => {
       if (selectedIndex < i) {

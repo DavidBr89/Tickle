@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as d3 from 'd3';
+import { range } from 'd3';
 // import tsnejs from 'tsne';
 // import _ from 'lodash';
 import { connect } from 'react-redux';
@@ -12,9 +12,9 @@ import { CardMarker } from 'Cards';
 
 const CardStack = ({ number }) => (
   <div style={{ display: 'flex' }}>
-    {d3
-      .range(0, number)
-      .map(() => <CardMarker style={{ width: '2vh', height: '2vh' }} />)}
+    {range(0, number).map(() => (
+      <CardMarker style={{ width: '2vh', height: '2vh' }} />
+    ))}
     {number === 0 && <div>No Cards!</div>}
   </div>
 );

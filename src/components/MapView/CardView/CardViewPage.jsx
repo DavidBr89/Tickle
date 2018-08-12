@@ -200,7 +200,7 @@ class CardViewPage extends Component {
                 justifyContent: 'center',
                 transition: 'opacity 0.5s',
                 height: '25%',
-                zIndex: 1000,
+                zIndex: 3000,
                 opacity: cardPanelVisible ? 1 : 0
               }}
             >

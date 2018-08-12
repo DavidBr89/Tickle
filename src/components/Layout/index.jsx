@@ -18,53 +18,69 @@ import Navigation from '../Navigation';
 // import userPic from './user.png';
 // import cx from './MainLayout.scss';
 
-const Menu = ({ style, children }) => (
-  <div style={{ ...style }}>
-    <nav
-      className="navbar navbar-light "
-      style={{
-        zIndex: 3000
-        // minWidth: '30%'
-        // filter: 'blur(10px)',
+class Menu extends Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string
+  };
 
-        // display: 'flex'
-      }}
-    >
-      <button
-        style={{ background: 'whitesmoke' }}
-        className="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#submenu"
-        aria-controls="submenu"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span className="navbar-toggler-icon" />
-      </button>
-    </nav>
-    <div
-      className="collapse w-100"
-      id="submenu"
-      style={{
-        position: 'relative',
-        zIndex: 4000,
-        background: 'white'
-      }}
-    >
-      <div
-        className={`p-3 ${css(stylesheet.border)}`}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center'
-        }}
-      >
-        {children}
+  state = {
+    open: false
+  };
+
+  render() {
+    const { style, children } = this.props;
+    const { open } = this.state;
+    return (
+      <div style={{ ...style }}>
+        <nav
+          className="navbar navbar-light "
+          style={{
+            zIndex: 3000
+            // minWidth: '30%'
+            // filter: 'blur(10px)',
+
+            // display: 'flex'
+          }}
+        >
+          <button
+            onClick={() => this.setState(oldSt => ({ open: !oldSt.open }))}
+            style={{ background: 'whitesmoke' }}
+            className="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#submenu"
+            aria-controls="submenu"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon" />
+          </button>
+        </nav>
+        <div
+          className={`collapse w-100 ${open && 'show'}`}
+          id="submenu"
+          style={{
+            position: 'relative',
+            zIndex: 4000,
+            background: 'white'
+          }}
+        >
+          <div
+            className={`p-3 ${css(stylesheet.border)}`}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center'
+            }}
+          >
+            {children}
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-);
+    );
+  }
+}
 
 class MainLayout extends Component {
   static propTypes = {
