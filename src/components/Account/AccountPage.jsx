@@ -129,26 +129,18 @@ const ExtendableCard = props => {
     onClose,
     source,
     asyncRemoveCard,
-    asyncSubmitChallenge
+    asyncSubmitChallenge,
+    smallScreen,
+    iOS
   } = props;
 
-  const makeEditable = d => {
-    d.edit = true;
-    return d;
-  };
+  // const makeEditable = d => {
+  //   d.edit = true;
+  //   return d;
+  // };
 
-  const {
-    createdCards,
-    submittedCards,
-    startedCards,
-    collectedCards
-  } = authUser;
-  const cards = [
-    ...createdCards.map(makeEditable),
-    ...submittedCards,
-    ...startedCards,
-    ...collectedCards
-  ];
+  const { submittedCards, startedCards, collectedCards } = authUser;
+  const cards = [...submittedCards, ...startedCards, ...collectedCards];
   const selected =
     extendedCardId !== null &&
     selectedCardId !== null &&
@@ -162,6 +154,7 @@ const ExtendableCard = props => {
       {selected && (
         <Card
           {...selectedCard}
+          iOS={iOS}
           width={width}
           height={height}
           onClick={onClick}

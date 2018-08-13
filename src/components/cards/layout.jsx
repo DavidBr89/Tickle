@@ -261,13 +261,13 @@ const PreviewMedia = ({ data, style, smallScreen }) => (
     {data.map(m => (
       <div
         key={m.url}
-        className="mr-1 mb-1"
+        className="mr-1"
         style={{
           display: 'flex',
           maxWidth: `${
             smallScreen
               ? Math.max(80 / data.length, 40)
-              : Math.max(100 / data.length, 45)
+              : Math.max(100 / data.length, 40)
           }%`
         }}
       >
@@ -434,7 +434,7 @@ export const FlipButton = ({ style, onClick, color, disabled, className }) => (
     disabled={disabled}
   >
     <div style={{ display: 'flex', alignItems: 'center' }}>
-      <img src={flipIconSrc} />
+      <img src={flipIconSrc} width={30} height={30} />
     </div>
   </BigButton>
 );
@@ -535,7 +535,7 @@ export const Btn = ({
   <CardThemeConsumer>
     {({ stylesheet: { btn } }) => (
       <button
-        className={css(btn)}
+        className={`${css(btn)} ${className}`}
         style={{ ...style }}
         onClick={onClick}
         disabled={disabled}
@@ -545,6 +545,31 @@ export const Btn = ({
     )}
   </CardThemeConsumer>
 );
+
+export const PreviewTags = ({ data, style, placeholder, small, colorScale }) =>
+  data !== null && data.length === 0 ? (
+    <div className="alert alert-danger">
+      <strong>No Tag!</strong> Please add at least one tag!
+    </div>
+  ) : (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        overflow: 'hidden',
+        ...style,
+        ...tagsStyle
+        // overflowY: 'visible'
+        // flexWrap: 'no-wrap'
+        // alignItems: 'center'
+      }}
+    >
+      {data !== null &&
+        data.length > 0 &&
+        data.map(t => <Tag title={t} color={tagColor} small={small} />)}
+    </div>
+  );
 
 export {
   DescriptionField,

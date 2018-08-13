@@ -106,7 +106,8 @@ class ReadCardFront extends Component {
       id,
       uid,
       challengeSubmission,
-      onSubmitChallenge
+      onSubmitChallenge,
+      smallScreen
     } = this.props;
 
     const FooterBtn = () => (
@@ -141,6 +142,7 @@ class ReadCardFront extends Component {
       case 'Challenge':
         return (
           <MediaChallenge
+            smallScreen={smallScreen}
             {...challenge}
             title="Challenge"
             key={id}
@@ -152,25 +154,10 @@ class ReadCardFront extends Component {
                 authorId: uid,
                 ...challengeSubmission,
                 ...d
-                // completed: false
               });
               this.setState({
-                challengeSubmitted: false,
-                challengeStarted: true
-              });
-            }}
-            onSubmit={d => {
-              onSubmitChallenge({
-                cardId: id,
-                authorId: uid,
-                ...challengeSubmission,
-                ...d
-                // completed: true
-              });
-              this.setState({
-                dialog: null,
-                challengeSubmitted: true,
-                challengeStarted: false
+                challengeStarted: !d.completed,
+                challengeSubmitted: d.completed
               });
             }}
           />
@@ -212,7 +199,7 @@ class ReadCardFront extends Component {
     const modalVisible = dialog !== null;
     const dialogTitle = dialog !== null ? dialog.key : null;
     const { coverPhoto, cardLayout } = stylesheet;
-
+    const fieldHeight = { height: smallScreen ? '20%' : '20%' };
     // TODO: modal color
     return (
       <CardHeader
@@ -234,7 +221,7 @@ class ReadCardFront extends Component {
             <PreviewTags colorScale={tagColorScale} data={tags} />
           </ImgOverlay>
           <DescriptionField
-            style={{ maxHeight: '20%' }}
+            style={fieldHeight }
             text={description}
             onEdit={() =>
               this.setState({
@@ -247,7 +234,7 @@ class ReadCardFront extends Component {
             }
           />
           <MediaField
-            style={{ maxHeight: '20%' }}
+            style={fieldHeight}
             smallScreen={smallScreen}
             media={smallScreen ? media.slice(0, 2) : media.slice(0, 4)}
             onClick={() =>

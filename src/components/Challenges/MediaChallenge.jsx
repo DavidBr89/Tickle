@@ -32,7 +32,13 @@ class MediaChallenge extends Component {
     stylesheet: {}
   };
 
-  state = { media: [], response: null, ...this.props.challengeSubmission };
+  state = {
+    media: [],
+    response: null,
+    completed: false,
+    ...this.props.challengeSubmission,
+    started: this.props.challengeSubmission !== null
+  };
 
   render() {
     const {
@@ -44,37 +50,60 @@ class MediaChallenge extends Component {
       stylesheet,
       title,
       onSubmit,
-      challengeSubmission
+      challengeSubmission,
+      smallScreen
     } = this.props;
-    const { media, response, completed } = this.state;
+    const { media, response, completed, started } = this.state;
 
+    const challBtnTxt = smallScreen ? 'Chall.' : 'Challenge';
+
+    const iconLock = <Icon.Lock size={30} />;
     // const isUploading = media.filter(m => m.url === null).length > 0;
     return (
       <ModalBody
         onClose={() => {
           onClose();
-          if (challengeSubmission && response !== challengeSubmission.response)
+          if (
+            (response !== null && !challengeSubmission) ||
+            (challengeSubmission && challengeSubmission.response !== response)
+          )
             onUpdate({ response, completed });
         }}
         title={title}
         footer={
-          <Btn
-            disabled={completed}
-            onClick={() => {
-              onSubmit({ media, response, completed: true });
-            }}
-          >
-            <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-              <div className="mr-1">
-                {completed ? 'Challenge submitted' : 'Submit Challenge'}
-              </div>
-              {completed && (
-                <div>
-                  <Icon.Lock />
+          <div style={{ display: 'flex' }}>
+            <Btn
+              disabled={started}
+              className="mr-1"
+              onClick={() => {
+                this.setState({ started: true });
+                onUpdate({ media, response, completed: false });
+              }}
+            >
+              <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <div className="mr-1">
+                  {!started ? `Start ${challBtnTxt}` : `${challBtnTxt} started`}
                 </div>
-              )}
-            </div>
-          </Btn>
+                {started && <div>{iconLock}</div>}
+              </div>
+            </Btn>
+            <Btn
+              disabled={completed || (media.length === 0 && response === null)}
+              onClick={() => {
+                onUpdate({ media, response, completed: true });
+                this.setState({ completed: true });
+              }}
+            >
+              <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <div className="mr-1">
+                  {completed
+                    ? `${challBtnTxt} submitted`
+                    : `Submit ${challBtnTxt}`}
+                </div>
+                {completed && <div>{iconLock}</div>}
+              </div>
+            </Btn>
+          </div>
         }
       >
         <div className={className} style={{ width: '100%', ...styles }}>
@@ -88,8 +117,9 @@ class MediaChallenge extends Component {
             placeholder="write your response"
             value={response}
             onChange={e => {
+              const text = e.target.value;
               this.setState({
-                response: e.target.value,
+                response: text !== '' ? text : null,
                 completed: false
               });
             }}
@@ -102,6 +132,7 @@ class MediaChallenge extends Component {
               stylesheet={stylesheet}
               buttonStyle={{ width: 30 }}
               onChange={newMedia => {
+                console.log('newMedia', newMedia);
                 this.setState({ media: newMedia, completed: false });
                 onUpdate({ media: newMedia, completed: false });
               }}

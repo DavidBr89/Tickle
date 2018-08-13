@@ -239,30 +239,31 @@ Tag.defaultProps = {
   color: tagColor
 };
 
-export const PreviewTags = ({ data, style, placeholder, small, colorScale }) =>
-  data !== null && data.length === 0 ? (
-    <div className="alert alert-danger">
-      <strong>No Tag!</strong> Please add at least one tag!
-    </div>
-  ) : (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        overflow: 'hidden',
-        ...style,
-        ...tagsStyle
-        // overflowY: 'visible'
-        // flexWrap: 'no-wrap'
-        // alignItems: 'center'
-      }}
-    >
-      {data !== null &&
-        data.length > 0 &&
-        data.map(t => <Tag title={t} color={tagColor} small={small} />)}
-    </div>
-  );
+export const PreviewTags = ({
+  data,
+  style,
+  placeholder,
+  small,
+  colorScale
+}) => (
+  <div
+    style={{
+      display: 'flex',
+      alignItems: 'center',
+      flexWrap: 'wrap',
+      overflow: 'hidden',
+      ...style,
+      ...tagsStyle
+      // overflowY: 'visible'
+      // flexWrap: 'no-wrap'
+      // alignItems: 'center'
+    }}
+  >
+    {data !== null &&
+      data.length > 0 &&
+      data.map(t => <Tag title={t} color={tagColor} small={small} />)}
+  </div>
+);
 
 PreviewTags.propTypes = {
   data: PropTypes.oneOfType([PropTypes.array, null]),

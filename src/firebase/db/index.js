@@ -154,8 +154,15 @@ export const addImgToStorage = ({ file, path }) => {
   const imgRef = storageRef.child(`images/${path}`);
   return imgRef
     .put(file, metadata)
-    .then(() => new Promise(resolve => resolve(imgRef.getDownloadURL())))
+    .then(
+      () =>
+        new Promise(resolve => {
+          console.log('imgRef', imgRef);
+          return resolve(imgRef.getDownloadURL());
+        })
+    )
     .catch(err => {
+      console.log('err', err);
       throw new Error(`error in uploading img for ${file.name}`);
       // Handle any error that occurred in any of the previous
       // promises in the chain.
@@ -317,7 +324,7 @@ export const addComment = ({ authorId, cardId, text }) =>
     .collection('comments')
     .add({ text, authorId, date: new Date() });
 
-export const readComments = (cardId ) =>
+export const readComments = cardId =>
   firestore
     .collection('comments')
     .where('cardId', '==', cardId)

@@ -35,7 +35,7 @@ function reducer(state = INITIAL_STATE, action) {
       const { width, height, iOS } = action.options;
 
       const isSmartphone = width < 450;
-      const smallScreen = width < 330;
+      const smallScreen = width < 420;
 
       return { ...state, width, height, isSmartphone, smallScreen, iOS };
     }

@@ -65,6 +65,7 @@ const mapStateToProps = state => {
 
   return {
     authUser: {
+      ...state.Screen,
       ...state.Session.authUser,
       collectedCards,
       submittedCards,

@@ -91,7 +91,8 @@ class Card extends React.Component {
       author,
       background,
       uiColor,
-      template
+      template,
+      iOS
     } = this.props;
     const { frontView } = this.state;
     const { onCollect } = this.props;
@@ -113,8 +114,8 @@ class Card extends React.Component {
       .darken(1)
       .hex();
 
-    const iOS =
-      !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+    // const iOS =
+    //   !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
 
     return (
       <div

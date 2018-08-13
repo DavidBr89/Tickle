@@ -11,7 +11,7 @@ import '@firebase/storage';
 // require("firebase/functions");
 // import * as fb from 'firebase';
 
-import 'firebase-auth';
+// import 'firebase-auth';
 
 import config from './firebase_api_keys.json';
 

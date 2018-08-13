@@ -45,7 +45,8 @@ const INITIAL_STATE = {
 };
 
 const byPropKey = (propertyName, value) => () => ({
-  [propertyName]: value
+  [propertyName]: value,
+  error: null
 });
 
 class SignUpForm extends Component {
@@ -68,37 +69,40 @@ class SignUpForm extends Component {
     auth
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then(res => {
-        console.log('res')
+        console.log('res');
         const authUser = res.user;
+        const userProfile = {
+          uid: authUser.uid,
+          fullname,
+          username,
+          photoURL: null,
+          email,
+          interests
+        };
+        onSetAuthUser({ authUser: userProfile });
+        history.push(routes.DATAVIEW_FLOORPLAN);
+        // Jump to page
         // Create a user in your own accessible Firebase Database too
+        // this.setState({ imgUpload: true });
+
         db.addImgToStorage({ file: img.file, path: `usr/${authUser.uid}` })
           .then(imgUrl => {
-            const userProfile = {
-              uid: authUser.uid,
-              fullname,
-              username,
-              photoURL: imgUrl,
-              email,
-              interests
-            };
-
-            db.doCreateUser(userProfile)
+            const userProfileWithImg = { ...userProfile, photoURL: imgUrl };
+            db.doCreateUser(userProfileWithImg)
               .then(() => {
                 this.setState(() => ({ ...INITIAL_STATE }));
-                onSetAuthUser({ authUser: userProfile });
-                // Jump to page
-                history.push(routes.DATAVIEW_FLOORPLAN);
+                onSetAuthUser({ authUser: userProfileWithImg });
               })
               .catch(error => {
-                this.setState(byPropKey('error', error));
+                this.setState({ error, loading: false });
               });
           })
           .catch(error => {
-            this.setState(byPropKey('error', error));
+            this.setState({ error, loading: false });
           });
       })
       .catch(error => {
-        this.setState(byPropKey('error', error));
+        this.setState({ error, loading: false });
       });
 
     event.preventDefault();
@@ -217,14 +221,18 @@ class SignUpForm extends Component {
           </div>
           <div
             className="mb-3"
-            style={{ display: 'flex', alignItems: 'center' }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}
           >
             <button
               className={css(stylesheet.btn)}
               disabled={isInvalid}
               type="submit"
             >
-              Sign Up {loading && <span>loading</span>}
+              Sign Up
             </button>
             {error && (
               <div className="ml-2 alert alert-danger">{error.message}</div>

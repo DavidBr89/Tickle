@@ -61,9 +61,8 @@ const mapStateToProps = state => {
     authUser: { uid }
   } = state.Session;
 
-  const filteredCards = collectibleCards
-    .filter(d => filterByTag(d, filterSet))
-    .filter(applyFilter(challengeStateFilter));
+  const filteredCards = collectibleCards.filter(d => filterByTag(d, filterSet));
+  // .filter(applyFilter(challengeStateFilter));
 
   const cardSets = setify(filteredCards);
   // const tagColorScale = makeTagColorScale(cardSets);
