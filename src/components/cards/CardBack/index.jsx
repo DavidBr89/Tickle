@@ -4,7 +4,7 @@ import { css } from 'aphrodite/no-important';
 
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
-import * as Icon from 'react-feather';
+import { Trash2, Maximize, Minimize } from 'react-feather';
 
 import { FlipButton } from '../layout';
 import { FieldSet } from 'Components/utils/StyledComps';
@@ -28,21 +28,60 @@ const DeleteButton = ({ style, onClick, color, className }) => (
         }}
         onClick={onClick}
       >
-        <div>
-          <Icon.Trash2 size={35} color="white" />
-        </div>
+        <Trash2 size={35} color="white" />
       </button>
     )}
   </CardThemeConsumer>
 );
 
-const BackField = ({ ...props }) => (
+const BackField = ({
+  onClick,
+  onControlClick,
+  style,
+  bodyStyle,
+  title,
+  legendStyle,
+  icon,
+  children,
+  extended
+}) => (
   <CardThemeConsumer>
-    {({ stylesheet: { shallowBg, fieldSetBorder } }) => (
-      <FieldSet
-        {...props}
+    {({ stylesheet: { shallowBg, fieldSetBorder, bareBtn } }) => (
+      <div
         className={`${css(shallowBg)} ${css(fieldSetBorder)}`}
-      />
+        onClick={!extended ? onClick : () => null}
+        style={{
+          // border: `1px solid ${uiColor}`,
+          marginTop: '4px',
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          padding: 10,
+          ...style,
+          overflow: 'hidden'
+        }}
+      >
+        <div
+          className="mb-1"
+          style={{
+            display: 'flex',
+            // width: '100%',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            position: 'relative'
+          }}
+        >
+          <div style={{ fontSize: '1.25rem' }}>{title}</div>
+          <button
+            className={css(bareBtn)}
+            onClick={extended ? onClick : () => null}
+          >
+            {extended ? <Minimize /> : <Maximize />}
+          </button>
+        </div>
+        {children}
+      </div>
     )}
   </CardThemeConsumer>
 );
@@ -142,17 +181,13 @@ class CardBackSkeleton extends Component {
 
     const { extended } = this.state;
 
-    const isExtended = field => ({
-      extended: extended === field && extended !== null
-    });
-
     const displayStyle = field => {
       const defaultStyle = { transition: 'height 200ms', marginBottom: 10 };
       const isExt = extended === field;
       if (extended !== null) {
         return {
           ...defaultStyle,
-          height: isExt ? '100%' : '7%',
+          height: isExt ? '70%' : '10%',
           overflow: isExt ? 'scroll' : 'hidden'
         };
       }
@@ -163,6 +198,8 @@ class CardBackSkeleton extends Component {
         ...defaultStyle
       };
     };
+
+    const isExtended = field => extended === field && extended !== null;
 
     return (
       <div
@@ -180,7 +217,8 @@ class CardBackSkeleton extends Component {
         }}
       >
         <BackField
-          legend="Author"
+          title="Author"
+          extended={isExtended('author')}
           style={displayStyle('author')}
           onClick={() => this.selectField('author')}
         >
@@ -194,9 +232,10 @@ class CardBackSkeleton extends Component {
         </BackField>
         {visible && (
           <BackField
+            extended={isExtended('map')}
             style={{ ...displayStyle('map'), padding: 0 }}
             edit={edit}
-            legend="Location"
+            title="Location"
             legendStyle={{ position: 'absolute', margin: 10, zIndex: 1000 }}
             borderColor={uiColor}
             onClick={() => this.selectField('map')}
@@ -204,7 +243,7 @@ class CardBackSkeleton extends Component {
             <MapAreaControl
               {...this.props}
               {...loc}
-              {...isExtended('map')}
+              extended={isExtended('map')}
               uiColor={uiColor}
               onChange={r => setMapRadius(r)}
               radius={mapRadius}
@@ -214,12 +253,13 @@ class CardBackSkeleton extends Component {
         )}
         {visible && (
           <BackField
+            extended={isExtended('comments')}
             onClick={() => this.selectField('comments')}
-            legend="Comments"
+            title="Comments"
             style={displayStyle('comments')}
             borderColor={uiColor}
           >
-            <Comments cardId={cardId} extended={extended === 'author'} />
+            <Comments cardId={cardId} extended={extended === 'comments'} />
           </BackField>
         )}
         <div

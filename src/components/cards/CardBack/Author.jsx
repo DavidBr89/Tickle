@@ -116,20 +116,14 @@ const ExtendedAuthor = ({
       style={noBorderStyle}
       legendStyle={legendStyle}
     >
-      <SkillBar
-        sets={interests}
-        acc={d => d.count}
-        tagColorScale={tagColorScale}
-      />
+      <SkillBar sets={interests} acc={() => 1} tagColorScale={tagColorScale} />
     </FieldSet>
     <FieldSet
       legend="skills:"
       style={noBorderStyle}
       className={css(stylesheet.shallowBg)}
       legendStyle={legendStyle}
-    >
-      <SkillBar sets={skills} tagColorScale={tagColorScale} />
-    </FieldSet>
+    />
     <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
       Activity
     </div>
@@ -200,7 +194,6 @@ class Author extends React.Component {
 
   componentDidMount() {
     const { uid } = this.props;
-    console.log('AUTHOR UID', uid);
     if (!uid) return;
     db.getDetailedUserInfo(uid).then(res => {
       const {
@@ -239,28 +232,6 @@ class Author extends React.Component {
   }
 }
 
-// const Author = ({ extended, ...restProps }) =>
-//   extended ? (
-//     <ExtendedAuthor {...restProps} key={restProps.uid} />
-//   ) : (
-//     <AuthorPreview {...restProps} key={restProps.uid} />
-//   );
-
-// Author.propTypes = {
-//   //  profile: PropTypes.shape({
-//   name: PropTypes.string,
-//   skills: PropTypes.array(
-//     PropTypes.shape({ name: PropTypes.string, level: PropTypes.number })
-//   ),
-//   activity: PropTypes.object(
-//     PropTypes.shape({
-//       collectedCards: PropTypes.number,
-//       createdCards: PropTypes.number
-//     })
-//   ),
-//   extended: PropTypes.bool
-// };
-
 Author.defaultProps = {
   // TODO: check
   placeholderImgUrl:
@@ -277,33 +248,5 @@ Author.defaultProps = {
   style: {},
   extended: false
 };
-
-const Profile = ({ data }) => (
-  <div className="media mt-3">
-    <img
-      className="d-flex mr-3"
-      width={64}
-      height={64}
-      src={profileSrc()}
-      alt="alt"
-    />
-    <div className="media-body">
-      <div>{data.comment}</div>
-      <div>
-        <small className="font-italic">- {data.name}</small>
-      </div>
-    </div>
-  </div>
-);
-
-Profile.propTypes = {
-  data: PropTypes.object.isRequired
-};
-Profile.defaultProps = {
-  data: {}
-};
-
-// TODO; rempve
-Profile.defaultProps = { name: 'jan', comment: 'yeah' };
 
 export default Author;

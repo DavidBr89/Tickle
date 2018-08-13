@@ -315,23 +315,26 @@ export const doDeleteCard = cid =>
     .delete();
 
 // Add a new document with a generated id.
-export const addComment = ({ authorId, cardId, text }) =>
+export const addComment = ({ uid, cardId, text }) =>
   firestore
-    .collection('users')
-    .doc(authorId)
-    .collection('createdCards')
+    .collection('cardComments')
     .doc(cardId)
     .collection('comments')
-    .add({ text, authorId, date: new Date() });
+    // TODO: change later will break in future firebase release
+    // TODO: change later
+    .add({ uid, text, date: new Date() });
 
 export const readComments = cardId =>
   firestore
+    .collection('cardComments')
+    .doc(cardId)
     .collection('comments')
-    .where('cardId', '==', cardId)
     .get()
     .then(querySnapshot => {
       const comments = [];
       querySnapshot.forEach(doc => comments.push(doc.data()));
+      querySnapshot.forEach(doc => console.log('yo', doc.data()));
+      console.log('querySnapshot', querySnapshot);
       return new Promise(
         resolve => resolve(comments),
         error => console.log('error in readComments', error)

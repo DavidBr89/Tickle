@@ -27,6 +27,9 @@ const makeStylesheet = ({ uiColor, background }) => {
       border: `1px solid ${littleShallowColor}`,
       boxShadow: `6px 6px ${littleShallowColor}`
     },
+    bareBtn: {
+      ...btnStyle,
+    },
     btn: {
       ...btnStyle,
       borderColor: uiColor,

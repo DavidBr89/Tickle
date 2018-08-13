@@ -104,10 +104,8 @@ const ExtendedAuthor = ({
       Personal
     </div>
     <FieldSet legend="Interests:">
-      <SkillBar data={interests} tagColorScale={tagColorScale} />
     </FieldSet>
     <FieldSet legend="skills:">
-      <SkillBar data={skills} tagColorScale={tagColorScale} />
     </FieldSet>
     <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
       Activity
@@ -145,7 +143,7 @@ const AuthorPreview = ({
       {photoURL ? (
         <img width="40%" height="80%" src={photoURL} alt="alt" />
       ) : (
-        //TODO:change
+        // TODO:change
         <Icon.User />
       )}
 

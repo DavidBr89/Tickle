@@ -121,9 +121,7 @@ export const FieldSet = ({
       >
         <div>
           <h5 style={legendStyle}>
-            <span>
               {legend} {icon}
-            </span>
           </h5>
         </div>
       </div>

@@ -9,6 +9,8 @@ import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 import { FieldSet } from 'Components/utils/StyledComps';
 import flipIconSrc from './flip_icon.png';
 
+import { RefreshCcw } from 'react-feather';
+
 // TODO: remove
 import cxx from './layout.scss';
 
@@ -434,7 +436,7 @@ export const FlipButton = ({ style, onClick, color, disabled, className }) => (
     disabled={disabled}
   >
     <div style={{ display: 'flex', alignItems: 'center' }}>
-      <img src={flipIconSrc} width={30} height={30} />
+      <RefreshCcw />
     </div>
   </BigButton>
 );

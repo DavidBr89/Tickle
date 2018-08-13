@@ -1,14 +1,7 @@
 import React, { Component, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { css } from 'aphrodite';
-
-// import * as Icon from 'react-feather';
-
-// import chroma from 'chroma-js';
-// import * as Icon from 'react-feather';
 
 import MediaChallenge from 'Components/Challenges/MediaChallenge';
 import { TagInput, PreviewTags } from 'Utils/Tag';
@@ -199,7 +192,7 @@ class ReadCardFront extends Component {
     const modalVisible = dialog !== null;
     const dialogTitle = dialog !== null ? dialog.key : null;
     const { coverPhoto, cardLayout } = stylesheet;
-    const fieldHeight = { height: smallScreen ? '20%' : '20%' };
+    const fieldHeight = { height: '20%' };
     // TODO: modal color
     return (
       <CardHeader
@@ -221,7 +214,7 @@ class ReadCardFront extends Component {
             <PreviewTags colorScale={tagColorScale} data={tags} />
           </ImgOverlay>
           <DescriptionField
-            style={fieldHeight }
+            style={fieldHeight}
             text={description}
             onEdit={() =>
               this.setState({
