@@ -38,20 +38,22 @@ const CardHeader = ({
     <CardThemeConsumer>
       {({ stylesheet }) => (
         <div
+          className="p-2"
           style={{
             width: '100%',
             height: '100%',
+              ...shadowStyle,
             ...style
           }}
         >
           <div
-            className="pl-2 pr-2 pt-2"
             style={{
               background,
-              overflow: 'hidden',
+              // overflow: 'hidden',
               height: '100%',
               width: '100%',
-              ...shadowStyle
+              display: 'flex',
+              flexDirection: 'column',
             }}
           >
             <div

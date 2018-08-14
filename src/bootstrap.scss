@@ -330,6 +330,18 @@ input[type="file"] {
   border-top: 1px solid grey;
   padding: 0.5rem;
 }
+
+.flexCol {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.flex-100 {
+  flex: 1 1 auto;
+
+}
+
 /* body,html{ */
 /*   overflow:hidden */
 /* } */

@@ -51,40 +51,40 @@ class CommentsWrapper extends Component {
 const Comments = ({ data, author, cardId, onChange, extended }) => {
   const { uid } = author;
 
-  const fetchtedComments = data.map(({ date, ...c }, i) => (
-    <OneComment {...c} date="date placeholder" />
-  ));
-  if (extended) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          flexGrow: 1
-        }}
-      >
-        <div style={{ overflow: 'scroll', flex: '1 1 auto' }}>
-          {fetchtedComments}
-          {data.length === 0 && (
-            <div style={{}}>
-              <h4>'No Comments'</h4>
-            </div>
-          )}
-        </div>
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        flexGrow: 1
+      }}
+    >
+      <div style={{ overflow: 'scroll', flex: '1 0 auto' }}>
+        {data
+          .slice(0, extended ? 20 : 2)
+          .map(({ date, ...c }) => (
+            <OneComment {...c} date="date placeholder" />
+          ))}
+        {data.length === 0 && (
+          <div style={{}}>
+            <h4>'No Comments'</h4>
+          </div>
+        )}
+      </div>
+      {extended && (
         <AddComment
           user={author}
           onClick={text => {
-            const comment = { uid, cardId, text };
+            const comment = { ...author, cardId, text };
             db.addComment({ uid, cardId, text }).then(() =>
               console.log('comment added', comment)
             );
             onChange(comment);
           }}
         />
-      </div>
-    );
-  }
-  return <div>{fetchtedComments}</div>;
+      )}
+    </div>
+  );
 };
 
 Comments.defaultProps = {
@@ -96,17 +96,20 @@ Comments.defaultProps = {
 
 const OneComment = ({ photoURL, text, username, date }) => (
   <div style={{ display: 'flex' }}>
-    <img
-      className=" mr-3"
-      width="20"
-      height="20"
-      src={photoURL}
-      style={{
-        borderRadius: '50%',
-        border: 'black 2px solid'
-      }}
-      alt="alt"
-    />
+    <div className="">
+      <img
+        className=" mr-3"
+        width="30"
+        height="30"
+        src={photoURL}
+        style={{
+          border: '1px solid black'
+          // borderRadius: '50%',
+          // border: 'black 2px solid'
+        }}
+        alt="alt"
+      />
+    </div>
     <div className="media-body">
       <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
         <small>{text}</small>

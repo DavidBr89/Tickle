@@ -68,8 +68,7 @@ const BackField = ({
             display: 'flex',
             // width: '100%',
             justifyContent: 'space-between',
-            alignItems: 'center',
-            position: 'relative'
+            alignItems: 'center'
           }}
         >
           <div style={{ fontSize: '1.25rem' }}>{title}</div>
@@ -92,6 +91,7 @@ DeleteButton.propTypes = {
   color: PropTypes.string,
   className: PropTypes.string
 };
+
 DeleteButton.defaultProps = {
   style: {},
   onClick: d => d,
@@ -181,109 +181,105 @@ class CardBackSkeleton extends Component {
 
     const { extended } = this.state;
 
+    const isExtended = field => extended === field && extended !== null;
     const displayStyle = field => {
       const defaultStyle = { transition: 'height 200ms', marginBottom: 10 };
-      const isExt = extended === field;
-      if (extended !== null) {
-        return {
-          ...defaultStyle,
-          height: isExt ? '70%' : '10%',
-          overflow: isExt ? 'scroll' : 'hidden'
-        };
-      }
+      const isExt = isExtended(field);
       return {
-        height: '30%',
-        cursor: 'pointer',
-        // background: null,
-        ...defaultStyle
+        ...defaultStyle,
+        height: isExt && '100%',
+        minHeight: 40,
+        flex: '1 1 auto',
+        // flex: '1 1 auto',
+        overflow: isExt ? 'scroll' : 'hidden'
       };
     };
-
-    const isExtended = field => extended === field && extended !== null;
 
     return (
       <div
         ref={cont => (this.cont = cont)}
-        className="container"
+        className="flexCol flex-100"
         style={{
-          height: '90%',
-          display: 'flex',
-          alignContent: 'center',
-          flexDirection: 'column'
+          // display: 'flex',
+          alignContent: 'center'
+          // flexDirection: 'column'
           // zIndex: 10000
           // ...style
           // justifyContent: 'space-around'
           // pointerEvents: 'all'
         }}
       >
-        <BackField
-          title="Author"
-          extended={isExtended('author')}
-          style={displayStyle('author')}
-          onClick={() => this.selectField('author')}
-        >
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <BackField
+            title="Author"
+            extended={isExtended('author')}
+            style={displayStyle('author')}
+            onClick={() => this.selectField('author')}
+          >
+            {visible && (
+              <StyledAuthor
+                uid={uid}
+                extended={extended === 'author'}
+                tagColorScale={tagColorScale}
+              />
+            )}
+          </BackField>
           {visible && (
-            <StyledAuthor
-              uid={uid}
-              extended={extended === 'author'}
-              tagColorScale={tagColorScale}
-            />
-          )}
-        </BackField>
-        {visible && (
-          <BackField
-            extended={isExtended('map')}
-            style={{ ...displayStyle('map'), padding: 0 }}
-            edit={edit}
-            title="Location"
-            legendStyle={{ position: 'absolute', margin: 10, zIndex: 1000 }}
-            borderColor={uiColor}
-            onClick={() => this.selectField('map')}
-          >
-            <MapAreaControl
-              {...this.props}
-              {...loc}
+            <BackField
               extended={isExtended('map')}
-              uiColor={uiColor}
-              onChange={r => setMapRadius(r)}
-              radius={mapRadius}
+              style={{ ...displayStyle('map'), padding: 0 }}
               edit={edit}
-            />
-          </BackField>
-        )}
-        {visible && (
-          <BackField
-            extended={isExtended('comments')}
-            onClick={() => this.selectField('comments')}
-            title="Comments"
-            style={displayStyle('comments')}
-            borderColor={uiColor}
-          >
-            <Comments cardId={cardId} extended={extended === 'comments'} />
-          </BackField>
-        )}
-        <div
-          className="mt-2"
-          style={{
-            display: 'flex',
-            // TODO: to complex, simplify
-            justifyContent: edit && template ? 'flex-end' : 'space-between'
-          }}
-        >
-          {edit && (
-            <DeleteButton
-              disabled
-              onClick={onDelete}
-              color={uiColor}
-              style={{ width: '20%' }}
-            />
+              title="Location"
+              legendStyle={{ position: 'absolute', margin: 10, zIndex: 1000 }}
+              borderColor={uiColor}
+              onClick={() => this.selectField('map')}
+            >
+              <MapAreaControl
+                {...this.props}
+                {...loc}
+                extended={isExtended('map')}
+                uiColor={uiColor}
+                onChange={r => setMapRadius(r)}
+                radius={mapRadius}
+                edit={edit}
+              />
+            </BackField>
           )}
-          <FlipButton
-            className={edit ? 'ml-2' : null}
-            color={uiColor}
-            onClick={flipHandler}
-            style={{ width: edit ? '20%' : '100%' }}
-          />
+          {visible && (
+            <BackField
+              extended={isExtended('comments')}
+              onClick={() => this.selectField('comments')}
+              title="Comments"
+              style={displayStyle('comments')}
+              borderColor={uiColor}
+            >
+              <Comments cardId={cardId} extended={extended === 'comments'} />
+            </BackField>
+          )}
+          <div
+            className="mt-2"
+            style={{
+              flexShrink: 0,
+              display: 'flex',
+              // TODO: to complex, simplify
+              justifyContent: edit && template ? 'flex-end' : 'space-between'
+            }}
+          >
+            {edit && (
+              <DeleteButton
+                disabled
+                onClick={onDelete}
+                color={uiColor}
+                style={{ width: '20%' }}
+              />
+            )}
+            <FlipButton
+              className={edit ? 'ml-2' : null}
+              color={uiColor}
+              onClick={flipHandler}
+              style={{ width: edit ? '20%' : '100%' }}
+            />
+          </div>
         </div>
       </div>
     );

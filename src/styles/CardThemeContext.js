@@ -28,7 +28,7 @@ const makeStylesheet = ({ uiColor, background }) => {
       boxShadow: `6px 6px ${littleShallowColor}`
     },
     bareBtn: {
-      ...btnStyle,
+      ...btnStyle
     },
     btn: {
       ...btnStyle,
@@ -75,7 +75,8 @@ const makeStylesheet = ({ uiColor, background }) => {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'space-around',
-      height: '90%'
+      flex: '1 1 auto'
+      // height: '90%'
     },
     coverPhoto: { height: '40%', maxHeight: 400, width: '100%' },
     flipContainer: {
