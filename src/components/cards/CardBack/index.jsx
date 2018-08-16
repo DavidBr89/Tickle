@@ -71,7 +71,7 @@ const BackField = ({
             alignItems: 'center'
           }}
         >
-          <div style={{ fontSize: '1.25rem' }}>{title}</div>
+          <div style={{ fontSize: '1.25rem', flex: '0 0 auto' }}>{title}</div>
           <button
             className={css(bareBtn)}
             onClick={extended ? onClick : () => null}
@@ -187,9 +187,10 @@ class CardBackSkeleton extends Component {
       const isExt = isExtended(field);
       return {
         ...defaultStyle,
-        height: isExt && '100%',
+        height: isExt ? '100%' : 50,
         minHeight: 40,
         flex: '1 1 auto',
+        // position: field === 'map' && 'absolute',
         // flex: '1 1 auto',
         overflow: isExt ? 'scroll' : 'hidden'
       };
@@ -200,6 +201,7 @@ class CardBackSkeleton extends Component {
         ref={cont => (this.cont = cont)}
         className="flexCol flex-100"
         style={{
+          height: '100%',
           // display: 'flex',
           alignContent: 'center'
           // flexDirection: 'column'
@@ -212,7 +214,7 @@ class CardBackSkeleton extends Component {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <BackField
             title="Author"
-            extended={isExtended('author')}
+            extended
             style={displayStyle('author')}
             onClick={() => this.selectField('author')}
           >
@@ -227,10 +229,9 @@ class CardBackSkeleton extends Component {
           {visible && (
             <BackField
               extended={isExtended('map')}
-              style={{ ...displayStyle('map'), padding: 0 }}
+              style={{ ...displayStyle('map') }}
               edit={edit}
               title="Location"
-              legendStyle={{ position: 'absolute', margin: 10, zIndex: 1000 }}
               borderColor={uiColor}
               onClick={() => this.selectField('map')}
             >

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import * as Icon from 'react-feather';
-import { css } from 'aphrodite/no-important';
+// import { css } from 'aphrodite/no-important';
 
 import { ModalBody } from 'Utils/Modal';
 import MediaUpload from 'Utils/MediaUpload';
@@ -17,19 +17,20 @@ class MediaChallenge extends Component {
     className: PropTypes.string,
     description: PropTypes.string,
     styles: PropTypes.object,
-    onChange: PropTypes.func,
     stylesheet: PropTypes.object,
-    challengeSubmission: PropTypes.oneOf([PropTypes.object, null])
+    challengeSubmission: PropTypes.oneOf([PropTypes.object, null]),
+    bookmarkable: PropTypes.boolean
   };
 
   static defaultProps = {
     className: '',
     description: 'placeholder challenge',
     challengeSubmission: null,
-    onChange: d => d,
     data: {},
     styles: {},
-    stylesheet: {}
+    stylesheet: {},
+    bookmarkable: false,
+    removable: false
   };
 
   state = {
@@ -51,13 +52,15 @@ class MediaChallenge extends Component {
       title,
       onSubmit,
       challengeSubmission,
-      smallScreen
+      smallScreen,
+      bookmarkable,
+      onRemoveSubmission
     } = this.props;
     const { media, response, completed, started } = this.state;
 
     const challBtnTxt = smallScreen ? 'Chall.' : 'Challenge';
 
-    const iconLock = <Icon.Lock size={30} />;
+    const iconLock = <Icon.Lock size={20} />;
     // const isUploading = media.filter(m => m.url === null).length > 0;
     return (
       <ModalBody
@@ -73,16 +76,19 @@ class MediaChallenge extends Component {
         footer={
           <div style={{ display: 'flex' }}>
             <Btn
-              disabled={started}
               className="mr-1"
               onClick={() => {
-                this.setState({ started: true });
-                onUpdate({ media, response, completed: false });
+                if (!started) {
+                  this.setState({ started: true });
+                  onUpdate({ media, response, completed: false });
+                } else {
+                  onRemoveSubmission();
+                }
               }}
             >
               <div style={{ display: 'inline-flex', alignItems: 'center' }}>
                 <div className="mr-1">
-                  {!started ? `Start ${challBtnTxt}` : `${challBtnTxt} started`}
+                  {!started ? 'Bookmark' : 'UnBookmark'}
                 </div>
                 {started && <div>{iconLock}</div>}
               </div>
@@ -132,7 +138,6 @@ class MediaChallenge extends Component {
               stylesheet={stylesheet}
               buttonStyle={{ width: 30 }}
               onChange={newMedia => {
-                console.log('newMedia', newMedia);
                 this.setState({ media: newMedia, completed: false });
                 onUpdate({ media: newMedia, completed: false });
               }}

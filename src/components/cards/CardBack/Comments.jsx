@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
 import { connect } from 'react-redux';
+import { css } from 'aphrodite';
 
 import { db } from 'Firebase';
 
 import { addCommentSuccess } from 'Reducers/Cards/actions';
+
+import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
 class CommentsWrapper extends Component {
   static propTypes = {
@@ -32,25 +34,36 @@ class CommentsWrapper extends Component {
 
   render() {
     const { comments } = this.state;
-    const { author, cardId, addComment, extended } = this.props;
+    const { author, cardId, extended } = this.props;
     return (
-      <Comments
-        extended={extended}
-        data={comments}
-        author={author}
-        cardId={cardId}
-        onChange={comment => {
-          addCommentSuccess();
-          this.setState({ comments: [...comments, comment] });
-        }}
-      />
+      <CardThemeConsumer>
+        {({ stylesheet }) => (
+          <CommentList
+            extended={extended}
+            data={comments}
+            author={author}
+            cardId={cardId}
+            stylesheet={stylesheet}
+            onChange={comment => {
+              addCommentSuccess();
+              this.setState({ comments: [...comments, comment] });
+            }}
+          />
+        )}
+      </CardThemeConsumer>
     );
   }
 }
 
-const Comments = ({ data, author, cardId, onChange, extended }) => {
+const CommentList = ({
+  data,
+  author,
+  cardId,
+  stylesheet,
+  onChange,
+  extended
+}) => {
   const { uid } = author;
-
   return (
     <div
       style={{
@@ -59,7 +72,7 @@ const Comments = ({ data, author, cardId, onChange, extended }) => {
         flexGrow: 1
       }}
     >
-      <div style={{ overflow: 'scroll', flex: '1 0 auto' }}>
+      <div style={{ overflow: 'scroll' }}>
         {data
           .slice(0, extended ? 20 : 2)
           .map(({ date, ...c }) => (
@@ -74,6 +87,7 @@ const Comments = ({ data, author, cardId, onChange, extended }) => {
       {extended && (
         <AddComment
           user={author}
+          stylesheet={stylesheet}
           onClick={text => {
             const comment = { ...author, cardId, text };
             db.addComment({ uid, cardId, text }).then(() =>
@@ -87,11 +101,12 @@ const Comments = ({ data, author, cardId, onChange, extended }) => {
   );
 };
 
-Comments.defaultProps = {
+CommentList.defaultProps = {
   data: [],
   author: {},
   cardId: null,
-  extended: false
+  extended: false,
+  stylesheet: {}
 };
 
 const OneComment = ({ photoURL, text, username, date }) => (
@@ -161,7 +176,7 @@ class AddComment extends Component {
   state = { text: null };
 
   render() {
-    const { onClick } = this.props;
+    const { onClick, stylesheet } = this.props;
     const { text } = this.state;
     return (
       <div style={{}} className="mt-3">
@@ -171,7 +186,7 @@ class AddComment extends Component {
           onChange={e => this.setState({ text: e.target.value })}
         />{' '}
         <button
-          className="mb-1"
+          className={`mb-1 ${css(stylesheet.btn)}`}
           style={{ width: '100%' }}
           disabled={text === null || text === ''}
           onClick={() => {

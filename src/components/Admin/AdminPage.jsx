@@ -59,10 +59,9 @@ class AdminPage extends Component {
       authUser,
       modalActive
     } = this.props;
-    console.log('authUser DIDMOUNT', authUser.uid);
     fetchUsers();
     fetchCreatedCards(authUser.uid);
-    selectCard(null);
+    // selectCard(null);
   }
 
   render() {
@@ -75,11 +74,27 @@ class AdminPage extends Component {
       toggleModal
     } = this.props;
     const { users } = this.props;
-    console.log('cards', selectedCardId, cards);
+    // console.log('cards', selectedCardId, cards);
     const selectedCard = cards.find(c => c.id === selectedCardId);
 
+    // {selectedCardId !== null && (
+    //   <div
+    //     onClick={() => toggleModal(true)}
+    //     style={{
+    //       width: 100,
+    //       height: 100,
+    //       // background: 'green',
+    //       display: 'flex',
+    //       boxShadow: '5px 5px grey',
+    //       border: '3px grey solid'
+    //     }}
+    //   >
+    //     {selectedCard.challengeSubmissions.length}
+    //   </div>
+    // )}
+
     return (
-      <div className="content-block">
+      <div className="content-block flexCol" style={{ height: '100%' }}>
         <Modal
           visible={modalActive}
           title="Title"
@@ -94,78 +109,57 @@ class AdminPage extends Component {
         <h1>Admin {authUser.username}</h1>
         <p>Restricted area! Only users with the admin rule are authorized.</p>
         <div
+          className="flex-100"
           style={{
             display: 'flex',
             justifyContent: 'space-around',
-            alignItems: 'center'
+            height: '100%'
           }}
         >
-          <div style={{ height: 900, width: 200 }}>
-            <CardStack
-              data={cards}
-              className="ml-1 mr-2"
-              selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
-              duration={600}
-              width={500}
-              height={900}
-              unit="px"
-              direction="vertical"
-              slotSize={200}
-              centered={selectedCardId !== null}
-            >
-              {d => (
-                <div
-                  className="w-100 h-100"
-                  key={d.id}
-                  onClick={() => selectCard(d.id)}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <div style={{ width: '100%', height: 200 }}>
-                    <PreviewCard
-                      {...d}
-                      tagColorScale={() => 'green'}
-                      key={d.id}
-                      edit={d.template}
-                      selected={selectedCardId === d.id}
-                      style={{
-                        transition: `transform 1s`,
-                        transform: selectedCardId === d.id && 'scale(1.2)',
-                        width: 180,
-                        opacity: d.template && 0.8
-                      }}
-                    />
-                  </div>
-                </div>
-              )}
-            </CardStack>
-          </div>
-          {selectedCardId !== null && (
-            <div
-              onClick={() => toggleModal(true)}
-              style={{
-                width: 100,
-                height: 100,
-                // background: 'green',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                boxShadow: '5px 5px grey',
-                border: '3px grey solid'
-              }}
-            >
-              {selectedCard.challengeSubmissions.length}
-            </div>
-          )}
-          <div>
-            {users.map(u => (
+          <CardStack
+            data={cards}
+            selectedIndex={null}
+            duration={600}
+            width={30}
+            height={100}
+            unit="%"
+            direction="vertical"
+            slotSize={30}
+            centered={false}
+          >
+            {u => (
               <div style={{ width: 200 }}>
                 <Author {...u} className="mb-3" />
               </div>
-            ))}
-          </div>
+            )}
+          </CardStack>
+          <CardStack
+            data={cards}
+            selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
+            duration={600}
+            width={30}
+            height={100}
+            unit="%"
+            direction="vertical"
+            slotSize={30}
+            centered={selectedCardId !== null}
+          >
+            {d => (
+              <PreviewCard
+                {...d}
+                onClick={() => selectCard(d.id)}
+                tagColorScale={() => 'green'}
+                key={d.id}
+                edit={d.template}
+                selected={selectedCardId === d.id}
+                style={{
+                  transition: `transform 1s`,
+                  transform: selectedCardId === d.id && 'scale(1.2)',
+                  width: '100%'
+                }}
+              />
+            )}
+          </CardStack>
         </div>
       </div>
     );

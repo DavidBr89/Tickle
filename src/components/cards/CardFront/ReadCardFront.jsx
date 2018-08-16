@@ -48,13 +48,13 @@ class ReadCardFront extends Component {
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     img: PropTypes.oneOf([PropTypes.object, null]),
-    onCollect: PropTypes.func,
     onClose: PropTypes.func,
     flipHandler: PropTypes.func,
     style: PropTypes.object,
     background: PropTypes.string,
     tagColorScale: PropTypes.func,
-    challenge: PropTypes.object
+    challenge: PropTypes.object,
+    bookmarkable: PropTypes.boolean
   };
 
   static defaultProps = {
@@ -71,9 +71,10 @@ class ReadCardFront extends Component {
     radius: 500,
     media: [],
     comments: [],
-    onCollect: null,
     flipHandler: d => d,
-    tagColorScale: () => 'green'
+    tagColorScale: () => 'green',
+    bookmarkable: false,
+    onRemoveChallengeSubmission: d => d
   };
 
   state = {
@@ -100,7 +101,10 @@ class ReadCardFront extends Component {
       uid,
       challengeSubmission,
       onSubmitChallenge,
-      smallScreen
+      smallScreen,
+      bookmarkable,
+      removable,
+      onRemoveChallengeSubmission
     } = this.props;
 
     const FooterBtn = () => (
@@ -137,14 +141,16 @@ class ReadCardFront extends Component {
           <MediaChallenge
             smallScreen={smallScreen}
             {...challenge}
+            bookmarkable={bookmarkable}
+            removable={removable}
             title="Challenge"
             key={id}
             challengeSubmission={challengeSubmission}
             onClose={this.closeModal}
+            onRemoveSubmission={onRemoveChallengeSubmission}
             onUpdate={d => {
               onSubmitChallenge({
                 cardId: id,
-                authorId: uid,
                 ...challengeSubmission,
                 ...d
               });
@@ -177,7 +183,6 @@ class ReadCardFront extends Component {
       img,
       description,
       media,
-      // onCollect,
       uiColor,
       flipHandler,
       // background,

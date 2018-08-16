@@ -104,6 +104,7 @@ const CardViewOverlay = props => {
             {...c}
             key={c.id}
             edit={false}
+            bookmarkable
             onClose={() => extendSelectedCard(null)}
             onCollect={() =>
               toggleCardChallenge({

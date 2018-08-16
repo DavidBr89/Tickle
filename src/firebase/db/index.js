@@ -29,7 +29,7 @@ const pruneFields = fields => {
   }, {});
 };
 
-const CARDS = 'cards';
+const CARDS = 'tmpCards';
 const getShallowCards = uid =>
   firestore
     .collection(CARDS)
@@ -51,7 +51,7 @@ const getShallowCards = uid =>
 export const readCards = (fromUID, playerId) =>
   getShallowCards(fromUID).then(data => {
     const pendingPromises = data.map(d =>
-      getOneChallengeSubmission(d.id, playerId || fromUID).then(
+      getOneChallengeSubmission(d.id, playerId).then(
         challengeSubmission =>
           new Promise(resolve => resolve({ ...d, challengeSubmission }))
       )
@@ -341,23 +341,21 @@ export const readComments = cardId =>
       );
     });
 
-export const addChallengeSubmission = ({
-  uid,
-  cardId,
-  playerId,
-  challengeData
-}) => {
-  console.log(
-    'uid',
-    uid,
-    'cardId',
-    cardId,
-    'playerId',
-    playerId,
-    'challengeData',
-    challengeData
-  );
-  return firestore
+export const removeChallengeSubmission = ({ cardId, playerId }) =>
+  firestore
+    .collection(CARDS)
+    .doc(cardId)
+    .collection('challengeSubmissions')
+    .doc(playerId)
+    .delete()
+    .catch(err => {
+      throw new Error(
+        `error adding challengesubmission for ${playerId} ${cardId} ${err}`
+      );
+    });
+
+export const addChallengeSubmission = ({ cardId, playerId, challengeData }) =>
+  firestore
     .collection(CARDS)
     .doc(cardId)
     .collection('challengeSubmissions')
@@ -368,7 +366,6 @@ export const addChallengeSubmission = ({
       // Handle any error that occurred in any of the previous
       // promises in the chain.
     });
-};
 // );
 
 // TODO: get authored cards

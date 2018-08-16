@@ -62,6 +62,7 @@ function centerLayout(nextProps) {
 
   const rightCards = data
     .slice(selectedIndex + 1, data.length)
+  //TODO: Pagination
     .slice(0, 10)
     .reverse()
     .map((c, j) => ({

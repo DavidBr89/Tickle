@@ -7,7 +7,7 @@ import { compose } from 'recompose';
 import { fetchUsers, fetchCreatedCards } from 'Reducers/Admin/async_actions';
 
 // TODO: change later
-import {toggleModal} from 'Reducers/Admin/actions';
+import { toggleModal } from 'Reducers/Admin/actions';
 import { selectCard } from 'Reducers/DataView/actions';
 
 import withAuthorization from '../withAuthorization';

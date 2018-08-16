@@ -101,6 +101,7 @@ export function fetchCollectibleCards(uid) {
   };
 }
 
+// TODO: later
 export function fetchCreatedCards(uid) {
   // Thunk middleware knows how to handle functions.
   // It passes the dispatch method as an argument to the function,
@@ -108,7 +109,7 @@ export function fetchCreatedCards(uid) {
   return function(dispatch) {
     dispatch(loadingCards());
 
-    return db.readCards(uid, 'createdCards').then(data => {
+    return db.readCards(uid).then(data => {
       dispatch(receiveCreatedCards(data.map(extractCardFields)));
     });
   };
@@ -251,26 +252,29 @@ export function fetchNearByPlaces() {
 export function asyncSubmitChallenge(challengeSubmission) {
   return function(dispatch) {
     console.log('response', db, challengeSubmission);
-    const {
-      authorId: uid,
-      cardId,
-      playerId,
-      ...challengeData
-    } = challengeSubmission;
+    const { cardId, playerId, ...challengeData } = challengeSubmission;
+
+    console.log('challengeSubmission', challengeSubmission);
+
     dispatch(submitChallenge(challengeSubmission));
     return db
-      .addChallengeSubmission({ uid, cardId, playerId, challengeData })
+      .addChallengeSubmission({ cardId, playerId, challengeData })
       .then(() => dispatch(submitChallengeSuccess()))
       .catch(err => {
         throw new Error('error saving challenge submission');
       });
+  };
+}
 
-    // return fetch(
-    //   `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=50.847109,4.352439&radius=500&key=${
-    //     process.env.GoogleAccessToken
-    //   }${PROXY_URL}`
-    // ).then(json => {
-    //   dispatch(receivePlaces(NearbyPlaces));
-    // });
+export function removeChallengeSubmission(challengeSubmission) {
+  const { cardId, playerId} = challengeSubmission;
+
+  return function(dispatch) {
+    // dispatch(submitChallenge(challengeSubmission));
+    return db.removeChallengeSubmission({ cardId, playerId });
+    //   .then(() => dispatch(submitChallengeSuccess()))
+    //   .catch(err => {
+    //     throw new Error('error saving challenge submission');
+    //   });
   };
 }

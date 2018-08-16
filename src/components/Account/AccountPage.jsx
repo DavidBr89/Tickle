@@ -134,12 +134,7 @@ const ExtendableCard = props => {
     iOS
   } = props;
 
-  // const makeEditable = d => {
-  //   d.edit = true;
-  //   return d;
-  // };
-
-  const { submittedCards, startedCards, collectedCards } = authUser;
+  const { submittedCards, uid, startedCards, collectedCards } = authUser;
   const cards = [...submittedCards, ...startedCards, ...collectedCards];
   const selected =
     extendedCardId !== null &&
@@ -147,24 +142,26 @@ const ExtendableCard = props => {
     extendedCardId === selectedCardId;
 
   const selectedCard = selected ? cards.find(c => c.id === selectedCardId) : {};
-  const { id, uid } = selectedCard;
+  const { id } = selectedCard;
 
   return (
     <BareModal key={selectedCard ? selectedCard.id : null} visible={selected}>
       {selected && (
         <Card
           {...selectedCard}
+          edit={false}
+          bookmarkable
+          removable
           iOS={iOS}
           width={width}
           height={height}
           onClick={onClick}
           onClose={onClose}
-          edit={source === 'created'}
-          onDelete={() => asyncRemoveCard(id)}
           selected={selected === id}
           onSubmitChallenge={challengeSubmission => {
             asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
           }}
+          onRemoveChallengeSubmission={d => console.log(d)}
         />
       )}
     </BareModal>

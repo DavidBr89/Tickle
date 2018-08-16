@@ -141,7 +141,7 @@ class MapAreaControl extends Component {
 
     const mapViewport = (width, height) => ({
       width,
-      height,
+      height: height ,
       latitude,
       longitude,
       zoom: scaleZoom(radius)
@@ -178,27 +178,29 @@ class MapAreaControl extends Component {
     //   radius={radius}
     // />
     return (
-      <DimWrapper delay={200}>
-        {(width, height) => (
-          <MapGL {...mapViewport(width, height)}>
-            <DivOverlay {...mapViewport(width, height)} data={[{ loc }]}>
-              {(_, [left, top]) => (
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: left - markerWidth / 2,
-                    top: top - markerHeight / 2,
-                    width: markerWidth,
-                    height: markerHeight
-                  }}
-                >
-                  <CardMarker />
-                </div>
-              )}
-            </DivOverlay>
-          </MapGL>
-        )}
-      </DimWrapper>
+      <div style={{ height: '100%', width: '100%' }}>
+        <DimWrapper delay={200}>
+          {(width, height) => (
+            <MapGL {...mapViewport(width, height)}>
+              <DivOverlay {...mapViewport(width, height)} data={[{ loc }]}>
+                {(_, [left, top]) => (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: left - markerWidth / 2,
+                      top: top - markerHeight / 2,
+                      width: markerWidth,
+                      height: markerHeight
+                    }}
+                  >
+                    <CardMarker />
+                  </div>
+                )}
+              </DivOverlay>
+            </MapGL>
+          )}
+        </DimWrapper>
+      </div>
     );
   }
 }

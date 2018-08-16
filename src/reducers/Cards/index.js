@@ -195,6 +195,31 @@ function reducer(state = INITIAL_STATE, action) {
       // tmpCards[cardIndex] = { ...cards[cardIndex], ...cardData };
     }
 
+    // case REMOVE_CHALLENGE_SUBMISSION: {
+    //   const { collectibleCards } = state;
+    //
+    //   const challengeSubmission = action.options;
+    //
+    //   const updatedCards = collectibleCards.map(c => {
+    //     if (c.id === challengeSubmission.cardId) {
+    //       return { ...c, challengeSubmission };
+    //     }
+    //     return c;
+    //   });
+    //
+    //   return {
+    //     ...state,
+    //     // TODO: remove
+    //     // tmpCards: updatedCards,
+    //     collectibleCards: updatedCards
+    //   };
+    //   // const tmpCards = [...createdCards];
+    //
+    //   // const cardIndex = tmpCards.findIndex(c => c.id === cardData.id);
+    //   // console.log('cardIndex', cardIndex);
+    //   // console.log('existAlready');
+    //   // tmpCards[cardIndex] = { ...cards[cardIndex], ...cardData };
+    // }
     case SUBMIT_CHALLENGE: {
       const { collectibleCards } = state;
 
