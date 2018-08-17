@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 // import styles from './PreviewCard.css';
 import placeholderImg from './placeholder.png';
-import cx from './Card.scss';
 import { shadowStyle, colorClass, colorScale } from './styles';
 import { PreviewTags } from 'Utils/Tag';
 
@@ -115,7 +114,7 @@ class PreviewCard extends Component {
         onClick={onClick}
       >
         {title !== null ? (
-          <div className={cx.cardHeader}>
+          <div>
             <div
               className="text-truncate"
               style={{ fontSize: '16px', margin: '4px 0' }}

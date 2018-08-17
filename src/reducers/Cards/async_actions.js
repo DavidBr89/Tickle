@@ -101,15 +101,10 @@ export function fetchCollectibleCards(uid) {
   };
 }
 
-// TODO: later
 export function fetchCreatedCards(uid) {
-  // Thunk middleware knows how to handle functions.
-  // It passes the dispatch method as an argument to the function,
-  // thus making it able to dispatch actions itself.
   return function(dispatch) {
     dispatch(loadingCards());
-
-    return db.readCards(uid).then(data => {
+    return db.readCardsWithSubmissions(uid).then(data => {
       dispatch(receiveCreatedCards(data.map(extractCardFields)));
     });
   };
@@ -267,7 +262,7 @@ export function asyncSubmitChallenge(challengeSubmission) {
 }
 
 export function removeChallengeSubmission(challengeSubmission) {
-  const { cardId, playerId} = challengeSubmission;
+  const { cardId, playerId } = challengeSubmission;
 
   return function(dispatch) {
     // dispatch(submitChallenge(challengeSubmission));

@@ -1,13 +1,12 @@
 // import 'w3-css';
 
 import React from 'react';
-// import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import chroma from 'chroma-js';
 
-import { StyleSheet, css } from 'aphrodite/no-important';
 
-import cx from './Card.scss';
+import { css } from 'aphrodite/no-important';
+
 import CardBack from './CardBack';
 import CardFront from './CardFront';
 
@@ -174,7 +173,6 @@ class Card extends React.Component {
               edit={edit && !template}
               background={background}
               uiColor={uiColor}
-              onCollect={onCollect}
               flipHandler={flipHandler}
               tagColorScale={tagColorScale}
               author={author}
@@ -190,5 +188,6 @@ class Card extends React.Component {
     );
   }
 }
+
 
 export { Card, PreviewCard, CardMarker };

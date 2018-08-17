@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import fetchJsonp from 'fetch-jsonp';
 
-import * as Icon from 'react-feather';
+import { Trash2, PlusSquare, Youtube, AlignLeft } from 'react-feather';
 import { css } from 'aphrodite/no-important';
 
 import { uniqBy } from 'lodash';
@@ -37,23 +37,11 @@ const OVERVIEW = 'Overview';
 const navIcons = [
   {
     key: WIKIPEDIA,
-    node: (
-      <i
-        className="fa fa-wikipedia-w fa-1x"
-        style={{ fontSize: '19px' }}
-        aria-hidden="true"
-      />
-    )
+    node: <AlignLeft size={30} />
   },
   {
     key: YOUTUBE,
-    node: (
-      <i
-        className="fa fa-youtube fa-1x"
-        style={{ fontSize: '19px' }}
-        aria-hidden="true"
-      />
-    )
+    node: <Youtube size={30} />
   },
   {
     key: GIPHY,
@@ -369,7 +357,7 @@ const CellDetail = ({
               </div>
             </NewTabLink>
           </h4>
-          <div>{React.createElement(mediaScale(type))}</div>
+          <div>{/* React.createElement(mediaScale(type)) */}</div>
         </div>
         {thumbnail ? (
           <div
@@ -672,7 +660,7 @@ class UnstyledMediaSearch extends Component {
                   ...newArticles,
                   ...selVideos,
                   ...selGIFs,
-                  ...selPhotos,
+                  // ...selPhotos,
                   ...selURLs,
                   ...selUserContent
                 ])
@@ -695,7 +683,7 @@ class UnstyledMediaSearch extends Component {
                   ...newVideos,
                   ...selArticles,
                   ...selGIFs,
-                  ...selPhotos,
+                  // ...selPhotos,
                   ...selURLs,
                   ...selUserContent
                 ])
@@ -719,7 +707,7 @@ class UnstyledMediaSearch extends Component {
                   ...newGIFs,
                   ...selArticles,
                   ...selVideos,
-                  ...selPhotos,
+                  // ...selPhotos,
                   ...selURLs,
                   ...selUserContent
                 ])
@@ -766,7 +754,7 @@ class UnstyledMediaSearch extends Component {
                   ...selArticles,
                   ...selVideos,
                   ...selGIFs,
-                  ...selPhotos,
+                  // ...selPhotos,
                   ...selUserContent
                 ])
               )
@@ -788,7 +776,7 @@ class UnstyledMediaSearch extends Component {
                   ...selVideos,
                   ...selArticles,
                   ...selGIFs,
-                  ...selPhotos,
+                  // ...selPhotos,
                   ...selURLs,
                   ...newUserContent
                 ])
@@ -823,7 +811,7 @@ class UnstyledMediaSearch extends Component {
     );
 
     return (
-      <div style={{ width: '100%', height: '100%' }}>
+      <div>
         <div className="mb-3" role="tablist">
           <div style={{ display: 'flex' }}>{navIcons.map(navBtn)}</div>
         </div>
@@ -848,9 +836,9 @@ function MediaBtn({ selected, onClick }) {
         >
           <span>
             {selected ? (
-              <Icon.Trash2 fill="whitesmoke" size={40} />
+              <Trash2 fill="whitesmoke" size={40} />
             ) : (
-              <Icon.PlusSquare fill="whitesmoke" size={40} />
+              <PlusSquare fill="whitesmoke" size={40} />
             )}
           </span>
         </div>
@@ -1073,7 +1061,7 @@ class MediaOverview extends Component {
     // TODO: fix view height
 
     return (
-      <div style={{ width: '100%', height: '100%' }}>
+      <div style={{}}>
         {data.length === 0 && (
           <div
             style={{

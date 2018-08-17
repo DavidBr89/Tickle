@@ -206,51 +206,46 @@ class MediaUpload extends Component {
     const allMedia = [...media, ...pendingMedia];
     const maxHeight = '200%';
     return (
-      <div style={{ height: '100%', ...style }}>
+      <div className="flex-100 flexCol">
         <DataUploadForm
           className="mt-3"
           style={{ width: '100%' }}
           stylesheet={stylesheet}
           onChange={this.addMediaItem}
         />
-        <div
-          style={{
-            height: '100%'
-            // display: 'flex',
-            // flexDirection: 'column',
-            // justifyContent: 'space-between'
-          }}
-        >
-          {allMedia.length > 0 ? (
-            <ScrollList
-              data={allMedia}
-              maxHeight={maxHeight}
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
-            >
-              {d => (
-                <MediaItem
-                  {...d}
-                  stylesheet={stylesheet}
-                  onRemove={() => this.removeMediaItem(d.id)}
-                />
-              )}
-            </ScrollList>
-          ) : (
-            <div
-              style={{
-                height: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
-            >
-              <h3 className="text-muted">No Media added</h3>
+        {allMedia.length > 0 ? (
+          <ScrollList
+            data={allMedia}
+            maxHeight={maxHeight}
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            {d => (
+              <MediaItem
+                {...d}
+                stylesheet={stylesheet}
+                onRemove={() => this.removeMediaItem(d.id)}
+              />
+            )}
+          </ScrollList>
+        ) : (
+          <div
+            className="flexCol flex-100"
+            style={{
+              height: '100%',
+              // display: 'flex',
+              // justifyContent: 'center',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <div>
+              <h3 className="text-muted flex-100">No Media added</h3>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     );
   }

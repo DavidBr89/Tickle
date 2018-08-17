@@ -239,7 +239,7 @@ class ReadCardFront extends Component {
               this.setState({ dialog: { key: 'Media', data: media } })
             }
           />
-          <div className="" style={{ display: 'flex' }}>
+          <div className="" style={{ display: 'flex', flexShrink: 0 }}>
             <BigButton
               onClick={() =>
                 this.setState({

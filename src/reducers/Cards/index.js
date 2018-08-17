@@ -10,7 +10,7 @@ import { tagColor } from 'Src/styles/GlobalThemeContext';
 import {
   RECEIVE_PLACES,
   UPDATE_CARD,
-  UPDATE_CARD_SUCCESS,
+  // UPDATE_CARD_SUCCESS,
   UPDATE_CARD_TEMPLATE,
   RECEIVE_COLLECTIBLE_CARDS,
   RECEIVE_CREATED_CARDS,
@@ -187,39 +187,8 @@ function reducer(state = INITIAL_STATE, action) {
         // tmpCards: updatedCards,
         createdCards: updatedCards
       };
-      // const tmpCards = [...createdCards];
-
-      // const cardIndex = tmpCards.findIndex(c => c.id === cardData.id);
-      // console.log('cardIndex', cardIndex);
-      // console.log('existAlready');
-      // tmpCards[cardIndex] = { ...cards[cardIndex], ...cardData };
     }
 
-    // case REMOVE_CHALLENGE_SUBMISSION: {
-    //   const { collectibleCards } = state;
-    //
-    //   const challengeSubmission = action.options;
-    //
-    //   const updatedCards = collectibleCards.map(c => {
-    //     if (c.id === challengeSubmission.cardId) {
-    //       return { ...c, challengeSubmission };
-    //     }
-    //     return c;
-    //   });
-    //
-    //   return {
-    //     ...state,
-    //     // TODO: remove
-    //     // tmpCards: updatedCards,
-    //     collectibleCards: updatedCards
-    //   };
-    //   // const tmpCards = [...createdCards];
-    //
-    //   // const cardIndex = tmpCards.findIndex(c => c.id === cardData.id);
-    //   // console.log('cardIndex', cardIndex);
-    //   // console.log('existAlready');
-    //   // tmpCards[cardIndex] = { ...cards[cardIndex], ...cardData };
-    // }
     case SUBMIT_CHALLENGE: {
       const { collectibleCards } = state;
 
@@ -238,21 +207,7 @@ function reducer(state = INITIAL_STATE, action) {
         // tmpCards: updatedCards,
         collectibleCards: updatedCards
       };
-      // const tmpCards = [...createdCards];
-
-      // const cardIndex = tmpCards.findIndex(c => c.id === cardData.id);
-      // console.log('cardIndex', cardIndex);
-      // console.log('existAlready');
-      // tmpCards[cardIndex] = { ...cards[cardIndex], ...cardData };
     }
-    // case SELECT_CARD: {
-    //   const { cards } = state;
-    //   const selectedCardId = action.options;
-    //   return {
-    //     ...state,
-    //     selectedCardId
-    //   };
-    // }
 
     case TOGGLE_CARD_CHALLENGE: {
       const { cardChallengeOpen } = action.options;
@@ -262,22 +217,8 @@ function reducer(state = INITIAL_STATE, action) {
       };
     }
 
-    case PLAY_CARD_CHALLENGE: {
-      return {
-        ...state,
-        modalOpen: !state.modalOpen
-      };
-    }
-
-    // case EXTEND_SELECTED_CARD: {
-    //   const { selectedCardId } = state;
-    //   const extCardId = action.options;
-    //   // console.log('extCardId', extCardId);
-    //   // TODO: update
-    //   return { ...state, extCardId };
-    // }
-
     case UPDATE_CARD_TEMPLATE: {
+      console.log();
       const { cardData, viewport, dataView } = action.options;
 
       const updatedTemplate = updCardDataDim({
@@ -428,6 +369,9 @@ function reducer(state = INITIAL_STATE, action) {
     case TOGGLE_TSNE_VIEW: {
       return { ...state, tsneView: !state.tsneView };
     }
+    // default: {
+    //   console.log('action', action);
+    // }
   }
 
   return state;

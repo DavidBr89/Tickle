@@ -78,7 +78,7 @@ const makeStylesheet = ({ uiColor, background }) => {
       flex: '1 1 auto'
       // height: '90%'
     },
-    coverPhoto: { height: '40%', maxHeight: 400, width: '100%' },
+    coverPhoto: { maxHeight: 400, width: '100%' },
     flipContainer: {
       '-webkit-perspective': 1000,
       '-moz-perspective': 1000,

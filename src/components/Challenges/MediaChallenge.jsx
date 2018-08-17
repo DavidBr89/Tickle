@@ -112,7 +112,7 @@ class MediaChallenge extends Component {
           </div>
         }
       >
-        <div className={className} style={{ width: '100%', ...styles }}>
+        <React.Fragment>
           <p style={{ width: '100%', maxHeight: '100%', overflow: 'scroll' }}>
             {description}
           </p>
@@ -130,7 +130,6 @@ class MediaChallenge extends Component {
               });
             }}
           />
-          <div className="mb-3">
             <MediaUpload
               style={{ width: '100%' }}
               uploadPath={id => `challengeSubmissionFiles/${id}`}
@@ -142,8 +141,7 @@ class MediaChallenge extends Component {
                 onUpdate({ media: newMedia, completed: false });
               }}
             />
-          </div>
-        </div>
+        </React.Fragment>
       </ModalBody>
     );
   }

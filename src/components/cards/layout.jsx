@@ -6,39 +6,31 @@ import { mediaScale } from 'Constants/mediaTypes';
 import { profileSrc, colorClass, colorScaleRandom } from './styles';
 
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
+import { stylesheet } from 'Src/styles/GlobalThemeContext';
 import { FieldSet } from 'Components/utils/StyledComps';
 import flipIconSrc from './flip_icon.png';
 
-import { RefreshCcw } from 'react-feather';
+import { RefreshCcw, Edit, ZoomIn } from 'react-feather';
 
 // TODO: remove
-import cxx from './layout.scss';
-
-import cx from './Card.scss';
-
 import placeholderImgSrc from './placeholder.png';
 
 const challengeTypes = ['quiz', 'gap text', 'hangman'];
 
-export const ZoomIcon = ({ style, className }) => (
-  <i
-    className={`fa fa-search ${className} ${cxx.icon}`}
-    style={{ cursor: 'pointer', opacity: 0.75, fontSize: '1rem', ...style }}
-  />
+// TODO: remove SASS dependence
+// TODO: remove SASS dependence
+// TODO: remove SASS dependence
+// TODO: remove SASS dependence
+const EditIcon = ({ style, className, ...props }) => (
+  <span style={{ cursor: 'pointer', fontSize: '1.2rem', ...style }}>
+    <Edit size={30} {...props} />
+  </span>
 );
 
-ZoomIcon.propTypes = { style: PropTypes.object, className: PropTypes.string };
-ZoomIcon.defaultProps = { style: {}, className: '' };
-
-// TODO: remove SASS dependence
-// TODO: remove SASS dependence
-// TODO: remove SASS dependence
-// TODO: remove SASS dependence
-const EditIcon = ({ style, className }) => (
-  <i
-    className={`fa fa-pencil-square-o ${className} ${cxx.icon}`}
-    style={{ cursor: 'pointer', fontSize: '1.2rem', ...style }}
-  />
+const ZoomIcon = ({ style, className, ...props }) => (
+  <span style={{ cursor: 'pointer', fontSize: '1.2rem', ...style }}>
+    <ZoomIn size={30} {...props} />
+  </span>
 );
 
 EditIcon.propTypes = { style: PropTypes.object, className: PropTypes.string };
@@ -72,6 +64,8 @@ Legend.defaultProps = { style: {}, children: null };
 //             ) : (
 //               <EditIcon style={{ cursor: 'pointer', fontSize: '1.2rem' }} />
 //             )
+const FieldIcon = ({ edit }) =>
+  edit ? <EditIcon size={20} /> : <ZoomIcon size={20} />;
 
 export const ChallengeField = ({
   text,
@@ -89,7 +83,7 @@ export const ChallengeField = ({
           uiColor={uiColor}
           legend="Challenge"
           className={`${css(shallowBg)} ${css(shallowBorder)}`}
-          icon={edit ? <EditIcon /> : <ZoomIcon />}
+          icon={<FieldIcon edit={edit} />}
         >
           <div
             style={{
@@ -100,7 +94,7 @@ export const ChallengeField = ({
             }}
           >
             <div
-              className={cx.textClamp}
+              className={css(stylesheet.truncate)}
               style={{ height: '100%', overflow: 'hidden' }}
             >
               {text !== null ? (
@@ -150,7 +144,7 @@ const DescriptionField = ({
           uiColor={uiColor}
           className={`${css(shallowBg)} ${css(shallowBorder)}`}
           legend="Description"
-          icon={edit ? <EditIcon /> : <ZoomIcon />}
+          icon={<FieldIcon edit={edit} />}
         >
           <div
             style={{
@@ -161,7 +155,7 @@ const DescriptionField = ({
             }}
           >
             <div
-              className={cx.textClamp}
+              className={css(stylesheet.truncate)}
               style={{ height: '100%', overflow: 'hidden' }}
             >
               {text !== null ? (
@@ -210,7 +204,7 @@ const MediaField = ({
     {({ uiColor, stylesheet: { shallowBg, shallowBorder } }) => (
       <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
         <FieldSet
-          icon={edit ? <EditIcon /> : <ZoomIcon />}
+          icon={<FieldIcon edit={edit} />}
           className={`${css(shallowBg)} ${css(shallowBorder)}`}
           legend="Media"
           uiColor={uiColor}
@@ -302,7 +296,7 @@ PreviewMedia.defaultProps = {
 
 const EditButton = ({ style, onClick, className }) => (
   <button className={`close ml-1 ${className}`} style={style} onClick={onClick}>
-    <EditIcon style={{ fontSize: '2rem' }} />
+    <EditIcon />
   </button>
 );
 

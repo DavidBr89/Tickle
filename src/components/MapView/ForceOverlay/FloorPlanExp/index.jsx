@@ -40,7 +40,14 @@ class FloorEditor extends Component {
               }}
             />
 
-            <div>{zn.map(d => children({ ...d, zhandler: zHandler }))}</div>
+            <div>
+              {zn.map(d =>
+                children({
+                  ...d,
+                  normalize: zHandler
+                })
+              )}
+            </div>
           </div>
         )}
       </ZoomCont>

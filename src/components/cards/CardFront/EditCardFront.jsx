@@ -443,7 +443,13 @@ class EditCardFront extends PureComponent {
                   width: '100%'
                 }}
               >
-                <PreviewTags colorScale={tagColorScale} data={tags} />
+                {invalid ? (
+                  <div className="alert alert-danger">
+                    Please add at least one tag!
+                  </div>
+                ) : (
+                  <PreviewTags colorScale={tagColorScale} data={tags} />
+                )}
                 <EditButton
                   className="mr-3"
                   onClick={() => {
@@ -482,57 +488,55 @@ class EditCardFront extends PureComponent {
               })
             }
           />
-
-          <div className="p-1 pt-3">
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                width: '100%'
-              }}
-            >
-              <div style={{ width: '80%', display: 'flex' }}>
-                {template && (
-                  <BigButton
-                    className="mr-2"
-                    disabled={invalid}
-                    edit
-                    onClick={() => {
-                      // TODO
-                      const message = window.confirm(
-                        `Are you sure you wish to ${
-                          added ? 'remove' : 'create'
-                        } this card?`
-                      );
-
-                      if (message) {
-                        onSubmit(data);
-                        this.setState({ added: !added });
-                      }
-                    }}
-                  >
-                    {added ? 'Remove Card' : 'Create Card'}
-                  </BigButton>
-                )}
+          <div
+            style={{
+              display: 'flex',
+              flexShrink: 0,
+              justifyContent: 'space-between',
+              width: '100%'
+            }}
+          >
+            <div style={{ width: '80%', display: 'flex' }}>
+              {template && (
                 <BigButton
-                  edit
+                  className="mr-2"
                   disabled={invalid}
-                  onClick={() =>
-                    this.setState({
-                      dialog: { title: 'Challenge', data: challenge }
-                    })
-                  }
+                  edit
+                  onClick={() => {
+                    // TODO
+                    const message = window.confirm(
+                      `Are you sure you wish to ${
+                        added ? 'remove' : 'create'
+                      } this card?`
+                    );
+
+                    if (message) {
+                      onSubmit(data);
+                      this.setState({ added: !added });
+                    }
+                  }}
                 >
-                  {template ? 'Add Chall.' : 'Update Challenge'}
+                  {added ? 'Remove Card' : 'Create Card'}
                 </BigButton>
-              </div>
-              <FlipButton
-                style={{ width: '20%' }}
-                color={uiColor}
-                onClick={flipHandler}
-                className="ml-3"
-              />
+              )}
+              <BigButton
+                edit
+                disabled={invalid}
+                onClick={() =>
+                  this.setState({
+                    dialog: { title: 'Challenge', data: challenge }
+                  })
+                }
+              >
+                {template ? 'Add Chall.' : 'Update Challenge'}
+              </BigButton>
             </div>
+            <FlipButton
+              style={{ width: '20%' }}
+              color={uiColor}
+              onClick={flipHandler}
+              className="ml-3"
+            />
           </div>
           {children}
         </div>

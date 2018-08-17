@@ -70,8 +70,9 @@ export function deleteCardError(options) {
   return { type: ERROR_DELETE_CARD, options };
 }
 
-export const UPDATE_CARD_TEMPLATE = 'UPDATE_CARD_TEMPLATE';
+export const UPDATE_CARD_TEMPLATE = 'UPDATE_CARD_TEMPLATE_X';
 export function updateCardTemplate(options) {
+  console.log(UPDATE_CARD_TEMPLATE);
   return { type: UPDATE_CARD_TEMPLATE, options };
 }
 

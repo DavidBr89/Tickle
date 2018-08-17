@@ -172,8 +172,13 @@ export class DropTargetCont extends PureComponent {
     // console.log('dropped', dropped, 'prevDropped', prevState.dropped);
     // console.log('this.props', this.props);
     if (prevProps.dragged && !this.props.dragged) {
-      // TODO: do I need all these fields
-      const inverted = data.zhandler.invert([left, top]);
+      // console.log('D', data);
+      // TODO: CHANGE LATER
+      const inverted = data.normalize
+        ? data.normalize.invert([left, top])
+        : [left, top];
+
+      console.log('DROP inverted', inverted);
       dropHandler({
         ...data,
         x: inverted[0],

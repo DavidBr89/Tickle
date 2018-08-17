@@ -74,24 +74,20 @@ export const Modal = ({
     >
       <div
         className="modal fade show"
-        tabIndex="-1"
-        role="dialog"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
         style={{
           opacity: visible ? 1 : 0,
           display: visible ? 'block' : 'none',
           width: '100%',
-          height: '100%',
-          // minHeight: 400,
-          maxHeight: 800
+          height: '100%'
         }}
       >
         <div
-          className="modal-dialog"
-          role="document"
           style={{
-            height: '97%',
+            height: '100%',
+            margin: 'auto', // margin: '1.75rem auto',
+            transform: 'translate(0, 0)',
+            maxWidth: 500,
+            maxHeight: 800,
             ...style
           }}
         >
@@ -152,27 +148,26 @@ export const ModalBody = ({
 }) => (
   <React.Fragment>
     <div
-      className="modal-header"
       style={{
+        padding: '1rem',
         borderBottom: `1px solid ${uiColor}`,
+        justifyContent: 'space-between',
         display: 'flex',
-        alignItems: 'center'
+        alignItems: 'center',
+        flexShrink: 0
       }}
     >
-      <h3 className="modal-title" id="exampleModalLabel">
-        {title}
-      </h3>
+      <h3 className="modal-title">{title}</h3>
       <button className={css(stylesheet.btn)} onClick={onClose}>
         <Icon.X />
       </button>
     </div>
-    <div
-      className="modal-body"
-      style={{ height: '70%', overflowY: 'scroll', ...style }}
-    >
+    <div className="modal-body flexCol" style={{ overflowY: 'scroll' }}>
       {children}
     </div>
-    <div className="modal-footer">{footer}</div>
+    <div className="modal-footer" style={{ flexShrink: 0 }}>
+      {footer}
+    </div>
   </React.Fragment>
 );
 
