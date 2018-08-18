@@ -13,7 +13,7 @@ import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
 import { MediaOverview } from 'Components/cards/MediaSearch';
 
-import CardHeader from '../CardHeader';
+import CardFrame from '../CardHeader';
 
 import { Btn } from 'Components/cards/layout';
 
@@ -34,8 +34,6 @@ import {
   BigButton,
   FlipButton
 } from '../layout';
-
-// import CardHeader from '../CardHeader';
 
 const defaultProps = {};
 
@@ -78,7 +76,7 @@ class ReadCardFront extends Component {
   };
 
   state = {
-    dialog: null,
+    dialogKey: null,
     challengeSubmitted:
       this.props.challengeSubmission !== null &&
       this.props.challengeSubmission.completed,
@@ -87,7 +85,7 @@ class ReadCardFront extends Component {
       this.props.challengeSubmission.completed
   };
 
-  closeModal = () => this.setState({ dialog: null });
+  closeModal = () => this.setState({ dialogKey: null });
 
   modalReadContent(field) {
     const {
@@ -108,11 +106,11 @@ class ReadCardFront extends Component {
     } = this.props;
 
     const FooterBtn = () => (
-      <Btn onClick={() => this.setState({ dialog: null })}>Close</Btn>
+      <Btn onClick={() => this.setState({ dialogKey: null })}>Close</Btn>
     );
 
     switch (field) {
-      case 'Title':
+      case 'title':
         return <p style={{ width: '100%' }}>{title}</p>;
       case 'Tags':
         return <p style={{ width: '100%' }}>{tags}</p>;
@@ -183,6 +181,7 @@ class ReadCardFront extends Component {
       img,
       description,
       media,
+      title,
       uiColor,
       flipHandler,
       // background,
@@ -193,15 +192,18 @@ class ReadCardFront extends Component {
       smallScreen
     } = this.props;
 
-    const { dialog, challengeSubmitted } = this.state;
-    const modalVisible = dialog !== null;
-    const dialogTitle = dialog !== null ? dialog.key : null;
+    const { dialogKey, challengeSubmitted } = this.state;
+    const modalVisible = dialogKey !== null;
     const { coverPhoto, cardLayout } = stylesheet;
-    const fieldHeight = { height: '20%' };
     // TODO: modal color
     return (
-      <CardHeader
+      <CardFrame
         {...this.props}
+        onHeaderClick={() =>
+          this.setState({
+            dialogKey: 'title'
+          })
+        }
         style={{
           zIndex: 4000,
           ...style
@@ -210,40 +212,34 @@ class ReadCardFront extends Component {
         <div className={css(cardLayout)}>
           <Modal
             visible={modalVisible}
-            title={dialogTitle}
-            onClose={() => this.setState({ dialog: null })}
+            title={dialogKey}
+            onClose={() => this.setState({ dialogKey: null })}
           >
-            {this.modalReadContent(dialogTitle)}
+            {this.modalReadContent(dialogKey)}
           </Modal>
           <ImgOverlay src={img ? img.url : null} className={css(coverPhoto)}>
             <PreviewTags colorScale={tagColorScale} data={tags} />
           </ImgOverlay>
           <DescriptionField
-            style={fieldHeight}
             text={description}
             onEdit={() =>
               this.setState({
-                dialog: {
-                  key: 'Description',
-                  id: 'description',
-                  data: description
-                }
+                dialogKey: 'Description'
+                // id: 'description',
+                // data: description
               })
             }
           />
           <MediaField
-            style={fieldHeight}
             smallScreen={smallScreen}
             media={smallScreen ? media.slice(0, 2) : media.slice(0, 4)}
-            onClick={() =>
-              this.setState({ dialog: { key: 'Media', data: media } })
-            }
+            onClick={() => this.setState({ dialogKey: 'Media' })}
           />
           <div className="" style={{ display: 'flex', flexShrink: 0 }}>
             <BigButton
               onClick={() =>
                 this.setState({
-                  dialog: { key: 'Challenge', data: media }
+                  dialogKey: 'Challenge'
                 })
               }
               style={{ width: '80%' }}
@@ -258,7 +254,7 @@ class ReadCardFront extends Component {
             />
           </div>
         </div>
-      </CardHeader>
+      </CardFrame>
     );
   }
 }

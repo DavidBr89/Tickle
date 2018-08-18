@@ -58,7 +58,7 @@ class ScrollList extends Component {
         }}
       >
         <ScrollView ref={scroller => (this._scroller = scroller)}>
-          <div className={className} style={{ height: '400%', ...style }}>
+          <div className={className} style={{ height: '100%', ...style }}>
             {data.map(d => (
               <ScrollElement name={d.url}>
                 <div

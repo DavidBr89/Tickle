@@ -81,12 +81,10 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const onSubmitChallenge = challengeSubmission => {
     asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
   };
-  // TODO: change
 
   return {
     ...state,
     ...dispatcherProps,
-    // onCardDrop,
     onCardUpdate,
     createCard,
     onSubmitChallenge,

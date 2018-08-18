@@ -19,7 +19,8 @@ const CardHeader = ({
   style,
   background,
   placeholder,
-  edit
+  edit,
+  onHeaderClick
   // id
 }) => {
   const btnStyle = {
@@ -42,30 +43,36 @@ const CardHeader = ({
           style={{
             width: '100%',
             height: '100%',
-              ...shadowStyle,
+            ...shadowStyle,
             ...style
           }}
         >
           <div
             style={{
+              // TODO: check
               background,
               // overflow: 'hidden',
               height: '100%',
               width: '100%',
               display: 'flex',
-              flexDirection: 'column',
+              flexDirection: 'column'
             }}
           >
             <div
               style={{
+                position: 'relative',
+                zIndex: 1,
                 display: 'flex',
                 alignItems: 'center',
-                position: 'relative',
                 width: '100%'
               }}
             >
               <div>{editButton}</div>
-              <div className="ml-1" style={{ maxWidth: edit ? '75%' : '85%' }}>
+              <div
+                className="ml-1"
+                style={{ maxWidth: '90%' }}
+                onClick={onHeaderClick}
+              >
                 <h1 style={{ marginBottom: 0 }} className="text-truncate">
                   {title === null ? (
                     <span className="text-muted">{placeholder}</span>
@@ -105,7 +112,8 @@ CardHeader.propTypes = {
   onClose: PropTypes.func,
   editButton: PropTypes.oneOf([PropTypes.node, null]),
   placeholder: PropTypes.string,
-  uiColor: PropTypes.string
+  uiColor: PropTypes.string,
+  onHeaderClick: PropTypes.func
 };
 
 CardHeader.defaultProps = {
@@ -119,7 +127,8 @@ CardHeader.defaultProps = {
   background: 'tomato',
   editButton: null,
   placeholder: 'No Title',
-  uiColor: 'black'
+  uiColor: 'black',
+  onHeaderClick: d => d
 };
 
 export default CardHeader;

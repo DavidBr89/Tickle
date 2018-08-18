@@ -37,7 +37,7 @@ import {
 
 import { TagInput, PreviewTags } from 'Components/utils/Tag';
 
-import CardHeader from '../CardHeader';
+import CardFrame from '../CardHeader';
 
 const FooterBtn = ({ onClick, children, disabled, style = {} }) => (
   <CardThemeConsumer>
@@ -194,10 +194,6 @@ class EditCardFront extends PureComponent {
     template: false
   };
 
-  constructor(props) {
-    super(props);
-    this.nodeDescription = null;
-  }
   state = {
     data: {
       ...extractCardFields({ ...this.props })
@@ -248,8 +244,6 @@ class EditCardFront extends PureComponent {
     const { challenge } = data;
     const { uiColor, tagColorScale, stylesheet, height } = this.props;
 
-    // console.log('tagColorScale', tagColorScale);
-    // TODO: img
     const { title, tags, img, description, media } = data;
     const closeBtn = <FooterBtn onClick={this.onCloseModal}>Close</FooterBtn>;
 
@@ -289,9 +283,6 @@ class EditCardFront extends PureComponent {
             {...modalProps}
             onClose={this.onCloseModal}
             footer={closeBtn}
-            style={
-              dialogTitle === 'Media' ? { height: MODAL_FULL_HEIGHT } : null
-            }
           >
             <EditPhoto
               uiColor="grey"
@@ -363,7 +354,8 @@ class EditCardFront extends PureComponent {
       tagColorScale,
       onSubmit,
       template,
-      stylesheet
+      stylesheet,
+      smallScreen
     } = this.props;
     const { data, added, dialog } = this.state;
     const modalVisible = dialog !== null;
@@ -382,7 +374,7 @@ class EditCardFront extends PureComponent {
     const invalid = tags === null || tags.length === 0;
 
     return (
-      <CardHeader
+      <CardFrame
         style={{
           zIndex: 4000,
           ...style
@@ -461,8 +453,8 @@ class EditCardFront extends PureComponent {
               </div>
             </div>
           </ImgOverlay>
-
           <DescriptionField
+            className="mb-1"
             style={{ maxHeight: '20%' }}
             text={description}
             borderColor={uiColor}
@@ -478,8 +470,10 @@ class EditCardFront extends PureComponent {
             }
           />
           <MediaField
+            className="mb-1"
             style={{ maxHeight: '20%' }}
-            media={media}
+            media={smallScreen ? media.slice(0, 2) : media}
+            smallScreen={smallScreen}
             borderColor={uiColor}
             edit
             onEdit={() =>
@@ -540,7 +534,7 @@ class EditCardFront extends PureComponent {
           </div>
           {children}
         </div>
-      </CardHeader>
+      </CardFrame>
     );
   }
 }

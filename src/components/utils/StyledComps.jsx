@@ -97,12 +97,12 @@ export const FieldSet = ({
     onClick={onClick}
     style={{
       // border: `1px solid ${uiColor}`,
-      marginTop: '4px',
+      // marginTop: '4px',
       width: '100%',
       height: '100%',
       // padding: 10,
-      ...style,
-      overflow: 'hidden'
+      ...style
+      // overflow: 'hidden'
     }}
   >
     <div
@@ -121,7 +121,7 @@ export const FieldSet = ({
       >
         <div>
           <h5 style={legendStyle}>
-              {legend} {icon}
+            {legend} {icon}
           </h5>
         </div>
       </div>

@@ -60,6 +60,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   };
 
   return {
+    ...state,
     ...dispatcherProps,
     ...ownProps,
     onSubmitChallenge

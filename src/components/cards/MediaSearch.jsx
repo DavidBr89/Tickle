@@ -83,7 +83,7 @@ const userContentUploadPath = id => `media/${id}`;
 const UploadUserContent = ({ onChange, ...props }) => (
   <CardThemeConsumer>
     {({ stylesheet }) => (
-      <div style={{ height: '100%' }}>
+      <div className="flexCol flex-100">
         <MediaUpload
           style={{ width: '100%', height: '60%' }}
           {...props}
@@ -552,11 +552,7 @@ class UrlMedia extends Component {
             </div>
             {data.length > 0 ? (
               <div style={{ width: '100%', height: '100%' }}>
-                <ScrollList
-                  data={data}
-                  maxHeight="90%"
-                  style={{ paddingLeft: '5%', paddingRight: '10%' }}
-                >
+                <ScrollList data={data} maxHeight="90%">
                   {(d, isSelected) => (
                     <div
                       className={` mb-3 p-3 ${css(
@@ -811,13 +807,11 @@ class UnstyledMediaSearch extends Component {
     );
 
     return (
-      <div>
-        <div className="mb-3" role="tablist">
+      <div className="flexCol flex-100">
+        <div className="mb-3" role="tablist" style={{ flexShrink: 0 }}>
           <div style={{ display: 'flex' }}>{navIcons.map(navBtn)}</div>
         </div>
-        <div className="tab-content" style={{ height: '100%' }}>
-          {this.activeTab(selected)}
-        </div>
+        {this.activeTab(selected)}
       </div>
     );
   }
@@ -905,9 +899,9 @@ class MetaSearch extends Component {
     // });
   }
 
-  componentWillUnmount() {
-    this.mounted = false;
-  }
+  // componentWillUnmount() {
+  //   this.mounted = false;
+  // }
 
   onSearch = searchStr => {
     const { searchFn, source, type } = this.props;
@@ -945,7 +939,7 @@ class MetaSearch extends Component {
 
     // TODO: fix view height
     return (
-      <div style={{ width: '100%', height: '100%', ...style }} role="tabpanel">
+      <div className="flex-100 flexCol" role="tabpanel">
         <div style={{ width: '100%' }}>
           <div className="mb-3 w-100">
             <input
@@ -956,20 +950,16 @@ class MetaSearch extends Component {
             />
           </div>
         </div>
-        <ScrollList
-          data={data}
-          maxHeight="90%"
-          itemStyle={{ paddingRight: '10%', paddingLeft: '5%' }}
-        >
+        <ScrollList data={data} maxHeight="100%" className="flex-100 p-1">
           {(d, isSelected) => (
             <CellWrapper
               className="mb-3"
               selected={isSelected}
               style={{
                 height: '40vh',
-                maxHeight: 300,
-                marginLeft: '5%',
-                paddingRight: '10%'
+                maxHeight: 300
+                // marginLeft: '5%',
+                // paddingRight: '10%'
               }}
               {...d}
               btn={
@@ -1061,25 +1051,17 @@ class MediaOverview extends Component {
     // TODO: fix view height
 
     return (
-      <div style={{}}>
+      <div
+        className="flex-100 flexCol"
+        style={{
+          justifyContent: data.length === 0 ? 'center' : null,
+          alignItems: 'center'
+        }}
+      >
         {data.length === 0 && (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
-            <div>
-              <h3 className="text-muted">{'No media added to this Card!'} </h3>
-            </div>
-          </div>
+          <h3 className="text-muted">{'No media added to this Card!'} </h3>
         )}
-        <ScrollList
-          data={data}
-          maxHeight="100%"
-          itemStyle={{ paddingRight: '10%', paddingLeft: '5%' }}
-        >
+        <ScrollList data={data} maxHeight="100%">
           {(d, selected) => (
             <CellWrapper
               {...d}

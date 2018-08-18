@@ -134,6 +134,7 @@ const DescriptionField = ({
   onEdit,
   onClick,
   placeholder,
+  className,
   style,
   edit
 }) => (
@@ -142,7 +143,7 @@ const DescriptionField = ({
       <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
         <FieldSet
           uiColor={uiColor}
-          className={`${css(shallowBg)} ${css(shallowBorder)}`}
+          className={`${css(shallowBg)} ${css(shallowBorder)} ${className}`}
           legend="Description"
           icon={<FieldIcon edit={edit} />}
         >
@@ -198,14 +199,15 @@ const MediaField = ({
   style,
   placeholder,
   edit,
-  smallScreen
+  smallScreen,
+  className
 }) => (
   <CardThemeConsumer>
     {({ uiColor, stylesheet: { shallowBg, shallowBorder } }) => (
       <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
         <FieldSet
           icon={<FieldIcon edit={edit} />}
-          className={`${css(shallowBg)} ${css(shallowBorder)}`}
+          className={`${css(shallowBg)} ${css(shallowBorder)} ${className}`}
           legend="Media"
           uiColor={uiColor}
         >
@@ -262,7 +264,7 @@ const PreviewMedia = ({ data, style, smallScreen }) => (
           display: 'flex',
           maxWidth: `${
             smallScreen
-              ? Math.max(80 / data.length, 40)
+              ? Math.max(80 / data.length, 45)
               : Math.max(100 / data.length, 40)
           }%`
         }}

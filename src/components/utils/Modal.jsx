@@ -26,7 +26,7 @@ export const InlineModal = ({
     className="modal-dialog"
     style={{
       width: '100%',
-      height: '100%',
+      // height: '100%',
       opacity: visible ? 1 : 0,
       transition: 'opacity 1s',
       zIndex: visible ? 5000 : -10,
@@ -50,9 +50,7 @@ export const BareModal = props =>
 
 export const Modal = ({
   visible,
-  title,
   children,
-  onClose,
   style,
   uiColor
   // background,
@@ -96,11 +94,8 @@ export const Modal = ({
             style={{
               width: '100%',
               height: '100%',
+              maxHeight: '100%',
               overflow: 'hidden'
-              // TODO: fix later
-              // TODO: fix later
-              // TODO: fix later
-              // TODO: fix later CONSTANT
             }}
           >
             {children}
@@ -162,10 +157,27 @@ export const ModalBody = ({
         <Icon.X />
       </button>
     </div>
-    <div className="modal-body flexCol" style={{ overflowY: 'scroll' }}>
+    <div
+      className="flexCol flex-100"
+      style={{
+        overflowY: 'scroll',
+        paddingTop: '1rem',
+        paddingLeft: '1rem',
+        paddingRight: '1rem'
+      }}
+    >
       {children}
     </div>
-    <div className="modal-footer" style={{ flexShrink: 0 }}>
+    <div
+      className="modal-footer"
+      style={{
+        display: 'flex',
+        justifyContent: 'flex-end',
+        flexShrink: 0,
+        borderTop: '1px solid grey',
+        padding: '1rem'
+      }}
+    >
       {footer}
     </div>
   </React.Fragment>
