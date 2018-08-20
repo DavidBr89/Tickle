@@ -333,14 +333,19 @@ input[type="file"] {
 
 .flexCol {
   display: flex;
-  // height: 100%;
   flex-direction: column;
 }
 
 
+//todo: rename to auto
 .flex-100 {
   flex: 1 1 auto;
+  // height: 100%;
+}
 
+.flex-full {
+  flex: 1 1 100%;
+  // height: 100%;
 }
 
 /* body,html{ */

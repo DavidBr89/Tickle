@@ -38,6 +38,12 @@ function centerLayout(nextProps) {
     // TODO
     // .reverse()
     .map((c, j) => ({
+      // TODO: make generic
+      // TODO: make generic
+      // TODO: make generic
+      // TODO: make generic
+      // TODO: make generic
+      // TODO: make generic
       id: c.id,
       position: 'left',
       i: 0,
@@ -62,7 +68,7 @@ function centerLayout(nextProps) {
 
   const rightCards = data
     .slice(selectedIndex + 1, data.length)
-  //TODO: Pagination
+    // TODO: Pagination
     .slice(0, 10)
     .reverse()
     .map((c, j) => ({
@@ -319,6 +325,8 @@ class CardStack extends Component {
                   cursor: 'pointer',
                   transition: `left ${duration}ms, top ${duration}ms, transform ${duration}ms`,
                   zIndex: c.zIndex,
+                  width: '100%',
+                  height: '100%',
                   ...size,
                   ...centerPos(c)
                 }}

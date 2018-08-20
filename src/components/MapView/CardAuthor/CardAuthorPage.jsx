@@ -179,63 +179,54 @@ class CardAuthorPage extends Component {
 
     return (
       <div
-        className="w-100 h-100"
+        className="w-100 h-100 flexCol"
         style={{ position: 'relative', overflow: 'hidden' }}
       >
+        <CardTagSearch
+          allTags={allTagsCreated}
+          key={filterSet.join(',')}
+          onChange={filterCards}
+          onSelect={() => selectCard(null)}
+          onClick={addCardFilter}
+          data={filterSet}
+        />
+
         <div
-          className="w-100 h-100"
-          ref={cont => (this.cont = cont)}
+          className="mb-3 mt-3"
           style={{
-            position: 'absolute'
+            display: 'flex',
+            justifyContent: 'center',
+            transition: 'opacity 0.5s',
+            height: '25%'
           }}
         >
-          <div className="h-100">
-            <CardTagSearch
-              allTags={allTagsCreated}
-              key={filterSet.join(',')}
-              onChange={filterCards}
-              onSelect={() => selectCard(null)}
-              onClick={addCardFilter}
-              data={filterSet}
-            />
-
-            <div
-              className="mb-3 mt-3"
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                transition: 'opacity 0.5s',
-                height: '25%'
-              }}
-            >
-              <CardStack
-                cards={cards}
-                selectedCardId={selectedCardId}
-                duration={600}
-                className="ml-1 mr-2"
-                width={cardStackWidth}
-                height={100}
-                cardHeight={height / 4}
-                unit="%"
-                onClick={previewCardAction}
-                tagColorScale={tagColorScale}
-                slotSize={slotSize}
-                style={{
-                  zIndex: 1000
-                }}
-              />
-            </div>
-            <CardDragAuthorOverlay
-              dataView={dataView}
-              cards={cards}
-              cardSets={cardSets}
-              selectedTags={selectedTags}
-              tagColorScale={tagColorScale}
-              selectedCardId={selectedCardId}
-              style={{ height: calcDataViewHeight(isSmartphone) }}
-            />
-          </div>
+          <CardStack
+            cards={cards}
+            selectedCardId={selectedCardId}
+            duration={600}
+            className="ml-1 mr-2"
+            width={cardStackWidth}
+            height={100}
+            cardHeight={height / 4}
+            unit="%"
+            onClick={previewCardAction}
+            tagColorScale={tagColorScale}
+            slotSize={slotSize}
+            style={{
+              zIndex: 1000
+            }}
+          />
         </div>
+        <CardDragAuthorOverlay
+          dataView={dataView}
+          cards={cards}
+          cardSets={cardSets}
+          selectedTags={selectedTags}
+          tagColorScale={tagColorScale}
+          selectedCardId={selectedCardId}
+          style={{ flex: '1 1 70%' }}
+          className="flexCol"
+        />
       </div>
     );
   }

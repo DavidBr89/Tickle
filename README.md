@@ -3,11 +3,8 @@
 TICKLE playground for our Project
 
 ### Todo
-* ~~integrate CardCreator into mapview~~
 * ~~fix powerscale in accordion~~
-* ~~Server side~~
-* ~~user k-means for topic map~~
-* fix drag and drop on mobile
+* fix drag and drop on mobile and bugs with map events
 
 
 * Fork and clone the project:

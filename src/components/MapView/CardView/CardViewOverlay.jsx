@@ -28,44 +28,45 @@ const CardViewOverlay = props => {
     style,
     onSubmitChallenge,
     iOS,
-    smallScreen
+    smallScreen,
+    className
   } = props;
 
   return (
-    <div style={style}>
-      <DataOverlay
-        disabled={isCardDragging}
-        width={width}
-        height={height}
-        data={cards}
-        sets={cardSets}
-        selectedTags={selectedTags}
-        selectedCardId={selectedCardId}
-        extCardId={extCardId}
-        filterSet={filterSet}
-        userLocation={userLocation}
-        mode={dataView}
-        padding={{
-          bottom: height / 5,
-          top: height / 5,
-          left: width / 5,
-          right: width / 5
-        }}
-        colorScale={tagColorScale}
-        preview={d => (
-          <PreviewMarker
-            x={d.x}
-            y={d.y}
-            style={{ zIndex: selectedCardId === d.id ? 5000 : 100 }}
-            selected={selectedCardId === d.id}
-            template={d.template}
-            color="whitesmoke"
-          />
-        )}
-      >
-        {c => <ConnectedCard {...c} />}
-      </DataOverlay>
-    </div>
+    <DataOverlay
+      className={className}
+      style={style}
+      disabled={isCardDragging}
+      width={width}
+      height={height}
+      data={cards}
+      sets={cardSets}
+      selectedTags={selectedTags}
+      selectedCardId={selectedCardId}
+      extCardId={extCardId}
+      filterSet={filterSet}
+      userLocation={userLocation}
+      mode={dataView}
+      padding={{
+        bottom: height / 5,
+        top: height / 5,
+        left: width / 5,
+        right: width / 5
+      }}
+      colorScale={tagColorScale}
+      preview={d => (
+        <PreviewMarker
+          x={d.x}
+          y={d.y}
+          style={{ zIndex: selectedCardId === d.id ? 5000 : 100 }}
+          selected={selectedCardId === d.id}
+          template={d.template}
+          color="whitesmoke"
+        />
+      )}
+    >
+      {c => <ConnectedCard {...c} />}
+    </DataOverlay>
   );
 };
 

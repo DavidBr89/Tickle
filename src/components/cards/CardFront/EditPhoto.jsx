@@ -78,24 +78,27 @@ class AddUrl extends Component {
                   </h1>
                 )}
               </div>
-              <div className="mt-3 mb-2">
-                <input
-                  className="mr-2"
-                  value={imgUrl}
-                  placeholder="Add Image Url"
-                  style={{ border: `${uiColor} 1px solid` }}
-                  type="url"
-                  onChange={e => this.setState({ imgUrl: e.target.value })}
-                />
+              <div className="mt-3 mb-2" style={{ display: 'flex' }}>
+                <div className="pr-1" style={{ width: '70%' }}>
+                  <input
+                    className="mr-1"
+                    value={imgUrl}
+                    placeholder="Add Image Url"
+                    style={{ border: `${uiColor} 1px solid`, width: '100%', height: '100%' }}
+                    type="url"
+                    onChange={e => this.setState({ imgUrl: e.target.value })}
+                  />
+                </div>
                 <button
                   className={css(stylesheet.btn)}
+                  style={{ width: '30%' }}
                   onClick={() => {
                     onChange({
                       url: imgUrl
                     });
                   }}
                 >
-                  Add Image Url
+                  Add Image
                 </button>
               </div>
             </div>

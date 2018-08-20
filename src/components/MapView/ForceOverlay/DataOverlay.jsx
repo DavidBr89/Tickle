@@ -231,12 +231,16 @@ class DataOverlay extends Component {
       disabled,
       data,
       padding,
-      filterSet
+      filterSet,
     } = this.props;
 
     const comp = this.selectComp();
 
-    return <React.Fragment>{comp}</React.Fragment>;
+    return (
+      <div className={className} style={style}>
+        {comp}
+      </div>
+    );
   }
 }
 

@@ -60,23 +60,26 @@ export default class TabNav extends React.Component {
               role="tablist"
             >
               {keys.map(key => (
-                <button
-                  className={`mr-3 ${css(
-                    key === selected ? stylesheet.btnActive : stylesheet.btn
-                  )}`}
-                  type="button"
-                  onClick={updState(key)}
-                  id={key}
-                >
-                  <div
-                    style={{
-                      // TODO: does not work
-                      textOverflow: 'ellipsis'
-                    }}
+                <div className="pr-1" style={{ width: `${100 / keys.length}%` }}>
+                  <button
+                    style={{ width: '100%' }}
+                    className={`mr-1 ${css(
+                      key === selected ? stylesheet.btnActive : stylesheet.btn
+                    )}`}
+                    type="button"
+                    onClick={updState(key)}
+                    id={key}
                   >
-                    {key}
-                  </div>
-                </button>
+                    <div
+                      style={{
+                        // TODO: does not work
+                        textOverflow: 'ellipsis'
+                      }}
+                    >
+                      {key}
+                    </div>
+                  </button>
+                </div>
               ))}
             </div>
             <div className="tab-content">

@@ -15,6 +15,22 @@ export const TOGGLE_MODAL = 'TOGGLE_MODAL';
 export function toggleModal(options) {
   return { type: TOGGLE_MODAL, options };
 }
+
+export const SELECT_USER = 'SELECT_USER';
+export function selectUser(options) {
+  return { type: SELECT_USER, options };
+}
+
+export const EXTEND_SELECTION = 'EXTEND_SELECTION';
+export function extendSelection(options) {
+  return { type: EXTEND_SELECTION, options };
+}
+
+export const SELECT_CARD_ID = 'SELECT_CARD_ID_ADMIN';
+export function selectCardId(options) {
+  return { type: SELECT_CARD_ID, options };
+}
+
 // export const SELECT_CARD = 'SELECT_CARD';
 // export function selectCardIndex(options) {
 //   return { type: SELECT_CARD_INDEX, options };

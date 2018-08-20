@@ -212,7 +212,7 @@ export class DropTargetCont extends PureComponent {
     // const { x, y } = clientOffset || { x: 0, y: 0 };
     // console.log('dropped', dropped);
 
-    return connectDropTarget(<div style={style}>{children}</div>);
+    return connectDropTarget(<div style={style} className={className}>{children}</div>);
   }
 }
 export const DragDropContextProvider = DragDropContext(HTML5);

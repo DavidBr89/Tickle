@@ -78,16 +78,15 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
       ? updateCardTemplate({ cardData, viewport, dataView })
       : asyncUpdateCard({ uid, cardData, viewport, dataView });
 
-  const onSubmitChallenge = challengeSubmission => {
-    asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
-  };
+  // const onSubmitChallenge = challengeSubmission => {
+  //   asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
+  // };
 
   return {
     ...state,
     ...dispatcherProps,
     onCardUpdate,
     createCard,
-    onSubmitChallenge,
     ...ownProps
   };
 };
@@ -97,7 +96,6 @@ const EditCard = ({
   createCard,
   asyncRemoveCard,
   onCardUpdate,
-  onSubmitChallenge,
   tagColorScale,
   x,
   y,
@@ -116,7 +114,6 @@ const EditCard = ({
     onUpdate={d => {
       onCardUpdate({ ...d, x, y });
     }}
-    onSubmitChallenge={onSubmitChallenge}
     uiColor="grey"
     background="whitesmoke"
     style={{ zIndex: 4000 }}

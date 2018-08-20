@@ -96,7 +96,8 @@ function getAllChallengeSubmissions(cid) {
   return chSub.get().then(snapshot => {
     snapshot.forEach(item => {
       const d = item.data(); // will have 'todo_item.title' and 'todo_item.completed'
-      challengeSubmissions.push(d || []);
+      // console.log('challengeSub', item);
+      challengeSubmissions.push({ ...d, playerId: item.id });
     });
     return new Promise(resolve => resolve(challengeSubmissions));
   });
@@ -114,10 +115,8 @@ function getOneChallengeSubmission(cid, playerId) {
 
 export const readCardsWithSubmissions = uid =>
   getShallowCards(uid).then(data => {
-    console.log('readCardsWithSubmissions');
     const pendingPromises = data.map(d =>
       getAllChallengeSubmissions(d.id).then(challengeSubmissions => {
-        console.log('CHallengeSubmission', challengeSubmissions);
         return new Promise(resolve => resolve({ ...d, challengeSubmissions }));
       })
     );
@@ -360,9 +359,11 @@ export const addChallengeSubmission = ({ cardId, playerId, challengeData }) =>
     .doc(cardId)
     .collection('challengeSubmissions')
     .doc(playerId)
-    .set({ ...challengeData, date: new Date() })
+    .set({ ...challengeData, date: new Date(), playerId })
     .catch(err => {
-      throw new Error(`error adding challengesubmission for ${uid} ${err}`);
+      throw new Error(
+        `error adding challengesubmission for ${playerId} ${err}`
+      );
       // Handle any error that occurred in any of the previous
       // promises in the chain.
     });

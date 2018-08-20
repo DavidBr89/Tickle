@@ -50,7 +50,8 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
     onCardUpdate,
     cards,
     style,
-    onSubmitChallenge
+    onSubmitChallenge,
+    className
   } = props;
   return (
     <DropTargetCont
@@ -58,8 +59,11 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
       dragged={isCardDragging}
       style={style}
       colorScale={tagColorScale}
+      className={className}
     >
       <DataOverlay
+        className="mb-1"
+        style={{ flex: '1 1 100%' }}
         author
         data={cards}
         disabled={isCardDragging}
