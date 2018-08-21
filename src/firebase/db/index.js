@@ -29,7 +29,7 @@ const pruneFields = fields => {
   }, {});
 };
 
-const CARDS = 'tmpCards';
+const CARDS = 'cards';
 const getShallowCards = uid =>
   firestore
     .collection(CARDS)

@@ -22,7 +22,6 @@ const CardViewable = ({
   <Card
     iOS={iOS}
     smallScreen={smallScreen}
-    {...props}
     key={props.id}
     edit={false}
     bookmarkable
@@ -31,6 +30,7 @@ const CardViewable = ({
     uiColor="grey"
     background="whitesmoke"
     style={{ zIndex: 4000 }}
+    {...props}
     challengeComp={
       <MediaChallenge
         {...props.challenge}

@@ -1,7 +1,12 @@
 import fetch from 'cross-fetch';
 import { uniqBy, flatten } from 'lodash';
 
-import { receiveUsers, getCards, submitChallengeReview, submitChallengeSuccessReview} from './actions';
+import {
+  receiveUsers,
+  getCards,
+  submitChallengeReview,
+  submitChallengeSuccessReview
+} from './actions';
 
 import NearbyPlaces from '../places.json';
 
@@ -58,7 +63,6 @@ export function asyncSubmitChallengeReview(challengeSubmission) {
       });
   };
 }
-
 
 export function fetchCreatedCards(uid) {
   console.log('uid', uid);

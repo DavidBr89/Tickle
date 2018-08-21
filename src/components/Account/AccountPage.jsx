@@ -10,7 +10,7 @@ import { SignInModalBody } from 'Components/SignIn';
 import { TagInput, PreviewTags, Tag } from 'Components/utils/Tag';
 
 // import { skillTypes } from '../../dummyData';
-import { Card } from 'Components/cards';
+import Card from 'Components/cards/ConnectedCard';
 import ExtendableMarker from 'Components/utils/ExtendableMarker';
 
 import { PreviewCard } from 'Cards';
