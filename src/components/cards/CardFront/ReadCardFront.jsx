@@ -139,7 +139,8 @@ class ReadCardFront extends Component {
         );
       case 'Challenge':
         return React.cloneElement(challengeComp, {
-          onClose: this.closeModal
+          onClose: this.closeModal,
+          challengeSubmission
           // smallScreen,
           // ...challenge,
           // bookmarkable,

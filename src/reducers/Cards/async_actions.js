@@ -249,7 +249,7 @@ export function asyncSubmitChallenge(challengeSubmission) {
     console.log('response', db, challengeSubmission);
     const { cardId, playerId, ...challengeData } = challengeSubmission;
 
-    console.log('challengeSubmission', challengeSubmission);
+    console.log('challengeSubmission', { cardId, playerId, challengeData });
 
     dispatch(submitChallenge(challengeSubmission));
     return db
@@ -260,6 +260,23 @@ export function asyncSubmitChallenge(challengeSubmission) {
       });
   };
 }
+
+// export function asyncSubmitChallenge(challengeSubmission) {
+//   return function(dispatch) {
+//     console.log('response', db, challengeSubmission);
+//     const { cardId, playerId, ...challengeData } = challengeSubmission;
+//
+//     console.log('challengeSubmission', challengeSubmission);
+//
+//     dispatch(submitChallenge(challengeSubmission));
+//     return db
+//       .addChallengeSubmission({ cardId, playerId, challengeData })
+//       .then(() => dispatch(submitChallengeSuccess()))
+//       .catch(err => {
+//         throw new Error('error saving challenge submission');
+//       });
+//   };
+// }
 
 export function removeChallengeSubmission(challengeSubmission) {
   const { cardId, playerId } = challengeSubmission;

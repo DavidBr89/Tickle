@@ -31,6 +31,17 @@ export function selectCardId(options) {
   return { type: SELECT_CARD_ID, options };
 }
 
+export const SUBMIT_CHALLENGE_REVIEW = 'SUBMIT_CHALLENGE_REVIEW';
+export function submitChallengeReview(options) {
+  return { type: SUBMIT_CHALLENGE_REVIEW, options };
+}
+
+export const SUBMIT_CHALLENGE_REVIEW_SUCCESS =
+  'SUBMIT_CHALLENGE_REVIEW_SUCCESS';
+export function submitChallengeReviewSuccess(options) {
+  return { type: SUBMIT_CHALLENGE_REVIEW_SUCCESS, options };
+}
+
 // export const SELECT_CARD = 'SELECT_CARD';
 // export function selectCardIndex(options) {
 //   return { type: SELECT_CARD_INDEX, options };

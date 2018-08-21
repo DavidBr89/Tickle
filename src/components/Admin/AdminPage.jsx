@@ -76,63 +76,70 @@ class AdminPage extends Component {
             className="flex-full"
             style={{
               display: 'flex',
-              justifyContent: 'space-around',
-              height: 2000
+              justifyContent: 'space-around'
             }}
           >
-            <CardStack
-              key="e"
-              data={users.map(d => ({ ...d, id: d.uid }))}
-              selectedIndex={users.findIndex(c => c.uid === selectedUserId)}
-              duration={600}
-              width={30}
-              slotSize={30}
-              height={100}
-              unit="%"
-              direction="vertical"
-              centered={selectedUserId !== null}
-            >
-              {u => (
-                <div
-                  key={u.uid}
-                  style={{ width: '100%', height: '100%' }}
-                  onClick={() => selectUser(u.uid)}
-                >
-                  <Author {...u} className="mb-3" />
-                </div>
-              )}
-            </CardStack>
-            <CardStack
-              data={cards}
-              selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
-              duration={600}
-              width={30}
-              height={100}
-              unit="%"
-              direction="vertical"
-              slotSize={30}
-              centered={selectedCardId !== null}
-            >
-              {d => (
-                <PreviewCard
-                  {...d}
-                  onClick={() =>
-                    selectedCardId !== d.id
-                      ? selectCardId(d.id)
-                      : extendSelection(d.id)
-                  }
-                  tagColorScale={() => 'green'}
-                  key={d.id}
-                  edit={d.template}
-                  selected={selectedCardId === d.id}
-                  style={{
-                    transition: `transform 1s`,
-                    transform: selectedCardId === d.id && 'scale(1.2)',
-                    width: '100%'
-                  }}
-                />
-              )}
-            </CardStack>
+            <div className="flexCol" style={{ width: '30%' }}>
+              <h3>Users</h3>
+              <CardStack
+                key="e"
+                className="flex-full"
+                data={users.map(d => ({ ...d, id: d.uid }))}
+                selectedIndex={users.findIndex(c => c.uid === selectedUserId)}
+                duration={600}
+                width={100}
+                slotSize={30}
+                height={100}
+                unit="%"
+                direction="vertical"
+                centered={selectedUserId !== null}
+              >
+                {u => (
+                  <div
+                    key={u.uid}
+                    style={{ width: '100%', height: '100%' }}
+                    onClick={() => selectUser(u.uid)}
+                  >
+                    <Author {...u} className="mb-3" />
+                  </div>
+                )}
+              </CardStack>
+            </div>
+            <div className="flexCol" style={{ width: '30%' }}>
+              <h3>Cards</h3>
+              <CardStack
+                className="flex-full"
+                data={cards}
+                selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
+                duration={600}
+                width={100}
+                height={100}
+                unit="%"
+                direction="vertical"
+                slotSize={30}
+                centered={selectedCardId !== null}
+              >
+                {d => (
+                  <PreviewCard
+                    {...d}
+                    onClick={() =>
+                      selectedCardId !== d.id
+                        ? selectCardId(d.id)
+                        : extendSelection(d.id)
+                    }
+                    tagColorScale={() => 'green'}
+                    key={d.id}
+                    edit={d.template}
+                    selected={selectedCardId === d.id}
+                    style={{
+                      transition: `transform 1s`,
+                      transform: selectedCardId === d.id && 'scale(1.2)',
+                      width: '100%'
+                    }}
+                  />
+                )}
+              </CardStack>
+            </div>
           </div>
         </div>
       </div>

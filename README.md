@@ -11,16 +11,14 @@ TICKLE playground for our Project
 * Analytics
 
 ### Todo bugfixes
-* ~~fix powerscale in accordion~~
 * fix drag and drop on mobile and bugs with map events
+* See issues
 
 
 * Fork and clone the project:
 
 ### To run
-
 * You'll need to have [git](https://git-scm.com/) and [node](https://nodejs.org/en/) installed in your system.
-* Fork and clone the project:
 
 ```
 git clone https://github.com/DinoJay/TickleClient
@@ -38,7 +36,7 @@ npm install
 npm start
 ```
 
-Open the web browser to `https://127.0.0.1:8888/#/hassan`
+Open the web browser to `localhost:3000`
 
 ### To build the production package
 
@@ -46,9 +44,6 @@ Open the web browser to `https://127.0.0.1:8888/#/hassan`
 npm run build
 ```
 
-
-### Development
-The development files for your project you find in src/components/Hassan
 
 ### Eslint
 There is a .eslint.json config for eslint ready with React plugin.

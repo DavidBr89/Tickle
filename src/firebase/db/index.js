@@ -97,7 +97,7 @@ function getAllChallengeSubmissions(cid) {
     snapshot.forEach(item => {
       const d = item.data(); // will have 'todo_item.title' and 'todo_item.completed'
       // console.log('challengeSub', item);
-      challengeSubmissions.push({ ...d, playerId: item.id });
+      challengeSubmissions.push({ ...d, cardId: cid, playerId: item.id });
     });
     return new Promise(resolve => resolve(challengeSubmissions));
   });

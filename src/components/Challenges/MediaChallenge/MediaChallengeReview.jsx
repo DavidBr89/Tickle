@@ -20,15 +20,17 @@ const StyledMediaList = props => (
   </CardThemeConsumer>
 );
 
-const StarRating = ({ highlighted }) => (
+const StarRating = ({ num = 5, highlighted = 0, onClick }) => (
   <div style={{ display: 'flex' }}>
-    {range(0, 5).map(i => (
-      <Star size={50} fill={i < highlighted ? 'gold' : 'white'} />
+    {range(1, num + 1).map(i => (
+      <div onClick={() => onClick(i)} style={{ cursor: 'pointer' }}>
+        <Star size={50} fill={i <= highlighted ? 'gold' : 'white'} />
+      </div>
     ))}
   </div>
 );
 
-class MediaChallenge extends Component {
+class ReviewMediaChallenge extends Component {
   static propTypes = {
     className: PropTypes.string,
     description: PropTypes.string,
@@ -48,9 +50,10 @@ class MediaChallenge extends Component {
 
   state = {
     response: null,
-    rating: null,
+    rating: 0,
     text: '',
-    ...this.props.feedback,
+    feedback: null,
+    ...this.props.challengeSubmission.feedback,
     feedbackSent: this.props.feedback !== null
   };
 
@@ -72,13 +75,12 @@ class MediaChallenge extends Component {
     return (
       <ModalBody
         onClose={onClose}
-        title={'Challenge Review'}
+        title="Challenge Review"
         footer={
           <div style={{ display: 'flex' }}>
             <Btn
-              disabled={feedbackSent || rating === null}
               onClick={() => {
-                onSubmit({});
+                onSubmit({ text, rating });
                 this.setState({ feedbackSent: true });
               }}
             >
@@ -91,30 +93,35 @@ class MediaChallenge extends Component {
       >
         <div className="flex-full flexCol" style={{}}>
           <div>
-            <h5>Description</h5>
+            <h4>Description</h4>
             <p>{description}</p>
           </div>
           <div>
-            <h5>Response</h5>
+            <h4>Response</h4>
             <p style={{ width: '100%' }}>{response}</p>
           </div>
           <div>
-            <h5>Media</h5>
+            <h4>Media</h4>
             <StyledMediaList data={media} className="mb-3" />
           </div>
           <div>
-            <h5>Feedback</h5>
-            <textArea
+            <h4>Feedback</h4>
+            <textarea
               placeholder="give Feedback for the challenge"
-              value={text}
               onChange={e => this.setState({ text: e.target.value })}
               rows="4"
               style={{ width: '100%' }}
-            />
+            >
+            {text}
+          </textarea>
           </div>
           <div>
-            <h5>Rating</h5>
-            <StarRating highlighted={3} />
+            <h4>Rating</h4>
+            <StarRating
+              num={5}
+              highlighted={rating}
+              onClick={n => this.setState({ rating: n })}
+            />
           </div>
         </div>
       </ModalBody>
@@ -122,10 +129,12 @@ class MediaChallenge extends Component {
   }
 }
 
-const StyledMediaChallenge = props => (
+const StyledMediaChallengeReview = props => (
   <CardThemeConsumer>
-    {({ stylesheet }) => <MediaChallenge {...props} stylesheet={stylesheet} />}
+    {({ stylesheet }) => (
+      <ReviewMediaChallenge {...props} stylesheet={stylesheet} />
+    )}
   </CardThemeConsumer>
 );
 
-export default StyledMediaChallenge;
+export default StyledMediaChallengeReview;

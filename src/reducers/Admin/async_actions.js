@@ -1,7 +1,7 @@
 import fetch from 'cross-fetch';
 import { uniqBy, flatten } from 'lodash';
 
-import { receiveUsers, getCards } from './actions';
+import { receiveUsers, getCards, submitChallengeReview, submitChallengeSuccessReview} from './actions';
 
 import NearbyPlaces from '../places.json';
 
@@ -45,6 +45,20 @@ export function fetchUsers() {
     });
   };
 }
+
+export function asyncSubmitChallengeReview(challengeSubmission) {
+  return function(dispatch) {
+    const { cardId, playerId, ...challengeData } = challengeSubmission;
+    dispatch(submitChallengeReview(challengeSubmission));
+    return db
+      .addChallengeSubmission({ cardId, playerId, challengeData })
+      .then(() => dispatch(submitChallengeSuccessReview()))
+      .catch(err => {
+        throw new Error('error saving challenge submission');
+      });
+  };
+}
+
 
 export function fetchCreatedCards(uid) {
   console.log('uid', uid);

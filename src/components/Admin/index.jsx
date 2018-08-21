@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 
-import { fetchUsers, fetchCreatedCards } from 'Reducers/Admin/async_actions';
+import { fetchUsers, fetchCreatedCards, submitChallengeReview} from 'Reducers/Admin/async_actions';
 
 // TODO: change later
 import * as adminActions from 'Reducers/Admin/actions';
