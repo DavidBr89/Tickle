@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import * as Icon from 'react-feather';
+import { X } from 'react-feather';
 import { uniqBy } from 'lodash';
-import { Stylesheet, css } from 'aphrodite/no-important';
+import { css } from 'aphrodite/no-important';
 
 import FileUpload from 'Utils/FileUpload';
 import { ModalBody } from 'Utils/Modal';
@@ -15,6 +15,8 @@ import { db } from 'Firebase';
 import { TEXT, IMG, VIDEO } from 'Constants/mediaTypes';
 
 import { stylesheet as defaultStylesheet } from 'Src/styles/GlobalThemeContext';
+
+import { NewTabLink } from 'Components/utils/StyledComps';
 
 class DataUploadForm extends Component {
   static propTypes = {
@@ -69,7 +71,6 @@ class DataUploadForm extends Component {
             <option>{VIDEO}</option>
           </select>
         </div>
-
         <div>
           <button
             className={`${css(btn)} ml-2`}
@@ -111,30 +112,67 @@ const MediaItem = ({
     >
       {children === null ? (
         <div className={css(truncate)} style={{}}>
-          {label}
+          <NewTabLink>{label}</NewTabLink>
         </div>
       ) : (
         children({ url, name, loading: url === null })
       )}
-      <div>
-        <button
-          className={css(btn)}
-          disabled={!url}
-          onClick={onRemove}
-          style={{ minWidth: 'unset' }}
-        >
-          <Icon.X />
-        </button>
-      </div>
+      {onRemove && (
+        <div>
+          <button
+            className={css(btn)}
+            disabled={!url}
+            onClick={onRemove}
+            style={{ minWidth: 'unset' }}
+          >
+            <Icon.X />
+          </button>
+        </div>
+      )}
     </div>
   );
 };
 
 MediaItem.propTypes = {
-  children: PropTypes.oneOf([null, PropTypes.func])
+  children: PropTypes.oneOf([null, PropTypes.func]),
+  onRemove: PropTypes.oneOf([null, PropTypes.func]),
+  stylesheet: PropTypes.object
 };
 MediaItem.defaultProps = {
-  children: null
+  children: null,
+  onRemove: null,
+  stylesheet: defaultStylesheet
+};
+
+export const MediaList = ({
+  data,
+  maxHeight,
+  stylesheet,
+  onRemove,
+  className
+}) => (
+  <ScrollList
+    className={className}
+    data={data}
+    maxHeight={maxHeight}
+    style={{
+      justifyContent: 'center',
+      alignItems: 'center'
+    }}
+  >
+    {d => <MediaItem {...d} stylesheet={stylesheet} onRemove={onRemove} />}
+  </ScrollList>
+);
+
+MediaList.defaultProps = {
+  data: []
+};
+
+MediaList.propTypes = {
+  data: PropTypes.array,
+  maxHeight: PropTypes.number,
+  stylesheet: PropTypes.object,
+  onRemove: PropTypes.func
 };
 
 class MediaUpload extends Component {
@@ -214,22 +252,11 @@ class MediaUpload extends Component {
           onChange={this.addMediaItem}
         />
         {allMedia.length > 0 ? (
-          <ScrollList
+          <MediaList
             data={allMedia}
+            stylesheet={stylesheet}
             maxHeight={maxHeight}
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
-            {d => (
-              <MediaItem
-                {...d}
-                stylesheet={stylesheet}
-                onRemove={() => this.removeMediaItem(d.id)}
-              />
-            )}
-          </ScrollList>
+          />
         ) : (
           <div
             className="flexCol flex-100"

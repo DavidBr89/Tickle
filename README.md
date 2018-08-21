@@ -2,7 +2,15 @@
 
 TICKLE playground for our Project
 
-### Todo
+## What is left to do?
+* Localisation
+* Card template Editor
+* Hierarchical View
+* Timeline View
+* Diary
+* Analytics
+
+### Todo bugfixes
 * ~~fix powerscale in accordion~~
 * fix drag and drop on mobile and bugs with map events
 

@@ -8,7 +8,6 @@ import { profileSrc, colorClass, colorScaleRandom } from './styles';
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 import { stylesheet } from 'Src/styles/GlobalThemeContext';
 import { FieldSet } from 'Components/utils/StyledComps';
-import flipIconSrc from './flip_icon.png';
 
 import { RefreshCcw, Edit, ZoomIn } from 'react-feather';
 

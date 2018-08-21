@@ -15,28 +15,22 @@ import AdminPage from './AdminPage';
 
 const mapStateToProps = state => {
   const { selectedUserId, cards } = state.Admin;
-  console.log('selectedUserId', cards, selectedUserId);
-  const filteredCards = cards.filter(c => {
-    console.log(
-      'ya',
-      c.challengeSubmissions.find(s => s.playerId === selectedUserId)
-    );
-    return (
-      c.challengeSubmissions.find(s => s.playerId === selectedUserId) !==
-      undefined
-    );
-  });
+  // console.log('selectedUserId', cards, selectedUserId);
+  const filteredCards = cards
+    .map(c => ({
+      ...c,
+      challengeSubmission:
+        c.challengeSubmissions.find(s => s.playerId === selectedUserId) || null
+    }))
+    .filter(c => c.challengeSubmission !== null);
+
   console.log('filteredCards', filteredCards);
-  // console.log(
-  //   'filteredCards',
-  //   cards.filter(c => c.challengeSubmissions.length > 0)
-  // );
 
   return {
     // ...state.Session,
     ...state.DataView,
     ...state.Admin,
-    cards: filteredCards,
+    cards: filteredCards
   };
 };
 

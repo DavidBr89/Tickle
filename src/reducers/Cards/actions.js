@@ -127,6 +127,11 @@ export function submitChallengeSuccess(options) {
   return { type: SUBMIT_CHALLENGE_SUCCESS, options };
 }
 
+export const SUBMIT_CHALLENGE_FEEDBACK = 'SUBMIT_CHALLENGE_FEEDBACK';
+export function submitChallengeFeedback(options) {
+  return { type: SUBMIT_CHALLENGE_FEEDBACK, options };
+}
+
 // export const TOGGLE_DATA_VIEW = 'TOGGLE_DATA_VIEW';
 // export function toggleDataView(options) {
 //   return { type: TOGGLE_DATA_VIEW, options };

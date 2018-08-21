@@ -6,12 +6,13 @@ import { connect } from 'react-redux';
 
 import { Card } from './index';
 
-import { asyncSubmitChallenge } from 'Reducers/Cards/async_actions';
+import { asyncSubmitChallengeReview } from 'Reducers/Cards/async_actions';
 
 import * as dataViewActions from 'Reducers/DataView/actions';
-import MediaChallenge from 'Components/Challenges/MediaChallenge';
 
-const CardViewable = ({
+import MediaChallengeReview from 'Components/Challenges/MediaChallenge/MediaChallengeReview';
+
+const CardReview = ({
   iOS,
   smallScreen,
   extendSelectedCard,
@@ -22,24 +23,13 @@ const CardViewable = ({
   <Card
     iOS={iOS}
     smallScreen={smallScreen}
-    {...props}
-    key={props.id}
-    edit={false}
-    bookmarkable
-    onClose={() => extendSelectedCard(null)}
-    tagColorScale={tagColorScale}
-    uiColor="grey"
-    background="whitesmoke"
-    style={{ zIndex: 4000 }}
     challengeComp={
-      <MediaChallenge
+      <MediaChallengeReview
+        title="Challenge Review"
         {...props.challenge}
-        bookmarkable
-        removable
-        title="Challenge"
-        key={props.id}
-        challengeSubmission={props.challengeSubmission}
-        onUpdate={d => {
+        {...props.challengeSubmission}
+        feedback={{}}
+        onSubmit={d => {
           onSubmitChallenge({
             cardId: props.id,
             ...props.challengeSubmission,
@@ -48,6 +38,15 @@ const CardViewable = ({
         }}
       />
     }
+    {...props}
+    key={props.id}
+    edit={false}
+    bookmarkable
+    tagColorScale={tagColorScale}
+    onSubmitChallenge={onSubmitChallenge}
+    uiColor="grey"
+    background="whitesmoke"
+    style={{ zIndex: 4000 }}
   />
 );
 
@@ -60,8 +59,8 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       // dragCard,
-      ...dataViewActions,
-      asyncSubmitChallenge
+      ...dataViewActions
+      // asyncSubmitChallengeReview
     },
     dispatch
   );
@@ -70,17 +69,17 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const { authUser } = state;
   const { uid } = authUser;
 
-  const { asyncSubmitChallenge } = dispatcherProps;
-
-  const onSubmitChallenge = challengeSubmission => {
-    asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
-  };
+  // const { asyncSubmitChallengeReview } = dispatcherProps;
+  //
+  // const onSubmitChallenge = challengeSubmission => {
+  //   asyncSubmitChallengeReview({ playerId: uid, ...challengeSubmission });
+  // };
 
   return {
     ...state,
     ...dispatcherProps,
-    ...ownProps,
-    onSubmitChallenge
+    ...ownProps
+    // onSubmitChallenge
   };
 };
 
@@ -88,4 +87,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps
-)(CardViewable);
+)(CardReview);

@@ -52,7 +52,8 @@ class ReadCardFront extends Component {
     background: PropTypes.string,
     tagColorScale: PropTypes.func,
     challenge: PropTypes.object,
-    bookmarkable: PropTypes.boolean
+    bookmarkable: PropTypes.boolean,
+    challengeComp: PropTypes.element
   };
 
   static defaultProps = {
@@ -72,7 +73,8 @@ class ReadCardFront extends Component {
     flipHandler: d => d,
     tagColorScale: () => 'green',
     bookmarkable: false,
-    onRemoveChallengeSubmission: d => d
+    onRemoveChallengeSubmission: d => d,
+    challengeComp: MediaChallenge
   };
 
   state = {
@@ -102,7 +104,8 @@ class ReadCardFront extends Component {
       smallScreen,
       bookmarkable,
       removable,
-      onRemoveChallengeSubmission
+      onRemoveChallengeSubmission,
+      challengeComp
     } = this.props;
 
     const FooterBtn = () => (
@@ -135,30 +138,27 @@ class ReadCardFront extends Component {
           </ModalBody>
         );
       case 'Challenge':
-        return (
-          <MediaChallenge
-            smallScreen={smallScreen}
-            {...challenge}
-            bookmarkable={bookmarkable}
-            removable={removable}
-            title="Challenge"
-            key={id}
-            challengeSubmission={challengeSubmission}
-            onClose={this.closeModal}
-            onRemoveSubmission={onRemoveChallengeSubmission}
-            onUpdate={d => {
-              onSubmitChallenge({
-                cardId: id,
-                ...challengeSubmission,
-                ...d
-              });
-              this.setState({
-                challengeStarted: !d.completed,
-                challengeSubmitted: d.completed
-              });
-            }}
-          />
-        );
+        return React.cloneElement(challengeComp, {
+          onClose: this.closeModal
+          // smallScreen,
+          // ...challenge,
+          // bookmarkable,
+          // removable,
+          // title: 'Challenge',
+          // key: id,
+          // challengeSubmission,
+          // onRemoveSubmission: onRemoveChallengeSubmission,
+          // onUpdate: d => {
+          //   onSubmitChallenge({
+          //     cardId: id,
+          //     ...challengeSubmission,
+          //     ...d
+          //   });
+          // this.setState({
+          //   challengeStarted: !d.completed,
+          //   challengeSubmitted: d.completed
+          // });
+        });
       default:
         return <div>error</div>;
     }
@@ -225,8 +225,6 @@ class ReadCardFront extends Component {
             onEdit={() =>
               this.setState({
                 dialogKey: 'Description'
-                // id: 'description',
-                // data: description
               })
             }
           />

@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { FLOORPLAN } from 'Constants/dataViews';
+
 // import * as d3 from 'd3';
 
 // import { Motion, spring } from 'react-motion';
@@ -224,7 +226,10 @@ class CardAuthorPage extends Component {
           selectedTags={selectedTags}
           tagColorScale={tagColorScale}
           selectedCardId={selectedCardId}
-          style={{ flex: '1 1 70%' }}
+          style={{
+            flex: '1 1 70%',
+            position: dataView === FLOORPLAN && 'absolute'
+          }}
           className="flexCol"
         />
       </div>

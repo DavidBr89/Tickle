@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { css } from 'aphrodite/no-important';
+
+import { GEO, TAGS, FLOORPLAN } from 'Constants/dataViews';
 // import { PreviewCard } from 'Components/cards';
 import CardStack from '../CardStack';
 
@@ -218,7 +220,10 @@ class CardViewPage extends Component {
         <CardViewOverlay
           {...this.props}
           className="mb-1"
-          style={{ flex: '1 1 70%' }}
+          style={{
+            flex: '1 1 70%',
+            position: this.props.dataView === FLOORPLAN && 'absolute'
+          }}
           colorScale={tagColorScale}
         />
       </div>

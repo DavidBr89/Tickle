@@ -128,81 +128,82 @@ class DataOverlay extends Component {
     // const noPointerEvents = extCardId !== null;
     switch (mode) {
       case GEO: {
+        // TODO: simplify the style here, inconsistent with style of CardView
         return (
-          <div
-            className={className}
-            style={{
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              // pointerEvents: noPointerEvents && 'none',
-              overflow: 'hidden',
-              left: 0,
-              top: 0,
-              ...style
-            }}
-          >
-            <Map
-              width={width}
-              height={height}
-              disabled={disabled}
-              nodes={data}
-              colorScale={colorScale}
-              preview={noPreview}
+            <div
+              className={className}
+              style={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                // pointerEvents: noPointerEvents && 'none',
+                overflow: 'hidden',
+                left: 0,
+                top: 0,
+                ...style
+              }}
             >
-              {draggable}
-            </Map>
-          </div>
+              <Map
+                width={width}
+                height={height}
+                disabled={disabled}
+                nodes={data}
+                colorScale={colorScale}
+                preview={noPreview}
+              >
+                {draggable}
+              </Map>
+            </div>
         );
       }
       case FLOORPLAN: {
         return (
-          <div ref={zc => (this.zoomCont = zc)}>
-            <Floorplan
-              {...this.props}
-              width={width}
-              height={height}
-              data={data}
-              edit={author}
-              colorScale={colorScale}
-              zoom
-              noPreview={noPreview}
-            >
-              {author ? draggable : noPreview}
-            </Floorplan>
-          </div>
+            <div ref={zc => (this.zoomCont = zc)}>
+              <Floorplan
+                {...this.props}
+                width={width}
+                height={height}
+                data={data}
+                edit={author}
+                colorScale={colorScale}
+                zoom
+                noPreview={noPreview}
+              >
+                {author ? draggable : noPreview}
+              </Floorplan>
+            </div>
         );
       }
       case TAGS: {
         return (
-          <div
-            style={{
-              ...style,
-              height: '100%',
-              // TODO: check later
-              paddingLeft: 7,
-              paddingRight: 15
-            }}
-          >
-            <DimWrapper>
-              {(w, h) => (
-                <TreeMapCluster
-                  {...this.props}
-                  sets={sets}
-                  data={data}
-                  width={w}
-                  height={h}
-                  center={[width / 2, (height * 3) / 4]}
-                  filterSet={filterSet}
-                  selectedId={selectedCardId}
-                  colorScale={colorScale}
-                  padding={padding}
-                >
-                  {noPreview}
-                </TreeMapCluster>
-              )}
-            </DimWrapper>
-          </div>
+            <div
+              style={{
+                ...style,
+                height: '100%'
+                // TODO: check later
+                // paddingLeft: 7,
+                // paddingRight: 15
+              }}
+            >
+              <DimWrapper>
+                {(w, h) => (
+                  <TreeMapCluster
+                    {...this.props}
+                    sets={sets}
+                    data={data}
+                    width={w}
+                    height={h}
+                    center={[width / 2, (height * 3) / 4]}
+                    filterSet={filterSet}
+                    selectedId={selectedCardId}
+                    colorScale={colorScale}
+                    padding={padding}
+                  >
+                    {noPreview}
+                  </TreeMapCluster>
+                )}
+              </DimWrapper>
+            </div>
         );
       }
       default: {
@@ -231,16 +232,11 @@ class DataOverlay extends Component {
       disabled,
       data,
       padding,
-      filterSet,
+      filterSet
     } = this.props;
 
     const comp = this.selectComp();
-
-    return (
-      <div className={className} style={style}>
-        {comp}
-      </div>
-    );
+    return <div className={className} style={{ ...style }}> {comp} </div>
   }
 }
 

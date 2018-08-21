@@ -8,7 +8,9 @@ import CardStack from 'Utils/CardStack/CardStack';
 
 import { BareModal, ModalBody } from 'Utils/Modal';
 
-import { Card } from 'Components/cards';
+import ReviewCard from 'Components/cards/ConnectedReviewCard';
+
+import { MediaList } from 'Utils/MediaUpload';
 
 class AdminPage extends Component {
   static propTypes = {
@@ -49,9 +51,9 @@ class AdminPage extends Component {
       extendSelection
     } = this.props;
     const { users } = this.props;
-    // console.log('cards', selectedCardId, cards);
+    console.log('cards', selectedCardId, cards);
     const selectedCard = cards.find(c => c.id === selectedCardId) || {};
-    console.log('selectedCard', Card, selectedCard);
+    console.log('selectedCard', ReviewCard, selectedCard);
 
     return (
       <div className="content-block flexCol" style={{ height: '100%' }}>
@@ -60,10 +62,9 @@ class AdminPage extends Component {
           uiColor="grey"
           background="transparent"
         >
-          <Card
+          <ReviewCard
             {...selectedCard}
             onClose={() => {
-              console.log('close');
               extendSelection(null);
             }}
           />
@@ -118,7 +119,7 @@ class AdminPage extends Component {
                   onClick={() =>
                     selectedCardId !== d.id
                       ? selectCardId(d.id)
-                      : extendSelection()
+                      : extendSelection(d.id)
                   }
                   tagColorScale={() => 'green'}
                   key={d.id}

@@ -17,6 +17,7 @@ export const CHALLENGE_SUBMITTED = 'CHALLENGE_SUBMITTED';
 export const CHALLENGE_NOT_SUBMITTED = 'CHALLENGE_NOT_SUBMITTED';
 export const CHALLENGE_SUCCEEDED = 'CHALLENGE_SUCCEEDED';
 
+// TODO: where is challenge submission?
 export const extractCardFields = ({
   id,
   uid,

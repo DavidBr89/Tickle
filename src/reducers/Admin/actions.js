@@ -21,7 +21,7 @@ export function selectUser(options) {
   return { type: SELECT_USER, options };
 }
 
-export const EXTEND_SELECTION = 'EXTEND_SELECTION';
+export const EXTEND_SELECTION = 'EXTEND_SELECTION_ADMIN';
 export function extendSelection(options) {
   return { type: EXTEND_SELECTION, options };
 }
