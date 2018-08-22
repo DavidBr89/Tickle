@@ -13,7 +13,8 @@ import {
   TOGGLE_MODAL,
   SELECT_USER,
   SELECT_CARD_ID,
-  EXTEND_SELECTION
+  EXTEND_SELECTION,
+  SUBMIT_CHALLENGE_REVIEW
 } from './actions';
 
 const INITIAL_STATE = {
@@ -37,9 +38,26 @@ function reducer(state = INITIAL_STATE, action) {
       const cards = action.options;
       return { ...state, cards };
     }
-    case TOGGLE_MODAL: {
-      const modalActive = action.options;
-      return { ...state, modalActive };
+    case SUBMIT_CHALLENGE_REVIEW: {
+      const challengeSubmission = action.options;
+      const { cards } = state;
+      console.log('Cards', cards);
+      const { cardId } = challengeSubmission;
+
+      const newCards = cards.map(c => {
+        if (c.id === cardId) {
+          return {
+            ...c,
+            challengeSubmissions: [
+              challengeSubmission,
+              ...c.challengeSubmissions
+            ]
+          };
+        }
+        return c;
+      });
+
+      return { ...state, cards: newCards };
     }
     case SELECT_USER: {
       const selectedUserId = action.options;

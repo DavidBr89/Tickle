@@ -39,7 +39,6 @@ export function submitChallengeReview(options) {
 export const SUBMIT_CHALLENGE_REVIEW_SUCCESS =
   'SUBMIT_CHALLENGE_REVIEW_SUCCESS';
 export function submitChallengeReviewSuccess(options) {
-
   return { type: SUBMIT_CHALLENGE_REVIEW_SUCCESS, options };
 }
 

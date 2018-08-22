@@ -54,17 +54,15 @@ export function submitUserInfoToDB(userData) {
     const usr = userFields(userData);
     const submitUserDispatchWrapper = () => {
       const { file, uid } = userData;
-      const path = `usr/${uid}`;
-      console.log(userData, 'file', file, 'path', path);
       if (file) {
-        return db.addImgToStorage({ file, path }).then(photoURL => {
-          console.log('photoUrl', photoURL);
-          const newUsr = { ...usr, photoURL };
-          db.doCreateUser(newUsr).then(() => {
-            console.log('createdUser', newUsr);
-            dispatch(submitUserInfoToDBSuccess(newUsr));
+        return db
+          .addImgToStorage({ file, path: 'usr', id: uid })
+          .then(photoURL => {
+            const newUsr = { ...usr, photoURL };
+            db.doCreateUser(newUsr).then(() => {
+              dispatch(submitUserInfoToDBSuccess(newUsr));
+            });
           });
-        });
       }
       return db.doCreateUser(usr).then(() => {
         dispatch(submitUserInfoToDBSuccess(usr));

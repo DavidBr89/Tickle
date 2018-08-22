@@ -4,7 +4,11 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 
-import { fetchUsers, fetchCreatedCards, submitChallengeReview} from 'Reducers/Admin/async_actions';
+import {
+  fetchUsers,
+  fetchCreatedCards,
+  asyncSubmitChallengeReview
+} from 'Reducers/Admin/async_actions';
 
 // TODO: change later
 import * as adminActions from 'Reducers/Admin/actions';
@@ -40,7 +44,8 @@ const mapDispatchToProps = dispatch =>
       ...adminActions,
       fetchUsers,
       fetchCreatedCards,
-      fetchAllCards
+      fetchAllCards,
+      submitChallengeReview: asyncSubmitChallengeReview
     },
     dispatch
   );

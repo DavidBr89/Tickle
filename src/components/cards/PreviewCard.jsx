@@ -147,7 +147,7 @@ class PreviewCard extends Component {
                 width: '100%',
                 height: '100%'
               }}
-              src={img ? img.url : placeholderImg}
+              src={img ? img.thumbnail || img.url : placeholderImg}
               alt="Card cap"
             />
           ) : (

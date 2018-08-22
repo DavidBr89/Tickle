@@ -5,7 +5,7 @@ import {
   receiveUsers,
   getCards,
   submitChallengeReview,
-  submitChallengeSuccessReview
+  submitChallengeReviewSuccess
 } from './actions';
 
 import NearbyPlaces from '../places.json';
@@ -52,15 +52,17 @@ export function fetchUsers() {
 }
 
 export function asyncSubmitChallengeReview(challengeSubmission) {
+  console.log('challengeSubmission', challengeSubmission);
+  const { cardId, playerId, ...challengeData } = challengeSubmission;
   return function(dispatch) {
-    const { cardId, playerId, ...challengeData } = challengeSubmission;
     dispatch(submitChallengeReview(challengeSubmission));
+    console.log('submit challenge', { cardId, playerId, challengeData });
     return db
       .addChallengeSubmission({ cardId, playerId, challengeData })
-      .then(() => dispatch(submitChallengeSuccessReview()))
-      .catch(err => {
-        throw new Error('error saving challenge submission');
-      });
+      .then(() => dispatch(submitChallengeReviewSuccess()));
+    // .catch(err => {
+    //   throw new Error(`error saving challenge submission ${err}`);
+    // });
   };
 }
 

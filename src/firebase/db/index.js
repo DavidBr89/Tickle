@@ -29,7 +29,9 @@ const pruneFields = fields => {
   }, {});
 };
 
-const CARDS = 'cards';
+const thumbFileName = fileName => `thumb_${fileName}`;
+
+const CARDS = 'tmpCards';
 const getShallowCards = uid =>
   firestore
     .collection(CARDS)
@@ -39,13 +41,26 @@ const getShallowCards = uid =>
       const data = [];
       querySnapshot.forEach(doc => {
         const d = doc.data();
-        data.push(d);
+
+        data.push({ ...d });
       });
 
-      return new Promise(
-        resolve => resolve(data),
-        error => console.log('error in readCards', error)
-      );
+      const dataPromises = data.map(d => {
+        if (!d.img) return d;
+
+        const thumbNailRef = storageRef.child(
+          `images/cards/${thumbFileName(d.id)}`
+        );
+        // return d;
+        return thumbNailRef.getDownloadURL().then(
+          url => ({ ...d, img: { ...d.img, thumbnail: url } }),
+          err => {
+            const img = { ...d.img, thumbnail: null };
+            return { ...d, ...img };
+          }
+        );
+      });
+      return Promise.all(dataPromises);
     });
 
 export const readCards = (fromUID, playerId) =>
@@ -116,9 +131,10 @@ function getOneChallengeSubmission(cid, playerId) {
 export const readCardsWithSubmissions = uid =>
   getShallowCards(uid).then(data => {
     const pendingPromises = data.map(d =>
-      getAllChallengeSubmissions(d.id).then(challengeSubmissions => {
-        return new Promise(resolve => resolve({ ...d, challengeSubmissions }));
-      })
+      getAllChallengeSubmissions(d.id).then(
+        challengeSubmissions =>
+          new Promise(resolve => resolve({ ...d, challengeSubmissions }))
+      )
     );
     return Promise.all(pendingPromises).then(results =>
       new Promise(resolve => resolve(results)).catch(err => {
@@ -148,18 +164,12 @@ export const removeFromStorage = path => {
   });
 };
 
-export const addImgToStorage = ({ file, path }) => {
+export const addImgToStorage = ({ file, path, id }) => {
   const metadata = { contentType: file.type };
-  const imgRef = storageRef.child(`images/${path}`);
+  const imgRef = storageRef.child(`images/${path}/${id}`);
   return imgRef
     .put(file, metadata)
-    .then(
-      () =>
-        new Promise(resolve => {
-          console.log('imgRef', imgRef);
-          return resolve(imgRef.getDownloadURL());
-        })
-    )
+    .then(() => new Promise(resolve => resolve(imgRef.getDownloadURL())))
     .catch(err => {
       console.log('err', err);
       throw new Error(`error in uploading img for ${file.name}`);
@@ -180,32 +190,34 @@ const uploadImgFields = card => {
   // TODO update
   const cardImgPromise = cardImgFile
     ? addImgToStorage({
-      file: cardImgFile,
-      path: `cards/${card.id}`
-    }).then(url => {
-      const img = {
-        title: card.img.title || cardImgFile.name,
-        url
-      };
-      return new Promise(resolve => resolve({ img }));
-    })
+        file: cardImgFile,
+        path: 'cards',
+        id: card.id
+      }).then(url => {
+        const img = {
+          title: card.img.title || cardImgFile.name,
+          url
+        };
+        return new Promise(resolve => resolve({ img }));
+      })
     : {};
   // card.img = null;
 
   const challImgPromise = cardChallengeFile
     ? addImgToStorage({
-      file: cardChallengeFile,
-      // TODO: fix cards with more challenges
-      path: `challenges/${card.id}`
-    }).then(url => {
-      const challenge = {
-        img: {
-          title: cardChallengeFile.name,
-          url
-        }
-      };
-      return new Promise(resolve => resolve({ challenge }));
-    })
+        file: cardChallengeFile,
+        path: 'challenges',
+        id: card.id
+        // TODO: fix cards with more challenges
+      }).then(url => {
+        const challenge = {
+          img: {
+            title: cardChallengeFile.name,
+            url
+          }
+        };
+        return new Promise(resolve => resolve({ challenge }));
+      })
     : {};
 
   return Promise.all([cardImgPromise, challImgPromise]).then(values => {
@@ -282,9 +294,23 @@ export const onceGetUsers = () =>
       const data = [];
       querySnapshot.forEach(doc => data.push(doc.data()));
       console.log('data', data);
-      return new Promise(
-        resolve => resolve(data),
-        error => console.log('error in reading users', error)
+
+      const dataPromises = data.map(d => {
+        const thumbNailRef = storageRef.child(
+          `images/usr/${thumbFileName(d.uid)}`
+        );
+        // return d;
+        return thumbNailRef.getDownloadURL().then(
+          url => ({ ...d, thumbnail: url }),
+          err => {
+            const img = { ...d, thumbnail: d.photoURL };
+            return { ...d, ...img };
+          }
+        );
+      });
+
+      return Promise.all(dataPromises).catch(error =>
+        console.log('error in reading users', error)
       );
     });
 
@@ -359,7 +385,7 @@ export const addChallengeSubmission = ({ cardId, playerId, challengeData }) =>
     .doc(cardId)
     .collection('challengeSubmissions')
     .doc(playerId)
-    .set({ ...challengeData, date: new Date(), playerId })
+    .set({ ...challengeData, date: new Date(), playerId, cardId })
     .catch(err => {
       throw new Error(
         `error adding challengesubmission for ${playerId} ${err}`

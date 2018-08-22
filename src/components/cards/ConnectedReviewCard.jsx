@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import { Card } from './index';
 
-import { asyncSubmitChallenge } from 'Reducers/Cards/async_actions';
+import { asyncSubmitChallengeReview } from 'Reducers/Admin/async_actions';
 
 import * as dataViewActions from 'Reducers/DataView/actions';
 
@@ -17,7 +17,7 @@ const CardReview = ({
   smallScreen,
   extendSelectedCard,
   tagColorScale,
-  submitChallenge,
+  submitChallengeReview,
   ...props
 }) => (
   <Card
@@ -25,13 +25,12 @@ const CardReview = ({
     smallScreen={smallScreen}
     challengeComp={
       <MediaChallengeReview
-
         title="Challenge Review"
         {...props.challenge}
         {...props.challengeSubmission}
         feedback={{}}
         onSubmit={feedback => {
-          submitChallenge({
+          submitChallengeReview({
             ...props.challengeSubmission,
             feedback
           });
@@ -59,7 +58,7 @@ const mapDispatchToProps = dispatch =>
     {
       // dragCard,
       ...dataViewActions,
-      submitChallenge: asyncSubmitChallenge
+      submitChallengeReview: asyncSubmitChallengeReview
     },
     dispatch
   );
