@@ -3,12 +3,17 @@
 TICKLE playground for our Project
 
 ## What is left to do?
-* Localisation
-* Card template Editor
-* Hierarchical View
-* Timeline View
-* Diary
-* Analytics
+  * Localisation (different languages)
+  * Card template Editor
+  * Learning Analytics (User profile and recomendation) and Web Analytics (Google Analytics)
+  * Porting to PWA (Progressive Web App)
+  * Unit testing
+  * Adding more challenge types
+  * Partial automatize the card creation process by adding content to the cards from web services (Google maps, Brussels tourism API, Wikipedia, etc.)
+  * Card Hierarchical View
+  * Card Timeline View
+  * User Diary
+  * Manually creating Content for Cards
 
 ### Todo bugfixes
 * fix drag and drop on mobile and bugs with map events
