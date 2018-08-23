@@ -51,10 +51,9 @@ class AdminPage extends Component {
       extendSelection
     } = this.props;
     const { users } = this.props;
-    console.log('cards', selectedCardId, cards);
     const selectedCard = cards.find(c => c.id === selectedCardId) || {};
-    console.log('selectedCard', ReviewCard, selectedCard);
 
+    const selectedUserIndex = users.findIndex(c => c.uid === selectedUserId);
     return (
       <div className="content-block flexCol" style={{ height: '100%' }}>
         <BareModal
@@ -84,15 +83,15 @@ class AdminPage extends Component {
               <CardStack
                 key="e"
                 className="flex-full"
-                data={users.map(d => ({ ...d, id: d.uid }))}
-                selectedIndex={users.findIndex(c => c.uid === selectedUserId)}
+                data={users}
+                selectedIndex={selectedUserIndex}
                 duration={600}
                 width={100}
                 slotSize={30}
                 height={100}
                 unit="%"
                 direction="vertical"
-                centered={selectedUserId !== null}
+                centered={selectedUserId !== null && users.length > 0}
               >
                 {u => (
                   <div

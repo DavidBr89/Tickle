@@ -11,7 +11,9 @@ TICKLE playground for our Project
   * Adding more challenge types
   * Partial automatize the card creation process by adding content to the cards from web services (Google maps, Brussels tourism API, Wikipedia, etc.)
   * Card Hierarchical View
+    * Hierarchy editor
   * Card Timeline View
+    * editor
   * User Diary
   * Manually creating Content for Cards
 

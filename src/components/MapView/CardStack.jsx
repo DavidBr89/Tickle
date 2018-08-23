@@ -26,8 +26,8 @@ function CardStack({
       selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
       width={width}
       height={height}
-      unit={unit}
       slotSize={slotSize}
+      unit={unit}
       style={{
         zIndex: 1000
       }}

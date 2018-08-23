@@ -60,7 +60,8 @@ const AuthorPreview = ({
   style,
   username,
   name,
-  email
+  email,
+  thumbnail
 }) => (
   <div
     className={`${className} flexCol flex-100 p-2`}
@@ -79,7 +80,7 @@ const AuthorPreview = ({
           height: '100%',
           maxHeight: 150
         }}
-        src={photoURL || usrPlaceholderImg}
+        src={thumbnail || usrPlaceholderImg}
         alt="alt"
       />
     </div>

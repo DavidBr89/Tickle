@@ -52,7 +52,6 @@ class ReviewMediaChallenge extends Component {
     response: null,
     rating: 0,
     text: '',
-    feedback: null,
     ...this.props.challengeSubmission.feedback,
     feedbackSent: this.props.feedback !== null
   };
@@ -80,7 +79,8 @@ class ReviewMediaChallenge extends Component {
           <div style={{ display: 'flex' }}>
             <Btn
               onClick={() => {
-                onSubmit({ text, rating });
+                //TODO: maybe change later
+                onSubmit({ text, rating, accomplished: true });
                 this.setState({ feedbackSent: true });
               }}
             >
@@ -112,8 +112,8 @@ class ReviewMediaChallenge extends Component {
               rows="4"
               style={{ width: '100%' }}
             >
-            {text}
-          </textarea>
+              {text}
+            </textarea>
           </div>
           <div>
             <h4>Rating</h4>

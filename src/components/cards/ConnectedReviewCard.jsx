@@ -32,7 +32,7 @@ const CardReview = ({
         onSubmit={feedback => {
           submitChallengeReview({
             ...props.challengeSubmission,
-            feedback
+            feedback,
           });
         }}
       />

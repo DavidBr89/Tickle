@@ -3,8 +3,14 @@ import PropTypes from 'prop-types';
 import { range, scaleBand, min, max, scaleLinear } from 'd3';
 // import VisibilitySensor from 'react-visibility-sensor/visibility-sensor.js';
 
-function centerLayout(nextProps) {
-  const { slotSize, width, height, data, selectedIndex, direction } = nextProps;
+function centerLayout({
+  slotSize,
+  width,
+  height,
+  data,
+  selectedIndex,
+  direction
+}) {
   const size = direction === 'horizontal' ? width : height;
 
   const center = size / 2;
@@ -16,72 +22,81 @@ function centerLayout(nextProps) {
 
   const rightSize = size - (slotSize * 3) / 2 - center;
 
-  // const bufferLeft = index => (center - slotSize) / (leftLen - index);
   const leftPos = j => (j * leftSize) / leftLen;
-  const leftScale = j => leftPos(j);
-  // center - slotSize > slotSize ? bufferLeft(j) + leftPos(j) : leftPos(j);
 
   const rightPos = j =>
     center + slotSize / 2 + ((rightLen - j) * rightSize) / rightLen;
 
-  // TODO: not correct, fix
-  const rightScale = j => rightPos(j); // case data.length === 1:
-  //   center - slotSize / 2;
-  // rightPos(j) - bufferRight(j) >= center + slotSize / 2
-  //   ? rightPos(j) - bufferRight(j)
-  //   : rightPos(j);
-
-  const leftCards = data
+  const leftPositions = data
     .slice(0, selectedIndex)
     // TODO: change later
     .slice(selectedIndex > 10 ? 7 : 0, selectedIndex)
-    // TODO
-    // .reverse()
     .map((c, j) => ({
-      // TODO: make generic
-      // TODO: make generic
-      // TODO: make generic
-      // TODO: make generic
-      // TODO: make generic
-      // TODO: make generic
-      id: c.id,
+      index: c.index,
       position: 'left',
-      i: 0,
-      j,
-      pos: leftScale(j),
-      // TODO: important
+      pos: leftPos(j),
       zIndex: j
-      // j
     }));
-  // .reverse();
 
-  const centerCard = [
-    {
-      ...data[selectedIndex],
-      position: 'center',
-      i: 1,
-      j: 0,
-      zIndex: 100,
-      pos: center - slotSize / 2
-    }
-  ];
+  if (!Number.isInteger(selectedIndex) || selectedIndex < 0)
+    throw new Error(`SelectedIndex ${selectedIndex} is not a positive integer`);
 
-  const rightCards = data
+  const centerIndex = data[selectedIndex] ? data[selectedIndex].index : 0;
+
+  const centerPos = {
+    index: centerIndex,
+    position: 'center',
+    zIndex: 100,
+    pos: center - slotSize / 2
+  };
+
+  const rightPositions = data
     .slice(selectedIndex + 1, data.length)
     // TODO: Pagination
     .slice(0, 10)
     .reverse()
     .map((c, j) => ({
-      ...c,
+      index: c.index,
       position: 'right',
-      i: 2,
-      j,
-      pos: rightScale(j),
+      pos: rightPos(j),
       zIndex: j
     }));
 
-  return [...leftCards, ...centerCard, ...rightCards];
+  return [...leftPositions, centerPos, ...rightPositions];
 }
+
+const baseLayout = ({
+  data,
+  innerMargin,
+  style,
+  className,
+  children,
+  unit,
+  slotSize,
+  width,
+  // centered,
+  // selectedIndex,
+  duration,
+  height,
+  onClick,
+  direction
+}) => {
+  const availSpace = direction === 'horizontal' ? width : height;
+  const neededSpace = data.length * slotSize;
+
+  const size =
+    neededSpace < availSpace ? neededSpace - slotSize : availSpace - slotSize;
+
+  // TODO: parameterize
+  const len = Math.min(data.length, 20);
+  const scale = scaleBand()
+    .domain(range(0, len))
+    .paddingInner(1)
+    // .align(0.5)
+    .range([0, size]);
+  // i => i * (100 - slotSize * 3 / 4) / data.length;
+  return data.slice(0, len).map((d, i) => ({ index: d.index, pos: scale(i) }));
+};
 
 class CardStack extends Component {
   static propTypes = {
@@ -120,139 +135,6 @@ class CardStack extends Component {
     // this.transitionStyles = transition.bind(this);
   }
 
-  // static getDerivedStateFromProps(nextProps) {
-  //   const cardStacks = centerLayout.bind(this)(nextProps);
-  //   return { cardStacks };
-  // }
-
-  baseLayout = () => {
-    const {
-      data,
-      innerMargin,
-      style,
-      className,
-      children,
-      unit,
-      slotSize,
-      width,
-      // centered,
-      // selectedIndex,
-      duration,
-      height,
-      onClick,
-      direction
-    } = this.props;
-
-    const transition = `left ${duration}ms, top ${duration}ms, transform ${duration}ms`;
-
-    const size = direction === 'horizontal' ? width : height;
-    // TODO: parameterize
-    const len = Math.min(data.length, 20);
-    const scale = scaleBand()
-      .domain(range(0, len))
-      .paddingInner(1)
-      // .align(0.5)
-      .range([0, size - slotSize]);
-    // i => i * (100 - slotSize * 3 / 4) / data.length;
-    const plotData = data
-      .slice(0, len)
-      .map((d, i) => ({ ...d, pos: scale(i) }));
-
-    const position = d =>
-      direction === 'vertical'
-        ? { top: `${d.pos}${unit}` }
-        : { left: `${d.pos}${unit}` };
-
-    return plotData;
-    // return (
-    //   <div
-    //     className={className}
-    //     style={{ ...style, height: `${height}${unit}`, position: 'relative' }}
-    //   >
-    //     <div
-    //       style={{
-    //         perspective: '2400px',
-    //         perspectiveOrigin: '50% -50%',
-    //         width: '100%',
-    //         height: '100%'
-    //       }}
-    //     >
-    //       {plotData.map((d, i) => (
-    //         <div
-    //           key={d.id}
-    //           style={{
-    //             position: 'absolute',
-    //             width: `${slotSize - innerMargin}${unit}`,
-    //             height: '100%',
-    //             // maxWidth: '200px',
-    //             paddingLeft: `${innerMargin / 2}${unit}`,
-    //             paddingRight: `${innerMargin / 2}${unit}`,
-    //             cursor: 'pointer',
-    //             transition,
-    //             ...position(d)
-    //           }}
-    //         >
-    //           {children(d)}
-    //         </div>
-    //       ))}
-    //     </div>
-    //   </div>
-    // );
-  };
-
-  hoverLayout = () => {
-    const {
-      slotSize,
-      direction,
-      width,
-      height,
-      data,
-      innerMargin,
-      style,
-      className,
-      children,
-      unit,
-      selectedIndex,
-      // slotSize,
-      // centered,
-      // selectedIndex,
-      duration,
-      onClick
-      // direction
-    } = this.props;
-
-    const size = direction === 'horizontal' ? width : height;
-
-    const scale = scaleLinear()
-      .domain([0, data.length - 1])
-      .range([0, size - slotSize]);
-
-    if (selectedIndex === null || selectedIndex < 0) {
-      return data.map((c, i) => ({ ...c, pos: scale(i) }));
-    }
-
-    const xFirstLeft = scaleLinear()
-      .domain([0, selectedIndex - 1])
-      .range([0, max([scale(selectedIndex) - slotSize, 0])]);
-
-    const xFirstRight = scaleLinear()
-      .domain([selectedIndex + 1, data.length - 1])
-      .range([min([scale(selectedIndex) + slotSize, size]), width]);
-
-    return data.map((c, i) => {
-      if (selectedIndex < i) {
-        return { ...c, pos: xFirstRight(i) };
-      }
-      if (selectedIndex > i) {
-        return { ...c, pos: xFirstLeft(i) };
-      }
-      if (selectedIndex === i || selectedIndex === data.length - 1) {
-        return { ...c, pos: scale(i) };
-      }
-      return c;
-    });
-  };
-
   render() {
     const {
       data,
@@ -274,11 +156,10 @@ class CardStack extends Component {
     // const { cardStacks } = this.state;
 
     // TODO: change later
-    const allCards = centered ? centerLayout(this.props) : this.baseLayout();
-
-    // const allCards = [...leftCards, ...centerCard, ...rightCards];
-
-    // TODO: reorder
+    const tmpData = data.map((d, i) => ({ ...d, index: i }));
+    const dataPos = centered
+      ? centerLayout({ ...this.props, data: tmpData })
+      : baseLayout({ ...this.props, data: tmpData });
 
     const centerPos = c =>
       direction === 'vertical'
@@ -308,27 +189,25 @@ class CardStack extends Component {
             perspectiveOrigin: '50% -50%',
             height: '100%',
             width: '100%'
-            // width: `${wh}${unit}`
           }}
         >
-          {data.map((d, i) => {
-            // important for KEY
-            const c = allCards.find(e => e.id === d.id) || null;
-            if (c === null) return null;
+          {tmpData.map((d, i) => {
+            const p = dataPos.find(e => e.index === d.index) || null;
+            if (p === null) return null;
             return (
               <div
-                key={d.id}
+                key={p.index}
                 style={{
                   position: 'absolute',
                   paddingLeft: `${innerMargin / 2}${unit}`,
                   paddingRight: `${innerMargin / 2}${unit}`,
                   cursor: 'pointer',
                   transition: `left ${duration}ms, top ${duration}ms, transform ${duration}ms`,
-                  zIndex: c.zIndex,
+                  zIndex: p.zIndex,
                   width: '100%',
                   height: '100%',
                   ...size,
-                  ...centerPos(c)
+                  ...centerPos(p)
                 }}
               >
                 {children(d, i)}

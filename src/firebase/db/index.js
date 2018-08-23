@@ -303,7 +303,8 @@ export const onceGetUsers = () =>
         return thumbNailRef.getDownloadURL().then(
           url => ({ ...d, thumbnail: url }),
           err => {
-            const img = { ...d, thumbnail: d.photoURL };
+            //TODO: check later
+            const img = { ...d, thumbnail: null };
             return { ...d, ...img };
           }
         );
