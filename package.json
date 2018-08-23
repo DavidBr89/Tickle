@@ -121,6 +121,7 @@
     "tensorflow": "^0.5.0",
     "tsne": "^1.0.1",
     "viewport-mercator-project": "^5.0.0",
+    "webfontloader": "^1.6.28",
     "yarn": "^1.7.0",
     "youtube-embed-video": "^1.0.2"
   },

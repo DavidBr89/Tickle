@@ -24,7 +24,9 @@ const mapStateToProps = state => {
     .map(c => ({
       ...c,
       challengeSubmission:
-        c.challengeSubmissions.find(s => s.playerId === selectedUserId) || null
+        c.challengeSubmissions.find(
+          s => s.playerId === selectedUserId && s.completed
+        ) || null
     }))
     .filter(c => c.challengeSubmission !== null);
 

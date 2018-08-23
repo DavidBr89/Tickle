@@ -46,6 +46,7 @@ const mapStateToProps = state => {
   const submittedCards = collectibleCards.filter(isChallengeSubmitted);
 
   const startedCards = collectibleCards.filter(isChallengeStarted);
+  const succeededCards = collectibleCards.filter(isChallengeSucceeded);
 
   const userTags = uniq(
     [...collectedCards, ...submittedCards, ...startedCards].reduce(
@@ -70,6 +71,7 @@ const mapStateToProps = state => {
       collectedCards,
       submittedCards,
       startedCards,
+      succeededCards,
       userTags
     },
     ...state.Screen,

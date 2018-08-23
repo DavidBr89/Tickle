@@ -1,10 +1,14 @@
 const isDefined = a => a !== null && a !== undefined;
 
 export const isChallengeSucceeded = c =>
-  isDefined(c.challengeSubmission) && c.challengeSubmission.accomplished;
+  isDefined(c.challengeSubmission) &&
+  c.challengeSubmission.feedback &&
+  c.challengeSubmission.feedback.accomplished;
 
 export const isChallengeSubmitted = c =>
-  isDefined(c.challengeSubmission) && c.challengeSubmission.completed;
+  isDefined(c.challengeSubmission) &&
+  c.challengeSubmission.completed &&
+  !c.challengeSubmission.feedback;
 
 export const isChallengeStarted = c =>
   isDefined(c.challengeSubmission) && !c.challengeSubmission.completed;

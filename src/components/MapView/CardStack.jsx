@@ -23,7 +23,7 @@ function CardStack({
       className={className}
       duration={600}
       centered={selectedCardId !== null}
-      selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
+      selectedIndex={cards.findIndex(c => c.id === selectedCardId) || null}
       width={width}
       height={height}
       slotSize={slotSize}

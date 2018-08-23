@@ -66,6 +66,10 @@ const mapStateToProps = state => {
 
   const cardSets = setify(filteredCards);
   // const tagColorScale = makeTagColorScale(cardSets);
+  //
+  // TODO: outsource action
+  // TODO: outsource action
+  // TODO: outsource action
   const selectedCard = filteredCards.find(d => d.id === selectedCardId) || null;
 
   const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;

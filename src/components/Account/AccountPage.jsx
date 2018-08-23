@@ -277,6 +277,7 @@ export default class AccountPage extends React.Component {
       submittedCards,
       collectedCards,
       startedCards,
+      succeededCards,
       name,
       username,
       email,
@@ -310,6 +311,12 @@ export default class AccountPage extends React.Component {
       ? selectedCardId
       : null;
 
+    const selectedIdSucceeded = succeededCards.find(
+      c => c.id === selectedCardId
+    )
+      ? selectedCardId
+      : null;
+
     // const Title = ({ children }) => <h4 style={{ margin: 0 }}>{children}</h4>;
 
     const cardData = [
@@ -332,10 +339,10 @@ export default class AccountPage extends React.Component {
         title: `Submitted Cards (${submittedCards.length})`
       },
       {
-        id: 'collected',
-        cards: collectedCards,
-        selected: selectedIdCollected,
-        title: `Collected Cards (${collectedCards.length})`
+        id: 'succeeded',
+        cards: succeededCards,
+        selected: selectedIdSucceeded,
+        title: `Collected Cards (${succeededCards.length})`
       }
     ];
 
@@ -404,6 +411,18 @@ export default class AccountPage extends React.Component {
                 }}
                 alt="alt"
               />
+              <div
+                style={{
+                  height: '20%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  fontSize: 'xx-large',
+                  alignItems: 'center',
+                  fontFamily: '"Permanent Marker", Times, serif'
+                }}
+              >
+                <div style={{ transform: 'rotate(-8deg)' }}>{username}</div>
+              </div>
             </div>
             <div className="mb-3" style={{ width: '90%' }}>
               <div

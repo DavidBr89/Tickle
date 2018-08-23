@@ -1,4 +1,5 @@
 import React from 'react';
+import WebFont from 'webfontloader';
 import { render } from 'react-dom';
 
 // import 'font-awesome/css/font-awesome.css';
@@ -11,5 +12,11 @@ import './bootstrap.scss';
 import './index.scss';
 
 import App from './App';
+
+WebFont.load({
+  google: {
+    families: ['Droid Sans', 'Permanent Marker']
+  }
+});
 
 render(<App />, document.getElementById('app'));
