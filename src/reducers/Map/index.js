@@ -54,59 +54,25 @@ const defaultLocation = {
   latitude: 50.85146,
   longitude: 4.315483
 };
-const cardTemplateId = 'temp';
+// const cardTemplateId = 'temp';
 const INITIAL_STATE = {
   mapViewport: {
-    width: 500,
-    height: 500,
     zoom: 10,
-    ...defaultLocation,
-    userLocation: defaultLocation
-  }
+    ...defaultLocation
+  },
+  userLocation: defaultLocation
 };
 function reducer(state = INITIAL_STATE, action) {
   // console.log('action', action);
   // const { selectedCardId } = state;
 
   switch (action.type) {
-    // case RECEIVE_AUTHORED_CARDS: {
-    //   const cards = action.options;
-    //   const createdCards = cards.map(c => ({ ...c, edit: true }));
-    //
-    //   return {
-    //     ...state,
-    //     createdCards
-    //     // cards
-    //     // isCardDragging
-    //   };
-    // }
-
-    // case DRAG_CARD: {
-    //   const isCardDragging = action.options;
-    //   return {
-    //     ...state,
-    //     isCardDragging
-    //   };
-    // }
-    // case TOGGLE_SEARCH: {
-    //   const isSearching = action.options;
-    //   return {
-    //     ...state,
-    //     isSearching,
-    //     selectedCardId: !isSearching ? state.selectedCardId : null,
-    //     selectedCardIdCache: state.selectedCardId
-    //   };
-    // }
-    // case TOGGLE_TAG_LIST: {
-    //   return { ...state, tagListView: !state.tagListView, gridView: false };
-    // }
-    // case RESIZE_CARD_WINDOW: {
-    //   return { ...state, ...action };
-    // }
-
     case CHANGE_MAP_VIEWPORT: {
       const mapViewport = action.options;
-      return { ...state, mapViewport };
+      return {
+        ...state,
+        mapViewport: { ...state.mapViewport, ...mapViewport }
+      };
     }
 
     // case SCREEN_RESIZE: {
@@ -116,16 +82,11 @@ function reducer(state = INITIAL_STATE, action) {
     // }
 
     case USER_MOVE: {
-      const options = action.options;
-      // if (state.extCardId !== null) return state;
-      const centerLocation = {
-        longitude: options.lngLat[0],
-        latitude: options.lngLat[1]
-      };
-      const userLocation = { ...centerLocation };
+      const userLocation = action.options;
+      console.log('userLocation', userLocation);
       return {
         ...state,
-        ...centerLocation
+        userLocation
         // userLocation
       };
     }

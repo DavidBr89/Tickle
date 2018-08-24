@@ -63,9 +63,9 @@ class MiniForce extends Component {
       .restart()
       .alpha(1)
       .alphaMin(0.7)
-      .force('x', d3.forceX(d => d.tx).strength(0.5))
-      .force('y', d3.forceY(d => d.ty).strength(0.5))
-      .force('coll', d3.forceCollide(40))
+      .force('x', d3.forceX(d => d.tx).strength(0.3))
+      .force('y', d3.forceY(d => d.ty).strength(0.3))
+      .force('coll', d3.forceCollide(20).strength(0.2))
       .on('end', () => {
         const nodes = forceNodes.map(({ x, y }) => ({ x, y }));
         this.setState({
@@ -79,6 +79,7 @@ class MiniForce extends Component {
     const { targetPos: oldTargetPos, data: oldData } = prevProps;
     const { data, targetPos } = this.props;
 
+    // this.force.stop();
     if (
       oldData.length !== data.length ||
       targetPos[0] !== oldTargetPos[0] ||

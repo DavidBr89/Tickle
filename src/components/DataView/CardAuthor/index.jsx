@@ -7,7 +7,7 @@ import { intersection } from 'lodash';
 import {
   resizeCardWindow,
   userMove,
-  changeViewport
+  changeMapViewport
 } from 'Reducers/Map/actions';
 
 import setify from 'Utils/setify'; // eslint-disable-line
@@ -40,8 +40,10 @@ const mapStateToProps = state => {
     authUser: { uid, username }
   } = state.Session;
 
+  console.log('userLocation', userLocation);
   const templateCard = {
     ...tmpCard,
+    loc: userLocation,
     uid
   };
 
@@ -90,7 +92,8 @@ const mapDispatchToProps = dispatch =>
       resizeCardWindow,
       userMove,
       screenResize,
-      changeViewport
+      changeMapViewport,
+      userMove
     },
     dispatch
   );

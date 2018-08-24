@@ -11,7 +11,7 @@ import { css } from 'aphrodite';
 
 import { GlobalThemeConsumer, stylesheet } from 'Src/styles/GlobalThemeContext';
 
-import MiniForce from 'Components/MapView/ForceOverlay/MiniForceCollide';
+import MiniForce from 'Components/DataView/ForceOverlay/MiniForceCollide';
 import CardMarker from 'Components/utils/PreviewMarker';
 
 import { connect } from 'react-redux';
@@ -57,7 +57,7 @@ const NavigationNonAuth = () => (
 
 const LandingPage = ({ onClick, width }) => (
   <div
-    style={{
+    tyle={{
       position: 'absolute',
       left: 0,
       top: 0,

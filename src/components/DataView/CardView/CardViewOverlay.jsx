@@ -1,8 +1,8 @@
 import React, { Fragment, Component } from 'react';
 
-import PreviewMarker from 'Utils/PreviewMarker';
 import ConnectedCard from 'Cards/ConnectedCard';
 import DataOverlay from '../ForceOverlay/DataOverlay';
+import Marker from '../Marker';
 
 const CardViewOverlay = props => {
   const {
@@ -26,7 +26,6 @@ const CardViewOverlay = props => {
     onCardUpdate,
     cards,
     style,
-    onSubmitChallenge,
     iOS,
     smallScreen,
     className
@@ -54,16 +53,7 @@ const CardViewOverlay = props => {
         right: width / 5
       }}
       colorScale={tagColorScale}
-      preview={d => (
-        <PreviewMarker
-          x={d.x}
-          y={d.y}
-          style={{ zIndex: selectedCardId === d.id ? 5000 : 100 }}
-          selected={selectedCardId === d.id}
-          template={d.template}
-          color="whitesmoke"
-        />
-      )}
+      preview={Marker}
     >
       {c => <ConnectedCard {...c} />}
     </DataOverlay>

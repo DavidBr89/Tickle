@@ -56,6 +56,7 @@ class CardMarker extends Component {
       barColor = 'black',
       className
     } = this.props;
+
     return (
       <div
         className={className}
@@ -67,6 +68,7 @@ class CardMarker extends Component {
           height: '100%',
           zIndex: 100,
           background: 'white',
+          transform: 'translate(-50%,-50%)',
           ...style
         }}
         onClick={onClick}

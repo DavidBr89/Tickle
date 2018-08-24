@@ -36,10 +36,10 @@ const filterByTag = (doc, filterSet) =>
   intersection(doc.tags.map(lowercase), filterSet.map(lowercase)).length ===
     filterSet.length;
 
-const applyFilter = challengeState => d => {
-  if (challengeState === CHALLENGE_SUBMITTED) return isChallengeSubmitted(d);
-  return !isChallengeSubmitted(d);
-};
+// const applyFilter = challengeState => d => {
+//   if (challengeState === CHALLENGE_SUBMITTED) return isChallengeSubmitted(d);
+//   return !isChallengeSubmitted(d);
+// };
 
 // Container
 const mapStateToProps = state => {

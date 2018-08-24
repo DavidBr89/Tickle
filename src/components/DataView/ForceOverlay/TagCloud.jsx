@@ -5,6 +5,8 @@ import { range } from 'd3';
 // import _ from 'lodash';
 import { connect } from 'react-redux';
 
+import chroma from 'chroma-js';
+
 // import ReactDom from 'react-dom';
 // import sketchy from '../utils/d3.sketchy';
 
@@ -89,15 +91,19 @@ class Tag extends React.Component {
       position: 'absolute',
       transition: `left ${transition}ms, top ${transition}ms, width ${transition}ms, height ${transition}ms`,
       cursor: 'pointer',
-      background: highlighted && color,
-      border: selected ? 'grey dashed 4px' : `${color} solid 4px`,
+      background: highlighted
+        ? color
+        : chroma(color)
+          .alpha(0.4)
+          .css(),
+      // border: selected ? 'grey dashed 4px' : `${color} solid 4px`,
       display: 'flex',
       alignItems: 'center'
       // paddingTop: height / 4,
       // paddingBottom: height / 4
     };
     return (
-      <div style={st} onClick={() => onClick(children)}>
+      <div className="" style={st} onClick={() => onClick(children)}>
         <div
           style={{
             width: '100%'

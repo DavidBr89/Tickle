@@ -31,7 +31,7 @@ const pruneFields = fields => {
 
 const thumbFileName = fileName => `thumb_${fileName}`;
 
-const CARDS = 'tmpCards';
+const CARDS = 'jan_cards';
 const getShallowCards = uid =>
   firestore
     .collection(CARDS)
@@ -303,7 +303,7 @@ export const onceGetUsers = () =>
         return thumbNailRef.getDownloadURL().then(
           url => ({ ...d, thumbnail: url }),
           err => {
-            //TODO: check later
+            // TODO: check later
             const img = { ...d, thumbnail: null };
             return { ...d, ...img };
           }

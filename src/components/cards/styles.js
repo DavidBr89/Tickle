@@ -67,10 +67,10 @@ export const profileSrc = () => {
   return `https://randomuser.me/api/portraits/thumb/${gender}/${i}.jpg`;
 };
 
-export const shadowStyle = {
-  boxShadow: '0.2rem 0.2rem 0.1rem grey'
-  // border: '1px solid black'
-};
+// export const shadowStyle = {
+//   boxShadow: '0.2rem 0.2rem 0.1rem grey'
+//   // border: '1px solid black'
+// };
 
 const colors = [...chromatic.schemePastel1, 'wheat'];
 

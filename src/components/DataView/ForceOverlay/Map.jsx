@@ -42,9 +42,10 @@ const PreviewMarker = ({
 }) => (
   <CardMarker
     color={color}
+    onClick={() => console.log('yeah')}
     style={{
       transform: selected && 'scale(1.5)',
-      zIndex: selected && 5000,
+      zIndex: selected && 50,
       transition: 'transform 1s',
       ...getShadowStyle(selected),
       position: 'absolute',
@@ -216,6 +217,8 @@ class Map extends Component {
           }
         }}
         height={height}
+        dragRotate={false}
+        doubleClickZoom={false}
         width={width}
         latitude={latitude}
         longitude={longitude}
@@ -233,24 +236,12 @@ class Map extends Component {
           height={height}
           colorScale={colorScale}
         >
-          {({ centroid, centerPos: [x, y], data: d }) =>
-            zoom >= maxZoom ? (
-              <ForceCollide data={d.values} targetPos={[x, y]}>
-                {children}
-              </ForceCollide>
-            ) : (
-              <ClusterPlaceholder
-                coords={[x, y]}
-                centroid={[x, y]}
-                size={Math.min(160, Math.max(40, 30 + d.tags.length * 9))}
-                colorScale={colorScale}
-                tags={d.tags}
-              />
-            )
-          }
+          {({ centerPos: [x, y], data: d }) => (
+            <ForceCollide data={d.values} targetPos={[x, y]}>
+              {children}
+            </ForceCollide>
+          )}
         </Cluster>
-        {zoom < maxZoom &&
-          locNodes.map(d => preview({ ...d, x: width / 2, y: height / 2 }))}
       </MapGL>
     );
   }

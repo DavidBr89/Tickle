@@ -6,7 +6,7 @@ import { render } from 'react-dom';
 // import 'material-icons/css/material-icons.css';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 // import 'bootstrap';
-import 'mapbox-gl/dist/mapbox-gl.css';
+// import 'mapbox-gl/dist/mapbox-gl.css';
 
 import './bootstrap.scss';
 import './index.scss';

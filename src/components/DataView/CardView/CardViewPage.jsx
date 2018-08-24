@@ -28,37 +28,6 @@ import CardViewOverlay from './CardViewOverlay';
 
 // import { StyledButton } from 'Utils/StyledComps';
 
-function SpeechBubble({ ...props }) {
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        transform: 'translate(-50%, -130%)',
-        // zIndex: 6000,
-        background: 'whitesmoke'
-      }}
-    >
-      <div
-        className="m-1"
-        style={{
-          width: 270,
-          // position: 'relative',
-          // zIndex: 4000,
-          border: '2px dashed grey'
-        }}
-      >
-        <div className="m-1">
-          <h3>drag and drop Card to change position</h3>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-SpeechBubble.defaultProps = {};
-
-SpeechBubble.propTypes = {};
-
 class CardViewPage extends Component {
   static propTypes = {
     cards: PropTypes.array,

@@ -141,10 +141,31 @@ class CardAuthorPage extends Component {
   };
 
   componentDidMount() {
-    const { screenResize, fetchCards, preSelectCardId } = this.props;
+    const {
+      screenResize,
+      fetchCards,
+      preSelectCardId,
+      userMove,
+      changeMapViewport
+    } = this.props;
 
     fetchCards();
-
+    navigator.geolocation.watchPosition(
+      pos => {
+        const coords = {
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude
+        };
+        userMove(coords);
+        changeMapViewport(coords);
+      },
+      err => console.log('err', err),
+      {
+        enableHighAccuracy: false,
+        timeout: 5000,
+        maximumAge: 0
+      }
+    );
     // screenResize({
     //   width: this.cont.offsetWidth,
     //   height: this.cont.offsetHeight

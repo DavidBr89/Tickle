@@ -8,7 +8,7 @@ import { tagFilter } from 'Reducers/DataView/async_actions';
 
 // import * as chromatic from 'd3-scale-chromatic';
 // import hull from 'hull.js';
-import hull from 'concaveman';
+// import hull from 'concaveman';
 import * as d3 from 'd3';
 
 // import chroma from 'chroma-js';
@@ -37,8 +37,8 @@ function makeTreemap({ data, width, height, padX, padY }) {
     .size([width / ratio, height])
     .paddingInner(0)
     .paddingOuter(0)
-    .round(true);
-  // .tile(SpiralTile);
+    .round(true)
+    .tile(d3.treemapResquarify);
 
   const size = d3
     .scaleLinear()

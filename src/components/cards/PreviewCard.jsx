@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 // import styles from './PreviewCard.css';
 import placeholderImg from './placeholder.png';
 import { shadowStyle, colorClass, colorScale } from './styles';
+
 import { PreviewTags } from 'Utils/Tag';
 
 const PlaceholderField = ({ text, style, fullHeight }) => (
@@ -106,7 +107,7 @@ class PreviewCard extends Component {
           padding: '5px',
           height: '100%',
           background: colorScale(type),
-          ...shadowStyle,
+          boxShadow: '0.2rem 0.2rem grey',
           ...style
           // minWidth: '100px'
           // maxHeight: '120px'

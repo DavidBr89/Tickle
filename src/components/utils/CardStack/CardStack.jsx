@@ -164,10 +164,9 @@ class CardStack extends Component {
     // TODO: change later
     const tmpData = data.map((d, i) => ({ ...d, index: i }));
 
-    const dataPos =
-      centered
-        ? centerLayout({ ...this.props, data: tmpData })
-        : baseLayout({ ...this.props, data: tmpData });
+    const dataPos = centered
+      ? centerLayout({ ...this.props, data: tmpData })
+      : baseLayout({ ...this.props, data: tmpData });
 
     const centerPos = c =>
       direction === 'vertical'
