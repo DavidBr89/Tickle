@@ -51,6 +51,7 @@
     "d3-geom-concavehull": "^1.0.0",
     "d3-radial": "^0.0.2",
     "d3-scale-chromatic": "^1.2.0",
+    "d3-voronoi-map": "^1.2.0",
     "d3-zoom": "^1.7.1",
     "dev": "^0.1.3",
     "dobbyscan": "^1.0.0",

@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { range, scaleBand, min, max, scaleLinear } from 'd3';
 // import VisibilitySensor from 'react-visibility-sensor/visibility-sensor.js';
 
+const isPosInt = n => Number.isInteger(n) && n >= 0;
+
 function centerLayout({
   slotSize,
   width,
@@ -37,9 +39,6 @@ function centerLayout({
       pos: leftPos(j),
       zIndex: j
     }));
-
-  if (!Number.isInteger(selectedIndex) || selectedIndex < 0)
-    throw new Error(`SelectedIndex ${selectedIndex} is not a positive integer`);
 
   const centerIndex = data[selectedIndex] ? data[selectedIndex].index : 0;
 
@@ -86,6 +85,7 @@ const baseLayout = ({
 
   const size =
     neededSpace < availSpace ? neededSpace - slotSize : availSpace - slotSize;
+  const buffer = size < availSpace ? (availSpace - size - slotSize) / 2 : 0;
 
   // TODO: parameterize
   const len = Math.min(data.length, 20);
@@ -93,7 +93,7 @@ const baseLayout = ({
     .domain(range(0, len))
     .paddingInner(1)
     // .align(0.5)
-    .range([0, size]);
+    .range([buffer, buffer + size]);
   // i => i * (100 - slotSize * 3 / 4) / data.length;
   return data.slice(0, len).map((d, i) => ({ index: d.index, pos: scale(i) }));
 };
@@ -153,13 +153,21 @@ class CardStack extends Component {
       direction
     } = this.props;
 
+    if (data.length === 0) return null;
+
+    if (centered && !isPosInt(selectedIndex))
+      throw new Error(
+        `SelectedIndex ${selectedIndex} is not a positive integer`
+      );
     // const { cardStacks } = this.state;
 
     // TODO: change later
     const tmpData = data.map((d, i) => ({ ...d, index: i }));
-    const dataPos = centered
-      ? centerLayout({ ...this.props, data: tmpData })
-      : baseLayout({ ...this.props, data: tmpData });
+
+    const dataPos =
+      centered
+        ? centerLayout({ ...this.props, data: tmpData })
+        : baseLayout({ ...this.props, data: tmpData });
 
     const centerPos = c =>
       direction === 'vertical'
@@ -216,37 +224,6 @@ class CardStack extends Component {
           })}
         </div>
       </div>
-    );
-  }
-}
-
-export class CardStackControlled extends Component {
-  static propTypes = {
-    children: PropTypes.node,
-    className: PropTypes.string,
-    onChange: PropTypes.func
-  };
-
-  static defaultProps = { onChange: d => d };
-
-  state = { selectedIndex: null };
-
-  render() {
-    const { data } = this.props;
-    const { selectedIndex } = this.state;
-    return (
-      <CardStack
-        {...this.props}
-        selectedIndex={this.state.selectedIndex}
-        onClick={selectedId =>
-          this.setState({
-            selectedIndex: data.findIndex(d => d.id === selectedId),
-            selectedId
-          })
-        }
-      >
-        <div />
-      </CardStack>
     );
   }
 }

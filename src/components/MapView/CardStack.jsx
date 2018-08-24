@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import { PreviewCard } from 'Cards';
 import Stack from 'Utils/CardStack';
 
+const isPosInt = n => Number.isInteger(n) && n >= 0;
+
 function CardStack({
   className,
   cards,
@@ -17,13 +19,14 @@ function CardStack({
   unit,
   ...props
 }) {
+  const cardIndex = cards.findIndex(c => c.id === selectedCardId);
   return (
     <Stack
       data={cards}
       className={className}
       duration={600}
-      centered={selectedCardId !== null}
-      selectedIndex={cards.findIndex(c => c.id === selectedCardId) || null}
+      centered={isPosInt(cardIndex)}
+      selectedIndex={cardIndex}
       width={width}
       height={height}
       slotSize={slotSize}
