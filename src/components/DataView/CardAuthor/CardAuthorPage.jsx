@@ -161,7 +161,7 @@ class CardAuthorPage extends Component {
       },
       err => console.log('err', err),
       {
-        enableHighAccuracy: false,
+        enableHighAccuracy: true,
         timeout: 5000,
         maximumAge: 0
       }
