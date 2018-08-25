@@ -180,50 +180,22 @@ export const addImgToStorage = ({ file, path, id }) => {
 
 // TODO: error handling
 const uploadImgFields = card => {
-  // console.log('card db', card);
-  const cardImgFile = card.img ? card.img.file : null;
-  const cardChallengeFile =
-    card.challenge !== null && card.challenge.img
-      ? card.challenge.img.file
-      : null;
+  const { file, ...restImgFields } = card.img;
+  const cardImgFile = file || null;
 
-  // TODO update
-  const cardImgPromise = cardImgFile
+  return cardImgFile
     ? addImgToStorage({
         file: cardImgFile,
         path: 'cards',
         id: card.id
       }).then(url => {
         const img = {
-          title: card.img.title || cardImgFile.name,
+          ...restImgFields,
           url
         };
-        return new Promise(resolve => resolve({ img }));
+        return new Promise(resolve => resolve(img));
       })
     : {};
-  // card.img = null;
-
-  const challImgPromise = cardChallengeFile
-    ? addImgToStorage({
-        file: cardChallengeFile,
-        path: 'challenges',
-        id: card.id
-        // TODO: fix cards with more challenges
-      }).then(url => {
-        const challenge = {
-          img: {
-            title: cardChallengeFile.name,
-            url
-          }
-        };
-        return new Promise(resolve => resolve({ challenge }));
-      })
-    : {};
-
-  return Promise.all([cardImgPromise, challImgPromise]).then(values => {
-    const imgFields = values.reduce((acc, d) => ({ ...acc, ...d }));
-    return imgFields;
-  });
 };
 
 export const doCreateUser = userProfile =>
@@ -316,14 +288,13 @@ export const onceGetUsers = () =>
     });
 
 export const doCreateCard = card =>
-  uploadImgFields(card).then(imgFields => {
+  uploadImgFields(card).then(img => {
     if (card.id === 'temp') {
       throw Error('error: temp card to create');
     } else {
-      const newCard = extractCardFields({ ...card, ...imgFields });
+      const newCard = extractCardFields({ ...card, img });
       console.log('newCard', newCard);
-      // TODO: make explicit
-      // const cardData = {floorX, floorY, id, img, loc, media, title, tags}
+
       return firestore
         .collection(CARDS)
         .doc(newCard.id)

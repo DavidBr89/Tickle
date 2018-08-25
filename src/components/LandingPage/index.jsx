@@ -45,7 +45,6 @@ const NavigationNonAuth = () => (
   </h3>
 );
 
-
 /*
         <MiniForce
           data={d3.range(0, 50).map(d => ({ id: d }))}
@@ -57,7 +56,7 @@ const NavigationNonAuth = () => (
 
 const LandingPage = ({ onClick, width }) => (
   <div
-    tyle={{
+    style={{
       position: 'absolute',
       left: 0,
       top: 0,
@@ -79,8 +78,7 @@ const LandingPage = ({ onClick, width }) => (
           // width: 300,
           // height: 300
         }}
-      >
-      </div>
+      />
       <h1 style={{ fontWeight: 'bold', fontSize: 100, zIndex: 2000 }}>
         TICKLE
       </h1>

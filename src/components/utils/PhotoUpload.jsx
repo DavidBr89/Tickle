@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import Compress from 'compress.js';
+
 import {
   stylesheet as defaultStylesheet,
   uiColor as defaultUIColor
 } from 'Src/styles/GlobalThemeContext';
 
 import { css } from 'aphrodite/no-important';
+
+const compress = new Compress();
 
 // import { DimWrapper } from 'Utils';
 
@@ -49,7 +53,7 @@ export default class PhotoUpload extends Component {
     maxHeight: 300,
     stylesheet: defaultStylesheet,
     imgName: null,
-    title: 'Choose Image'
+    title: 'Take Photo'
   };
 
   render() {
@@ -138,10 +142,37 @@ export default class PhotoUpload extends Component {
           accept="image/*"
           capture="environment"
           onChange={e => {
-            onChange({
-              url: convertToImgSrc(e.target.files),
-              file: e.target.files[0]
-            });
+            const files = [...e.target.files];
+            const fileName = e.target.files[0].name;
+            const fileType = fileName.slice(
+              ((fileName.lastIndexOf('.') - 1) >>> 0) + 2
+            );
+            // onChange({
+            //   url: convertToImgSrc(e.target.files),
+            //   file: e.target.files[0]
+            // });
+            compress
+              .compress(files, {
+                size: 1.5,
+                quality: 0.75,
+                maxWidth: 1920,
+                // maxHeight: 800,
+                resize: true
+              })
+              .then(data => {
+                const img1 = data[0];
+                const base64str = img1.data;
+                const imgExt = img1.ext;
+                const file = Compress.convertBase64ToFile(base64str, imgExt);
+                console.log('AllFIles', files);
+
+                onChange({
+                  url: convertToImgSrc(files),
+                  title: null,
+                  fileType,
+                  file
+                });
+              });
           }}
         />
       </div>
