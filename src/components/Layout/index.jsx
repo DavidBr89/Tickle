@@ -16,7 +16,7 @@ import Navigation from '../Navigation';
 // import { findRoute } from '../utils';
 
 // import userPic from './user.png';
-// import cx from './MainLayout.scss';
+// import cx from './DefaultLayout.scss';
 
 class Menu extends Component {
   static propTypes = {
@@ -82,7 +82,7 @@ class Menu extends Component {
   }
 }
 
-class MainLayout extends Component {
+class DefaultLayout extends Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
     activePath: PropTypes.string
@@ -139,4 +139,4 @@ export default connect(
   mapStateToProps,
   null,
   mergeProps
-)(MainLayout);
+)(DefaultLayout);

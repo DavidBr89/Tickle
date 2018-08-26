@@ -143,9 +143,9 @@ export default class PhotoUpload extends Component {
           capture="environment"
           onChange={e => {
             const files = [...e.target.files];
-            const fileName = e.target.files[0].name;
-            const fileType = fileName.slice(
-              ((fileName.lastIndexOf('.') - 1) >>> 0) + 2
+            const imgName = e.target.files[0].name;
+            const imgType = imgName.slice(
+              ((imgName.lastIndexOf('.') - 1) >>> 0) + 2
             );
             // onChange({
             //   url: convertToImgSrc(e.target.files),
@@ -164,12 +164,12 @@ export default class PhotoUpload extends Component {
                 const base64str = img1.data;
                 const imgExt = img1.ext;
                 const file = Compress.convertBase64ToFile(base64str, imgExt);
-                console.log('AllFIles', files);
 
                 onChange({
                   url: convertToImgSrc(files),
                   title: null,
-                  fileType,
+                  imgType,
+                  name: imgName,
                   file
                 });
               });

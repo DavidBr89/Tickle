@@ -90,8 +90,8 @@ export function fetchCollectibleCards(uid) {
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
   return function(dispatch) {
-    // TODO: change later
-    return db.readCards(haaike, uid).then(data => {
+    // TODO: change later with obj params
+    return db.readCards(null, uid).then(data => {
       dispatch(
         receiveCollectibleCards(
           data // .filter(d => d.challengeSubmission === null || d.challengeSubmission.completed)

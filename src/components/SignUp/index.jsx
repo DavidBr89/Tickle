@@ -69,7 +69,6 @@ class SignUpForm extends Component {
     auth
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then(res => {
-        console.log('res');
         const authUser = res.user;
         const userProfile = {
           uid: authUser.uid,

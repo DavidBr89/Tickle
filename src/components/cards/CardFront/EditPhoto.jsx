@@ -84,7 +84,11 @@ class AddUrl extends Component {
                     className="mr-1"
                     value={imgUrl}
                     placeholder="Add Image Url"
-                    style={{ border: `${uiColor} 1px solid`, width: '100%', height: '100%' }}
+                    style={{
+                      border: `${uiColor} 1px solid`,
+                      width: '100%',
+                      height: '100%'
+                    }}
                     type="url"
                     onChange={e => this.setState({ imgUrl: e.target.value })}
                   />

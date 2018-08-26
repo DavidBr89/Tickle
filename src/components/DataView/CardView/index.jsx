@@ -2,6 +2,7 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { compose } from 'recompose';
+import { Link, withRouter } from 'react-router-dom';
 
 import { intersection } from 'lodash';
 import {
@@ -19,6 +20,7 @@ import * as cardActions from 'Reducers/Cards/actions';
 
 import * as asyncActions from 'Reducers/Cards/async_actions';
 import * as dataViewActions from 'Reducers/DataView/actions';
+import { asyncSelectCard } from 'Reducers/DataView/async_actions';
 
 import withAuthorization from 'Src/components/withAuthorization';
 
@@ -47,10 +49,10 @@ const mapStateToProps = state => {
   const { collectibleCards } = state.Cards;
 
   const {
-    selectedCardId,
+    // selectedCardId,
     filterSet,
-    cardPanelVisible,
-    challengeStateFilter
+    cardPanelVisible
+    // challengeStateFilter
   } = state.DataView;
 
   // TODO: own dim reducer
@@ -61,31 +63,20 @@ const mapStateToProps = state => {
     authUser: { uid }
   } = state.Session;
 
-  const filteredCards = collectibleCards.filter(d => filterByTag(d, filterSet));
-  // .filter(applyFilter(challengeStateFilter));
-
-  const cardSets = setify(filteredCards);
-  // const tagColorScale = makeTagColorScale(cardSets);
-  //
-  // TODO: outsource action
-  // TODO: outsource action
-  // TODO: outsource action
-  const selectedCard = filteredCards.find(d => d.id === selectedCardId) || null;
-
-  const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
   return {
     // TODO: make more specific
     ...state.MapView,
     ...state.DataView,
     uid,
-    selectedCardId,
+    // selectedCardId,
     filterSet,
+    collectibleCards,
     cardPanelVisible,
     ...state.Cards,
-    cardSets,
-    selectedTags,
-    ...state.Screen,
-    cards: filteredCards
+    ...state.Screen
+    // cards: filteredCards
+    // cardSets,
+    // selectedTags,
     // tagColorScale
   };
 };
@@ -99,7 +90,8 @@ const mapDispatchToProps = dispatch =>
       resizeCardWindow,
       userMove,
       screenResize,
-      changeViewport
+      changeViewport,
+      asyncSelectCard
     },
     dispatch
   );
@@ -107,19 +99,26 @@ const mapDispatchToProps = dispatch =>
 // });
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const { selectedCardId, uid } = state;
+  const { uid, collectibleCards, /* selectedCardId, */ filterSet } = state;
+  const { dataView, path, selectedCardId, history } = ownProps;
+
+  console.log('ownProps', ownProps, 'state', state);
+
+  // const selectedCardId = selectedCardIds;
   const {
     selectCard,
     extendSelectedCard,
-    fetchAllCards,
+    asyncSelectCard,
+    // fetchAllCards,
     // fetchReadableCards,
     fetchCollectibleCards
   } = dispatcherProps;
 
-  const { dataView } = ownProps;
-
-  const previewCardAction = d =>
-    selectedCardId === d.id ? extendSelectedCard(d.id) : selectCard(d.id);
+  const previewCardAction = d => {
+    selectedCardId === d.id
+      ? extendSelectedCard(d.id)
+      : asyncSelectCard({ id: d.id, path, history });
+  };
 
   const fetchCards = () => {
     // TODO
@@ -128,13 +127,26 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const preSelectCardId = () => selectCard(null);
 
+  const filteredCards = collectibleCards.filter(d => filterByTag(d, filterSet));
+  // .filter(applyFilter(challengeStateFilter));
+
+  const cardSets = setify(filteredCards);
+  const selectedCard = filteredCards.find(d => d.id === selectedCardId) || null;
+
+  const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
+
   return {
     ...state,
     ...dispatcherProps,
     previewCardAction,
+    selectCard: asyncSelectCard,
     fetchCards,
     preSelectCardId,
-    dataView
+    dataView,
+    cards: filteredCards,
+    cardSets,
+    selectedTags,
+    selectedCardId
   };
 };
 
@@ -142,6 +154,7 @@ const authCondition = authUser => authUser !== null;
 
 export default compose(
   withAuthorization(authCondition),
+  withRouter,
   connect(
     mapStateToProps,
     mapDispatchToProps,

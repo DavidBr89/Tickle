@@ -287,9 +287,10 @@ class EditCardFront extends PureComponent {
             <EditPhoto
               uiColor="grey"
               imgUrl={img ? img.url : null}
-              imgName={img && img.file ? img.file.name : null}
+              imgName={img && img.name}
               stylesheet={stylesheet}
               onChange={imgObj => {
+                console.log('imgObj', imgObj);
                 this.updateField({ img: imgObj, dialog: null });
               }}
             />

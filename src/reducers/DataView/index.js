@@ -22,7 +22,7 @@ const INITIAL_STATE = {
   // dataView: 'topic',
   // authEnv: false,
   cardPanelVisible: true,
-  selectedCardId: null,
+  // selectedCardId: null,
   extCard: null,
   filterSet: [],
   clusteredIds: [],

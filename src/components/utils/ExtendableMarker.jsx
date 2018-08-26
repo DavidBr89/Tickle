@@ -84,7 +84,7 @@ class ExtendableMarker extends Component {
           //TODO
           //TODO
           //TODO
-          zIndex: selected ? 5000 : 100,
+          zIndex: selected ? 500 : 100,
           // zIndex: extended && 4000,
           // transition: `transform ${delay}ms, left ${delay}ms, top ${delay}ms, width ${delay}ms, height ${delay}ms`,
           ...style

@@ -5,8 +5,6 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { createLogger } from 'redux-logger';
 import { Provider } from 'react-redux';
 
-import { connectRouter, routerMiddleware } from 'connected-react-router';
-
 import { hot } from 'react-hot-loader';
 // import withAuthentication from './components/withAuthentication';oo
 // import AuthUserContext from './components/AuthUserContext';
@@ -19,9 +17,6 @@ import * as chromatic from 'd3-scale-chromatic';
 
 import chroma from 'chroma-js';
 
-
-
-
 // import Login from './components/Login';
 
 // import { dummyCards } from './dummyData';
@@ -32,9 +27,11 @@ import chroma from 'chroma-js';
 //   fetchNearByPlaces
 // } from './reducers/Cards/async_actions';
 
+import { createBrowserHistory } from 'history';
 import { screenResize } from 'Reducers/Screen/actions';
 
-import history from './BrowserHistory';
+// TODO check whether it's only created once
+const history = createBrowserHistory();
 
 const defaultLocation = {
   latitude: 50.85146,
@@ -110,16 +107,15 @@ function configureStore(rootReducer, initialState) {
       return applyMiddleware(
         thunkMiddleware,
         loggerMiddleware,
-        routerMiddleware(history)
       );
     }
-    return applyMiddleware(thunkMiddleware, routerMiddleware(history));
+    return applyMiddleware(thunkMiddleware);
   };
 
   const enhancer = composeEnhancers(setMiddleWare());
 
   const store = createStore(
-    connectRouter(history)(rootReducer),
+    rootReducer,
     initialState,
     enhancer
   );
@@ -135,9 +131,9 @@ function configureStore(rootReducer, initialState) {
   return store;
 }
 
-const store = configureStore(rootReducer, defaultState);
+const store = configureStore(rootReducer);
 
-window.addEventListener('load', () => {
+window.addEventListener('DOMContentLoaded', () => {
   const cont = document.querySelector('#content-container');
   const android = /(android)/i.test(navigator.userAgent);
   const iOS =

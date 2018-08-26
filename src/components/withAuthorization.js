@@ -22,12 +22,22 @@ const withAuthorization = condition => Component => {
   }
 
   const mapStateToProps = state => ({
-    ...state.Session
+    authUser: state.Session.authUser
+  });
+
+  const mergeProps = (stateProps, dispatchProps, ownProps) => ({
+    ...stateProps,
+    ...dispatchProps,
+    ...ownProps
   });
 
   return compose(
     withRouter,
-    connect(mapStateToProps)
+    connect(
+      mapStateToProps,
+      null,
+      mergeProps
+    )
   )(WithAuthorization);
 };
 

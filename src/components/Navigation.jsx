@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+
+import { Link, withRouter } from 'react-router-dom';
 
 // import { intersection } from 'lodash';
 
@@ -51,7 +51,7 @@ const includePath = (pathA, pathB) => {
   return splA[0] === splB[0];
 };
 
-const InnerLi = ({ name, path, hash, active, subRoutes = [] }) => (
+const InnerLi = ({ name, path, curPath, active, subRoutes = [] }) => (
   <li className="mb-2">
     <Link
       className={`nav-link ${css(stylesheet.bareBtn)} ${subRoutes.length > 0 &&
@@ -60,19 +60,21 @@ const InnerLi = ({ name, path, hash, active, subRoutes = [] }) => (
     >
       {name}
     </Link>
-    <ul>
-      {subRoutes.map(d => (
-        <li className="mb-1">
-          <Link
-            to={d.path}
-            className={`${css(stylesheet.bareBtn)} nav-link`}
-            style={{ border: includePath(path, hash) && '1px solid grey' }}
-          >
-            {d.name}
-          </Link>
-        </li>
-      ))}
-    </ul>
+    {curPath.includes(path) && (
+      <ul>
+        {subRoutes.map(d => (
+          <li className="mb-1">
+            <Link
+              to={d.path}
+              className={`${css(stylesheet.bareBtn)} nav-link`}
+              style={{ border: includePath(path, curPath) && '1px solid grey' }}
+            >
+              {d.name}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    )}
   </li>
 );
 
@@ -87,7 +89,7 @@ const NavigationHelper = ({
 }) => (
   <ul className="navList ">
     {Object.keys(routes).map(key => (
-      <InnerLi {...routes[key]} hash={location.hash} />
+      <InnerLi {...routes[key]} curPath={location.pathname} />
     ))}
     {signOut && (
       <li>
@@ -143,15 +145,4 @@ const mapStateToProps = state => ({
   ...state.router
 });
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      setDataView
-    },
-    dispatch
-  );
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Navigation);
+export default connect(mapStateToProps)(withRouter(Navigation));

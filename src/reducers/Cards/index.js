@@ -250,7 +250,7 @@ function reducer(state = INITIAL_STATE, action) {
         ...state,
         createdCards: newCreatedCards,
         extCardId: null,
-        selectedCardId: 'temp'
+        // selectedCardId: 'temp'
       };
     }
     case SUCCESS_DELETE_CARD: {

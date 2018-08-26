@@ -35,7 +35,7 @@ const CARDS = 'jan_cards';
 const getShallowCards = uid =>
   firestore
     .collection(CARDS)
-    .where('uid', '==', uid)
+    // .where('uid', '==', uid || true)
     .get()
     .then(querySnapshot => {
       const data = [];
@@ -45,6 +45,7 @@ const getShallowCards = uid =>
         data.push({ ...d });
       });
 
+      // TODO; remove later
       const dataPromises = data.map(d => {
         if (!d.img) return d;
 
@@ -60,6 +61,7 @@ const getShallowCards = uid =>
           }
         );
       });
+
       return Promise.all(dataPromises);
     });
 

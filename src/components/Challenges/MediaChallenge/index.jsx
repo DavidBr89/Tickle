@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import * as Icon from 'react-feather';
-// import { css } from 'aphrodite/no-important';
+import { css } from 'aphrodite/no-important';
 
 import { ModalBody } from 'Utils/Modal';
 import MediaUpload from 'Utils/MediaUpload';
@@ -112,7 +112,7 @@ class MediaChallenge extends Component {
           </div>
         }
       >
-        <React.Fragment>
+        <div className="flexCol flex-full" ref={cont => (this.cont = cont)}>
           <p style={{ width: '100%', maxHeight: '100%', overflow: 'scroll' }}>
             {description}
           </p>
@@ -130,18 +130,24 @@ class MediaChallenge extends Component {
               });
             }}
           />
-            <MediaUpload
-              style={{ width: '100%' }}
-              uploadPath={id => `challengeSubmissionFiles/${id}`}
-              media={media}
-              stylesheet={stylesheet}
-              buttonStyle={{ width: 30 }}
-              onChange={newMedia => {
-                this.setState({ media: newMedia, completed: false });
-                onUpdate({ media: newMedia, completed: false });
-              }}
-            />
-        </React.Fragment>
+          <button
+            className={`${css(stylesheet.btn)} mt-1`}
+            onClick={() => this.cont.focus()}
+          >
+            Add Response
+          </button>
+          <MediaUpload
+            style={{ width: '100%' }}
+            uploadPath={id => `challengeSubmissionFiles/${id}`}
+            media={media}
+            stylesheet={stylesheet}
+            buttonStyle={{ width: 30 }}
+            onChange={newMedia => {
+              this.setState({ media: newMedia, completed: false });
+              onUpdate({ media: newMedia, completed: false });
+            }}
+          />
+        </div>
       </ModalBody>
     );
   }
