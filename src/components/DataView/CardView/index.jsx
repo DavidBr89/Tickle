@@ -2,7 +2,7 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { compose } from 'recompose';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 import { intersection } from 'lodash';
 import {
@@ -20,7 +20,7 @@ import * as cardActions from 'Reducers/Cards/actions';
 
 import * as asyncActions from 'Reducers/Cards/async_actions';
 import * as dataViewActions from 'Reducers/DataView/actions';
-import { asyncSelectCard } from 'Reducers/DataView/async_actions';
+import * as dataViewAsyncActions from 'Reducers/DataView/async_actions';
 
 import withAuthorization from 'Src/components/withAuthorization';
 
@@ -63,8 +63,8 @@ const mapStateToProps = state => {
     authUser: { uid }
   } = state.Session;
 
+  // TODO: make more specific
   return {
-    // TODO: make more specific
     ...state.MapView,
     ...state.DataView,
     uid,
@@ -91,7 +91,7 @@ const mapDispatchToProps = dispatch =>
       userMove,
       screenResize,
       changeViewport,
-      asyncSelectCard
+      ...dataViewAsyncActions
     },
     dispatch
   );
@@ -99,16 +99,20 @@ const mapDispatchToProps = dispatch =>
 // });
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const { uid, collectibleCards, /* selectedCardId, */ filterSet } = state;
-  const { dataView, path, selectedCardId, history } = ownProps;
+  const { uid, collectibleCards, filterSet } = state;
+  const { dataView, history, match } = ownProps;
+  const { path } = match;
+  const selectedCardId = match.params.selectedCardId || null;
+  const extCardId =
+    match.params.extended === 'extended' ? selectedCardId : null;
 
-  console.log('ownProps', ownProps, 'state', state);
+  console.log('match', match);
 
   // const selectedCardId = selectedCardIds;
   const {
     selectCard,
-    extendSelectedCard,
-    asyncSelectCard,
+    routeExtendCard,
+    routeSelectCard,
     // fetchAllCards,
     // fetchReadableCards,
     fetchCollectibleCards
@@ -116,8 +120,17 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const previewCardAction = d => {
     selectedCardId === d.id
-      ? extendSelectedCard(d.id)
-      : asyncSelectCard({ id: d.id, path, history });
+      ? routeExtendCard({
+        path,
+        history,
+        id: selectedCardId,
+        extended: extCardId === null
+      })
+      : routeSelectCard({
+        path,
+        history,
+        id: d.id
+      });
   };
 
   const fetchCards = () => {
@@ -139,14 +152,14 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     ...state,
     ...dispatcherProps,
     previewCardAction,
-    selectCard: asyncSelectCard,
     fetchCards,
     preSelectCardId,
     dataView,
     cards: filteredCards,
     cardSets,
     selectedTags,
-    selectedCardId
+    selectedCardId,
+    extCardId
   };
 };
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { FLOORPLAN } from 'Constants/dataViews';
+import { FLOORPLAN, GEO } from 'Constants/dataViews';
 
 // import * as d3 from 'd3';
 
@@ -150,22 +150,6 @@ class CardAuthorPage extends Component {
     } = this.props;
 
     fetchCards();
-    navigator.geolocation.watchPosition(
-      pos => {
-        const coords = {
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude
-        };
-        userMove(coords);
-        changeMapViewport(coords);
-      },
-      err => console.log('err', err),
-      {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0
-      }
-    );
     // screenResize({
     //   width: this.cont.offsetWidth,
     //   height: this.cont.offsetHeight
@@ -193,7 +177,7 @@ class CardAuthorPage extends Component {
       cardSets,
       selectedTags,
       isSmartphone,
-      allTagsCreated
+      allTagsCreated, extCardId
     } = this.props;
 
     const slotSize = 100 / 3.5;
@@ -215,7 +199,7 @@ class CardAuthorPage extends Component {
         />
 
         <div
-          className="mb-3 mt-3"
+          className="mb-2 mt-3"
           style={{
             display: 'flex',
             justifyContent: 'center',
@@ -247,9 +231,11 @@ class CardAuthorPage extends Component {
           selectedTags={selectedTags}
           tagColorScale={tagColorScale}
           selectedCardId={selectedCardId}
+          extCardId={extCardId}
           style={{
+            // TODO: remvoe for topic map
             flex: '1 1 70%',
-            position: dataView === FLOORPLAN && 'absolute'
+            position: dataView === FLOORPLAN || (dataView === GEO && 'absolute')
           }}
           className="flexCol"
         />

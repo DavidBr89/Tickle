@@ -108,6 +108,7 @@ class PreviewCard extends Component {
           height: '100%',
           background: colorScale(type),
           boxShadow: '0.2rem 0.2rem grey',
+          overflow: 'hidden',
           ...style
           // minWidth: '100px'
           // maxHeight: '120px'

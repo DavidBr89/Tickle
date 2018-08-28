@@ -18,6 +18,8 @@ import { changeMapViewport } from 'Reducers/Map/actions';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 
+import userIcon from './user.svg';
+
 const mapStyleUrl = 'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l';
 
 const defaultLocation = {
@@ -208,6 +210,8 @@ class Map extends Component {
       return acc;
     }, []);
 
+    const userPos = vp.project([userLocation.longitude, userLocation.latitude]);
+
     return (
       <MapGL
         mapStyle={mapStyleUrl}
@@ -224,7 +228,21 @@ class Map extends Component {
         longitude={longitude}
         zoom={zoom}
       >
-        <UserOverlay {...this.props} location={userLocation} />
+        <div
+          style={{
+            position: 'absolute',
+            left: userPos[0],
+            top: userPos[1],
+            zIndex: 2000
+          }}
+        >
+          <img
+            src={userIcon}
+            width={50}
+            height={50}
+            style={{ transform: 'translate(-50%,-50%)' }}
+          />
+        </div>
 
         <Cluster
           radius={d =>

@@ -129,32 +129,17 @@ class DataOverlay extends Component {
     // const noPointerEvents = extCardId !== null;
     switch (mode) {
       case GEO: {
-        // TODO: simplify the style here, inconsistent with style of CardView
         return (
-          <div
-            className={className}
-            style={{
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              // pointerEvents: noPointerEvents && 'none',
-              overflow: 'hidden',
-              left: 0,
-              top: 0,
-              ...style
-            }}
+          <Map
+            width={width}
+            height={height}
+            disabled={disabled}
+            nodes={data}
+            colorScale={colorScale}
+            preview={noPreview}
           >
-            <Map
-              width={width}
-              height={height}
-              disabled={disabled}
-              nodes={data}
-              colorScale={colorScale}
-              preview={noPreview}
-            >
-              {draggable}
-            </Map>
-          </div>
+            {draggable}
+          </Map>
         );
       }
       case FLOORPLAN: {

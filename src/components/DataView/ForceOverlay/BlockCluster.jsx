@@ -44,7 +44,7 @@ function makeTreemap({ data, width, height, padX, padY }) {
     .range([10, 25]);
 
   const first = { name: 'root', children: sorted };
-  const root = d3.hierarchy(first).sum(d => size(d.count));
+  const root = d3.hierarchy(first).sum(d => 20 + size(d.count));
 
   treemap(root);
   if (!root.children) return [];

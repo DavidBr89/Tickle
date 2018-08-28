@@ -335,7 +335,15 @@ Img.propTypes = {
 Img.defaultProps = { src: null, style: {} };
 
 export const ImgOverlay = ({ src, className, style, children, footer }) => (
-  <div style={{ position: 'relative', width: '100%', ...style }}>
+  <div
+    style={{
+      position: 'relative',
+      // width: '100%',
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      ...style
+    }}
+  >
     <img
       className={className}
       src={src || placeholderImgSrc}

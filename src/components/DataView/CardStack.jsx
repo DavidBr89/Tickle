@@ -47,7 +47,7 @@ function CardStack({
           style={{
             transition: `transform 1s`,
             // TODO: change later
-            height: cardHeight,
+            height: '100%',
             transform: selectedCardId === d.id && 'scale(1.2)',
             // zIndex: selectedCardId === d.id && 2000,
             opacity: d.template && 0.8

@@ -19,7 +19,6 @@ function centerLayout({
 
   const leftLen = selectedIndex + 1;
   const rightLen = data.length - selectedIndex;
-
   const leftSize = center - (slotSize * 3) / 2;
 
   const rightSize = size - (slotSize * 3) / 2 - center;
@@ -190,38 +189,29 @@ class CardStack extends Component {
           justifyContent: 'center'
         }}
       >
-        <div
-          style={{
-            perspective: '2400px',
-            perspectiveOrigin: '50% -50%',
-            height: '100%',
-            width: '100%'
-          }}
-        >
-          {tmpData.map((d, i) => {
-            const p = dataPos.find(e => e.index === d.index) || null;
-            if (p === null) return null;
-            return (
-              <div
-                key={p.index}
-                style={{
-                  position: 'absolute',
-                  paddingLeft: `${innerMargin / 2}${unit}`,
-                  paddingRight: `${innerMargin / 2}${unit}`,
-                  cursor: 'pointer',
-                  transition: `left ${duration}ms, top ${duration}ms, transform ${duration}ms`,
-                  zIndex: p.zIndex,
-                  width: '100%',
-                  height: '100%',
-                  ...size,
-                  ...centerPos(p)
-                }}
-              >
-                {children(d, i)}
-              </div>
-            );
-          })}
-        </div>
+        {tmpData.map((d, i) => {
+          const p = dataPos.find(e => e.index === d.index) || null;
+          if (p === null) return null;
+          return (
+            <div
+              key={p.index}
+              style={{
+                position: 'absolute',
+                paddingLeft: `${innerMargin / 2}${unit}`,
+                paddingRight: `${innerMargin / 2}${unit}`,
+                cursor: 'pointer',
+                transition: `left ${duration}ms, top ${duration}ms, transform ${duration}ms`,
+                zIndex: p.zIndex,
+                width: '100%',
+                height: '100%',
+                ...size,
+                ...centerPos(p)
+              }}
+            >
+              {children(d, i)}
+            </div>
+          );
+        })}
       </div>
     );
   }

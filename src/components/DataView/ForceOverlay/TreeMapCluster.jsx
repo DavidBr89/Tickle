@@ -30,7 +30,7 @@ function distance(a, b) {
 }
 
 function makeTreemap({ data, width, height, padX, padY }) {
-  const ratio = 3;
+  const ratio = 2;
   const sorted = data.sort((a, b) => b.values.length - a.count);
   const treemap = d3
     .treemap()
@@ -43,7 +43,7 @@ function makeTreemap({ data, width, height, padX, padY }) {
   const size = d3
     .scaleLinear()
     .domain(d3.extent(data, d => d.count))
-    .range([10, 25]);
+    .range([20, 25]);
 
   const first = { name: 'root', children: sorted };
   const root = d3.hierarchy(first).sum(d => size(d.count));

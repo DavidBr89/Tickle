@@ -25,8 +25,7 @@ const Routes = ({ history }) => (
   <HashRouter>
     <Switch>
       <Route
-        exact
-        path={routes.AUTH_ENV}
+        path={`${`${routes.AUTH_ENV}/${TAGS}`}/:selectedCardId?/:extended?`}
         render={() => (
           <DefaultLayout>
             <CardAuthor dataView={TAGS} />
@@ -34,8 +33,7 @@ const Routes = ({ history }) => (
         )}
       />
       <Route
-        exact
-        path={routes.AUTH_ENV_GEO}
+        path={`${`${routes.AUTH_ENV}/${GEO}`}/:selectedCardId?/:extended?`}
         render={() => (
           <DefaultLayout>
             <CardAuthor dataView={GEO} />
@@ -44,16 +42,9 @@ const Routes = ({ history }) => (
       />
       <Route
         exact
-        path={routes.AUTH_ENV_TAGS}
-        render={() => (
-          <DefaultLayout>
-            <CardAuthor dataView={TAGS} />
-          </DefaultLayout>
-        )}
-      />
-      <Route
-        exact
-        path={routes.AUTH_ENV_FLOORPLAN}
+        path={`${`${
+          routes.AUTH_ENV
+        }/${FLOORPLAN}`}/:selectedCardId?/:extended?`}
         render={() => (
           <DefaultLayout>
             <CardAuthor dataView={FLOORPLAN} />
@@ -62,7 +53,18 @@ const Routes = ({ history }) => (
       />
       <Route
         exact
-        path={routes.DATAVIEW_GEO}
+        path={`${`${
+          routes.AUTH_ENV
+        }/${FLOORPLAN}`}/:selectedCardId?/:extended?`}
+        render={() => (
+          <DefaultLayout>
+            <CardAuthor dataView={FLOORPLAN} />
+          </DefaultLayout>
+        )}
+      />
+      <Route
+        exact
+        path={`${routes.DATAVIEW}/:selectedCardId?/:extended?`}
         render={() => (
           <DefaultLayout>
             <CardView dataView={GEO} />
@@ -71,46 +73,26 @@ const Routes = ({ history }) => (
       />
       <Route
         exact
-        path={routes.DATAVIEW}
+        path={`${routes.DATAVIEW_GEO}/:selectedCardId?/:extended?`}
         render={() => (
           <DefaultLayout>
-            <div>emptye site</div>
+            <CardView dataView={GEO} />
           </DefaultLayout>
         )}
       />
       <Route
-        exact
-        path={routes.DATAVIEW_TAGS}
-        render={props => (
-          <DefaultLayout>
-            <CardView
-              dataView={TAGS}
-              path={routes.DATAVIEW_TAGS}
-              selectedCardId={null}
-            />
-          </DefaultLayout>
-        )}
-      />
-      <Route
-        exact
-        path={`${routes.DATAVIEW_TAGS}/:selectedCardId`}
-        render={props => (
-          <DefaultLayout>
-            <CardView
-              dataView={TAGS}
-              path={routes.DATAVIEW_TAGS}
-              selectedCardId={props.match.params.selectedCardId}
-              routerProps={props}
-            />
-          </DefaultLayout>
-        )}
-      />
-      <Route
-        exact
-        path={routes.DATAVIEW_FLOORPLAN}
+        path={`${routes.DATAVIEW_TAGS}/:selectedCardId?/:extended?`}
         render={() => (
           <DefaultLayout>
-            <CardView dataView={FLOORPLAN} />
+            <CardView dataView={TAGS} path={routes.DATAVIEW_TAGS} />
+          </DefaultLayout>
+        )}
+      />
+      <Route
+        path={`${routes.DATAVIEW_FLOORPLAN}/:selectedCardId?/:extended?`}
+        render={() => (
+          <DefaultLayout>
+            <CardView path={routes.DATAVIEW_FLOORPLAN} dataView={FLOORPLAN} />
           </DefaultLayout>
         )}
       />

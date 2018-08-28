@@ -158,13 +158,13 @@ class CardViewPage extends Component {
           data={filterSet}
         />
         <div
-          className="mb-3 mt-3"
+          className="mt-3"
           style={{
             display: 'flex',
             justifyContent: 'center',
             transition: 'opacity 0.5s',
-            height: '25%',
             zIndex: 3000,
+            flexBasis: '25%',
             opacity: cardPanelVisible ? 1 : 0
           }}
         >
@@ -190,8 +190,11 @@ class CardViewPage extends Component {
           {...this.props}
           className="mb-1"
           style={{
-            flex: '1 1 70%',
-            position: this.props.dataView === FLOORPLAN && 'absolute'
+            flex: '1 1 60%',
+            position:
+              this.props.dataView === FLOORPLAN || this.props.dataView === GEO
+                ? 'absolute'
+                : null
           }}
           colorScale={tagColorScale}
         />

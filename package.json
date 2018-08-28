@@ -85,6 +85,7 @@
     "popper.js": "^1.12.5",
     "prop-types": "^15.6.0",
     "pusher-js": "^4.0.0",
+    "query-string": "^6.1.0",
     "raster-tile-style": "^1.0.1",
     "react": "^16.4.0",
     "react-addons-css-transition-group": "^15.6.2",

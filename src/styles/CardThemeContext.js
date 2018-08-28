@@ -83,6 +83,8 @@ const makeStylesheet = ({ uiColor, background }) => {
       maxHeight: 300,
       minHeight: 100,
       maxWidth: '100%',
+      marginLeft: 'auto',
+      marginRight: 'auto',
       width: 'auto',
       height: 'auto'
     },

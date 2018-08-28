@@ -130,6 +130,14 @@ function getOneChallengeSubmission(cid, playerId) {
     .then(doc => new Promise(resolve => resolve(doc.data() || null)));
 }
 
+export function getOneEmailUser(email) {
+  return firestore
+    .collection('users')
+    .where('email', '==', email)
+    .get()
+    .then(sn => sn.forEach(d => console.log('d', d.data())));
+}
+
 export const readCardsWithSubmissions = uid =>
   getShallowCards(uid).then(data => {
     const pendingPromises = data.map(d =>
@@ -182,12 +190,11 @@ export const addImgToStorage = ({ file, path, id }) => {
 
 // TODO: error handling
 const uploadImgFields = card => {
-  const { file, ...restImgFields } = card.img;
-  const cardImgFile = file || null;
+  const { file = null, ...restImgFields } = card.img;
 
-  return cardImgFile
+  return file
     ? addImgToStorage({
-        file: cardImgFile,
+        file,
         path: 'cards',
         id: card.id
       }).then(url => {
@@ -197,7 +204,7 @@ const uploadImgFields = card => {
         };
         return new Promise(resolve => resolve(img));
       })
-    : {};
+    : new Promise(resolve => resolve({ ...restImgFields }));
 };
 
 export const doCreateUser = userProfile =>
@@ -368,6 +375,15 @@ export const addChallengeSubmission = ({ cardId, playerId, challengeData }) =>
       // promises in the chain.
     });
 // );
+
+export function getOneUser(playerId) {
+  return firestore
+    .collection('users')
+    .doc(playerId)
+    .get()
+    .then(doc => new Promise(resolve => resolve(doc.data() || {})))
+    .then(d => console.log('user EMAIL', d.email));
+}
 
 // TODO: get authored cards
 // return firebase.firestore

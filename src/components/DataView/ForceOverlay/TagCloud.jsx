@@ -94,50 +94,45 @@ class Tag extends React.Component {
       background: highlighted
         ? color
         : chroma(color)
-          .alpha(0.4)
-          .css(),
+            .alpha(0.4)
+            .css()
       // border: selected ? 'grey dashed 4px' : `${color} solid 4px`,
-      display: 'flex',
-      alignItems: 'center'
+      // display: 'flex',
+      // alignItems: 'center'
       // paddingTop: height / 4,
       // paddingBottom: height / 4
     };
+
     return (
-      <div className="" style={st} onClick={() => onClick(children)}>
-        <div
-          style={{
-            width: '100%'
-            // height: '100%'
-          }}
-        >
+      <div className="flexCol" style={st} onClick={() => onClick(children)}>
+        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+          <div style={{ position: 'absolute', zIndex: 100 }}><span>{children} ({count})</span></div>
           <div
+            className="flexCol"
             style={{
-              // height: '100%',
-              display: 'flex',
-              flexWrap: 'wrap',
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
               justifyContent: 'center',
               alignItems: 'center'
             }}
           >
             <div
-              className="mr-2"
+              className="flexCol"
               style={{
-                // fontSize: small ? '100%' : '200%',
-                fontSize: 'calc(1.5vw + 1.5vh + 1vmin)',
-
-                // width: '100%',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis'
+                // border: 'grey 1px solid',
+                borderRadius: '50%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 50,
+                height: 50,
+                zIndez: 0
               }}
             >
-              #{children}
+              <CardMarker
+                style={{ width: 20, height: 20, transform: null, zIndex: 0 }}
+              />
             </div>
-            {!small && (
-              <div className="pl-1 pr-1" style={{ maxWidth: '100%' }}>
-                <CardStack number={count} />
-              </div>
-            )}
           </div>
         </div>
       </div>

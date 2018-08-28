@@ -30,6 +30,8 @@ import chroma from 'chroma-js';
 import { createBrowserHistory } from 'history';
 import { screenResize } from 'Reducers/Screen/actions';
 
+import { userMove, changeMapViewport } from 'Reducers/Map/actions';
+
 // TODO check whether it's only created once
 const history = createBrowserHistory();
 
@@ -104,21 +106,14 @@ function configureStore(rootReducer, initialState) {
   const setMiddleWare = () => {
     const loggerMiddleware = createLogger();
     if (process.env.NODE_ENV === 'development') {
-      return applyMiddleware(
-        thunkMiddleware,
-        loggerMiddleware,
-      );
+      return applyMiddleware(thunkMiddleware, loggerMiddleware);
     }
     return applyMiddleware(thunkMiddleware);
   };
 
   const enhancer = composeEnhancers(setMiddleWare());
 
-  const store = createStore(
-    rootReducer,
-    initialState,
-    enhancer
-  );
+  const store = createStore(rootReducer, initialState, enhancer);
 
   if (module.hot) {
     // Enable Webpack hot module replacement for reducers
@@ -148,6 +143,25 @@ window.addEventListener('DOMContentLoaded', () => {
     })
   );
 });
+
+// TODO
+navigator.geolocation.getCurrentPosition(
+  pos => {
+    const coords = {
+      latitude: pos.coords.latitude,
+      longitude: pos.coords.longitude
+    };
+    store.dispatch(userMove(coords));
+    store.dispatch(changeMapViewport(coords));
+  },
+  err => console.log('err', err),
+  {
+    enableHighAccuracy: true,
+    timeout: 200000,
+    maximumAge: 0
+  }
+);
+
 //
 // window.addEventListener('resize', () => {
 //   const cont = document.querySelector('#content-container');
@@ -200,6 +214,8 @@ const App = () => (
   </Provider>
 );
 
+// PbQiWWDMJgYCnl6vhK8fkMhWe4y2
+// db.getOneUser('PbQiWWDMJgYCnl6vhK8fkMhWe4y2');
 // db.readCopyOlga();
 
 export default hot(module)(App);

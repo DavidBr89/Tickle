@@ -9,7 +9,7 @@ import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 import DimWrapper from 'Utils/DimensionsWrapper';
 import ExtendableMarker from 'Utils/ExtendableMarker';
 
-import CardPreviewMarker from 'Utils/PreviewMarker';
+import CardMarker from 'Components/cards/CardMarker';
 
 import {
   DragSourceCont,
@@ -85,10 +85,13 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
         colorScale={tagColorScale}
         preview={d => (
           <DragSourceCont dragHandler={dragCard} data={d} x={d.x} y={d.y}>
-            <CardPreviewMarker
-              selected={selectedCardId === d.id}
+            <CardMarker
               color="whitesmoke"
-              style={{ zIndex: selectedCardId === d.id ? 5000 : 100 }}
+              style={{
+                // TODO: zIndex not working
+                zIndex: selectedCardId === d.id ? 5000 : 100,
+                transform: selectedCardId === d.id && 'scale(2)'
+              }}
             />
           </DragSourceCont>
         )}

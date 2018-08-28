@@ -1,15 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import chroma from 'chroma-js';
+import { compose } from 'recompose';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import { Card } from './index';
+import { withRouter } from 'react-router-dom';
 
 import { updateCardTemplate, dragCard } from 'Reducers/Cards/actions';
 
 import { changeMapViewport } from 'Reducers/Map/actions';
+import * as routeActions from 'Reducers/DataView/async_actions';
 
 import {
   asyncUpdateCard,
@@ -42,7 +45,8 @@ const mapDispatchToProps = dispatch =>
       asyncSubmitChallenge,
       asyncCreateCard,
       asyncRemoveCard,
-      changeMapViewport
+      changeMapViewport,
+      ...routeActions
     },
     dispatch
   );
@@ -51,7 +55,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const { selectedCardId, mapViewport, width, height, authUser } = state;
   const { uid } = authUser;
 
-  const { dataView } = ownProps;
+  const { dataView, match, history, id } = ownProps;
+  const { path } = match;
 
   const {
     asyncUpdateCard,
@@ -78,6 +83,13 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
       ? updateCardTemplate({ cardData, viewport, dataView })
       : asyncUpdateCard({ uid, cardData, viewport, dataView });
 
+  const { routeExtendCard } = dispatcherProps;
+  // TODO replace by regex
+
+  const closeCard = () => {
+    routeExtendCard({ path, history, id, extended: false });
+  };
+
   // const onSubmitChallenge = challengeSubmission => {
   //   asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
   // };
@@ -87,6 +99,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     ...dispatcherProps,
     onCardUpdate,
     createCard,
+    closeCard,
     ...ownProps
   };
 };
@@ -99,12 +112,13 @@ const EditCard = ({
   tagColorScale,
   x,
   y,
+  closeCard,
   ...props
 }) => (
   <Card
     {...props}
     key={props.id}
-    onClose={() => extendSelectedCard(null)}
+    onClose={closeCard}
     edit
     onSubmit={d => {
       createCard({ ...d, x, y });
@@ -120,8 +134,11 @@ const EditCard = ({
   />
 );
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-  mergeProps
+export default compose(
+  withRouter,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+    mergeProps
+  )
 )(EditCard);
