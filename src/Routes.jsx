@@ -11,11 +11,15 @@ import Admin from './components/Admin';
 import Account from './components/Account';
 import DefaultLayout from './components/Layout';
 
+import Grid from './components/DataView/GridView/index.tsx';
+
 import withAuthentication from './components/withAuthentication';
 // import AuthUserContext from './components/AuthUserContext';
 
 import * as routes from 'Constants/routes';
 import { TAGS, GEO, FLOORPLAN } from 'Constants/dataViews';
+
+const GRID = 'grid';
 
 // import history from './BrowserHistory';
 
@@ -72,6 +76,17 @@ const Routes = ({ history }) => (
         render={() => (
           <DefaultLayout>
             <CardView dataView={GEO} />
+          </DefaultLayout>
+        )}
+      />
+      <Route
+        exact
+        path={`${
+          routes.DATAVIEW
+        }/${GRID}/:selectedCardId?/:extended?/:flipped?`}
+        render={() => (
+          <DefaultLayout>
+            <Grid />
           </DefaultLayout>
         )}
       />

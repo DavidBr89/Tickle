@@ -54,6 +54,10 @@ module.exports = [
   //   include: path.join(__dirname, 'node_modules/@tensorflow/tfjs-tsne')
   // },
   {
+    test: /\.(ts|tsx)$/,
+    loader: 'awesome-typescript-loader'
+  },
+  {
     // enforce: 'pre',
     test: /\.js$/,
     loader: 'babel-loader?cacheDirectory=true',

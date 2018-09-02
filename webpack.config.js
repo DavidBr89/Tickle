@@ -28,7 +28,7 @@ module.exports = {
     filename: 'main.js'
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx', 'ts', 'tsx'],
     alias
   },
   module: {
