@@ -12,7 +12,8 @@ import {
   REMOVE_CARD_FILTER,
   FILTER_CARDS,
   TOGGLE_CARD_PANEL,
-  FILTER_BY_CHALLENGE_STATE
+  FILTER_BY_CHALLENGE_STATE,
+  FLIP_CARD
   // ADD_CARD_FILTER,
   // REMOVE_CARD_FILTER,
   // FILTER_CARDS
@@ -79,6 +80,11 @@ export default function dataViewReducer(state = INITIAL_STATE, action) {
         selectedCardId: null
       };
     }
+    case FLIP_CARD: {
+      const cardFlipped = action.options;
+      return { ...state, cardFlipped };
+    }
+
     case TOGGLE_CARD_PANEL: {
       return { ...state, cardPanelVisible: !state.cardPanelVisible };
     }

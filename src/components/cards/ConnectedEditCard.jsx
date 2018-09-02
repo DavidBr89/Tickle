@@ -12,16 +12,10 @@ import { withRouter } from 'react-router-dom';
 import { updateCardTemplate, dragCard } from 'Reducers/Cards/actions';
 
 import { changeMapViewport } from 'Reducers/Map/actions';
+
+import * as asyncCardActions from 'Reducers/Cards/async_actions';
+
 import * as routeActions from 'Reducers/DataView/async_actions';
-
-import {
-  asyncUpdateCard,
-  asyncCreateCard,
-  asyncRemoveCard,
-  asyncSubmitChallenge
-} from 'Reducers/Cards/async_actions';
-
-import * as dataViewActions from 'Reducers/DataView/actions';
 
 function mapStateToProps(state) {
   return {
@@ -39,12 +33,9 @@ const mapDispatchToProps = dispatch =>
     {
       // dragCard,
       updateCardTemplate,
-      ...dataViewActions,
+      ...routeActions,
       dragCard,
-      asyncUpdateCard,
-      asyncSubmitChallenge,
-      asyncCreateCard,
-      asyncRemoveCard,
+      ...asyncCardActions,
       changeMapViewport,
       ...routeActions
     },
@@ -58,12 +49,14 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const { dataView, match, history, id } = ownProps;
   const { path } = match;
 
+  const { flipped } = match.params;
+
   const {
     asyncUpdateCard,
     updateCardTemplate,
     asyncCreateCard,
     asyncRemoveCard,
-    asyncSubmitChallenge
+    routeFlipCard
   } = dispatcherProps;
 
   const viewport = { ...mapViewport, width, height };
@@ -89,10 +82,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const closeCard = () => {
     routeExtendCard({ path, history, id, extended: false });
   };
-
-  // const onSubmitChallenge = challengeSubmission => {
-  //   asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
-  // };
+  const flipHandler = () => routeFlipCard({ match, history });
 
   return {
     ...state,
@@ -100,6 +90,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     onCardUpdate,
     createCard,
     closeCard,
+    flipHandler,
+    frontView: !flipped,
     ...ownProps
   };
 };

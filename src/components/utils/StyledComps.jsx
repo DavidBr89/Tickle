@@ -96,37 +96,13 @@ export const FieldSet = ({
     className={className}
     onClick={onClick}
     style={{
-      // border: `1px solid ${uiColor}`,
-      // marginTop: '4px',
-      width: '100%',
-      height: '100%',
-      // padding: 10,
-      ...style
-      // overflow: 'hidden'
+      ...style,
+      overflow: 'hidden',
+      minHeight: 0,
+      padding: 4
     }}
   >
-    <div
-      style={{
-        margin: 10,
-        // width: '100%',
-        overflow: 'hidden',
-        height: '80%'
-      }}
-    >
-      <div
-        style={{
-          position: 'relative',
-          ...bodyStyle
-        }}
-      >
-        <div>
-          <h5 style={legendStyle}>
-            {legend} {icon}
-          </h5>
-        </div>
-      </div>
-      {children}
-    </div>
+    {children}
   </div>
 );
 

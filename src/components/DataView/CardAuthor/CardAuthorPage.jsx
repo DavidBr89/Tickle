@@ -177,7 +177,8 @@ class CardAuthorPage extends Component {
       cardSets,
       selectedTags,
       isSmartphone,
-      allTagsCreated, extCardId
+      allTagsCreated,
+      extCardId
     } = this.props;
 
     const slotSize = 100 / 3.5;
@@ -199,12 +200,14 @@ class CardAuthorPage extends Component {
         />
 
         <div
-          className="mb-2 mt-3"
+          className="mt-3"
           style={{
             display: 'flex',
             justifyContent: 'center',
             transition: 'opacity 0.5s',
-            height: '25%'
+            marginBottom: 25,
+            // height: '25%'
+            flexBasis: '25%'
           }}
         >
           <CardStack
@@ -235,7 +238,8 @@ class CardAuthorPage extends Component {
           style={{
             // TODO: remvoe for topic map
             flex: '1 1 70%',
-            position: dataView === FLOORPLAN || (dataView === GEO && 'absolute')
+            position:
+              dataView === FLOORPLAN || dataView === GEO ? 'absolute' : null
           }}
           className="flexCol"
         />

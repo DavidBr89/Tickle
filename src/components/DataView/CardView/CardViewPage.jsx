@@ -165,7 +165,7 @@ class CardViewPage extends Component {
             transition: 'opacity 0.5s',
             zIndex: 3000,
             flexBasis: '25%',
-            opacity: cardPanelVisible ? 1 : 0
+            opacity: cardPanelVisible ? 1 : 0, marginBottom: 25
           }}
         >
           <CardStack

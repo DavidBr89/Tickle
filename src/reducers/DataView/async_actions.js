@@ -3,7 +3,8 @@ import {
   selectCard,
   extendSelectedCard,
   addCardFilter,
-  removeCardFilter
+  removeCardFilter,
+  flipCard
 } from './actions';
 
 const getBasePath = url => url.slice(0, url.indexOf('/:'));
@@ -30,4 +31,16 @@ export const routeExtendCard = ({
 }) => dispatch => {
   history.push(`${getBasePath(path)}/${id}/${extended ? 'extended' : ''}`);
   dispatch(extendSelectedCard(id));
+};
+
+export const routeFlipCard = ({ match, history }) => dispatch => {
+  const { path } = match;
+  const { selectedCardId, extended, flipped } = match.params;
+
+  history.push(
+    `${getBasePath(path)}/${selectedCardId}/${extended}/${
+      !flipped ? 'flipped' : ''
+    }`
+  );
+  dispatch(flipCard(!flipped));
 };

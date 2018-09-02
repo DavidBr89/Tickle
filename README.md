@@ -3,6 +3,7 @@
 TICKLE playground for our Project
 
 ## What is left to do?
+  * proportional scaling
   * Localisation (different languages)
   * Card template Editor
   * Learning Analytics (User profile and recommendation) and Web Analytics (Google Analytics)

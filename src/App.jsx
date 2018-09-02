@@ -129,6 +129,12 @@ function configureStore(rootReducer, initialState) {
 const store = configureStore(rootReducer);
 
 window.addEventListener('DOMContentLoaded', () => {
+  //TODO
+  //TODO
+  //TODO
+  //TODO
+  //TODO
+  //TODO
   const cont = document.querySelector('#content-container');
   const android = /(android)/i.test(navigator.userAgent);
   const iOS =

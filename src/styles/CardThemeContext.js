@@ -76,12 +76,12 @@ const makeStylesheet = ({ uiColor, background }) => {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'space-evenly',
-      flex: '1 1 auto'
+      flex: '0 1 100%'
       // height: '90%'
     },
     coverPhoto: {
-      maxHeight: 300,
-      minHeight: 100,
+      flex: '0 1 45%',
+      minHeight: 0,
       maxWidth: '100%',
       marginLeft: 'auto',
       marginRight: 'auto',

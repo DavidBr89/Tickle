@@ -11,7 +11,7 @@ import { Card } from './index';
 import { asyncSubmitChallenge } from 'Reducers/Cards/async_actions';
 
 import * as dataViewActions from 'Reducers/DataView/actions';
-import * as asyncDataViewActions from 'Reducers/DataView/async_actions';
+import * as routeActions from 'Reducers/DataView/async_actions';
 import MediaChallenge from 'Components/Challenges/MediaChallenge';
 
 const CardViewable = ({
@@ -20,6 +20,7 @@ const CardViewable = ({
   closeCard,
   tagColorScale,
   onSubmitChallenge,
+  flipped,
   ...props
 }) => (
   <Card
@@ -33,6 +34,7 @@ const CardViewable = ({
     uiColor="grey"
     background="whitesmoke"
     style={{ zIndex: 4000 }}
+    frontView={flipped}
     {...props}
     challengeComp={
       <MediaChallenge
@@ -65,7 +67,7 @@ const mapDispatchToProps = dispatch =>
       // dragCard,
       ...dataViewActions,
       asyncSubmitChallenge,
-      ...asyncDataViewActions
+      ...routeActions
     },
     dispatch
   );
@@ -75,7 +77,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const { authUser } = state;
   const { uid } = authUser;
   const { path } = match;
-  const { routeExtendCard } = dispatcherProps;
+  const { flipped } = match.params;
+  const { routeExtendCard, routeFlipCard } = dispatcherProps;
   // TODO replace by regex
 
   const closeCard = () => {
@@ -86,12 +89,17 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
   };
 
+  const flipHandler = () => routeFlipCard({ match, history });
+
   return {
     ...state,
     ...dispatcherProps,
     ...ownProps,
     onSubmitChallenge,
-    closeCard
+    closeCard,
+    flipHandler,
+    // TODO refactor
+    frontView: !flipped
   };
 };
 

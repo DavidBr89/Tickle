@@ -223,6 +223,7 @@ class ReadCardFront extends Component {
           </ImgOverlay>
           <DescriptionField
             text={description}
+            style={{flex: '0 1 18%'}}
             onEdit={() =>
               this.setState({
                 dialogKey: 'Description'

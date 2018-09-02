@@ -25,7 +25,9 @@ const Routes = ({ history }) => (
   <HashRouter>
     <Switch>
       <Route
-        path={`${`${routes.AUTH_ENV}/${TAGS}`}/:selectedCardId?/:extended?`}
+        path={`${`${
+          routes.AUTH_ENV
+        }/${TAGS}`}/:selectedCardId?/:extended?/:flipped?`}
         render={() => (
           <DefaultLayout>
             <CardAuthor dataView={TAGS} />
@@ -33,7 +35,9 @@ const Routes = ({ history }) => (
         )}
       />
       <Route
-        path={`${`${routes.AUTH_ENV}/${GEO}`}/:selectedCardId?/:extended?`}
+        path={`${`${
+          routes.AUTH_ENV
+        }/${GEO}`}/:selectedCardId?/:extended?/:flipped?`}
         render={() => (
           <DefaultLayout>
             <CardAuthor dataView={GEO} />
@@ -44,7 +48,7 @@ const Routes = ({ history }) => (
         exact
         path={`${`${
           routes.AUTH_ENV
-        }/${FLOORPLAN}`}/:selectedCardId?/:extended?`}
+        }/${FLOORPLAN}`}/:selectedCardId?/:extended?/:flipped?`}
         render={() => (
           <DefaultLayout>
             <CardAuthor dataView={FLOORPLAN} />
@@ -55,7 +59,7 @@ const Routes = ({ history }) => (
         exact
         path={`${`${
           routes.AUTH_ENV
-        }/${FLOORPLAN}`}/:selectedCardId?/:extended?`}
+        }/${FLOORPLAN}`}/:selectedCardId?/:extended?/:flipped?`}
         render={() => (
           <DefaultLayout>
             <CardAuthor dataView={FLOORPLAN} />
@@ -64,7 +68,7 @@ const Routes = ({ history }) => (
       />
       <Route
         exact
-        path={`${routes.DATAVIEW}/:selectedCardId?/:extended?`}
+        path={`${routes.DATAVIEW}/${GEO}/:selectedCardId?/:extended?/:flipped?`}
         render={() => (
           <DefaultLayout>
             <CardView dataView={GEO} />
@@ -72,16 +76,7 @@ const Routes = ({ history }) => (
         )}
       />
       <Route
-        exact
-        path={`${routes.DATAVIEW_GEO}/:selectedCardId?/:extended?`}
-        render={() => (
-          <DefaultLayout>
-            <CardView dataView={GEO} />
-          </DefaultLayout>
-        )}
-      />
-      <Route
-        path={`${routes.DATAVIEW_TAGS}/:selectedCardId?/:extended?`}
+        path={`${routes.DATAVIEW_TAGS}/:selectedCardId?/:extended?/:flipped?`}
         render={() => (
           <DefaultLayout>
             <CardView dataView={TAGS} path={routes.DATAVIEW_TAGS} />
@@ -89,7 +84,9 @@ const Routes = ({ history }) => (
         )}
       />
       <Route
-        path={`${routes.DATAVIEW_FLOORPLAN}/:selectedCardId?/:extended?`}
+        path={`${
+          routes.DATAVIEW_FLOORPLAN
+        }/:selectedCardId?/:extended?/:flipped?`}
         render={() => (
           <DefaultLayout>
             <CardView path={routes.DATAVIEW_FLOORPLAN} dataView={FLOORPLAN} />

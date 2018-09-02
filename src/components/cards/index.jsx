@@ -4,7 +4,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import chroma from 'chroma-js';
 
-
 import { css } from 'aphrodite/no-important';
 
 import CardBack from './CardBack';
@@ -71,10 +70,7 @@ class Card extends React.Component {
     background: 'whitesmoke',
     onUpdate: d => d,
     tagColorScale: () => 'gold',
-    author: { username: 'defaultUser', email: 'defaultEmail' }
-  };
-
-  state = {
+    author: { username: 'defaultUser', email: 'defaultEmail' },
     frontView: true
   };
 
@@ -91,19 +87,20 @@ class Card extends React.Component {
       background,
       uiColor,
       template,
-      iOS
+      iOS,
+      flipHandler
     } = this.props;
-    const { frontView } = this.state;
-    const { onCollect } = this.props;
+    // const { frontView } = this.state;
+    const { onCollect, frontView } = this.props;
 
     const stylesheet = makeStylesheet({ uiColor, background });
     const { flipper, flipAnim, flipContainer } = stylesheet;
     // const { onClose } = this.props;
-    const flipHandler = () => {
-      this.setState(oldState => ({
-        frontView: !oldState.frontView
-      }));
-    };
+    // const flipHandler = () => {
+    //   this.setState(oldState => ({
+    //     frontView: !oldState.frontView
+    //   }));
+    // };
     // const background = colorScale(type);
     // const uiColor = chroma(background).darken(1);
     // const focusColor = chroma(background).darken(3);
@@ -188,6 +185,5 @@ class Card extends React.Component {
     );
   }
 }
-
 
 export { Card, PreviewCard, CardMarker };

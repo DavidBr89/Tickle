@@ -18,6 +18,10 @@ export function extendSelectedCard(options) {
   return { type: EXTEND_SELECTED_CARD, options };
 }
 
+export const FLIP_CARD = 'FLIP_CARD';
+export function flipCard(options) {
+  return { type: FLIP_CARD, options };
+}
 // export const FILTER = 'FILTER';
 // export function filter(options) {
 //   return { type: FILTER, options };

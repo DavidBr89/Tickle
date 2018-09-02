@@ -139,34 +139,16 @@ const DescriptionField = ({
 }) => (
   <CardThemeConsumer>
     {({ uiColor, stylesheet: { shallowBg, shallowBorder } }) => (
-      <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
-        <FieldSet
-          uiColor={uiColor}
-          className={`${css(shallowBg)} ${css(shallowBorder)} ${className}`}
-          legend="Description"
-          icon={<FieldIcon edit={edit} />}
-        >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              height: '100%'
-            }}
-          >
-            <div
-              className={css(stylesheet.truncate)}
-              style={{ height: '100%', overflow: 'hidden' }}
-            >
-              {text !== null ? (
-                text
-              ) : (
-                <span style={{ fontStyle: 'italic' }}>{placeholder}</span>
-              )}
-            </div>
-          </div>
-        </FieldSet>
-      </div>
+      <FieldSet
+        uiColor={uiColor}
+        className={`${css(shallowBg)} ${css(shallowBorder)} ${className}`}
+        legend="Description"
+        icon={<FieldIcon edit={edit} />}
+        style={{ ...style, cursor: 'pointer' }}
+        onClick={onClick || onEdit}
+      >
+        {text}
+      </FieldSet>
     )}
   </CardThemeConsumer>
 );
@@ -203,26 +185,26 @@ const MediaField = ({
 }) => (
   <CardThemeConsumer>
     {({ uiColor, stylesheet: { shallowBg, shallowBorder } }) => (
-      <div style={{ ...style, cursor: 'pointer' }} onClick={onClick || onEdit}>
-        <FieldSet
-          icon={<FieldIcon edit={edit} />}
-          className={`${css(shallowBg)} ${css(shallowBorder)} ${className}`}
-          legend="Media"
-          uiColor={uiColor}
-        >
-          <div style={{ display: 'flex', alignContent: 'end' }}>
-            {Array.isArray(media) && media.length > 0 ? (
-              <PreviewMedia
-                data={media}
-                smallScreen={smallScreen}
-                style={{ width: '100%', height: '100%' }}
-              />
-            ) : (
-              <div style={{ fontStyle: 'italic' }}>{placeholder}</div>
-            )}
-          </div>
-        </FieldSet>
-      </div>
+      <FieldSet
+        icon={<FieldIcon edit={edit} />}
+        className={`${css(shallowBg)} ${css(shallowBorder)} ${className}`}
+        legend="Media"
+        uiColor={uiColor}
+        onClick={onClick || onEdit}
+        style={style}
+      >
+        <div style={{ display: 'flex', alignContent: 'end' }}>
+          {Array.isArray(media) && media.length > 0 ? (
+            <PreviewMedia
+              data={media}
+              smallScreen={smallScreen}
+              style={{ width: '100%', height: '100%' }}
+            />
+          ) : (
+            <div style={{ fontStyle: 'italic' }}>{placeholder}</div>
+          )}
+        </div>
+      </FieldSet>
     )}
   </CardThemeConsumer>
 );
@@ -336,6 +318,7 @@ Img.defaultProps = { src: null, style: {} };
 
 export const ImgOverlay = ({ src, className, style, children, footer }) => (
   <div
+    className={className}
     style={{
       position: 'relative',
       // width: '100%',
@@ -345,7 +328,6 @@ export const ImgOverlay = ({ src, className, style, children, footer }) => (
     }}
   >
     <img
-      className={className}
       src={src || placeholderImgSrc}
       alt="Card img"
       style={{ width: '100%', height: '100%', overflow: 'hidden', ...style }}
@@ -565,8 +547,7 @@ export const PreviewTags = ({ data, style, placeholder, small, colorScale }) =>
         alignItems: 'center',
         flexWrap: 'wrap',
         overflow: 'hidden',
-        ...style,
-        ...tagsStyle
+        ...style
         // overflowY: 'visible'
         // flexWrap: 'no-wrap'
         // alignItems: 'center'

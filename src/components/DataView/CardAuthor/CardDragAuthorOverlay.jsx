@@ -63,7 +63,7 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
     >
       <DataOverlay
         className="mb-1"
-        style={{ flex: '1 1 100%' }}
+        style={style}
         author
         data={cards}
         disabled={isCardDragging}

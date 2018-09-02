@@ -100,12 +100,19 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const { authUser } = stateProps;
 
   const { fetchCollectibleCards } = dispatchProps;
-  console.log('AUTH_USER', authUser);
   const fetchCards = () => {
     fetchCollectibleCards(authUser.uid);
   };
 
-  return { ...ownProps, ...stateProps, ...dispatchProps, fetchCards };
+  return {
+    ...ownProps,
+    ...stateProps,
+    ...dispatchProps,
+    fetchCards,
+    selectedCardId: null,
+    //TODO
+    userInfoExtended: false
+  };
 };
 
 const authCondition = authUser => authUser !== null;
