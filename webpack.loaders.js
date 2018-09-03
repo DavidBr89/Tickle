@@ -19,7 +19,7 @@ module.exports = [
   },
   {
     test: /\.scss$/,
-    exclude: /[/\\]components[/\\]/,
+    // exclude: /[/\\]components[/\\]/,
     use: [
       {
         loader: 'style-loader'
@@ -36,17 +36,17 @@ module.exports = [
     ]
   },
   // local scss modules
-  {
-    test: /\.scss$/,
-    include: /[/\\](components)[/\\]/,
-    exclude: /[/\\](node_modules)[/\\]/,
-    loaders: [
-      'style-loader?sourceMap',
-      'css-loader?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]',
-      'postcss-loader',
-      'sass-loader'
-    ]
-  },
+  // {
+  //   test: /\.scss$/,
+  //   include: /[/\\](components)[/\\]/,
+  //   exclude: /[/\\](node_modules)[/\\]/,
+  //   loaders: [
+  //     'style-loader?sourceMap',
+  //     'css-loader?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]',
+  //     'postcss-loader',
+  //     'sass-loader'
+  //   ]
+  // },
   // {
   //   enforce: 'pre',
   //   test: /\.js$/,
@@ -55,7 +55,7 @@ module.exports = [
   // },
   {
     test: /\.(ts|tsx)$/,
-    loader: 'awesome-typescript-loader'
+    loader: 'ts-loader'
   },
   {
     // enforce: 'pre',

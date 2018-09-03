@@ -1,0 +1,9 @@
+.card-expanded {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+}

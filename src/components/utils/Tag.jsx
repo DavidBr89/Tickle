@@ -244,9 +244,10 @@ export const PreviewTags = ({
   style,
   placeholder,
   small,
-  colorScale
+  colorScale, onClick
 }) => (
   <div
+    onClick={onClick}
     style={{
       display: 'flex',
       alignItems: 'center',

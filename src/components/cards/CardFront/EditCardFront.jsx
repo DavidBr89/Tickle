@@ -12,13 +12,14 @@ import { css } from 'aphrodite/no-important';
 // import PhotoChallenge from 'Src/components/Challenges/MatchPhotoChallenge';
 import ChallengeAuthorModalBody from 'Src/components/ChallengeAuthor';
 import { extractCardFields } from 'Constants/cardFields';
-import { MODAL_FULL_HEIGHT } from 'Constants/styleDimensions';
 
 import { Modal, StyledModalBody } from 'Utils/Modal';
 import { MediaSearch, MediaOverview } from '../MediaSearch';
 import { coverPhotoStyle } from '../styles';
 
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
+
+import CardFront from './CardFront';
 
 import {
   // FieldSet,
@@ -372,170 +373,47 @@ class EditCardFront extends PureComponent {
       challenge
     } = data;
 
-    const invalid = tags === null || tags.length === 0;
-
     return (
-      <CardFrame
-        style={{
-          zIndex: 4000,
-          ...style
-        }}
-        title={title}
-        onClose={onClose}
-        background={background}
-        uiColor={uiColor}
-        edit
-        editButton={
-          <EditButton
-            onClick={() =>
-              this.setState({
-                dialog: { title: 'Title', data: title }
-              })
-            }
-          />
-        }
-        flipHandler={flipHandler}
-      >
-        <div className={css(cardLayout)}>
-          <Modal visible={modalVisible}>{this.modalWriteContent()}</Modal>
-          <ImgOverlay
-            src={img && img.url}
-            className={css(coverPhoto)}
-            footer={
-              <EditButton
-                style={{
-                  position: 'absolute',
-                  bottom: 5,
-                  right: 5,
-                  width: 40,
-                  height: 40,
-                  zIndex: 3000
-                }}
-                onClick={() => {
-                  this.setState({
-                    dialog: { title: 'Photo', data: tags }
-                  });
-                }}
-              />
-            }
-          >
-            <div
-              className="m-2"
-              style={{
-                position: 'absolute',
-                zIndex: 200,
-                left: 0,
-                top: 0,
-                width: '100%'
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  width: '100%'
-                }}
-              >
-                {invalid ? (
-                  <div className="alert alert-danger">
-                    Please add at least one tag!
-                  </div>
-                ) : (
-                  <PreviewTags colorScale={tagColorScale} data={tags} />
-                )}
-                <EditButton
-                  className="mr-3"
-                  onClick={() => {
-                    this.setState({
-                      dialog: { title: 'Tags', data: tags }
-                    });
-                  }}
-                />
-              </div>
-            </div>
-          </ImgOverlay>
-          <DescriptionField
-            className="mb-1"
-            style={{ maxHeight: '20%' }}
-            text={description}
-            borderColor={uiColor}
-            edit
-            onEdit={() =>
-              this.setState({
-                dialog: {
-                  title: 'Description',
-                  id: 'description',
-                  data: description
-                }
-              })
-            }
-          />
-          <MediaField
-            className="mb-1"
-            style={{ maxHeight: '20%' }}
-            media={smallScreen ? media.slice(0, 2) : media}
-            smallScreen={smallScreen}
-            borderColor={uiColor}
-            edit
-            onEdit={() =>
-              this.setState({
-                dialog: { title: 'Media', data: media }
-              })
-            }
-          />
-          <div
-            style={{
-              display: 'flex',
-              flexShrink: 0,
-              justifyContent: 'space-between',
-              width: '100%'
-            }}
-          >
-            <div style={{ width: '80%', display: 'flex' }}>
-              {template && (
-                <BigButton
-                  className="mr-2"
-                  disabled={invalid}
-                  edit
-                  onClick={() => {
-                    // TODO
-                    const message = window.confirm(
-                      `Are you sure you wish to ${
-                        added ? 'remove' : 'create'
-                      } this card?`
-                    );
-
-                    if (message) {
-                      onSubmit(data);
-                      this.setState({ added: !added });
-                    }
-                  }}
-                >
-                  {added ? 'Remove Card' : 'Create Card'}
-                </BigButton>
-              )}
-              <BigButton
-                edit
-                disabled={invalid}
-                onClick={() =>
-                  this.setState({
-                    dialog: { title: 'Challenge', data: challenge }
-                  })
-                }
-              >
-                {template ? 'Add Chall.' : 'Update Challenge'}
-              </BigButton>
-            </div>
-            <FlipButton
-              style={{ width: '20%' }}
-              color={uiColor}
-              onClick={flipHandler}
-              className="ml-3"
-            />
-          </div>
-          {children}
-        </div>
-      </CardFrame>
+      <React.Fragment>
+        <Modal visible={modalVisible}>{this.modalWriteContent()}</Modal>
+        <CardFront
+          {...this.props}
+          onClose={onClose}
+          onTagsClick={() => {
+            this.setState({
+              dialog: { title: 'Tags', data: tags }
+            });
+            console.log('onTagsClick');
+          }}
+          onTitleClick={() =>
+            this.setState({
+              dialog: { title: 'Title', data: title }
+            })
+          }
+          onImgClick={() => {
+            this.setState({
+              dialog: { title: 'Photo', data: tags }
+            });
+          }}
+          onDescriptionClick={() => {
+            console.log('click description');
+            this.setState({
+              dialog: { title: 'Description', data: description }
+            });
+          }}
+          onMediaClick={() =>
+            this.setState({
+              dialog: { title: 'Media', data: media }
+            })
+          }
+          onChallengeClick={() =>
+            this.setState({
+              dialog: { title: 'Challenge', data: challenge }
+            })
+          }
+          onFlip={flipHandler}
+        />
+      </React.Fragment>
     );
   }
 }

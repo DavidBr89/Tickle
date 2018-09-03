@@ -7,13 +7,16 @@ import MediaChallenge from 'Components/Challenges/MediaChallenge';
 import { TagInput, PreviewTags } from 'Utils/Tag';
 import { Modal, ModalBody } from 'Utils/Modal';
 
-import { MODAL_FULL_HEIGHT } from 'Constants/styleDimensions';
-
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
 import { MediaOverview } from 'Components/cards/MediaSearch';
 
+import placeholderImgSrc from '../placeholder.png';
+
 import CardFrame from '../CardHeader';
+import CardFront from './CardFront';
+
+import { X } from 'react-feather';
 
 import { Btn } from 'Components/cards/layout';
 
@@ -27,7 +30,6 @@ import {
   DescriptionField,
   EditButton,
   Img,
-  ImgOverlay,
   ZoomIcon,
   // Tags,
   // SmallPreviewTags,
@@ -36,6 +38,49 @@ import {
 } from '../layout';
 
 const defaultProps = {};
+
+const ImgOverlay = ({ src, className, style, children, footer }) => (
+  <div
+    className={className}
+    style={{
+      position: 'relative',
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      ...style
+    }}
+  >
+    <img
+      src={src || placeholderImgSrc}
+      alt="Card img"
+      style={{ width: '100%', height: '100%', overflow: 'hidden', ...style }}
+    />
+    <div
+      style={{
+        position: 'absolute',
+        width: '100%',
+        // zIndex: 200,
+        left: 0,
+        top: 0
+      }}
+    >
+      {children}
+    </div>
+  </div>
+);
+
+const Title = ({ onClick, children }) => (
+  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+    <div className="ml-1" style={{ maxWidth: '100%' }} onClick={onClick}>
+      <h1 style={{ marginBottom: 0 }} className="text-truncate">
+        {children === null ? (
+          <span className="text-muted">No Title</span>
+        ) : (
+          children
+        )}
+      </h1>
+    </div>
+  </div>
+);
 
 class ReadCardFront extends Component {
   static propTypes = {
@@ -190,77 +235,49 @@ class ReadCardFront extends Component {
       stylesheet,
       tagColorScale,
       style,
-      smallScreen
+      smallScreen,
+      onHeaderClick,
+      onClose
     } = this.props;
 
     const { dialogKey, challengeSubmitted } = this.state;
     const modalVisible = dialogKey !== null;
-    const { coverPhoto, cardLayout } = stylesheet;
-    // TODO: modal color
     return (
-      <CardFrame
-        {...this.props}
-        onHeaderClick={() =>
-          this.setState({
-            dialogKey: 'title'
-          })
-        }
-        style={{
-          zIndex: 4000,
-          ...style
-        }}
-      >
-        <div className={css(cardLayout)}>
-          <Modal
-            visible={modalVisible}
-            title={dialogKey}
-            onClose={() => this.setState({ dialogKey: null })}
-          >
-            {this.modalReadContent(dialogKey)}
-          </Modal>
-          <ImgOverlay src={img ? img.url : null} className={css(coverPhoto)}>
-            <PreviewTags colorScale={tagColorScale} data={tags} />
-          </ImgOverlay>
-          <DescriptionField
-            text={description}
-            style={{flex: '0 1 18%'}}
-            onEdit={() =>
-              this.setState({
-                dialogKey: 'Description'
-              })
-            }
-          />
-          <MediaField
-            smallScreen={smallScreen}
-            media={smallScreen ? media.slice(0, 2) : media.slice(0, 4)}
-            onClick={() => this.setState({ dialogKey: 'Media' })}
-          />
-          <div className="" style={{ display: 'flex', flexShrink: 0 }}>
-            <BigButton
-              onClick={() =>
-                this.setState({
-                  dialogKey: 'Challenge'
-                })
-              }
-              style={{ width: '80%' }}
-            >
-              {this.btnText()}
-            </BigButton>
+      <React.Fragment>
+        <Modal
+          visible={modalVisible}
+          title={dialogKey}
+          onClose={() => this.setState({ dialogKey: null })}
+        >
+          {this.modalReadContent(dialogKey)}
+        </Modal>
 
-            <FlipButton
-              color={uiColor}
-              onClick={flipHandler}
-              className="ml-2"
-            />
-          </div>
-        </div>
-      </CardFrame>
+        <CardFront
+          {...this.props}
+          onClose={onClose}
+          onTitleClick={() => console.log('img click')}
+          onImgClick={() => console.log('img click')}
+          onDescriptionClick={() =>
+            this.setState({
+              dialogKey: 'Description'
+            })
+          }
+          onMediaClick={() => this.setState({ dialogKey: 'Media' })}
+          onChallengeClick={() =>
+            this.setState({
+              dialogKey: 'Challenge'
+            })
+          }
+          onFlip={flipHandler}
+        />
+      </React.Fragment>
     );
   }
 }
 
 // <span className="ml-1">
 //                 <Icon.Lock />
+//
 //               </span>
 const StyledReadCardFront = props => (
   <CardThemeConsumer>

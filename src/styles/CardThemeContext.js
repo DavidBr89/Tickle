@@ -72,21 +72,20 @@ const makeStylesheet = ({ uiColor, background }) => {
       borderTop: `1px solid ${uiColor}`
     },
     cardLayout: {
-      margin: 4,
+      // margin: 4,
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'space-evenly',
+      justifyContent: 'space-between',
       flex: '0 1 100%'
       // height: '90%'
     },
     coverPhoto: {
-      flex: '0 1 45%',
+      flex: '0 1 40%',
+      // height: '40%',
       minHeight: 0,
       maxWidth: '100%',
       marginLeft: 'auto',
-      marginRight: 'auto',
-      width: 'auto',
-      height: 'auto'
+      marginRight: 'auto'
     },
     flipContainer: {
       '-webkit-perspective': 1000,

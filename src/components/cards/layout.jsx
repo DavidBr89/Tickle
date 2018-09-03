@@ -147,7 +147,7 @@ const DescriptionField = ({
         style={{ ...style, cursor: 'pointer' }}
         onClick={onClick || onEdit}
       >
-        {text}
+        {text || <p style={{ fontStyle: 'italic' }}>{placeholder}</p>}
       </FieldSet>
     )}
   </CardThemeConsumer>
@@ -222,7 +222,7 @@ MediaField.defaultProps = {
   media: null,
   onEdit: null,
   onClick: null,
-  placeholder: 'Add a video, webpage or a sound snippet',
+  placeholder: 'No video, webpage or a sound snippet',
   style: {},
   edit: false
 };
@@ -441,78 +441,6 @@ FlipButton.defaultProps = {
   className: ''
 };
 
-const randomComment = () =>
-  [
-    'woah, what a nice card',
-    'that was really a hidden and interesting place',
-    'A real piece of art',
-    'this is one of the best sights in Brussels',
-    'without this app I would have never found this place'
-  ][Math.floor(Math.random() * 4)];
-
-const Comments = ({ data, extended, onClose }) => (
-  <div>
-    {extended && (
-      <button
-        type="button"
-        className="close "
-        data-dismiss="modal"
-        aria-label="Close"
-        onClick={onClose}
-      >
-        <span aria-hidden="true">×</span>
-      </button>
-    )}
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center'
-      }}
-    >
-      <div>
-        {data.map(({ comment, user, date, imgSrc }) => (
-          <div style={{ display: 'flex' }}>
-            <img
-              className={`${cx.avatar} mr-3`}
-              width="20%"
-              height="20%"
-              src={profileSrc()}
-              alt="alt"
-            />
-            <div className="media-body">
-              <div className={cx.textClamp}>
-                <small>{randomComment()}</small>
-              </div>
-              <div>
-                <small className="font-italic">
-                  - {user}, {date && date.toString()}
-                </small>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>
-);
-
-Comments.propTypes = {
-  data: PropTypes.array.isRequired,
-  extended: PropTypes.bool.isRequired
-};
-
-Comments.defaultProps = {
-  data: [
-    {
-      user: 'Jan',
-      date: new Date(),
-      comment: 'Yes, cool shit',
-      imgSrc: profileSrc()
-    }
-  ],
-  extended: false
-};
-
 export const Btn = ({
   onClick,
   children,
@@ -535,13 +463,21 @@ export const Btn = ({
   </CardThemeConsumer>
 );
 
-export const PreviewTags = ({ data, style, placeholder, small, colorScale }) =>
+export const PreviewTags = ({
+  data,
+  style,
+  placeholder,
+  small,
+  colorScale,
+  onClick
+}) =>
   data !== null && data.length === 0 ? (
-    <div className="alert alert-danger">
+    <div className="alert alert-danger" onClick={onClick}>
       <strong>No Tag!</strong> Please add at least one tag!
     </div>
   ) : (
     <div
+      onClick={onClick}
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -559,11 +495,4 @@ export const PreviewTags = ({ data, style, placeholder, small, colorScale }) =>
     </div>
   );
 
-export {
-  DescriptionField,
-  PreviewMedia,
-  MediaField,
-  EditButton,
-  Img,
-  Comments
-};
+export { DescriptionField, PreviewMedia, MediaField, EditButton, Img };

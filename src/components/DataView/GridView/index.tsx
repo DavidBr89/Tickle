@@ -1,13 +1,11 @@
 import React from 'react';
 
-interface IAppProps {
-  message: string;
-}
+import CardGrid from './AnimatedGrid';
 
-export default function({ message }: IAppProps) {
+import { range } from 'd3';
+
+export default function() {
   return (
-    <div>
-      <h1>Hello {message}</h1>
-    </div>
+      <CardGrid  />
   );
 }
