@@ -4,6 +4,9 @@ import { withRouter } from 'react-router-dom';
 import { css } from 'aphrodite';
 // import { compose } from 'recompose';
 
+// import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
 import { SignUpLink } from '../SignUp';
 import { PasswordForgetLink } from '../Password';
 
@@ -14,6 +17,8 @@ import * as routes from 'Constants/routes';
 
 import { GlobalThemeConsumer, stylesheet } from 'Src/styles/GlobalThemeContext';
 
+import { setAuthUser } from 'Reducers/Session/actions';
+
 const byPropKey = (propertyName, value) => () => ({
   [propertyName]: value
 });
@@ -21,13 +26,13 @@ const byPropKey = (propertyName, value) => () => ({
 function onSubmit(event) {
   const { email, password } = this.state;
 
-  const { history, onAuthenticate } = this.props;
+  const { onAuthenticate } = this.props;
   // console.log('auth', auth);
 
   auth
     .doSignInWithEmailAndPassword(email, password)
-    .then(() => {
-      onAuthenticate(history);
+    .then(usr => {
+      onAuthenticate(usr);
     })
     .catch(error => {
       this.setState(byPropKey('error', error));
@@ -40,13 +45,29 @@ const SignInPage = ({ history }) => (
   <div className="content-block">
     <h1>SignIn</h1>
     <SignInForm
-      history={history}
-      onAuthenticate={history => history.push(routes.DATAVIEW)}
+      onAuthenticate={(usr) => {
+      console.log('usr', usr)
+        // setAuthUser(authUser);
+        history.push(routes.DATAVIEW_TAGS);
+      }}
     />
     <PasswordForgetLink />
     <SignUpLink />
   </div>
 );
+
+const mapDispatchToProps = dispatch => ({
+  onSetAuthUser: authUser => {
+    dispatch(setAuthUser(authUser));
+  }
+});
+
+// const mergeProps = (stateProps, dispatchProps, ownProps) => ({});
+const ConnectedSignInPage = connect(
+  null,
+  mapDispatchToProps,
+  null
+)(SignInPage);
 
 const INITIAL_STATE = {
   email: null,
@@ -156,7 +177,7 @@ export class SignInModalBody extends Component {
   };
 
   static defaultProps = {
-    onAuthenticate: history => history.push(routes.DATAVIEW),
+    onAuthenticate: history => history.push(routes.DATAVIEW_TAGS),
     history: null
   };
 

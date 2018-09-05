@@ -55,15 +55,6 @@ const mapStateToProps = state => {
     )
   );
 
-  console.log(
-    'startedCards',
-    startedCards,
-    'submittedCards',
-    submittedCards,
-    'collectedCards',
-    collectedCards
-  );
-
   return {
     authUser: {
       ...state.Screen,

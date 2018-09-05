@@ -11,7 +11,7 @@ import Admin from './components/Admin';
 import Account from './components/Account';
 import DefaultLayout from './components/Layout';
 
-import Grid from './components/DataView/GridView/index.tsx';
+import Grid from './components/DataView/GridView';
 
 import withAuthentication from './components/withAuthentication';
 // import AuthUserContext from './components/AuthUserContext';

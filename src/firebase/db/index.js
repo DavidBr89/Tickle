@@ -31,7 +31,7 @@ const pruneFields = fields => {
 
 const thumbFileName = fileName => `thumb_${fileName}`;
 
-const CARDS = 'jan_cards';
+const CARDS = 'cards';
 const getShallowCards = uid =>
   firestore
     .collection(CARDS)
