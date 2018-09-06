@@ -19,9 +19,6 @@ class Cell extends PureComponent {
         <div
           onClick={onClick}
           style={{
-            border: 'blue 2px solid',
-            display: 'flex',
-            justifyContent: 'center',
             ...style
           }}
         >
@@ -48,6 +45,52 @@ const STARTED = 'started';
 const COLLECTED = 'collected';
 const SUBMITTED = 'submitted';
 const OPEN = 'open';
+
+const Linx = ({ width, height, nodes, domNodes }) => {
+  const makePath = (s, t) => {
+    const tgt = nodes.find(e => e.id === t);
+    const coords = [[s.pos, 0], [tgt.pos, height]];
+    console.log('tgt', t, tgt, s, 'coords', coords);
+    return <path d={d3.line()(coords)} stroke="black" fill="none" />;
+  };
+
+  const coords = Object.keys(domNodes).map(k => {
+    const pos = [domNodes[k].offsetLeft, domNodes[k].offsetTop];
+    return { id: k, pos };
+  });
+
+  console.log('coords', coords);
+
+  return (
+    <svg
+      width={width}
+      height={height}
+      style={{ position: 'absolute', zIndex: -1 }}
+    >
+      {nodes.map(s => s.children.map(c => makePath(s, c)))}
+    </svg>
+  );
+};
+
+const unStratify = root => {
+  const stack = [root];
+  let stackItem = 0;
+  let current;
+  let children, i, len;
+
+  while ((current = stack[stackItem++])) {
+    // get the arguments
+    children = current.children || [];
+    for (i = 0, len = children.length; i < len; i++) {
+      stack.push(children[i]);
+    }
+  }
+  return stack.map(e => ({
+    ...e,
+    children: e.children ? e.children.map(d => d.id) : []
+  }));
+};
+
 export default class Grid extends Component {
   componentDidMount() {
     // will automatically clean itself up when dom node is removed
@@ -62,51 +105,77 @@ export default class Grid extends Component {
     expanded: null,
     selected: null,
     colWidth: 10,
-    tags: this.props.userTags.map(t => ({ id: t, title: t, level: 0 }))
+    tags: [{ id: 'root', title: 'root', parent: null, depth: 0 }] // this.props.userTags.map(t => ({ id: t, title: t, depth: 0 }))
   };
 
   componentDidUpdate(prevProps, prevState) {
-    const { expanded } = this.state;
-    if (prevState.expanded !== expanded) this.scrollTo(expanded);
+    const { selected } = this.state;
+    if (prevState.selected !== selected) this.scrollTo(selected);
+    this.scrollTo('addNode');
   }
 
+  dict = {};
   render() {
-    const { userTags } = this.props;
+    const { userTags, width, height } = this.props;
     const { tags } = this.state;
     const cards = d3.range(0, 100).map(d => ({ id: d, title: d }));
     const { expanded, selected } = this.state;
     const colWidth = 25;
 
+    const root = d3
+      .stratify()
+      // .id(function(d) { return d.name; })
+      .parentId(d => d.parent)(tags);
+
+    const partition = d3
+      .partition()
+      .size([200, 200])
+      .padding(0)
+      .round(true)(root);
+
+    const tmpFlatNodes = unStratify(partition);
+    // TODO: fix check
+    const selectedTag = tmpFlatNodes.find(t => t.id == selected) || {
+      depth: -1
+    };
+    console.log('selected', selected, 'selectedTag', selectedTag);
+
+    const calcWidth = ({ length, selLevel, width }) => {
+      const size = width / length;
+      const ret = Math.max(20, size);
+      console.log('ret', ret);
+      return ret;
+    };
+
     const nestedTags = d3
       .nest()
-      .key(d => d.level)
-      .entries(tags)
-      .map(d => ({ ...d, level: d.values[0].level }));
+      .key(d => d.depth)
+      .entries(tmpFlatNodes)
+      .map(d => ({ ...d, depth: d.values[0].depth }))
+      .map(d => {
+        const w = calcWidth({
+          length: d.values.length,
+          width
+        });
+        const values = d.values.map((e, i) => {
+          console.log('wid', w);
+          return { ...e, width: w, pos: w * i };
+        });
+        return { ...d, values };
+      });
 
-    console.log('nestedTags', userTags, nestedTags);
-
-    const selectedTag = tags.find(t => t.id === selected) || { level: -1 };
+    const flatNodes = nestedTags.reduce((acc, d) => acc.concat(d.values), []);
     console.log('nestedTags', nestedTags);
 
     const CellWrapper = e => (
-      <Cell
-        {...e}
-        key={e.id}
-        id={e.id}
-        expanded={expanded === e.id}
-        onClick={() =>
-          this.setState({ selected: selected !== e.id ? e.id : null })
-        }
-      />
+      <Cell {...e} key={e.id} id={e.id} expanded={expanded === e.id} />
     );
 
     const addTag = t => this.setState(st => ({ tags: [...st.tags, t] }));
 
-    const calcSize = ({ length, level, selLevel }) => {
-      if (length) return 50;
-      return 100 / (length + (selectedTag.level + 1 === selLevel ? 1 : 0));
-    };
+    const gap = 80;
 
+    const pad = 40;
     return (
       <div
         className="content-block"
@@ -123,70 +192,83 @@ export default class Grid extends Component {
         </select>
         <ScrollView ref={scroller => (this._scroller = scroller)}>
           <div>
+            <Linx
+              nodes={flatNodes}
+              width={width}
+              height={height}
+              domNodes={this.dict}
+            />
             <div ref={el => (this.grid = el)}>
               {nestedTags.map(d => (
-                <div
-                  style={{
-                    display: 'flex',
-                    width: '100%',
-                    justifyContent: 'center'
-                  }}
-                >
-                  {d.values.map(e => (
-                    <CellWrapper
-                      {...e}
-                      style={{
-                        overflow: 'hidden',
-                        margin: 5,
-                        flex: `0 1 ${calcSize({
-                          length: d.values.length,
-                          level: d.level,
-                          selLevel: selectedTag.level
-                        })}%`,
-                        minWidth: 0,
-                        transition: 'all 1s',
-                        background: selected === e.id ? 'gold' : null
-                      }}
-                    />
-                  ))}
-                  {selectedTag.level + 1 === d.level && (
-                    <div
-                      style={{
-                        margin: 5,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        border: '1px green dashed',
-                        flex: '1 0 50%'
-                      }}
-                      onClick={() =>
-                        addTag({
-                          id: Math.random(),
-                          title: 'test',
-                          level: d.level,
-                          parent: null
-                        })
-                      }
-                    >
-                      Add Node
-                    </div>
-                  )}
-                </div>
+                <React.Fragment>
+                  <div
+                    key={d.key}
+                    style={{
+                      display: 'flex',
+                      width: '100%',
+                      height: 200,
+                      // margin: 1,
+                      // marginBottom: 70,
+                      overflow: 'scroll',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    {d.values.map(e => (
+                      <div
+                        ref={r => (this.dict[e.id] = r)}
+                        onClick={() =>
+                          this.setState({
+                            selected: selected !== e.id ? e.id : null
+                          })
+                        }
+                        style={{
+                          overflow: 'hidden',
+                          height: '100%',
+                          flex: `1 1 ${e.width}px`,
+                          minWidth: 100,
+                          transition: 'all 1s',
+                          // TODO: fix later
+                          background: selected == e.id ? 'gold' : null,
+                          border: 'blue 2px solid',
+                          display: 'flex',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <CellWrapper {...e.data} />
+                        {selectedTag.depth === d.depth && (
+                          <div
+                            style={{
+                              margin: 5,
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'flex-end',
+                              height: '100%'
+                              // width: 200,
+                              // height: 200
+                            }}
+                          >
+                            <div
+                              style={{
+                                border: '1px solid black'
+                              }}
+                              onClick={() =>
+                                addTag({
+                                  id: flatNodes.length + 1,
+                                  title: flatNodes.length + 1,
+                                  depth: d.depth,
+                                  parent: selected
+                                })
+                              }
+                            >
+                              Add Children
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </React.Fragment>
               ))}
-              {selectedTag.level + 1 === nestedTags.length && (
-                <div
-                  onClick={() =>
-                    addTag({
-                      id: Math.random(),
-                      title: 'test',
-                      level: nestedTags.length,
-                      parent: selected
-                    })
-                  }
-                  style={{ width: '50%' }}
-                >
-                  Plus
-                </div>
-              )}
             </div>
           </div>
         </ScrollView>
