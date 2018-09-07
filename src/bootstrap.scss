@@ -227,6 +227,8 @@ html, body {
   @extend .container;
   padding: 0;
   background: blanchedalmond;
+  display: flex;
+  flex-direction: column;
   // overflow: scroll;
 }
 
