@@ -235,6 +235,7 @@ class CardAuthorPage extends Component {
           tagColorScale={tagColorScale}
           selectedCardId={selectedCardId}
           extCardId={extCardId}
+          previewCardAction={previewCardAction}
           style={{
             // TODO: remvoe for topic map
             flex: '1 1 70%',

@@ -72,7 +72,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     asyncCreateCard({ uid, cardData, viewport, dataView });
 
   const onCardUpdate = cardData =>
-    selectedCardId === 'temp'
+    cardData.id === 'temp'
       ? updateCardTemplate({ cardData, viewport, dataView })
       : asyncUpdateCard({ uid, cardData, viewport, dataView });
 
@@ -112,8 +112,9 @@ const EditCard = ({
     key={props.id}
     onClose={closeCard}
     edit
-    onSubmit={d => {
+    onCreate={d => {
       createCard({ ...d, x, y });
+      closeCard();
     }}
     onDelete={() => asyncRemoveCard(props.id)}
     tagColorScale={tagColorScale}

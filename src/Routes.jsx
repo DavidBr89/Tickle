@@ -9,6 +9,7 @@ import CardView from './components/DataView/CardView';
 import CardAuthor from './components/DataView/CardAuthor';
 import Admin from './components/Admin';
 import Account from './components/Account';
+import MyCards from './components/MyCards';
 import DefaultLayout from './components/Layout';
 
 import Grid from './components/DataView/GridView';
@@ -28,6 +29,14 @@ const GRID = 'grid';
 const Routes = ({ history }) => (
   <HashRouter>
     <Switch>
+      <Route
+        path={routes.MYCARDS}
+        render={() => (
+          <DefaultLayout>
+            <MyCards />
+          </DefaultLayout>
+        )}
+      />
       <Route
         path={`${`${
           routes.AUTH_ENV
@@ -99,12 +108,10 @@ const Routes = ({ history }) => (
         )}
       />
       <Route
-        path={`${
-          routes.DATAVIEW_FLOORPLAN
-        }/:selectedCardId?/:extended?/:flipped?`}
+        path={`${routes.DATAVIEW}/:selectedCardId?/:extended?/:flipped?`}
         render={() => (
           <DefaultLayout>
-            <CardView path={routes.DATAVIEW_FLOORPLAN} dataView={FLOORPLAN} />
+            <CardView path={routes.DATAVIEW} dataView={FLOORPLAN} />
           </DefaultLayout>
         )}
       />

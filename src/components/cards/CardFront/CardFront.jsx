@@ -13,25 +13,35 @@ import { MediaOverview } from 'Components/cards/MediaSearch';
 
 import placeholderImgSrc from '../placeholder.png';
 
-import CardFrame from '../CardHeader';
+import { X, Edit, Search } from 'react-feather';
 
-import { X } from 'react-feather';
+import { FieldSet } from 'Components/utils/StyledComps';
+
+import { mediaScale } from 'Constants/mediaTypes';
 
 import {
-  MediaField,
-  ChallengeField,
-  DescriptionField,
-  EditButton,
-  Img,
-  ZoomIcon,
+  // MediaField,
+  // ChallengeField,
+  // DescriptionField,
+  // EditButton,
+  // Img,
+  // ZoomIcon,
   BigButton,
   FlipButton
 } from '../layout';
 
 const defaultProps = {};
 
-const ImgOverlay = ({ src, className, style, children, footer }) => (
+const TagLabels = ({ tags, tagColorScale }) => (
+  <PreviewTags
+    colorScale={tagColorScale}
+    data={tags && tags.length > 0 ? tags : ['No Tags']}
+  />
+);
+
+const ImgOverlay = ({ src, className, style, children, footer, onClick }) => (
   <div
+    onClick={onClick}
     className={className}
     style={{
       position: 'relative',
@@ -50,6 +60,7 @@ const ImgOverlay = ({ src, className, style, children, footer }) => (
       style={{
         position: 'absolute',
         width: '100%',
+        height: '100%',
         // zIndex: 200,
         left: 0,
         top: 0
@@ -60,19 +71,202 @@ const ImgOverlay = ({ src, className, style, children, footer }) => (
   </div>
 );
 
-const Title = ({ onClick, children }) => (
-  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-    <div className="ml-1" style={{ maxWidth: '100%' }} onClick={onClick}>
-      <h1 style={{ marginBottom: 0 }} className="text-truncate">
-        {children === null ? (
-          <span className="text-muted">No Title</span>
-        ) : (
-          children
-        )}
-      </h1>
-    </div>
+const Title = ({ onClick, edit, children }) => (
+  <h1 className="text-truncate" onClick={onClick}>
+    {children === null ? (
+      <div>
+        <span className="text-muted">No Title</span> {edit && <Edit />}
+      </div>
+    ) : (
+      children
+    )}
+  </h1>
+);
+
+const FieldIcon = ({ edit, className, style }) =>
+  edit ? (
+    <span
+      className={className}
+      style={{ cursor: 'pointer', fontSize: '1.2rem', ...style }}
+    >
+      <Edit size={30} />
+    </span>
+  ) : (
+    <span
+      className={className}
+      style={{ cursor: 'pointer', fontSize: '1.2rem', ...style }}
+    >
+      <Search size={30} />
+    </span>
+  );
+
+const DescriptionField = ({
+  text,
+  onEdit,
+  onClick,
+  placeholder,
+  className,
+  style,
+  edit
+}) => (
+  <CardThemeConsumer>
+    {({ uiColor, stylesheet: { shallowBg, shallowBorder } }) => (
+      <FieldSet
+        uiColor={uiColor}
+        className={`${css(shallowBg)} ${css(shallowBorder)} ${className}`}
+        legend="Description"
+        style={{ ...style, cursor: 'pointer' }}
+        onClick={onClick || onEdit}
+      >
+        <div style={{ display: 'flex' }}>
+          <div style={{ width: '100%' }}>
+            {text || <p style={{ fontStyle: 'italic' }}>{placeholder}</p>}
+          </div>
+          <FieldIcon edit={edit} />
+        </div>
+      </FieldSet>
+    )}
+  </CardThemeConsumer>
+);
+
+DescriptionField.propTypes = {
+  text: PropTypes.oneOf([PropTypes.string, null]),
+  // TODO: how to
+  onEdit: PropTypes.func,
+  onClick: PropTypes.func,
+  placeholder: PropTypes.string,
+  style: PropTypes.object,
+  edit: PropTypes.bool
+};
+
+DescriptionField.defaultProps = {
+  text: null,
+  onEdit: null,
+  onClick: null,
+  placeholder:
+    'Add a description for your card to give hints how to succeed the Challenge',
+  style: {},
+  edit: false
+};
+
+const MediaField = ({
+  media,
+  onEdit,
+  onClick,
+  style,
+  placeholder,
+  edit,
+  smallScreen,
+  className
+}) => (
+  <CardThemeConsumer>
+    {({ uiColor, stylesheet: { shallowBg, shallowBorder } }) => (
+      <FieldSet
+        className={`${css(shallowBg)} ${css(shallowBorder)} ${className}`}
+        uiColor={uiColor}
+        onClick={onClick || onEdit}
+        style={style}
+      >
+        <div style={{ display: 'flex', alignContent: 'end' }}>
+          {Array.isArray(media) && media.length > 0 ? (
+            <PreviewMedia
+              data={media}
+              smallScreen={smallScreen}
+              style={{ width: '100%', height: '100%' }}
+            />
+          ) : (
+            <div style={{ fontStyle: 'italic', width: '100%' }}>
+              {placeholder}
+            </div>
+          )}
+          <FieldIcon edit={edit} />
+        </div>
+      </FieldSet>
+    )}
+  </CardThemeConsumer>
+);
+
+MediaField.propTypes = {
+  media: PropTypes.oneOf([null, PropTypes.array]),
+  onEdit: PropTypes.func,
+  onClick: PropTypes.func,
+  placeholder: PropTypes.string,
+  style: PropTypes.object,
+  edit: PropTypes.bool
+};
+
+MediaField.defaultProps = {
+  media: null,
+  onEdit: null,
+  onClick: null,
+  placeholder: 'No video, webpage or a sound snippet',
+  style: {},
+  edit: false
+};
+
+const PreviewMedia = ({ data, style, smallScreen }) => (
+  <div
+    style={{
+      style,
+      display: 'flex',
+      alignItems: 'center',
+      flexWrap: 'wrap',
+      width: '100%'
+    }}
+  >
+    {data.map(m => (
+      <div
+        key={m.url}
+        className="mr-1"
+        style={{
+          display: 'flex',
+          maxWidth: `${
+            smallScreen
+              ? Math.max(80 / data.length, 45)
+              : Math.max(100 / data.length, 40)
+          }%`
+        }}
+      >
+        <div className="mr-1">{React.createElement(mediaScale(m.type))}</div>
+        <div
+          style={{
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
+          }}
+        >
+          {m.title}
+        </div>
+      </div>
+    ))}
   </div>
 );
+
+PreviewMedia.propTypes = {
+  data: PropTypes.array.isRequired,
+  style: PropTypes.object
+  // extended: PropTypes.bool
+};
+
+PreviewMedia.defaultProps = {
+  data: [{ title: 'bka', url: 'bla', descr: 'bla' }],
+  extended: false,
+  style: { width: '90%' }
+};
+
+const EditButton = ({ style, onClick, className }) => (
+  <button className={`close ml-1 ${className}`} style={style} onClick={onClick}>
+    <Edit />
+  </button>
+);
+
+EditButton.propTypes = {
+  style: PropTypes.object,
+  className: PropTypes.string,
+  onClick: PropTypes.func
+};
+
+EditButton.defaultProps = { style: {}, onClick: () => null, className: '' };
 
 class CardFront extends Component {
   static propTypes = {
@@ -136,17 +330,52 @@ class CardFront extends Component {
       onTitleClick,
       onChallengeClick,
       onFlip,
-      onTagsClick
+      onTagsClick,
+      onCreate,
+      edit,
+      template
     } = this.props;
 
     const { cardLayout, btn } = stylesheet;
 
+    const Controls = () => (
+      <div
+        className=""
+        style={{
+          display: 'flex',
+          flexShrink: 0,
+          marginTop: 'auto'
+        }}
+      >
+        <button className={css(btn)} onClick={onClose}>
+          <X size={30} />
+        </button>
+        <div
+          style={{ marginLeft: 'auto', marginRight: 'auto', display: 'flex' }}
+        >
+          <BigButton onClick={onChallengeClick}>Challenge</BigButton>
+          {template && (
+            <BigButton className="ml-1" onClick={onCreate}>
+              Create
+            </BigButton>
+          )}
+        </div>
+        <FlipButton color={uiColor} onClick={onFlip} />
+      </div>
+    );
+
     return (
       <div
-        style={{ height: '100%', zIndex: 3000 }}
-        className={`${css(cardLayout)} p-3`}
+        style={{
+          height: '100%',
+          zIndex: 3000,
+          border: '5px grey solid',
+          ...style
+        }}
+        className={css(cardLayout)}
       >
         <ImgOverlay
+          onClick={onImgClick}
           src={img ? img.url : null}
           style={{
             flex: '0 1 40%',
@@ -154,38 +383,48 @@ class CardFront extends Component {
           }}
         >
           <div
-            className="m-1"
-            style={{ display: 'flex', justifyContent: 'space-between' }}
+            style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              justifyContent: 'flex-end',
+              alignItems: 'flex-end'
+            }}
           >
-            <PreviewTags
-              colorScale={tagColorScale}
-              data={tags}
-              onClick={onTagsClick}
-            />
-            <button className={css(btn)} onClick={onClose}>
-              <X size={30} />
-            </button>
+            <FieldIcon edit={edit} className="m-1" />
           </div>
         </ImgOverlay>
-        <Title onClick={onTitleClick}>{title}</Title>
-        <DescriptionField
-          text={description}
-          placeholder="No Description"
-          style={{ flex: '0 1 20%' }}
-          onEdit={onDescriptionClick}
-        />
-        <MediaField
-          smallScreen={smallScreen}
-          style={{ flex: '0 1 20%' }}
-          media={smallScreen ? media.slice(0, 2) : media.slice(0, 4)}
-          onClick={onMediaClick}
-        />
-        <div className="" style={{ display: 'flex', flexShrink: 0 }}>
-          <BigButton onClick={onChallengeClick} style={{ width: '80%' }}>
-            Challenge
-          </BigButton>
-          <FlipButton color={uiColor} onClick={onFlip} className="ml-2" />
+        <div
+          className="mt-3 mr-3 ml-3 mb-1"
+          style={{
+            flex: '0 1 60%',
+            display: 'flex',
+            flexDirection: 'column'
+            // justifyContent: 'space-around'
+          }}
+        >
+          <Title edit={edit} onClick={onTitleClick}>
+            {title}
+          </Title>
+
+          <div className="mb-1" onClick={onTagsClick}>
+            <TagLabels tags={tags} tagColorScale={tagColorScale} />
+          </div>
+          <MediaField
+            edit={edit}
+            media={media}
+            className="mb-2"
+            onClick={onMediaClick}
+          />
+          <DescriptionField
+            text={description}
+            placeholder="No Description"
+            style={{ flex: '0 1 20%' }}
+            edit={edit}
+            onEdit={onDescriptionClick}
+          />
         </div>
+        <Controls />
       </div>
     );
   }

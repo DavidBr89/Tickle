@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import { bindActionCreators } from 'redux';
+
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { stylesheet } from 'Src/styles/GlobalThemeContext';
@@ -10,6 +12,8 @@ import { css } from 'aphrodite';
 // import SignOutButton from '../SignOut';
 
 import Navigation from '../Navigation';
+
+import { screenResize } from 'Reducers/Screen/actions';
 
 // import DocumentMeta from 'react-document-meta';
 
@@ -24,13 +28,12 @@ class Menu extends Component {
     className: PropTypes.string
   };
 
-  state = {
-    open: false
-  };
+  // state = {
+  //   open: false
+  // };
 
   render() {
-    const { style, children } = this.props;
-    const { open } = this.state;
+    const { style, open, children, onToggle } = this.props;
     return (
       <div style={{ ...style }}>
         <nav
@@ -44,7 +47,7 @@ class Menu extends Component {
           }}
         >
           <button
-            onClick={() => this.setState(oldSt => ({ open: !oldSt.open }))}
+            onClick={onToggle}
             style={{ background: 'whitesmoke' }}
             className="navbar-toggler"
             type="button"
@@ -90,30 +93,53 @@ class DefaultLayout extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { isToggleOn: false };
 
-    // This binding is necessary to make `this` work in the callback
     this.handleClick = this.handleClick.bind(this);
   }
 
-  handleClick() {
+  state = { open: false };
+
+  handleClick = () => {
     this.setState(prevState => ({
-      isToggleOn: !prevState.isToggleOn
+      open: !prevState.open
     }));
+  };
+
+  componentDidMount() {
+    const { screenResize } = this.props;
+    const android = /(android)/i.test(navigator.userAgent);
+    const iOS =
+      !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+
+    screenResize({
+      width: this.cont.offsetWidth,
+      height: this.cont.offsetHeight,
+      android,
+      iOS
+    });
   }
 
   render() {
     const { children, activePath, isAndroid } = this.props;
+    const { open } = this.state;
 
     // style={{ height: isAndroid ? '100vh' : '100vh' }}
     return (
-      <div id="content-container">
-        <Menu style={{ position: 'absolute' }}>
-          <Navigation activePath={activePath}>
-            {(r, name) => (
-              <Link className="btn mb-2" to={r}>
+      <div id="content-container" ref={c => (this.cont = c)}>
+        <Menu
+          open={open}
+          style={{ position: 'absolute' }}
+          onToggle={this.handleClick}
+        >
+          <Navigation>
+            {({ name }) => (
+              <div
+                onClick={() => {
+                  this.setState({ open: false });
+                }}
+              >
                 {name}
-              </Link>
+              </div>
             )}
           </Navigation>
         </Menu>
@@ -125,18 +151,22 @@ class DefaultLayout extends Component {
 
 const mapStateToProps = state => ({ ...state.Screen });
 
-/*
-exampleAction: authUser => {
-    dispatch(setAuthUser(authUser));
-  }
-*/
-const mergeProps = (stateProps, _, ownProps) => ({
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      screenResize
+    },
+    dispatch
+  );
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...stateProps,
+  ...dispatchProps,
   ...ownProps
 });
 
 export default connect(
   mapStateToProps,
-  null,
+  mapDispatchToProps,
   mergeProps
 )(DefaultLayout);

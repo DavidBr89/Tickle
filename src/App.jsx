@@ -128,27 +128,15 @@ function configureStore(rootReducer, initialState) {
 
 const store = configureStore(rootReducer);
 
-window.addEventListener('DOMContentLoaded', () => {
-  //TODO
-  //TODO
-  //TODO
-  //TODO
-  //TODO
-  //TODO
-  const cont = document.querySelector('#content-container');
-  const android = /(android)/i.test(navigator.userAgent);
-  const iOS =
-    !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
-
-  store.dispatch(
-    screenResize({
-      width: cont.offsetWidth,
-      height: cont.offsetHeight,
-      android,
-      iOS
-    })
-  );
-});
+// window.addEventListener('DOMContentLoaded', () => {
+//   //TODO
+//   //TODO
+//   //TODO
+//   //TODO
+//   //TODO
+//   //TODO
+//   const cont = document.querySelector('#content-container');
+// });
 
 // TODO
 navigator.geolocation.getCurrentPosition(
@@ -157,8 +145,9 @@ navigator.geolocation.getCurrentPosition(
       latitude: pos.coords.latitude,
       longitude: pos.coords.longitude
     };
-    store.dispatch(userMove(coords));
-    store.dispatch(changeMapViewport(coords));
+    const turnoud = { latitude: 51.325087, longitude: 4.943867 };
+    store.dispatch(userMove(turnoud));
+    store.dispatch(changeMapViewport(turnoud));
   },
   err => console.log('err', err),
   {

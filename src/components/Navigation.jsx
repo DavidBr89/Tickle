@@ -21,7 +21,7 @@ import {
 import { stylesheet } from 'Src/styles/GlobalThemeContext';
 import { css } from 'aphrodite';
 
-import { setDataView } from 'Reducers/DataView/actions';
+// import { setDataView } from 'Reducers/DataView/actions';
 
 // const zip= rows=>rows[0].map((_,c)=>rows.map(row=>row[c]))
 
@@ -51,14 +51,14 @@ const includePath = (pathA, pathB) => {
   return splA[0] === splB[0];
 };
 
-const InnerLi = ({ name, path, curPath, active, subRoutes = [] }) => (
+const InnerLi = ({ name, path, curPath, active, children, subRoutes = [] }) => (
   <li className="mb-2">
     <Link
       className={`nav-link ${css(stylesheet.bareBtn)} ${subRoutes.length > 0 &&
         'mb-2'}`}
       to={path}
     >
-      {name}
+      {children}
     </Link>
     {curPath.includes(path) && (
       <ul>
@@ -85,11 +85,14 @@ const NavigationHelper = ({
   pathName,
   location,
   routes,
-  signOut
+  signOut,
+  children
 }) => (
   <ul className="navList ">
     {Object.keys(routes).map(key => (
-      <InnerLi {...routes[key]} curPath={location.pathname} />
+      <InnerLi {...routes[key]} curPath={location.pathname}>
+        {children(routes[key])}
+      </InnerLi>
     ))}
     {signOut && (
       <li>
@@ -137,6 +140,7 @@ const Navigation = ({ authUser, ...props }) => {
   }
   if (authUser !== null)
     return <NavigationHelper {...props} signOut routes={authRoutes} />;
+
   return <NavigationHelper {...props} routes={nonAuthRoutes} />;
 };
 

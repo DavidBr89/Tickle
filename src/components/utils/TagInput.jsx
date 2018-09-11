@@ -9,7 +9,8 @@ export const TagInput = class TagInput extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
-    onSelect: PropTypes.func
+    onSelect: PropTypes.func,
+    placeholder: PropTypes.string
   };
   static defaultProps = {
     data: [],
@@ -17,7 +18,8 @@ export const TagInput = class TagInput extends Component {
     onAdd: d => d,
     onRemove: d => d,
     onTagInputChange: d => d,
-    onSelect: d => d
+    onSelect: d => d,
+    placeholder: 'Search by tags'
   };
 
   render() {
@@ -30,57 +32,58 @@ export const TagInput = class TagInput extends Component {
       style,
       inputTag,
       onSelect,
-      vocabulary
+      vocabulary,
+      placeholder
     } = this.props;
 
+    const firstData = data.slice(0, 5);
+    const secData = data.slice(5);
     return (
-      <div>
+      <div style={style}>
         <div
           style={{
             display: 'flex',
-            alignItems: 'center',
+            justifyContent: 'space-between',
+            // alignItems: 'center',
             backgroundColor: '#fff',
             overflow: 'hidden',
-            padding: 5
+            padding: 5,
+            width: '100%'
             // width: 300
           }}
         >
-          <div
+          <form
             style={{
               display: 'flex',
               flexWrap: 'no-wrap',
-              justifyContent: 'space-between',
               alignItems: 'center'
-              // zIndex: 2000
-              // width: 250
+            }}
+            onSubmit={event => {
+              event.preventDefault();
+              onAdd(inputTag);
             }}
           >
-            <form
-              onSubmit={event => {
-                event.preventDefault();
-                onAdd(inputTag);
+            <input
+              className="form-control"
+              type="text"
+              placeholder={placeholder}
+              onSelect={onSelect}
+              value={inputTag}
+              onChange={event => onTagInputChange(event.target.value)}
+              style={{
+                position: 'relative',
+                // zIndex: 1000,
+                background: 'transparent',
+                border: 0,
+                color: '#777',
+                outline: 'none',
+                padding: 5,
+                minWidth: 40
+                // width: 80
               }}
-            >
-              <input
-                className="form-control"
-                type="text"
-                placeholder="Search by Tag"
-                onSelect={onSelect}
-                value={inputTag}
-                onChange={event => onTagInputChange(event.target.value)}
-                style={{
-                  position: 'relative',
-                  // zIndex: 1000,
-                  background: 'transparent',
-                  border: 0,
-                  color: '#777',
-                  outline: 'none',
-                  padding: 5,
-                  minWidth: 40
-                  // width: 80
-                }}
-              />
-            </form>
+            />
+          </form>
+          <div style={{ marginLeft: 'auto' }}>
             <button
               className={`${css(stylesheet.bareBtn)} ml-2 mr-2 pl-2 pr-2`}
               type="button"
@@ -91,34 +94,59 @@ export const TagInput = class TagInput extends Component {
             >
               +
             </button>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                flexWrap: 'no-wrap'
-              }}
-            >
-              {data.map(key => (
-                <button
-                  className={`${css(stylesheet.bareBtn)} mr-1`}
-                  style={{
-                    position: 'relative',
-                    maxWidth: 100,
-                    // zIndex: 4000,
-                    fontSize: 'small',
-                    fontWeight: 'bold',
-                    display: 'inline-flex'
-                  }}
-                  onClick={() => onRemove(key)}
-                >
-                  <span className={`mr-1 ${css(stylesheet.truncate)}`}>
-                    {key}
-                  </span>
-                  <span>x</span>
-                </button>
-              ))}
-            </div>
           </div>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center'
+              // flexWrap: 'no-wrap'
+            }}
+          >
+            {firstData.map(key => (
+              <button
+                className={`${css(stylesheet.bareBtn)} mr-1`}
+                style={{
+                  position: 'relative',
+                  maxWidth: 100,
+                  // zIndex: 4000,
+                  fontSize: 'small',
+                  fontWeight: 'bold',
+                  display: 'inline-flex'
+                }}
+                onClick={() => onRemove(key)}
+              >
+                <span className={`mr-1 ${css(stylesheet.truncate)}`}>
+                  {key}
+                </span>
+                <span>x</span>
+              </button>
+            ))}
+          </div>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center'
+            // flexWrap: 'no-wrap'
+          }}
+        >
+          {secData.map(key => (
+            <button
+              className={`${css(stylesheet.bareBtn)} mr-1`}
+              style={{
+                position: 'relative',
+                maxWidth: 100,
+                // zIndex: 4000,
+                fontSize: 'small',
+                fontWeight: 'bold',
+                display: 'inline-flex'
+              }}
+              onClick={() => onRemove(key)}
+            >
+              <span className={`mr-1 ${css(stylesheet.truncate)}`}>{key}</span>
+              <span>x</span>
+            </button>
+          ))}
         </div>
         <Hits
           data={vocabulary.filter(
@@ -137,13 +165,14 @@ const Hits = ({ data, text, onAdd }) => (
       width: '100%',
       background: 'white',
       position: 'absolute',
+      zIndex: 20000,
       borderLeft: rawCSS.border,
       borderRight: rawCSS.border,
       borderBottom: rawCSS.border
     }}
   >
     {data.length > 0 && (
-      <div className="m-3">
+      <div className="mt-3">
         {data.map(d => (
           <div className="mb-2">
             <button
@@ -190,8 +219,8 @@ export const DropDown = class DropDown extends Component {
   };
 
   render() {
-    const {style} = this.props;
-    const { active, curSet, curKey, setList} = this.state;
+    const { style } = this.props;
+    const { active, curSet, curKey, setList } = this.state;
 
     // const isCurSetNew =
     //   curSet.length > 0 &&
@@ -203,7 +232,7 @@ export const DropDown = class DropDown extends Component {
         style={{
           alignItems: 'center',
           backgroundColor: '#fff',
-          maxWidth: '60%',
+          // maxWidth: '60%',
           position: 'relative',
           ...style
           // border: '2px solid #ccc'
@@ -217,6 +246,7 @@ export const DropDown = class DropDown extends Component {
         >
           <TagInput
             {...this.props}
+            style={{ width: '100%' }}
             data={curSet}
             onTagInputChange={key => this.setState({ curKey: key })}
             inputTag={curKey}

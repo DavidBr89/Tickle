@@ -29,7 +29,8 @@ const CardViewOverlay = props => {
     style,
     iOS,
     smallScreen,
-    className
+    className,
+    previewCardAction
   } = props;
 
   return (
@@ -56,6 +57,12 @@ const CardViewOverlay = props => {
       colorScale={tagColorScale}
       preview={d => (
         <CardMarker
+          style={{ pointerEvents: 'all' }}
+          onClick={e => {
+            console.log('pointerEvents');
+            previewCardAction(d);
+            e.stopPropagation();
+          }}
           color="whitesmoke"
           style={{
             // TODO: zIndex not working

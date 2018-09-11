@@ -70,10 +70,15 @@ export function deleteCardError(options) {
   return { type: ERROR_DELETE_CARD, options };
 }
 
-export const UPDATE_CARD_TEMPLATE = 'UPDATE_CARD_TEMPLATE_X';
+export const UPDATE_CARD_TEMPLATE = 'UPDATE_CARD_TEMPLATE';
 export function updateCardTemplate(options) {
   console.log(UPDATE_CARD_TEMPLATE);
   return { type: UPDATE_CARD_TEMPLATE, options };
+}
+
+export const SET_DEFAULT_TEMPLATE = 'SET_DEFAULT_TEMPLATE';
+export function setDefaultTemplate(options) {
+  return { type: SET_DEFAULT_TEMPLATE, options };
 }
 
 // export const TOGGLE_CARD_AUTHORING = 'TOGGLE_CARD_AUTHORING';

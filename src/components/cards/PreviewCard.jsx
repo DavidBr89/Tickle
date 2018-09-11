@@ -127,17 +127,6 @@ class PreviewCard extends Component {
         ) : (
           <PlaceholderField text="Title" style={{ fontSize: '18px' }} />
         )}
-        {Array.isArray(tags) && tags.length > 0 ? (
-          <PreviewTags
-            small
-            colorScale={tagColorScale}
-            data={tags}
-            style={{ flexWrap: null }}
-          />
-        ) : (
-          <PlaceholderField text="Tags" style={{ fontSize: '80%' }} />
-        )}
-
         <div
           className="mt-1 mb-1"
           style={{ height: '50%', background: '#ffd70080' }}
@@ -149,7 +138,7 @@ class PreviewCard extends Component {
                 width: '100%',
                 height: '100%'
               }}
-              src={img ? img.thumbnail || img.url : placeholderImg}
+              src={img.thumbnail ? img.thumbnail || img.url : placeholderImg}
               alt="Card cap"
             />
           ) : (

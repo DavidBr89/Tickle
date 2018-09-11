@@ -2,7 +2,7 @@ import React, { Component, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import ReadCardFront from './ReadCardFront';
 import EditCardFront from './EditCardFront';
-import CardHeader from '../CardHeader';
+// import CardHeader from '../CardHeader';
 
 const CardFront = props =>
   props.edit ? <EditCardFront {...props} /> : <ReadCardFront {...props} />;

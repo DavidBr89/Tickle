@@ -15,35 +15,38 @@ export function fetchUserInfo(uid) {
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
   return function(dispatch) {
-    return db
-      .getDetailedUserInfo(uid)
-      .then(usrInfo => {
-        const {
-          interests,
-          createdCards,
-          collectedCards,
-          ...userDetails
-        } = usrInfo;
+    dispatch(setAuthUserInfo({ uid }));
+    if (uid !== null) {
+      return db
+        .getDetailedUserInfo(uid)
+        .then(usrInfo => {
+          const {
+            interests,
+            createdCards,
+            collectedCards,
+            ...userDetails
+          } = usrInfo;
 
-        const cardSets = setify([...createdCards, ...collectedCards]);
+          const cardSets = setify([...createdCards, ...collectedCards]);
 
-        const numCollectedCards = collectedCards.length;
-        const numCreatedCards = createdCards.length;
+          const numCollectedCards = collectedCards.length;
+          const numCreatedCards = createdCards.length;
 
-        const detailInfo = {
-          ...userDetails,
-          interests,
-          cardSets,
-          skills: cardSets,
-          collectedCards,
-          createdCards,
-          numCollectedCards,
-          numCreatedCards
-        };
+          const detailInfo = {
+            ...userDetails,
+            interests,
+            cardSets,
+            skills: cardSets,
+            collectedCards,
+            createdCards,
+            numCollectedCards,
+            numCreatedCards
+          };
 
-        dispatch(setAuthUserInfo({ uid, ...detailInfo }));
-      })
-      .catch(err => console.log('err', err));
+          dispatch(setAuthUserInfo({ uid, ...detailInfo }));
+        })
+        .catch(err => console.log('err', err));
+    }
   };
 }
 

@@ -45,29 +45,15 @@ const SignInPage = ({ history }) => (
   <div className="content-block">
     <h1>SignIn</h1>
     <SignInForm
-      onAuthenticate={(usr) => {
-      console.log('usr', usr)
-        // setAuthUser(authUser);
-        history.push(routes.DATAVIEW_TAGS);
+      onAuthenticate={usr => {
+        console.log('usr', usr);
+        history.push(routes.DATAVIEW_GEO);
       }}
     />
     <PasswordForgetLink />
     <SignUpLink />
   </div>
 );
-
-const mapDispatchToProps = dispatch => ({
-  onSetAuthUser: authUser => {
-    dispatch(setAuthUser(authUser));
-  }
-});
-
-// const mergeProps = (stateProps, dispatchProps, ownProps) => ({});
-const ConnectedSignInPage = connect(
-  null,
-  mapDispatchToProps,
-  null
-)(SignInPage);
 
 const INITIAL_STATE = {
   email: null,

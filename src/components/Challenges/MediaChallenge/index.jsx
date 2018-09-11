@@ -101,11 +101,7 @@ class MediaChallenge extends Component {
               }}
             >
               <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                <div className="mr-1">
-                  {completed
-                    ? `${challBtnTxt} submitted`
-                    : `Submit ${challBtnTxt}`}
-                </div>
+                <div className="mr-1">{completed ? 'Submitted' : 'Submit'}</div>
                 {completed && <div>{iconLock}</div>}
               </div>
             </Btn>

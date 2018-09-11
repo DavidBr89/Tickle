@@ -25,6 +25,7 @@ import EditCard from 'Components/cards/ConnectedEditCard';
 import { updateCardTemplate, dragCard } from 'Reducers/Cards/actions';
 
 import { asyncUpdateCard } from 'Reducers/Cards/async_actions';
+import { selectCard } from 'Reducers/DataView/actions';
 
 // import { extendSelectedCard } from 'Reducers/DataView/actions';
 
@@ -51,8 +52,54 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
     cards,
     style,
     onSubmitChallenge,
-    className
+    className,
+    selectCard,
+    previewCardAction
   } = props;
+  const PreviewCard = d => {
+    const selected = selectedCardId === d.id;
+
+    return (
+      <DragSourceCont
+        dragHandler={dragCard}
+        data={d}
+        x={d.x}
+        y={d.y}
+        selected={selected}
+        style={{
+          border: selected && '2px dashed black'
+          // zIndex: selected ? 5000 : 100
+        }}
+      >
+        {selected && (
+          <div style={{ position: 'absolute', width: 200 }}>Drag and drop</div>
+        )}
+        <div
+          onClick={e => {
+            previewCardAction(d);
+            e.stopPropagation();
+          }}
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          <CardMarker
+            color="whitesmoke"
+            style={{
+              width: 25,
+              height: 30,
+              transform: selectedCardId === d.id && 'scale(2)'
+            }}
+          />
+        </div>
+      </DragSourceCont>
+    );
+  };
+
   return (
     <DropTargetCont
       dropHandler={onCardDrop}
@@ -83,18 +130,7 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
           right: width / 5
         }}
         colorScale={tagColorScale}
-        preview={d => (
-          <DragSourceCont dragHandler={dragCard} data={d} x={d.x} y={d.y}>
-            <CardMarker
-              color="whitesmoke"
-              style={{
-                // TODO: zIndex not working
-                zIndex: selectedCardId === d.id ? 5000 : 100,
-                transform: selectedCardId === d.id && 'scale(2)'
-              }}
-            />
-          </DragSourceCont>
-        )}
+        preview={PreviewCard}
       >
         {({ x, y, ...c }) => (
           <EditCard {...c} x={x} y={y} dataView={dataView} />
@@ -120,7 +156,8 @@ const mapDispatchToProps = dispatch =>
     {
       updateCardTemplate,
       dragCard,
-      asyncUpdateCard
+      asyncUpdateCard,
+      selectCard
     },
     dispatch
   );
@@ -134,7 +171,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const viewport = { ...mapViewport, width, height };
 
   const onCardDrop = cardData => {
-    console.log('cardData', cardData);
+    // console.log('cardData', cardData);
     selectedCardId === 'temp'
       ? updateCardTemplate({ uid, cardData, viewport, dataView })
       : asyncUpdateCard({ cardData, viewport, dataView });

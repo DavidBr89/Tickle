@@ -42,8 +42,6 @@ export default function updCardDataDim({ rawData, viewport, dataView }) {
     // tags: rawData.tags.length === 0 ? ['no_tags'] : rawData.tags
   };
 
-  console.log('cardData UPDATE', rawData);
-
   switch (dataView) {
     case GEO:
       return updCardLoc(cardData, viewport);

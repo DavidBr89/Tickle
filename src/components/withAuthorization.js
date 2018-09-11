@@ -6,7 +6,7 @@ import { withRouter } from 'react-router-dom';
 import { firebase } from '../firebase';
 import * as routes from '../constants/routes';
 
-import { setAuthUser } from 'Reducers/Session/actions';
+import { fetchUserInfo } from 'Reducers/Session/async_actions';
 
 const withAuthorization = condition => Component => {
   class WithAuthorization extends React.Component {
@@ -18,7 +18,7 @@ const withAuthorization = condition => Component => {
           onSetAuthUser(null);
           this.props.history.push(routes.SIGN_IN);
         } else {
-          onSetAuthUser({ authUser });
+          onSetAuthUser(authUser.uid);
           // this.setState({ authUser });
         }
       });
@@ -38,8 +38,8 @@ const withAuthorization = condition => Component => {
   });
 
   const mapDispatchToProps = dispatch => ({
-    onSetAuthUser: authUser => {
-      dispatch(setAuthUser(authUser));
+    onSetAuthUser: uid => {
+      dispatch(fetchUserInfo(uid));
     }
   });
 

@@ -27,7 +27,6 @@ const CardViewable = ({
     iOS={iOS}
     smallScreen={smallScreen}
     key={props.id}
-    edit={false}
     bookmarkable
     onClose={closeCard}
     tagColorScale={tagColorScale}
@@ -36,6 +35,7 @@ const CardViewable = ({
     style={{ zIndex: 4000 }}
     frontView={flipped}
     {...props}
+    edit={false}
     challengeComp={
       <MediaChallenge
         {...props.challenge}
@@ -78,7 +78,11 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const { uid } = authUser;
   const { path } = match;
   const { flipped } = match.params;
-  const { routeExtendCard, routeFlipCard } = dispatcherProps;
+  const {
+    routeExtendCard,
+    routeFlipCard,
+    asyncSubmitChallenge
+  } = dispatcherProps;
   // TODO replace by regex
 
   const closeCard = () => {

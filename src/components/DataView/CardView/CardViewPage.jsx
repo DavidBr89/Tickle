@@ -129,7 +129,7 @@ class CardViewPage extends Component {
       selectCard,
       filterCards,
       addCardFilter,
-      allTagsCollectible,
+      tagVocabulary,
       // setDataView,
       filterSet,
       toggleAuthEnv,
@@ -150,7 +150,7 @@ class CardViewPage extends Component {
         style={{ position: 'relative', overflow: 'hidden' }}
       >
         <CardTagSearch
-          allTags={allTagsCollectible}
+          allTags={tagVocabulary}
           key={filterSet.join(',')}
           onChange={filterCards}
           onSelect={() => selectCard(null)}
@@ -163,9 +163,10 @@ class CardViewPage extends Component {
             display: 'flex',
             justifyContent: 'center',
             transition: 'opacity 0.5s',
-            zIndex: 3000,
+            // zIndex: 3000,
             flexBasis: '25%',
-            opacity: cardPanelVisible ? 1 : 0, marginBottom: 25
+            opacity: cardPanelVisible ? 1 : 0,
+            marginBottom: 25
           }}
         >
           <CardStack

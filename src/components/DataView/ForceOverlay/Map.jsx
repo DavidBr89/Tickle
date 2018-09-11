@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import MapGL from 'react-map-gl';
+import MapGL, { HTMLOverlay } from 'react-map-gl';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { UserOverlay } from '../../utils/map-layers/DivOverlay';
+// import { UserOverlay } from '../../utils/map-layers/DivOverlay';
 
 import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 
@@ -173,7 +173,6 @@ class Map extends Component {
       selectedCardId !== null &&
       prevProps.selectedCardId !== selectedCardId
     ) {
-      console.log('NODES', nodes, 'selectedCardId', selectedCardId);
       const selectedNode = nodes.find(n => selectedCardId === n.id);
       const {
         loc: { longitude, latitude }
@@ -195,7 +194,8 @@ class Map extends Component {
       userLocation,
       preview,
       width,
-      height
+      height,
+      isCardDragging
     } = this.props;
 
     const { latitude, longitude, zoom } = viewport;
@@ -212,11 +212,15 @@ class Map extends Component {
 
     const userPos = vp.project([userLocation.longitude, userLocation.latitude]);
 
+    function redraw() {
+      return locNodes.map(children);
+    }
+
     return (
       <MapGL
         mapStyle={mapStyleUrl}
         onViewportChange={newViewport => {
-          if (!disabled) {
+          if (!isCardDragging) {
             this.props.changeMapViewport({ ...newViewport });
           }
         }}
@@ -231,9 +235,20 @@ class Map extends Component {
         <div
           style={{
             position: 'absolute',
+            // left: userPos[0],
+            // top: userPos[1]
+            // zIndex: 2000
+          }}
+        >
+          {redraw()}
+        </div>
+
+        <div
+          style={{
+            position: 'absolute',
             left: userPos[0],
-            top: userPos[1],
-            zIndex: 2000
+            top: userPos[1]
+            // zIndex: 2000
           }}
         >
           <img
@@ -243,23 +258,6 @@ class Map extends Component {
             style={{ transform: 'translate(-50%,-50%)' }}
           />
         </div>
-
-        <Cluster
-          radius={d =>
-            // console.log('d', d);
-            80
-          }
-          nodes={locNodes}
-          width={width}
-          height={height}
-          colorScale={colorScale}
-        >
-          {({ centerPos: [x, y], data: d }) => (
-            <ForceCollide data={d.values} targetPos={[x, y]}>
-              {children}
-            </ForceCollide>
-          )}
-        </Cluster>
       </MapGL>
     );
   }
@@ -269,11 +267,13 @@ class Map extends Component {
 const mapStateToProps = ({
   MapView: { mapViewport, userLocation, width, height },
   DataView: { selectedCardId },
+  Cards: { isCardDragging },
   Screen
 }) => ({
   viewport: { ...mapViewport, ...Screen },
   userLocation,
-  selectedCardId
+  selectedCardId,
+  isCardDragging
 });
 
 const mapDispatchToProps = dispatch =>

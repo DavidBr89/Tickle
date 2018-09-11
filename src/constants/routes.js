@@ -18,8 +18,13 @@ export const ACCOUNT = '/account';
 export const ADMIN = '/admin';
 export const PASSWORD_FORGET = '/pw-forget';
 export const HOME = '/home';
+export const MYCARDS = '/my-cards';
 
 const HOME_ROUTE = { HOME: { name: 'Home', path: HOME, subRoutes: [] } };
+const MYCARDS_ROUTE = {
+  MYCARDS: { name: 'My Cards', path: MYCARDS, subRoutes: [] }
+};
+
 const SIGN_IN_ROUTE = {
   SIGN_IN: { name: 'Sign In', path: SIGN_IN, subRoutes: [] }
 };
@@ -30,11 +35,11 @@ const DATAVIEW_ROUTE = {
   DATAVIEW: {
     name: 'Card View',
     // TODO: change later
-    path: DATAVIEW_FLOORPLAN,
+    path: DATAVIEW_GEO,
     subRoutes: [
       // { name: 'Geo', path: DATAVIEW_GEO },
-      { name: 'Treasure Map', path: DATAVIEW_FLOORPLAN },
-      { name: 'Topic', path: DATAVIEW_TAGS }
+      // { name: 'Treasure Map', path: DATAVIEW_FLOORPLAN },
+      // { name: 'Topic', path: DATAVIEW_TAGS }
     ]
   }
 };
@@ -45,9 +50,9 @@ const AUTH_ENV_ROUTE = {
     // TODO: change later
     path: AUTH_ENV_GEO,
     subRoutes: [
-      { name: 'Geo', path: AUTH_ENV_GEO },
-      { name: 'FloorPlan', path: AUTH_ENV_FLOORPLAN },
-      { name: 'Topic', path: AUTH_ENV_TAGS }
+      // { name: 'Geo', path: AUTH_ENV_GEO }
+      // { name: 'FloorPlan', path: AUTH_ENV_FLOORPLAN },
+      // { name: 'Topic', path: AUTH_ENV_TAGS }
     ]
   }
 };
@@ -67,13 +72,15 @@ export const Routes = {
   ...PASSWORD_FORGET_ROUTE,
   ...ADMIN_ROUTE,
   ...ACCOUNT_ROUTE,
+  ...MYCARDS_ROUTE,
   ...PASSWORD_FORGET_ROUTE
 };
 
 export const authRoutes = {
   ...HOME_ROUTE,
   ...DATAVIEW_ROUTE,
-  // ...AUTH_ENV_ROUTE,
+  ...MYCARDS_ROUTE,
+  ...AUTH_ENV_ROUTE,
   // TODO: change
   // ...ADMIN_ROUTE,
   ...ACCOUNT_ROUTE
@@ -84,7 +91,8 @@ export const adminRoutes = {
   ...DATAVIEW_ROUTE,
   ...AUTH_ENV_ROUTE,
   ...ADMIN_ROUTE,
-  ...ACCOUNT_ROUTE
+  ...ACCOUNT_ROUTE,
+  ...MYCARDS_ROUTE
 };
 
 export const nonAuthRoutes = {

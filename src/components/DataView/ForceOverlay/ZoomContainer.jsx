@@ -107,14 +107,14 @@ class ZoomContainer extends Component {
 
   componentDidMount() {
     this.zoomFactoryCont = this.zoomFactory(this.props);
-    d3.select(this.zoomCont)
-      .call(this.zoomFactoryCont)
-      .on('dblclick.zoom', null);
+    // d3.select(this.zoomCont)
+    //   .call(this.zoomFactoryCont)
+    //   .on('dblclick.zoom', null);
     // .duration(0);
     // .on('.zoom', null);
 
     const zoomHandler = centerView(this.props);
-    d3.select(this.zoomCont).call(this.zoomFactoryCont.transform, zoomHandler);
+    // d3.select(this.zoomCont).call(this.zoomFactoryCont.transform, zoomHandler);
 
     // d3.select(this.zoomCont).call(
     //   this.zoomFactoryCont.transform,
@@ -165,8 +165,8 @@ class ZoomContainer extends Component {
       .extent([[0, 0], [width, height]])
       .filter(() => {
         console.log('yeah', d3.event);
-        // return !d3.event.target.classList.contains('no-zoom');
-        return true;
+        return !d3.event.target.classList.contains('no-zoom');
+        // return true;
       })
       .on('zoom', () => {
         this.setState({

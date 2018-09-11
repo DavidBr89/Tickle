@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { X } from 'react-feather';
-import { uniqBy } from 'lodash';
+// import { X } from 'react-feather';
+// import { uniqBy } from 'lodash';
 import { css } from 'aphrodite/no-important';
 
 import FileUpload from 'Utils/FileUpload';
-import { ModalBody } from 'Utils/Modal';
+// import { ModalBody } from 'Utils/Modal';
 import ScrollList from 'Utils/ScrollList';
 
-import { GlobalThemeConsumer } from 'Src/styles/GlobalThemeContext';
+// import { GlobalThemeConsumer } from 'Src/styles/GlobalThemeContext';
 
 import { db } from 'Firebase';
 import { TEXT, IMG, VIDEO } from 'Constants/mediaTypes';
@@ -42,6 +42,9 @@ class DataUploadForm extends Component {
     } = this.props;
 
     const { imgUrl, file, type } = this.state;
+    const imgRegex = /.(jpg|jpeg|png|gif)$/i;
+    const videoRegex = /.(ogg|h264|webm|vp9|hls)$/i;
+
     return (
       <div
         className={className}
@@ -58,19 +61,13 @@ class DataUploadForm extends Component {
           style={buttonStyle}
           fileName={file ? file.name : null}
           onChange={({ url, file: newFile }) => {
-            this.setState({ imgUrl: url, file: newFile });
+            let ftype = TEXT;
+            if (newFile.name.match(imgRegex)) ftype = IMG;
+            if (newFile.name.match(videoRegex)) ftype = VIDEO;
+
+            this.setState({ imgUrl: url, file: newFile, type: ftype });
           }}
         />
-        <div className={`${css(btn)} ml-2`}>
-          <select
-            style={{ border: 'unset', fontSize: 18, padding: 1 }}
-            onChange={e => this.setState({ type: e.target.value })}
-          >
-            <option>{TEXT}</option>
-            <option>{IMG}</option>
-            <option>{VIDEO}</option>
-          </select>
-        </div>
         <div>
           <button
             className={`${css(btn)} ml-2`}

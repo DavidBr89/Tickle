@@ -59,7 +59,7 @@ const defaultLocation = {
 const defaultCardTemplate = {
   id: cardTemplateId,
   template: true,
-  loc: defaultLocation,
+  // loc: defaultLocation,
   edit: true,
   tags: [],
   challenge: null,
@@ -72,7 +72,7 @@ const INITIAL_STATE = {
   collectibleCards: [],
   createdCards: [],
   tmpCards: [],
-  allTags: [],
+  tagVocabulary: [],
   // TODO: update
   tmpCard: defaultCardTemplate,
   challenges: [],
@@ -99,7 +99,7 @@ function reducer(state = INITIAL_STATE, action) {
     case RECEIVE_CREATED_CARDS: {
       const cards = action.options;
 
-      const allTagsCreated = uniq(
+      const tagVocabulary = uniq(
         cards.reduce((acc, c) => [...acc, ...c.tags], [])
       );
 
@@ -112,7 +112,7 @@ function reducer(state = INITIAL_STATE, action) {
         ...state,
         createdCards,
         loadingCards: false,
-        allTagsCreated
+        tagVocabulary
         // tagColorScale
         // cards
         // isCardDragging
@@ -121,7 +121,7 @@ function reducer(state = INITIAL_STATE, action) {
 
     case RECEIVE_COLLECTIBLE_CARDS: {
       const cards = action.options;
-      const allTagsCollectible = uniq(
+      const tagVocabulary = uniq(
         cards.reduce((acc, c) => [...acc, ...c.tags], [])
       );
       return {
@@ -129,7 +129,7 @@ function reducer(state = INITIAL_STATE, action) {
         collectibleCards: cards,
         // submittedCards,
         // startedCards,
-        allTagsCollectible,
+        tagVocabulary,
         loadingCards: false
         // tagColorScale
         // defaultCards: cards
@@ -218,7 +218,6 @@ function reducer(state = INITIAL_STATE, action) {
     }
 
     case UPDATE_CARD_TEMPLATE: {
-      console.log();
       const { cardData, viewport, dataView } = action.options;
 
       const updatedTemplate = updCardDataDim({
@@ -226,15 +225,6 @@ function reducer(state = INITIAL_STATE, action) {
         viewport,
         dataView
       });
-      console.log(
-        'updatedTemplate',
-        {
-          rawData: { ...cardData, template: true },
-          viewport,
-          dataView
-        },
-        updatedTemplate
-      );
 
       return { ...state, tmpCard: updatedTemplate };
     }
@@ -249,7 +239,7 @@ function reducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         createdCards: newCreatedCards,
-        extCardId: null,
+        extCardId: null
         // selectedCardId: 'temp'
       };
     }

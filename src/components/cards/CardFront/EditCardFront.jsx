@@ -21,6 +21,8 @@ import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
 import CardFront from './CardFront';
 
+import { DropDown } from 'Utils/TagInput';
+
 import {
   // FieldSet,
   // PreviewMedia,
@@ -37,8 +39,6 @@ import {
 } from '../layout';
 
 import { TagInput, PreviewTags } from 'Components/utils/Tag';
-
-import CardFrame from '../CardHeader';
 
 const FooterBtn = ({ onClick, children, disabled, style = {} }) => (
   <CardThemeConsumer>
@@ -243,7 +243,13 @@ class EditCardFront extends PureComponent {
   modalWriteContent() {
     const { data, dialog } = this.state;
     const { challenge } = data;
-    const { uiColor, tagColorScale, stylesheet, height } = this.props;
+    const {
+      uiColor,
+      tagColorScale,
+      stylesheet,
+      height,
+      tagVocabulary
+    } = this.props;
 
     const { title, tags, img, description, media } = data;
     const closeBtn = <FooterBtn onClick={this.onCloseModal}>Close</FooterBtn>;
@@ -270,11 +276,14 @@ class EditCardFront extends PureComponent {
             {...modalProps}
             footer={closeBtn}
           >
-            <TagInput
-              tags={tags}
-              colorScale={tagColorScale}
-              uiColor={uiColor}
+            <DropDown
+              style={{ width: '100%' }}
               onChange={newTags => this.updateField({ tags: [...newTags] })}
+              onSelect={n => console.log('select yeah', n)}
+              vocabulary={[]}
+              onClick={n => console.log('submit', n)}
+              data={tags}
+              vocabulary={tagVocabulary}
             />
           </StyledModalBody>
         );
@@ -357,11 +366,12 @@ class EditCardFront extends PureComponent {
       onSubmit,
       template,
       stylesheet,
-      smallScreen
+      smallScreen,
+      onCreate
     } = this.props;
-    const { data, added, dialog } = this.state;
+    const { data, dialog } = this.state;
     const modalVisible = dialog !== null;
-    const { cardLayout, coverPhoto } = stylesheet;
+    const { coverPhoto } = stylesheet;
     const {
       id,
       title,
@@ -378,12 +388,12 @@ class EditCardFront extends PureComponent {
         <Modal visible={modalVisible}>{this.modalWriteContent()}</Modal>
         <CardFront
           {...this.props}
+          onCreate={() => onCreate(data)}
           onClose={onClose}
           onTagsClick={() => {
             this.setState({
               dialog: { title: 'Tags', data: tags }
             });
-            console.log('onTagsClick');
           }}
           onTitleClick={() =>
             this.setState({

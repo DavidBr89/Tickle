@@ -40,13 +40,13 @@ const mapStateToProps = state => {
 
   // const { authEnv } = state.DataView;
   const {
-    authUser: { uid, username }
+    authUser: { uid }
   } = state.Session;
 
   console.log('userLocation', userLocation);
   const templateCard = {
-    ...tmpCard,
     loc: userLocation,
+    ...tmpCard,
     uid
   };
 
@@ -158,6 +158,11 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   };
 };
 
+// TODO: change Later
+// TODO: change Later
+// TODO: change Later
+// TODO: change Later
+// TODO: change Later
 const authCondition = authUser => authUser !== null;
 
 export default compose(

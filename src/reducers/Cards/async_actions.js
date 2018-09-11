@@ -115,12 +115,14 @@ export function fetchAllCards(uid) {
     dispatch(loadingCards());
     // TODO
     // TODO
-    return db.readCards(haaike, 'collectibleCards').then(collectibleCards => {
-      dispatch(receiveCollectibleCards(collectibleCards));
-      db.readCards(uid, 'createdCards').then(createdCards =>
-        dispatch(receiveCreatedCards(createdCards))
-      );
-    });
+    // db.readCards(uid, 'collectibleCards').then(collectibleCards => {
+    //   dispatch(receiveCollectibleCards(collectibleCards));
+    // });
+    //
+    // db.readCards(uid, 'createdCards').then(createdCards => {
+    //   console.log('UID', uid);
+    //   dispatch(receiveCreatedCards(createdCards));
+    // });
   };
 }
 

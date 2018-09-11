@@ -13,74 +13,9 @@ import { MediaOverview } from 'Components/cards/MediaSearch';
 
 import placeholderImgSrc from '../placeholder.png';
 
-import CardFrame from '../CardHeader';
 import CardFront from './CardFront';
 
-import { X } from 'react-feather';
-
 import { Btn } from 'Components/cards/layout';
-
-// todo
-
-import {
-  // FieldSet,
-  // PreviewMedia,
-  MediaField,
-  ChallengeField,
-  DescriptionField,
-  EditButton,
-  Img,
-  ZoomIcon,
-  // Tags,
-  // SmallPreviewTags,
-  BigButton,
-  FlipButton
-} from '../layout';
-
-const defaultProps = {};
-
-const ImgOverlay = ({ src, className, style, children, footer }) => (
-  <div
-    className={className}
-    style={{
-      position: 'relative',
-      marginLeft: 'auto',
-      marginRight: 'auto',
-      ...style
-    }}
-  >
-    <img
-      src={src || placeholderImgSrc}
-      alt="Card img"
-      style={{ width: '100%', height: '100%', overflow: 'hidden', ...style }}
-    />
-    <div
-      style={{
-        position: 'absolute',
-        width: '100%',
-        // zIndex: 200,
-        left: 0,
-        top: 0
-      }}
-    >
-      {children}
-    </div>
-  </div>
-);
-
-const Title = ({ onClick, children }) => (
-  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-    <div className="ml-1" style={{ maxWidth: '100%' }} onClick={onClick}>
-      <h1 style={{ marginBottom: 0 }} className="text-truncate">
-        {children === null ? (
-          <span className="text-muted">No Title</span>
-        ) : (
-          children
-        )}
-      </h1>
-    </div>
-  </div>
-);
 
 class ReadCardFront extends Component {
   static propTypes = {
@@ -143,6 +78,7 @@ class ReadCardFront extends Component {
       uiColor,
       challenge,
       id,
+      img,
       uid,
       challengeSubmission,
       onSubmitChallenge,
@@ -182,28 +118,26 @@ class ReadCardFront extends Component {
             <MediaOverview edit={false} data={media || []} uiColor={uiColor} />
           </ModalBody>
         );
+      case 'Img':
+        return (
+          <ModalBody
+            onClose={this.closeModal}
+            title="Photo"
+            footer={<FooterBtn />}
+          >
+            <div className="mb-1">
+              <img
+                src={img.url || placeholderImgSrc}
+                style={{ width: '100%', height: '100%' }}
+                alt="Photo broken"
+              />
+            </div>
+          </ModalBody>
+        );
       case 'Challenge':
         return React.cloneElement(challengeComp, {
           onClose: this.closeModal,
           challengeSubmission
-          // smallScreen,
-          // ...challenge,
-          // bookmarkable,
-          // removable,
-          // title: 'Challenge',
-          // key: id,
-          // challengeSubmission,
-          // onRemoveSubmission: onRemoveChallengeSubmission,
-          // onUpdate: d => {
-          //   onSubmitChallenge({
-          //     cardId: id,
-          //     ...challengeSubmission,
-          //     ...d
-          //   });
-          // this.setState({
-          //   challengeStarted: !d.completed,
-          //   challengeSubmitted: d.completed
-          // });
         });
       default:
         return <div>error</div>;
@@ -256,7 +190,11 @@ class ReadCardFront extends Component {
           {...this.props}
           onClose={onClose}
           onTitleClick={() => console.log('img click')}
-          onImgClick={() => console.log('img click')}
+          onImgClick={() =>
+            this.setState({
+              dialogKey: 'Img'
+            })
+          }
           onDescriptionClick={() =>
             this.setState({
               dialogKey: 'Description'

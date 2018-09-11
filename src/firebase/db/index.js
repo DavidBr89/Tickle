@@ -31,39 +31,42 @@ const pruneFields = fields => {
 
 const thumbFileName = fileName => `thumb_${fileName}`;
 
-const CARDS = 'cards';
-const getShallowCards = uid =>
-  firestore
-    .collection(CARDS)
-    // .where('uid', '==', uid || true)
-    .get()
-    .then(querySnapshot => {
-      const data = [];
-      querySnapshot.forEach(doc => {
-        const d = doc.data();
+const CARDS = 'vds_geo_cards_staging';
+const getShallowCards = uid => {
+  console.log('UID', uid);
+  const firePr =
+    uid !== null
+      ? firestore.collection(CARDS).where('uid', '==', uid)
+      : firestore.collection(CARDS);
 
-        data.push({ ...d });
-      });
+  return firePr.get().then(querySnapshot => {
+    const data = [];
+    querySnapshot.forEach(doc => {
+      const d = doc.data();
 
-      // TODO; remove later
-      const dataPromises = data.map(d => {
-        if (!d.img) return d;
-
-        const thumbNailRef = storageRef.child(
-          `images/cards/${thumbFileName(d.id)}`
-        );
-        // return d;
-        return thumbNailRef.getDownloadURL().then(
-          url => ({ ...d, img: { ...d.img, thumbnail: url } }),
-          err => {
-            const img = { ...d.img, thumbnail: null };
-            return { ...d, ...img };
-          }
-        );
-      });
-
-      return Promise.all(dataPromises);
+      data.push({ ...d });
     });
+
+    // TODO; remove later
+    const dataPromises = data.map(d => {
+      if (!d.img) return d;
+
+      const thumbNailRef = storageRef.child(
+        `images/cards/${thumbFileName(d.id)}`
+      );
+      // return d;
+      return thumbNailRef.getDownloadURL().then(
+        url => ({ ...d, img: { ...d.img, thumbnail: url } }),
+        err => {
+          const img = { ...d.img, thumbnail: null };
+          return { ...d, ...img };
+        }
+      );
+    });
+
+    return Promise.all(dataPromises);
+  });
+};
 
 export const readCards = (fromUID, playerId) =>
   getShallowCards(fromUID).then(data => {
@@ -190,7 +193,8 @@ export const addImgToStorage = ({ file, path, id }) => {
 
 // TODO: error handling
 const uploadImgFields = card => {
-  const { file = null, ...restImgFields } = card.img;
+  const { file = null, ...restImgFields } = card.img || {};
+  console.log('card img', file, restImgFields);
 
   return file
     ? addImgToStorage({

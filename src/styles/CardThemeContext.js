@@ -32,11 +32,8 @@ const makeStylesheet = ({ uiColor, background }) => {
     },
     btn: {
       ...btnStyle,
-      borderColor: uiColor,
-      background: shallowBg,
-      ':hover': {
-        boxShadow: `4px 4px ${uiColor}`
-      }
+      background: 'grey',
+      color: 'white'
     },
     shallowBg: {
       background: shallowBg
@@ -46,7 +43,7 @@ const makeStylesheet = ({ uiColor, background }) => {
     },
     btnActive: {
       ...btnStyle,
-      background: uiColor,
+      background: 'black',
       color: 'whitesmoke',
       display: 'inline-flex',
       justifyContent: 'center',
@@ -76,7 +73,8 @@ const makeStylesheet = ({ uiColor, background }) => {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'space-between',
-      flex: '0 1 100%'
+      flex: '0 1 100%',
+      width: '100%'
       // height: '90%'
     },
     coverPhoto: {

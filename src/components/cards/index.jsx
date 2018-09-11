@@ -136,7 +136,8 @@ class Card extends React.Component {
                 transform: 'rotateY(0deg)',
                 height: '100%',
                 pointerEvents: !frontView && 'none',
-                // zIndex: frontView ? 5000 : -10,
+                zIndex: frontView ? 5000 : -10,
+                // opacity: frontView ? 1 : 0,
                 display: iOS && !frontView && 'none'
                 // display: !frontView && 'none'
                 // zIndex: frontView && 100
@@ -162,6 +163,7 @@ class Card extends React.Component {
                 backfaceVisibility: 'hidden',
                 pointerEvents: frontView && 'none',
                 display: iOS && frontView && 'none',
+                zIndex: !frontView ? 5000 : -10,
                 // zIndex: 100,
                 // zIndex: !frontView && 4000,
                 // transformStyle: 'preserve-3d',
