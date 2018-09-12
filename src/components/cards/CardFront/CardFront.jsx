@@ -71,34 +71,28 @@ const ImgOverlay = ({ src, className, style, children, footer, onClick }) => (
   </div>
 );
 
+const FieldIcon = ({ edit, className, style }) =>
+  edit ? (
+    <span className={className} style={{ cursor: 'pointer', ...style }}>
+      <Edit size={25} />
+    </span>
+  ) : (
+    <span className={className} style={{ cursor: 'pointer', ...style }}>
+      <Search size={25} />
+    </span>
+  );
+
 const Title = ({ onClick, edit, children }) => (
   <h1 className="text-truncate" onClick={onClick}>
     {children === null ? (
       <div>
-        <span className="text-muted">No Title</span> {edit && <Edit />}
+        <span className="text-muted">No Title</span> <FieldIcon edit={edit} />
       </div>
     ) : (
       children
     )}
   </h1>
 );
-
-const FieldIcon = ({ edit, className, style }) =>
-  edit ? (
-    <span
-      className={className}
-      style={{ cursor: 'pointer', fontSize: '1.2rem', ...style }}
-    >
-      <Edit size={30} />
-    </span>
-  ) : (
-    <span
-      className={className}
-      style={{ cursor: 'pointer', fontSize: '1.2rem', ...style }}
-    >
-      <Search size={30} />
-    </span>
-  );
 
 const DescriptionField = ({
   text,
@@ -407,8 +401,13 @@ class CardFront extends Component {
             {title}
           </Title>
 
-          <div className="mb-1" onClick={onTagsClick}>
+          <div
+            className="mb-1"
+            style={{ display: 'flex', alignItems: 'center' }}
+            onClick={onTagsClick}
+          >
             <TagLabels tags={tags} tagColorScale={tagColorScale} />
+            <FieldIcon edit={edit} className="ml-1" />
           </div>
           <MediaField
             edit={edit}

@@ -206,7 +206,7 @@ class CardAuthorPage extends Component {
             justifyContent: 'center',
             transition: 'opacity 0.5s',
             marginBottom: 25,
-            //TODO: fix later
+            // TODO: fix later
             zIndex: 20000,
             // height: '25%'
             flexBasis: '25%'

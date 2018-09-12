@@ -79,7 +79,7 @@ class SignUpForm extends Component {
           interests
         };
         onSetAuthUser({ authUser: userProfile });
-        history.push(routes.DATAVIEW_FLOORPLAN);
+        history.push(routes.DATAVIEW_GEO);
         // Jump to page
         // Create a user in your own accessible Firebase Database too
         // this.setState({ imgUpload: true });

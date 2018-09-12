@@ -77,9 +77,9 @@ export const Routes = {
 };
 
 export const authRoutes = {
-  ...HOME_ROUTE,
+  // ...HOME_ROUTE,
   ...DATAVIEW_ROUTE,
-  ...MYCARDS_ROUTE,
+  // ...MYCARDS_ROUTE,
   ...AUTH_ENV_ROUTE,
   // TODO: change
   // ...ADMIN_ROUTE,

@@ -99,9 +99,9 @@ function reducer(state = INITIAL_STATE, action) {
     case RECEIVE_CREATED_CARDS: {
       const cards = action.options;
 
-      const tagVocabulary = uniq(
-        cards.reduce((acc, c) => [...acc, ...c.tags], [])
-      );
+      // const tagVocabulary = uniq(
+      //   cards.reduce((acc, c) => [...acc, ...c.tags], [])
+      // );
 
       const createdCards = cards.map(c => ({ ...c, edit: true }));
 
@@ -112,7 +112,7 @@ function reducer(state = INITIAL_STATE, action) {
         ...state,
         createdCards,
         loadingCards: false,
-        tagVocabulary
+        // tagVocabulary
         // tagColorScale
         // cards
         // isCardDragging

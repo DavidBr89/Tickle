@@ -171,13 +171,6 @@ export default class AccountPage extends React.Component {
                 <h5 className="mr-1">email: </h5>
                 <div>{email}</div>
               </div>
-              <button
-                style={{ width: '100%' }}
-                className={css(defaultStylesheet.btn)}
-                onClick={() => extendUserInfo()}
-              >
-                <Icon.Edit />
-              </button>
             </div>
           </div>
         </ScrollView>
@@ -185,3 +178,13 @@ export default class AccountPage extends React.Component {
     );
   }
 }
+
+/* {
+  <!-- <button -->
+    <!--   style={{ width: '100%' }} -->
+    <!--   className={css(defaultStylesheet.btn)} -->
+    <!--   onClick={() => extendUserInfo()} -->
+    <!-- > -->
+    <!--   <Icon.Edit /> -->
+    <!-- </button> -->
+  } */
