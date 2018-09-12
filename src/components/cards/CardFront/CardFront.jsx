@@ -89,7 +89,9 @@ const Title = ({ onClick, edit, children }) => (
         <span className="text-muted">No Title</span> <FieldIcon edit={edit} />
       </div>
     ) : (
-      children
+      <React.Fragment>
+        {children} <FieldIcon edit={edit} />
+      </React.Fragment>
     )}
   </h1>
 );

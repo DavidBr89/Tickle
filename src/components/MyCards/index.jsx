@@ -8,6 +8,8 @@ import { uniq } from 'lodash';
 
 import CardGrid from './AnimatedGrid';
 
+import { selectCardType } from 'Reducers/Diary/actions';
+
 import {
   isChallengeStarted,
   isChallengeSubmitted,
@@ -17,33 +19,23 @@ import {
 const mapStateToProps = state => {
   const { cardSets } = state.Account;
   const { tagColorScale, collectibleCards } = state.Cards;
+  const { filterByCardType } = state.Diary;
   // console.log('cards');
   //
   // const tagColorScale = makeTagColorScale(cardSets);
   //
   //
-  const collectedCards = collectibleCards.filter(isChallengeSucceeded);
-
-  const submittedCards = collectibleCards.filter(isChallengeSubmitted);
-
-  const startedCards = collectibleCards.filter(isChallengeStarted);
-  const succeededCards = collectibleCards.filter(isChallengeSucceeded);
+  const cards = collectibleCards.filter(filterByCardType);
 
   const userTags = uniq(
-    [...collectedCards, ...submittedCards, ...startedCards].reduce(
-      (acc, c) => [...acc, ...c.tags],
-      []
-    )
+    collectibleCards.reduce((acc, c) => [...acc, ...c.tags], [])
   );
 
   return {
     authUser: {
       ...state.Session.authUser
     },
-    collectedCards,
-    startedCards,
-    submittedCards,
-    succeededCards,
+    cards,
     userTags,
     ...state.Screen,
     tagColorScale
@@ -55,18 +47,18 @@ exampleAction: authUser => {
     dispatch(setAuthUser(authUser));
   }
 */
-// const mapDispatchToProps = dispatch =>
-//   bindActionCreators(
-//     {
-//       actions
-//     },
-//     dispatch
-//   );
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      selectCardType
+    },
+    dispatch
+  );
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({});
 
 export default connect(
   mapStateToProps,
-  null,
+  mapDispatchToProps,
   null
 )(CardGrid);

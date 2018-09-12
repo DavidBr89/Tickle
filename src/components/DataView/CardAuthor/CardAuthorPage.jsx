@@ -154,7 +154,7 @@ class CardAuthorPage extends Component {
     //   width: this.cont.offsetWidth,
     //   height: this.cont.offsetHeight
     // });
-    preSelectCardId();
+    // preSelectCardId();
   }
 
   componentWillUnmount() {}

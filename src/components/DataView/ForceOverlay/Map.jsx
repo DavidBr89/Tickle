@@ -158,10 +158,52 @@ class Map extends Component {
     disabled: false,
     maxZoom: 16,
     viewport: { ...defaultLocation, width: 100, height: 100, zoom: 10 },
-    nodes: []
+    nodes: [],
+    showUser: false
   };
 
   state = { ...this.props };
+
+  componentDidMount() {
+    console.log('mapgl', this.mapgl);
+    const map = this.mapgl.getMap();
+
+    map.on('load', () =>
+      map.addLayer({
+        id: 'route',
+        type: 'line',
+        source: {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates: [
+  [4.99535, 51.314751],
+  [4.99684, 51.314709],
+  [4.997494, 51.314592],
+  [4.999943, 51.31378],
+  [5.000791, 51.313581],
+  [5.002289, 51.313371],
+  [5.00321, 51.313367],
+  [5.004118, 51.31351],
+  [5.007665, 51.313871]
+              ]
+            }
+          }
+        },
+        layout: {
+          'line-join': 'round',
+          'line-cap': 'round'
+        },
+        paint: {
+          'line-color': 'red',
+          'line-width': 8
+        }
+      })
+    );
+  }
 
   // static getDerivedStateFromProps({ latitude, longitude }, prevState) {
   //   return { latitude, longitude };
@@ -195,7 +237,8 @@ class Map extends Component {
       preview,
       width,
       height,
-      isCardDragging
+      isCardDragging,
+      showUser
     } = this.props;
 
     const { latitude, longitude, zoom } = viewport;
@@ -218,6 +261,7 @@ class Map extends Component {
 
     return (
       <MapGL
+        ref={m => (this.mapgl = m)}
         mapStyle={mapStyleUrl}
         width={width}
         height={height}
@@ -235,30 +279,32 @@ class Map extends Component {
       >
         <div
           style={{
-            position: 'absolute',
+            position: 'absolute'
             // left: userPos[0],
             // top: userPos[1]
-            zIndex: 5000
+            // zIndex: 5000
           }}
         >
           {redraw()}
         </div>
 
-        <div
-          style={{
-            position: 'absolute',
-            left: userPos[0],
-            top: userPos[1]
-            // zIndex: 2000
-          }}
-        >
-          <img
-            src={userIcon}
-            width={50}
-            height={50}
-            style={{ transform: 'translate(-50%,-50%)' }}
-          />
-        </div>
+        {showUser && (
+          <div
+            style={{
+              position: 'absolute',
+              left: userPos[0],
+              top: userPos[1]
+              // zIndex: 2000
+            }}
+          >
+            <img
+              src={userIcon}
+              width={50}
+              height={50}
+              style={{ transform: 'translate(-50%,-50%)' }}
+            />
+          </div>
+        )}
       </MapGL>
     );
   }

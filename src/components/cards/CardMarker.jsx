@@ -62,14 +62,14 @@ class CardMarker extends Component {
     const { hovered } = this.state;
     return (
       <div
-        className={className}
+        className="cardmarker"
         style={{
           // pointerEvents: 'none',
           // padding: '15%',
           transition: 'opacity 1s',
           width: '100%',
           height: '100%',
-          zIndex: 100,
+          // zIndex: 100,
           background: 'white',
           transition: 'transform 400ms',
           transform: hovered || selected ? 'scale(2)' : null,

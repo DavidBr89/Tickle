@@ -57,7 +57,7 @@ const defaultLocation = {
 // const cardTemplateId = 'temp';
 const INITIAL_STATE = {
   mapViewport: {
-    zoom: 10,
+    zoom: 15,
     ...defaultLocation
   },
   userLocation: defaultLocation

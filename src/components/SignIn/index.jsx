@@ -47,7 +47,7 @@ const SignInPage = ({ history }) => (
     <SignInForm
       onAuthenticate={usr => {
         console.log('usr', usr);
-        history.push(routes.DATAVIEW_GEO);
+        history.push(`${routes.AUTH_ENV_GEO}/temp`);
       }}
     />
     <PasswordForgetLink />

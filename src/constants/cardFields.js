@@ -13,13 +13,27 @@ export const isChallengeSubmitted = c =>
 export const isChallengeStarted = c =>
   isDefined(c.challengeSubmission) && !c.challengeSubmission.completed;
 
+export const isChallengeOpen = c => !isDefined(c.challengeSubmission);
+
 export const NO_CHALLENGE_FILTER = 'NO_CHALLENGE_FILTER';
+export const NO_CARD_FILTER = 'NO_CARD_FILTER';
 export const CHALLENGE_STARTED = 'CHALLENGE_STARTED';
+export const CHALLENGE_OPEN = 'CHALLENGE_OPEN';
 
 export const CHALLENGE_NOT_STARTED = 'CHALLENGE_NOT_STARTED';
 export const CHALLENGE_SUBMITTED = 'CHALLENGE_SUBMITTED';
 export const CHALLENGE_NOT_SUBMITTED = 'CHALLENGE_NOT_SUBMITTED';
 export const CHALLENGE_SUCCEEDED = 'CHALLENGE_SUCCEEDED';
+
+export const challengeTypeMap = (() => {
+  const obj = {};
+  obj[CHALLENGE_STARTED] = isChallengeStarted;
+  obj[CHALLENGE_SUBMITTED] = isChallengeSubmitted;
+  obj[CHALLENGE_SUCCEEDED] = isChallengeSucceeded;
+  obj[CHALLENGE_OPEN] = isChallengeOpen;
+  obj[NO_CARD_FILTER] = () => true;
+  return obj;
+})();
 
 // TODO: where is challenge submission?
 export const extractCardFields = ({

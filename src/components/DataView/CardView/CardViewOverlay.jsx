@@ -59,14 +59,15 @@ const CardViewOverlay = props => {
         <CardMarker
           style={{ pointerEvents: 'all' }}
           onClick={e => {
-            console.log('pointerEvents');
             previewCardAction(d);
             e.stopPropagation();
           }}
           color="whitesmoke"
           style={{
             // TODO: zIndex not working
-            zIndex: selectedCardId === d.id ? 5000 : 100,
+            width: 25,
+            height: 30,
+            zIndex: selectedCardId === d.id ? 5000 : 0,
             transform: selectedCardId === d.id && 'scale(2)'
           }}
         />

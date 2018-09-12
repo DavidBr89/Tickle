@@ -3,7 +3,7 @@ export function receiveUserInfo(options) {
   return { type: RECEIVE_USER_INFO, options };
 }
 
-export const SELECT_CARD_ID = 'SELECT_CARD_ID_ACC';
+export const SELECT_CARD_ID = 'SELECT_CARD_ID';
 export function selectCard(options) {
   return { type: SELECT_CARD_ID, options };
 }
@@ -23,7 +23,7 @@ export function updatePersonalInfo(options) {
   return { type: UPDATE_PERSONAL_INFO, options };
 }
 
-export const SELECT_CARD_TYPE = 'UPDATE_PERSONAL_INFO';
+export const SELECT_CARD_TYPE = 'SELECT_CARD_TYPE';
 export function selectCardType(options) {
   return { type: SELECT_CARD_TYPE, options };
 }

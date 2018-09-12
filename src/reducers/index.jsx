@@ -8,6 +8,7 @@ import DataView from './DataView';
 import Screen from './Screen';
 import Admin from './Admin';
 import Account from './Account';
+import Diary from './Diary';
 // import Login from './components/Login/reducer';
 
 // TODO: write my own combineReducer
@@ -19,7 +20,7 @@ export default combineReducers({
   DataView,
   Admin,
   Screen,
-  Account
+  Account, Diary
 });
 // export default MapView;
 // export default CardCreator;
