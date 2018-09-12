@@ -219,15 +219,16 @@ class Map extends Component {
     return (
       <MapGL
         mapStyle={mapStyleUrl}
+        width={width}
+        height={height}
         onViewportChange={newViewport => {
           if (!isCardDragging) {
             this.props.changeMapViewport({ ...newViewport });
           }
         }}
-        height={height}
+        dragPan={!isCardDragging}
         dragRotate={false}
         doubleClickZoom={false}
-        width={width}
         latitude={latitude}
         longitude={longitude}
         zoom={zoom}
@@ -237,7 +238,7 @@ class Map extends Component {
             position: 'absolute',
             // left: userPos[0],
             // top: userPos[1]
-            // zIndex: 2000
+            zIndex: 5000
           }}
         >
           {redraw()}

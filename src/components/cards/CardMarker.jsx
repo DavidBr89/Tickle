@@ -34,6 +34,7 @@ class CardMarker extends Component {
     shadow: true
   };
 
+  state = { hovered: false };
   // shouldComponentUpdate() {
   //   return false;
   // }
@@ -54,9 +55,11 @@ class CardMarker extends Component {
       // tags,
       barHeight = '12%',
       barColor = 'black',
-      className
+      className,
+      selected
     } = this.props;
 
+    const { hovered } = this.state;
     return (
       <div
         className={className}
@@ -68,9 +71,13 @@ class CardMarker extends Component {
           height: '100%',
           zIndex: 100,
           background: 'white',
-          transform: 'translate(-50%,-50%)',
+          transition: 'transform 400ms',
+          transform: hovered || selected ? 'scale(2)' : null,
           ...style
+          // transform: hovered || (selected && 'scale(2)')
         }}
+        onMouseOver={() => this.setState({ hovered: true })}
+        onMouseOut={() => this.setState({ hovered: false })}
         onClick={onClick}
       >
         <div

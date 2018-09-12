@@ -32,7 +32,7 @@ function CardStack({
       slotSize={slotSize}
       unit={unit}
       style={{
-        zIndex: 1000
+        zIndex: 3000
       }}
       {...props}
     >
@@ -48,9 +48,9 @@ function CardStack({
             transition: `transform 1s`,
             // TODO: change later
             height: '100%',
-            transform: selectedCardId === d.id && 'scale(1.2)',
+            transform: selectedCardId === d.id && 'scale(1.2)'
             // zIndex: selectedCardId === d.id && 2000,
-            opacity: d.template && 0.8
+            // opacity: d.template && 0.8
           }}
         />
       )}

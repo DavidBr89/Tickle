@@ -53,7 +53,7 @@ export default class PhotoUpload extends Component {
     maxHeight: 300,
     stylesheet: defaultStylesheet,
     imgName: null,
-    title: 'Take Photo'
+    title: 'Browse Images'
   };
 
   render() {

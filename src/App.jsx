@@ -145,7 +145,10 @@ navigator.geolocation.getCurrentPosition(
       latitude: pos.coords.latitude,
       longitude: pos.coords.longitude
     };
-    const turnoud = { latitude: 51.325087, longitude: 4.943867 };
+
+    //Oude Arendonkse Baan, Oud-Turnhout 51.313476, 5.001513
+
+    const turnoud = { latitude: 51.313476, longitude: 5.001513 };
     store.dispatch(userMove(turnoud));
     store.dispatch(changeMapViewport(turnoud));
   },

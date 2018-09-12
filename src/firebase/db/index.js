@@ -193,8 +193,9 @@ export const addImgToStorage = ({ file, path, id }) => {
 
 // TODO: error handling
 const uploadImgFields = card => {
-  const { file = null, ...restImgFields } = card.img || {};
-  console.log('card img', file, restImgFields);
+  if (card.img === null) return new Promise(resolve => resolve(null));
+
+  const { file = null, ...restImgFields } = card.img;
 
   return file
     ? addImgToStorage({

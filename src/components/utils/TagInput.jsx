@@ -54,6 +54,7 @@ export const TagInput = class TagInput extends Component {
         >
           <form
             style={{
+              flex: '1 0 100px',
               display: 'flex',
               flexWrap: 'no-wrap',
               alignItems: 'center'
@@ -77,8 +78,8 @@ export const TagInput = class TagInput extends Component {
                 border: 0,
                 color: '#777',
                 outline: 'none',
-                padding: 5,
-                minWidth: 40
+                padding: 5
+                // minWidth: 40
                 // width: 80
               }}
             />

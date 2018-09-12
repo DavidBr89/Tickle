@@ -1,10 +1,10 @@
 import React, { Fragment, Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+// import { connect } from 'react-redux';
+// import { bindActionCreators } from 'redux';
 
-import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
+// import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 
 import DimWrapper from 'Utils/DimensionsWrapper';
 // TODO: change
@@ -16,7 +16,7 @@ import { GEO, TAGS, FLOORPLAN } from 'Constants/dataViews';
 
 import { Modal, InlineModal, BareModal, ModalBody } from 'Utils/Modal';
 
-import ZoomCont from './ZoomContainer';
+// import ZoomCont from './ZoomContainer';
 
 // import│ {shallowEqualProps} from'shallow-equal-props';
 
@@ -106,18 +106,17 @@ class DataOverlay extends Component {
       extCardId === c.id ? (
         <BareModal visible>{children({ ...c })}</BareModal>
       ) : (
-        // TODO: remove
-        // TODO: redo
-        <ExtendableMarker
-          key={c.id}
-          delay={100}
-          width={25}
-          height={30}
-          selected={selectedCardId === c.id}
-          x={c.x}
-          y={c.y}
-          preview={preview(c)}
-        />
+        <div
+          style={{
+            position: 'absolute',
+            left: c.x,
+            top: c.y,
+            transform: 'translate(-50%, -50%)',
+            zIndex: selectedCardId === c.id ? 10 : 0
+          }}
+        >
+          {preview(c)}
+        </div>
       );
 
     // TODO: remove

@@ -4,11 +4,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
-
-import DimWrapper from 'Utils/DimensionsWrapper';
-import ExtendableMarker from 'Utils/ExtendableMarker';
-
 import CardMarker from 'Components/cards/CardMarker';
 
 import {
@@ -65,17 +60,12 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
         data={d}
         x={d.x}
         y={d.y}
+        width={80}
+        height={80}
         selected={selected}
-        style={{
-          border: selected && '2px dashed black'
-          // zIndex: selected ? 5000 : 100
-        }}
       >
-        {selected && (
-          <div style={{ position: 'absolute', width: 200 }}>Drag and drop</div>
-        )}
         <div
-          onClick={e => {
+          onDoubleClick={e => {
             previewCardAction(d);
             e.stopPropagation();
           }}
@@ -84,15 +74,17 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
             height: '100%',
             display: 'flex',
             justifyContent: 'center',
-            alignItems: 'center'
+            alignItems: 'center',
+            border: selected && '2px dashed black',
+            borderRadius: '10%'
           }}
         >
           <CardMarker
             color="whitesmoke"
+            selected={selected}
             style={{
               width: 25,
-              height: 30,
-              transform: selectedCardId === d.id && 'scale(2)'
+              height: 30
             }}
           />
         </div>
@@ -163,18 +155,19 @@ const mapDispatchToProps = dispatch =>
   );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const { selectedCardId, mapViewport, width, height, authUser } = state;
+  const { mapViewport, width, height, authUser } = state;
   const { uid } = authUser;
-  const { dataView } = ownProps;
+  const { dataView, selectedCardId } = ownProps;
   const { asyncUpdateCard, updateCardTemplate } = dispatcherProps;
 
   const viewport = { ...mapViewport, width, height };
 
   const onCardDrop = cardData => {
-    // console.log('cardData', cardData);
-    selectedCardId === 'temp'
-      ? updateCardTemplate({ uid, cardData, viewport, dataView })
-      : asyncUpdateCard({ cardData, viewport, dataView });
+    if (selectedCardId === cardData.id) {
+      if (cardData.id === 'temp')
+        updateCardTemplate({ uid, cardData, viewport, dataView });
+      else asyncUpdateCard({ cardData, viewport, dataView });
+    }
   };
 
   return {

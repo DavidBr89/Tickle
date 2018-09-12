@@ -119,7 +119,8 @@ export class DragSourceCont extends PureComponent {
     // const { name } = this.props;
     const opacity = isDragging ? 0.4 : 1;
 
-    return connectDragSource(
+    // TODO better solution
+    const cont = (
       <div
         className="dragSource"
         style={{
@@ -132,13 +133,15 @@ export class DragSourceCont extends PureComponent {
           ...style,
           cursor: 'pointer',
           // TODO: change later
-          pointerEvents: 'all', // selected && 'all',
+          // pointerEvents: 'all', // selected && 'all',
           zIndex: selected && 5000
         }}
       >
         {children}
       </div>
     );
+
+    return selected ? connectDragSource(cont) : cont;
   }
 }
 
@@ -202,6 +205,10 @@ export class DropTargetCont extends PureComponent {
     // console.log('this.props', this.props);
     if (prevProps.dragged && !this.props.dragged) {
       // console.log('D', data);
+      // TODO: CHANGE LATER
+      // TODO: CHANGE LATER
+      // TODO: CHANGE LATER
+      // TODO: CHANGE LATER
       // TODO: CHANGE LATER
       const inverted = data.normalize
         ? data.normalize.invert([left, top])

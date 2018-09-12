@@ -46,66 +46,22 @@ class ExtendableMarker extends Component {
   };
 
   render() {
-    const {
-      width,
-      height,
-      extended,
-      delay,
-      x,
-      y,
-      children,
-      onClick,
-      preview,
-      node,
-      style,
-      domNode,
-      selected
-    } = this.props;
+    const { x, y, style, preview } = this.props;
 
     const marker = (
       <div
-        onClick={onClick}
         style={{
-          // position: extended ? 'fixed' 'absolute',
           position: 'absolute',
-          maxWidth: 500,
-          // minWidth: 320,
           left: x,
           top: y,
-          transform: 'translate(-50%, -50%)',
-          // right: extended && 0,
-          // bottom: extended && 0,
-          width,
-          height,
-          // TODO
-          // TODO
-          // TODO
-          // TODO
-          // TODO
-          // TODO
-          // TODO
-          // zIndex: extended && 4000,
-          // transition: `transform ${delay}ms, left ${delay}ms, top ${delay}ms, width ${delay}ms, height ${delay}ms`,
-          ...style
+          transform: 'translate(-50%, -50%)'
         }}
       >
-        <div
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            zIndex: selected && 5000
-          }}
-        >
-          {preview}
-        </div>
+        {preview}
       </div>
     );
 
-    const teleported = domNode
-      ? ReactDOM.createPortal(marker, domNode)
-      : marker;
-    return teleported;
+    return marker;
   }
 }
 

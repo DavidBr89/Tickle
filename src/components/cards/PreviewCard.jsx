@@ -101,6 +101,13 @@ class PreviewCard extends Component {
       tagColorScale,
       type
     } = this.props;
+    const selImg = (() => {
+      if (img && img.thumbnail) return img.thumbnail;
+      if (img && img.url) return img.url;
+      return placeholderImg;
+    })();
+
+    // img.thumbnail ? img.thumbnail || img.url : placeholderImg;
     return (
       <div
         style={{
@@ -138,7 +145,7 @@ class PreviewCard extends Component {
                 width: '100%',
                 height: '100%'
               }}
-              src={img.thumbnail ? img.thumbnail || img.url : placeholderImg}
+              src={selImg}
               alt="Card cap"
             />
           ) : (
