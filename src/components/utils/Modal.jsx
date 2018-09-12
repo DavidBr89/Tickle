@@ -29,7 +29,7 @@ export const InlineModal = ({
       // height: '100%',
       opacity: visible ? 1 : 0,
       transition: 'opacity 1s',
-      zIndex: visible ? 5000 : -10,
+      zIndex: visible ? 30000 : -10,
       margin: 'auto',
       left: 0,
       top: 0,

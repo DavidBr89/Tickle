@@ -39,7 +39,7 @@ class Menu extends Component {
         <nav
           className="navbar navbar-light "
           style={{
-            zIndex: 3000
+            zIndex: 25000
             // minWidth: '30%'
             // filter: 'blur(10px)',
 
@@ -65,7 +65,7 @@ class Menu extends Component {
           id="submenu"
           style={{
             position: 'relative',
-            zIndex: 4000,
+            zIndex: 250000,
             background: 'white'
           }}
         >
