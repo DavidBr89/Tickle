@@ -8,7 +8,7 @@ import { uniq } from 'lodash';
 
 import CardGrid from './AnimatedGrid';
 
-import { selectCardType } from 'Reducers/Diary/actions';
+import * as diaryActions from 'Reducers/Diary/actions';
 
 import {
   isChallengeStarted,
@@ -31,6 +31,7 @@ const mapStateToProps = state => {
     collectibleCards.reduce((acc, c) => [...acc, ...c.tags], [])
   );
 
+  console.log('State Diary', state.Diary);
   return {
     authUser: {
       ...state.Session.authUser
@@ -38,7 +39,8 @@ const mapStateToProps = state => {
     cards,
     userTags,
     ...state.Screen,
-    tagColorScale
+    tagColorScale,
+    ...state.Diary
   };
 };
 
@@ -48,12 +50,7 @@ exampleAction: authUser => {
   }
 */
 const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      selectCardType
-    },
-    dispatch
-  );
+  bindActionCreators(diaryActions, dispatch);
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({});
 

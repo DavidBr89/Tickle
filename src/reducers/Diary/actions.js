@@ -4,7 +4,7 @@ export function receiveUserInfo(options) {
 }
 
 export const SELECT_CARD_ID = 'SELECT_CARD_ID';
-export function selectCard(options) {
+export function selectCardID(options) {
   return { type: SELECT_CARD_ID, options };
 }
 

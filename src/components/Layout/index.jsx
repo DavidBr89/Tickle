@@ -25,7 +25,14 @@ import { screenResize } from 'Reducers/Screen/actions';
 class Menu extends Component {
   static propTypes = {
     children: PropTypes.node,
-    className: PropTypes.string
+    className: PropTypes.string,
+    ui: PropTypes.node
+  };
+
+  static defaultProps = {
+    children: <div>no content</div>,
+    className: '',
+    ui: <React.Fragment />
   };
 
   // state = {
@@ -33,7 +40,7 @@ class Menu extends Component {
   // };
 
   render() {
-    const { style, open, children, onToggle } = this.props;
+    const { style, open, children, onToggle, ui } = this.props;
     return (
       <div style={{ ...style }}>
         <nav
@@ -49,7 +56,7 @@ class Menu extends Component {
           <button
             onClick={onToggle}
             style={{ background: 'whitesmoke' }}
-            className="navbar-toggler"
+            className="navbar-toggler mr-2"
             type="button"
             data-toggle="collapse"
             data-target="#submenu"
@@ -59,6 +66,7 @@ class Menu extends Component {
           >
             <span className="navbar-toggler-icon" />
           </button>
+          {ui}
         </nav>
         <div
           className={`collapse w-100 ${open && 'show'}`}
@@ -120,29 +128,32 @@ class DefaultLayout extends Component {
   }
 
   render() {
-    const { children, activePath, isAndroid } = this.props;
+    const { children, activePath, menu } = this.props;
     const { open } = this.state;
 
     // style={{ height: isAndroid ? '100vh' : '100vh' }}
     return (
       <div id="content-container" ref={c => (this.cont = c)}>
-        <Menu
-          open={open}
-          style={{ position: 'absolute' }}
-          onToggle={this.handleClick}
-        >
-          <Navigation>
-            {({ name }) => (
-              <div
-                onClick={() => {
-                  this.setState({ open: false });
-                }}
-              >
-                {name}
-              </div>
-            )}
-          </Navigation>
-        </Menu>
+        <div style={{ display: 'flex' }}>
+          <Menu
+            ui={menu}
+            open={open}
+            style={{ position: 'absolute' }}
+            onToggle={this.handleClick}
+          >
+            <Navigation>
+              {({ name }) => (
+                <div
+                  onClick={() => {
+                    this.setState({ open: false });
+                  }}
+                >
+                  {name}
+                </div>
+              )}
+            </Navigation>
+          </Menu>
+        </div>
         {children}
       </div>
     );

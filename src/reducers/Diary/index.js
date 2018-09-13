@@ -9,19 +9,13 @@ import {
 import { NO_CARD_FILTER, challengeTypeMap } from 'Constants/cardFields';
 
 const INITIAL_STATE = {
-  // skills: [],
-  // collectedCards: [],
+  selectedCardID: null,
+  // cardSets: [],
+  // cards: [],
   // createdCards: [],
   // submittedCards: [],
-  // numCollectedCards: 0,
-  // numCreatedCards: 0,
-  cardSets: [],
-  cards: [],
-  createdCards: [],
-  submittedCards: [],
   modalActive: false,
-  selectedCardId: null,
-  extendedCardId: null,
+  extendedCardID: null,
   userInfoExtended: false,
   filterByCardType: challengeTypeMap[NO_CARD_FILTER]
 };
@@ -31,6 +25,10 @@ function reducer(state = INITIAL_STATE, action) {
   // const { selectedCardId } = state;
 
   switch (action.type) {
+    case SELECT_CARD_ID: {
+      const selectedCardID = action.options;
+      return { ...state, selectedCardID };
+    }
     case SELECT_CARD_TYPE: {
       const selectedCardType = action.options;
       return { ...state, filterByCardType: challengeTypeMap[selectedCardType] };
