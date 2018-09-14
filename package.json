@@ -99,6 +99,7 @@
     "react-dnd-touch-backend": "^0.3.17",
     "react-document-meta": "^2.1.1",
     "react-dom": "^16.4.0",
+    "react-easy-swipe": "^0.0.16",
     "react-feather": "^1.0.8",
     "react-hot-loader": "^4.3.2",
     "react-icons": "^2.2.7",

@@ -93,7 +93,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
   };
 
-  const flipHandler = () => routeFlipCard({ match, history });
+  const flipHandler = () => {
+    routeFlipCard({ match, history });
+  };
 
   return {
     ...state,

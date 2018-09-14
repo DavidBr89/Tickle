@@ -31,7 +31,7 @@ const pruneFields = fields => {
 
 const thumbFileName = fileName => `thumb_${fileName}`;
 
-const CARDS = 'staging_vds_geo_cards';
+const CARDS = 'tmpCards';
 const getShallowCards = uid => {
   console.log('UID', uid);
   const firePr =
@@ -42,6 +42,9 @@ const getShallowCards = uid => {
   return firePr.get().then(querySnapshot => {
     const data = [];
     querySnapshot.forEach(doc => {
+      // const timestamp = doc.get('created_at');
+      // console.log('timestamp', timestamp);
+      // const date = timestamp.toDate();
       const d = doc.data();
 
       data.push({ ...d });
@@ -306,7 +309,8 @@ export const doCreateCard = card =>
     if (card.id === 'temp') {
       throw Error('error: temp card to create');
     } else {
-      const newCard = extractCardFields({ ...card, img });
+      const timestamp = null; // firestore.FieldValue.serverTimestamp();
+      const newCard = extractCardFields({ ...card, img, timestamp });
       console.log('newCard', newCard);
 
       return firestore

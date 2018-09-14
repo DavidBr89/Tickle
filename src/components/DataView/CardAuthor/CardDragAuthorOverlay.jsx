@@ -65,6 +65,7 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
         selected={selected}
       >
         <div
+          onMouseDown={() => dragCard(true)}
           onDoubleClick={e => {
             previewCardAction(d);
             e.stopPropagation();

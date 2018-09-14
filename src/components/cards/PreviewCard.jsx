@@ -75,7 +75,8 @@ class PreviewCard extends Component {
     // TODO: include only type
     challenge: { type: null },
     edit: false,
-    type: null
+    type: null,
+    showImg: true
   };
 
   shouldComponentUpdate(nextProps) {
@@ -99,7 +100,8 @@ class PreviewCard extends Component {
       onClick,
       edit,
       tagColorScale,
-      type
+      type,
+      showImg
     } = this.props;
     const selImg = (() => {
       if (img && img.thumbnail) return img.thumbnail;
@@ -138,7 +140,7 @@ class PreviewCard extends Component {
           className="mt-1 mb-1"
           style={{ height: '50%', background: '#ffd70080' }}
         >
-          {img !== null || !edit ? (
+          {(showImg && img !== null) ? (
             <img
               style={{
                 display: 'block',

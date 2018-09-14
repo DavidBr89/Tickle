@@ -29,7 +29,10 @@ const GRID = 'grid';
 const Routes = ({ history }) => (
   <HashRouter>
     <Switch>
-      <Route path={routes.MYCARDS} render={() => <Diary />} />
+      <Route
+        path={`${routes.MYCARDS}/:selectedCardId?/:extended?/:flipped?`}
+        render={() => <Diary />}
+      />
       <Route
         path={`${`${
           routes.AUTH_ENV

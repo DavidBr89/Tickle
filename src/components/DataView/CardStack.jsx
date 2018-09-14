@@ -3,10 +3,20 @@ import PropTypes from 'prop-types';
 
 import { PreviewCard } from 'Cards';
 import Stack from 'Utils/CardStack';
+import Swipe from 'react-easy-swipe';
 
 const isPosInt = n => Number.isInteger(n) && n >= 0;
 
-function CardStack({
+const TouchableCard = ({ touch, onClick, ...d }) =>
+  touch ? (
+    <Swipe onSwipeStart={onClick} style={{width: '100%', height: '100%'}}>
+      <PreviewCard {...d} />
+    </Swipe>
+  ) : (
+    <PreviewCard {...d} onClick={onClick} />
+  );
+
+function CardStackWrapper({
   className,
   cards,
   selectedCardId,
@@ -17,6 +27,7 @@ function CardStack({
   onClick,
   cardHeight,
   unit,
+  touch,
   ...props
 }) {
   const cardIndex = cards.findIndex(c => c.id === selectedCardId);
@@ -37,8 +48,9 @@ function CardStack({
       {...props}
     >
       {d => (
-        <PreviewCard
+        <TouchableCard
           {...d}
+          touch={touch}
           onClick={() => onClick(d)}
           tagColorScale={tagColorScale}
           key={d.id}
@@ -58,8 +70,8 @@ function CardStack({
   );
 }
 
-CardStack.defaultProps = {};
+CardStackWrapper.defaultProps = {};
 
-CardStack.propTypes = {};
+CardStackWrapper.propTypes = {};
 
-export default CardStack;
+export default CardStackWrapper;

@@ -17,7 +17,8 @@ const INITIAL_STATE = {
   modalActive: false,
   extendedCardID: null,
   userInfoExtended: false,
-  filterByCardType: challengeTypeMap[NO_CARD_FILTER]
+  selectedCardType: NO_CARD_FILTER,
+  isSelectedCardType: challengeTypeMap[NO_CARD_FILTER]
 };
 
 function reducer(state = INITIAL_STATE, action) {
@@ -31,7 +32,11 @@ function reducer(state = INITIAL_STATE, action) {
     }
     case SELECT_CARD_TYPE: {
       const selectedCardType = action.options;
-      return { ...state, filterByCardType: challengeTypeMap[selectedCardType] };
+      return {
+        ...state,
+        isSelectedCardType: challengeTypeMap[selectedCardType],
+        selectedCardType
+      };
     }
     case SELECT_CARD_ID: {
       const selectedCardId = action.options;

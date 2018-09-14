@@ -215,6 +215,7 @@ class CardAuthorPage extends Component {
           <CardStack
             cards={cards}
             selectedCardId={selectedCardId}
+            touch={isSmartphone}
             duration={600}
             className="ml-1 mr-2"
             width={cardStackWidth}

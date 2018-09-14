@@ -4,6 +4,7 @@ import { StyleSheet, css } from 'aphrodite/no-important';
 import { wrapGrid } from 'animate-css-grid';
 
 import PreviewCard from 'Components/cards/PreviewCard';
+import ConnectedCard from 'Components/cards/ConnectedCard';
 
 import DefaultLayout from 'Components/Layout';
 
@@ -20,53 +21,74 @@ import './layout.scss';
 
 class Cell extends Component {
   static propTypes = {
-    onClick: PropTypes.func
+    onClick: PropTypes.func,
+    selected: PropTypes.bool
   };
 
   static defaultProps = {
-    onClick: () => null
+    onClick: () => null,
+    selected: true
   };
 
   state = { hovered: false };
 
   render() {
-    const { onClick, style, ...restProps } = this.props;
+    const { onClick, style, selected, expanded, ...restProps } = this.props;
     const { hovered } = this.state;
+
     return (
       <div
         style={{
-          padding: '5%',
+          padding: '10%',
           cursor: 'pointer',
           zIndex: hovered && 2000,
           width: '100%',
           height: '100%',
+          opacity: selected ? 1 : 0.5,
+          transition: 'opacity 500ms',
           ...style
         }}
         onClick={onClick}
       >
-        <PreviewCard
+        <div
           style={{
-            transform: hovered ? 'scale(1.15)' : 'scale(1)',
-            transition: 'transform 200ms',
-            transformOrigin: hovered && null
+            // IMPORTANT FOR ANIMATION
+            width: '100%',
+            height: '100%'
           }}
-          {...restProps}
-        />
+        >
+          {expanded ? (
+            <PreviewCard {...this.props} />
+          ) : (
+            <PreviewCard
+              showImg={false}
+              style={{
+                transform: hovered ? 'scale(1.15)' : 'scale(1)',
+                transition: 'transform 200ms',
+                transformOrigin: hovered && null
+              }}
+              {...restProps}
+            />
+          )}
+        </div>
       </div>
     );
   }
 }
 
-const INITIAL_GRID_STATE = { colWidth: '35%', rowWidth: '35' };
+const INITIAL_GRID_STATE = {
+  colNum: 10,
+  rowNum: 10
+};
 
 export default class MyDiary extends Component {
   componentDidMount() {
     // will automatically clean itself up when dom node is removed
     // TODO check later
     this.fg = wrapGrid(this.grid, {
-      easing: 'backInOut',
+      easing: 'easein',
       stagger: 0,
-      duration: 200
+      duration: 800
     });
   }
 
@@ -75,29 +97,37 @@ export default class MyDiary extends Component {
   componentDidUpdate(prevProps, prevState) {
     this.fg.forceGridAnimation();
   }
-  render() {
-    const { cards, selectCardID, selectedCardID, selectCardType } = this.props;
-    const { colWidth, rowWidth } = this.state;
 
-    const defColNum = 6;
-    const defRowNum = 6;
-    const colNum = 10;
-    const rowNum = 10;
+  render() {
+    const {
+      cards,
+      selectCard,
+      selectedCardId,
+      selectCardType,
+      isSelectedCardType,
+      cardAction,
+      selectedCard
+    } = this.props;
+    const { colNum, rowNum } = this.state;
+
+    const cn = Math.max(6, Math.floor(Math.sqrt(cards.length)));
+    const rn = Math.max(6, Math.ceil(Math.sqrt(cards.length)));
+    const centerC = Math.floor(cn / 2);
+    const centerR = Math.floor(rn / 2);
+    console.log('cn', cn, 'rn', rn);
+
     const gridModeStyle =
-      selectedCardID === null
+      selectedCardId === null
         ? {
-          // gridTemplateColumns: `repeat(auto-fill, minmax(${colWidth}, 1fr))`,
-          // gridTemplateRows: `minmax(${rowWidth}, 1fr)`,
-          //   gridAutoRows: '1fr',
-          gridTemplateColumns: `repeat(${defColNum}, ${100 / defColNum}%)`,
+          gridAutoColumns: `${100 / colNum}%`,
           // gridTemplateRows: `repeat(${defRowNum}, ${100 / defRowNum}%)`,
           gridAutoRows: `${100 / rowNum}%`
           // gridGap: '16px'
         }
         : {
-          gridTemplateColumns: `repeat(${colNum}, ${100 / colNum}%)`,
+          gridTemplateColumns: `repeat(${cn}, ${100 / cn}%)`,
           // gridTemplateRows: `repeat(${rowNum}, ${100 / rowNum}%)`,
-          gridAutoRows: `${100 / rowNum}%`
+          gridAutoRows: `${100 / rn}%`
           // gridGap: '10%'
             // gridTemplateColumns: '33%',
             // gridTemplateRows: '33%'
@@ -111,25 +141,34 @@ export default class MyDiary extends Component {
       ...gridModeStyle
     };
 
-    const selectedCard =
-      selectedCardID !== null ? cards.find(c => c.id === selectedCardID) : null;
     // const indices = cards.map((d, i) => i);
     const mapCell = d => {
-      const selStyle =
-        d.id === selectedCardID
-          ? {
-            gridColumn: '1 / span 8',
-            gridRow: '1 / span 8'
-          }
-          : { gridColumn: 'span 2', gridRow: 'span 2' };
+      const cardExpanded = d.id === selectedCardId;
 
-      const onClick = () =>
-        d.id === selectedCardID ? selectCardID(null) : selectCardID(d.id);
+      // col={i % cn}
+      // row={Math.ceil(i / cn)}
+      const selStyle = cardExpanded
+        ? {
+          gridColumn: `${centerC} / span 2`,
+          gridRow: `${centerR} / span 2`
+        }
+        : { gridColumn: 'span 1', gridRow: 'span 1' };
 
-      return <Cell key={d.id} {...d} style={selStyle} onClick={onClick} />;
+      // const onClick = () =>
+      //   d.id === selectedCardId ? selectCard(null) : selectCard(d.id);
+
+      return (
+        <Cell
+          key={d.id}
+          {...d}
+          style={selStyle}
+          onClick={() => cardAction(d)}
+          selected={isSelectedCardType(d)}
+          expanded={cardExpanded}
+        />
+      );
     };
 
-    console.log('selectedCard', selectedCard);
     return (
       <DefaultLayout
         menu={
@@ -142,18 +181,10 @@ export default class MyDiary extends Component {
               </select>
             </div>
             <button onClick={() => this.setState(INITIAL_GRID_STATE)}>a</button>
-            <button
-              onClick={() =>
-                this.setState({ colWidth: '25%', rowWidth: '25%' })
-              }
-            >
+            <button onClick={() => this.setState({ ...INITIAL_GRID_STATE })}>
               b
             </button>
-            <button
-              onClick={() =>
-                this.setState({ colWidth: '10%', rowWidth: '10%' })
-              }
-            >
+            <button onClick={() => this.setState({ colNum: 20, rowNum: 20 })}>
               c
             </button>
           </React.Fragment>

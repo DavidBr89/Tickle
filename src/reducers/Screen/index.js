@@ -36,6 +36,7 @@ function reducer(state = INITIAL_STATE, action) {
 
       const isSmartphone = width < 450;
       const smallScreen = width < 420;
+      console.log('isSmartphone', isSmartphone);
 
       return { ...state, width, height, isSmartphone, smallScreen, iOS };
     }

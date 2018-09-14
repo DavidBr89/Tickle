@@ -127,7 +127,7 @@ class ReadCardFront extends Component {
           >
             <div className="mb-1">
               <img
-                src={img.url || placeholderImgSrc}
+                src={(img && img.url) || placeholderImgSrc}
                 style={{ width: '100%', height: '100%' }}
                 alt="Photo broken"
               />

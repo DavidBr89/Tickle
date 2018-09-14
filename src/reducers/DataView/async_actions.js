@@ -7,6 +7,8 @@ import {
   flipCard
 } from './actions';
 
+// import { matchPath } from 'react-router-dom';
+
 const getBasePath = url => url.slice(0, url.indexOf('/:'));
 
 export function tagFilter({ filterSet, tag }) {
@@ -35,6 +37,7 @@ export const routeExtendCard = ({
 
 export const routeFlipCard = ({ match, history }) => dispatch => {
   const { path } = match;
+  console.log('FLIP', match, history);
   const { selectedCardId, extended, flipped } = match.params;
 
   history.push(

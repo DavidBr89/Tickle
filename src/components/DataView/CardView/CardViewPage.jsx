@@ -172,6 +172,7 @@ class CardViewPage extends Component {
           <CardStack
             cards={cards}
             edit={false}
+            touch={isSmartphone}
             selectedCardId={selectedCardId}
             duration={600}
             className="ml-1 mr-2"
