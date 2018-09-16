@@ -110,64 +110,141 @@ export default class MyDiary extends Component {
     } = this.props;
     const { colNum, rowNum } = this.state;
 
-    const cn = Math.max(6, Math.floor(Math.sqrt(cards.length)));
-    const rn = Math.max(6, Math.ceil(Math.sqrt(cards.length)));
-    const centerC = Math.floor(cn / 2);
-    const centerR = Math.floor(rn / 2);
-    console.log('cn', cn, 'rn', rn);
+    const colWidth = 2;
+    const rowHeight = 1;
+    const colNumber = 3 * colWidth;
+
+    const rowNumber = rowHeight * 3; // Math.max(6, Math.ceil(Math.sqrt(cards.length)));
+    const centerCol = colWidth + 1; // Math.ceil(colNumber / 2);
+    const centerRow = rowHeight + 1; // Math.floor(rowNumber / 2);
+    const centerWidth = 1;
+    const centerHeight = 1;
+    const cardWidth = 2;
+    const cardHeight = 1;
+    console.log('centerRow', centerRow);
+    console.log('colNumber', colNumber, 'rowNumber', rowNumber);
+
+    const defaultColNum = Math.max(6, Math.floor(Math.sqrt(cards.length)));
+    console.log('defaultColNum', defaultColNum);
 
     const gridModeStyle =
       selectedCardId === null
         ? {
-          gridAutoColumns: `${100 / colNum}%`,
-          // gridTemplateRows: `repeat(${defRowNum}, ${100 / defRowNum}%)`,
-          gridAutoRows: `${100 / rowNum}%`
+          gridTemplateColumns: `repeat(${4}, ${100 / 4}%)`,
+          gridTemplateRows: `repeat(${Math.ceil(cards.length / 4)}, ${5}%)`
+          // gridAutoColumns: `${100 / defaultColNum}%`,
+          // // gridTemplateRows: `repeat(${defRowNum}, ${100 / defRowNum}%)`,
+          // gridAutoRows: `${100 / defaultColNum}%`
           // gridGap: '16px'
         }
         : {
-          gridTemplateColumns: `repeat(${cn}, ${100 / cn}%)`,
-          // gridTemplateRows: `repeat(${rowNum}, ${100 / rowNum}%)`,
-          gridAutoRows: `${100 / rn}%`
+          gridTemplateColumns: `repeat(${colNumber}, ${100 / colNumber}%)`,
+          gridTemplateRows: `repeat(${rowNumber}, ${100 / rowNumber}%)`
+          // gridAutoRows: `${100 / rowNumber}%`
           // gridGap: '10%'
             // gridTemplateColumns: '33%',
             // gridTemplateRows: '33%'
             // gridTemplateAreas: '"header" "main main main" "footer"'
         };
 
+    console.log('gridModeStyle', gridModeStyle, 'selectedCard', selectedCardId);
+
     const gridStyle = {
       height: '100%',
       display: 'grid',
-      gridAutoFlow: 'dense',
+      // gridAutoFlow: 'column dense',
       ...gridModeStyle
     };
 
-    // const indices = cards.map((d, i) => i);
+    const findCellStyle = (d, i) => {
+      if (selectedCard === null) {
+        return { gridColumn: 'span 1', gridRow: 'span 1' };
+      }
+
+      switch (true) {
+        case i < 3: {
+          return {
+            gridColumn: `${i * colWidth + 1} / span ${cardWidth}`,
+            // gridColumn: `span ${colWidth}`,
+            gridRow: `${1}/ span ${rowHeight}`
+          };
+        }
+        case i === 3: {
+          return {
+            gridColumn: `${1} / span ${cardWidth}`,
+            gridRow: `${centerRow} / span ${cardHeight}`
+          };
+        }
+        case i === 4: {
+          console.log('DDD', d);
+          return {
+            gridColumn: `${colNumber - colWidth + 1} / span ${cardWidth}`,
+            gridRow: `${centerRow} / span ${cardHeight}`
+          };
+        }
+        case i > 4: {
+          const gr = rowHeight * 2 + 1; // (rowNumber - 1) * rowHeight;
+          console.log('gr', gr);
+          return {
+            gridColumn: `span ${cardWidth}`,
+            // gridColumn: `${Math.abs(colNumber - i) + colWidth} / span ${colWidth}`,
+            gridRow: `${gr} / span ${cardHeight}`
+          };
+        }
+        // default:
+        //   `span ${colWidth}`;
+      }
+    };
+
+    const nonSelStyle = cards
+      .filter(c => c.id !== selectedCardId)
+      .reduce((acc, d, i) => {
+        acc[d.id] = findCellStyle(d, i);
+        return acc;
+      }, {});
+
     const mapCell = d => {
       const cardExpanded = d.id === selectedCardId;
 
-      // col={i % cn}
-      // row={Math.ceil(i / cn)}
-      const selStyle = cardExpanded
+      const style = cardExpanded
         ? {
-          gridColumn: `${centerC} / span 2`,
-          gridRow: `${centerR} / span 2`
-        }
-        : { gridColumn: 'span 1', gridRow: 'span 1' };
-
-      // const onClick = () =>
-      //   d.id === selectedCardId ? selectCard(null) : selectCard(d.id);
+          gridColumn: `${centerCol} / span ${cardWidth}`,
+          gridRow: `${centerRow} / span ${cardHeight}`,
+          transformOrigin: null,
+          transform: 'scale(1.3)'
+          }
+        : nonSelStyle[d.id];
 
       return (
         <Cell
           key={d.id}
           {...d}
-          style={selStyle}
+          style={style}
           onClick={() => cardAction(d)}
           selected={isSelectedCardType(d)}
           expanded={cardExpanded}
         />
       );
     };
+
+    // const indices = cards.map((d, i) => i);
+    // const mapSelectedCell = (d, i) => {
+    //   const cardExpanded = d.id === selectedCardId;
+    //   const selStyle = {
+    //     gridColumn: `${centerCol} / span 3`,
+    //     gridRow: `${centerRow} / span 3`
+    //   };
+    //   return (
+    //     <Cell
+    //       key={d.id}
+    //       {...d}
+    //       style={selStyle}
+    //       onClick={() => cardAction(d)}
+    //       selected={isSelectedCardType(d)}
+    //       expanded={cardExpanded}
+    //     />
+    //   );
+    // };
 
     return (
       <DefaultLayout
@@ -197,9 +274,11 @@ export default class MyDiary extends Component {
             overflow: 'scroll'
           }}
         >
-          {selectedCard !== null && (
-            <div>{selectedCard.tags.map(d => <div>{d}</div>)}</div>
-          )}
+          <div style={{ height: 200 }}>
+            {selectedCard !== null && (
+              <div>{selectedCard.tags.map(d => <div>{d}</div>)}</div>
+            )}
+          </div>
           <div className="flex-full">
             <div style={gridStyle} ref={el => (this.grid = el)}>
               {cards.map(mapCell)}

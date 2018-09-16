@@ -68,7 +68,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const { cards, userTags } = stateProps;
 
   const { routeSelectCard, routeExtendCard } = dispatchProps;
-  console.log('match', match, history, id);
+  // console.log('match', match, history, id);
 
   const { path } = match;
   const { selectedCardId, extended, flipped } = match.params;
@@ -95,11 +95,11 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     ...stateProps,
     ...dispatchProps,
     ...ownProps,
-    selectedCardId,
+    selectedCardId: selectedCardId ? selectedCardId : null,
     cardAction,
     selectedCard,
     selectedTags,
-    cards: cards
+    cards: [...nbs]
   };
 };
 
