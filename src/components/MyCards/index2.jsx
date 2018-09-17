@@ -71,12 +71,16 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   // console.log('match', match, history, id);
 
   const { path } = match;
-  const { selectedCardId = null, extended = null, flipped } = match.params;
+  const { selectedCardId = null, extended, flipped } = match.params;
 
   const cardAction = d => {
     selectedCardId === d.id
-      ? routeExtendCard({ path, history, id: d.id, extended: !extended })
-      : routeSelectCard({ path, history, id: d.id });
+      ? _ => _
+      : routeSelectCard({
+        path,
+          history,
+        id: d.id
+        });
   };
 
   const selectedCard = cards.find(c => c.id === selectedCardId) || null;
@@ -88,36 +92,31 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     'selectedCardId',
     selectedCardId
   );
-  // const nbs =
-  //   selectedCard !== null
-  //     ? cards
-  //       .filter(
-  //         c =>
-  //           c.id !== selectedCardId &&
-  //             intersection(c.tags, selectedCard.tags).length !== 0
-  //       )
-  //       .slice(0, 8)
-  //       .concat([selectedCard])
-  //     : [...cards];
-  //
-  // const selectedTags = uniq(
-  //   nbs.reduce((acc, d) => acc.concat([...d.tags]), [])
-  // );
-  // console.log('nbs', nbs);
+  const nbs =
+    selectedCard !== null
+      ? cards
+        .filter(
+          c =>
+            c.id !== selectedCardId &&
+              intersection(c.tags, selectedCard.tags).length !== 0
+        )
+        .slice(0, 8)
+        .concat([selectedCard])
+      : [...cards];
+
+  const selectedTags = uniq(
+    nbs.reduce((acc, d) => acc.concat([...d.tags]), [])
+  );
+  console.log('nbs', nbs);
   return {
     ...stateProps,
     ...dispatchProps,
     ...ownProps,
     selectedCardId: selectedCardId || null,
     cardAction,
-    selectedTags: [],
+    selectedTags,
     selectedCard,
-    cardExtended: extended,
-    cards: cards.sort((a, b) => {
-      if (a.id < b.id) return -1;
-      if (a.id > b.id) return 1;
-      return 0;
-    })
+    cards: [...nbs]
   };
 };
 

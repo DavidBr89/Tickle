@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 // import styles from './PreviewCard.css';
 import placeholderImg from './placeholder.png';
 import { shadowStyle, colorClass, colorScale } from './styles';
+import { Lock as LockF } from 'react-feather';
 
 import { PreviewTags } from 'Utils/Tag';
 
@@ -76,7 +77,8 @@ class PreviewCard extends Component {
     challenge: { type: null },
     edit: false,
     type: null,
-    showImg: true
+    showImg: true,
+    accessible: true
   };
 
   shouldComponentUpdate(nextProps) {
@@ -101,46 +103,65 @@ class PreviewCard extends Component {
       edit,
       tagColorScale,
       type,
-      showImg
+      showImg,
+      accessible
     } = this.props;
     const selImg = (() => {
       if (img && img.thumbnail) return img.thumbnail;
       if (img && img.url) return img.url;
       return placeholderImg;
     })();
+    const contStyle = {
+      padding: '5px',
+      height: '100%',
+      background: colorScale(type),
+      boxShadow: '0.2rem 0.2rem grey',
+      overflow: 'hidden',
+      ...style
+      // minWidth: '100px'
+      // maxHeight: '120px'
+    };
 
+    if (!accessible)
+      return (
+        <div style={contStyle} onClick={onClick} className="flexCol">
+          <div
+            className="text-truncate"
+            style={{ fontSize: '16px', margin: '4px 0', flexShrink: 0 }}
+          >
+            {title}
+          </div>
+          <div
+            className="flexCol"
+            style={{
+              flex: '0 1 100%',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <LockF size={90} />
+          </div>
+        </div>
+      );
     // img.thumbnail ? img.thumbnail || img.url : placeholderImg;
     return (
-      <div
-        style={{
-          padding: '5px',
-          height: '100%',
-          background: colorScale(type),
-          boxShadow: '0.2rem 0.2rem grey',
-          overflow: 'hidden',
-          ...style
-          // minWidth: '100px'
-          // maxHeight: '120px'
-        }}
-        onClick={onClick}
-      >
+      <div style={contStyle} onClick={onClick}>
         {title !== null ? (
-          <div>
-            <div
-              className="text-truncate"
-              style={{ fontSize: '16px', margin: '4px 0' }}
-            >
-              {title}
-            </div>
+          <div
+            className="text-truncate"
+            style={{ fontSize: '16px', margin: '4px 0' }}
+          >
+            {title}
           </div>
         ) : (
           <PlaceholderField text="Title" style={{ fontSize: '18px' }} />
         )}
+
         <div
           className="mt-1 mb-1"
           style={{ height: '50%', background: '#ffd70080' }}
         >
-          {(showImg && img !== null) ? (
+          {showImg && img !== null ? (
             <img
               style={{
                 display: 'block',

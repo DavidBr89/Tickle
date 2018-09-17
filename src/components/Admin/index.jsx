@@ -18,7 +18,7 @@ import withAuthorization from '../withAuthorization';
 import AdminPage from './AdminPage';
 
 const mapStateToProps = state => {
-  const { selectedUserId, cards } = state.Admin;
+  const { selectedUserId, selectedCardId, cards } = state.Admin;
   // console.log('selectedUserId', cards, selectedUserId);
   const filteredCards = cards
     .map(c => ({
@@ -30,13 +30,19 @@ const mapStateToProps = state => {
     }))
     .filter(c => c.challengeSubmission !== null);
 
-  console.log('filteredCards', filteredCards);
+  const selectedCard =
+    selectedCardId !== null
+      ? filteredCards.find(c => c.id === selectedCardId)
+      : null;
+
+  // console.log('filteredCards', filteredCards);
 
   return {
     // ...state.Session,
     ...state.DataView,
     ...state.Admin,
-    cards: filteredCards
+    cards: filteredCards,
+    selectedCard
   };
 };
 

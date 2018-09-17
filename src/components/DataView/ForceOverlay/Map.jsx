@@ -14,7 +14,7 @@ import { CardMarker } from 'Cards';
 import Cluster from './Cluster';
 import ForceCollide from './MiniForceCollide';
 
-import { changeMapViewport } from 'Reducers/Map/actions';
+import { changeMapViewport, userMove } from 'Reducers/Map/actions';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -44,7 +44,6 @@ const PreviewMarker = ({
 }) => (
   <CardMarker
     color={color}
-    onClick={() => console.log('yeah')}
     style={{
       transform: selected && 'scale(1.5)',
       zIndex: selected && 50,
@@ -180,15 +179,15 @@ class Map extends Component {
             geometry: {
               type: 'LineString',
               coordinates: [
-  [4.99535, 51.314751],
-  [4.99684, 51.314709],
-  [4.997494, 51.314592],
-  [4.999943, 51.31378],
-  [5.000791, 51.313581],
-  [5.002289, 51.313371],
-  [5.00321, 51.313367],
-  [5.004118, 51.31351],
-  [5.007665, 51.313871]
+                [4.99535, 51.314751],
+                [4.99684, 51.314709],
+                [4.997494, 51.314592],
+                [4.999943, 51.31378],
+                [5.000791, 51.313581],
+                [5.002289, 51.313371],
+                [5.00321, 51.313367],
+                [5.004118, 51.31351],
+                [5.007665, 51.313871]
               ]
             }
           }
@@ -238,7 +237,8 @@ class Map extends Component {
       width,
       height,
       isCardDragging,
-      showUser
+      showUser,
+      userMove
     } = this.props;
 
     const { latitude, longitude, zoom } = viewport;
@@ -261,6 +261,10 @@ class Map extends Component {
 
     return (
       <MapGL
+        onClick={e =>
+          // TODO: only for testing porposes
+          userMove({ longitude: e.lngLat[0], latitude: e.lngLat[1] })
+        }
         ref={m => (this.mapgl = m)}
         mapStyle={mapStyleUrl}
         width={width}
@@ -326,7 +330,8 @@ const mapStateToProps = ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      changeMapViewport
+      changeMapViewport,
+      userMove
     },
     dispatch
   );

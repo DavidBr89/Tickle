@@ -32,7 +32,7 @@ const pruneFields = fields => {
 const thumbFileName = fileName => `thumb_${fileName}`;
 
 const CARDS = 'tmpCards';
-const getShallowCards = uid => {
+const getShallowCards = ( uid=null ) => {
   console.log('UID', uid);
   const firePr =
     uid !== null
@@ -145,7 +145,7 @@ export function getOneEmailUser(email) {
 }
 
 export const readCardsWithSubmissions = uid =>
-  getShallowCards(uid).then(data => {
+  getShallowCards().then(data => {
     const pendingPromises = data.map(d =>
       getAllChallengeSubmissions(d.id).then(
         challengeSubmissions =>

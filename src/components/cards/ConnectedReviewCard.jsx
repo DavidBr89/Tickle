@@ -18,6 +18,7 @@ const CardReview = ({
   extendSelectedCard,
   tagColorScale,
   submitChallengeReview,
+  uid,
   ...props
 }) => (
   <Card
@@ -28,11 +29,10 @@ const CardReview = ({
         title="Challenge Review"
         {...props.challenge}
         {...props.challengeSubmission}
-        feedback={{}}
-        onSubmit={feedback => {
+        onSubmit={fb => {
           submitChallengeReview({
             ...props.challengeSubmission,
-            feedback,
+            feedback: { ...fb, uid }
           });
         }}
       />
@@ -76,7 +76,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   return {
     ...state,
     ...dispatcherProps,
-    ...ownProps
+    ...ownProps,
+    uid
     // onSubmitChallenge
   };
 };

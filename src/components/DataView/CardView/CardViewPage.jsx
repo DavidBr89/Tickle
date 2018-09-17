@@ -69,35 +69,6 @@ class CardViewPage extends Component {
     tagColorScale: () => 'green',
     screenResize: d => d
   };
-  constructor(props) {
-    super(props);
-
-    // TODO put into container element
-    const { screenResize } = props;
-
-    // this._onChangeViewport = this._onChangeViewport.bind(this);
-    // this._userMove = this._userMove.bind(this);
-    // this.gridSpan = this.gridSpan.bind(this);
-
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-
-    // screenResize({
-    //   width: this.cont.offsetWidth || window.innerWidth,
-    //   height: this.cont.offsetHeight || window.innerHeight
-    // });
-    // window.addEventListener('resize', () => {
-    //   screenResize({
-    //     width: this.cont.offsetWidth || window.innerWidth,
-    //     height: this.cont.offsetHeight || window.innerHeight
-    //   });
-    // });
-
-    // screenResize({
-    //   width,
-    //   height
-    // });
-  }
 
   componentDidMount() {
     const {
@@ -156,6 +127,7 @@ class CardViewPage extends Component {
           onSelect={() => selectCard(null)}
           onClick={addCardFilter}
           data={filterSet}
+          height={height / 2 - 50}
         />
         <div
           className="mt-3"
@@ -164,7 +136,7 @@ class CardViewPage extends Component {
             justifyContent: 'center',
             transition: 'opacity 0.5s',
             // zIndex: 3000,
-            flexBasis: '25%',
+            flexBasis: height / 5,
             opacity: cardPanelVisible ? 1 : 0,
             marginBottom: 25
           }}

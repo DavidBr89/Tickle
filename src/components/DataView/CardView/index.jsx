@@ -12,6 +12,7 @@ import {
 } from 'Reducers/Map/actions';
 
 import setify from 'Utils/setify';
+import distanceLoc from 'Components/utils/distanceLoc';
 // rename path
 import { makeTagColorScale } from 'Src/styles/GlobalThemeContext';
 
@@ -99,7 +100,7 @@ const mapDispatchToProps = dispatch =>
 // });
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const { uid, collectibleCards, filterSet } = state;
+  const { uid, collectibleCards, filterSet, userLocation } = state;
   const { dataView, history, match } = ownProps;
   const { path } = match;
   const selectedCardId = match.params.selectedCardId || null;
@@ -140,7 +141,13 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const preSelectCardId = () => selectCard(null);
 
-  const filteredCards = collectibleCards.filter(d => filterByTag(d, filterSet));
+  const filteredCards = collectibleCards
+    .filter(d => filterByTag(d, filterSet))
+    .map(c => {
+      //TODO: make editable
+      const accessible = distanceLoc(userLocation, c.loc) < 500;
+      return { ...c, accessible };
+    });
   // .filter(applyFilter(challengeStateFilter));
 
   const cardSets = setify(filteredCards);

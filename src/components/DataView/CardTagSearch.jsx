@@ -8,6 +8,7 @@ function CardTagSearch({
   onChange,
   onSelect,
   onSubmit,
+  height,
   ...props
 }) {
   return (
@@ -26,12 +27,11 @@ function CardTagSearch({
         key={data.join(',')}
         onChange={onChange}
         onSelect={onSelect}
+        height={height}
         vocabulary={allTags}
-        style={
-          {
-            width: '70%'
-          }
-        }
+        style={{
+          width: '70%'
+        }}
         onClick={onSubmit}
         data={data}
       />

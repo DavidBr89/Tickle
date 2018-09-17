@@ -19,9 +19,11 @@ export const TagInput = class TagInput extends Component {
     onRemove: d => d,
     onTagInputChange: d => d,
     onSelect: d => d,
-    placeholder: 'Search by tags'
+    placeholder: 'Search by tags',
+    inputTag: null
   };
 
+  state = { showResults: false };
   render() {
     const {
       onClick,
@@ -33,13 +35,21 @@ export const TagInput = class TagInput extends Component {
       inputTag,
       onSelect,
       vocabulary,
-      placeholder
+      placeholder,
+      showResults,
+      height
     } = this.props;
 
     const firstData = data.slice(0, 5);
     const secData = data.slice(5);
     return (
-      <div style={style}>
+      <div
+        style={style}
+        onMouseDown={e => {
+          showResults && e.preventDefault();
+          // e.stopPropagation();
+        }}
+      >
         <div
           style={{
             display: 'flex',
@@ -68,7 +78,6 @@ export const TagInput = class TagInput extends Component {
               className="form-control"
               type="text"
               placeholder={placeholder}
-              onSelect={onSelect}
               value={inputTag}
               onChange={event => onTagInputChange(event.target.value)}
               style={{
@@ -89,7 +98,11 @@ export const TagInput = class TagInput extends Component {
               className={`${css(stylesheet.bareBtn)} ml-2 mr-2 pl-2 pr-2`}
               type="button"
               style={{ fontWeight: 'bold' }}
-              onClick={() => {
+              onMouseDown={e => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onClick={e => {
                 onAdd(inputTag);
               }}
             >
@@ -149,9 +162,13 @@ export const TagInput = class TagInput extends Component {
             </button>
           ))}
         </div>
-        <Hits
+        <Results
+          visible={showResults}
+          height={height}
           data={vocabulary.filter(
-            t => inputTag && t.toLowerCase().includes(inputTag.toLowerCase())
+            t =>
+              inputTag === null ||
+              t.toLowerCase().includes(inputTag.toLowerCase())
           )}
           onAdd={onAdd}
         />
@@ -160,12 +177,15 @@ export const TagInput = class TagInput extends Component {
   }
 };
 
-const Hits = ({ data, text, onAdd }) => (
+const Results = ({ data, text, onAdd, visible, height }) => (
   <div
     style={{
+      display: !visible && 'none',
       width: '100%',
+      maxHeight: height,
       background: 'white',
       position: 'absolute',
+      overflow: 'scroll',
       zIndex: 20000,
       borderLeft: rawCSS.border,
       borderRight: rawCSS.border,
@@ -173,12 +193,19 @@ const Hits = ({ data, text, onAdd }) => (
     }}
   >
     {data.length > 0 && (
-      <div className="mt-3">
+      <div
+        className="mt-3"
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap'
+        }}
+      >
         {data.map(d => (
-          <div className="mb-2">
+          <div className="m-2">
             <button
               className={css(stylesheet.bareBtn)}
               onClick={() => onAdd(d)}
+              onBlur={e => e.stopPropagation()}
             >
               {d}
             </button>
@@ -196,7 +223,12 @@ export const DropDown = class DropDown extends Component {
   };
   static defaultProps = { style: {}, vocabulary: [] };
 
-  state = { active: false, curSet: this.props.data, setList: [] };
+  state = {
+    active: false,
+    curSet: this.props.data,
+    setList: [],
+    showResults: false
+  };
 
   // .dropdown:hover .dropdown-content {
   //     display: block;
@@ -221,7 +253,7 @@ export const DropDown = class DropDown extends Component {
 
   render() {
     const { style } = this.props;
-    const { active, curSet, curKey, setList } = this.state;
+    const { active, curSet, curKey, setList, showResults } = this.state;
 
     // const isCurSetNew =
     //   curSet.length > 0 &&
@@ -230,6 +262,8 @@ export const DropDown = class DropDown extends Component {
 
     return (
       <div
+        onBlur={() => this.setState({ showResults: false })}
+        onSelect={() => this.setState({ showResults: true })}
         style={{
           alignItems: 'center',
           backgroundColor: '#fff',
@@ -249,6 +283,7 @@ export const DropDown = class DropDown extends Component {
             {...this.props}
             style={{ width: '100%' }}
             data={curSet}
+            showResults={showResults}
             onTagInputChange={key => this.setState({ curKey: key })}
             inputTag={curKey}
             onAdd={k => {

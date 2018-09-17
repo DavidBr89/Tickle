@@ -196,6 +196,7 @@ class CardAuthorPage extends Component {
           onChange={filterCards}
           onSelect={() => selectCard(null)}
           onClick={addCardFilter}
+          height={height / 2}
           data={filterSet}
         />
 

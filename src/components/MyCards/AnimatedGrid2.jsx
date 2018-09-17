@@ -6,7 +6,6 @@ import { wrapGrid } from 'animate-css-grid';
 import PreviewCard from 'Components/cards/PreviewCard';
 import ConnectedCard from 'Components/cards/ConnectedCard';
 
-import { BareModal, ModalBody } from 'Utils/Modal';
 import DefaultLayout from 'Components/Layout';
 
 import {
@@ -18,7 +17,7 @@ import {
   // challengeTypeMap
 } from 'Constants/cardFields';
 
-// import './layout.scss';
+import './layout.scss';
 
 class Cell extends Component {
   static propTypes = {
@@ -62,7 +61,9 @@ class Cell extends Component {
             <PreviewCard {...this.props} />
           ) : (
             <PreviewCard
+              showImg={false}
               style={{
+                transform: hovered ? 'scale(1.15)' : 'scale(1)',
                 transition: 'transform 200ms',
                 transformOrigin: hovered && null
               }}
@@ -84,17 +85,17 @@ export default class MyDiary extends Component {
   componentDidMount() {
     // will automatically clean itself up when dom node is removed
     // TODO check later
-    // this.fg = wrapGrid(this.grid, {
-    //   easing: 'easein',
-    //   stagger: 0,
-    //   duration: 800
-    // });
+    this.fg = wrapGrid(this.grid, {
+      easing: 'easein',
+      stagger: 0,
+      duration: 800
+    });
   }
 
   state = INITIAL_GRID_STATE;
 
   componentDidUpdate(prevProps, prevState) {
-    // this.fg.forceGridAnimation();
+    this.fg.forceGridAnimation();
   }
 
   render() {
@@ -106,9 +107,7 @@ export default class MyDiary extends Component {
       isSelectedCardType,
       cardAction,
       selectedCard,
-      selectedTags,
-      height,
-      cardExtended
+      selectedTags
     } = this.props;
     const { colNum, rowNum } = this.state;
 
@@ -123,32 +122,99 @@ export default class MyDiary extends Component {
     const centerHeight = 1;
     const cardWidth = 1;
     const cardHeight = 1;
+    console.log('centerRow', centerRow);
+    console.log('colNumber', colNumber, 'rowNumber', rowNumber);
+
+    const defaultColNum = Math.max(6, Math.floor(Math.sqrt(cards.length)));
+    console.log('defaultColNum', defaultColNum);
+
+    const gridModeStyle =
+      selectedCardId === null
+        ? {
+          gridTemplateColumns: `repeat(${4}, ${100 / 4}%)`,
+          gridTemplateRows: `repeat(${Math.ceil(cards.length / 4)}, ${5}%)`
+          // gridAutoColumns: `${100 / defaultColNum}%`,
+          // // gridTemplateRows: `repeat(${defRowNum}, ${100 / defRowNum}%)`,
+          // gridAutoRows: `${100 / defaultColNum}%`
+          // gridGap: '16px'
+        }
+        : {
+          gridTemplateColumns: `repeat(${colNumber}, ${100 / colNumber}%)`,
+          gridTemplateRows: `repeat(${rowNumber}, ${100 / rowNumber}%)`
+          // gridAutoRows: `${100 / rowNumber}%`
+          // gridGap: '10%'
+            // gridTemplateColumns: '33%',
+            // gridTemplateRows: '33%'
+            // gridTemplateAreas: '"header" "main main main" "footer"'
+        };
+
+    console.log('gridModeStyle', gridModeStyle, 'selectedCard', selectedCardId);
 
     const gridStyle = {
       height: '100%',
       display: 'grid',
       // gridAutoFlow: 'column dense',
-      gridTemplateColumns: `repeat(${4}, ${100 / 4}%)`,
-      gridTemplateRows: `repeat(${Math.ceil(cards.length / 4)}, ${height /
-        6}px)`
+      ...gridModeStyle
     };
 
-    // const nonSelStyle = cards
-    //   .filter(c => c.id !== selectedCardId)
-    //   .reduce((acc, d, i) => {
-    //     acc[d.id] = findCellStyle(d, i);
-    //     return acc;
-    //   }, {});
+    const findCellStyle = (d, i) => {
+      if (selectedCard === null) {
+        return { gridColumn: 'span 1', gridRow: 'span 1' };
+      }
+
+      switch (true) {
+        case i < 3: {
+          return {
+            gridColumn: `${i * colWidth + 1} / span ${cardWidth}`,
+            // gridColumn: `span ${colWidth}`,
+            gridRow: `${1}/ span ${cardHeight}`
+          };
+        }
+        case i === 3: {
+          return {
+            gridColumn: `${1} / span ${cardWidth}`,
+            gridRow: `${centerRow} / span ${cardHeight}`
+          };
+        }
+        case i === 4: {
+          console.log('DDD', d);
+          return {
+            gridColumn: `${colNumber - colWidth + 1} / span ${cardWidth}`,
+            gridRow: `${centerRow} / span ${cardHeight}`
+          };
+        }
+        case i > 4: {
+          const gr = rowHeight * 2 + 1; // (rowNumber - 1) * rowHeight;
+          console.log('gr', gr);
+          return {
+            gridColumn: `span ${cardWidth}`,
+            // gridColumn: `${Math.abs(colNumber - i) + colWidth} / span ${colWidth}`,
+            gridRow: `${gr} / span ${cardHeight}`
+          };
+        }
+        // default:
+        //   `span ${colWidth}`;
+      }
+    };
+
+    const nonSelStyle = cards
+      .filter(c => c.id !== selectedCardId)
+      .reduce((acc, d, i) => {
+        acc[d.id] = findCellStyle(d, i);
+        return acc;
+      }, {});
 
     const mapCell = d => {
-      const cardSelected = d.id === selectedCardId;
+      const cardExpanded = d.id === selectedCardId;
 
-      const style = {
-        transformOrigin: null,
-        transform: cardSelected ? 'scale(1.2)' : 'scale(1)',
-        zIndex: cardSelected && 5000,
-        transition: 'transform 500ms'
-      };
+      const style = cardExpanded
+        ? {
+          gridColumn: `${centerCol} / span ${cardWidth}`,
+          gridRow: `${centerRow} / span ${cardHeight}`,
+          transformOrigin: null,
+          transform: 'scale(1.3)'
+          }
+        : nonSelStyle[d.id];
 
       return (
         <Cell
@@ -157,14 +223,14 @@ export default class MyDiary extends Component {
           style={style}
           onClick={() => cardAction(d)}
           selected={isSelectedCardType(d)}
-          expanded={cardSelected}
+          expanded={cardExpanded}
         />
       );
     };
 
     // const indices = cards.map((d, i) => i);
     // const mapSelectedCell = (d, i) => {
-    //   const cardSelected = d.id === selectedCardId;
+    //   const cardExpanded = d.id === selectedCardId;
     //   const selStyle = {
     //     gridColumn: `${centerCol} / span 3`,
     //     gridRow: `${centerRow} / span 3`
@@ -176,7 +242,7 @@ export default class MyDiary extends Component {
     //       style={selStyle}
     //       onClick={() => cardAction(d)}
     //       selected={isSelectedCardType(d)}
-    //       expanded={cardSelected}
+    //       expanded={cardExpanded}
     //     />
     //   );
     // };
@@ -202,13 +268,6 @@ export default class MyDiary extends Component {
           </React.Fragment>
         }
       >
-        <BareModal
-          visible={cardExtended}
-          uiColor="grey"
-          background="transparent"
-        >
-          <ConnectedCard {...selectedCard} />
-        </BareModal>
         <div
           className="content-block flexCol"
           style={{

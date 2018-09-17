@@ -83,7 +83,6 @@ function reducer(state = INITIAL_STATE, action) {
 
     case USER_MOVE: {
       const userLocation = action.options;
-      console.log('userLocation', userLocation);
       return {
         ...state,
         userLocation

@@ -105,7 +105,7 @@ export function fetchCreatedCards(uid) {
   return function(dispatch) {
     dispatch(loadingCards());
     return db.readCardsWithSubmissions(uid).then(data => {
-      dispatch(receiveCreatedCards(data.map(extractCardFields)));
+      dispatch(receiveCreatedCards(data));
     });
   };
 }

@@ -15,9 +15,10 @@ TICKLE playground for our Project
     * Hierarchy editor (file tree view)
   * Card Timeline View
     * editor
-  * User Diary
+  * User Diary (show related cards)
   * create Mission editor and reward cards
   * Manually creating Content for Cards
+  * add neighborhood range in geo card author
 
 ### Todo bugfixes
 * fix drag and drop on mobile and bugs with map events (and the corresponding component)

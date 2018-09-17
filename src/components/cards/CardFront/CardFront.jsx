@@ -13,7 +13,7 @@ import { MediaOverview } from 'Components/cards/MediaSearch';
 
 import placeholderImgSrc from '../placeholder.png';
 
-import { X, Edit, Search } from 'react-feather';
+import { X, Edit, Search, RotateCcw } from 'react-feather';
 
 import { FieldSet } from 'Components/utils/StyledComps';
 
@@ -77,9 +77,7 @@ const FieldIcon = ({ edit, className, style }) =>
       <Edit size={25} />
     </span>
   ) : (
-    <span className={className} style={{ cursor: 'pointer', ...style }}>
-      <Search size={25} />
-    </span>
+    <span className={className} style={{ cursor: 'pointer', ...style }} />
   );
 
 const Title = ({ onClick, edit, children }) => (
@@ -356,7 +354,10 @@ class CardFront extends Component {
             </BigButton>
           )}
         </div>
-        <FlipButton color={uiColor} onClick={onFlip} />
+
+        <button className={css(btn)} onClick={onFlip}>
+          <RotateCcw size={30} />
+        </button>
       </div>
     );
 

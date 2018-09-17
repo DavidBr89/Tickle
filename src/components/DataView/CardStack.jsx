@@ -8,9 +8,9 @@ import Swipe from 'react-easy-swipe';
 const isPosInt = n => Number.isInteger(n) && n >= 0;
 
 const TouchableCard = ({ touch, onClick, ...d }) =>
-  touch ? (
-    <Swipe onSwipeStart={onClick} style={{width: '100%', height: '100%'}}>
-      <PreviewCard {...d} />
+  touch && !d.selected ? (
+    <Swipe onSwipeStart={onClick} style={{ width: '100%', height: '100%' }}>
+      <PreviewCard {...d} onClick={() => null}/>
     </Swipe>
   ) : (
     <PreviewCard {...d} onClick={onClick} />
@@ -51,7 +51,10 @@ function CardStackWrapper({
         <TouchableCard
           {...d}
           touch={touch}
-          onClick={() => onClick(d)}
+          onClick={e => {
+            e.stopPropagation();
+            onClick(d);
+          }}
           tagColorScale={tagColorScale}
           key={d.id}
           edit={d.template}
@@ -60,6 +63,7 @@ function CardStackWrapper({
             transition: `transform 1s`,
             // TODO: change later
             height: '100%',
+            // opacity: d.accessible ? 1 : 0.7,
             transform: selectedCardId === d.id && 'scale(1.2)'
             // zIndex: selectedCardId === d.id && 2000,
             // opacity: d.template && 0.8

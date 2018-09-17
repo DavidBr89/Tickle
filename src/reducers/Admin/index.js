@@ -61,11 +61,11 @@ function reducer(state = INITIAL_STATE, action) {
     }
     case SELECT_USER: {
       const selectedUserId = action.options;
-      return { ...state, selectedUserId };
+      return { ...state, selectedUserId, selectedCardId: null };
     }
     case SELECT_CARD_ID: {
       const selectedCardId = action.options;
-      console.log('selectedCardId OPTS', selectedCardId);
+      // console.log('selectedCardId OPTS', selectedCardId);
       return { ...state, selectedCardId };
     }
     case EXTEND_SELECTION: {

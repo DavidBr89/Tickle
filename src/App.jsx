@@ -147,10 +147,9 @@ navigator.geolocation.getCurrentPosition(
     };
 
     // Oude Arendonkse Baan, Oud-Turnhout 51.313476, 5.001513
-
     const turnoud = { latitude: 51.313476, longitude: 5.001513 };
-    store.dispatch(userMove(turnoud));
-    store.dispatch(changeMapViewport(turnoud));
+    store.dispatch(userMove(coords));
+    store.dispatch(changeMapViewport(coords));
   },
   err => console.log('err', err),
   {

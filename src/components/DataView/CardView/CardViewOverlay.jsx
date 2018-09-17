@@ -47,6 +47,7 @@ const CardViewOverlay = props => {
       extCardId={extCardId}
       filterSet={filterSet}
       userLocation={userLocation}
+      showUserLocation
       mode={dataView}
       padding={{
         bottom: height / 5,

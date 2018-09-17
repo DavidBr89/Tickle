@@ -98,7 +98,8 @@ class DataOverlay extends Component {
       extCardId,
       author,
       // isCardDragging,
-      preview
+      preview,
+      showUserLocation
     } = this.props;
 
     // TODO: join
@@ -133,6 +134,7 @@ class DataOverlay extends Component {
             width={width}
             height={height}
             disabled={disabled}
+            showUser={showUserLocation}
             nodes={data}
             colorScale={colorScale}
             preview={noPreview}
