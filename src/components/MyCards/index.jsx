@@ -71,7 +71,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   // console.log('match', match, history, id);
 
   const { path } = match;
-  const { selectedCardId, extended, flipped } = match.params;
+  const { selectedCardId = null, extended, flipped } = match.params;
 
   const cardAction = d => {
     selectedCardId === d.id
@@ -84,21 +84,38 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   };
 
   const selectedCard = cards.find(c => c.id === selectedCardId) || null;
-  console.log('SelectedCard', selectedCard);
-  const selectedTags = selectedCard ? selectedCard.tags : userTags;
+  console.log(
+    'cards',
+    cards,
+    'SelectedCard',
+    selectedCard,
+    'selectedCardId',
+    selectedCardId
+  );
   const nbs =
-    selectedCardId !== null
-      ? cards.filter(c => intersection(c.tags, selectedTags).length !== 0)
-      : [];
+    selectedCard !== null
+      ? cards
+        .filter(
+          c =>
+            c.id !== selectedCardId &&
+              intersection(c.tags, selectedCard.tags).length !== 0
+        )
+        .slice(0, 8)
+        .concat([selectedCard])
+      : [...cards];
 
+  const selectedTags = uniq(
+    nbs.reduce((acc, d) => acc.concat([...d.tags]), [])
+  );
+  console.log('nbs', nbs);
   return {
     ...stateProps,
     ...dispatchProps,
     ...ownProps,
-    selectedCardId: selectedCardId ? selectedCardId : null,
+    selectedCardId: selectedCardId || null,
     cardAction,
-    selectedCard,
     selectedTags,
+    selectedCard,
     cards: [...nbs]
   };
 };

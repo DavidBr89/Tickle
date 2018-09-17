@@ -106,11 +106,12 @@ export default class MyDiary extends Component {
       selectCardType,
       isSelectedCardType,
       cardAction,
-      selectedCard
+      selectedCard,
+      selectedTags
     } = this.props;
     const { colNum, rowNum } = this.state;
 
-    const colWidth = 2;
+    const colWidth = 1;
     const rowHeight = 1;
     const colNumber = 3 * colWidth;
 
@@ -119,7 +120,7 @@ export default class MyDiary extends Component {
     const centerRow = rowHeight + 1; // Math.floor(rowNumber / 2);
     const centerWidth = 1;
     const centerHeight = 1;
-    const cardWidth = 2;
+    const cardWidth = 1;
     const cardHeight = 1;
     console.log('centerRow', centerRow);
     console.log('colNumber', colNumber, 'rowNumber', rowNumber);
@@ -166,7 +167,7 @@ export default class MyDiary extends Component {
           return {
             gridColumn: `${i * colWidth + 1} / span ${cardWidth}`,
             // gridColumn: `span ${colWidth}`,
-            gridRow: `${1}/ span ${rowHeight}`
+            gridRow: `${1}/ span ${cardHeight}`
           };
         }
         case i === 3: {
