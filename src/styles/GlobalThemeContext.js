@@ -33,8 +33,8 @@ const tagColor = chroma('#a5b1c2')
 // .hex();
 
 const rawCSS = {
-  border: { border: '1px solid lightgrey' },
-  shallowBg: {background: shallowBg},
+  border: { border: `1px solid ${shallowBg}` },
+  shallowBg: { background: shallowBg },
   imgBorder: {
     boxShadow: '4px 4px lightgrey',
     background: 'white',

@@ -14,7 +14,7 @@ import ExtendableMarker from 'Utils/ExtendableMarker';
 import { changeMapViewport } from 'Reducers/Map/actions';
 import { GEO, TAGS, FLOORPLAN } from 'Constants/dataViews';
 
-import { Modal, InlineModal, BareModal, ModalBody } from 'Utils/Modal';
+import { Modal, BareModal, ModalBody } from 'Utils/Modal';
 
 // import ZoomCont from './ZoomContainer';
 

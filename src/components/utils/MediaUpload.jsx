@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-// import { X } from 'react-feather';
+import { X } from 'react-feather';
 // import { uniqBy } from 'lodash';
 import { css } from 'aphrodite/no-important';
 
@@ -51,7 +51,7 @@ class DataUploadForm extends Component {
         style={{
           display: 'flex',
           alignItems: 'center',
-          width: '70%',
+          // width: '70%',
           ...style
           // justifyContent: 'space-between',
           // height: '100%'
@@ -68,19 +68,20 @@ class DataUploadForm extends Component {
             this.setState({ imgUrl: url, file: newFile, type: ftype });
           }}
         />
-        <div>
-          <button
-            className={`${css(btn)} ml-2`}
-            style={{ fontWeight: 'bold' }}
-            onClick={() => {
-              onChange({ imgUrl, file, type });
-              this.setState({ imgUrl: null, file: null });
-            }}
-            disabled={!file}
-          >
-            Add
-          </button>
-        </div>
+        <button
+          className={`${css(btn)} ml-2`}
+          style={{
+            fontWeight: 'bold',
+            flex: '1 1 auto'
+          }}
+          onClick={() => {
+            onChange({ imgUrl, file, type });
+            this.setState({ imgUrl: null, file: null });
+          }}
+          disabled={!file}
+        >
+          Add
+        </button>
       </div>
     );
   }
@@ -91,7 +92,8 @@ const MediaItem = ({
   name,
   onRemove,
   stylesheet: { shallowBg, shallowBorder, btn, boxShadow, truncate },
-  children = null
+  children = null,
+  id
 }) => {
   const label = url ? name : 'loading';
   return (
@@ -109,7 +111,7 @@ const MediaItem = ({
     >
       {children === null ? (
         <div className={css(truncate)} style={{}}>
-          <NewTabLink>{label}</NewTabLink>
+          <NewTabLink href={url}>{label}</NewTabLink>
         </div>
       ) : (
         children({ url, name, loading: url === null })
@@ -119,10 +121,10 @@ const MediaItem = ({
           <button
             className={css(btn)}
             disabled={!url}
-            onClick={onRemove}
+            onClick={() => onRemove(id)}
             style={{ minWidth: 'unset' }}
           >
-            <Icon.X />
+            <X />
           </button>
         </div>
       )}
@@ -146,19 +148,21 @@ export const MediaList = ({
   maxHeight,
   stylesheet,
   onRemove,
-  className
+  classNam,
+  style
 }) => (
-  <ScrollList
-    className={className}
-    data={data}
-    maxHeight={maxHeight}
+  <div
     style={{
+      flex: '0 0 100%',
       justifyContent: 'center',
-      alignItems: 'center'
+      alignItems: 'center',
+      ...style
     }}
   >
-    {d => <MediaItem {...d} stylesheet={stylesheet} onRemove={onRemove} />}
-  </ScrollList>
+    {data.map(d => (
+      <MediaItem {...d} stylesheet={stylesheet} onRemove={onRemove} />
+    ))}
+  </div>
 );
 
 MediaList.defaultProps = {
@@ -178,13 +182,16 @@ class MediaUpload extends Component {
     style: PropTypes.object,
     stylesheet: PropTypes.object,
     uploadPath: PropTypes.func.isRequired,
-    nodeWrapper: PropTypes.oneOf([null, PropTypes.func])
+    nodeWrapper: PropTypes.oneOf([null, PropTypes.func]),
+    onClick: PropTypes.func
   };
 
   static defaultProps = {
     stylesheet: defaultStylesheet,
     nodeWrapper: null,
-    style: {}
+    style: {},
+    onChange: d => d,
+    onClick: d => d
   };
 
   state = { media: [], pendingMedia: [], ...this.props };
@@ -202,7 +209,9 @@ class MediaUpload extends Component {
 
   removeMediaItem = id => {
     const { uploadPath } = this.props;
-    db.removeFromStorage(uploadPath(id)).then(() =>
+    const p = uploadPath(id);
+    console.log();
+    db.removeFromStorage(p).then(() =>
       console.log('removedMediaItem Success', id)
     );
     this.setState(({ media: oldMedia }) => ({
@@ -241,35 +250,46 @@ class MediaUpload extends Component {
     const allMedia = [...media, ...pendingMedia];
     const maxHeight = '200%';
     return (
-      <div className="flex-100 flexCol">
+      <div className="flexCol" style={{ flexShrink: 0 }}>
         <DataUploadForm
-          className="mt-3"
           style={{ width: '100%' }}
           stylesheet={stylesheet}
           onChange={this.addMediaItem}
         />
-        {allMedia.length > 0 ? (
-          <MediaList
-            data={allMedia}
-            stylesheet={stylesheet}
-            maxHeight={maxHeight}
-          />
-        ) : (
-          <div
-            className="flexCol flex-100"
-            style={{
-              height: '100%',
-              // display: 'flex',
-              // justifyContent: 'center',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            <div>
-              <h3 className="text-muted flex-100">No Media added</h3>
+        <div
+          className={`mt-3 mb-3 p-1 ${css(stylesheet.border)}`}
+          style={
+            {
+              // border: '1px solid grey'
+            }
+          }
+        >
+          {allMedia.length > 0 ? (
+            <div
+              className="flexCol flex-100"
+              style={{
+                flex: '0 0 100%'
+              }}
+            >
+              <MediaList
+                data={allMedia}
+                onRemove={this.removeMediaItem}
+                stylesheet={stylesheet}
+                maxHeight={maxHeight}
+              />
             </div>
-          </div>
-        )}
+          ) : (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              <div className="text-muted" style={{fontSize: 'x-large'}}>No Media added</div>
+            </div>
+          )}
+        </div>
       </div>
     );
   }

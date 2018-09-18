@@ -6,9 +6,12 @@ import { css } from 'aphrodite/no-important';
 
 import { ModalBody } from 'Utils/Modal';
 import MediaUpload from 'Utils/MediaUpload';
+
+import { ScrollView, ScrollElement } from 'Utils/ScrollView';
 // import ScrollList from 'Utils/ScrollList';
 
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
+import { ChevronsDown } from 'react-feather';
 // TODO: untangle later
 import { Btn } from 'Components/cards/layout';
 
@@ -37,8 +40,100 @@ class MediaChallenge extends Component {
     media: [],
     response: null,
     completed: false,
+    focusTextArea: false,
     ...this.props.challengeSubmission,
     started: this.props.challengeSubmission !== null
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    const { focusTextArea, media } = this.state;
+    if (focusTextArea && prevState.focusTextArea !== focusTextArea) {
+      this.scrollTo('textArea');
+    }
+
+    if (media.length !== prevState.media.length) {
+      this.scrollTo('mediaUpload');
+    }
+  }
+
+  scrollTo = (name, opts) => {
+    this._scroller.scrollTo(name, opts);
+  };
+
+  textAreaControls = () => (
+    <div style={{ display: 'flex' }}>
+      <Btn
+        className="mr-1"
+        onClick={() => {
+          this.setState({ focusTextArea: false });
+        }}
+      >
+        <div style={{ display: 'flex' }}>
+          <div>Disable Keyboard</div>
+          <ChevronsDown />
+        </div>
+      </Btn>
+    </div>
+  );
+
+  generalControls = () => {
+    const {
+      className,
+      description,
+      onUpdate,
+      onClose,
+      styles,
+      stylesheet,
+      title,
+      onSubmit,
+      challengeSubmission,
+      smallScreen,
+      bookmarkable,
+      onRemoveSubmission
+    } = this.props;
+    const { media, response, completed, started } = this.state;
+
+    const iconLock = <Icon.Lock size={20} />;
+    return (
+      <div style={{ display: 'flex' }}>
+        <Btn
+          className="mr-1"
+          onClick={() => {
+            if (!started) {
+              this.setState({ started: true });
+              onUpdate({ media, response, completed: false });
+            } else {
+              onRemoveSubmission();
+            }
+          }}
+        >
+          <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+            <div className="mr-1">{!started ? 'Bookmark' : 'UnBookmark'}</div>
+            {started && <div>{iconLock}</div>}
+          </div>
+        </Btn>
+        <Btn
+          disabled={completed || (media.length === 0 && response === null)}
+          style={{
+            opacity: completed && 0.6
+          }}
+          onClick={() => {
+            onUpdate({ media, response, completed: true });
+            this.setState({ completed: true });
+          }}
+        >
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center'
+            }}
+          >
+            <div className="mr-1">{completed ? 'Submitted' : 'Submit'}</div>
+            {completed && <div>{iconLock}</div>}
+          </div>
+        </Btn>
+      </div>
+    );
   };
 
   render() {
@@ -56,11 +151,10 @@ class MediaChallenge extends Component {
       bookmarkable,
       onRemoveSubmission
     } = this.props;
-    const { media, response, completed, started } = this.state;
+    const { media, response, completed, started, focusTextArea } = this.state;
 
     const challBtnTxt = smallScreen ? 'Chall.' : 'Challenge';
 
-    const iconLock = <Icon.Lock size={20} />;
     // const isUploading = media.filter(m => m.url === null).length > 0;
     return (
       <ModalBody
@@ -74,76 +168,63 @@ class MediaChallenge extends Component {
         }}
         title={title}
         footer={
-          <div style={{ display: 'flex' }}>
-            <Btn
-              className="mr-1"
-              onClick={() => {
-                if (!started) {
-                  this.setState({ started: true });
-                  onUpdate({ media, response, completed: false });
-                } else {
-                  onRemoveSubmission();
-                }
-              }}
-            >
-              <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                <div className="mr-1">
-                  {!started ? 'Bookmark' : 'UnBookmark'}
-                </div>
-                {started && <div>{iconLock}</div>}
-              </div>
-            </Btn>
-            <Btn
-              disabled={completed || (media.length === 0 && response === null)}
-              onClick={() => {
-                onUpdate({ media, response, completed: true });
-                this.setState({ completed: true });
-              }}
-            >
-              <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                <div className="mr-1">{completed ? 'Submitted' : 'Submit'}</div>
-                {completed && <div>{iconLock}</div>}
-              </div>
-            </Btn>
-          </div>
+          !focusTextArea ? this.generalControls() : this.textAreaControls()
         }
       >
-        <div className="flexCol flex-full" ref={cont => (this.cont = cont)}>
-          <p style={{ width: '100%', maxHeight: '100%', overflow: 'scroll' }}>
-            {description}
-          </p>
-          <h5>Response</h5>
-          <textarea
-            style={{ width: '100%' }}
-            rows="4"
-            placeholder="write your response"
-            value={response}
-            onChange={e => {
-              const text = e.target.value;
-              this.setState({
-                response: text !== '' ? text : null,
-                completed: false
-              });
-            }}
-          />
-          <button
-            className={`${css(stylesheet.btn)} mt-1`}
-            onClick={() => this.cont.focus()}
+        <ScrollView ref={scroller => (this._scroller = scroller)}>
+          <div
+            className="flexCol flex-full"
+            ref={cont => (this.cont = cont)}
+            style={{ minHeight: 300 }}
           >
-            Add Response
-          </button>
-          <MediaUpload
-            style={{ width: '100%' }}
-            uploadPath={id => `challengeSubmissionFiles/${id}`}
-            media={media}
-            stylesheet={stylesheet}
-            buttonStyle={{ width: 30 }}
-            onChange={newMedia => {
-              this.setState({ media: newMedia, completed: false });
-              onUpdate({ media: newMedia, completed: false });
-            }}
-          />
-        </div>
+            <p
+              style={{
+                width: '100%',
+                maxHeight: '100%',
+                overflow: 'scroll',
+                flexShrink: 0,
+                flexGrow: 0
+              }}
+            >
+              {description}
+            </p>
+
+            <ScrollElement name="textArea">
+              <div style={{ width: '100%', flexShrink: 0, flexGrow: 0 }}>
+                <h5>Response</h5>
+                <textarea
+                  style={{ width: '100%' }}
+                  rows="4"
+                  placeholder="write your response"
+                  value={response}
+                  onFocus={() => this.setState({ focusTextArea: true })}
+                  onBlur={() => this.setState({ focusTextArea: false })}
+                  onChange={e => {
+                    const text = e.target.value;
+                    this.setState({
+                      response: text !== '' ? text : null,
+                      completed: false
+                    });
+                  }}
+                />
+              </div>
+            </ScrollElement>
+
+            <ScrollElement name="mediaUpload">
+              <MediaUpload
+                style={{ width: '100%', flex: '0 0' }}
+                uploadPath={id => `challengeSubmissionFiles/${id}`}
+                media={media}
+                stylesheet={stylesheet}
+                buttonStyle={{ width: 30 }}
+                onChange={newMedia => {
+                  this.setState({ media: newMedia, completed: false });
+                  onUpdate({ media: newMedia, completed: false });
+                }}
+              />
+            </ScrollElement>
+          </div>
+        </ScrollView>
       </ModalBody>
     );
   }

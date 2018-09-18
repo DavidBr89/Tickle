@@ -77,7 +77,9 @@ const Routes = ({ history }) => (
       />
       <Route
         exact
-        path={`${routes.DATAVIEW}/${GEO}/:selectedCardId?/:extended?/:flipped?`}
+        path={`${
+          routes.DATAVIEW
+        }/${GEO}/:selectedCardId?/:showOption?/:flipped?`}
         render={() => (
           <DefaultLayout>
             <CardView dataView={GEO} />

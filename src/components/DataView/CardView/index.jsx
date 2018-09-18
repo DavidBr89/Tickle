@@ -103,35 +103,50 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const { uid, collectibleCards, filterSet, userLocation } = state;
   const { dataView, history, match } = ownProps;
   const { path } = match;
-  const selectedCardId = match.params.selectedCardId || null;
-  const extCardId =
-    match.params.extended === 'extended' ? selectedCardId : null;
+
+  const { selectedCardId = null, showOption = null } = match.params;
+
+  const extCardId = showOption === 'extended' ? selectedCardId : null;
+  const selectedCardLocked = showOption === 'locked';
 
   console.log('match', match);
 
   // const selectedCardId = selectedCardIds;
   const {
     selectCard,
-    routeExtendCard,
-    routeSelectCard,
     // fetchAllCards,
     // fetchReadableCards,
-    fetchCollectibleCards
+    fetchCollectibleCards,
+    ...otherActions
   } = dispatcherProps;
 
+  const routeLockedCard = id =>
+    otherActions.routeLockedCard({
+      path,
+      history,
+      id
+    });
+
+  const routeExtendCard = () =>
+    otherActions.routeExtendCard({
+      path,
+      history,
+      id: selectedCardId,
+      extended: extCardId === null
+    });
+
+  const routeSelectCard = id =>
+    otherActions.routeSelectCard({ path, history, id });
+
   const previewCardAction = d => {
-    selectedCardId === d.id
-      ? routeExtendCard({
-        path,
-        history,
-        id: selectedCardId,
-        extended: extCardId === null
-      })
-      : routeSelectCard({
-        path,
-        history,
-        id: d.id
-      });
+    if (selectedCardId === d.id) {
+      if (!d.accessible) {
+        return routeLockedCard(d.id);
+      }
+
+      return routeExtendCard();
+    }
+    return routeSelectCard(d.id);
   };
 
   const fetchCards = () => {
@@ -144,7 +159,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const filteredCards = collectibleCards
     .filter(d => filterByTag(d, filterSet))
     .map(c => {
-      //TODO: make editable
+      // TODO: make editable
       const accessible = distanceLoc(userLocation, c.loc) < 500;
       return { ...c, accessible };
     });
@@ -159,6 +174,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     ...state,
     ...dispatcherProps,
     previewCardAction,
+    routeSelectCard,
     fetchCards,
     preSelectCardId,
     dataView,
@@ -166,7 +182,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     cardSets,
     selectedTags,
     selectedCardId,
-    extCardId
+    extCardId,
+    selectedCardLocked
   };
 };
 

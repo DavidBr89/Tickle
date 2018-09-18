@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 import { css } from 'aphrodite/no-important';
 import * as Icon from 'react-feather';
 
+import { connect } from 'react-redux';
+
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 import {
   stylesheet as defaultStylesheet,
@@ -48,11 +50,13 @@ export const BareModal = props =>
     document.querySelector('body')
   );
 
-export const Modal = ({
+export const PureModal = ({
   visible,
   children,
   style,
-  uiColor
+  uiColor,
+  width,
+  height
   // background,
 }) =>
   ReactDOM.createPortal(
@@ -94,7 +98,8 @@ export const Modal = ({
             style={{
               width: '100%',
               height: '100%',
-              maxHeight: '100%',
+              maxWidth: 500,
+              maxHeight: 800,
               overflow: 'hidden'
             }}
           >
@@ -106,7 +111,7 @@ export const Modal = ({
     document.querySelector('body')
   );
 
-Modal.propTypes = {
+PureModal.propTypes = {
   visible: PropTypes.bool,
   background: PropTypes.string,
   title: PropTypes.string,
@@ -118,7 +123,7 @@ Modal.propTypes = {
   footer: PropTypes.oneOf([PropTypes.node, null])
 };
 
-Modal.defaultProps = {
+PureModal.defaultProps = {
   visible: true,
   title: null,
   children: <div>test</div>,
@@ -168,20 +173,34 @@ export const ModalBody = ({
     >
       {children}
     </div>
-    <div
-      className="modal-footer"
-      style={{
-        display: 'flex',
-        justifyContent: 'flex-end',
-        flexShrink: 0,
-        borderTop: '1px solid grey',
-        padding: '1rem'
-      }}
-    >
-      {footer}
-    </div>
+    {footer && (
+      <div
+        className="modal-footer"
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          flexShrink: 0,
+          borderTop: '1px solid grey',
+          padding: '1rem'
+        }}
+      >
+        {footer}
+      </div>
+    )}
   </React.Fragment>
 );
+
+const mapStateToProps = state => ({ ...state.Screen });
+const mergeProps = (stateProps, dispatchProps, ownProps) => ({
+  ...stateProps,
+  ...ownProps
+});
+
+export const Modal = connect(
+  mapStateToProps,
+  null,
+  mergeProps
+)(PureModal);
 
 export const StyledModalBody = ({ children, ...props }) => (
   <CardThemeConsumer>

@@ -177,7 +177,7 @@ class CardAuthorPage extends Component {
       cardSets,
       selectedTags,
       isSmartphone,
-      allTagsCreated,
+      tagVocabularyCreated,
       extCardId
     } = this.props;
 
@@ -191,7 +191,7 @@ class CardAuthorPage extends Component {
         style={{ position: 'relative', overflow: 'hidden' }}
       >
         <CardTagSearch
-          allTags={allTagsCreated}
+          allTags={tagVocabularyCreated}
           key={filterSet.join(',')}
           onChange={filterCards}
           onSelect={() => selectCard(null)}
@@ -208,7 +208,7 @@ class CardAuthorPage extends Component {
             transition: 'opacity 0.5s',
             marginBottom: 25,
             // TODO: fix later
-            zIndex: 20000,
+            zIndex: 200,
             // height: '25%'
             flexBasis: '25%'
           }}

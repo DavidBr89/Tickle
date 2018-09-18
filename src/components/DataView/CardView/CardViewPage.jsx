@@ -101,6 +101,7 @@ class CardViewPage extends Component {
       filterCards,
       addCardFilter,
       tagVocabulary,
+      nestedTagVocabulary,
       // setDataView,
       filterSet,
       toggleAuthEnv,
@@ -109,7 +110,8 @@ class CardViewPage extends Component {
       cardPanelVisible,
       toggleCardPanel,
       filterByChallengeState,
-      challengeStateFilter
+      challengeStateFilter,
+      isLoadingCards
     } = this.props;
 
     const slotSize = 100 / 3.5;
@@ -121,7 +123,7 @@ class CardViewPage extends Component {
         style={{ position: 'relative', overflow: 'hidden' }}
       >
         <CardTagSearch
-          allTags={tagVocabulary}
+          allTags={nestedTagVocabulary}
           key={filterSet.join(',')}
           onChange={filterCards}
           onSelect={() => selectCard(null)}
@@ -141,6 +143,18 @@ class CardViewPage extends Component {
             marginBottom: 25
           }}
         >
+          {isLoadingCards && (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 4000
+              }}
+            >
+              <h1>...LOADING CARDS</h1>
+            </div>
+          )}
           <CardStack
             cards={cards}
             edit={false}

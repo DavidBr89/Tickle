@@ -70,8 +70,8 @@ export const TagInput = class TagInput extends Component {
               alignItems: 'center'
             }}
             onSubmit={event => {
-              event.preventDefault();
-              onAdd(inputTag);
+              // event.preventDefault();
+              // onAdd(inputTag);
             }}
           >
             <input
@@ -93,22 +93,6 @@ export const TagInput = class TagInput extends Component {
               }}
             />
           </form>
-          <div style={{ marginLeft: 'auto' }}>
-            <button
-              className={`${css(stylesheet.bareBtn)} ml-2 mr-2 pl-2 pr-2`}
-              type="button"
-              style={{ fontWeight: 'bold' }}
-              onMouseDown={e => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-              onClick={e => {
-                onAdd(inputTag);
-              }}
-            >
-              +
-            </button>
-          </div>
           <div
             style={{
               display: 'flex',
@@ -162,13 +146,13 @@ export const TagInput = class TagInput extends Component {
             </button>
           ))}
         </div>
-        <Results
+        <SearchResults
           visible={showResults}
           height={height}
           data={vocabulary.filter(
-            t =>
+            d =>
               inputTag === null ||
-              t.toLowerCase().includes(inputTag.toLowerCase())
+              d.key.toLowerCase().includes(inputTag.toLowerCase())
           )}
           onAdd={onAdd}
         />
@@ -177,7 +161,7 @@ export const TagInput = class TagInput extends Component {
   }
 };
 
-const Results = ({ data, text, onAdd, visible, height }) => (
+const SearchResults = ({ data, text, onAdd, visible, height }) => (
   <div
     style={{
       display: !visible && 'none',
@@ -196,6 +180,7 @@ const Results = ({ data, text, onAdd, visible, height }) => (
       <div
         className="mt-3"
         style={{
+          width: '100%',
           display: 'flex',
           flexWrap: 'wrap'
         }}
@@ -203,11 +188,12 @@ const Results = ({ data, text, onAdd, visible, height }) => (
         {data.map(d => (
           <div className="m-2">
             <button
+              style={{ width: 175 }}
               className={css(stylesheet.bareBtn)}
-              onClick={() => onAdd(d)}
+              onClick={() => onAdd(d.key)}
               onBlur={e => e.stopPropagation()}
             >
-              {d}
+              {d.key} ({d.values.length})
             </button>
           </div>
         ))}

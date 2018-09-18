@@ -12,6 +12,7 @@ export default function setify(data) {
     .map(d => {
       const tags = uniq(flatten(d.values.map(e => e.tags)));
       return { ...d, count: d.values.length, tags, tag: d.key };
-    });
+    })
+    .sort((a, b) => b.values.length - a.values.length);
   return nested;
 }

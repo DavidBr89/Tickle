@@ -7,13 +7,43 @@ import Swipe from 'react-easy-swipe';
 
 const isPosInt = n => Number.isInteger(n) && n >= 0;
 
+class DelayClick extends React.Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string
+  };
+
+  constructor(props) {
+    super(props);
+    this.creationDate = +new Date();
+    console.log('CONSTRUCTOR', this.creationDate);
+  }
+
+  render() {
+    return React.cloneElement(this.props.children, {
+      onClick: () => {
+        const diff = Math.abs(+new Date() - this.creationDate);
+        console.log('click diff', diff);
+
+        diff > 1000 && this.props.onClick();
+      }
+    });
+  }
+}
+
 const TouchableCard = ({ touch, onClick, ...d }) =>
   touch && !d.selected ? (
-    <Swipe onSwipeStart={onClick} style={{ width: '100%', height: '100%' }}>
-      <PreviewCard {...d} onClick={() => null} />
+    <Swipe
+      onSwipeStart={onClick}
+      style={{ width: '100%', height: '100%' }}
+      allowMouseEvents
+    >
+      <PreviewCard {...d} />
     </Swipe>
   ) : (
-    <PreviewCard {...d} onClick={onClick} />
+    <DelayClick onClick={onClick}>
+      <PreviewCard {...d} />
+    </DelayClick>
   );
 
 function CardStackWrapper({
@@ -51,8 +81,8 @@ function CardStackWrapper({
         <TouchableCard
           {...d}
           touch={touch}
-          onClick={e => {
-            e.stopPropagation();
+          onClick={() => {
+            // e.stopPropagation();
             onClick(d);
           }}
           tagColorScale={tagColorScale}

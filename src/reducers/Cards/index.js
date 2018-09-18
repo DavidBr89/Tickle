@@ -1,5 +1,5 @@
 import updCardDataDim from './updateDataDimension';
-import setify from 'Utils/setify';
+import setify from 'Components/utils/setify';
 
 import { union, uniq } from 'lodash';
 
@@ -90,9 +90,10 @@ const INITIAL_STATE = {
 function reducer(state = INITIAL_STATE, action) {
   switch (action.type) {
     case LOADING_CARDS: {
+      const isLoadingCards = action.options;
       return {
         ...state,
-        loadingCards: true
+        isLoadingCards
       };
     }
 
@@ -105,13 +106,16 @@ function reducer(state = INITIAL_STATE, action) {
 
       const createdCards = cards.map(c => ({ ...c, edit: true }));
 
+      const tagVocabularyCreated = setify(createdCards);
+
       // const cardSets = setify(cards);
       // const tagColorScale = makeTagColorScale(cardSets);
 
       return {
         ...state,
         createdCards,
-        loadingCards: false,
+        tagVocabularyCreated
+        // loadingCards: false
         // tagVocabulary
         // tagColorScale
         // cards
@@ -121,16 +125,18 @@ function reducer(state = INITIAL_STATE, action) {
 
     case RECEIVE_COLLECTIBLE_CARDS: {
       const cards = action.options;
+      const nestedTagVocabulary = setify(cards);
       const tagVocabulary = uniq(
         cards.reduce((acc, c) => [...acc, ...c.tags], [])
       );
       return {
         ...state,
         collectibleCards: cards,
+        nestedTagVocabulary,
         // submittedCards,
         // startedCards,
-        tagVocabulary,
-        loadingCards: false
+        tagVocabulary
+        // loadingCards: false
         // tagColorScale
         // defaultCards: cards
         // isCardDragging

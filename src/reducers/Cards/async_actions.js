@@ -84,14 +84,16 @@ import idGenerate from 'Src/idGenerator';
 //     );
 // });
 
-const haaike = 'PpNOHOQLtXatZzcaAYVCMQQP5XT2';
+// const haaike = 'PpNOHOQLtXatZzcaAYVCMQQP5XT2';
 export function fetchCollectibleCards(uid) {
   // Thunk middleware knows how to handle functions.
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
   return function(dispatch) {
+    dispatch(loadingCards(true));
     // TODO: change later with obj params
     return db.readCards(null, uid).then(data => {
+      dispatch(loadingCards(false));
       dispatch(
         receiveCollectibleCards(
           data // .filter(d => d.challengeSubmission === null || d.challengeSubmission.completed)
@@ -103,8 +105,9 @@ export function fetchCollectibleCards(uid) {
 
 export function fetchCreatedCards(uid) {
   return function(dispatch) {
-    dispatch(loadingCards());
+    dispatch(loadingCards(true));
     return db.readCardsWithSubmissions(uid).then(data => {
+    dispatch(loadingCards(false));
       dispatch(receiveCreatedCards(data));
     });
   };
@@ -112,7 +115,7 @@ export function fetchCreatedCards(uid) {
 
 export function fetchAllCards(uid) {
   return function(dispatch) {
-    dispatch(loadingCards());
+    // dispatch(loadingCards());
     // TODO
     // TODO
     // db.readCards(uid, 'collectibleCards').then(collectibleCards => {
@@ -131,7 +134,7 @@ export function fetchCardTemplates(uid) {
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
   return function(dispatch) {
-    dispatch(loadingCards());
+    // dispatch(loadingCards(true));
     return firebase.firestore
       .collection('users')
       .doc(uid)
@@ -140,6 +143,7 @@ export function fetchCardTemplates(uid) {
       .then(querySnapshot => {
         const data = [];
         querySnapshot.forEach(doc => data.push({ ...doc.data(), id: doc.id }));
+        // dispatch(loadingCards(false));
         dispatch(receiveCreatedCards(data));
       });
   };

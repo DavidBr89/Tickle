@@ -20,8 +20,7 @@ export function tagFilter({ filterSet, tag }) {
 }
 
 export const routeSelectCard = ({ path, history, id }) => dispatch => {
-  console.log('history', history, 'path', path);
-  history.push(`${getBasePath(path)}/${id}`); //
+  history.push(`${getBasePath(path)}/${id !== null ? id : ''}`); //
   dispatch(selectCard(id));
 };
 
@@ -31,19 +30,25 @@ export const routeExtendCard = ({
   id,
   extended
 }) => dispatch => {
-  history.push(`${getBasePath(path)}/${id}/${extended ? 'extended' : ''}`);
+  const bp = getBasePath(path);
+  history.push(`${bp}/${id}/${extended ? 'extended' : ''}`);
   dispatch(extendSelectedCard(id));
+};
+
+export const routeLockedCard = ({ path, history, id }) => dispatch => {
+  history.push(`${getBasePath(path)}/${id}/locked`);
+  // dispatch(extendSelectedCard(id));
 };
 
 export const routeFlipCard = ({ match, history }) => dispatch => {
   const { path } = match;
-  console.log('FLIP', match, history);
-  const { selectedCardId, extended, flipped } = match.params;
+  const bp = getBasePath(path);
+  console.log('FLIP', bp, match, history);
+  const { selectedCardId, showOption, flipped } = match.params;
+  console.log('PARAMS', match.params);
 
   history.push(
-    `${getBasePath(path)}/${selectedCardId}/${extended}/${
-      !flipped ? 'flipped' : ''
-    }`
+    `${bp}/${selectedCardId}/${showOption}/${!flipped ? 'flipped' : ''}`
   );
   dispatch(flipCard(!flipped));
 };
