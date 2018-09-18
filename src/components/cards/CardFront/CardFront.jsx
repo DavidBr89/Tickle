@@ -18,6 +18,7 @@ import { X, Edit, Search, RotateCcw } from 'react-feather';
 import { FieldSet } from 'Components/utils/StyledComps';
 
 import { mediaScale } from 'Constants/mediaTypes';
+import CardControls from 'Components/cards/CardControls';
 
 import {
   // MediaField,
@@ -143,111 +144,6 @@ DescriptionField.defaultProps = {
   edit: false
 };
 
-const MediaField = ({
-  media,
-  onEdit,
-  onClick,
-  style,
-  placeholder,
-  edit,
-  smallScreen,
-  className
-}) => (
-  <CardThemeConsumer>
-    {({ uiColor, stylesheet: { shallowBg, shallowBorder } }) => (
-      <FieldSet
-        className={`${css(shallowBg)} ${css(shallowBorder)} ${className}`}
-        uiColor={uiColor}
-        onClick={onClick || onEdit}
-        style={style}
-      >
-        <div style={{ display: 'flex', alignContent: 'end' }}>
-          {Array.isArray(media) && media.length > 0 ? (
-            <PreviewMedia
-              data={media}
-              smallScreen={smallScreen}
-              style={{ width: '100%', height: '100%' }}
-            />
-          ) : (
-            <div style={{ fontStyle: 'italic', width: '100%' }}>
-              {placeholder}
-            </div>
-          )}
-          <FieldIcon edit={edit} />
-        </div>
-      </FieldSet>
-    )}
-  </CardThemeConsumer>
-);
-
-MediaField.propTypes = {
-  media: PropTypes.oneOf([null, PropTypes.array]),
-  onEdit: PropTypes.func,
-  onClick: PropTypes.func,
-  placeholder: PropTypes.string,
-  style: PropTypes.object,
-  edit: PropTypes.bool
-};
-
-MediaField.defaultProps = {
-  media: null,
-  onEdit: null,
-  onClick: null,
-  placeholder: 'No video, webpage or a sound snippet',
-  style: {},
-  edit: false
-};
-
-const PreviewMedia = ({ data, style, smallScreen }) => (
-  <div
-    style={{
-      style,
-      display: 'flex',
-      alignItems: 'center',
-      flexWrap: 'wrap',
-      width: '100%'
-    }}
-  >
-    {data.map(m => (
-      <div
-        key={m.url}
-        className="mr-1"
-        style={{
-          display: 'flex',
-          maxWidth: `${
-            smallScreen
-              ? Math.max(80 / data.length, 45)
-              : Math.max(100 / data.length, 40)
-          }%`
-        }}
-      >
-        <div className="mr-1">{React.createElement(mediaScale(m.type))}</div>
-        <div
-          style={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap'
-          }}
-        >
-          {m.title}
-        </div>
-      </div>
-    ))}
-  </div>
-);
-
-PreviewMedia.propTypes = {
-  data: PropTypes.array.isRequired,
-  style: PropTypes.object
-  // extended: PropTypes.bool
-};
-
-PreviewMedia.defaultProps = {
-  data: [{ title: 'bka', url: 'bla', descr: 'bla' }],
-  extended: false,
-  style: { width: '90%' }
-};
-
 const EditButton = ({ style, onClick, className }) => (
   <button className={`close ml-1 ${className}`} style={style} onClick={onClick}>
     <Edit />
@@ -332,35 +228,6 @@ class CardFront extends Component {
 
     const { cardLayout, btn } = stylesheet;
 
-    const Controls = () => (
-      <div
-        className=""
-        style={{
-          display: 'flex',
-          flexShrink: 0,
-          marginTop: 'auto'
-        }}
-      >
-        <button className={css(btn)} onClick={onClose}>
-          <X size={30} />
-        </button>
-        <div
-          style={{ marginLeft: 'auto', marginRight: 'auto', display: 'flex' }}
-        >
-          <BigButton onClick={onChallengeClick}>Challenge</BigButton>
-          {template && (
-            <BigButton className="ml-1" onClick={onCreate}>
-              Create
-            </BigButton>
-          )}
-        </div>
-
-        <button className={css(btn)} onClick={onFlip}>
-          <RotateCcw size={30} />
-        </button>
-      </div>
-    );
-
     return (
       <div
         style={{
@@ -412,21 +279,26 @@ class CardFront extends Component {
             <TagLabels tags={tags} tagColorScale={tagColorScale} />
             <FieldIcon edit={edit} className="ml-1" />
           </div>
-          <MediaField
-            edit={edit}
-            media={media}
-            className="mb-2"
-            onClick={onMediaClick}
-          />
           <DescriptionField
             text={description}
             placeholder="No Description"
-            style={{ flex: '0 1 20%' }}
+            style={{ flex: '0 1 auto' }}
             edit={edit}
             onEdit={onDescriptionClick}
           />
         </div>
-        <Controls />
+        <CardControls onFlip={onFlip} onClose={onClose}>
+          <div
+            style={{ marginLeft: 'auto', marginRight: 'auto', display: 'flex' }}
+          >
+            <BigButton onClick={onChallengeClick}>Challenge</BigButton>
+            {template && (
+              <BigButton className="ml-1" onClick={onCreate}>
+                Create
+              </BigButton>
+            )}
+          </div>
+        </CardControls>
       </div>
     );
   }

@@ -13,6 +13,8 @@ import CardHeader from '../CardHeader';
 import Author from './Author';
 import { MapAreaControl } from './MapAreaControl';
 
+import CardControls from 'Components/cards/CardControls';
+
 //
 const DeleteButton = ({ style, onClick, color, className }) => (
   <CardThemeConsumer>
@@ -176,7 +178,8 @@ class CardBackSkeleton extends Component {
       id: cardId,
       uid,
       style,
-      visible
+      visible,
+      onClose
     } = this.props;
 
     const { extended } = this.state;
@@ -257,30 +260,22 @@ class CardBackSkeleton extends Component {
               <Comments cardId={cardId} extended={extended === 'comments'} />
             </BackField>
           )}
-          <div
-            className="mt-2"
-            style={{
+            <CardControls
+            className="mb-1"
+              onFlip={flipHandler}
+              onClose={onClose}
+              style={{ width: '100%',
+
               flexShrink: 0,
-              display: 'flex',
-              // TODO: to complex, simplify
-              justifyContent: edit && template ? 'flex-end' : 'space-between'
-            }}
-          >
-            {edit && (
+              }}
+            >
               <DeleteButton
                 disabled
                 onClick={onDelete}
                 color={uiColor}
                 style={{ width: '20%' }}
               />
-            )}
-            <FlipButton
-              className={edit ? 'ml-2' : null}
-              color={uiColor}
-              onClick={flipHandler}
-              style={{ width: edit ? '20%' : '100%' }}
-            />
-          </div>
+            </CardControls>
         </div>
       </div>
     );
@@ -288,15 +283,9 @@ class CardBackSkeleton extends Component {
 }
 
 const CardBack = ({ style, ...props }) => (
-  <CardHeader
-    onClose={props.onClose}
-    background={props.background}
-    title={props.title}
-    uiColor={props.uiColor}
-    style={style}
-  >
+  <div style={style}>
     <CardBackSkeleton {...props} />
-  </CardHeader>
+  </div>
 );
 
 CardBack.propTypes = {

@@ -17,6 +17,8 @@ import CardFront from './CardFront';
 
 import { Btn } from 'Components/cards/layout';
 
+import { IMG } from 'Constants/mediaTypes';
+
 class ReadCardFront extends Component {
   static propTypes = {
     children: PropTypes.node,
@@ -108,32 +110,33 @@ class ReadCardFront extends Component {
             <p style={{ width: '100%' }}>{description}</p>
           </ModalBody>
         );
-      case 'Media':
+      case 'Img': {
+        const photo = img
+          ? [
+            {
+              thumbnail: img.url,
+              ...img,
+              type: IMG
+            }
+          ]
+          : [];
+
+        const mediaWithPhoto = img ? [...photo, ...media] : media;
+
         return (
           <ModalBody
             onClose={this.closeModal}
             title="Media"
             footer={<FooterBtn />}
           >
-            <MediaOverview edit={false} data={media || []} uiColor={uiColor} />
+            <MediaOverview
+              edit={false}
+              data={mediaWithPhoto}
+              uiColor={uiColor}
+            />
           </ModalBody>
         );
-      case 'Img':
-        return (
-          <ModalBody
-            onClose={this.closeModal}
-            title="Photo"
-            footer={<FooterBtn />}
-          >
-            <div className="mb-1">
-              <img
-                src={(img && img.url) || placeholderImgSrc}
-                style={{ width: '100%', height: '100%' }}
-                alt="Photo broken"
-              />
-            </div>
-          </ModalBody>
-        );
+      }
       case 'Challenge':
         return React.cloneElement(challengeComp, {
           onClose: this.closeModal,

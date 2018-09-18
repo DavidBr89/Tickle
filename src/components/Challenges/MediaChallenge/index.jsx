@@ -15,6 +15,25 @@ import { ChevronsDown } from 'react-feather';
 // TODO: untangle later
 import { Btn } from 'Components/cards/layout';
 
+/*
+        <Btn
+          className="mr-1"
+          onClick={() => {
+            if (!started) {
+              this.setState({ started: true });
+              onUpdate({ media, response, completed: false });
+            } else {
+              onRemoveSubmission();
+            }
+          }}
+        >
+          <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+            <div className="mr-1">{!started ? 'Bookmark' : 'UnBookmark'}</div>
+            {started && <div>{iconLock}</div>}
+          </div>
+        </Btn>
+*/
+
 class MediaChallenge extends Component {
   static propTypes = {
     className: PropTypes.string,
@@ -96,22 +115,6 @@ class MediaChallenge extends Component {
     const iconLock = <Icon.Lock size={20} />;
     return (
       <div style={{ display: 'flex' }}>
-        <Btn
-          className="mr-1"
-          onClick={() => {
-            if (!started) {
-              this.setState({ started: true });
-              onUpdate({ media, response, completed: false });
-            } else {
-              onRemoveSubmission();
-            }
-          }}
-        >
-          <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-            <div className="mr-1">{!started ? 'Bookmark' : 'UnBookmark'}</div>
-            {started && <div>{iconLock}</div>}
-          </div>
-        </Btn>
         <Btn
           disabled={completed || (media.length === 0 && response === null)}
           style={{

@@ -10,7 +10,13 @@ const isPosInt = n => Number.isInteger(n) && n >= 0;
 class DelayClick extends React.Component {
   static propTypes = {
     children: PropTypes.node,
-    className: PropTypes.string
+    delay: PropTypes.number,
+    onClick: PropTypes.func
+  };
+
+  defaultProps = {
+    children: React.Fragment,
+    delay: 500
   };
 
   constructor(props) {
@@ -20,12 +26,13 @@ class DelayClick extends React.Component {
   }
 
   render() {
+    const { delay } = this.props;
     return React.cloneElement(this.props.children, {
       onClick: () => {
         const diff = Math.abs(+new Date() - this.creationDate);
         console.log('click diff', diff);
 
-        diff > 1000 && this.props.onClick();
+        diff >= delay && this.props.onClick();
       }
     });
   }
@@ -41,7 +48,7 @@ const TouchableCard = ({ touch, onClick, ...d }) =>
       <PreviewCard {...d} />
     </Swipe>
   ) : (
-    <DelayClick onClick={onClick}>
+    <DelayClick delay={800} onClick={onClick}>
       <PreviewCard {...d} />
     </DelayClick>
   );
