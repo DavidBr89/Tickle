@@ -242,7 +242,7 @@ class CardFront extends Component {
           onClick={onImgClick}
           src={img ? img.url : null}
           style={{
-            flex: '0 1 40%',
+            flex: '0 1 50%',
             minHeight: 0
           }}
         >
@@ -261,7 +261,7 @@ class CardFront extends Component {
         <div
           className="mt-3 mr-3 ml-3 mb-1"
           style={{
-            flex: '0 1 60%',
+            flex: '0 1 auto',
             display: 'flex',
             flexDirection: 'column'
             // justifyContent: 'space-around'
