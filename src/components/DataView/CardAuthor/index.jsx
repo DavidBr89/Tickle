@@ -118,11 +118,11 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const { dataView, history, match } = ownProps;
   const { path } = match;
-  const selectedCardId = match.params.selectedCardId || null;
 
-  const extCardId =
-    match.params.extended === 'extended' ? selectedCardId : null;
-  console.log('extCardId', extCardId);
+  const { selectedCardId = null, showOption = null } = match.params;
+
+  const extCardId = showOption === 'extended' ? selectedCardId : null;
+  console.log(match.params, 'extCardId', showOption, extCardId);
 
   // TODO: refactor
   const previewCardAction = d => {

@@ -3,7 +3,7 @@ import React, { Fragment, Component } from 'react';
 import ConnectedCard from 'Cards/ConnectedCard';
 import DataOverlay from '../ForceOverlay/DataOverlay';
 // TODO integrate
-import Marker from '../Marker';
+// import Marker from '../Marker';
 import CardMarker from 'Components/cards/CardMarker';
 
 import { Modal, BareModal, ModalBody } from 'Utils/Modal';
@@ -38,6 +38,8 @@ const CardViewOverlay = props => {
     routeSelectCard
   } = props;
 
+  const extendedCard =
+    extCardId !== null ? cards.find(c => c.id === extCardId) : null;
   return (
     <React.Fragment>
       <Modal visible={selectedCardLocked}>
@@ -56,6 +58,10 @@ const CardViewOverlay = props => {
         </ModalBody>
       </Modal>
 
+      <BareModal visible={extCardId !== null}>
+        <ConnectedCard {...extendedCard} />
+      </BareModal>
+
       <DataOverlay
         className={className}
         style={style}
@@ -69,7 +75,8 @@ const CardViewOverlay = props => {
         extCardId={extCardId}
         filterSet={filterSet}
         userLocation={userLocation}
-        showUserLocation
+        previewCardAction={previewCardAction}
+        userview
         mode={dataView}
         padding={{
           bottom: height / 5,
@@ -78,25 +85,29 @@ const CardViewOverlay = props => {
           right: width / 5
         }}
         colorScale={tagColorScale}
-        preview={d => (
+      >
+        {d => (
           <CardMarker
-            style={{ pointerEvents: 'all' }}
             onClick={e => {
               previewCardAction(d);
               e.stopPropagation();
             }}
             color="whitesmoke"
             style={{
+
+        position: 'absolute',
+        left: d.x,
+        top: d.y,
+        transform: 'translate(-50%, -50%)',
               // TODO: zIndex not working
-              width: 25,
-              height: 30,
-              zIndex: selectedCardId === d.id ? 5000 : 0,
-              transform: selectedCardId === d.id && 'scale(2)'
+              width: selectedCardId === d.id ? 65 : 25,
+              height: selectedCardId === d.id ? 75 : 30,
+              zIndex: selectedCardId === d.id ? 5000 : 0
+              // transition: 'width 300ms, height 300ms'
+              // transform: selectedCardId === d.id && 'scale(2)'
             }}
           />
         )}
-      >
-        {c => <ConnectedCard {...c} />}
       </DataOverlay>
     </React.Fragment>
   );

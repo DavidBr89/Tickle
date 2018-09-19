@@ -17,7 +17,7 @@ import { X, Edit, Search, RotateCcw } from 'react-feather';
 
 import { FieldSet } from 'Components/utils/StyledComps';
 
-import { mediaScale } from 'Constants/mediaTypes';
+// import { mediaScale } from 'Constants/mediaTypes';
 import CardControls from 'Components/cards/CardControls';
 
 import {
@@ -74,11 +74,17 @@ const ImgOverlay = ({ src, className, style, children, footer, onClick }) => (
 
 const FieldIcon = ({ edit, className, style }) =>
   edit ? (
-    <span className={className} style={{ cursor: 'pointer', ...style }}>
+    <span
+      className={className}
+      style={{
+        cursor: 'pointer',
+        ...style
+      }}
+    >
       <Edit size={25} />
     </span>
   ) : (
-    <span className={className} style={{ cursor: 'pointer', ...style }} />
+    <div className={className} style={{ cursor: 'pointer', ...style }} />
   );
 
 const Title = ({ onClick, edit, children }) => (
@@ -174,7 +180,8 @@ class CardFront extends Component {
     tagColorScale: PropTypes.func,
     challenge: PropTypes.object,
     bookmarkable: PropTypes.boolean,
-    challengeComp: PropTypes.element
+    challengeComp: PropTypes.element,
+    onPointsClick: PropTypes.func
   };
 
   static defaultProps = {
@@ -195,7 +202,8 @@ class CardFront extends Component {
     tagColorScale: () => 'green',
     bookmarkable: false,
     onRemoveChallengeSubmission: d => d,
-    challengeComp: MediaChallenge
+    challengeComp: MediaChallenge,
+    onPointsClick: d => d
   };
 
   render() {
@@ -223,7 +231,9 @@ class CardFront extends Component {
       onTagsClick,
       onCreate,
       edit,
-      template
+      template,
+      points,
+      onPointsClick
     } = this.props;
 
     const { cardLayout, btn } = stylesheet;
@@ -239,7 +249,7 @@ class CardFront extends Component {
         className={css(cardLayout)}
       >
         <ImgOverlay
-          onClick={onImgClick}
+          onClick={!edit ? onImgClick : null}
           src={img ? img.url : null}
           style={{
             flex: '0 1 50%',
@@ -247,7 +257,9 @@ class CardFront extends Component {
           }}
         >
           <div
+            onClick={edit ? onImgClick : null}
             style={{
+              position: 'absolute',
               width: '100%',
               height: '100%',
               display: 'flex',
@@ -256,6 +268,47 @@ class CardFront extends Component {
             }}
           >
             <FieldIcon edit={edit} className="m-1" />
+          </div>
+
+          <div
+            style={{
+              // width: '100%',
+              // height: '100%',
+              display: 'flex',
+              justifyContent: 'flex-end'
+              // alignItems: 'flex-end'
+            }}
+          >
+            <div
+              className="m-1"
+              onClick={edit ? onPointsClick : null}
+              style={{
+                zIndex: edit && 400,
+                background: 'white'
+              }}
+            >
+              <div
+                className="pl-1 pr-1"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
+              >
+                <div style={{ fontSize: 'xx-large' }}>{points}P</div>
+                {edit && (
+                  <div
+                    className="ml-1"
+                    style={{
+                      // display: 'flex',
+                      // alignItems: 'center',
+                      height: '50%'
+                    }}
+                  >
+                    <FieldIcon edit={edit} />
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </ImgOverlay>
         <div
@@ -286,7 +339,19 @@ class CardFront extends Component {
             edit={edit}
             onEdit={onDescriptionClick}
           />
+
+          {edit && (
+            <DescriptionField
+              className="mt-1"
+              text={null}
+              placeholder="Add Media"
+              style={{ flex: '0 1 auto' }}
+              edit={edit}
+              onEdit={onDescriptionClick}
+            />
+          )}
         </div>
+
         <CardControls onFlip={onFlip} onClose={onClose}>
           <div
             style={{ marginLeft: 'auto', marginRight: 'auto', display: 'flex' }}

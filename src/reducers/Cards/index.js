@@ -60,6 +60,7 @@ const defaultCardTemplate = {
   id: cardTemplateId,
   template: true,
   // loc: defaultLocation,
+  points: 0,
   edit: true,
   tags: [],
   challenge: null,

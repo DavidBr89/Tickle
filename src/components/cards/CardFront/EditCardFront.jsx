@@ -40,6 +40,70 @@ import {
 
 import { TagInput, PreviewTags } from 'Components/utils/Tag';
 
+class NumberInput extends Component {
+  static propTypes = {
+    className: PropTypes.string,
+    onChange: PropTypes.func
+  };
+  static defaultProps = {
+    className: '',
+    onChange: d => d
+  };
+
+  state = { value: 0, error: null, ...this.state };
+
+  constructor(props) {
+    super(props);
+  }
+
+  isPosInt = () => /^\+?(0|[1-9]\d*)$/.test(this.state.value);
+
+  componentDidUpdate(prevProps, prevState) {
+    const { value } = this.state;
+    if (value !== prevState.value) {
+      if (this.isPosInt()) {
+        // this.props.onChange(value);
+        this.setState({ error: null });
+      } else {
+        this.setState({ error: 'Input is not a positive Integer' });
+      }
+    }
+  }
+
+  render() {
+    const { onUpdate, onClose } = this.props;
+    const { value, error } = this.state;
+    const disabled = error !== null;
+    return (
+      <StyledModalBody
+        {...this.props}
+        onClose={() => onClose()}
+        footer={
+          <FooterBtn
+            style={{ opacity: disabled ? 0.5 : 1, transition: 'opacity 200ms' }}
+            disabled={disabled}
+            onClick={() => onUpdate(value)}
+          >
+            Update
+          </FooterBtn>
+        }
+      >
+        <input
+          type="number"
+          value={value}
+          pattern="^[0-9]"
+          min="0"
+          step="1"
+          onChange={e => {
+            this.setState({ value: e.target.value });
+          }}
+        />
+        <div>{error}</div>
+      </StyledModalBody>
+    );
+  }
+}
+
 const FooterBtn = ({ onClick, children, disabled, style = {} }) => (
   <CardThemeConsumer>
     {({ stylesheet: { btn } }) => (
@@ -251,7 +315,7 @@ class EditCardFront extends PureComponent {
       tagVocabulary
     } = this.props;
 
-    const { title, tags, img, description, media } = data;
+    const { title, tags, img, description, media, points } = data;
     const closeBtn = <FooterBtn onClick={this.onCloseModal}>Close</FooterBtn>;
 
     const modalVisible = dialog !== null;
@@ -312,12 +376,9 @@ class EditCardFront extends PureComponent {
             {...modalProps}
             text={description}
             onUpdate={newDescr => {
-              this.updateFieldAndCloseModal(
-                {
-                  description: newDescr
-                },
-                true
-              );
+              this.updateFieldAndCloseModal({
+                description: newDescr
+              });
             }}
           />
         );
@@ -347,6 +408,20 @@ class EditCardFront extends PureComponent {
             challenge={challenge}
             onChange={ch => {
               this.updateField({ challenge: ch });
+            }}
+          />
+        );
+
+      case 'Points':
+        return (
+          <NumberInput
+            {...modalProps}
+            onClose={this.onCloseModal}
+            value={points}
+            onUpdate={number => {
+              this.updateFieldAndCloseModal({
+                points: number
+              });
             }}
           />
         );
@@ -380,7 +455,8 @@ class EditCardFront extends PureComponent {
       description,
       media,
       children,
-      challenge
+      challenge,
+      points
     } = data;
 
     return (
@@ -419,6 +495,11 @@ class EditCardFront extends PureComponent {
           onChallengeClick={() =>
             this.setState({
               dialog: { title: 'Challenge', data: challenge }
+            })
+          }
+          onPointsClick={() =>
+            this.setState({
+              dialog: { title: 'Points', data: points }
             })
           }
           onFlip={flipHandler}

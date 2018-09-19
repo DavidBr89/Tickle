@@ -3,7 +3,15 @@ import PropTypes from 'prop-types';
 
 import { X, RotateCcw } from 'react-feather';
 
-const CardControls = ({ onFlip, onClose, children, style, className }) => (
+const CardControls = ({
+  onFlip,
+  onClose,
+  children,
+  style,
+  className,
+  size = 40,
+  color = 'grey'
+}) => (
   <div
     className={className}
     style={{
@@ -17,30 +25,34 @@ const CardControls = ({ onFlip, onClose, children, style, className }) => (
   >
     <div
       onClick={onClose}
-      className="ml-1"
+      className="m-1"
       style={{
         display: 'flex',
         alignItems: 'center'
       }}
     >
-      <X size={30} />
+      <X size={size} color={color} />
     </div>
     {children}
     <div
-      className="mr-1"
+      className="m-1"
       onClick={onFlip}
       style={{
         display: 'flex',
         alignItems: 'center'
       }}
     >
-      <RotateCcw size={30} />
+      <RotateCcw size={size} color={color} />
     </div>
   </div>
 );
 
-CardControls.defaultProps = { style: {} };
+CardControls.defaultProps = { style: {}, children: null, className: '' };
 
-CardControls.propTypes = {};
+CardControls.propTypes = {
+  children: PropTypes.oneOf([null, PropTypes.node]),
+  style: PropTypes.object,
+  className: PropTypes.string
+};
 
 export default CardControls;

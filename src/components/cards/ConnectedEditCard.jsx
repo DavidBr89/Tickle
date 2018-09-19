@@ -84,6 +84,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   };
   const flipHandler = () => routeFlipCard({ match, history });
 
+
   return {
     ...state,
     ...dispatcherProps,

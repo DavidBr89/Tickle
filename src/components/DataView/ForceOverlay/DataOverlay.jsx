@@ -23,6 +23,7 @@ import { Modal, BareModal, ModalBody } from 'Utils/Modal';
 // import louvain from './jlouvain';
 
 import Map from './Map';
+import UserMap from './UserMap';
 import Floorplan from './FloorPlanExp';
 import TreeMapCluster from './TreeMapCluster';
 
@@ -89,6 +90,7 @@ class DataOverlay extends Component {
       width,
       height,
       onMapViewportChange,
+      previewCardAction,
       children,
       sets,
       filterSet,
@@ -99,26 +101,26 @@ class DataOverlay extends Component {
       author,
       // isCardDragging,
       preview,
-      showUserLocation
+      userview,
+      draggable
     } = this.props;
 
+    const MapComp = userview ? UserMap : Map;
+
     // TODO: join
-    const draggable = c =>
-      extCardId === c.id ? (
-        <BareModal visible>{children({ ...c })}</BareModal>
-      ) : (
-        <div
-          style={{
-            position: 'absolute',
-            left: c.x,
-            top: c.y,
-            transform: 'translate(-50%, -50%)',
-            zIndex: selectedCardId === c.id ? 10 : 0
-          }}
-        >
-          {preview(c)}
-        </div>
-      );
+    // const draggable = c => (
+    //   <div
+    //     style={{
+    //       position: 'absolute',
+    //       left: c.x,
+    //       top: c.y,
+    //       transform: 'translate(-50%, -50%)',
+    //       zIndex: selectedCardId === c.id ? 10 : 0
+    //     }}
+    //   >
+    //     {preview(c)}
+    //   </div>
+    // );
 
     // TODO: remove
     const noPreview = c =>
@@ -130,17 +132,16 @@ class DataOverlay extends Component {
     switch (mode) {
       case GEO: {
         return (
-          <Map
+          <MapComp
             width={width}
             height={height}
             disabled={disabled}
-            showUser={showUserLocation}
+            preview={previewCardAction}
             nodes={data}
             colorScale={colorScale}
-            preview={noPreview}
           >
-            {draggable}
-          </Map>
+            {children}
+          </MapComp>
         );
       }
       case FLOORPLAN: {

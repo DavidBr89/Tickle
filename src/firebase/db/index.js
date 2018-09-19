@@ -31,9 +31,9 @@ const pruneFields = fields => {
 
 const thumbFileName = fileName => `thumb_${fileName}`;
 
-const CARDS = 'tmpCards';
-const getShallowCards = ( uid=null ) => {
-  console.log('UID', uid);
+const CARDS = 'vds_geo_cards';
+const getShallowCards = (uid = null) => {
+  // console.log('UID', uid);
   const firePr =
     uid !== null
       ? firestore.collection(CARDS).where('uid', '==', uid)
@@ -145,7 +145,7 @@ export function getOneEmailUser(email) {
 }
 
 export const readCardsWithSubmissions = uid =>
-  getShallowCards().then(data => {
+  getShallowCards(uid).then(data => {
     const pendingPromises = data.map(d =>
       getAllChallengeSubmissions(d.id).then(
         challengeSubmissions =>

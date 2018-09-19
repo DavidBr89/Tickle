@@ -44,6 +44,7 @@ class DataUploadForm extends Component {
     const { imgUrl, file, type } = this.state;
     const imgRegex = /.(jpg|jpeg|png|gif)$/i;
     const videoRegex = /.(ogg|h264|webm|vp9|hls)$/i;
+    console.log('FIle', file);
 
     return (
       <div
@@ -286,7 +287,9 @@ class MediaUpload extends Component {
                 alignItems: 'center'
               }}
             >
-              <div className="text-muted" style={{fontSize: 'x-large'}}>No Media added</div>
+              <div className="text-muted" style={{ fontSize: 'x-large' }}>
+                No Media added
+              </div>
             </div>
           )}
         </div>

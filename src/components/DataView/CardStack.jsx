@@ -3,40 +3,11 @@ import PropTypes from 'prop-types';
 
 import { PreviewCard } from 'Cards';
 import Stack from 'Utils/CardStack';
+import DelayClick from 'Components/utils/DelayClick';
+
 import Swipe from 'react-easy-swipe';
 
 const isPosInt = n => Number.isInteger(n) && n >= 0;
-
-class DelayClick extends React.Component {
-  static propTypes = {
-    children: PropTypes.node,
-    delay: PropTypes.number,
-    onClick: PropTypes.func
-  };
-
-  defaultProps = {
-    children: React.Fragment,
-    delay: 500
-  };
-
-  constructor(props) {
-    super(props);
-    this.creationDate = +new Date();
-    console.log('CONSTRUCTOR', this.creationDate);
-  }
-
-  render() {
-    const { delay } = this.props;
-    return React.cloneElement(this.props.children, {
-      onClick: () => {
-        const diff = Math.abs(+new Date() - this.creationDate);
-        console.log('click diff', diff);
-
-        diff >= delay && this.props.onClick();
-      }
-    });
-  }
-}
 
 const TouchableCard = ({ touch, onClick, ...d }) =>
   touch && !d.selected ? (
@@ -48,7 +19,7 @@ const TouchableCard = ({ touch, onClick, ...d }) =>
       <PreviewCard {...d} />
     </Swipe>
   ) : (
-    <DelayClick delay={800} onClick={onClick}>
+    <DelayClick delay={500} onClick={onClick}>
       <PreviewCard {...d} />
     </DelayClick>
   );
@@ -72,7 +43,7 @@ function CardStackWrapper({
     <Stack
       data={cards}
       className={className}
-      duration={600}
+      duration={400}
       centered={isPosInt(cardIndex)}
       selectedIndex={cardIndex}
       width={width}
@@ -97,7 +68,7 @@ function CardStackWrapper({
           edit={d.template}
           selected={selectedCardId === d.id}
           style={{
-            transition: `transform 1s`,
+            transition: 'transform 500ms',
             // TODO: change later
             height: '100%',
             // opacity: d.accessible ? 1 : 0.7,

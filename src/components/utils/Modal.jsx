@@ -149,7 +149,7 @@ export const ModalBody = ({
   <React.Fragment>
     <div
       style={{
-        padding: '1rem',
+        padding: '0.5rem',
         borderBottom: `1px solid ${uiColor}`,
         justifyContent: 'space-between',
         display: 'flex',
@@ -181,7 +181,7 @@ export const ModalBody = ({
           justifyContent: 'flex-end',
           flexShrink: 0,
           borderTop: '1px solid grey',
-          padding: '1rem'
+          padding: '0.5rem'
         }}
       >
         {footer}

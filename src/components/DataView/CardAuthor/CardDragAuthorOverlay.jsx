@@ -6,6 +6,8 @@ import { bindActionCreators } from 'redux';
 
 import CardMarker from 'Components/cards/CardMarker';
 
+import { Modal, BareModal, ModalBody } from 'Utils/Modal';
+
 import {
   DragSourceCont,
   DropTargetCont,
@@ -51,7 +53,8 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
     selectCard,
     previewCardAction
   } = props;
-  const PreviewCard = d => {
+
+  const DragPreviewCard = ({ ...d }) => {
     const selected = selectedCardId === d.id;
 
     return (
@@ -66,9 +69,10 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
       >
         <div
           onMouseDown={() => dragCard(true)}
-          onDoubleClick={e => {
+          onClick={e => {
             previewCardAction(d);
             e.stopPropagation();
+            dragCard(false);
           }}
           style={{
             width: '100%',
@@ -92,6 +96,22 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
       </DragSourceCont>
     );
   };
+
+  console.log('extCardId', extCardId);
+
+  const draggable = c => (
+    <div
+      style={{
+        position: 'absolute',
+        left: c.x,
+        top: c.y,
+        transform: 'translate(-50%, -50%)',
+        zIndex: selectedCardId === c.id ? 10 : 0
+      }}
+    >
+      {DragPreviewCard(c)}
+    </div>
+  );
 
   return (
     <DropTargetCont
@@ -123,11 +143,17 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
           right: width / 5
         }}
         colorScale={tagColorScale}
-        preview={PreviewCard}
+        draggable={draggable}
       >
-        {({ x, y, ...c }) => (
-          <EditCard {...c} x={x} y={y} dataView={dataView} />
-        )}
+        {c =>
+          extCardId === c.id ? (
+            <BareModal visible>
+              <EditCard {...c} dataView={dataView} />
+            </BareModal>
+          ) : (
+            draggable(c)
+          )
+        }
       </DataOverlay>
     </DropTargetCont>
   );

@@ -31,6 +31,10 @@ function centerLayout({
   const leftPositions = data
     .slice(0, selectedIndex)
     // TODO: change later
+    // TODO: change later
+    // TODO: change later
+    // TODO: change later
+    // TODO: change later
     .slice(selectedIndex > 10 ? 7 : 0, selectedIndex)
     .map((c, j) => ({
       index: c.index,
@@ -51,7 +55,7 @@ function centerLayout({
   const rightPositions = data
     .slice(selectedIndex + 1, data.length)
     // TODO: Pagination
-    .slice(0, 10)
+    .slice(0, 7)
     .reverse()
     .map((c, j) => ({
       index: c.index,

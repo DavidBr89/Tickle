@@ -36,42 +36,10 @@ const Routes = ({ history }) => (
       <Route
         path={`${`${
           routes.AUTH_ENV
-        }/${TAGS}`}/:selectedCardId?/:extended?/:flipped?`}
-        render={() => (
-          <DefaultLayout>
-            <CardAuthor dataView={TAGS} />
-          </DefaultLayout>
-        )}
-      />
-      <Route
-        path={`${`${
-          routes.AUTH_ENV
-        }/${GEO}`}/:selectedCardId?/:extended?/:flipped?`}
+        }/${GEO}`}/:selectedCardId?/:showOption?/:flipped?`}
         render={() => (
           <DefaultLayout>
             <CardAuthor dataView={GEO} />
-          </DefaultLayout>
-        )}
-      />
-      <Route
-        exact
-        path={`${`${
-          routes.AUTH_ENV
-        }/${FLOORPLAN}`}/:selectedCardId?/:extended?/:flipped?`}
-        render={() => (
-          <DefaultLayout>
-            <CardAuthor dataView={FLOORPLAN} />
-          </DefaultLayout>
-        )}
-      />
-      <Route
-        exact
-        path={`${`${
-          routes.AUTH_ENV
-        }/${FLOORPLAN}`}/:selectedCardId?/:extended?/:flipped?`}
-        render={() => (
-          <DefaultLayout>
-            <CardAuthor dataView={FLOORPLAN} />
           </DefaultLayout>
         )}
       />
@@ -83,33 +51,6 @@ const Routes = ({ history }) => (
         render={() => (
           <DefaultLayout>
             <CardView dataView={GEO} />
-          </DefaultLayout>
-        )}
-      />
-      <Route
-        exact
-        path={`${
-          routes.DATAVIEW
-        }/${GRID}/:selectedCardId?/:extended?/:flipped?`}
-        render={() => (
-          <DefaultLayout>
-            <Grid />
-          </DefaultLayout>
-        )}
-      />
-      <Route
-        path={`${routes.DATAVIEW_TAGS}/:selectedCardId?/:extended?/:flipped?`}
-        render={() => (
-          <DefaultLayout>
-            <CardView dataView={TAGS} path={routes.DATAVIEW_TAGS} />
-          </DefaultLayout>
-        )}
-      />
-      <Route
-        path={`${routes.DATAVIEW}/:selectedCardId?/:extended?/:flipped?`}
-        render={() => (
-          <DefaultLayout>
-            <CardView path={routes.DATAVIEW} dataView={FLOORPLAN} />
           </DefaultLayout>
         )}
       />

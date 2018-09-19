@@ -160,8 +160,12 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     .filter(d => filterByTag(d, filterSet))
     .map(c => {
       // TODO: make editable
+      // TODO: make editable
+      // TODO: make editable
+      // TODO: make editable
+      // TODO: make editable
       const accessible = distanceLoc(userLocation, c.loc) < 500;
-      return { ...c, accessible };
+      return { ...c, accessible: true };
     });
   // .filter(applyFilter(challengeStateFilter));
 

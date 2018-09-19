@@ -24,6 +24,7 @@ const INITIAL_STATE = {
   width: 100,
   height: 100,
   iOS: false,
+  android: false,
   smallScreen: false
 };
 function reducer(state = INITIAL_STATE, action) {

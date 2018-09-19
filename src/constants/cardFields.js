@@ -48,7 +48,8 @@ export const extractCardFields = ({
   title = null,
   challenge = null,
   timestamp = null,
-  description = ''
+  description = '',
+  points = 0
 }) => ({
   id,
   uid,
@@ -61,5 +62,6 @@ export const extractCardFields = ({
   media,
   title,
   challenge,
-  description
+  description,
+  points
 });

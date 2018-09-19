@@ -12,6 +12,9 @@ import { ScrollView, ScrollElement } from 'Utils/ScrollView';
 
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 import { ChevronsDown } from 'react-feather';
+
+import DelayClick from 'Components/utils/DelayClick';
+
 // TODO: untangle later
 import { Btn } from 'Components/cards/layout';
 
@@ -41,7 +44,8 @@ class MediaChallenge extends Component {
     styles: PropTypes.object,
     stylesheet: PropTypes.object,
     challengeSubmission: PropTypes.oneOf([PropTypes.object, null]),
-    bookmarkable: PropTypes.boolean
+    bookmarkable: PropTypes.boolean,
+    isSmartphone: PropTypes.boolean
   };
 
   static defaultProps = {
@@ -52,7 +56,8 @@ class MediaChallenge extends Component {
     styles: {},
     stylesheet: {},
     bookmarkable: false,
-    removable: false
+    removable: false,
+    isSmartphone: false
   };
 
   state = {
@@ -65,13 +70,17 @@ class MediaChallenge extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    const { focusTextArea, media } = this.state;
+    const { focusTextArea, media, response, completed } = this.state;
     if (focusTextArea && prevState.focusTextArea !== focusTextArea) {
       this.scrollTo('textArea');
     }
 
     if (media.length !== prevState.media.length) {
       this.scrollTo('mediaUpload');
+    }
+
+    if (completed && response !== prevState.response) {
+      this.setState({ completed: false });
     }
   }
 
@@ -112,33 +121,48 @@ class MediaChallenge extends Component {
     } = this.props;
     const { media, response, completed, started } = this.state;
 
-    const iconLock = <Icon.Lock size={20} />;
+    const iconLock = <Icon.Lock size={15} />;
     return (
       <div style={{ display: 'flex' }}>
-        <Btn
-          disabled={completed || (media.length === 0 && response === null)}
-          style={{
-            opacity: completed && 0.6
-          }}
+        <DelayClick
+          delay={200}
           onClick={() => {
+            // e.stopPropagation();
+            // e.preventDefault();
             onUpdate({ media, response, completed: true });
-            this.setState({ completed: true });
+            setTimeout(() => this.setState({ completed: true }), 200);
           }}
         >
-          <div
+          <Btn
+            disabled={completed}
             style={{
-              display: 'inline-flex',
-              alignItems: 'center'
+              opacity: completed && 0.6
             }}
           >
-            <div className="mr-1">{completed ? 'Submitted' : 'Submit'}</div>
-            {completed && <div>{iconLock}</div>}
-          </div>
-        </Btn>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              <div className="mr-1">{completed ? 'Submitted' : 'Submit'}</div>
+              {completed && <div>{iconLock}</div>}
+            </div>
+          </Btn>
+        </DelayClick>
       </div>
     );
   };
 
+  makeFooter = () => {
+    const { isSmartphone } = this.props;
+    const { focusTextArea } = this.state;
+
+    if (isSmartphone) {
+      return !focusTextArea ? this.generalControls() : this.textAreaControls();
+    }
+    return this.generalControls();
+  };
   render() {
     const {
       className,
@@ -170,9 +194,7 @@ class MediaChallenge extends Component {
             onUpdate({ response, completed });
         }}
         title={title}
-        footer={
-          !focusTextArea ? this.generalControls() : this.textAreaControls()
-        }
+        footer={this.makeFooter()}
       >
         <ScrollView ref={scroller => (this._scroller = scroller)}>
           <div

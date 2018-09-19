@@ -260,22 +260,23 @@ class CardBackSkeleton extends Component {
               <Comments cardId={cardId} extended={extended === 'comments'} />
             </BackField>
           )}
-            <CardControls
+          <CardControls
             className="mb-1"
-              onFlip={flipHandler}
-              onClose={onClose}
-              style={{ width: '100%',
-
-              flexShrink: 0,
-              }}
-            >
+            onFlip={flipHandler}
+            onClose={onClose}
+            style={{
+              width: '100%',
+              flexShrink: 0
+            }}
+          >
+            {edit ? (
               <DeleteButton
-                disabled
                 onClick={onDelete}
                 color={uiColor}
                 style={{ width: '20%' }}
               />
-            </CardControls>
+            ) : null}
+          </CardControls>
         </div>
       </div>
     );

@@ -96,7 +96,7 @@ export function fetchCollectibleCards(uid) {
       dispatch(loadingCards(false));
       dispatch(
         receiveCollectibleCards(
-          data // .filter(d => d.challengeSubmission === null || d.challengeSubmission.completed)
+          data.map(extractCardFields) // .filter(d => d.challengeSubmission === null || d.challengeSubmission.completed)
         )
       );
     });
@@ -107,8 +107,8 @@ export function fetchCreatedCards(uid) {
   return function(dispatch) {
     dispatch(loadingCards(true));
     return db.readCardsWithSubmissions(uid).then(data => {
-    dispatch(loadingCards(false));
-      dispatch(receiveCreatedCards(data));
+      dispatch(loadingCards(false));
+      dispatch(receiveCreatedCards(data.map(extractCardFields)));
     });
   };
 }

@@ -20,7 +20,9 @@ const CardViewable = ({
   closeCard,
   tagColorScale,
   onSubmitChallenge,
+  isSmartphone,
   flipped,
+  android,
   ...props
 }) => (
   <Card
@@ -42,6 +44,7 @@ const CardViewable = ({
         bookmarkable
         removable
         title="Challenge"
+        isSmartphone={isSmartphone}
         key={props.id}
         challengeSubmission={props.challengeSubmission}
         onUpdate={d => {

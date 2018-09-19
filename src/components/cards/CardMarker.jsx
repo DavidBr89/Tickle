@@ -66,13 +66,14 @@ class CardMarker extends Component {
         style={{
           // pointerEvents: 'none',
           // padding: '15%',
-          transition: 'opacity 1s',
           width: '100%',
           height: '100%',
           // zIndex: 100,
           background: 'white',
-          transition: 'transform 400ms',
-          transform: hovered || selected ? 'scale(2)' : null,
+          // transition: 'width 300ms, height 300ms, transform 300ms',
+          // transform: 'translate(-50%,-50%)',
+          // transition: 'transform 400ms',
+          // transform: hovered || selected ? 'scale(2)' : null,
           ...style
           // transform: hovered || (selected && 'scale(2)')
         }}

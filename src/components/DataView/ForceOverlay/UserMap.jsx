@@ -5,11 +5,13 @@ import MapGL, { HTMLOverlay } from 'react-map-gl';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import CardMarker from 'Components/cards/CardMarker';
+
 // import { UserOverlay } from '../../utils/map-layers/DivOverlay';
 
 import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 
-import { CardMarker } from 'Cards';
+// import { CardMarker } from 'Cards';
 
 import Cluster from './Cluster';
 import ForceCollide from './MiniForceCollide';
@@ -35,39 +37,45 @@ const shadowStyle = {
 
 const getShadowStyle = selected => (selected ? shadowStyle : {});
 
-const PreviewMarker = ({
-  selected,
-  template,
-  color,
-  size = 25,
-  offset = 100
-}) => (
-  <CardMarker
-    color={color}
-    style={{
-      transform: selected && 'scale(1.5)',
-      zIndex: selected && 50,
-      transition: 'transform 1s',
-      ...getShadowStyle(selected),
-      position: 'absolute',
-      width: size,
-      height: size // '13vw',
-    }}
-  />
-);
+// const PreviewMarker = ({
+//   selected,
+//   template,
+//   color,
+//   size = 25,
+//   offset = 100
+// }) => (
+//   <CardMarker
+//     color={color}
+//     style={{
+//       transform: selected && 'scale(1.5)',
+//       zIndex: selected && 50,
+//       transition: 'transform 1s',
+//       ...getShadowStyle(selected),
+//       position: 'absolute',
+//       width: size,
+//       height: size // '13vw',
+//     }}
+//   />
+// );
 
-function ClusterPlaceholder({
+function CardCluster({
   coords: [x, y],
   colorScale,
-  tags,
+  data,
   centroid: [cx, cy],
   size,
-  transition
+  transition,
+  onClick,
+  children
   // ...props
 }) {
+  if (data.values.length === 1) return children(data.values[0]);
+
   return (
     <div
-      key={tags.join('-')}
+      onClick={onClick}
+      className="cluster"
+      key={data.tags.join('-')}
       style={{
         position: 'absolute',
         transition: `left ${transition}ms, top ${transition}ms, width ${transition}ms, height ${transition}ms`,
@@ -113,38 +121,19 @@ function ClusterPlaceholder({
             overflowY: 'hidden',
             display: 'flex',
             justifyContent: 'center',
+            alignItems: 'center',
             flexWrap: 'wrap'
           }}
         >
-          {tags.map(t => (
-            <div
-              className="mb-1 mr-1"
-              style={{
-                fontSize: 14,
-                background: colorScale(t),
-                maxWidth: '100%'
-              }}
-            >
-              <div
-                style={{
-                  // width: '150%',
-                  maxWidth: '100%',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis'
-                }}
-              >
-                {t}
-              </div>
-            </div>
-          ))}
+          <div className="mr-1">{data.values.length}</div>
+          <CardMarker style={{ width: 30, height: 30 }} />
         </div>
       </div>
     </div>
   );
 }
-ClusterPlaceholder.propTypes = { transition: PropTypes.array };
-ClusterPlaceholder.defaultProps = { transition: 500 };
+CardCluster.propTypes = { transition: PropTypes.array };
+CardCluster.defaultProps = { transition: 500 };
 
 class Map extends Component {
   static propTypes = {
@@ -155,7 +144,7 @@ class Map extends Component {
 
   static defaultProps = {
     disabled: false,
-    maxZoom: 16,
+    maxZoom: 18,
     viewport: { ...defaultLocation, width: 100, height: 100, zoom: 10 },
     nodes: [],
     showUser: false
@@ -255,12 +244,12 @@ class Map extends Component {
 
     const userPos = vp.project([userLocation.longitude, userLocation.latitude]);
 
-    function redraw() {
-      return locNodes.map(children);
-    }
-
     return (
       <MapGL
+        onClick={e =>
+          // TODO: only for testing porposes
+          userMove({ longitude: e.lngLat[0], latitude: e.lngLat[1] })
+        }
         ref={m => (this.mapgl = m)}
         mapStyle={mapStyleUrl}
         width={width}
@@ -277,34 +266,44 @@ class Map extends Component {
         longitude={longitude}
         zoom={zoom}
       >
+        <Cluster
+          radius={() =>
+            // console.log('d', d);
+            40
+          }
+          nodes={locNodes}
+          width={width}
+          height={height}
+          colorScale={colorScale}
+        >
+          {({ centroid, centerPos: [x, y], data: d }) => (
+            <CardCluster
+              coords={[x, y]}
+              centroid={[x, y]}
+              size={90}
+              data={d}
+              onClick={() => preview(d.values[0])}
+            >
+              {children}
+            </CardCluster>
+          )}
+        </Cluster>
+
         <div
           style={{
-            position: 'absolute'
-            // left: userPos[0],
-            // top: userPos[1]
-            // zIndex: 5000
+            position: 'absolute',
+            left: userPos[0],
+            top: userPos[1]
+            // zIndex: 2000
           }}
         >
-          {locNodes.map(children)}
+          <img
+            src={userIcon}
+            width={50}
+            height={50}
+            style={{ transform: 'translate(-50%,-50%)' }}
+          />
         </div>
-
-        {showUser && (
-          <div
-            style={{
-              position: 'absolute',
-              left: userPos[0],
-              top: userPos[1]
-              // zIndex: 2000
-            }}
-          >
-            <img
-              src={userIcon}
-              width={50}
-              height={50}
-              style={{ transform: 'translate(-50%,-50%)' }}
-            />
-          </div>
-        )}
       </MapGL>
     );
   }

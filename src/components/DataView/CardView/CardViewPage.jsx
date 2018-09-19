@@ -143,18 +143,6 @@ class CardViewPage extends Component {
             marginBottom: 25
           }}
         >
-          {isLoadingCards && (
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 4000
-              }}
-            >
-              <h1>...LOADING CARDS</h1>
-            </div>
-          )}
           <CardStack
             cards={cards}
             edit={false}
@@ -174,6 +162,19 @@ class CardViewPage extends Component {
             }}
           />
         </div>
+
+          {isLoadingCards && (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 4000
+              }}
+            >
+              <h1>...LOADING CARDS</h1>
+            </div>
+          )}
         <CardViewOverlay
           {...this.props}
           className="mb-1"

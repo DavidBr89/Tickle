@@ -98,7 +98,8 @@ class AddUrl extends Component {
                   style={{ width: '30%' }}
                   onClick={() => {
                     onChange({
-                      url: imgUrl
+                      url: imgUrl,
+                      thumbnail: imgUrl
                     });
                   }}
                 >
