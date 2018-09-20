@@ -14,6 +14,8 @@ import * as dataViewActions from 'Reducers/DataView/actions';
 import * as routeActions from 'Reducers/DataView/async_actions';
 import MediaChallenge from 'Components/Challenges/MediaChallenge';
 
+import { BigButton } from './layout';
+
 const CardViewable = ({
   iOS,
   smallScreen,
@@ -23,6 +25,9 @@ const CardViewable = ({
   isSmartphone,
   flipped,
   android,
+  onChallengeClick,
+  onCreate,
+  template,
   ...props
 }) => (
   <Card
@@ -38,6 +43,9 @@ const CardViewable = ({
     frontView={flipped}
     {...props}
     edit={false}
+    bottomControls={
+      <BigButton onClick={onChallengeClick}>ChallengeXXX</BigButton>
+    }
     challengeComp={
       <MediaChallenge
         {...props.challenge}
@@ -47,11 +55,10 @@ const CardViewable = ({
         isSmartphone={isSmartphone}
         key={props.id}
         challengeSubmission={props.challengeSubmission}
-        onUpdate={d => {
+        onUpdate={newChallengeSub => {
           onSubmitChallenge({
             cardId: props.id,
-            ...props.challengeSubmission,
-            ...d
+            ...newChallengeSub
           });
         }}
       />

@@ -16,6 +16,7 @@ import placeholderImgSrc from '../placeholder.png';
 import { X, Edit, Search, RotateCcw } from 'react-feather';
 
 import { FieldSet } from 'Components/utils/StyledComps';
+import { mediaScale } from 'Constants/mediaTypes';
 
 // import { mediaScale } from 'Constants/mediaTypes';
 import CardControls from 'Components/cards/CardControls';
@@ -27,11 +28,21 @@ import {
   // EditButton,
   // Img,
   // ZoomIcon,
-  BigButton,
-  FlipButton
+  BigButton
 } from '../layout';
 
 const defaultProps = {};
+
+const MediaIcons = ({ media }) => (
+  <div className="ml-1" style={{ display: 'flex', alignItems: 'center' }}>
+    {media.map(m =>
+      React.createElement(mediaScale(m.type), {
+        className: 'm-1',
+        style: { background: 'white' }
+      })
+    )}
+  </div>
+);
 
 const TagLabels = ({ tags, tagColorScale }) => (
   <PreviewTags
@@ -49,13 +60,14 @@ const ImgOverlay = ({ src, className, style, children, footer, onClick }) => (
       marginLeft: 'auto',
       marginRight: 'auto',
       width: '100%',
+      overflow: 'hidden',
       ...style
     }}
   >
     <img
       src={src || placeholderImgSrc}
       alt="Card img"
-      style={{ width: '100%', height: '100%', overflow: 'hidden', ...style }}
+      style={{ width: '100%', height: 'auto', ...style }}
     />
     <div
       style={{
@@ -72,19 +84,29 @@ const ImgOverlay = ({ src, className, style, children, footer, onClick }) => (
   </div>
 );
 
-const FieldIcon = ({ edit, className, style }) =>
+const FieldIcon = ({ edit, className, style, onClick }) =>
   edit ? (
     <span
       className={className}
+      onClick={onClick}
       style={{
         cursor: 'pointer',
+
         ...style
       }}
     >
-      <Edit size={25} />
+      <Edit
+        size={25}
+        style={{
+          background: 'white'
+        }}
+      />
     </span>
   ) : (
-    <div className={className} style={{ cursor: 'pointer', ...style }} />
+    <div
+      className={className}
+      style={{ cursor: 'pointer', background: 'white', ...style }}
+    />
   );
 
 const Title = ({ onClick, edit, children }) => (
@@ -164,121 +186,8 @@ EditButton.propTypes = {
 
 EditButton.defaultProps = { style: {}, onClick: () => null, className: '' };
 
-class CardFront extends Component {
-  static propTypes = {
-    children: PropTypes.node,
-    className: PropTypes.string,
-    uiColor: PropTypes.string,
-    tags: PropTypes.any, // PropTypes.oneOf([null, PropTypes.array]),
-    title: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    img: PropTypes.oneOf([PropTypes.object, null]),
-    onClose: PropTypes.func,
-    flipHandler: PropTypes.func,
-    style: PropTypes.object,
-    background: PropTypes.string,
-    tagColorScale: PropTypes.func,
-    challenge: PropTypes.object,
-    bookmarkable: PropTypes.boolean,
-    challengeComp: PropTypes.element,
-    onPointsClick: PropTypes.func
-  };
+/*
 
-  static defaultProps = {
-    title: null,
-    challenge: null,
-    challengeSubmission: null,
-    // date: '28/04/2012 10:00',
-    tags: null,
-    img: null,
-    xpPoints: null,
-    description: null,
-    // loc: { latitude: 50.828797, longitude: 4.352191 },
-    creator: 'Jan',
-    radius: 500,
-    media: [],
-    comments: [],
-    flipHandler: d => d,
-    tagColorScale: () => 'green',
-    bookmarkable: false,
-    onRemoveChallengeSubmission: d => d,
-    challengeComp: MediaChallenge,
-    onPointsClick: d => d
-  };
-
-  render() {
-    const {
-      tags,
-      img,
-      description,
-      media,
-      title,
-      uiColor,
-      // background,
-      challengeSubmission,
-      stylesheet,
-      tagColorScale,
-      style,
-      smallScreen,
-
-      onClose,
-      onImgClick,
-      onDescriptionClick,
-      onMediaClick,
-      onTitleClick,
-      onChallengeClick,
-      onFlip,
-      onTagsClick,
-      onCreate,
-      edit,
-      template,
-      points,
-      onPointsClick
-    } = this.props;
-
-    const { cardLayout, btn } = stylesheet;
-
-    return (
-      <div
-        style={{
-          height: '100%',
-          zIndex: 3000,
-          border: '5px grey solid',
-          ...style
-        }}
-        className={css(cardLayout)}
-      >
-        <ImgOverlay
-          onClick={!edit ? onImgClick : null}
-          src={img ? img.url : null}
-          style={{
-            flex: '0 1 50%',
-            minHeight: 0
-          }}
-        >
-          <div
-            onClick={edit ? onImgClick : null}
-            style={{
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              justifyContent: 'flex-end',
-              alignItems: 'flex-end'
-            }}
-          >
-            <FieldIcon edit={edit} className="m-1" />
-          </div>
-
-          <div
-            style={{
-              // width: '100%',
-              // height: '100%',
-              display: 'flex',
-              justifyContent: 'flex-end'
-              // alignItems: 'flex-end'
-            }}
-          >
             <div
               className="m-1"
               onClick={edit ? onPointsClick : null}
@@ -309,6 +218,142 @@ class CardFront extends Component {
                 )}
               </div>
             </div>
+            */
+
+class CardFront extends Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string,
+    uiColor: PropTypes.string,
+    tags: PropTypes.any, // PropTypes.oneOf([null, PropTypes.array]),
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    img: PropTypes.oneOf([PropTypes.object, null]),
+    onClose: PropTypes.func,
+    flipHandler: PropTypes.func,
+    style: PropTypes.object,
+    background: PropTypes.string,
+    tagColorScale: PropTypes.func,
+    challenge: PropTypes.object,
+    bookmarkable: PropTypes.boolean,
+    onPointsClick: PropTypes.func,
+    bottomControls: PropTypes.node
+  };
+
+  static defaultProps = {
+    title: null,
+    challenge: null,
+    challengeSubmission: null,
+    // date: '28/04/2012 10:00',
+    tags: null,
+    img: null,
+    xpPoints: null,
+    description: null,
+    // loc: { latitude: 50.828797, longitude: 4.352191 },
+    creator: 'Jan',
+    radius: 500,
+    media: [],
+    comments: [],
+    flipHandler: d => d,
+    tagColorScale: () => 'green',
+    bookmarkable: false,
+    onRemoveChallengeSubmission: d => d,
+    onPointsClick: d => d,
+    bottomControls: <React.Fragment />
+  };
+
+  render() {
+    const {
+      tags,
+      img,
+      description,
+      media,
+      title,
+      uiColor,
+      // background,
+      challengeSubmission,
+      stylesheet,
+      tagColorScale,
+      style,
+      smallScreen,
+
+      onClose,
+      onImgClick,
+      onDescriptionClick,
+      onMediaClick,
+      onTitleClick,
+      onChallengeClick,
+      onFlip,
+      onTagsClick,
+      onCreate,
+      edit,
+      template,
+      points,
+      onPointsClick,
+      bottomControls
+    } = this.props;
+
+    const { cardLayout, btn } = stylesheet;
+
+    // console.log('mediaIcons', mediaIcons);
+    return (
+      <div
+        style={{
+          height: '100%',
+          zIndex: 3000,
+          border: '5px grey solid',
+          ...style
+        }}
+        className={css(cardLayout)}
+      >
+        <ImgOverlay
+          onClick={!edit ? onImgClick : null}
+          src={img ? img.url : null}
+          style={{
+            flex: '0 1 50%',
+            cursor: !edit && 'pointer',
+            minHeight: 0
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              justifyContent: 'flex-end',
+              alignItems: 'flex-end',
+              zIndex: 1
+            }}
+          >
+            <FieldIcon
+              edit={edit}
+              className="m-1"
+              onClick={edit ? onImgClick : null}
+            />
+          </div>
+
+          <div
+            style={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'flex-end',
+              zIndex: 0
+            }}
+          >
+            <MediaIcons media={media} />
+          </div>
+          <div
+            style={{
+              // width: '100%',
+              // height: '100%',
+              display: 'flex',
+              justifyContent: 'flex-end'
+              // alignItems: 'flex-end'
+            }}
+          >
           </div>
         </ImgOverlay>
         <div
@@ -347,7 +392,7 @@ class CardFront extends Component {
               placeholder="Add Media"
               style={{ flex: '0 1 auto' }}
               edit={edit}
-              onEdit={onDescriptionClick}
+              onEdit={onMediaClick}
             />
           )}
         </div>
@@ -356,12 +401,7 @@ class CardFront extends Component {
           <div
             style={{ marginLeft: 'auto', marginRight: 'auto', display: 'flex' }}
           >
-            <BigButton onClick={onChallengeClick}>Challenge</BigButton>
-            {template && (
-              <BigButton className="ml-1" onClick={onCreate}>
-                Create
-              </BigButton>
-            )}
+            {bottomControls}
           </div>
         </CardControls>
       </div>

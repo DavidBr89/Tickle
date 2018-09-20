@@ -38,14 +38,14 @@ class DataUploadForm extends Component {
       stylesheet: { btn },
       className,
       style,
+      disabled,
       buttonStyle
     } = this.props;
 
     const { imgUrl, file, type } = this.state;
     const imgRegex = /.(jpg|jpeg|png|gif)$/i;
     const videoRegex = /.(ogg|h264|webm|vp9|hls)$/i;
-    console.log('FIle', file);
-
+    const disabledUpload = !file || disabled;
     return (
       <div
         className={className}
@@ -71,15 +71,17 @@ class DataUploadForm extends Component {
         />
         <button
           className={`${css(btn)} ml-2`}
+          disabled={disabledUpload}
           style={{
             fontWeight: 'bold',
-            flex: '1 1 auto'
+            flex: '1 1 auto',
+            opacity: disabledUpload ? 0.6 : 1,
+            transition: 'opacity 200ms'
           }}
           onClick={() => {
             onChange({ imgUrl, file, type });
             this.setState({ imgUrl: null, file: null });
           }}
-          disabled={!file}
         >
           Add
         </button>
@@ -93,6 +95,7 @@ const MediaItem = ({
   name,
   onRemove,
   stylesheet: { shallowBg, shallowBorder, btn, boxShadow, truncate },
+  disabled,
   children = null,
   id
 }) => {
@@ -117,7 +120,7 @@ const MediaItem = ({
       ) : (
         children({ url, name, loading: url === null })
       )}
-      {onRemove && (
+      {!disabled && (
         <div>
           <button
             className={css(btn)}
@@ -150,6 +153,7 @@ export const MediaList = ({
   stylesheet,
   onRemove,
   classNam,
+  disabled,
   style
 }) => (
   <div
@@ -161,7 +165,12 @@ export const MediaList = ({
     }}
   >
     {data.map(d => (
-      <MediaItem {...d} stylesheet={stylesheet} onRemove={onRemove} />
+      <MediaItem
+        {...d}
+        disabled={disabled}
+        stylesheet={stylesheet}
+        onRemove={onRemove}
+      />
     ))}
   </div>
 );
@@ -184,7 +193,8 @@ class MediaUpload extends Component {
     stylesheet: PropTypes.object,
     uploadPath: PropTypes.func.isRequired,
     nodeWrapper: PropTypes.oneOf([null, PropTypes.func]),
-    onClick: PropTypes.func
+    onClick: PropTypes.func,
+    disabled: PropTypes.bool
   };
 
   static defaultProps = {
@@ -192,7 +202,8 @@ class MediaUpload extends Component {
     nodeWrapper: null,
     style: {},
     onChange: d => d,
-    onClick: d => d
+    onClick: d => d,
+    disabled: false
   };
 
   state = { media: [], pendingMedia: [], ...this.props };
@@ -247,12 +258,13 @@ class MediaUpload extends Component {
 
   render() {
     const { media, pendingMedia } = this.state;
-    const { nodeWrapper, style, stylesheet } = this.props;
+    const { nodeWrapper, style, stylesheet, disabled } = this.props;
     const allMedia = [...media, ...pendingMedia];
     const maxHeight = '200%';
     return (
       <div className="flexCol" style={{ flexShrink: 0 }}>
         <DataUploadForm
+          disabled={disabled}
           style={{ width: '100%' }}
           stylesheet={stylesheet}
           onChange={this.addMediaItem}
@@ -274,6 +286,7 @@ class MediaUpload extends Component {
             >
               <MediaList
                 data={allMedia}
+                disabled={disabled}
                 onRemove={this.removeMediaItem}
                 stylesheet={stylesheet}
                 maxHeight={maxHeight}

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import chroma from 'chroma-js';
+// import chroma from 'chroma-js';
 import { compose } from 'recompose';
 
 import { bindActionCreators } from 'redux';
@@ -16,6 +16,8 @@ import { changeMapViewport } from 'Reducers/Map/actions';
 import * as asyncCardActions from 'Reducers/Cards/async_actions';
 
 import * as routeActions from 'Reducers/DataView/async_actions';
+
+import { BigButton } from './layout';
 
 function mapStateToProps(state) {
   return {
@@ -43,7 +45,14 @@ const mapDispatchToProps = dispatch =>
   );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const { selectedCardId, mapViewport, width, height, authUser } = state;
+  const {
+    selectedCardId,
+    mapViewport,
+    width,
+    height,
+    authUser,
+    nestedTagVocabulary
+  } = state;
   const { uid } = authUser;
 
   const { dataView, match, history, id } = ownProps;
@@ -84,7 +93,6 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   };
   const flipHandler = () => routeFlipCard({ match, history });
 
-
   return {
     ...state,
     ...dispatcherProps,
@@ -93,6 +101,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     closeCard,
     flipHandler,
     frontView: !flipped,
+    tagVocabulary: nestedTagVocabulary,
     ...ownProps
   };
 };
@@ -106,12 +115,16 @@ const EditCard = ({
   x,
   y,
   closeCard,
+  onChallengeClick,
+  onCreate,
+  template,
   ...props
 }) => (
   <Card
     {...props}
     key={props.id}
     onClose={closeCard}
+    template={template}
     edit
     onCreate={d => {
       createCard({ ...d, x, y });

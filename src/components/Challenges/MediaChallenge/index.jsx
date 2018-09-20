@@ -15,6 +15,8 @@ import { ChevronsDown } from 'react-feather';
 
 import DelayClick from 'Components/utils/DelayClick';
 
+import { db } from 'Firebase';
+
 // TODO: untangle later
 import { Btn } from 'Components/cards/layout';
 
@@ -36,6 +38,143 @@ import { Btn } from 'Components/cards/layout';
           </div>
         </Btn>
 */
+
+const GeneralControls = ({ ...props }) => {
+  const {
+    media,
+    text,
+    completed,
+    challengeSubmitted,
+    challengeInvalid,
+    challengeStarted,
+    onSubmit,
+    onStart
+  } = props;
+
+  const iconLock = <Icon.Lock size={15} />;
+  const submitDisabled = challengeInvalid || challengeSubmitted;
+  return (
+    <div
+      style={{
+        display: 'flex',
+        justifyItems: 'space-between',
+        alignItems: 'center'
+      }}
+    >
+      <div className="mr-3">
+        <DelayClick delay={200} onClick={onStart}>
+          <Btn
+            disabled={challengeStarted}
+            style={{
+              opacity: challengeStarted && 0.6
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              <div className="mr-1">
+                {!challengeStarted ? 'Start' : 'Started'}
+              </div>
+              {challengeStarted && <div>{iconLock}</div>}
+            </div>
+          </Btn>
+        </DelayClick>
+      </div>
+      <DelayClick delay={200} onClick={onSubmit}>
+        <Btn
+          disabled={submitDisabled}
+          style={{
+            opacity: submitDisabled && 0.6
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
+            <div className="mr-1">{completed ? 'Submitted' : 'Submit'}</div>
+            {submitDisabled && <div>{iconLock}</div>}
+          </div>
+        </Btn>
+      </DelayClick>
+    </div>
+  );
+};
+
+const TextAreaControls = ({ onClick }) => (
+  <div style={{ display: 'flex' }}>
+    <Btn className="mr-1" onClick={onClick}>
+      <div style={{ display: 'flex' }}>
+        <div>Disable Keyboard</div>
+        <ChevronsDown />
+      </div>
+    </Btn>
+  </div>
+);
+
+const SubmitInfo = ({ challengeSubmitted, challengeInvalid }) => {
+  if (challengeSubmitted)
+    return (
+      <div className="alert alert-success mb-3 p-3">
+        <strong>Challenge is submitted!</strong>
+      </div>
+    );
+
+  if (!challengeInvalid) return null;
+
+  if (challengeInvalid)
+    return (
+      <div className="alert alert-warning mb-3 p-3">
+        <strong>Please enter some info to fulfill the challenge!</strong>
+      </div>
+    );
+
+  return null;
+};
+
+function makeFooter({
+  challengeStarted,
+  challengeSubmitted,
+  challengeInvalid
+}) {
+  const { isSmartphone, onUpdate, challengeSubmission } = this.props;
+  const { focusTextArea, media, response } = this.state;
+
+  const gcontrol = (
+    <GeneralControls
+      {...this.state}
+      challengeStarted={challengeStarted}
+      challengeSubmitted={challengeSubmitted}
+      challengeInvalid={challengeInvalid}
+      onStart={() => {
+        clearTimeout(this.textAreaTimeoutId);
+        onUpdate({ media, response, completed: false });
+      }}
+      onSubmit={() => {
+        clearTimeout(this.textAreaTimeoutId);
+        onUpdate({ media, response, completed: true });
+        this.setState({ completed: true });
+      }}
+    />
+  );
+
+  if (isSmartphone) {
+    return !focusTextArea ? (
+      gcontrol
+    ) : (
+      <TextAreaControls
+        onClick={() => {
+          this.setState({ focusTextArea: false });
+        }}
+      />
+    );
+  }
+  return gcontrol;
+}
 
 class MediaChallenge extends Component {
   static propTypes = {
@@ -69,8 +208,10 @@ class MediaChallenge extends Component {
     started: this.props.challengeSubmission !== null
   };
 
+  textAreaTimeoutId = null;
   componentDidUpdate(prevProps, prevState) {
     const { focusTextArea, media, response, completed } = this.state;
+    const { onUpdate } = this.props;
     if (focusTextArea && prevState.focusTextArea !== focusTextArea) {
       this.scrollTo('textArea');
     }
@@ -79,8 +220,14 @@ class MediaChallenge extends Component {
       this.scrollTo('mediaUpload');
     }
 
-    if (completed && response !== prevState.response) {
-      this.setState({ completed: false });
+    if (!focusTextArea && prevState.focusTextArea) {
+      const sub = { media, response, completed: false };
+      clearTimeout(this.textAreaTimeoutId);
+      this.textAreaTimeoutId = setTimeout(() => onUpdate(sub), 1000);
+    }
+
+    if (completed && !prevState.completed) {
+      this.scrollTo('info');
     }
   }
 
@@ -88,81 +235,6 @@ class MediaChallenge extends Component {
     this._scroller.scrollTo(name, opts);
   };
 
-  textAreaControls = () => (
-    <div style={{ display: 'flex' }}>
-      <Btn
-        className="mr-1"
-        onClick={() => {
-          this.setState({ focusTextArea: false });
-        }}
-      >
-        <div style={{ display: 'flex' }}>
-          <div>Disable Keyboard</div>
-          <ChevronsDown />
-        </div>
-      </Btn>
-    </div>
-  );
-
-  generalControls = () => {
-    const {
-      className,
-      description,
-      onUpdate,
-      onClose,
-      styles,
-      stylesheet,
-      title,
-      onSubmit,
-      challengeSubmission,
-      smallScreen,
-      bookmarkable,
-      onRemoveSubmission
-    } = this.props;
-    const { media, response, completed, started } = this.state;
-
-    const iconLock = <Icon.Lock size={15} />;
-    return (
-      <div style={{ display: 'flex' }}>
-        <DelayClick
-          delay={200}
-          onClick={() => {
-            // e.stopPropagation();
-            // e.preventDefault();
-            onUpdate({ media, response, completed: true });
-            setTimeout(() => this.setState({ completed: true }), 200);
-          }}
-        >
-          <Btn
-            disabled={completed}
-            style={{
-              opacity: completed && 0.6
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center'
-              }}
-            >
-              <div className="mr-1">{completed ? 'Submitted' : 'Submit'}</div>
-              {completed && <div>{iconLock}</div>}
-            </div>
-          </Btn>
-        </DelayClick>
-      </div>
-    );
-  };
-
-  makeFooter = () => {
-    const { isSmartphone } = this.props;
-    const { focusTextArea } = this.state;
-
-    if (isSmartphone) {
-      return !focusTextArea ? this.generalControls() : this.textAreaControls();
-    }
-    return this.generalControls();
-  };
   render() {
     const {
       className,
@@ -180,21 +252,26 @@ class MediaChallenge extends Component {
     } = this.props;
     const { media, response, completed, started, focusTextArea } = this.state;
 
-    const challBtnTxt = smallScreen ? 'Chall.' : 'Challenge';
+    const challengeStarted = challengeSubmission !== null;
+    const challengeSubmitted = completed;
+    const challengeInvalid = media.length === 0 && response === null;
 
-    // const isUploading = media.filter(m => m.url === null).length > 0;
     return (
       <ModalBody
         onClose={() => {
           onClose();
-          if (
-            (response !== null && !challengeSubmission) ||
-            (challengeSubmission && challengeSubmission.response !== response)
-          )
-            onUpdate({ response, completed });
+          // if (
+          //   (response !== null && !challengeSubmission) ||
+          //   (challengeSubmission && challengeSubmission.response !== response)
+          // )
+          //   onUpdate({ response, media, completed });
         }}
         title={title}
-        footer={this.makeFooter()}
+        footer={makeFooter.bind(this)({
+          challengeStarted,
+          challengeSubmitted,
+          challengeInvalid
+        })}
       >
         <ScrollView ref={scroller => (this._scroller = scroller)}>
           <div
@@ -219,6 +296,7 @@ class MediaChallenge extends Component {
                 <h5>Response</h5>
                 <textarea
                   style={{ width: '100%' }}
+                  disabled={challengeSubmitted}
                   rows="4"
                   placeholder="write your response"
                   value={response}
@@ -237,6 +315,7 @@ class MediaChallenge extends Component {
 
             <ScrollElement name="mediaUpload">
               <MediaUpload
+                disabled={completed}
                 style={{ width: '100%', flex: '0 0' }}
                 uploadPath={id => `challengeSubmissionFiles/${id}`}
                 media={media}
@@ -244,10 +323,21 @@ class MediaChallenge extends Component {
                 buttonStyle={{ width: 30 }}
                 onChange={newMedia => {
                   this.setState({ media: newMedia, completed: false });
-                  onUpdate({ media: newMedia, completed: false });
+                  onUpdate({ media: newMedia, response, completed: false });
                 }}
               />
             </ScrollElement>
+            <div
+              className="flexCol mb-3"
+              style={{ flex: '1 0 auto', justifyContent: 'flex-end' }}
+            >
+              <ScrollElement name="info">
+                <SubmitInfo
+                  challengeSubmitted={challengeSubmitted}
+                  challengeInvalid={challengeInvalid}
+                />
+              </ScrollElement>
+            </div>
           </div>
         </ScrollView>
       </ModalBody>

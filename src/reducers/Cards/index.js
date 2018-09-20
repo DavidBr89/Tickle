@@ -177,22 +177,25 @@ function reducer(state = INITIAL_STATE, action) {
     }
 
     case UPDATE_CARD: {
-      const { createdCards } = state;
-
+      const { createdCards, collectibleCards } = state;
       const updatedCard = action.options;
 
-      const updatedCards = createdCards.map(c => {
+      const doUpdateCard = c => {
         if (c.id === updatedCard.id) {
           return updatedCard;
         }
         return c;
-      });
+      };
+
+      const updatedCreatedCards = createdCards.map(doUpdateCard);
+      const updatedCollectibleCards = collectibleCards.map(doUpdateCard);
 
       return {
         ...state,
         // TODO: remove
         // tmpCards: updatedCards,
-        createdCards: updatedCards
+        createdCards: updatedCreatedCards,
+        collectibleCards: updatedCollectibleCards
       };
     }
 

@@ -291,3 +291,77 @@ export const DropDown = class DropDown extends Component {
     );
   }
 };
+
+
+export const ReadDropDown = class DropDown extends Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string
+  };
+  static defaultProps = { style: {}, vocabulary: [] };
+
+  state = {
+    active: false,
+    curSet: this.props.data,
+    setList: [],
+    showResults: false
+  };
+
+  // .dropdown:hover .dropdown-content {
+  //     display: block;
+  // }
+  componentDidUpdate(prevProps, prevState) {
+    const { onChange } = this.props;
+    const { curSet } = this.state;
+    const { curSet: oldSet } = prevState;
+
+    if (curSet.length !== oldSet.length) {
+      onChange(curSet);
+    }
+  }
+
+  removeListItem = set => {
+    this.setState(({ setList: olList }) => ({
+      setList: olList.filter(s => difference(set, s).length !== 0),
+      active: false,
+      curSet: []
+    }));
+  };
+
+  render() {
+    const { style } = this.props;
+    const { active, curSet, curKey, setList, showResults } = this.state;
+
+    // const isCurSetNew =
+    //   curSet.length > 0 &&
+    //   setList.filter(s => intersection(curSet, s).length === curSet.length)
+    //     .length === 0;
+
+    return (
+      <div
+        onBlur={() => this.setState({ showResults: false })}
+        onSelect={() => this.setState({ showResults: true })}
+        style={{
+          alignItems: 'center',
+          backgroundColor: '#fff',
+          // maxWidth: '60%',
+          position: 'relative',
+          ...style
+          // border: '2px solid #ccc'
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            border: '1px solid lightgrey'
+          }}
+        >
+          <div>
+
+          </div>
+        </div>
+      </div>
+    );
+  }
+};
+

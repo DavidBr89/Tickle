@@ -207,41 +207,41 @@ class TitleModal extends Component {
     );
   }
 }
-
-class DescriptionModal extends Component {
-  static propTypes = {
-    children: PropTypes.node,
-    className: PropTypes.string,
-    onUpdate: PropTypes.func
-  };
-
-  state = { ...this.props };
-
-  render() {
-    const { onUpdate } = this.props;
-    const { text } = this.state;
-
-    return (
-      <StyledModalBody
-        {...this.props}
-        onClose={() => onUpdate(text)}
-        footer={<FooterBtn onClick={() => onUpdate(text)}>Update</FooterBtn>}
-      >
-        <div className="form-group">
-          <input
-            onChange={e =>
-              this.setState({
-                title: e.target.value || null
-              })
-            }
-            style={{ width: '100%' }}
-            value={text}
-          />
-        </div>
-      </StyledModalBody>
-    );
-  }
-}
+//
+// class DescriptionModal extends Component {
+//   static propTypes = {
+//     children: PropTypes.node,
+//     className: PropTypes.string,
+//     onUpdate: PropTypes.func
+//   };
+//
+//   state = { ...this.props };
+//
+//   render() {
+//     const { onUpdate } = this.props;
+//     const { text } = this.state;
+//
+//     return (
+//       <StyledModalBody
+//         {...this.props}
+//         onClose={() => onUpdate(text)}
+//         footer={<FooterBtn onClick={() => onUpdate(text)}>Update</FooterBtn>}
+//       >
+//         <div className="form-group">
+//           <input
+//             onChange={e =>
+//               this.setState({
+//                 title: e.target.value || null
+//               })
+//             }
+//             style={{ width: '100%' }}
+//             value={text}
+//           />
+//         </div>
+//       </StyledModalBody>
+//     );
+//   }
+// }
 
 class EditCardFront extends PureComponent {
   static propTypes = {
@@ -393,6 +393,7 @@ class EditCardFront extends PureComponent {
               selectedMedia={media}
               stylesheet={stylesheet}
               onChange={mediaItems => {
+                console.log('mediasearch', mediaItems);
                 this.updateField({ media: mediaItems });
               }}
             />
@@ -464,7 +465,6 @@ class EditCardFront extends PureComponent {
         <Modal visible={modalVisible}>{this.modalWriteContent()}</Modal>
         <CardFront
           {...this.props}
-          onCreate={() => onCreate(data)}
           onClose={onClose}
           onTagsClick={() => {
             this.setState({
@@ -492,10 +492,23 @@ class EditCardFront extends PureComponent {
               dialog: { title: 'Media', data: media }
             })
           }
-          onChallengeClick={() =>
-            this.setState({
-              dialog: { title: 'Challenge', data: challenge }
-            })
+          bottomControls={
+            <React.Fragment>
+              <BigButton
+                onClick={() =>
+                  this.setState({
+                    dialog: { title: 'Challenge', data: challenge }
+                  })
+                }
+              >
+                {challenge === null ? 'Add Challenge' : 'Edit Challenge'}
+              </BigButton>
+              {template && (
+                <BigButton className="ml-1" onClick={() => onCreate(data)}>
+                  Create
+                </BigButton>
+              )}
+            </React.Fragment>
           }
           onPointsClick={() =>
             this.setState({

@@ -25,7 +25,7 @@ class AdminPage extends Component {
   componentDidMount() {
     const {
       fetchUsers,
-      fetchCreatedCards,
+      fetchAllCardsWithSubmissions,
       selectCard,
       authUser,
       modalActive
@@ -33,7 +33,7 @@ class AdminPage extends Component {
     fetchUsers();
 
     // const haaike = 'PpNOHOQLtXatZzcaAYVCMQQP5XT2';
-    fetchCreatedCards();
+    fetchAllCardsWithSubmissions();
     // selectCard(null);
   }
 

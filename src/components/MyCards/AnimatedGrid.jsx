@@ -192,13 +192,6 @@ export default class MyDiary extends Component {
                 <option value={CHALLENGE_SUBMITTED}>Submitted Cards</option>
               </select>
             </div>
-            <button onClick={() => this.setState(INITIAL_GRID_STATE)}>a</button>
-            <button onClick={() => this.setState({ ...INITIAL_GRID_STATE })}>
-              b
-            </button>
-            <button onClick={() => this.setState({ colNum: 20, rowNum: 20 })}>
-              c
-            </button>
           </React.Fragment>
         }
       >
@@ -216,7 +209,7 @@ export default class MyDiary extends Component {
             overflow: 'scroll'
           }}
         >
-          <div style={{ height: 200 }}>
+          <div>
             {selectedCard !== null && (
               <div>{selectedCard.tags.map(d => <div>{d}</div>)}</div>
             )}

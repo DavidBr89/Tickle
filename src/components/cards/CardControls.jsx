@@ -28,7 +28,8 @@ const CardControls = ({
       className="m-1"
       style={{
         display: 'flex',
-        alignItems: 'center'
+        alignItems: 'center',
+        cursor: 'pointer'
       }}
     >
       <X size={size} color={color} />
@@ -39,7 +40,8 @@ const CardControls = ({
       onClick={onFlip}
       style={{
         display: 'flex',
-        alignItems: 'center'
+        alignItems: 'center',
+        cursor: 'pointer'
       }}
     >
       <RotateCcw size={size} color={color} />

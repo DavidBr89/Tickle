@@ -144,7 +144,6 @@ class Card extends React.Component {
                 // transformStyle: 'preserve-3d'
               }}
               edit={edit}
-              onCollect={onCollect}
               background={background}
               flipHandler={flipHandler}
               uiColor={uiColor}

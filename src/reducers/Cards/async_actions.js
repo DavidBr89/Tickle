@@ -103,12 +103,22 @@ export function fetchCollectibleCards(uid) {
   };
 }
 
+export function fetchAllCardsWithSubmissions() {
+  return function(dispatch) {
+    dispatch(loadingCards(true));
+    return db.readCardsWithSubmissions().then(data => {
+      dispatch(loadingCards(false));
+      dispatch(receiveCreatedCards(data));
+    });
+  };
+}
+
 export function fetchCreatedCards(uid) {
   return function(dispatch) {
     dispatch(loadingCards(true));
     return db.readCardsWithSubmissions(uid).then(data => {
       dispatch(loadingCards(false));
-      dispatch(receiveCreatedCards(data.map(extractCardFields)));
+      dispatch(receiveCreatedCards(data));
     });
   };
 }

@@ -27,6 +27,113 @@ import UserMap from './UserMap';
 import Floorplan from './FloorPlanExp';
 import TreeMapCluster from './TreeMapCluster';
 
+const SelectedComp = ({ ...props }) => {
+  const {
+    mode,
+    data,
+    selectedCardId,
+    // userLocation,
+    // className,
+    style,
+    // onViewportChange,
+    disabled,
+    width,
+    height,
+    // onMapViewportChange,
+    previewCardAction,
+    children,
+    sets,
+    filterSet,
+    padding,
+    colorScale,
+    // dragCard,
+    extCardId,
+    author,
+    // isCardDragging,
+    // preview,
+    userview,
+    draggable
+  } = props;
+
+  const MapComp = userview ? UserMap : Map;
+
+  const noPreview = c =>
+    extCardId === c.id ? (
+      <BareModal visible>{children({ ...c })}</BareModal>
+    ) : null;
+
+  // const noPointerEvents = extCardId !== null;
+  switch (mode) {
+    case GEO: {
+      return (
+        <MapComp
+          width={width}
+          height={height}
+          disabled={disabled}
+          preview={previewCardAction}
+          nodes={data}
+          colorScale={colorScale}
+        >
+          {children}
+        </MapComp>
+      );
+    }
+    case FLOORPLAN: {
+      return (
+        <div ref={zc => (this.zoomCont = zc)}>
+          <Floorplan
+            {...this.props}
+            width={width}
+            height={height}
+            data={data}
+            edit={author}
+            colorScale={colorScale}
+            zoom
+            noPreview={noPreview}
+          >
+            {author ? draggable : noPreview}
+          </Floorplan>
+        </div>
+      );
+    }
+    case TAGS: {
+      return (
+        <div
+          style={{
+            ...style,
+            height: '100%'
+            // TODO: check later
+            // paddingLeft: 7,
+            // paddingRight: 15
+          }}
+        >
+          <DimWrapper>
+            {(w, h) => (
+              <TreeMapCluster
+                {...this.props}
+                sets={sets}
+                data={data}
+                width={w}
+                height={h}
+                center={[width / 2, (height * 3) / 4]}
+                filterSet={filterSet}
+                selectedId={selectedCardId}
+                colorScale={colorScale}
+                padding={padding}
+              >
+                {noPreview}
+              </TreeMapCluster>
+            )}
+          </DimWrapper>
+        </div>
+      );
+    }
+    default: {
+      return <div>Unknown dataView {mode}</div>;
+    }
+  }
+};
+
 class DataOverlay extends Component {
   static propTypes = {
     children: PropTypes.func,
@@ -77,129 +184,6 @@ class DataOverlay extends Component {
     // this.ids.map(clearTimeout);
   }
 
-  selectComp = () => {
-    const {
-      mode,
-      data,
-      selectedCardId,
-      userLocation,
-      className,
-      style,
-      onViewportChange,
-      disabled,
-      width,
-      height,
-      onMapViewportChange,
-      previewCardAction,
-      children,
-      sets,
-      filterSet,
-      padding,
-      colorScale,
-      // dragCard,
-      extCardId,
-      author,
-      // isCardDragging,
-      preview,
-      userview,
-      draggable
-    } = this.props;
-
-    const MapComp = userview ? UserMap : Map;
-
-    // TODO: join
-    // const draggable = c => (
-    //   <div
-    //     style={{
-    //       position: 'absolute',
-    //       left: c.x,
-    //       top: c.y,
-    //       transform: 'translate(-50%, -50%)',
-    //       zIndex: selectedCardId === c.id ? 10 : 0
-    //     }}
-    //   >
-    //     {preview(c)}
-    //   </div>
-    // );
-
-    // TODO: remove
-    const noPreview = c =>
-      extCardId === c.id ? (
-        <BareModal visible>{children({ ...c })}</BareModal>
-      ) : null;
-
-    // const noPointerEvents = extCardId !== null;
-    switch (mode) {
-      case GEO: {
-        return (
-          <MapComp
-            width={width}
-            height={height}
-            disabled={disabled}
-            preview={previewCardAction}
-            nodes={data}
-            colorScale={colorScale}
-          >
-            {children}
-          </MapComp>
-        );
-      }
-      case FLOORPLAN: {
-        return (
-          <div ref={zc => (this.zoomCont = zc)}>
-            <Floorplan
-              {...this.props}
-              width={width}
-              height={height}
-              data={data}
-              edit={author}
-              colorScale={colorScale}
-              zoom
-              noPreview={noPreview}
-            >
-              {author ? draggable : noPreview}
-            </Floorplan>
-          </div>
-        );
-      }
-      case TAGS: {
-        return (
-          <div
-            style={{
-              ...style,
-              height: '100%'
-              // TODO: check later
-              // paddingLeft: 7,
-              // paddingRight: 15
-            }}
-          >
-            <DimWrapper>
-              {(w, h) => (
-                <TreeMapCluster
-                  {...this.props}
-                  sets={sets}
-                  data={data}
-                  width={w}
-                  height={h}
-                  center={[width / 2, (height * 3) / 4]}
-                  filterSet={filterSet}
-                  selectedId={selectedCardId}
-                  colorScale={colorScale}
-                  padding={padding}
-                >
-                  {noPreview}
-                </TreeMapCluster>
-              )}
-            </DimWrapper>
-          </div>
-        );
-      }
-      default: {
-        return <div>Unknown dataView {mode}</div>;
-      }
-    }
-  };
-
   render() {
     const {
       children,
@@ -223,11 +207,9 @@ class DataOverlay extends Component {
       filterSet
     } = this.props;
 
-    const comp = this.selectComp();
     return (
       <div className={className} style={{ ...style }}>
-        {' '}
-        {comp}{' '}
+        <SelectedComp {...this.props} />
       </div>
     );
   }

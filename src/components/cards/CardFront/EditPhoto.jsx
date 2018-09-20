@@ -57,13 +57,20 @@ class AddUrl extends Component {
                 {imgUrl ? (
                   <div
                     style={{
-                      overflow: 'hidden',
-                      width: '100%',
-                      height: 300
+                      overflow: 'hidden'
+                      // max-height: 300px;
                       // height: this.contHeight
                     }}
                   >
-                    <img src={imgUrl} width="100%" alt={imgUrl} />
+                    <img
+                      src={imgUrl}
+                      width="100%"
+                      style={{
+                        maxHeight: 300,
+                        width: 'auto'
+                      }}
+                      alt={imgUrl}
+                    />
                   </div>
                 ) : (
                   <h1

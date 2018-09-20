@@ -31,7 +31,7 @@ const pruneFields = fields => {
 
 const thumbFileName = fileName => `thumb_${fileName}`;
 
-const CARDS = 'vds_geo_cards';
+const CARDS = 'staging_vds_geo_cards';
 const getShallowCards = (uid = null) => {
   // console.log('UID', uid);
   const firePr =
@@ -148,8 +148,8 @@ export const readCardsWithSubmissions = uid =>
   getShallowCards(uid).then(data => {
     const pendingPromises = data.map(d =>
       getAllChallengeSubmissions(d.id).then(
-        challengeSubmissions =>
-          new Promise(resolve => resolve({ ...d, challengeSubmissions }))
+        allChallengeSubmissions =>
+          new Promise(resolve => resolve({ ...d, allChallengeSubmissions }))
       )
     );
     return Promise.all(pendingPromises).then(results =>
@@ -242,36 +242,21 @@ export const getUser = uid =>
 // TODO
 // TODO
 // TODO
-const haaike = 'PpNOHOQLtXatZzcaAYVCMQQP5XT2';
+// const haaike = 'PpNOHOQLtXatZzcaAYVCMQQP5XT2';
 export const getDetailedUserInfo = uid =>
   getUser(uid)
-    .then(usr =>
-      readCards(haaike, uid).then(
-        cards =>
-          new Promise(resolve =>
-            resolve({
-              ...usr,
-              readableCards: [],
-              createdCards: cards.filter(c => c.uid === uid),
-              // TODO
-              collectedCards: cards.filter(
-                c =>
-                  isDefined(c.challengeSubmission) &&
-                  c.challengeSubmission.accomplished
-              ),
-              submittedCards: cards.filter(
-                c =>
-                  isDefined(c.challengeSubmission) &&
-                  c.challengeSubmission.completed
-              ),
-              startedCards: cards.filter(
-                c =>
-                  isDefined(c.challengeSubmission) &&
-                  !c.challengeSubmission.completed
-              )
-            })
-          )
-      )
+    .then(
+      usr =>
+        new Promise(resolve =>
+          resolve({
+            ...usr,
+            readableCards: [],
+            createdCards: [],
+            collectedCards: [],
+            submittedCards: [],
+            startedCards: []
+          })
+        )
     )
     .catch(err => console.log('err i getUser', err));
 

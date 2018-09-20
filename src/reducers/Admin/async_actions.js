@@ -66,12 +66,11 @@ export function asyncSubmitChallengeReview(challengeSubmission) {
   };
 }
 
-export function fetchCreatedCards(uid) {
-  console.log('uid', uid);
+export function fetchAllCardsWithSubmissions() {
   return function(dispatch) {
-    // db.getCardsWithSubmissions(uid);
-    return db.readCardsWithSubmissions(uid).then(cards => {
-      console.log('cards', cards);
+    // dispatch(loadingCards(true));
+    return db.readCardsWithSubmissions().then(cards => {
+      // dispatch(loadingCards(false));
       dispatch(getCards(cards));
     });
   };

@@ -6,13 +6,12 @@ import { compose } from 'recompose';
 
 import {
   fetchUsers,
-  fetchCreatedCards,
-  asyncSubmitChallengeReview
+  asyncSubmitChallengeReview,
+  fetchAllCardsWithSubmissions
 } from 'Reducers/Admin/async_actions';
 
 // TODO: change later
 import * as adminActions from 'Reducers/Admin/actions';
-import { fetchAllCards } from 'Reducers/Cards/async_actions';
 
 import withAuthorization from '../withAuthorization';
 import AdminPage from './AdminPage';
@@ -24,7 +23,7 @@ const mapStateToProps = state => {
     .map(c => ({
       ...c,
       challengeSubmission:
-        c.challengeSubmissions.find(
+        c.allChallengeSubmissions.find(
           s => s.playerId === selectedUserId && s.completed
         ) || null
     }))
@@ -51,8 +50,7 @@ const mapDispatchToProps = dispatch =>
     {
       ...adminActions,
       fetchUsers,
-      fetchCreatedCards,
-      fetchAllCards,
+      fetchAllCardsWithSubmissions,
       submitChallengeReview: asyncSubmitChallengeReview
     },
     dispatch

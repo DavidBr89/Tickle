@@ -1,4 +1,4 @@
-import * as Icon from 'react-feather';
+import { AlignLeft, Image, Film } from 'react-feather';
 import { scaleOrdinal } from 'd3';
 
 export const GIF = 'gif';
@@ -10,4 +10,4 @@ export const USER_CONTENT = 'USER_CONTENT';
 
 export const mediaScale = scaleOrdinal()
   .domain([TEXT, IMG, GIF, VIDEO])
-  .range([Icon.AlignLeft, Icon.Image, Icon.Image, Icon.Film]);
+  .range([AlignLeft, Image, Image, Film]);

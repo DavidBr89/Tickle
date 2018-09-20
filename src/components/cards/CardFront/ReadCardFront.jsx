@@ -19,6 +19,8 @@ import { Btn } from 'Components/cards/layout';
 
 import { IMG } from 'Constants/mediaTypes';
 
+import { BigButton } from '../layout';
+
 class ReadCardFront extends Component {
   static propTypes = {
     children: PropTypes.node,
@@ -60,13 +62,7 @@ class ReadCardFront extends Component {
   };
 
   state = {
-    dialogKey: null,
-    challengeSubmitted:
-      this.props.challengeSubmission !== null &&
-      this.props.challengeSubmission.completed,
-    challengeStarted:
-      this.props.challengeSubmission !== null &&
-      this.props.challengeSubmission.completed
+    dialogKey: null
   };
 
   closeModal = () => this.setState({ dialogKey: null });
@@ -138,6 +134,7 @@ class ReadCardFront extends Component {
         );
       }
       case 'Challenge':
+        // TODO
         return React.cloneElement(challengeComp, {
           onClose: this.closeModal,
           challengeSubmission
@@ -148,12 +145,17 @@ class ReadCardFront extends Component {
   }
 
   btnText = () => {
-    const { challengeStarted, challengeSubmitted } = this.state;
+    const { challengeSubmission } = this.props;
+    const challengeSubmitted =
+      challengeSubmission !== null && challengeSubmission.completed;
+    const challengeStarted =
+      challengeSubmission !== null && !challengeSubmission.completed;
+
     if (challengeSubmitted) {
-      return 'Challenge done';
+      return 'Chall. submitted';
     }
     if (challengeStarted) {
-      return 'Challenge started';
+      return 'Chall. started';
     }
     return 'Challenge';
   };
@@ -192,7 +194,6 @@ class ReadCardFront extends Component {
         <CardFront
           {...this.props}
           onClose={onClose}
-          onTitleClick={() => console.log('img click')}
           onImgClick={() =>
             this.setState({
               dialogKey: 'Img'
@@ -204,10 +205,16 @@ class ReadCardFront extends Component {
             })
           }
           onMediaClick={() => this.setState({ dialogKey: 'Media' })}
-          onChallengeClick={() =>
-            this.setState({
-              dialogKey: 'Challenge'
-            })
+          bottomControls={
+            <BigButton
+              onClick={() =>
+                this.setState({
+                  dialogKey: 'Challenge'
+                })
+              }
+            >
+              {this.btnText()}
+            </BigButton>
           }
           onFlip={flipHandler}
         />

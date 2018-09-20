@@ -48,9 +48,9 @@ function reducer(state = INITIAL_STATE, action) {
         if (c.id === cardId) {
           return {
             ...c,
-            challengeSubmissions: [
+            allChallengeSubmissions: [
               challengeSubmission,
-              ...c.challengeSubmissions
+              ...c.allChallengeSubmissions
             ]
           };
         }
