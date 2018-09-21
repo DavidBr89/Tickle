@@ -28,6 +28,24 @@ import CardViewOverlay from './CardViewOverlay';
 
 // import { StyledButton } from 'Utils/StyledComps';
 
+const LoadingScreen = ({ visible, style }) => {
+  if (visible) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 4000,
+          ...style
+        }}
+      >
+        <h1>...LOADING CARDS</h1>
+      </div>
+    );
+  }
+  return null;
+};
 class CardViewPage extends Component {
   static propTypes = {
     cards: PropTypes.array,
@@ -126,21 +144,21 @@ class CardViewPage extends Component {
           allTags={nestedTagVocabulary}
           key={filterSet.join(',')}
           onChange={filterCards}
-          onSelect={() => selectCard(null)}
           onClick={addCardFilter}
           data={filterSet}
           height={height / 2 - 50}
         />
         <div
-          className="mt-3"
+          className="mt-2"
           style={{
             display: 'flex',
             justifyContent: 'center',
             transition: 'opacity 0.5s',
             // zIndex: 3000,
-            flexBasis: height / 5,
-            opacity: cardPanelVisible ? 1 : 0,
-            marginBottom: 25
+            // flexBasis: height / 5,
+            height: height / 5,
+            opacity: cardPanelVisible ? 1 : 0
+            // marginBottom: 25
           }}
         >
           <CardStack
@@ -162,28 +180,15 @@ class CardViewPage extends Component {
             }}
           />
         </div>
+        <LoadingScreen style={{ marginTop: 25 }} visible={isLoadingCards} />
 
-          {isLoadingCards && (
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 4000
-              }}
-            >
-              <h1>...LOADING CARDS</h1>
-            </div>
-          )}
         <CardViewOverlay
           {...this.props}
           className="mb-1"
           style={{
             flex: '1 1 60%',
-            position:
-              this.props.dataView === FLOORPLAN || this.props.dataView === GEO
-                ? 'absolute'
-                : null
+            position: 'absolute',
+            left: 0, top: 0
           }}
           colorScale={tagColorScale}
         />

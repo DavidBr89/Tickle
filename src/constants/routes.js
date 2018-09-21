@@ -83,7 +83,8 @@ export const authRoutes = {
   ...AUTH_ENV_ROUTE,
   // TODO: change
   // ...ADMIN_ROUTE,
-  ...ACCOUNT_ROUTE
+  ...ACCOUNT_ROUTE,
+  ...MYCARDS_ROUTE
 };
 
 export const adminRoutes = {

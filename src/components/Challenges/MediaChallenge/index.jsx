@@ -39,7 +39,7 @@ import { Btn } from 'Components/cards/layout';
         </Btn>
 */
 
-const GeneralControls = ({ ...props }) => {
+const DefaultControls = ({ ...props }) => {
   const {
     media,
     text,
@@ -136,29 +136,23 @@ const SubmitInfo = ({ challengeSubmitted, challengeInvalid }) => {
   return null;
 };
 
-function makeFooter({
+const Footer = ({
+  isSmartphone,
   challengeStarted,
   challengeSubmitted,
-  challengeInvalid
-}) {
-  const { isSmartphone, onUpdate, challengeSubmission } = this.props;
-  const { focusTextArea, media, response } = this.state;
-
+  challengeInvalid,
+  focusTextArea,
+  onChallengeStart,
+  onChallengeSubmit,
+  onDisableKeyboard
+}) => {
   const gcontrol = (
-    <GeneralControls
-      {...this.state}
+    <DefaultControls
       challengeStarted={challengeStarted}
       challengeSubmitted={challengeSubmitted}
       challengeInvalid={challengeInvalid}
-      onStart={() => {
-        clearTimeout(this.textAreaTimeoutId);
-        onUpdate({ media, response, completed: false });
-      }}
-      onSubmit={() => {
-        clearTimeout(this.textAreaTimeoutId);
-        onUpdate({ media, response, completed: true });
-        this.setState({ completed: true });
-      }}
+      onStart={onChallengeStart}
+      onSubmit={onChallengeSubmit}
     />
   );
 
@@ -166,15 +160,11 @@ function makeFooter({
     return !focusTextArea ? (
       gcontrol
     ) : (
-      <TextAreaControls
-        onClick={() => {
-          this.setState({ focusTextArea: false });
-        }}
-      />
+      <TextAreaControls onClick={onDisableKeyboard} />
     );
   }
   return gcontrol;
-}
+};
 
 class MediaChallenge extends Component {
   static propTypes = {
@@ -208,7 +198,6 @@ class MediaChallenge extends Component {
     started: this.props.challengeSubmission !== null
   };
 
-  textAreaTimeoutId = null;
   componentDidUpdate(prevProps, prevState) {
     const { focusTextArea, media, response, completed } = this.state;
     const { onUpdate } = this.props;
@@ -231,13 +220,15 @@ class MediaChallenge extends Component {
     }
   }
 
+  textAreaTimeoutId = null;
+
   scrollTo = (name, opts) => {
     this._scroller.scrollTo(name, opts);
   };
 
   render() {
     const {
-      className,
+      // className,
       description,
       onUpdate,
       onClose,
@@ -246,7 +237,8 @@ class MediaChallenge extends Component {
       title,
       onSubmit,
       challengeSubmission,
-      smallScreen,
+      isSmartphone,
+      // smallScreen,
       bookmarkable,
       onRemoveSubmission
     } = this.props;
@@ -267,11 +259,31 @@ class MediaChallenge extends Component {
           //   onUpdate({ response, media, completed });
         }}
         title={title}
-        footer={makeFooter.bind(this)({
-          challengeStarted,
-          challengeSubmitted,
-          challengeInvalid
-        })}
+        onSubmit={() => {
+          onUpdate({ media, response, completed: true });
+          this.setState({ completed: true });
+        }}
+        footer={
+          <Footer
+            isSmartphone={isSmartphone}
+            challengeStarted={challengeStarted}
+            challengeSubmitted={challengeSubmitted}
+            challengeInvalid={challengeInvalid}
+            focusTextArea={focusTextArea}
+            onChallengeStart={() => {
+              // clearTimeout(this.textAreaTimeoutId);
+              onUpdate({ media, response, completed: false });
+            }}
+            onChallengeSubmit={() => {
+              // clearTimeout(this.textAreaTimeoutId);
+              onUpdate({ media, response, completed: true });
+              this.setState({ completed: true });
+            }}
+            onDisableKeyboard={() => {
+              this.setState({ focusTextArea: false });
+            }}
+          />
+        }
       >
         <ScrollView ref={scroller => (this._scroller = scroller)}>
           <div

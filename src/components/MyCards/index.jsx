@@ -31,11 +31,13 @@ const mapStateToProps = state => {
   // const tagColorScale = makeTagColorScale(cardSets);
   //
   //
-  const cards = collectibleCards.sort((a, b) => {
-    if (isSelectedCardType(a)) return -1;
-    if (isSelectedCardType(b)) return 1;
-    return 0;
-  });
+  const cards = collectibleCards.filter(isSelectedCardType);
+
+  //   .sort((a, b) => {
+  //   if (isSelectedCardType(a)) return -1;
+  //   if (isSelectedCardType(b)) return 1;
+  //   return 0;
+  // });
 
   const userTags = uniq(
     collectibleCards.reduce((acc, c) => [...acc, ...c.tags], [])
@@ -71,7 +73,12 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   // console.log('match', match, history, id);
 
   const { path } = match;
-  const { selectedCardId = null, extended = null, flipped } = match.params;
+  const {
+    selectedCardId = null,
+    showOption = null,
+    // flipped = null
+  } = match.params;
+  const extended = showOption === 'extended';
 
   const cardAction = d => {
     selectedCardId === d.id

@@ -59,6 +59,7 @@ class DataUploadForm extends Component {
         }}
       >
         <FileUpload
+          disabled={disabled}
           style={buttonStyle}
           fileName={file ? file.name : null}
           onChange={({ url, file: newFile }) => {
@@ -210,7 +211,8 @@ class MediaUpload extends Component {
 
   addMediaItem = ({ url, file, type }) => {
     const { media } = this.state;
-    const pendingMediaItem = { file, id: file.name, url: null, type };
+    const id = `${type}_${media.length}${file.name}`;
+    const pendingMediaItem = { file, id, name: id, url: null, type };
 
     if (media.filter(m => m.id === pendingMediaItem.id).length === 0) {
       this.setState(({ pendingMedia: oldPendingMedia }) => ({
@@ -222,7 +224,6 @@ class MediaUpload extends Component {
   removeMediaItem = id => {
     const { uploadPath } = this.props;
     const p = uploadPath(id);
-    console.log();
     db.removeFromStorage(p).then(() =>
       console.log('removedMediaItem Success', id)
     );
@@ -244,7 +245,7 @@ class MediaUpload extends Component {
       const promises = pendingMedia.map(({ file, ...rest }) =>
         db
           .addFileToStorage({ file, path: uploadPath(rest.id) })
-          .then(url => ({ ...rest, name: file.name, url }))
+          .then(url => ({ ...rest, name: rest.id, url }))
       );
 
       Promise.all(promises).then(uploadedMediaItems =>

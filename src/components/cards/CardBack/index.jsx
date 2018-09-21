@@ -45,6 +45,7 @@ const BackField = ({
   legendStyle,
   icon,
   children,
+  disabled,
   extended
 }) => (
   <CardThemeConsumer>
@@ -54,7 +55,7 @@ const BackField = ({
         onClick={!extended ? onClick : () => null}
         style={{
           // border: `1px solid ${uiColor}`,
-          marginTop: '4px',
+          // marginTop: '4px',
           width: '100%',
           height: '100%',
           display: 'flex',
@@ -74,12 +75,14 @@ const BackField = ({
           }}
         >
           <div style={{ fontSize: '1.25rem', flex: '0 0 auto' }}>{title}</div>
-          <button
-            className={css(bareBtn)}
-            onClick={extended ? onClick : () => null}
-          >
-            {extended ? <Minimize /> : <Maximize />}
-          </button>
+          {!disabled && (
+            <button
+              className={css(bareBtn)}
+              onClick={extended ? onClick : () => null}
+            >
+              {extended ? <Minimize /> : <Maximize />}
+            </button>
+          )}
         </div>
         {children}
       </div>
@@ -186,12 +189,12 @@ class CardBackSkeleton extends Component {
 
     const isExtended = field => extended === field && extended !== null;
     const displayStyle = field => {
-      const defaultStyle = { transition: 'height 200ms', marginBottom: 10 };
+      const defaultStyle = { transition: 'height 200ms', marginBottom: 2 };
       const isExt = isExtended(field);
       return {
         ...defaultStyle,
-        height: isExt ? '100%' : 50,
-        minHeight: 40,
+        height: isExt ? '100%' : 0,
+        minHeight: 0,
         flex: '1 1 auto',
         // position: field === 'map' && 'absolute',
         // flex: '1 1 auto',
@@ -204,6 +207,7 @@ class CardBackSkeleton extends Component {
         ref={cont => (this.cont = cont)}
         className="flexCol flex-100"
         style={{
+          border: '5px grey solid',
           height: '100%',
           // display: 'flex',
           alignContent: 'center'
@@ -218,6 +222,7 @@ class CardBackSkeleton extends Component {
           <BackField
             title="Author"
             extended
+            disabled
             style={displayStyle('author')}
             onClick={() => this.selectField('author')}
           >
@@ -235,8 +240,8 @@ class CardBackSkeleton extends Component {
               style={{ ...displayStyle('map') }}
               edit={edit}
               title="Location"
+              disabled
               borderColor={uiColor}
-              onClick={() => this.selectField('map')}
             >
               <MapAreaControl
                 {...this.props}

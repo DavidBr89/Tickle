@@ -5,6 +5,28 @@ import { difference, intersection, uniq } from 'lodash';
 import { stylesheet, rawCSS } from 'Src/styles/GlobalThemeContext';
 import { css } from 'aphrodite';
 
+const TagSelection = ({ data, style, onRemove }) => (
+  <div style={style}>
+    {data.map(key => (
+      <button
+        className={`${css(stylesheet.bareBtn)} mr-1`}
+        style={{
+          position: 'relative',
+          maxWidth: 100,
+          // zIndex: 4000,
+          fontSize: 'small',
+          fontWeight: 'bold',
+          display: 'inline-flex'
+        }}
+        onClick={() => onRemove(key)}
+      >
+        <span className={`mr-1 ${css(stylesheet.truncate)}`}>{key}</span>
+        <span>x</span>
+      </button>
+    ))}
+  </div>
+);
+
 export const TagInput = class TagInput extends Component {
   static propTypes = {
     children: PropTypes.node,
@@ -23,7 +45,14 @@ export const TagInput = class TagInput extends Component {
     inputTag: null
   };
 
-  state = { showResults: false };
+  componentDidUpdate(prevProps, prevState) {
+    const { data } = this.props;
+
+    if (data.length !== prevProps.data.length) {
+      this.props.onBlur();
+      this.input.blur();
+    }
+  }
   render() {
     const {
       onClick,
@@ -36,20 +65,49 @@ export const TagInput = class TagInput extends Component {
       onSelect,
       vocabulary,
       placeholder,
-      showResults,
-      height
+      matchesVisible,
+      height,
+      editable,
+      onBlur
     } = this.props;
 
-    const firstData = data.slice(0, 5);
-    const secData = data.slice(5);
+    const slicedData = !editable ? data.slice(0, 5) : data;
+
+    const tagMatches = vocabulary
+      .filter(d => !slicedData.includes(d.key))
+      .filter(
+        d =>
+          inputTag === null ||
+          d.key.toLowerCase().includes(inputTag.toLowerCase())
+      );
+
     return (
       <div
-        style={style}
         onMouseDown={e => {
-          showResults && e.preventDefault();
+          // TODO: important
+          matchesVisible && e.preventDefault();
           // e.stopPropagation();
         }}
       >
+        {editable && (
+          <div style={{ minHeight: 50 }}>
+            {slicedData.length === 0 && (
+              <div className="alert-warning p-2 mb-1">
+                <strong>No Tag added!</strong>
+              </div>
+            )}
+            <TagSelection
+              style={{
+                display: 'flex',
+                // alignItems: 'center',
+                flexWrap: 'wrap'
+                // minHeight: 200
+              }}
+              data={slicedData}
+              onRemove={onRemove}
+            />
+          </div>
+        )}
         <div
           style={{
             display: 'flex',
@@ -58,7 +116,8 @@ export const TagInput = class TagInput extends Component {
             backgroundColor: '#fff',
             overflow: 'hidden',
             padding: 5,
-            width: '100%'
+            width: '100%',
+            ...style
             // width: 300
           }}
         >
@@ -75,6 +134,9 @@ export const TagInput = class TagInput extends Component {
             }}
           >
             <input
+              ref={input => (this.input = input)}
+              onBlur={onBlur}
+              onSelect={onSelect}
               className="form-control"
               type="text"
               placeholder={placeholder}
@@ -92,68 +154,32 @@ export const TagInput = class TagInput extends Component {
                 // width: 80
               }}
             />
-          </form>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center'
-              // flexWrap: 'no-wrap'
-            }}
-          >
-            {firstData.map(key => (
+            {editable &&
+              slicedData.length === 0 && (
               <button
-                className={`${css(stylesheet.bareBtn)} mr-1`}
-                style={{
-                  position: 'relative',
-                  maxWidth: 100,
-                  // zIndex: 4000,
-                  fontSize: 'small',
-                  fontWeight: 'bold',
-                  display: 'inline-flex'
-                }}
-                onClick={() => onRemove(key)}
+                className={css(stylesheet.btn)}
+                onClick={() => onAdd(inputTag)}
               >
-                <span className={`mr-1 ${css(stylesheet.truncate)}`}>
-                  {key}
-                </span>
-                <span>x</span>
+                  Add
               </button>
-            ))}
-          </div>
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center'
-            // flexWrap: 'no-wrap'
-          }}
-        >
-          {secData.map(key => (
-            <button
-              className={`${css(stylesheet.bareBtn)} mr-1`}
+            )}
+          </form>
+          {!editable && (
+            <TagSelection
               style={{
-                position: 'relative',
-                maxWidth: 100,
-                // zIndex: 4000,
-                fontSize: 'small',
-                fontWeight: 'bold',
-                display: 'inline-flex'
+                display: 'flex',
+                alignItems: 'center',
+                flexWrap: 'no-wrap'
               }}
-              onClick={() => onRemove(key)}
-            >
-              <span className={`mr-1 ${css(stylesheet.truncate)}`}>{key}</span>
-              <span>x</span>
-            </button>
-          ))}
+              data={slicedData}
+              onRemove={onRemove}
+            />
+          )}
         </div>
         <SearchResults
-          visible={showResults}
+          visible={matchesVisible}
           height={height}
-          data={vocabulary.filter(
-            d =>
-              inputTag === null ||
-              d.key.toLowerCase().includes(inputTag.toLowerCase())
-          )}
+          data={tagMatches}
           onAdd={onAdd}
         />
       </div>
@@ -188,10 +214,14 @@ const SearchResults = ({ data, text, onAdd, visible, height }) => (
         {data.map(d => (
           <div className="m-2">
             <button
-              style={{ width: 175 }}
+              style={
+                {
+                  // TODO: later bar charts
+                  // width: 175
+                }
+              }
               className={css(stylesheet.bareBtn)}
               onClick={() => onAdd(d.key)}
-              onBlur={e => e.stopPropagation()}
             >
               {d.key} ({d.values.length})
             </button>
@@ -205,7 +235,8 @@ const SearchResults = ({ data, text, onAdd, visible, height }) => (
 export const DropDown = class DropDown extends Component {
   static propTypes = {
     children: PropTypes.node,
-    className: PropTypes.string
+    className: PropTypes.string,
+    onInputSelect: PropTypes.oneOf([null, PropTypes.func])
   };
   static defaultProps = { style: {}, vocabulary: [] };
 
@@ -213,7 +244,9 @@ export const DropDown = class DropDown extends Component {
     active: false,
     curSet: this.props.data,
     setList: [],
-    showResults: false
+    matchesVisible: false,
+    editable: false,
+    onInputSelect: null
   };
 
   // .dropdown:hover .dropdown-content {
@@ -238,8 +271,8 @@ export const DropDown = class DropDown extends Component {
   };
 
   render() {
-    const { style } = this.props;
-    const { active, curSet, curKey, setList, showResults } = this.state;
+    const { style, editable } = this.props;
+    const { active, curSet, curKey, setList, matchesVisible } = this.state;
 
     // const isCurSetNew =
     //   curSet.length > 0 &&
@@ -248,8 +281,6 @@ export const DropDown = class DropDown extends Component {
 
     return (
       <div
-        onBlur={() => this.setState({ showResults: false })}
-        onSelect={() => this.setState({ showResults: true })}
         style={{
           alignItems: 'center',
           backgroundColor: '#fff',
@@ -259,109 +290,41 @@ export const DropDown = class DropDown extends Component {
           // border: '2px solid #ccc'
         }}
       >
-        <div
+        <TagInput
+          {...this.props}
+          onBlur={() => this.setState({ matchesVisible: false })}
+          onSelect={() => {
+            const { onInputSelect } = this.props;
+            this.setState({ matchesVisible: true });
+            if (onInputSelect) {
+              onInputSelect();
+            }
+          }}
           style={{
-            display: 'flex',
             border: '1px solid lightgrey'
           }}
-        >
-          <TagInput
-            {...this.props}
-            style={{ width: '100%' }}
-            data={curSet}
-            showResults={showResults}
-            onTagInputChange={key => this.setState({ curKey: key })}
-            inputTag={curKey}
-            onAdd={k => {
-              if (k && k !== '') {
-                this.setState(({ curSet: oldSet }) => ({
-                  curSet: uniq([k, ...oldSet]),
-                  curKey: ''
-                }));
-              }
-            }}
-            onRemove={k => {
+          data={curSet}
+          matchesVisible={matchesVisible}
+          editable={editable}
+          onTagInputChange={key => this.setState({ curKey: key })}
+          inputTag={curKey}
+          onAdd={k => {
+            if (k && k !== '') {
               this.setState(({ curSet: oldSet }) => ({
-                curSet: oldSet.filter(key => key !== k)
+                curSet: uniq([k, ...oldSet]),
+                curKey: ''
+                // matchesVisible: false
               }));
-            }}
-          />
-        </div>
-      </div>
-    );
-  }
-};
-
-
-export const ReadDropDown = class DropDown extends Component {
-  static propTypes = {
-    children: PropTypes.node,
-    className: PropTypes.string
-  };
-  static defaultProps = { style: {}, vocabulary: [] };
-
-  state = {
-    active: false,
-    curSet: this.props.data,
-    setList: [],
-    showResults: false
-  };
-
-  // .dropdown:hover .dropdown-content {
-  //     display: block;
-  // }
-  componentDidUpdate(prevProps, prevState) {
-    const { onChange } = this.props;
-    const { curSet } = this.state;
-    const { curSet: oldSet } = prevState;
-
-    if (curSet.length !== oldSet.length) {
-      onChange(curSet);
-    }
-  }
-
-  removeListItem = set => {
-    this.setState(({ setList: olList }) => ({
-      setList: olList.filter(s => difference(set, s).length !== 0),
-      active: false,
-      curSet: []
-    }));
-  };
-
-  render() {
-    const { style } = this.props;
-    const { active, curSet, curKey, setList, showResults } = this.state;
-
-    // const isCurSetNew =
-    //   curSet.length > 0 &&
-    //   setList.filter(s => intersection(curSet, s).length === curSet.length)
-    //     .length === 0;
-
-    return (
-      <div
-        onBlur={() => this.setState({ showResults: false })}
-        onSelect={() => this.setState({ showResults: true })}
-        style={{
-          alignItems: 'center',
-          backgroundColor: '#fff',
-          // maxWidth: '60%',
-          position: 'relative',
-          ...style
-          // border: '2px solid #ccc'
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            border: '1px solid lightgrey'
+            }
           }}
-        >
-          <div>
-
-          </div>
-        </div>
+          onRemove={k => {
+            this.setState(({ curSet: oldSet }) => ({
+              curSet: oldSet.filter(key => key !== k)
+              // matchesVisible: false
+            }));
+          }}
+        />
       </div>
     );
   }
 };
-

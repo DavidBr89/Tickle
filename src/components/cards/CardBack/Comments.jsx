@@ -15,21 +15,24 @@ class CommentsWrapper extends Component {
     cardId: PropTypes.string,
     addComment: PropTypes.func
   };
-  defaultProps: { author: {}, cardId: '', addComment: d => d };
+  defaultProps: { author: {}, cardId: null, addComment: d => d, uid: null };
 
   state = { comments: [], extended: false };
 
   componentDidMount() {
     const { cardId } = this.props;
-    db.readComments(cardId).then(comments => {
-      this.setState({ comments });
-      const allProms = comments.map(c =>
-        db.getUser(c.uid).then(user => ({ ...c, ...user }))
-      );
-      Promise.all(allProms).then(commentsWithUser => {
-        this.setState({ comments: commentsWithUser });
+    if (cardId && cardId !== null) {
+      db.readComments(cardId).then(comments => {
+        console.log('comments', comments);
+        this.setState({ comments });
+        const allProms = comments.map(c =>
+          db.getUser(c.uid).then(user => ({ ...c, ...user }))
+        );
+        Promise.all(allProms).then(commentsWithUser => {
+          this.setState({ comments: commentsWithUser });
+        });
       });
-    });
+    }
   }
 
   render() {
@@ -75,9 +78,7 @@ const CommentList = ({
       <div style={{ overflow: 'scroll' }}>
         {data
           .slice(0, extended ? 20 : 2)
-          .map(({ date, ...c }) => (
-            <OneComment {...c} date="date placeholder" />
-          ))}
+          .map(({ date, ...c }) => <OneComment {...c} date="" />)}
         {data.length === 0 && (
           <div style={{}}>
             <h4>'No Comments'</h4>
@@ -131,7 +132,7 @@ const OneComment = ({ photoURL, text, username, date }) => (
       </div>
       <div>
         <small className="font-italic">
-          - {username}, {date}
+          - {username} {date}
         </small>
       </div>
     </div>

@@ -26,7 +26,7 @@ function CardTagSearch({
         className="mr-1"
         key={data.join(',')}
         onChange={onChange}
-        onSelect={onSelect}
+        onInputSelect={onSelect}
         height={height}
         vocabulary={allTags}
         style={{

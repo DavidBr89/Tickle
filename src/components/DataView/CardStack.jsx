@@ -11,11 +11,7 @@ const isPosInt = n => Number.isInteger(n) && n >= 0;
 
 const TouchableCard = ({ touch, onClick, ...d }) =>
   touch && !d.selected ? (
-    <Swipe
-      onSwipeStart={onClick}
-      style={{ width: '100%', height: '100%' }}
-      allowMouseEvents
-    >
+    <Swipe onSwipeStart={onClick} style={{ width: '100%', height: '100%' }}>
       <PreviewCard {...d} />
     </Swipe>
   ) : (

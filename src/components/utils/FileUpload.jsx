@@ -27,13 +27,13 @@ function convertToImgSrc(fileList) {
   return null;
 }
 
-export default class DataUpload extends Component {
+export default class FileUpload extends Component {
   static propTypes = {
     className: PropTypes.string,
     style: PropTypes.object,
     onChange: PropTypes.func,
     placeholder: PropTypes.string,
-    defaultImg: PropTypes.any
+    disabled: PropTypes.bool
   };
 
   static defaultProps = {
@@ -43,11 +43,9 @@ export default class DataUpload extends Component {
     uiColor: defaultUIColor,
     placeholder: 'Add your description',
     stylesheet: defaultStylesheet,
-    defaultImg: null,
-    width: 250,
-    height: 250,
     className: '',
-    fileName: null
+    fileName: null,
+    disabled: false
   };
 
   render() {
@@ -57,7 +55,8 @@ export default class DataUpload extends Component {
       style,
       onChange,
       uiColor,
-      stylesheet
+      stylesheet,
+      disabled
     } = this.props;
 
     return (
@@ -66,7 +65,7 @@ export default class DataUpload extends Component {
           display: 'flex',
           alignItems: 'center',
           width: '60%',
-          //TODO: style is not passed down
+          // TODO: style is not passed down
           ...style
         }}
       >
@@ -87,6 +86,7 @@ export default class DataUpload extends Component {
         </label>
         <input
           id="all-file-upload"
+          disabled={disabled}
           className={className}
           style={{
             border: `${uiColor} 1px solid`,

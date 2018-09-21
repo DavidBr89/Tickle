@@ -30,7 +30,7 @@ const Routes = ({ history }) => (
   <HashRouter>
     <Switch>
       <Route
-        path={`${routes.MYCARDS}/:selectedCardId?/:extended?/:flipped?`}
+        path={`${routes.MYCARDS}/:selectedCardId?/:showOption?/:flipped?`}
         render={() => <Diary />}
       />
       <Route

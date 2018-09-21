@@ -148,17 +148,17 @@ const store = configureStore(rootReducer);
 
 // TODO: Only inline function work with hot reloading
 
-// const geoSuccess = pos => {
-//   const coords = {
-//     latitude: pos.coords.latitude,
-//     longitude: pos.coords.longitude
-//   };
-//
-//   // Oude Arendonkse Baan, Oud-Turnhout 51.313476, 5.001513
-//   // const turnoud = { latitude: 51.313476, longitude: 5.001513 };
-//   store.dispatch(userMove(coords));
-//   store.dispatch(changeMapViewport(coords));
-// };
+const geoSuccess = pos => {
+  const coords = {
+    latitude: pos.coords.latitude,
+    longitude: pos.coords.longitude
+  };
+
+  // Oude Arendonkse Baan, Oud-Turnhout 51.313476, 5.001513
+  // const turnoud = { latitude: 51.313476, longitude: 5.001513 };
+  // store.dispatch(userMove(coords));
+  // store.dispatch(changeMapViewport(coords));
+};
 
 // TODO
 navigator.geolocation.getCurrentPosition(
@@ -177,7 +177,7 @@ navigator.geolocation.getCurrentPosition(
   geoOpts
 );
 
-// navigator.geolocation.watchPosition(geoSuccess, geoError, geoOpts);
+navigator.geolocation.watchPosition(geoSuccess, geoError, geoOpts);
 
 //
 // window.addEventListener('resize', () => {

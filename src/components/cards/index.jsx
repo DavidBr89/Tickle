@@ -163,6 +163,7 @@ class Card extends React.Component {
                 pointerEvents: frontView && 'none',
                 display: iOS && frontView && 'none',
                 zIndex: !frontView ? 5000 : -10,
+                background: 'whitesmoke',
                 // zIndex: 100,
                 // zIndex: !frontView && 4000,
                 // transformStyle: 'preserve-3d',

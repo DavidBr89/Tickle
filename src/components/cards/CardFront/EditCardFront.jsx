@@ -343,9 +343,8 @@ class EditCardFront extends PureComponent {
             <DropDown
               style={{ width: '100%' }}
               onChange={newTags => this.updateField({ tags: [...newTags] })}
-              onSelect={n => console.log('select yeah', n)}
+              editable={true}
               vocabulary={[]}
-              onClick={n => console.log('submit', n)}
               data={tags}
               vocabulary={tagVocabulary}
             />

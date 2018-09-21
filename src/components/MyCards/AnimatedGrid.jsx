@@ -6,7 +6,7 @@ import { wrapGrid } from 'animate-css-grid';
 import PreviewCard from 'Components/cards/PreviewCard';
 import ConnectedCard from 'Components/cards/ConnectedCard';
 
-import { BareModal, ModalBody } from 'Utils/Modal';
+import { BareModal } from 'Utils/Modal';
 import DefaultLayout from 'Components/Layout';
 
 import {
@@ -40,7 +40,7 @@ class Cell extends Component {
     return (
       <div
         style={{
-          padding: '10%',
+          padding: '5%',
           cursor: 'pointer',
           zIndex: hovered && 2000,
           width: '100%',
@@ -59,9 +59,10 @@ class Cell extends Component {
           }}
         >
           {expanded ? (
-            <PreviewCard {...this.props} />
+            <PreviewCard {...this.props} key={this.props.id} />
           ) : (
             <PreviewCard
+              key={this.props.id}
               style={{
                 transition: 'transform 200ms',
                 transformOrigin: hovered && null
@@ -84,11 +85,7 @@ export default class MyDiary extends Component {
   componentDidMount() {
     // will automatically clean itself up when dom node is removed
     // TODO check later
-    // this.fg = wrapGrid(this.grid, {
-    //   easing: 'easein',
-    //   stagger: 0,
-    //   duration: 800
-    // });
+    // this.fg = wrapGrid(this.grid);
   }
 
   state = INITIAL_GRID_STATE;
@@ -124,13 +121,17 @@ export default class MyDiary extends Component {
     const cardWidth = 1;
     const cardHeight = 1;
 
+    const tmpColNum = 3;
+    const tmpRowHeight = height / 4;
+
     const gridStyle = {
       height: '100%',
       display: 'grid',
       // gridAutoFlow: 'column dense',
-      gridTemplateColumns: `repeat(${4}, ${100 / 4}%)`,
-      gridTemplateRows: `repeat(${Math.ceil(cards.length / 4)}, ${height /
-        6}px)`
+      gridTemplateColumns: `repeat(${tmpColNum}, ${100 / tmpColNum}%)`,
+      gridTemplateRows: `repeat(${Math.ceil(
+        cards.length / tmpColNum
+      )}, ${tmpRowHeight}px)`
     };
 
     // const nonSelStyle = cards
@@ -145,7 +146,7 @@ export default class MyDiary extends Component {
 
       const style = {
         transformOrigin: null,
-        transform: cardSelected ? 'scale(1.2)' : 'scale(1)',
+        transform: cardSelected ? 'scale(1.15)' : 'scale(1)',
         zIndex: cardSelected && 5000,
         transition: 'transform 500ms'
       };
@@ -188,7 +189,7 @@ export default class MyDiary extends Component {
             <div>
               <select onChange={e => selectCardType(e.target.value)}>
                 <option value={NO_CARD_FILTER}>All cards</option>
-                <option value={CHALLENGE_OPEN}>Open Cards</option>
+                <option value={CHALLENGE_STARTED}>Started Cards</option>
                 <option value={CHALLENGE_SUBMITTED}>Submitted Cards</option>
               </select>
             </div>
@@ -209,11 +210,6 @@ export default class MyDiary extends Component {
             overflow: 'scroll'
           }}
         >
-          <div>
-            {selectedCard !== null && (
-              <div>{selectedCard.tags.map(d => <div>{d}</div>)}</div>
-            )}
-          </div>
           <div className="flex-full">
             <div style={gridStyle} ref={el => (this.grid = el)}>
               {cards.map(mapCell)}

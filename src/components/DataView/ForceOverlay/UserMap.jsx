@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import MapGL, { HTMLOverlay } from 'react-map-gl';
+import { css } from 'aphrodite';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { MapPin } from 'react-feather';
 
 import CardMarker from 'Components/cards/CardMarker';
 
@@ -17,6 +19,8 @@ import Cluster from './Cluster';
 import ForceCollide from './MiniForceCollide';
 
 import { changeMapViewport, userMove } from 'Reducers/Map/actions';
+
+import { stylesheet } from 'Src/styles/GlobalThemeContext';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -144,7 +148,7 @@ class Map extends Component {
 
   static defaultProps = {
     disabled: false,
-    maxZoom: 18,
+    maxZoom: 16,
     viewport: { ...defaultLocation, width: 100, height: 100, zoom: 10 },
     nodes: [],
     showUser: false
@@ -244,12 +248,12 @@ class Map extends Component {
 
     const userPos = vp.project([userLocation.longitude, userLocation.latitude]);
 
+    // onClick={e =>
+    //   // TODO: only for testing porposes
+    //   userMove({ longitude: e.lngLat[0], latitude: e.lngLat[1] })
+    // }
     return (
       <MapGL
-        onClick={e =>
-          // TODO: only for testing porposes
-          userMove({ longitude: e.lngLat[0], latitude: e.lngLat[1] })
-        }
         ref={m => (this.mapgl = m)}
         mapStyle={mapStyleUrl}
         width={width}
@@ -303,6 +307,31 @@ class Map extends Component {
             height={50}
             style={{ transform: 'translate(-50%,-50%)' }}
           />
+        </div>
+        <div
+          style={{ position: 'absolute', bottom: 0, right: 0, zIndex: 4000 }}
+        >
+          <button
+            className={css(stylesheet.btn)}
+            onClick={() =>
+              this.props.changeMapViewport({
+                width,
+                height,
+                zoom: 14,
+                ...userLocation
+              })
+            }
+            className="p-3 m-2"
+            style={{
+              border: null,
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <MapPin />
+          </button>
         </div>
       </MapGL>
     );

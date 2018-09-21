@@ -210,7 +210,7 @@ class CardAuthorPage extends Component {
             // TODO: fix later
             zIndex: 200,
             // height: '25%'
-            flexBasis: '25%'
+            height: height / 5
           }}
         >
           <CardStack
