@@ -69,17 +69,19 @@ function CardCluster({
   centroid: [cx, cy],
   size,
   transition,
+  id,
   onClick,
   children
   // ...props
 }) {
+  // TODO: fix
   if (data.values.length === 1) return children(data.values[0]);
 
   return (
     <div
       onClick={onClick}
       className="cluster"
-      key={data.tags.join('-')}
+      key={id}
       style={{
         position: 'absolute',
         transition: `left ${transition}ms, top ${transition}ms, width ${transition}ms, height ${transition}ms`,
@@ -280,13 +282,16 @@ class Map extends Component {
           height={height}
           colorScale={colorScale}
         >
-          {({ centroid, centerPos: [x, y], data: d }) => (
+          {({ id, centroid, centerPos: [x, y], data: d }) => (
             <CardCluster
+              id={id}
               coords={[x, y]}
               centroid={[x, y]}
-              size={90}
+              size={65}
               data={d}
-              onClick={() => preview(d.values[0])}
+              onClick={() => {
+                preview(d.values[0]);
+              }}
             >
               {children}
             </CardCluster>
@@ -324,6 +329,7 @@ class Map extends Component {
             className="p-3 m-2"
             style={{
               border: null,
+              background: 'lightgrey',
               borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',

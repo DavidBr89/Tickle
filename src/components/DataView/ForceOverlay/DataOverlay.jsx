@@ -40,7 +40,7 @@ const SelectedComp = ({ ...props }) => {
     width,
     height,
     // onMapViewportChange,
-    previewCardAction,
+    routeSelectCard,
     children,
     sets,
     filterSet,
@@ -70,7 +70,7 @@ const SelectedComp = ({ ...props }) => {
           width={width}
           height={height}
           disabled={disabled}
-          preview={previewCardAction}
+          preview={d => routeSelectCard(d.id)}
           nodes={data}
           colorScale={colorScale}
         >

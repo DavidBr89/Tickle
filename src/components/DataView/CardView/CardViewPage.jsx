@@ -88,21 +88,21 @@ class CardViewPage extends Component {
     screenResize: d => d
   };
 
-  componentDidMount() {
-    const {
-      screenResize,
-      getUserCards,
-      fetchCards,
-      preSelectCardId
-    } = this.props;
-
-    fetchCards();
-    // screenResize({
-    //   width: this.cont.offsetWidth,
-    //   height: this.cont.offsetHeight
-    // });
-    // preSelectCardId();
-  }
+  // componentDidMount() {
+  //   const {
+  //     screenResize,
+  //     getUserCards,
+  //     fetchCards,
+  //     preSelectCardId
+  //   } = this.props;
+  //
+  //   // fetchCards();
+  //   // screenResize({
+  //   //   width: this.cont.offsetWidth,
+  //   //   height: this.cont.offsetHeight
+  //   // });
+  //   // preSelectCardId();
+  // }
 
   componentWillUnmount() {
     // window.addEventListener('resize', () => {});
@@ -188,7 +188,8 @@ class CardViewPage extends Component {
           style={{
             flex: '1 1 60%',
             position: 'absolute',
-            left: 0, top: 0
+            left: 0,
+            top: 0
           }}
           colorScale={tagColorScale}
         />

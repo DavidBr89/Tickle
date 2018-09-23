@@ -64,11 +64,10 @@ const AuthorPreview = ({
   thumbnail
 }) => (
   <div
-    className={`${className} flexCol flex-100 p-2`}
     style={{
       boxShadow: '1px 1px grey',
       background: 'whitesmoke',
-      height: '100%',
+      // height: '100%',
       ...style
     }}
   >
@@ -83,15 +82,6 @@ const AuthorPreview = ({
         src={thumbnail || usrPlaceholderImg}
         alt="alt"
       />
-    </div>
-    <div>
-      <div className={`mb-1 ${css(stylesheet.truncate)}`}>
-        <span style={{}}>name: </span>
-        {name}
-      </div>
-      <div className={`mb-1 ${css(stylesheet.truncate)}`}>
-        <span style={{}}>email: </span> {email}
-      </div>
     </div>
   </div>
 );

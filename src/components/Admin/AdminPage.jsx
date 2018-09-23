@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import Author from './Author';
-
 import PreviewCard from 'Cards/PreviewCard';
 import CardStack from 'Utils/CardStack/CardStack';
 
@@ -11,6 +9,8 @@ import { BareModal, ModalBody } from 'Utils/Modal';
 import ReviewCard from 'Components/cards/ConnectedReviewCard';
 
 import { MediaList } from 'Utils/MediaUpload';
+
+const Author = ({ username }) => <div>{username}</div>;
 
 class AdminPage extends Component {
   static propTypes = {
@@ -71,69 +71,42 @@ class AdminPage extends Component {
         </BareModal>
         <h1>Admin {authUser.username}</h1>
         <p>Restricted area! Only users with the admin rule are authorized.</p>
-        <div className="flex-full flexCol m-3">
+        <div
+          className="flexCol"
+          style={{
+            flex: 1,
+            display: 'grid',
+            overflow: 'hidden',
+            gridTemplateColumns: '50% 50%',
+            gridTemplateRows: '50% 50%'
+          }}
+        >
+          <div style={{ display: 'flex', overflow: 'hidden' }}>
+            <div style={{ overflow: 'scroll', width: '100%' }}>
+              <h3>Users</h3>
+              {users.map(d => <div>{d.username}</div>)}
+            </div>
+          </div>
+          <div>User</div>
           <div
-            className="flex-full"
+            className="flexCol"
             style={{
-              display: 'flex',
-              justifyContent: 'space-between'
+              overflow: 'scroll',
+              gridColumn: 'span 2'
             }}
           >
-            <div className="flexCol" style={{ width: '30%' }}>
-              <h3>Users</h3>
-              <CardStack
-                key="e"
-                className="flex-full"
-                data={users}
-                selectedIndex={selectedUserIndex}
-                duration={600}
-                width={100}
-                slotSize={30}
-                height={100}
-                unit="%"
-                direction="vertical"
-                centered={selectedUserId !== null && users.length > 0}
-              >
-                {u => (
-                  <div
-                    key={u.uid}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      transform: selectedUserId === u.uid && 'scale(1.2)',
-                      transition: `transform 500ms`
-                    }}
-                    onClick={() => selectUser(u.uid)}
-                  >
-                    <Author {...u} className="mb-3" />
-                  </div>
-                )}
-              </CardStack>
-            </div>
+            <h3>Cards</h3>
             <div
-              className="flexCol"
-              style={{ height: '100%', justifyContent: 'center' }}
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, 20%)',
+                gridGap: '10',
+                // gridTemplateRows: 'repeat(1, 1fr)',
+                gridAutoRows: '1fr'
+              }}
             >
-              <div>
-                Review
-                <div>{selectedCard && selectedCard.id}</div>
-              </div>
-            </div>
-            <div className="flexCol" style={{ width: '30%' }}>
-              <h3>Cards</h3>
-              <CardStack
-                className="flex-full"
-                data={cards}
-                selectedIndex={cards.findIndex(c => c.id === selectedCardId)}
-                duration={600}
-                width={100}
-                height={100}
-                unit="%"
-                direction="vertical"
-                slotSize={30}
-                centered={selectedCardId !== null}
-              >
-                {d => (
+              {cards.map(d => (
+                <div style={{ padding: 10 }}>
                   <PreviewCard
                     {...d}
                     onClick={() =>
@@ -148,11 +121,12 @@ class AdminPage extends Component {
                     style={{
                       transition: `transform 500ms`,
                       transform: selectedCardId === d.id && 'scale(1.2)',
-                      width: '100%'
+                      width: '100%',
+                      height: '100%'
                     }}
                   />
-                )}
-              </CardStack>
+                </div>
+              ))}
             </div>
           </div>
         </div>

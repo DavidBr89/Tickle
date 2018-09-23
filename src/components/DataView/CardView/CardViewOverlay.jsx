@@ -76,6 +76,7 @@ const CardViewOverlay = props => {
         filterSet={filterSet}
         userLocation={userLocation}
         previewCardAction={previewCardAction}
+        routeSelectCard={routeSelectCard}
         userview
         mode={dataView}
         padding={{
@@ -89,16 +90,16 @@ const CardViewOverlay = props => {
         {d => (
           <CardMarker
             onClick={e => {
-              previewCardAction(d);
-              e.stopPropagation();
+              // TODO: remove extendcard
+              if (selectedCardId !== d.id) routeSelectCard(d.id);
+              // e.stopPropagation();
             }}
             color="whitesmoke"
             style={{
-
-        position: 'absolute',
-        left: d.x,
-        top: d.y,
-        transform: 'translate(-50%, -50%)',
+              position: 'absolute',
+              left: d.x,
+              top: d.y,
+              transform: 'translate(-50%, -50%)',
               // TODO: zIndex not working
               width: selectedCardId === d.id ? 65 : 25,
               height: selectedCardId === d.id ? 75 : 30,
