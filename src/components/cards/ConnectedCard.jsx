@@ -13,8 +13,9 @@ import { asyncSubmitChallenge } from 'Reducers/Cards/async_actions';
 import * as dataViewActions from 'Reducers/DataView/actions';
 import * as routeActions from 'Reducers/DataView/async_actions';
 import MediaChallenge from 'Components/Challenges/MediaChallenge';
+import ReadCardFront from './CardFront/ReadCardFront';
 
-import { BigButton } from './layout';
+// import { BigButton } from './layout';
 
 const CardViewable = ({
   iOS,
@@ -35,6 +36,7 @@ const CardViewable = ({
     smallScreen={smallScreen}
     key={props.id}
     bookmarkable
+    front={<ReadCardFront />}
     onClose={closeCard}
     tagColorScale={tagColorScale}
     uiColor="grey"
@@ -42,10 +44,6 @@ const CardViewable = ({
     style={{ zIndex: 4000 }}
     frontView={flipped}
     {...props}
-    edit={false}
-    bottomControls={
-      <BigButton onClick={onChallengeClick}>ChallengeXXX</BigButton>
-    }
     challengeComp={
       <MediaChallenge
         {...props.challenge}

@@ -26,6 +26,11 @@ export function extendSelection(options) {
   return { type: EXTEND_SELECTION, options };
 }
 
+export const FLIP = 'FLIP';
+export function flip(options) {
+  return { type: FLIP, options };
+}
+
 export const SELECT_CARD_ID = 'SELECT_CARD_ID_ADMIN';
 export function selectCardId(options) {
   return { type: SELECT_CARD_ID, options };
@@ -40,6 +45,12 @@ export const SUBMIT_CHALLENGE_REVIEW_SUCCESS =
   'SUBMIT_CHALLENGE_REVIEW_SUCCESS';
 export function submitChallengeReviewSuccess(options) {
   return { type: SUBMIT_CHALLENGE_REVIEW_SUCCESS, options };
+}
+
+export const CARD_FILTER_CHANGE = 'CARD_FILTER_CHANGE';
+
+export function changeCardFilter(options) {
+  return { type: CARD_FILTER_CHANGE, options };
 }
 
 // export const SELECT_CARD = 'SELECT_CARD';

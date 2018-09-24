@@ -3,6 +3,16 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
+import { uniqBy } from 'lodash';
+import {
+  isChallengeStarted,
+  isChallengeSucceeded,
+  isChallengeSubmitted,
+  challengeTypeMap,
+  CHALLENGE_STARTED,
+  CHALLENGE_SUCCEEDED,
+  CHALLENGE_SUBMITTED
+} from 'Constants/cardFields';
 
 import {
   fetchUsers,
@@ -17,30 +27,83 @@ import withAuthorization from '../withAuthorization';
 import AdminPage from './AdminPage';
 
 const mapStateToProps = state => {
-  const { selectedUserId, selectedCardId, cards } = state.Admin;
+  const {
+    selectedUserId,
+    cardFilters,
+    selectedCardId,
+    cards,
+    users
+  } = state.Admin;
   // console.log('selectedUserId', cards, selectedUserId);
-  const filteredCards = cards
+
+  const selectedUser =
+    selectedUserId !== null ? users.find(u => u.uid === selectedUserId) : null;
+
+  const cardsWithSubmission = cards
     .map(c => ({
       ...c,
       challengeSubmission:
-        c.allChallengeSubmissions.find(
-          s => s.playerId === selectedUserId && s.completed
-        ) || null
+        c.allChallengeSubmissions.find(s => s.playerId === selectedUserId) ||
+        null
     }))
     .filter(c => c.challengeSubmission !== null);
 
   const selectedCard =
     selectedCardId !== null
-      ? filteredCards.find(c => c.id === selectedCardId)
+      ? cardsWithSubmission.find(c => c.id === selectedCardId)
       : null;
 
-  // console.log('filteredCards', filteredCards);
+  // const startedCards = cardsWithSubmission.filter(isChallengeStarted);
+  // const submittedCards = cardsWithSubmission.filter(isChallengeSubmitted);
+  // const succeededCards = cardsWithSubmission.filter(isChallengeSucceeded);
+
+  const cardSets = {
+    [CHALLENGE_STARTED]: cardsWithSubmission.filter(
+      challengeTypeMap[CHALLENGE_STARTED]
+    ),
+    [CHALLENGE_SUBMITTED]: cardsWithSubmission.filter(
+      challengeTypeMap[CHALLENGE_SUBMITTED]
+    ),
+    [CHALLENGE_SUCCEEDED]: cardsWithSubmission.filter(
+      challengeTypeMap[CHALLENGE_SUCCEEDED]
+    )
+  };
+
+  const filteredCards = uniqBy(
+    cardFilters.reduce(
+      (acc, filterStr) => [...acc, ...cardSets[filterStr]],
+      {}
+    ),
+    'id'
+  );
+
+  // const routeLockedCard = id =>
+  //   otherActions.routeLockedCard({
+  //     path,
+  //     history,
+  //     id
+  //   });
+  //
+  // const routeExtendCard = () =>
+  //   otherActions.routeExtendCard({
+  //     path,
+  //     history,
+  //     id: selectedCardId,
+  //     extended: extCardId === null
+  //   });
+  //
+  // const routeSelectCard = id =>
+  //   otherActions.routeSelectCard({ path, history, id });
 
   return {
     // ...state.Session,
     ...state.DataView,
     ...state.Admin,
     cards: filteredCards,
+    startedCards: cardSets[CHALLENGE_STARTED],
+    submittedCards: cardSets[CHALLENGE_SUBMITTED],
+    succeededCards: cardSets[CHALLENGE_SUCCEEDED],
+    selectedUser,
     selectedCard
   };
 };
@@ -58,10 +121,23 @@ const mapDispatchToProps = dispatch =>
 
 const authCondition = authUser => authUser !== null;
 
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+  const { flipped } = stateProps;
+  const { flip } = dispatchProps;
+  const onFlip = () => (flipped ? flip(false) : flip(true));
+  return {
+    ...stateProps,
+    ...dispatchProps,
+    ...ownProps,
+    onFlip
+  };
+};
+
 export default compose(
   withAuthorization(authCondition),
   connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
+    mergeProps
   )
 )(AdminPage);

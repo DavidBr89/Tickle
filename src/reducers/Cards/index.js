@@ -72,7 +72,6 @@ const INITIAL_STATE = {
   cardTemplateId,
   collectibleCards: [],
   createdCards: [],
-  tmpCards: [],
   tagVocabulary: [],
   // TODO: update
   tmpCard: defaultCardTemplate,
@@ -158,16 +157,16 @@ function reducer(state = INITIAL_STATE, action) {
       };
     }
     case CREATE_CARD: {
-      const { tmpCards, createdCards } = state;
+      const { createdCards, collectibleCards } = state;
 
       const newCard = action.options;
 
-      const newCards = [...tmpCards, newCard];
+      const newCards = [...createdCards, newCard];
 
       return {
         ...state,
-        tmpCards: newCards,
         createdCards: [newCard, ...createdCards],
+        collectibleCards: [newCard, ...collectibleCards],
         tmpCard: defaultCardTemplate
       };
     }

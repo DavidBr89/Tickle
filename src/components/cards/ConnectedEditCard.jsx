@@ -19,6 +19,8 @@ import * as routeActions from 'Reducers/DataView/async_actions';
 
 import { BigButton } from './layout';
 
+import EditCardFront from './CardFront/EditCardFront';
+
 function mapStateToProps(state) {
   return {
     ...state.MapView,
@@ -122,19 +124,19 @@ const EditCard = ({
 }) => (
   <Card
     {...props}
+    front={<EditCardFront />}
     key={props.id}
     onClose={closeCard}
     template={template}
-    edit
     onCreate={d => {
       createCard({ ...d, x, y });
       closeCard();
     }}
-    onDelete={() => asyncRemoveCard(props.id)}
-    tagColorScale={tagColorScale}
     onUpdate={d => {
       onCardUpdate({ ...d, x, y });
     }}
+    onDelete={() => asyncRemoveCard(props.id)}
+    tagColorScale={tagColorScale}
     uiColor="grey"
     background="whitesmoke"
     style={{ zIndex: 4000 }}

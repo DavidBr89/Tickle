@@ -72,6 +72,20 @@ export function fetchAllCardsWithSubmissions() {
     return db.readCardsWithSubmissions().then(cards => {
       // dispatch(loadingCards(false));
       dispatch(getCards(cards));
+      db.onceGetUsers().then(users => {
+        const newUsers = users.map(u => {
+          const cardsWithSubmission = cards
+            .map(c => ({
+              ...c,
+              challengeSubmission:
+                c.allChallengeSubmissions.find(s => s.playerId === u.uid) ||
+                null
+            }))
+            .filter(c => c.challengeSubmission !== null);
+          return { ...u, cardsWithSubmission };
+        });
+        dispatch(receiveUsers(newUsers));
+      });
     });
   };
 }

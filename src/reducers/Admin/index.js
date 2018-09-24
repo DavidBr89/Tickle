@@ -14,15 +14,25 @@ import {
   SELECT_USER,
   SELECT_CARD_ID,
   EXTEND_SELECTION,
-  SUBMIT_CHALLENGE_REVIEW
+  SUBMIT_CHALLENGE_REVIEW,
+  CARD_FILTER_CHANGE,
+  FLIP
 } from './actions';
+
+import {
+  CHALLENGE_STARTED,
+  CHALLENGE_SUCCEEDED,
+  CHALLENGE_SUBMITTED
+} from 'Constants/cardFields';
 
 const INITIAL_STATE = {
   users: [],
   cards: [],
   extendedId: null,
   selectedCardId: null,
-  selectedUserId: 'fq3CsS5YBVOuX3JCyLtzqwLaj5G2'
+  selectedUserId: null,//'fq3CsS5YBVOuX3JCyLtzqwLaj5G2',
+  cardFilters: [CHALLENGE_STARTED, CHALLENGE_SUCCEEDED, CHALLENGE_SUBMITTED],
+  flipped: false
 };
 
 function reducer(state = INITIAL_STATE, action) {
@@ -30,6 +40,14 @@ function reducer(state = INITIAL_STATE, action) {
   // const { selectedCardId } = state;
 
   switch (action.type) {
+    case FLIP: {
+      const flipped = action.options;
+      return { ...state, flipped };
+    }
+    case CARD_FILTER_CHANGE: {
+      const cardFilters = action.options;
+      return { ...state, cardFilters };
+    }
     case RECEIVE_USERS: {
       const users = action.options;
       return { ...state, users };
@@ -70,7 +88,12 @@ function reducer(state = INITIAL_STATE, action) {
     }
     case EXTEND_SELECTION: {
       const extendedId = action.options;
-      return { ...state, extendedId };
+      const { flipped } = state;
+      return {
+        ...state,
+        extendedId,
+        flipped: extendedId === null ? null : flipped
+      };
     }
     default:
       return state;

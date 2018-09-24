@@ -85,7 +85,7 @@ class ReviewMediaChallenge extends Component {
               }}
             >
               <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-                Sent Feedback!
+                {feedbackSent ? 'Feeback is sent!' : 'Send Feedback'}
               </div>
             </Btn>
           </div>

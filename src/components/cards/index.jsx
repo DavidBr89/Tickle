@@ -7,7 +7,7 @@ import chroma from 'chroma-js';
 import { css } from 'aphrodite/no-important';
 
 import CardBack from './CardBack';
-import CardFront from './CardFront';
+import ReadCardFront from './CardFront/ReadCardFront';
 
 import PreviewCard from './PreviewCard';
 import CardMarker from './CardMarker';
@@ -71,7 +71,8 @@ class Card extends React.Component {
     onUpdate: d => d,
     tagColorScale: () => 'gold',
     author: { username: 'defaultUser', email: 'defaultEmail' },
-    frontView: true
+    frontView: true,
+    front: ReadCardFront
   };
 
   render() {
@@ -88,7 +89,8 @@ class Card extends React.Component {
       uiColor,
       template,
       iOS,
-      flipHandler
+      flipHandler,
+      front
     } = this.props;
     // const { frontView } = this.state;
     const { onCollect, frontView } = this.props;
@@ -126,9 +128,10 @@ class Card extends React.Component {
           }}
         >
           <CardThemeProvider value={{ stylesheet, uiColor, darkerUiColor }}>
-            <CardFront
-              {...this.props}
-              style={{
+            {React.cloneElement(front, {
+              //TODO: UNTANGLE
+              ...this.props,
+              style: {
                 position: 'absolute',
                 top: 0,
                 left: 0,
@@ -142,14 +145,13 @@ class Card extends React.Component {
                 // display: !frontView && 'none'
                 // zIndex: frontView && 100
                 // transformStyle: 'preserve-3d'
-              }}
-              edit={edit}
-              background={background}
-              flipHandler={flipHandler}
-              uiColor={uiColor}
-              tagColorScale={tagColorScale}
-              onUpdate={onUpdate}
-            />
+              },
+              background,
+              flipHandler,
+              uiColor,
+              tagColorScale,
+              onUpdate
+            })}
             <CardBack
               {...this.props}
               visible={!frontView}

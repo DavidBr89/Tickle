@@ -67,22 +67,18 @@ const AuthorPreview = ({
     style={{
       boxShadow: '1px 1px grey',
       background: 'whitesmoke',
-      // height: '100%',
       ...style
     }}
   >
-    <h3 className={css(stylesheet.truncate)}>{username}</h3>
-    <div className="mb-1" style={{ display: 'flex', justifyContent: 'center' }}>
       <img
         style={{
           width: '100%',
-          height: '100%',
-          maxHeight: 150
+          height: '100%'
+          // maxHeight: 150
         }}
         src={thumbnail || usrPlaceholderImg}
         alt="alt"
       />
-    </div>
   </div>
 );
 

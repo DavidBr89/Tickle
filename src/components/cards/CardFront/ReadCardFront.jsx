@@ -1,7 +1,7 @@
 import React, { Component, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
-import { css } from 'aphrodite';
+// import { css } from 'aphrodite';
 
 import MediaChallenge from 'Components/Challenges/MediaChallenge';
 import { TagInput, PreviewTags } from 'Utils/Tag';
