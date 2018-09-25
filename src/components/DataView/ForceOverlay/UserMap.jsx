@@ -39,6 +39,18 @@ const shadowStyle = {
   // border: '1px solid black'
 };
 
+const metersPerPixel = function(latitude, zoomLevel) {
+  const earthCircumference = 40075017;
+  const latitudeRadians = latitude * (Math.PI / 180);
+  return (
+    (earthCircumference * Math.cos(latitudeRadians)) / 2 ** (zoomLevel + 8)
+  );
+};
+
+const geometricRadius = function(latitude, meters, zoomLevel) {
+  return meters / metersPerPixel(latitude, zoomLevel);
+};
+
 const getShadowStyle = selected => (selected ? shadowStyle : {});
 
 // const PreviewMarker = ({
@@ -250,14 +262,15 @@ class Map extends Component {
 
     const userPos = vp.project([userLocation.longitude, userLocation.latitude]);
 
-    // onClick={e =>
-    //   // TODO: only for testing porposes
-    //   userMove({ longitude: e.lngLat[0], latitude: e.lngLat[1] })
-    // }
+    const accessibleRadius = geometricRadius(latitude, 50, zoom);
+
     return (
       <MapGL
         ref={m => (this.mapgl = m)}
-        mapStyle={mapStyleUrl}
+        onClick={e =>
+          // TODO: only for testing porposes
+          userMove({ longitude: e.lngLat[0], latitude: e.lngLat[1] })
+        }
         width={width}
         height={height}
         onViewportChange={newViewport => {
@@ -313,6 +326,31 @@ class Map extends Component {
             style={{ transform: 'translate(-50%,-50%)' }}
           />
         </div>
+
+        <div
+          style={{
+            position: 'absolute',
+            left: userPos[0],
+            top: userPos[1]
+            // zIndex: 2000
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              transform: 'translate(-50%,-50%)',
+              // left: x1 - r,
+              // top: y1 - r,
+              border: '2px solid grey',
+              borderRadius: '50%',
+              transition: 'width 0.5s, height 0.5s, left 0.5s, top 0.5s',
+              width: accessibleRadius * 2,
+              height: accessibleRadius * 2
+              // background: 'green',
+              // opacity: 0.3
+            }}
+          />
+        </div>
         <div
           style={{ position: 'absolute', bottom: 0, right: 0, zIndex: 4000 }}
         >
@@ -346,13 +384,14 @@ class Map extends Component {
 
 // TODO: change this later
 const mapStateToProps = ({
-  MapView: { mapViewport, userLocation, width, height },
+  MapView: { mapViewport, userLocation, width, height, accessibleRadius },
   DataView: { selectedCardId },
   Cards: { isCardDragging },
   Screen
 }) => ({
   viewport: { ...mapViewport, ...Screen },
   userLocation,
+  accessibleRadius,
   selectedCardId,
   isCardDragging
 });

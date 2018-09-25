@@ -253,16 +253,9 @@ class Map extends Component {
       return acc;
     }, []);
 
-    const userPos = vp.project([userLocation.longitude, userLocation.latitude]);
-
-    function redraw() {
-      return locNodes.map(children);
-    }
-
     return (
       <MapGL
         ref={m => (this.mapgl = m)}
-        mapStyle={mapStyleUrl}
         width={width}
         height={height}
         onViewportChange={newViewport => {
@@ -287,24 +280,6 @@ class Map extends Component {
         >
           {locNodes.map(children)}
         </div>
-
-        {showUser && (
-          <div
-            style={{
-              position: 'absolute',
-              left: userPos[0],
-              top: userPos[1]
-              // zIndex: 2000
-            }}
-          >
-            <img
-              src={userIcon}
-              width={50}
-              height={50}
-              style={{ transform: 'translate(-50%,-50%)' }}
-            />
-          </div>
-        )}
       </MapGL>
     );
   }

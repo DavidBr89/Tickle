@@ -154,7 +154,7 @@ export const ModalBody = ({
         justifyContent: 'space-between',
         display: 'flex',
         alignItems: 'center',
-        flexShrink: 0
+        flexShrink: 0, ...style
       }}
     >
       <h3 className="modal-title">{title}</h3>

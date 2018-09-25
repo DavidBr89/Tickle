@@ -10,7 +10,6 @@ import { hot } from 'react-hot-loader';
 // import AuthUserContext from './components/AuthUserContext';
 
 import { db } from 'Firebase';
-
 import rootReducer from './reducers';
 import Routes from './Routes';
 import * as chromatic from 'd3-scale-chromatic';
@@ -31,6 +30,8 @@ import { createBrowserHistory } from 'history';
 import { screenResize } from 'Reducers/Screen/actions';
 
 import { userMove, changeMapViewport } from 'Reducers/Map/actions';
+
+// db.readCopyUsers();
 
 // TODO check whether it's only created once
 const history = createBrowserHistory();
@@ -128,7 +129,7 @@ function configureStore(rootReducer, initialState) {
 
 const geoOpts = {
   enableHighAccuracy: true,
-  maximumAge: 30000,
+  maximumAge: 3000,
   timeout: 27000
 };
 
@@ -154,7 +155,9 @@ const geoSuccess = pos => {
     longitude: pos.coords.longitude
   };
 
+  console.log('watchPosition', coords);
   // Oude Arendonkse Baan, Oud-Turnhout 51.313476, 5.001513
+  //
   // const turnoud = { latitude: 51.313476, longitude: 5.001513 };
   store.dispatch(userMove(coords));
   // store.dispatch(changeMapViewport(coords));
@@ -170,7 +173,7 @@ navigator.geolocation.getCurrentPosition(
 
     // Oude Arendonkse Baan, Oud-Turnhout 51.313476, 5.001513
     // const turnoud = { latitude: 51.313476, longitude: 5.001513 };
-    // store.dispatch(userMove(coords));
+    store.dispatch(userMove(coords));
     store.dispatch(changeMapViewport(coords));
   },
   err => console.log('err', err),

@@ -11,7 +11,8 @@ import {
   challengeTypeMap,
   CHALLENGE_STARTED,
   CHALLENGE_SUCCEEDED,
-  CHALLENGE_SUBMITTED
+  CHALLENGE_SUBMITTED,
+  CARD_CREATED
 } from 'Constants/cardFields';
 
 import {
@@ -31,9 +32,13 @@ const mapStateToProps = state => {
     selectedUserId,
     cardFilters,
     selectedCardId,
+    extendedId,
     cards,
     users
   } = state.Admin;
+  // const {
+  //   authUser: { uid }
+  // } = state.Session;
   // console.log('selectedUserId', cards, selectedUserId);
 
   const selectedUser =
@@ -49,13 +54,22 @@ const mapStateToProps = state => {
     .filter(c => c.challengeSubmission !== null);
 
   const selectedCard =
-    selectedCardId !== null
-      ? cardsWithSubmission.find(c => c.id === selectedCardId)
+    extendedId !== null
+      ? cardsWithSubmission.find(c => c.id === extendedId)
       : null;
 
   // const startedCards = cardsWithSubmission.filter(isChallengeStarted);
   // const submittedCards = cardsWithSubmission.filter(isChallengeSubmitted);
   // const succeededCards = cardsWithSubmission.filter(isChallengeSucceeded);
+
+  // const haaike = 'PpNOHOQLtXatZzcaAYVCMQQP5XT2';
+  // const filteredCreatedCards = cardsWithSubmission.filter(
+  //   d => d.uid === haaike
+  // );
+
+  console.log('cardsWithSubmission', cardsWithSubmission);
+
+  const createdCards = cards.filter(c => c.uid === selectedUserId);
 
   const cardSets = {
     [CHALLENGE_STARTED]: cardsWithSubmission.filter(
@@ -69,6 +83,7 @@ const mapStateToProps = state => {
     )
   };
 
+  console.log('cardsets', cardSets);
   const filteredCards = uniqBy(
     cardFilters.reduce(
       (acc, filterStr) => [...acc, ...cardSets[filterStr]],
@@ -103,6 +118,7 @@ const mapStateToProps = state => {
     startedCards: cardSets[CHALLENGE_STARTED],
     submittedCards: cardSets[CHALLENGE_SUBMITTED],
     succeededCards: cardSets[CHALLENGE_SUCCEEDED],
+    createdCards,
     selectedUser,
     selectedCard
   };

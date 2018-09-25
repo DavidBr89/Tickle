@@ -100,7 +100,13 @@ const mapDispatchToProps = dispatch =>
 // });
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const { uid, collectibleCards, filterSet, userLocation } = state;
+  const {
+    uid,
+    collectibleCards,
+    filterSet,
+    userLocation,
+    accessibleRadius
+  } = state;
   const { dataView, history, match } = ownProps;
   const { path } = match;
 
@@ -159,14 +165,12 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const filteredCards = collectibleCards
     .filter(d => filterByTag(d, filterSet))
     .map(c => {
-      // TODO: make editable
-      // TODO: make editable
-      // TODO: make editable
-      // TODO: make editable
-      // TODO: make editable
-      const accessible = distanceLoc(userLocation, c.loc) < 500;
-      return { ...c, accessible: true };
-    });
+      // TODO: hack
+      const accessible =
+        distanceLoc(userLocation, c.loc) < accessibleRadius / 2 + 1;
+      return { ...c, accessible };
+    })
+    .filter(d => d.accessible);
   // .filter(applyFilter(challengeStateFilter));
 
   const cardSets = setify(filteredCards);

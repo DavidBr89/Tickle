@@ -32,6 +32,7 @@ const pruneFields = fields => {
 const thumbFileName = fileName => `thumb_${fileName}`;
 
 const CARDS = 'staging_vds_geo_cards';
+const USERS = 'users';
 const getShallowCards = (uid = null) => {
   // console.log('UID', uid);
   const firePr =
@@ -88,10 +89,10 @@ export const readCards = (fromUID, playerId) =>
     );
   });
 
-export const readCopyOlga = () => {
-  console.log('readCopyOlga');
+export const readCopyUsers = () => {
+  console.log('readCopyUsers');
   firestore
-    .collection('cards')
+    .collection('users')
     .get()
     .then(querySnapshot => {
       const data = [];
@@ -102,8 +103,8 @@ export const readCopyOlga = () => {
 
       data.forEach(d =>
         firestore
-          .collection('tmpCards')
-          .doc(d.id)
+          .collection(USERS)
+          .doc(d.uid)
           .set(d)
       );
     });
@@ -138,7 +139,7 @@ function getOneChallengeSubmission(cid, playerId) {
 
 export function getOneEmailUser(email) {
   return firestore
-    .collection('users')
+    .collection(USERS)
     .where('email', '==', email)
     .get()
     .then(sn => sn.forEach(d => console.log('d', d.data())));
@@ -217,13 +218,13 @@ const uploadImgFields = card => {
 
 export const doCreateUser = userProfile =>
   firestore
-    .collection('users')
+    .collection(USERS)
     .doc(userProfile.uid)
     .set(userProfile);
 
 export const getUser = uid =>
   firestore
-    .collection('users')
+    .collection(USERS)
     .doc(uid)
     .get()
     .then(
@@ -262,7 +263,7 @@ export const getDetailedUserInfo = uid =>
 
 export const onceGetUsers = () =>
   firestore
-    .collection('users')
+    .collection(USERS)
     .get()
     .then(querySnapshot => {
       const data = [];
@@ -372,7 +373,7 @@ export const addChallengeSubmission = ({ cardId, playerId, challengeData }) =>
 
 export function getOneUser(playerId) {
   return firestore
-    .collection('users')
+    .collection(USERS)
     .doc(playerId)
     .get()
     .then(doc => new Promise(resolve => resolve(doc.data() || {})))

@@ -73,18 +73,17 @@ export function fetchAllCardsWithSubmissions() {
       // dispatch(loadingCards(false));
       dispatch(getCards(cards));
       db.onceGetUsers().then(users => {
-        const newUsers = users.map(u => {
-          const cardsWithSubmission = cards
-            .map(c => ({
-              ...c,
-              challengeSubmission:
-                c.allChallengeSubmissions.find(s => s.playerId === u.uid) ||
-                null
-            }))
-            .filter(c => c.challengeSubmission !== null);
-          return { ...u, cardsWithSubmission };
+        const usersWithSubmissions = users.map(u => {
+          const createdCards = cards
+            .filter(c => c.uid === u.uid)
+            .map(d => d.id);
+          const challengeSubmissions = cards.filter(c =>
+            c.allChallengeSubmissions.find(s => s.playerId === u.uid)
+          );
+          return { ...u, challengeSubmissions, createdCards };
         });
-        dispatch(receiveUsers(newUsers));
+        dispatch(receiveUsers(usersWithSubmissions));
+        // dispatch(receiveUsers(newUsers));
       });
     });
   };

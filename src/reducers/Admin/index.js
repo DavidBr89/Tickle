@@ -22,7 +22,7 @@ import {
 import {
   CHALLENGE_STARTED,
   CHALLENGE_SUCCEEDED,
-  CHALLENGE_SUBMITTED
+  CHALLENGE_SUBMITTED, CARD_CREATED
 } from 'Constants/cardFields';
 
 const INITIAL_STATE = {
@@ -31,7 +31,7 @@ const INITIAL_STATE = {
   extendedId: null,
   selectedCardId: null,
   selectedUserId: null,//'fq3CsS5YBVOuX3JCyLtzqwLaj5G2',
-  cardFilters: [CHALLENGE_STARTED, CHALLENGE_SUCCEEDED, CHALLENGE_SUBMITTED],
+  cardFilters: [CHALLENGE_SUBMITTED],
   flipped: false
 };
 

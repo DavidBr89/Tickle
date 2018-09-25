@@ -14,11 +14,9 @@ import { Btn } from 'Components/cards/layout';
 
 import { MediaList } from 'Utils/MediaUpload';
 
-const StyledMediaList = props => (
-  <CardThemeConsumer>
-    {({ stylesheet }) => <MediaList {...props} stylesheet={stylesheet} />}
-  </CardThemeConsumer>
-);
+import { stylesheet } from 'Src/styles/GlobalThemeContext';
+
+import { TagInput, PreviewTags } from 'Utils/Tag';
 
 const StarRating = ({ num = 5, highlighted = 0, onClick }) => (
   <div style={{ display: 'flex' }}>
@@ -49,10 +47,8 @@ class ReviewMediaChallenge extends Component {
   };
 
   state = {
-    response: null,
     rating: 0,
     text: '',
-    ...this.props.challengeSubmission.feedback,
     feedbackSent: this.props.feedback !== null
   };
 
@@ -62,11 +58,13 @@ class ReviewMediaChallenge extends Component {
       description,
       onUpdate,
       onClose,
-      response,
-      media,
       styles,
       title,
-      onSubmit
+      onSubmit,
+      tags,
+      challengeSubmission,
+      media,
+      response
     } = this.props;
 
     const { feedbackSent, text, rating } = this.state;
@@ -74,12 +72,13 @@ class ReviewMediaChallenge extends Component {
     return (
       <ModalBody
         onClose={onClose}
-        title="Challenge Review"
+        title={title}
+        style={{ background: 'whitesmoke' }}
         footer={
           <div style={{ display: 'flex' }}>
-            <Btn
+            <button
               onClick={() => {
-                //TODO: maybe change later
+                // TODO: maybe change later
                 onSubmit({ text, rating, accomplished: true });
                 this.setState({ feedbackSent: true });
               }}
@@ -87,14 +86,18 @@ class ReviewMediaChallenge extends Component {
               <div style={{ display: 'inline-flex', alignItems: 'center' }}>
                 {feedbackSent ? 'Feeback is sent!' : 'Send Feedback'}
               </div>
-            </Btn>
+            </button>
           </div>
         }
       >
-        <div className="flex-full flexCol" style={{}}>
+        <div className="flex-full flexCol" style={{ background: 'smokewhite' }}>
           <div>
             <h4>Description</h4>
             <p>{description}</p>
+          </div>
+          <div>
+            <h4>Tags</h4>
+            <PreviewTags data={tags} />
           </div>
           <div>
             <h4>Response</h4>
@@ -102,7 +105,12 @@ class ReviewMediaChallenge extends Component {
           </div>
           <div>
             <h4>Media</h4>
-            <StyledMediaList data={media} className="mb-3" />
+            <MediaList
+              data={media}
+              className="mb-3"
+              stylesheet={stylesheet}
+              disabled
+            />
           </div>
           <div>
             <h4>Feedback</h4>

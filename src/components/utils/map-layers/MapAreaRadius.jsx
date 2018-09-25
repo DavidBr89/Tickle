@@ -7,7 +7,9 @@ import { SvgOverlay, DivOverlay } from './DivOverlay';
 const metersPerPixel = function(latitude, zoomLevel) {
   const earthCircumference = 40075017;
   const latitudeRadians = latitude * (Math.PI / 180);
-  return earthCircumference * Math.cos(latitudeRadians) / 2 ** (zoomLevel + 8);
+  return (
+    (earthCircumference * Math.cos(latitudeRadians)) / 2 ** (zoomLevel + 8)
+  );
 };
 
 const geometricRadius = function(latitude, meters, zoomLevel) {
@@ -81,7 +83,7 @@ class MapAreaRadius extends Component {
               top: y1 - r,
               border: '2px solid grey',
               borderRadius: '50%',
-              transition: 'width 0.5s, height 0.5s, left 0.5s, top 0.5s',
+              transition: 'width 0.2s, height 0.2s, left 0.2s, top 0.2s',
               width: r * 2,
               height: r * 2,
               background: accessible ? 'green' : 'tomato',

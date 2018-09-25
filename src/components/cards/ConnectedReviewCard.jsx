@@ -26,34 +26,26 @@ const CardReview = ({
   submitChallengeReview,
   uid,
   onFlip,
+  description,
+  tags,
+  challengeSubmission,
+  title,
+  onClose,
   ...props
 }) => (
-  <Card
-    iOS={iOS}
-    smallScreen={smallScreen}
-    front={<ReadCardFront />}
-    flipHandler={onFlip}
-    challengeComp={
-      <MediaChallengeReview
-        title="Challenge Review"
-        {...props.challenge}
-        {...props.challengeSubmission}
-        onSubmit={fb => {
-          submitChallengeReview({
-            ...props.challengeSubmission,
-            feedback: { ...fb, uid }
-          });
-        }}
-      />
-    }
-    {...props}
-    key={props.id}
-    edit={false}
-    bookmarkable
-    tagColorScale={tagColorScale}
-    uiColor="grey"
-    background="whitesmoke"
-    style={{ zIndex: 4000 }}
+  <MediaChallengeReview
+    submitChallengeReview={submitChallengeReview}
+    onClose={onClose}
+    description={description}
+    title={title}
+    tags={tags}
+    {...challengeSubmission}
+    onSubmit={fb => {
+      submitChallengeReview({
+        ...challengeSubmission,
+        feedback: { ...fb, uid }
+      });
+    }}
   />
 );
 

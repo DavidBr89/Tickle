@@ -15,6 +15,8 @@ export const isChallengeStarted = c =>
 
 export const isChallengeOpen = c => !isDefined(c.challengeSubmission);
 
+export const hasCardCreated = (c, uid) => c.uid === uid;
+
 export const NO_CHALLENGE_FILTER = 'NO_CHALLENGE_FILTER';
 export const NO_CARD_FILTER = 'NO_CARD_FILTER';
 export const CHALLENGE_STARTED = 'CHALLENGE_STARTED';
@@ -24,6 +26,7 @@ export const CHALLENGE_NOT_STARTED = 'CHALLENGE_NOT_STARTED';
 export const CHALLENGE_SUBMITTED = 'CHALLENGE_SUBMITTED';
 export const CHALLENGE_NOT_SUBMITTED = 'CHALLENGE_NOT_SUBMITTED';
 export const CHALLENGE_SUCCEEDED = 'CHALLENGE_SUCCEEDED';
+export const CARD_CREATED = 'CARD_CREATED';
 
 export const challengeTypeMap = (() => {
   const obj = {};
@@ -32,6 +35,7 @@ export const challengeTypeMap = (() => {
   obj[CHALLENGE_SUCCEEDED] = isChallengeSucceeded;
   obj[CHALLENGE_OPEN] = isChallengeOpen;
   obj[NO_CARD_FILTER] = () => true;
+  obj[CARD_CREATED] = hasCardCreated;
   return obj;
 })();
 

@@ -4,16 +4,17 @@ import PropTypes from 'prop-types';
 import PreviewCard from 'Cards/PreviewCard';
 import CardStack from 'Utils/CardStack/CardStack';
 
-import { BareModal, ModalBody } from 'Utils/Modal';
+import { BareModal, Modal, ModalBody } from 'Utils/Modal';
 
-import ReviewCard from 'Components/cards/ConnectedReviewCard';
+import CardReview from 'Components/cards/ConnectedReviewCard';
 
 import usrPlaceholderImg from './user-placeholder.png';
 
 import {
   CHALLENGE_STARTED,
   CHALLENGE_SUCCEEDED,
-  CHALLENGE_SUBMITTED
+  CHALLENGE_SUBMITTED,
+  CARD_CREATED
 } from 'Constants/cardFields';
 
 // import { MediaList } from 'Utils/MediaUpload';
@@ -73,10 +74,11 @@ class AuthorPreview extends Component {
       numStartedCards,
       numSubmittedCards,
       numSucceededCards,
-      visible
+      visible,
+      numCreatedCards
     } = this.props;
-    const totalCardsLen =
-      numStartedCards + numSubmittedCards + numSucceededCards;
+    const totalCardsLen = numCreatedCards;
+    // numStartedCards + numSubmittedCards + numSucceededCards;
 
     const barFormula = n =>
       totalCardsLen !== 0 ? (n / totalCardsLen) * 100 : 0;
@@ -220,10 +222,13 @@ class UserList extends Component {
       if (a.username > b.username) return 1;
       return 0;
     };
+
     const cardNum = (a, b) => {
-      if (a.cardsWithSubmission.length < b.cardsWithSubmission.length) return 1;
-      if (a.cardsWithSubmission.length > b.cardsWithSubmission.length)
-        return -1;
+      const aSub = a.challengeSubmissions;
+      const bSub = b.challengeSubmissions;
+
+      if (aSub.length < bSub.length) return 1;
+      if (aSub.length > bSub.length) return -1;
       return 0;
     };
 
@@ -320,7 +325,8 @@ class AdminPage extends Component {
       submittedCards,
       succeededCards,
       onFlip,
-      flipped
+      flipped,
+      createdCards
     } = this.props;
     const { users } = this.props;
     // const selectedCard = cards.find(c => c.id === selectedCardId) || {};
@@ -329,21 +335,18 @@ class AdminPage extends Component {
 
     return (
       <div className="content-block flexCol" style={{ height: '100%' }}>
-        <BareModal
+        <Modal
           visible={extendedId !== null}
           uiColor="grey"
           background="transparent"
         >
-          <ReviewCard
+          <CardReview
             {...selectedCard}
-            frontView={!flipped}
-            onFlip={onFlip}
-            flipped={flipped}
             onClose={() => {
               extendSelection(null);
             }}
           />
-        </BareModal>
+        </Modal>
         <h1>Admin {authUser.username}</h1>
         <p>Restricted area! Only users with the admin rule are authorized.</p>
         <div
@@ -398,14 +401,12 @@ class AdminPage extends Component {
             <h3>Cards</h3>
             <Grid data={cards}>
               {d => (
-                <div style={{ padding: 15, overflow: 'hidden' }}>
+                <div
+                  style={{ padding: 15, overflow: 'hidden', cursor: 'pointer' }}
+                >
                   <PreviewCard
                     {...d}
-                    onClick={() =>
-                      selectedCardId !== d.id
-                        ? selectCardId(d.id)
-                        : extendSelection(d.id)
-                    }
+                    onClick={() => extendSelection(d.id)}
                     tagColorScale={() => 'green'}
                     key={d.id}
                     edit={d.template}

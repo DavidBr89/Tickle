@@ -60,6 +60,7 @@ const INITIAL_STATE = {
     zoom: 15,
     ...defaultLocation
   },
+  accessibleRadius: 50,
   userLocation: defaultLocation
 };
 function reducer(state = INITIAL_STATE, action) {
