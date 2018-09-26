@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 
 import WebMercatorViewport from 'viewport-mercator-project';
 
+
+    // "viewport-mercator-project": "^5.0.0",
 export default class SVGOverlay extends PureComponent {
   static propTypes() {
     return {

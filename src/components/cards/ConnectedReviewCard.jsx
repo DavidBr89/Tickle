@@ -69,13 +69,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const { authUser } = state;
   const { uid } = authUser;
 
-  const { match, history } = ownProps;
-  const { path } = match;
+  // const { path } = match;
 
-  const { flipped } = match.params;
-
-  const { routeFlipCard } = dispatcherProps;
-  // const onFlip = () => routeFlipCard({ match, history });
   // const { asyncSubmitChallengeReview } = dispatcherProps;
   //
   // const onSubmitChallenge = challengeSubmission => {
@@ -92,11 +87,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   };
 };
 
-export default compose(
-  withRouter,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-    mergeProps
-  )
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
 )(CardReview);

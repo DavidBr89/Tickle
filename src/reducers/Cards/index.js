@@ -161,8 +161,6 @@ function reducer(state = INITIAL_STATE, action) {
 
       const newCard = action.options;
 
-      const newCards = [...createdCards, newCard];
-
       return {
         ...state,
         createdCards: [newCard, ...createdCards],

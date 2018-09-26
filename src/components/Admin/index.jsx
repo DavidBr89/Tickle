@@ -83,7 +83,6 @@ const mapStateToProps = state => {
     )
   };
 
-  console.log('cardsets', cardSets);
   const filteredCards = uniqBy(
     cardFilters.reduce(
       (acc, filterStr) => [...acc, ...cardSets[filterStr]],
@@ -92,6 +91,8 @@ const mapStateToProps = state => {
     'id'
   );
 
+  console.log('filteredCards', filteredCards);
+  console.log('selectedCard', selectedCard);
   // const routeLockedCard = id =>
   //   otherActions.routeLockedCard({
   //     path,
@@ -140,12 +141,10 @@ const authCondition = authUser => authUser !== null;
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const { flipped } = stateProps;
   const { flip } = dispatchProps;
-  const onFlip = () => (flipped ? flip(false) : flip(true));
   return {
     ...stateProps,
     ...dispatchProps,
-    ...ownProps,
-    onFlip
+    ...ownProps
   };
 };
 

@@ -340,12 +340,16 @@ class AdminPage extends Component {
           uiColor="grey"
           background="transparent"
         >
-          <CardReview
-            {...selectedCard}
-            onClose={() => {
-              extendSelection(null);
-            }}
-          />
+          {extendedId !== null && (
+            <CardReview
+              {...selectedCard}
+              feedback={selectedCard.feedback}
+              challengeSubmission={selectedCard.challengeSubmission}
+              onClose={() => {
+                extendSelection(null);
+              }}
+            />)
+          }
         </Modal>
         <h1>Admin {authUser.username}</h1>
         <p>Restricted area! Only users with the admin rule are authorized.</p>

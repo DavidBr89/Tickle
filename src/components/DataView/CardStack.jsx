@@ -47,7 +47,7 @@ function CardStackWrapper({
       slotSize={slotSize}
       unit={unit}
       style={{
-        zIndex: 3000
+        zIndex: 3000,
       }}
       {...props}
     >
@@ -64,6 +64,8 @@ function CardStackWrapper({
           edit={d.template}
           selected={selectedCardId === d.id}
           style={{
+
+        pointerEvents: 'all',
             transition: 'transform 500ms',
             // TODO: change later
             height: '100%',

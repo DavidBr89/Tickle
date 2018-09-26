@@ -154,6 +154,7 @@ class CardViewPage extends Component {
             display: 'flex',
             justifyContent: 'center',
             transition: 'opacity 0.5s',
+            pointerEvents: 'none',
             // zIndex: 3000,
             // flexBasis: height / 5,
             height: height / 5,

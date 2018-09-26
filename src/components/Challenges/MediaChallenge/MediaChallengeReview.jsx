@@ -18,12 +18,16 @@ import { stylesheet } from 'Src/styles/GlobalThemeContext';
 
 import { TagInput, PreviewTags } from 'Utils/Tag';
 
-const StarRating = ({ num = 5, highlighted = 0, onClick }) => (
+const StarRating = ({ num = 5, highlighted = 0, onClick, disabled }) => (
   <div style={{ display: 'flex' }}>
     {range(1, num + 1).map(i => (
-      <div onClick={() => onClick(i)} style={{ cursor: 'pointer' }}>
+      <button
+        disabled={disabled}
+        onClick={() => onClick(i)}
+        style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+      >
         <Star size={50} fill={i <= highlighted ? 'gold' : 'white'} />
-      </div>
+      </button>
     ))}
   </div>
 );
@@ -47,8 +51,9 @@ class ReviewMediaChallenge extends Component {
   };
 
   state = {
-    rating: 0,
-    text: '',
+    rating: this.props.feedback ? this.props.feedback.rating : 0,
+    text: this.props.feedback ? this.props.feedback.text : '',
+    ...this.props,
     feedbackSent: this.props.feedback !== null
   };
 
@@ -62,7 +67,6 @@ class ReviewMediaChallenge extends Component {
       title,
       onSubmit,
       tags,
-      challengeSubmission,
       media,
       response
     } = this.props;
@@ -77,6 +81,7 @@ class ReviewMediaChallenge extends Component {
         footer={
           <div style={{ display: 'flex' }}>
             <button
+              disabled={feedbackSent}
               onClick={() => {
                 // TODO: maybe change later
                 onSubmit({ text, rating, accomplished: true });
@@ -104,7 +109,7 @@ class ReviewMediaChallenge extends Component {
             <p style={{ width: '100%' }}>{response}</p>
           </div>
           <div>
-            <h4>Media</h4>
+            <h4>Submitted Media</h4>
             <MediaList
               data={media}
               className="mb-3"
@@ -115,6 +120,7 @@ class ReviewMediaChallenge extends Component {
           <div>
             <h4>Feedback</h4>
             <textarea
+              disabled={feedbackSent}
               placeholder="give Feedback for the challenge"
               onChange={e => this.setState({ text: e.target.value })}
               rows="4"
@@ -126,6 +132,7 @@ class ReviewMediaChallenge extends Component {
           <div>
             <h4>Rating</h4>
             <StarRating
+              disabled={feedbackSent}
               num={5}
               highlighted={rating}
               onClick={n => this.setState({ rating: n })}
@@ -137,12 +144,4 @@ class ReviewMediaChallenge extends Component {
   }
 }
 
-const StyledMediaChallengeReview = props => (
-  <CardThemeConsumer>
-    {({ stylesheet }) => (
-      <ReviewMediaChallenge {...props} stylesheet={stylesheet} />
-    )}
-  </CardThemeConsumer>
-);
-
-export default StyledMediaChallengeReview;
+export default ReviewMediaChallenge;

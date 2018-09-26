@@ -101,8 +101,8 @@ const CardViewOverlay = props => {
               top: d.y,
               transform: 'translate(-50%, -50%)',
               // TODO: zIndex not working
-              width: selectedCardId === d.id ? 65 : 25,
-              height: selectedCardId === d.id ? 75 : 30,
+              width: selectedCardId === d.id ? 40 : 25,
+              height: selectedCardId === d.id ? 50 : 30,
               zIndex: selectedCardId === d.id ? 5000 : 0
               // transition: 'width 300ms, height 300ms'
               // transform: selectedCardId === d.id && 'scale(2)'

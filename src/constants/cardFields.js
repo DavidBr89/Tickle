@@ -13,6 +13,8 @@ export const isChallengeSubmitted = c =>
 export const isChallengeStarted = c =>
   isDefined(c.challengeSubmission) && !c.challengeSubmission.completed;
 
+export const isChallengeSeen = c=>isChallengeStarted(c) || isChallengeSubmitted(c) || isChallengeSucceeded(c)
+
 export const isChallengeOpen = c => !isDefined(c.challengeSubmission);
 
 export const hasCardCreated = (c, uid) => c.uid === uid;

@@ -1,4 +1,6 @@
 // import React from 'react';
+import WebMercatorViewport from 'viewport-mercator-project';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { compose } from 'recompose';
@@ -15,6 +17,7 @@ import setify from 'Utils/setify';
 import distanceLoc from 'Components/utils/distanceLoc';
 // rename path
 import { makeTagColorScale } from 'Src/styles/GlobalThemeContext';
+import { isChallengeSeen } from 'Constants/cardFields';
 
 import { screenResize } from 'Reducers/Screen/actions';
 import * as cardActions from 'Reducers/Cards/actions';
@@ -57,12 +60,15 @@ const mapStateToProps = state => {
   } = state.DataView;
 
   // TODO: own dim reducer
-  const { width, height, userLocation } = state.MapView;
+  const { width, height, userLocation, mapViewport } = state.MapView;
 
   // const { authEnv } = state.DataView;
   const {
     authUser: { uid }
   } = state.Session;
+
+  // console.log('mercator', FlatMercatorViewport);
+  const mercator = new WebMercatorViewport({ ...mapViewport });
 
   // TODO: make more specific
   return {
@@ -74,7 +80,8 @@ const mapStateToProps = state => {
     collectibleCards,
     cardPanelVisible,
     ...state.Cards,
-    ...state.Screen
+    ...state.Screen,
+    mercator
     // cards: filteredCards
     // cardSets,
     // selectedTags,
@@ -105,7 +112,10 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     collectibleCards,
     filterSet,
     userLocation,
-    accessibleRadius
+    accessibleRadius,
+    mercator,
+    width,
+    height
   } = state;
   const { dataView, history, match } = ownProps;
   const { path } = match;
@@ -115,7 +125,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const extCardId = showOption === 'extended' ? selectedCardId : null;
   const selectedCardLocked = showOption === 'locked';
 
-  console.log('match', match);
+  // console.log('match', match);
 
   // const selectedCardId = selectedCardIds;
   const {
@@ -125,6 +135,12 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     fetchCollectibleCards,
     ...otherActions
   } = dispatcherProps;
+
+  const isInView = loc => {
+    const coords = [loc.longitude, loc.latitude];
+    const pos = mercator.project(coords);
+    return pos[0] > 0 && pos[0] < width && pos[1] > 0 && pos[1] < height;
+  };
 
   const routeLockedCard = id =>
     otherActions.routeLockedCard({
@@ -155,22 +171,28 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     return routeSelectCard(d.id);
   };
 
+  // TODO remove
   const fetchCards = () => {
-    // TODO
     fetchCollectibleCards(uid);
   };
 
   const preSelectCardId = () => selectCard(null);
 
+  // TODO: hack
+  const isInDistance = loc =>
+    distanceLoc(userLocation, loc) < accessibleRadius / 2 + 1;
+
   const filteredCards = collectibleCards
     .filter(d => filterByTag(d, filterSet))
     .map(c => {
-      // TODO: hack
       const accessible =
-        distanceLoc(userLocation, c.loc) < accessibleRadius / 2 + 1;
+        (isInView(c.loc) && isInDistance(c.loc)) || isChallengeSeen(c);
+
       return { ...c, accessible };
     })
     .filter(d => d.accessible);
+
+  console.log('filteredCards', filteredCards);
   // .filter(applyFilter(challengeStateFilter));
 
   const cardSets = setify(filteredCards);

@@ -52,11 +52,11 @@ export function fetchUsers() {
 }
 
 export function asyncSubmitChallengeReview(challengeSubmission) {
-  console.log('challengeSubmission', challengeSubmission);
   const { cardId, playerId, ...challengeData } = challengeSubmission;
+  console.log('challengeSubmission', { cardId, playerId, ...challengeData });
   return function(dispatch) {
     dispatch(submitChallengeReview(challengeSubmission));
-    console.log('submit challenge', { cardId, playerId, challengeData });
+    console.log('submit challenge review', { cardId, playerId, challengeData });
     return db
       .addChallengeSubmission({ cardId, playerId, challengeData })
       .then(() => dispatch(submitChallengeReviewSuccess()));
