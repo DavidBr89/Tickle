@@ -13,7 +13,13 @@ export const isChallengeSubmitted = c =>
 export const isChallengeStarted = c =>
   isDefined(c.challengeSubmission) && !c.challengeSubmission.completed;
 
-export const isChallengeSeen = c=>isChallengeStarted(c) || isChallengeSubmitted(c) || isChallengeSucceeded(c)
+// TODO: update later
+export const CARD_SEEN = 'CARD_SEEN';
+export const isCardSeen = c =>
+  isChallengeStarted(c) ||
+  isChallengeSubmitted(c) ||
+  isChallengeSucceeded(c) ||
+  c.seen === true;
 
 export const isChallengeOpen = c => !isDefined(c.challengeSubmission);
 
@@ -38,6 +44,7 @@ export const challengeTypeMap = (() => {
   obj[CHALLENGE_OPEN] = isChallengeOpen;
   obj[NO_CARD_FILTER] = () => true;
   obj[CARD_CREATED] = hasCardCreated;
+  obj[CARD_SEEN] = isCardSeen;
   return obj;
 })();
 

@@ -129,12 +129,16 @@ class CardViewPage extends Component {
       toggleCardPanel,
       filterByChallengeState,
       challengeStateFilter,
-      isLoadingCards
+      isLoadingCards,
+      seeCard
     } = this.props;
 
     const slotSize = 100 / 3.5;
     const cardStackWidth = 100;
-    // slotSize / cards.length < slotSize ? 100 : slotSize * cards.length;
+
+    //TODO change later
+    cards.map(c => !c.seen && seeCard(c.id));
+
     return (
       <div
         className="w-100 h-100 flexCol"

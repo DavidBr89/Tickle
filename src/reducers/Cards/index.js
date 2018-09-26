@@ -20,6 +20,7 @@ import {
   DELETE_CARD,
   ERROR_DELETE_CARD,
   SUCCESS_DELETE_CARD,
+  SEE_CARD,
   // SELECT_CARD,
   TOGGLE_CARD_CHALLENGE,
   // EXTEND_SELECTED_CARD,
@@ -95,6 +96,18 @@ function reducer(state = INITIAL_STATE, action) {
         ...state,
         isLoadingCards
       };
+    }
+
+    case SEE_CARD: {
+      const { collectibleCards } = state;
+      const id = action.options;
+
+      const updatedCollectibleCards = collectibleCards.map(d => {
+        if (d.id === id) return { ...d, seen: true };
+        return d;
+      });
+
+      return { ...state, collectibleCards: updatedCollectibleCards };
     }
 
     case RECEIVE_CREATED_CARDS: {

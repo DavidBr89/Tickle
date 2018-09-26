@@ -45,6 +45,12 @@ export function createCard(options) {
   return { type: CREATE_CARD, options };
 }
 
+export const SEE_CARD = 'SEE_CARD';
+export function seeCard(options) {
+  return { type: SEE_CARD, options };
+}
+
+
 export const SUCCESS_CREATE_CARD = 'SUCCESS_CREATE_CARD';
 export function createCardSuccess(options) {
   return { type: SUCCESS_CREATE_CARD, options };

@@ -239,31 +239,35 @@ class UserList extends Component {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             Sort By
-            <div style={{ display: 'flex' }}>
-              <input
-                checked={sortBy === 'abc'}
-                type="radio"
-                name="contact"
-                value="abc"
-                onClick={() =>
-                  this.setState({
-                    sortBy: 'abc'
-                  })
-                }
-              />
-              <label htmlFor="contactChoice1">ABC</label>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div className="mr-1">
+                <input
+                  checked={sortBy === 'abc'}
+                  type="radio"
+                  name="contact"
+                  value="abc"
+                  onClick={() =>
+                    this.setState({
+                      sortBy: 'abc'
+                    })
+                  }
+                />
+                <label htmlFor="contactChoice1">ABC</label>
+              </div>
 
-              <input
-                type="radio"
-                checked={sortBy === 'cards'}
-                value="cards"
-                onClick={() =>
-                  this.setState({
-                    sortBy: 'cards'
-                  })
-                }
-              />
-              <label htmlFor="contactChoice2">cards</label>
+              <div>
+                <input
+                  type="radio"
+                  checked={sortBy === 'cards'}
+                  value="cards"
+                  onClick={() =>
+                    this.setState({
+                      sortBy: 'cards'
+                    })
+                  }
+                />
+                <label htmlFor="contactChoice2">Number of Cards</label>
+              </div>
             </div>
           </div>
         </div>
@@ -348,8 +352,8 @@ class AdminPage extends Component {
               onClose={() => {
                 extendSelection(null);
               }}
-            />)
-          }
+            />
+          )}
         </Modal>
         <h1>Admin {authUser.username}</h1>
         <p>Restricted area! Only users with the admin rule are authorized.</p>
@@ -370,7 +374,9 @@ class AdminPage extends Component {
                 {d => (
                   <div
                     className="p-1"
-                    onClick={() => selectUser(d.uid)}
+                    onClick={() => {
+                      selectUser(d.uid);
+                    }}
                     style={{
                       borderBottom: '1px lightgrey solid',
                       cursor: 'pointer',

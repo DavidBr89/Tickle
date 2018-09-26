@@ -68,7 +68,16 @@ const Routes = ({ history }) => (
         path={routes.SIGN_UP}
         component={() => (
           <DefaultLayout>
-            <SignUp />
+            <SignUp admin={false} />
+          </DefaultLayout>
+        )}
+      />
+      <Route
+        exact
+        path="/admin-signup"
+        component={() => (
+          <DefaultLayout>
+            <SignUp admin />
           </DefaultLayout>
         )}
       />

@@ -17,7 +17,7 @@ import setify from 'Utils/setify';
 import distanceLoc from 'Components/utils/distanceLoc';
 // rename path
 import { makeTagColorScale } from 'Src/styles/GlobalThemeContext';
-import { isChallengeSeen } from 'Constants/cardFields';
+import { isCardSeen } from 'Constants/cardFields';
 
 import { screenResize } from 'Reducers/Screen/actions';
 import * as cardActions from 'Reducers/Cards/actions';
@@ -130,6 +130,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   // const selectedCardId = selectedCardIds;
   const {
     selectCard,
+    seeCard,
     // fetchAllCards,
     // fetchReadableCards,
     fetchCollectibleCards,
@@ -149,16 +150,18 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
       id
     });
 
-  const routeExtendCard = () =>
+  const routeExtendCard = () => {
     otherActions.routeExtendCard({
       path,
       history,
       id: selectedCardId,
       extended: extCardId === null
     });
+  };
 
-  const routeSelectCard = id =>
+  const routeSelectCard = id => {
     otherActions.routeSelectCard({ path, history, id });
+  };
 
   const previewCardAction = d => {
     if (selectedCardId === d.id) {
@@ -185,8 +188,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const filteredCards = collectibleCards
     .filter(d => filterByTag(d, filterSet))
     .map(c => {
+      console.log('c', c);
       const accessible =
-        (isInView(c.loc) && isInDistance(c.loc)) || isChallengeSeen(c);
+        (isInView(c.loc) && isInDistance(c.loc)) || isCardSeen(c);
 
       return { ...c, accessible };
     })

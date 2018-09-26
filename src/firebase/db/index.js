@@ -32,7 +32,7 @@ const pruneFields = fields => {
 const thumbFileName = fileName => `thumb_${fileName}`;
 
 const CARDS = 'staging_vds_geo_cards';
-const USERS = 'users';
+const USERS = 'staging_vds_geo_users';
 const getShallowCards = (uid = null) => {
   // console.log('UID', uid);
   const firePr =
@@ -92,7 +92,7 @@ export const readCards = (fromUID, playerId) =>
 export const readCopyUsers = () => {
   console.log('readCopyUsers');
   firestore
-    .collection('users')
+    .collection('vds_geo_users')
     .get()
     .then(querySnapshot => {
       const data = [];
@@ -103,7 +103,7 @@ export const readCopyUsers = () => {
 
       data.forEach(d =>
         firestore
-          .collection(USERS)
+          .collection('staging_vds_geo_users')
           .doc(d.uid)
           .set(d)
       );

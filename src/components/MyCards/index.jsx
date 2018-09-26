@@ -14,6 +14,8 @@ import * as diaryActions from 'Reducers/Diary/actions';
 
 import * as dataViewActions from 'Reducers/DataView/async_actions';
 
+import { challengeTypeMap, isCardSeen } from 'Constants/cardFields';
+
 import {
   isChallengeStarted,
   isChallengeSubmitted,
@@ -25,14 +27,23 @@ import withAuthorization from 'Components/withAuthorization';
 const mapStateToProps = state => {
   // const { cardSets } = state.Account;
   const { tagColorScale, collectibleCards } = state.Cards;
-  const { isSelectedCardType } = state.Diary;
+  const { selectedCardType } = state.Diary;
   // console.log('cards');
   //
   // const tagColorScale = makeTagColorScale(cardSets);
   //
   //
-  const cards = collectibleCards.filter(isSelectedCardType);
+  const cards = collectibleCards
+    .map(d => {
+      const seen = isCardSeen(d);
+      return { ...d, seen };
+    })
+    .filter(challengeTypeMap[selectedCardType]);
 
+  const numSeenCards = cards.filter(c => c.seen).length;
+  const numCollectibleCards = collectibleCards.length;
+
+  console.log(' Cards', cards);
   //   .sort((a, b) => {
   //   if (isSelectedCardType(a)) return -1;
   //   if (isSelectedCardType(b)) return 1;
@@ -49,6 +60,9 @@ const mapStateToProps = state => {
     authUser: {
       ...state.Session.authUser
     },
+    selectedCardType,
+    numSeenCards,
+    numCollectibleCards,
     cards,
     userTags,
     ...state.Screen,
@@ -66,8 +80,8 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators({ ...diaryActions, ...dataViewActions }, dispatch);
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
-  const { match, history, id } = ownProps;
-  const { cards, userTags } = stateProps;
+  const { match, history } = ownProps;
+  const { cards } = stateProps;
 
   const { routeSelectCard, routeExtendCard } = dispatchProps;
   // console.log('match', match, history, id);
@@ -75,42 +89,19 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const { path } = match;
   const {
     selectedCardId = null,
-    showOption = null,
+    showOption = null
     // flipped = null
   } = match.params;
   const extended = showOption === 'extended';
 
   const cardAction = d => {
-    selectedCardId === d.id
-      ? routeExtendCard({ path, history, id: d.id, extended: !extended })
-      : routeSelectCard({ path, history, id: d.id });
+    // TODO: change later
+    routeSelectCard({ path, history, id: d.id });
+    routeExtendCard({ path, history, id: d.id, extended: !extended });
   };
 
   const selectedCard = cards.find(c => c.id === selectedCardId) || null;
-  console.log(
-    'cards',
-    cards,
-    'SelectedCard',
-    selectedCard,
-    'selectedCardId',
-    selectedCardId
-  );
-  // const nbs =
-  //   selectedCard !== null
-  //     ? cards
-  //       .filter(
-  //         c =>
-  //           c.id !== selectedCardId &&
-  //             intersection(c.tags, selectedCard.tags).length !== 0
-  //       )
-  //       .slice(0, 8)
-  //       .concat([selectedCard])
-  //     : [...cards];
-  //
-  // const selectedTags = uniq(
-  //   nbs.reduce((acc, d) => acc.concat([...d.tags]), [])
-  // );
-  // console.log('nbs', nbs);
+
   return {
     ...stateProps,
     ...dispatchProps,

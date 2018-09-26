@@ -13,7 +13,6 @@ import {
   CHALLENGE_STARTED,
   CHALLENGE_SUBMITTED,
   CHALLENGE_SUCCEEDED,
-  CHALLENGE_OPEN,
   NO_CARD_FILTER
   // challengeTypeMap
 } from 'Constants/cardFields';
@@ -34,7 +33,14 @@ class Cell extends Component {
   state = { hovered: false };
 
   render() {
-    const { onClick, style, selected, expanded, ...restProps } = this.props;
+    const {
+      onClick,
+      style,
+      selected,
+      expanded,
+      seen,
+      ...restProps
+    } = this.props;
     const { hovered } = this.state;
 
     return (
@@ -49,7 +55,7 @@ class Cell extends Component {
           transition: 'opacity 500ms',
           ...style
         }}
-        onClick={onClick}
+        onClick={seen ? onClick : null}
       >
         <div
           style={{
@@ -58,18 +64,12 @@ class Cell extends Component {
             height: '100%'
           }}
         >
-          {expanded ? (
-            <PreviewCard {...this.props} key={this.props.id} />
-          ) : (
-            <PreviewCard
-              key={this.props.id}
-              style={{
-                transition: 'transform 200ms',
-                transformOrigin: hovered && null
-              }}
-              {...restProps}
-            />
-          )}
+          <PreviewCard
+            {...this.props}
+            accessible={seen}
+            key={this.props.id}
+            onClick={null}
+          />
         </div>
       </div>
     );
@@ -79,6 +79,19 @@ class Cell extends Component {
 const INITIAL_GRID_STATE = {
   colNum: 10,
   rowNum: 10
+};
+
+const cardTypeText = cardType => {
+  switch (cardType) {
+    case CHALLENGE_STARTED:
+      return 'started';
+    case CHALLENGE_SUBMITTED:
+      return 'submitted';
+    case CHALLENGE_SUCCEEDED:
+      return 'collected';
+    case NO_CARD_FILTER:
+      return 'discovered';
+  }
 };
 
 export default class MyDiary extends Component {
@@ -99,13 +112,15 @@ export default class MyDiary extends Component {
       cards,
       selectCard,
       selectedCardId,
-      selectCardType,
-      isSelectedCardType,
       cardAction,
       selectedCard,
       selectedTags,
       height,
-      cardExtended
+      cardExtended,
+      selectCardType,
+      selectedCardType,
+      numCollectibleCards,
+      numSeenCards
     } = this.props;
     const { colNum, rowNum } = this.state;
 
@@ -146,7 +161,7 @@ export default class MyDiary extends Component {
 
       const style = {
         transformOrigin: null,
-        transform: cardSelected ? 'scale(1.15)' : 'scale(1)',
+        transform: cardSelected ? 'scale(1.05)' : 'scale(1)',
         zIndex: cardSelected && 5000,
         transition: 'transform 500ms'
       };
@@ -157,7 +172,6 @@ export default class MyDiary extends Component {
           {...d}
           style={style}
           onClick={() => cardAction(d)}
-          selected={isSelectedCardType(d)}
           expanded={cardSelected}
         />
       );
@@ -188,9 +202,30 @@ export default class MyDiary extends Component {
           <React.Fragment>
             <div>
               <select onChange={e => selectCardType(e.target.value)}>
-                <option value={NO_CARD_FILTER}>All cards</option>
-                <option value={CHALLENGE_STARTED}>Started Cards</option>
-                <option value={CHALLENGE_SUBMITTED}>Submitted Cards</option>
+                <option
+                  selected={selectedCardType === NO_CARD_FILTER}
+                  value={NO_CARD_FILTER}
+                >
+                  All Cards
+                </option>
+                <option
+                  selected={selectedCardType === CHALLENGE_STARTED}
+                  value={CHALLENGE_STARTED}
+                >
+                  Started Cards
+                </option>
+                <option
+                  selected={selectedCardType === CHALLENGE_SUBMITTED}
+                  value={CHALLENGE_SUBMITTED}
+                >
+                  Submitted Cards
+                </option>
+                <option
+                  selected={selectedCardType === CHALLENGE_SUCCEEDED}
+                  value={CHALLENGE_SUCCEEDED}
+                >
+                  Collected Cards
+                </option>
               </select>
             </div>
           </React.Fragment>
@@ -210,11 +245,21 @@ export default class MyDiary extends Component {
             overflow: 'scroll'
           }}
         >
-          <div className="flex-full">
-            <div style={gridStyle} ref={el => (this.grid = el)}>
-              {cards.map(mapCell)}
-            </div>
+          <div>
+            Your {cardTypeText(selectedCardType)} {numSeenCards}/{
+              numCollectibleCards+' '
+            }
+            cards
           </div>
+          {cards.length === 0 ? (
+            <h3>No Cards</h3>
+          ) : (
+            <div className="flex-full">
+              <div style={gridStyle} ref={el => (this.grid = el)}>
+                {cards.map(mapCell)}
+              </div>
+            </div>
+          )}
         </div>
       </DefaultLayout>
     );

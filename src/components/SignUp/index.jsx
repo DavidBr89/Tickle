@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Link, withRouter } from 'react-router-dom';
 
 import { compose } from 'recompose';
@@ -15,7 +16,7 @@ import { stylesheet } from 'Src/styles/GlobalThemeContext';
 
 import { setAuthUser } from 'Reducers/Session/actions';
 
-const SignUpPage = ({ ...props }) => (
+const SignUpPage = ({ admin, ...props }) => (
   <div
     style={{
       overflowY: 'scroll',
@@ -26,11 +27,19 @@ const SignUpPage = ({ ...props }) => (
     }}
   >
     <div className="mt-3">
-      <h1>SignUp</h1>
+      <h1>SignUp {admin ? 'Admin' : null}</h1>
     </div>
-    <SignUpForm {...props} />
+    <SignUpForm {...props} admin={admin} />
   </div>
 );
+
+SignUpPage.propTypes = {
+  admin: PropTypes.bool
+};
+
+SignUpPage.defaultProps = {
+  admin: false
+};
 
 const INITIAL_STATE = {
   username: '',
@@ -62,7 +71,7 @@ class SignUpForm extends Component {
       interests
     } = this.state;
 
-    const { history, onSetAuthUser } = this.props;
+    const { history, onSetAuthUser, admin } = this.props;
 
     this.setState({ loading: true });
 
@@ -76,7 +85,8 @@ class SignUpForm extends Component {
           username,
           photoURL: null,
           email,
-          interests
+          interests,
+          admin
         };
         onSetAuthUser({ authUser: userProfile });
         history.push(routes.DATAVIEW_GEO);
@@ -261,11 +271,18 @@ const mapDispatchToProps = dispatch => ({
   }
 });
 
+const mergeProps = (stateProps, dispatchProps, ownProps) => ({
+  ...stateProps,
+  ...dispatchProps,
+  ...ownProps
+});
+
 export default compose(
   withRouter,
   connect(
     null,
-    mapDispatchToProps
+    mapDispatchToProps,
+    mergeProps
   )
 )(SignUpPage);
 

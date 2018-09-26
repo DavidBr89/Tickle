@@ -89,11 +89,6 @@ const CardViewOverlay = props => {
       >
         {d => (
           <CardMarker
-            onClick={e => {
-              // TODO: remove extendcard
-              if (selectedCardId !== d.id) routeSelectCard(d.id);
-              // e.stopPropagation();
-            }}
             color="whitesmoke"
             style={{
               position: 'absolute',

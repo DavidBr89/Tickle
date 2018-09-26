@@ -141,6 +141,7 @@ const authCondition = authUser => authUser !== null;
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const { flipped } = stateProps;
   const { flip } = dispatchProps;
+
   return {
     ...stateProps,
     ...dispatchProps,

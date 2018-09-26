@@ -126,12 +126,6 @@ class PreviewCard extends Component {
       return (
         <div style={contStyle} onClick={onClick} className="flexCol">
           <div
-            className="text-truncate"
-            style={{ fontSize: '16px', margin: '4px 0', flexShrink: 0 }}
-          >
-            {title}
-          </div>
-          <div
             className="flexCol"
             style={{
               flex: '0 1 100%',
