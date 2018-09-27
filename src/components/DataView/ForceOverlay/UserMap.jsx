@@ -173,8 +173,9 @@ class Map extends Component {
   componentDidMount() {
     console.log('mapgl', this.mapgl);
     const map = this.mapgl.getMap();
-  //TODO: START END 4.989203,51.314682;5.013693,51.311366
-    map.on('load', () =>
+
+    // TODO: START END 4.989203,51.314682;5.013693,51.311366
+    map.on('load', () => {
       map.addLayer({
         id: 'route',
         type: 'line',
@@ -186,9 +187,7 @@ class Map extends Component {
             geometry: {
               type: 'LineString',
               coordinates: [
-                [4.989176, 51.314684],
-                [4.989341, 51.314593],
-                [4.992337, 51.314825],
+                [4.991218, 51.31484],
                 [4.99684, 51.314709],
                 [4.997494, 51.314592],
                 [4.999943, 51.31378],
@@ -196,7 +195,7 @@ class Map extends Component {
                 [5.00321, 51.313367],
                 [5.00878, 51.313932],
                 [5.009547, 51.313655],
-                [5.013682, 51.311358]
+                [5.013749, 51.311311]
               ]
             }
           }
@@ -207,10 +206,53 @@ class Map extends Component {
         },
         paint: {
           'line-color': 'red',
-          'line-width': 8
+          'line-width': 8,
+          'line-opacity': 0.4
         }
-      })
-    );
+      });
+
+      map.addLayer({
+        id: 'points',
+        type: 'symbol',
+        source: {
+          type: 'geojson',
+          data: {
+            type: 'FeatureCollection',
+            features: [
+              {
+                type: 'Feature',
+                geometry: {
+                  type: 'Point',
+                  coordinates: [4.989203, 51.314682]
+                },
+                properties: {
+                  title: 'START',
+                  icon: 'marker'
+                }
+              },
+              {
+                type: 'Feature',
+                geometry: {
+                  type: 'Point',
+                  coordinates: [5.013693, 51.311366]
+                },
+                properties: {
+                  title: 'END',
+                  icon: 'marker'
+                }
+              }
+            ]
+          }
+        },
+        layout: {
+          'icon-image': '{icon}-15',
+          'text-field': '{title}',
+          'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+          'text-offset': [0, 0.6],
+          'text-anchor': 'top'
+        }
+      });
+    });
   }
 
   // static getDerivedStateFromProps({ latitude, longitude }, prevState) {
@@ -269,10 +311,6 @@ class Map extends Component {
     return (
       <MapGL
         ref={m => (this.mapgl = m)}
-        onClick={e =>
-          // TODO: only for testing porposes
-          userMove({ longitude: e.lngLat[0], latitude: e.lngLat[1] })
-        }
         width={width}
         height={height}
         onViewportChange={newViewport => {

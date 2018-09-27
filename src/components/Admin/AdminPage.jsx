@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { sortBy, deepEqual } from 'lodash';
 
 import PreviewCard from 'Cards/PreviewCard';
 import CardStack from 'Utils/CardStack/CardStack';
@@ -9,6 +10,8 @@ import { BareModal, Modal, ModalBody } from 'Utils/Modal';
 import CardReview from 'Components/cards/ConnectedReviewCard';
 
 import usrPlaceholderImg from './user-placeholder.png';
+
+import memoizeOne from 'memoize-one';
 
 import {
   CHALLENGE_STARTED,
@@ -212,27 +215,37 @@ class UserList extends Component {
     className: PropTypes.string
   };
 
-  state = { sortBy: 'abc' };
+  state = { sortParam: 'abc', sortedData: this.props.data };
+
+  componentDidMount() {
+    this.memSort();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      prevState.sortParam !== this.state.sortParam ||
+      prevProps.data.length !== this.props.data.length
+    ) {
+      this.memSort();
+    }
+  }
+
+  memSort = () => {
+    const { data } = this.props;
+    const { sortParam } = this.state;
+
+    const sortedData = sortBy(
+      data,
+      sortParam === 'abc'
+        ? d => d.username
+        : d => -d.challengeSubmissions.length
+    );
+    this.setState({ sortedData });
+  };
 
   render() {
     const { children, style, data } = this.props;
-    const { sortBy } = this.state;
-    const alphabetical = (a, b) => {
-      if (a.username < b.username) return -1;
-      if (a.username > b.username) return 1;
-      return 0;
-    };
-
-    const cardNum = (a, b) => {
-      const aSub = a.challengeSubmissions;
-      const bSub = b.challengeSubmissions;
-
-      if (aSub.length < bSub.length) return 1;
-      if (aSub.length > bSub.length) return -1;
-      return 0;
-    };
-
-    const sortedData = data.sort(sortBy === 'abc' ? alphabetical : cardNum);
+    const { sortParam, sortedData } = this.state;
 
     return (
       <div className="flexCol" style={{ ...style }}>
@@ -242,13 +255,13 @@ class UserList extends Component {
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <div className="mr-1">
                 <input
-                  checked={sortBy === 'abc'}
+                  checked={sortParam === 'abc'}
                   type="radio"
                   name="contact"
                   value="abc"
                   onClick={() =>
                     this.setState({
-                      sortBy: 'abc'
+                      sortParam: 'abc'
                     })
                   }
                 />
@@ -258,11 +271,11 @@ class UserList extends Component {
               <div>
                 <input
                   type="radio"
-                  checked={sortBy === 'cards'}
+                  checked={sortParam === 'cards'}
                   value="cards"
                   onClick={() =>
                     this.setState({
-                      sortBy: 'cards'
+                      sortParam: 'cards'
                     })
                   }
                 />

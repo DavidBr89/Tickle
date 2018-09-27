@@ -188,7 +188,6 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const filteredCards = collectibleCards
     .filter(d => filterByTag(d, filterSet))
     .map(c => {
-      console.log('c', c);
       const accessible =
         (isInView(c.loc) && isInDistance(c.loc)) || isCardSeen(c);
 

@@ -124,12 +124,13 @@ class Card extends React.Component {
           className={`${css(stylesheet.flipper)}`}
           style={{
             background,
-            transform: !iOS && !frontView && `rotateY(180deg)`
+            transform: !iOS && !frontView && `rotateY(180deg)`,
+            border: '5px black solid'
           }}
         >
           <CardThemeProvider value={{ stylesheet, uiColor, darkerUiColor }}>
             {React.cloneElement(front, {
-              //TODO: UNTANGLE
+              // TODO: UNTANGLE
               ...this.props,
               style: {
                 position: 'absolute',

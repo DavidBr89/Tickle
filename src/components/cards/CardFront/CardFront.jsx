@@ -3,33 +3,20 @@ import PropTypes from 'prop-types';
 
 import { css } from 'aphrodite';
 
-import MediaChallenge from 'Components/Challenges/MediaChallenge';
-import { TagInput, PreviewTags } from 'Utils/Tag';
-import { Modal, ModalBody } from 'Utils/Modal';
+// import MediaChallenge from 'Components/Challenges/MediaChallenge';
+import { PreviewTags } from 'Utils/Tag';
 
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
-import { MediaOverview } from 'Components/cards/MediaSearch';
-
 import placeholderImgSrc from '../placeholder.png';
 
-import { X, Edit, Search, RotateCcw } from 'react-feather';
+import { Edit } from 'react-feather';
 
 import { FieldSet } from 'Components/utils/StyledComps';
 import { mediaScale } from 'Constants/mediaTypes';
 
 // import { mediaScale } from 'Constants/mediaTypes';
 import CardControls from 'Components/cards/CardControls';
-
-import {
-  // MediaField,
-  // ChallengeField,
-  // DescriptionField,
-  // EditButton,
-  // Img,
-  // ZoomIcon,
-  BigButton
-} from '../layout';
 
 const defaultProps = {};
 
@@ -301,7 +288,6 @@ class CardFront extends Component {
         style={{
           height: '100%',
           zIndex: 3000,
-          border: '5px grey solid',
           ...style
         }}
         className={css(cardLayout)}
@@ -353,8 +339,7 @@ class CardFront extends Component {
               justifyContent: 'flex-end'
               // alignItems: 'flex-end'
             }}
-          >
-          </div>
+          />
         </ImgOverlay>
         <div
           className="mt-3 mr-3 ml-3 mb-1"

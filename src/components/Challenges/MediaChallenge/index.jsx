@@ -328,6 +328,7 @@ class MediaChallenge extends Component {
             <ScrollElement name="mediaUpload">
               <MediaUpload
                 disabled={completed}
+                btnText="Upload Media"
                 style={{ width: '100%', flex: '0 0' }}
                 uploadPath={id => `challengeSubmissionFiles/${id}`}
                 media={media}

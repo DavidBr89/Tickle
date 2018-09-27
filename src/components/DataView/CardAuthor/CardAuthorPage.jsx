@@ -243,6 +243,7 @@ class CardAuthorPage extends Component {
           style={{
             // TODO: remvoe for topic map
             flex: '1 1 70%',
+            //TODO remove
             position:
               dataView === FLOORPLAN || dataView === GEO ? 'absolute' : null
           }}

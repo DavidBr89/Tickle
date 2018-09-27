@@ -2,6 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { X, RotateCcw } from 'react-feather';
+import CloseCorner from './CloseCorner';
+import FlipCorner from './FlipCorner';
+// import FlipCorner from './styles/flip_corner.svg';
+
+// console.log('CloseCorner', CloseCorner);
 
 const CardControls = ({
   onFlip,
@@ -16,7 +21,7 @@ const CardControls = ({
     className={className}
     style={{
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'flex-end',
       flexShrink: 0,
       marginTop: 'auto',
       justifyContent: 'space-between',
@@ -25,18 +30,16 @@ const CardControls = ({
   >
     <div
       onClick={onClose}
-      className="m-1"
       style={{
         display: 'flex',
         alignItems: 'center',
         cursor: 'pointer'
       }}
     >
-      <X size={size} color={color} />
+      <CloseCorner width={70} height={70} />
     </div>
     {children}
     <div
-      className="m-1"
       onClick={onFlip}
       style={{
         display: 'flex',
@@ -44,7 +47,7 @@ const CardControls = ({
         cursor: 'pointer'
       }}
     >
-      <RotateCcw size={size} color={color} />
+      <FlipCorner width={70} height={70} />
     </div>
   </div>
 );

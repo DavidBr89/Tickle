@@ -80,7 +80,7 @@ export const authRoutes = {
   // ...HOME_ROUTE,
   ...DATAVIEW_ROUTE,
   // ...MYCARDS_ROUTE,
-  ...AUTH_ENV_ROUTE,
+  // ...AUTH_ENV_ROUTE,
   // TODO: change
   // ...ADMIN_ROUTE,
   ...ACCOUNT_ROUTE,

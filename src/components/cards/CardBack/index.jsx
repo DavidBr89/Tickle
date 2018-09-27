@@ -207,7 +207,8 @@ class CardBackSkeleton extends Component {
         ref={cont => (this.cont = cont)}
         className="flexCol flex-100"
         style={{
-          border: '5px grey solid',
+          // TODO outsource
+          // border: '5px black solid',
           height: '100%',
           // display: 'flex',
           alignContent: 'center'
@@ -266,7 +267,6 @@ class CardBackSkeleton extends Component {
             </BackField>
           )}
           <CardControls
-            className="mb-1"
             onFlip={flipHandler}
             onClose={onClose}
             style={{

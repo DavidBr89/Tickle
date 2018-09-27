@@ -33,7 +33,8 @@ export default class FileUpload extends Component {
     style: PropTypes.object,
     onChange: PropTypes.func,
     placeholder: PropTypes.string,
-    disabled: PropTypes.bool
+    disabled: PropTypes.bool,
+    btnText: PropTypes.string
   };
 
   static defaultProps = {
@@ -45,7 +46,8 @@ export default class FileUpload extends Component {
     stylesheet: defaultStylesheet,
     className: '',
     fileName: null,
-    disabled: false
+    disabled: false,
+    btnText: 'Browse Files'
   };
 
   render() {
@@ -56,7 +58,8 @@ export default class FileUpload extends Component {
       onChange,
       uiColor,
       stylesheet,
-      disabled
+      disabled,
+      btnText
     } = this.props;
 
     return (
@@ -81,7 +84,7 @@ export default class FileUpload extends Component {
               overflow: 'hidden'
             }}
           >
-            {fileName || 'Browse File'}
+            {fileName || btnText}
           </div>
         </label>
         <input

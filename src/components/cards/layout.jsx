@@ -124,6 +124,26 @@ export const BigButton = ({
         className={`${className} ${css(stylesheet.btn)}`}
         disabled={disabled}
         style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          fontWeight: 'bold',
+          textAlign: 'center',
+          whiteSpace: 'nowrap',
+          justifyContent: 'center',
+          verticalAlign: 'middle',
+          lineHeight: '1.5',
+          cursor: 'pointer',
+          color: 'white',
+          borderRadius: '0px',
+          padding: '0.375rem',
+          overflow: 'hidden',
+          borderWidth: '1px',
+          borderStyle: 'solid',
+          borderColor: 'transparent',
+          borderImage: 'initial',
+          transition:
+            'color 0.15s ease-in-out 0s, background-color 0.15s ease-in-out 0s, border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s',
+          background: 'black',
           // width: '100%',
           // display: 'inline-flex',
           // justifyContent: 'center',

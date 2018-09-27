@@ -21,13 +21,15 @@ import { NewTabLink } from 'Components/utils/StyledComps';
 class DataUploadForm extends Component {
   static propTypes = {
     onChange: PropTypes.func,
-    stylesheet: PropTypes.object
+    stylesheet: PropTypes.object,
+    btnText: PropTypes.string
   };
 
   static defaultProps: {
     stylesheet: defaultStylesheet,
     style: {},
-    buttonStyle: {}
+    buttonStyle: {},
+    btnText: 'Browse Files'
   };
 
   state = { description: null, imgUrl: null, file: null, type: TEXT };
@@ -39,7 +41,8 @@ class DataUploadForm extends Component {
       className,
       style,
       disabled,
-      buttonStyle
+      buttonStyle,
+      btnText
     } = this.props;
 
     const { imgUrl, file, type } = this.state;
@@ -60,6 +63,7 @@ class DataUploadForm extends Component {
       >
         <FileUpload
           disabled={disabled}
+          btnText={btnText}
           style={buttonStyle}
           fileName={file ? file.name : null}
           onChange={({ url, file: newFile }) => {
@@ -259,12 +263,13 @@ class MediaUpload extends Component {
 
   render() {
     const { media, pendingMedia } = this.state;
-    const { nodeWrapper, style, stylesheet, disabled } = this.props;
+    const { nodeWrapper, style, stylesheet, disabled, btnText} = this.props;
     const allMedia = [...media, ...pendingMedia];
     const maxHeight = '200%';
     return (
       <div className="flexCol" style={{ flexShrink: 0 }}>
         <DataUploadForm
+          btnText={btnText}
           disabled={disabled}
           style={{ width: '100%' }}
           stylesheet={stylesheet}

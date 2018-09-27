@@ -40,7 +40,7 @@ const mapStateToProps = state => {
 
   // const { authEnv } = state.DataView;
   const {
-    authUser: { uid }
+    authUser: { uid, admin }
   } = state.Session;
 
   console.log('userLocation', userLocation);
@@ -76,6 +76,7 @@ const mapStateToProps = state => {
     ...state.Cards,
     ...state.Screen,
     uid,
+    admin,
     selectedCardId,
     filterSet,
     templateCard,
@@ -105,7 +106,7 @@ const mapDispatchToProps = dispatch =>
 // });
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const { uid, templateCard, createdCards, cards, filterSet } = state;
+  const { uid, admin, templateCard, createdCards, cards, filterSet } = state;
   console.log('card author state', state);
   const {
     selectCard,
@@ -143,7 +144,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   // const previewCardAction = d =>
   //   selectedCardId === d.id ? extendSelectedCard(d.id) : selectCard(d.id);
 
-  const fetchCards = () => fetchCreatedCards(uid);
+  const fetchCards = () => fetchCreatedCards(admin ? uid : null);
   const preSelectCardId = () => selectCard(templateCard.id);
 
   return {
