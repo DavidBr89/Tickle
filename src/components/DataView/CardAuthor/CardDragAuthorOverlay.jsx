@@ -56,62 +56,62 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
 
   const DragPreviewCard = ({ ...d }) => {
     const selected = selectedCardId === d.id;
+    const posStyle = {
+      position: 'absolute',
+      left: d.x,
+      top: d.y,
+      transform: 'translate(-50%, -50%)',
+      zIndex: selectedCardId === d.id ? 10 : 0
+    };
+    const elem = (
+      <div
+        onMouseDown={() => dragCard(true)}
+        onClick={e => {
+          e.stopPropagation();
+          previewCardAction(d);
+          dragCard(false);
+        }}
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          border: selected && '2px dashed black',
+          borderRadius: '10%'
+        }}
+      >
+        <CardMarker
+          color="whitesmoke"
+          selected={selected}
+          style={{
+            width: 25,
+            height: 30
+          }}
+        />
+      </div>
+    );
+
+    if (!selected) return <div style={posStyle}>{elem}</div>;
 
     return (
-      <DragSourceCont
-        dragHandler={dragCard}
-        data={d}
-        x={d.x}
-        y={d.y}
-        width={80}
-        height={80}
-        selected={selected}
-      >
-        <div
-          onMouseDown={() => dragCard(true)}
-          onClick={e => {
-            previewCardAction(d);
-            e.stopPropagation();
-            dragCard(false);
-          }}
-          style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            border: selected && '2px dashed black',
-            borderRadius: '10%'
-          }}
+      <div style={posStyle}>
+        <DragSourceCont
+          dragHandler={dragCard}
+          data={d}
+          x={d.x}
+          y={d.y}
+          width={80}
+          height={80}
+          selected={selected}
         >
-          <CardMarker
-            color="whitesmoke"
-            selected={selected}
-            style={{
-              width: 25,
-              height: 30
-            }}
-          />
-        </div>
-      </DragSourceCont>
+          {elem}
+        </DragSourceCont>
+      </div>
     );
   };
 
   console.log('extCardId', extCardId);
-
-  const draggable = c => (
-    <div
-      style={{
-        position: 'absolute',
-        left: c.x,
-        top: c.y,
-        transform: 'translate(-50%, -50%)',
-        zIndex: selectedCardId === c.id ? 10 : 0
-      }}
-    >
-      {DragPreviewCard(c)}
-    </div>
-  );
 
   return (
     <DropTargetCont
@@ -143,7 +143,7 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
           right: width / 5
         }}
         colorScale={tagColorScale}
-        draggable={draggable}
+        draggable={DragPreviewCard}
       >
         {c =>
           extCardId === c.id ? (
@@ -151,7 +151,7 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
               <EditCard {...c} dataView={dataView} />
             </BareModal>
           ) : (
-            draggable(c)
+            DragPreviewCard(c)
           )
         }
       </DataOverlay>

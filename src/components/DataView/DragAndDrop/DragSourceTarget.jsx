@@ -191,6 +191,7 @@ export class DropTargetCont extends PureComponent {
     this.state = {
       top: 100,
       left: 100,
+      data: null,
       dropped: false
     };
   }
@@ -210,15 +211,15 @@ export class DropTargetCont extends PureComponent {
       // TODO: CHANGE LATER
       // TODO: CHANGE LATER
       // TODO: CHANGE LATER
-      const inverted = data.normalize
-        ? data.normalize.invert([left, top])
-        : [left, top];
+      // const inverted = data.normalize
+      //   ? data.normalize.invert([left, top])
+      //   : [left, top];
 
-      console.log('DROP inverted', inverted);
+      // console.log('DROP inverted', inverted);
       dropHandler({
         ...data,
-        x: inverted[0],
-        y: inverted[1]
+        x: left,
+        y: top
         // tx: left,
         // ty: top,
         // vx: left,

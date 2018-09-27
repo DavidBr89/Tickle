@@ -343,7 +343,7 @@ class EditCardFront extends PureComponent {
             <DropDown
               style={{ width: '100%' }}
               onChange={newTags => this.updateField({ tags: [...newTags] })}
-              editable={true}
+              editable
               vocabulary={[]}
               data={tags}
               vocabulary={tagVocabulary}
@@ -463,6 +463,7 @@ class EditCardFront extends PureComponent {
       <React.Fragment>
         <Modal visible={modalVisible}>{this.modalWriteContent()}</Modal>
         <CardFront
+          edit
           {...this.props}
           onClose={onClose}
           onTagsClick={() => {
