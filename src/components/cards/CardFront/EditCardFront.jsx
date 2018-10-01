@@ -463,7 +463,6 @@ class EditCardFront extends PureComponent {
       <React.Fragment>
         <Modal visible={modalVisible}>{this.modalWriteContent()}</Modal>
         <CardFront
-          edit
           {...this.props}
           onClose={onClose}
           onTagsClick={() => {
@@ -516,6 +515,7 @@ class EditCardFront extends PureComponent {
             })
           }
           onFlip={flipHandler}
+          edit
         />
       </React.Fragment>
     );

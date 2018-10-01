@@ -18,6 +18,7 @@ const withAuthorization = condition => Component => {
           onSetAuthUser(null);
           this.props.history.push(routes.SIGN_IN);
         } else {
+          console.log('authUser UID', authUser);
           onSetAuthUser(authUser.uid);
           // this.setState({ authUser });
         }

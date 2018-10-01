@@ -1,0 +1,12 @@
+$btn-font-weight: bold !default;
+
+// @import '~bootstrap/scss/bootstrap.scss';
+// @import "~colors.css/css/colors.css";
+
+.navOverlay {
+  background: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 100;
+}

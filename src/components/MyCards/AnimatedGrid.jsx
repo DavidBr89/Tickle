@@ -7,7 +7,7 @@ import PreviewCard from 'Components/cards/PreviewCard';
 import ConnectedCard from 'Components/cards/ConnectedCard';
 
 import { BareModal } from 'Utils/Modal';
-import DefaultLayout from 'Components/Layout';
+import DefaultLayout from 'Components/DefaultLayout';
 
 import {
   CHALLENGE_STARTED,

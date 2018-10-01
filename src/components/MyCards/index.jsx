@@ -102,6 +102,9 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 
   const selectedCard = cards.find(c => c.id === selectedCardId) || null;
 
+  const includesSelectedCard =
+    cards.filter(d => d.id !== null && d.id === selectedCardId).length === 1;
+
   return {
     ...stateProps,
     ...dispatchProps,
@@ -109,8 +112,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     selectedCardId: selectedCardId || null,
     cardAction,
     selectedTags: [],
-    selectedCard,
-    cardExtended: extended,
+    selectedCard: includesSelectedCard ? selectedCard : null,
+    cardExtended: includesSelectedCard && extended,
     cards: cards.sort((a, b) => {
       if (a.id < b.id) return -1;
       if (a.id > b.id) return 1;

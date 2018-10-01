@@ -18,10 +18,12 @@ TICKLE playground for our Project
   * User Diary (show related cards)
   * create Mission editor and reward cards
   * Manually creating Content for Cards
-  * add neighborhood range in geo card author
+  * add neighborhood range in geo card author (define the bounds of the card)
 
 ### Todo bugfixes
 * fix drag and drop on mobile and bugs with map events (and the corresponding component)
+* untangle flip container from cardfront
+* find better abstraction for readcardfront and cardfront (with or without modal)
 * See issues
 
 

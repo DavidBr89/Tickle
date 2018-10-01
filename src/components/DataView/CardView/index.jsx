@@ -123,6 +123,10 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const { selectedCardId = null, showOption = null } = match.params;
 
   const extCardId = showOption === 'extended' ? selectedCardId : null;
+
+  const extendedCard =
+    extCardId !== null ? collectibleCards.find(c => c.id === extCardId) : null;
+
   const selectedCardLocked = showOption === 'locked';
 
   // console.log('match', match);
@@ -188,8 +192,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const filteredCards = collectibleCards
     .filter(d => filterByTag(d, filterSet))
     .map(c => {
+      const visible = isInView(c.loc);
       const accessible =
-        (isInView(c.loc) && isInDistance(c.loc)) || isCardSeen(c);
+        (visible && isInDistance(c.loc)) || (isCardSeen(c) && visible);
 
       return { ...c, accessible };
     })
@@ -216,7 +221,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     selectedTags,
     selectedCardId,
     extCardId,
-    selectedCardLocked
+    selectedCardLocked, extendedCard
   };
 };
 

@@ -13,11 +13,10 @@ function CardTagSearch({
 }) {
   return (
     <div
-      className="m-2"
+      className="m-2 z-50"
       style={{
         display: 'flex',
         justifyContent: 'flex-end',
-        zIndex: 2000,
         position: 'relative'
         // width: 30
       }}
@@ -30,7 +29,8 @@ function CardTagSearch({
         height={height}
         vocabulary={allTags}
         style={{
-          width: '70%'
+          width: '70%',
+          maxWidth: 400
         }}
         onClick={onSubmit}
         data={data}

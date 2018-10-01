@@ -25,14 +25,13 @@ export const InlineModal = ({
   // background,
 }) => (
   <div
-    className="modal-dialog"
     style={{
       width: '100%',
-      // height: '100%',
+      height: '100%',
       opacity: visible ? 1 : 0,
       transition: 'opacity 1s',
-      zIndex: visible ? 30000 : -10,
-      margin: 'auto',
+      pointerEvents: !visible  ? 'none' : null,
+      zIndex: 30000,
       left: 0,
       top: 0,
       right: 0,
@@ -154,7 +153,8 @@ export const ModalBody = ({
         justifyContent: 'space-between',
         display: 'flex',
         alignItems: 'center',
-        flexShrink: 0, ...style
+        flexShrink: 0,
+        ...style
       }}
     >
       <h3 className="modal-title">{title}</h3>

@@ -6,8 +6,6 @@ import { bindActionCreators } from 'redux';
 
 import CardMarker from 'Components/cards/CardMarker';
 
-import { Modal, BareModal, ModalBody } from 'Utils/Modal';
-
 import {
   DragSourceCont,
   DropTargetCont,
@@ -111,8 +109,6 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
     );
   };
 
-  console.log('extCardId', extCardId);
-
   return (
     <DropTargetCont
       dropHandler={onCardDrop}
@@ -145,15 +141,7 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
         colorScale={tagColorScale}
         draggable={DragPreviewCard}
       >
-        {c =>
-          extCardId === c.id ? (
-            <BareModal visible>
-              <EditCard {...c} dataView={dataView} />
-            </BareModal>
-          ) : (
-            DragPreviewCard(c)
-          )
-        }
+        {DragPreviewCard}
       </DataOverlay>
     </DropTargetCont>
   );

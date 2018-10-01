@@ -91,7 +91,7 @@ const SelectedComp = ({ ...props }) => {
             zoom
             noPreview={noPreview}
           >
-            {author ? draggable : noPreview}
+            {noPreview}
           </Floorplan>
         </div>
       );

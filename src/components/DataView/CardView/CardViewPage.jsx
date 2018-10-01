@@ -16,15 +16,15 @@ import {
 
 import ToggleSwitch from 'Utils/ToggleSwitch';
 
-import {
-  DragSourceCont,
-  DropTargetCont,
-  DragDropContextProvider
-} from '../DragAndDrop/DragSourceTarget';
+import DefaultLayout from 'Components/DefaultLayout';
+
 
 import CardTagSearch from '../CardTagSearch';
 
 import CardViewOverlay from './CardViewOverlay';
+
+import ConnectedCard from 'Cards/ConnectedCard';
+import { Modal, BareModal, ModalBody } from 'Utils/Modal';
 
 // import { StyledButton } from 'Utils/StyledComps';
 
@@ -130,40 +130,39 @@ class CardViewPage extends Component {
       filterByChallengeState,
       challengeStateFilter,
       isLoadingCards,
-      seeCard
+      seeCard,
+      extendedCard,
+      selectedCard
     } = this.props;
 
     const slotSize = 100 / 3.5;
     const cardStackWidth = 100;
 
-    //TODO change later
+    // TODO change later
     cards.map(c => !c.seen && seeCard(c.id));
 
     return (
-      <div
-        className="w-100 h-100 flexCol"
+      <DefaultLayout
+        className="w-full h-full flex-col"
         style={{ position: 'relative', overflow: 'hidden' }}
+        menu={
+          <CardTagSearch
+            allTags={nestedTagVocabulary}
+            key={filterSet.join(',')}
+            onChange={filterCards}
+            onClick={addCardFilter}
+            data={filterSet}
+            height={height / 2 - 50}
+          />
+        }
       >
-        <CardTagSearch
-          allTags={nestedTagVocabulary}
-          key={filterSet.join(',')}
-          onChange={filterCards}
-          onClick={addCardFilter}
-          data={filterSet}
-          height={height / 2 - 50}
-        />
         <div
-          className="mt-2"
+          className="mt-16 flex justify-center"
           style={{
-            display: 'flex',
-            justifyContent: 'center',
             transition: 'opacity 0.5s',
             pointerEvents: 'none',
-            // zIndex: 3000,
-            // flexBasis: height / 5,
             height: height / 5,
             opacity: cardPanelVisible ? 1 : 0
-            // marginBottom: 25
           }}
         >
           <CardStack
@@ -187,6 +186,13 @@ class CardViewPage extends Component {
         </div>
         <LoadingScreen style={{ marginTop: 25 }} visible={isLoadingCards} />
 
+        <BareModal visible={extendedCard !== null}>
+          <ConnectedCard
+            {...selectedCard}
+            style={{ margin: `${!isSmartphone ? '5rem' : ''} auto` }}
+          />
+        </BareModal>
+
         <CardViewOverlay
           {...this.props}
           className="mb-1"
@@ -198,7 +204,7 @@ class CardViewPage extends Component {
           }}
           colorScale={tagColorScale}
         />
-      </div>
+      </DefaultLayout>
     );
   }
 }

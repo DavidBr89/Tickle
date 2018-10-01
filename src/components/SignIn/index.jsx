@@ -46,7 +46,7 @@ const SignInPage = ({ history }) => (
     <h1>SignIn</h1>
     <SignInForm
       onAuthenticate={usr => {
-        console.log('usr', usr);
+        console.log('USR', usr);
         history.push(`${routes.DATAVIEW_GEO}`);
       }}
     />
@@ -106,20 +106,30 @@ const SignInPureForm = ({
   onEmailChange
 }) => (
   <form className="mb-1" onSubmit={onSubmit}>
-    <input
-      value={email}
-      onChange={onEmailChange}
-      type="text"
-      placeholder="Email Address"
-      className="form-control mb-1"
-    />
-    <input
-      value={password}
-      onChange={onPasswordChange}
-      type="password"
-      placeholder="Password"
-      className="form-control mb-1"
-    />
+    <div className="flex flex-col mb-4">
+      <label className="mb-2 text-lg text-grey-darkest" htmlFor="first_name">
+        Username
+      </label>
+      <input
+        value={email}
+        onChange={onEmailChange}
+        type="text"
+        placeholder="Email Address"
+        className="border py-2 px-3 text-grey-darkest"
+      />
+    </div>
+    <div className="flex flex-col mb-4">
+      <label className="mb-2 text-lg text-grey-darkest" htmlFor="first_name">
+        Password
+      </label>
+      <input
+        value={password}
+        onChange={onPasswordChange}
+        type="password"
+        placeholder="Password"
+        className="border py-2 px-3 text-grey-darkest"
+      />
+    </div>
     {onSubmit && (
       <React.Fragment>
         <button

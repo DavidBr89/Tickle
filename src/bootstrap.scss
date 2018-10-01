@@ -1,42 +1,45 @@
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
-@import "~bootstrap/scss/mixins";
-@import "~bootstrap/scss/print";
-@import "~bootstrap/scss/reboot";
-@import "~bootstrap/scss/type";
-@import "~bootstrap/scss/images";
+// @import "~bootstrap/scss/functions";
+// @import "~bootstrap/scss/variables";
+// @import "~bootstrap/scss/mixins";
+// @import "~bootstrap/scss/print";
+// @import "~bootstrap/scss/reboot";
+// @import "~bootstrap/scss/type";
+// @import "~bootstrap/scss/images";
 // @import "~bootstrap/scss/code";
-@import "~bootstrap/scss/grid";
-@import "~bootstrap/scss/tables";
-@import "~bootstrap/scss/forms";
-@import "~bootstrap/scss/buttons";
-@import "~bootstrap/scss/transitions";
-@import "~bootstrap/scss/dropdown";
-@import "~bootstrap/scss/button-group";
-@import "~bootstrap/scss/input-group";
-@import "~bootstrap/scss/custom-forms";
-@import "~bootstrap/scss/nav";
-@import "~bootstrap/scss/navbar";
-@import "~bootstrap/scss/card";
-@import "~bootstrap/scss/breadcrumb";
-@import "~bootstrap/scss/pagination";
-@import "~bootstrap/scss/badge";
-@import "~bootstrap/scss/jumbotron";
-@import "~bootstrap/scss/alert";
-@import "~bootstrap/scss/progress";
-@import "~bootstrap/scss/media";
-@import "~bootstrap/scss/list-group";
-@import "~bootstrap/scss/close";
-@import "~bootstrap/scss/modal";
-@import "~bootstrap/scss/tooltip";
-@import "~bootstrap/scss/popover";
+// @import "~bootstrap/scss/grid";
+// @import "~bootstrap/scss/tables";
+// @import "~bootstrap/scss/forms";
+// @import "~bootstrap/scss/buttons";
+// @import "~bootstrap/scss/transitions";
+// @import "~bootstrap/scss/dropdown";
+// @import "~bootstrap/scss/button-group";
+// @import "~bootstrap/scss/input-group";
+// @import "~bootstrap/scss/custom-forms";
+// @import "~bootstrap/scss/nav";
+// @import "~bootstrap/scss/navbar";
+// @import "~bootstrap/scss/card";
+// @import "~bootstrap/scss/breadcrumb";
+// @import "~bootstrap/scss/pagination";
+// @import "~bootstrap/scss/badge";
+// @import "~bootstrap/scss/jumbotron";
+// @import "~bootstrap/scss/alert";
+// @import "~bootstrap/scss/progress";
+// @import "~bootstrap/scss/media";
+// @import "~bootstrap/scss/list-group";
+// @import "~bootstrap/scss/close";
+// @import "~bootstrap/scss/modal";
+// @import "~bootstrap/scss/tooltip";
+// @import "~bootstrap/scss/popover";
 
 // @import "~bootstrap/scss/carousel";
-@import "~bootstrap/scss/utilities";
+// @import "~bootstrap/scss/utilities";
 
 @import url(https://fonts.googleapis.com/css?family=Material+Icons);
 
 @import url(https://fonts.googleapis.com/css?family=Press+Start+2P);
+
+
+
 // body {
 //   // text-align: center;
 //   // margin: 1em;
@@ -62,6 +65,17 @@ $black: #24292e;//#3c3c3c;
 
 
 
+.navbar {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+}
+
+
+
 
 .shadow {
   box-shadow: 0.4rem 0.4rem lightgrey;
@@ -69,7 +83,7 @@ $black: #24292e;//#3c3c3c;
 };
 
 .form-control {
-  @extend .form-control;
+  // @extend .form-control;
   border-radius: 0;
 
 }
@@ -90,13 +104,13 @@ $black: #24292e;//#3c3c3c;
 /* } */
 /*  */
 .slim-btn {
-  @extend .btn;
+  // @extend .btn;
   box-shadow: initial;
 }
 
 
 .bare-btn {
-  @extend .btn;
+  // @extend .btn;
   border-radius: 0;
   padding: 0.375rem;
   box-shadow: unset;
@@ -123,7 +137,7 @@ $black: #24292e;//#3c3c3c;
 
 .btn-danger {
 
-  @extend .btn-danger;
+  // @extend .btn-danger;
   box-shadow: $sw $sw #dc3545;
   border: 1px #dc3545 solid !important;
   background: white;
@@ -140,32 +154,34 @@ $black: #24292e;//#3c3c3c;
 }
 
 .btn:hover {
-  @extend .boxShadow;
+  // @extend .boxShadow;
 }
 
 .nav-link {
-  @extend .nav-link;
+  // @extend .nav-link;
   border-radius: 0 !important;
 }
 
 .nav-pills {
-  @extend .nav-pills;
+  // @extend .nav-pills;
   border-radius: 0 !important;
 }
 
 .modal-content {
-  @extend .modal-content;
+  // @extend .modal-content;
   border-radius: 0px;
 }
 
 .modal-dialog {
-  @extend .modal-dialog;
+  // @extend .modal-dialog;
   pointer-events: all;
   border-radius: 0px;
 }
 
 .navbar-toggler {
-  @extend .navbar-toggler;
+  padding: 0.25rem 0.75rem;
+  font-size: 1.25rem;
+  line-height: 1;
   border-radius: 0;
   box-shadow: $sw $sw grey;
 }
@@ -187,13 +203,13 @@ fieldset {
 }
 
 .fixed-bottom-left {
-  @extend .fixed-top;
+  // @extend .fixed-top;
   left: 0;
   zindex: 4000;
 }
 
 .fixed-top-center{
-  @extend .fixed-top;
+  // @extend .fixed-top;
   left: 50%;
   z-index: 4000;
   transform: translateX(-50%);
@@ -224,7 +240,7 @@ html, body {
 //TODO: unround form input
 
 #content-container {
-  @extend .container;
+  margin: auto;
   padding: 0;
   background: blanchedalmond;
   display: flex;
@@ -262,7 +278,8 @@ html, body {
 @media only screen and (min-width: 592px) {
     #content-container {
         height: 90vh;
-        width: 700px;
+        width: 80vw;
+        max-width: 1000px;
         margin-top: 40px;
         box-shadow: lightgrey 0.2rem 0.2rem ;
         border: 0.1rem solid lightgrey;

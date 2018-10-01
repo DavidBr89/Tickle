@@ -2,9 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { PreviewCard } from 'Cards';
-import Stack from 'Utils/CardStack';
+import Stack from 'Utils/Stack';
 import DelayClick from 'Components/utils/DelayClick';
 
+//TODO: do my own
 import Swipe from 'react-easy-swipe';
 
 const isPosInt = n => Number.isInteger(n) && n >= 0;
@@ -46,9 +47,6 @@ function CardStackWrapper({
       height={height}
       slotSize={slotSize}
       unit={unit}
-      style={{
-        zIndex: 3000
-      }}
       {...props}
     >
       {d => (

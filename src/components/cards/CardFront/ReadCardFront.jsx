@@ -151,12 +151,19 @@ class ReadCardFront extends Component {
     const challengeStarted =
       challengeSubmission !== null && !challengeSubmission.completed;
 
+    //TODO: fix later
+    const challengeCompleted =
+      challengeSubmission !== null && challengeSubmission.feedback;
+
+    if (challengeCompleted) return 'See Results';
+
     if (challengeSubmitted) {
       return 'Chall. submitted';
     }
     if (challengeStarted) {
       return 'Chall. started';
     }
+
     return 'Challenge';
   };
 

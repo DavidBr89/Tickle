@@ -167,7 +167,7 @@ class Map extends Component {
     console.log('mapgl', this.mapgl);
     const map = this.mapgl.getMap();
 
-    map.on('load', () =>
+    map.on('load', () => {
       map.addLayer({
         id: 'route',
         type: 'line',
@@ -179,15 +179,15 @@ class Map extends Component {
             geometry: {
               type: 'LineString',
               coordinates: [
-                [4.99535, 51.314751],
+                [4.991218, 51.31484],
                 [4.99684, 51.314709],
                 [4.997494, 51.314592],
                 [4.999943, 51.31378],
-                [5.000791, 51.313581],
                 [5.002289, 51.313371],
                 [5.00321, 51.313367],
-                [5.004118, 51.31351],
-                [5.007665, 51.313871]
+                [5.00878, 51.313932],
+                [5.009547, 51.313655],
+                [5.013749, 51.311311]
               ]
             }
           }
@@ -198,10 +198,53 @@ class Map extends Component {
         },
         paint: {
           'line-color': 'red',
-          'line-width': 8
+          'line-width': 8,
+          'line-opacity': 0.4
         }
-      })
-    );
+      });
+
+      map.addLayer({
+        id: 'points',
+        type: 'symbol',
+        source: {
+          type: 'geojson',
+          data: {
+            type: 'FeatureCollection',
+            features: [
+              {
+                type: 'Feature',
+                geometry: {
+                  type: 'Point',
+                  coordinates: [4.989203, 51.314682]
+                },
+                properties: {
+                  title: 'START',
+                  icon: 'marker'
+                }
+              },
+              {
+                type: 'Feature',
+                geometry: {
+                  type: 'Point',
+                  coordinates: [5.013693, 51.311366]
+                },
+                properties: {
+                  title: 'END',
+                  icon: 'marker'
+                }
+              }
+            ]
+          }
+        },
+        layout: {
+          'icon-image': '{icon}-15',
+          'text-field': '{title}',
+          'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+          'text-offset': [0, 0.6],
+          'text-anchor': 'top'
+        }
+      });
+    });
   }
 
   // static getDerivedStateFromProps({ latitude, longitude }, prevState) {
@@ -245,6 +288,7 @@ class Map extends Component {
 
     const vp = new PerspectiveMercatorViewport({ ...viewport, width, height });
 
+    const userPos = vp.project([userLocation.longitude, userLocation.latitude]);
     const locNodes = nodes.reduce((acc, n) => {
       const [x, y] = vp.project([n.loc.longitude, n.loc.latitude]);
       if (x > 0 && x < width && y > 0 && y < height) {
@@ -279,6 +323,22 @@ class Map extends Component {
           }}
         >
           {locNodes.map(children)}
+
+        <div
+          style={{
+            position: 'absolute',
+            left: userPos[0],
+            top: userPos[1]
+            // zIndex: 2000
+          }}
+        >
+          <img
+            src={userIcon}
+            width={50}
+            height={50}
+            style={{ transform: 'translate(-50%,-50%)' }}
+          />
+        </div>
         </div>
       </MapGL>
     );

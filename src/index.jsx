@@ -8,8 +8,9 @@ import { render } from 'react-dom';
 // import 'bootstrap';
 // import 'mapbox-gl/dist/mapbox-gl.css';
 
-import './bootstrap.scss';
-import './index.scss';
+// import './bootstrap.scss';
+import './styles/tailwind.css';
+import './styles/index.scss';
 
 import App from './App';
 

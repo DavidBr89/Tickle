@@ -31,6 +31,10 @@ const withAuthentication = Component => {
           // TODO: change
           // getReadableCards(uid);
           // getCreatedCards(uid);
+          console.log('login', uid);
+          if (uid) {
+            fetchUserInfo(uid);
+          }
           fetchCollectibleCards(uid);
           // fetchAllCards(uid);
         } else {

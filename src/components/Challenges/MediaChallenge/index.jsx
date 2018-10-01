@@ -201,6 +201,9 @@ class MediaChallenge extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { focusTextArea, media, response, completed } = this.state;
     const { onUpdate } = this.props;
+
+    clearTimeout(this.textAreaTimeoutId);
+
     if (focusTextArea && prevState.focusTextArea !== focusTextArea) {
       this.scrollTo('textArea');
     }
@@ -209,12 +212,12 @@ class MediaChallenge extends Component {
       this.scrollTo('mediaUpload');
     }
 
-    if (!focusTextArea && prevState.focusTextArea) {
-      const sub = { media, response, completed: false };
-      clearTimeout(this.textAreaTimeoutId);
-      this.textAreaTimeoutId = setTimeout(() => onUpdate(sub), 1000);
-    }
-
+    // if (!completed && !focusTextArea && prevState.focusTextArea) {
+    //   console.log('trigger text area', this.state);
+    //   const sub = { media, response, completed };
+    //   this.textAreaTimeoutId = setTimeout(() => onUpdate(sub), 1000);
+    // }
+    //
     if (completed && !prevState.completed) {
       this.scrollTo('info');
     }
@@ -256,13 +259,11 @@ class MediaChallenge extends Component {
           //   (response !== null && !challengeSubmission) ||
           //   (challengeSubmission && challengeSubmission.response !== response)
           // )
-          //   onUpdate({ response, media, completed });
+          if (!completed) {
+            onUpdate({ response, media, completed });
+          }
         }}
         title={title}
-        onSubmit={() => {
-          onUpdate({ media, response, completed: true });
-          this.setState({ completed: true });
-        }}
         footer={
           <Footer
             isSmartphone={isSmartphone}
@@ -277,7 +278,11 @@ class MediaChallenge extends Component {
             onChallengeSubmit={() => {
               // clearTimeout(this.textAreaTimeoutId);
               onUpdate({ media, response, completed: true });
-              this.setState({ completed: true });
+              this.setState({
+                completed: true,
+                focusTextArea: false,
+                submitted: true
+              });
             }}
             onDisableKeyboard={() => {
               this.setState({ focusTextArea: false });

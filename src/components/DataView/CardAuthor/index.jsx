@@ -82,7 +82,7 @@ const mapStateToProps = state => {
     templateCard,
     cardSets,
     cards,
-    selectedTags
+    selectedTags, selectedCard
     // tagColorScale
   };
 };
@@ -144,7 +144,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   // const previewCardAction = d =>
   //   selectedCardId === d.id ? extendSelectedCard(d.id) : selectCard(d.id);
 
-  const fetchCards = () => fetchCreatedCards(admin ? uid : null);
+  const fetchCards = () => fetchCreatedCards(null);
   const preSelectCardId = () => selectCard(templateCard.id);
 
   return {
@@ -155,7 +155,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     preSelectCardId,
     dataView,
     selectedCardId,
-    extCardId
+    extCardId,
   };
 };
 

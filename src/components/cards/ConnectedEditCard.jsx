@@ -140,6 +140,7 @@ const EditCard = ({
     uiColor="grey"
     background="whitesmoke"
     style={{ zIndex: 4000 }}
+    edit
   />
 );
 

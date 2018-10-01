@@ -211,8 +211,10 @@ const searchYoutube = (q = '') =>
     )
       .then(res => res.json())
       .then(({ items }) => {
+        console.log('items', items);
         const res = items.map(d => ({
-          url: `http://www.youtube.com/embed/${d.id.videoId}`,
+          // url2: `http://www.youtube.com/embed/${d.id.videoId}`,
+          url: `https://www.youtube.com/watch?v=${d.id.videoId}`,
           id: d.id.videoId,
           title: d.snippet.title,
           descr: d.snippet.description,

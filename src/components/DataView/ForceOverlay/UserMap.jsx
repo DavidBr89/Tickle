@@ -103,7 +103,7 @@ function CardCluster({
         top: y,
         transform: `translate(-50%,-50%)`,
         // background: 'white',
-        zIndex: 100,
+        // zIndex: 100,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -261,18 +261,16 @@ class Map extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { nodes, selectedCardId, maxZoom } = this.props;
-    if (
-      selectedCardId !== null &&
-      prevProps.selectedCardId !== selectedCardId
-    ) {
-      const selectedNode = nodes.find(n => selectedCardId === n.id);
-      const {
-        loc: { longitude, latitude }
-      } = selectedNode;
-
-      const vp = { ...this.state, longitude, latitude, zoom: maxZoom };
-      this.props.changeMapViewport({ ...vp });
-    }
+    // if ( selectedCardId !== null && prevProps.selectedCardId !== selectedCardId
+    // ) {
+    //   const selectedNode = nodes.find(n => selectedCardId === n.id);
+    //   const {
+    //     loc: { longitude, latitude }
+    //   } = selectedNode;
+    //
+    //   const vp = { ...this.state, longitude, latitude };
+    //   this.props.changeMapViewport({ ...vp });
+    // }
   }
 
   render() {
@@ -311,6 +309,9 @@ class Map extends Component {
     return (
       <MapGL
         ref={m => (this.mapgl = m)}
+        onClick={({ lngLat }) => {
+          userMove({ longitude: lngLat[0], latitude: lngLat[1] });
+        }}
         width={width}
         height={height}
         onViewportChange={newViewport => {
@@ -343,6 +344,7 @@ class Map extends Component {
               size={65}
               data={d}
               onClick={() => {
+                // TODO
                 preview(d.values[0]);
               }}
             >
@@ -400,7 +402,7 @@ class Map extends Component {
               this.props.changeMapViewport({
                 width,
                 height,
-                zoom: 14,
+                zoom,
                 ...userLocation
               })
             }

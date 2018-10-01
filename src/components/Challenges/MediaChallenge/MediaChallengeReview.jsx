@@ -18,19 +18,7 @@ import { stylesheet } from 'Src/styles/GlobalThemeContext';
 
 import { TagInput, PreviewTags } from 'Utils/Tag';
 
-const StarRating = ({ num = 5, highlighted = 0, onClick, disabled }) => (
-  <div style={{ display: 'flex' }}>
-    {range(1, num + 1).map(i => (
-      <button
-        disabled={disabled}
-        onClick={() => onClick(i)}
-        style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-      >
-        <Star size={50} fill={i <= highlighted ? 'gold' : 'white'} />
-      </button>
-    ))}
-  </div>
-);
+import StarRating from 'Components/utils/StarRating';
 
 class ReviewMediaChallenge extends Component {
   static propTypes = {

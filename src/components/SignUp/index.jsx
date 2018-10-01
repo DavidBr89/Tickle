@@ -75,6 +75,16 @@ class SignUpForm extends Component {
 
     this.setState({ loading: true });
 
+    const createUser = profile =>
+      db
+        .doCreateUser(profile)
+        .then(() => {
+          this.setState(() => ({ ...INITIAL_STATE }));
+          onSetAuthUser({ authUser: profile });
+        })
+        .catch(error => {
+          this.setState({ error, loading: false });
+        });
     auth
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then(res => {
@@ -90,25 +100,22 @@ class SignUpForm extends Component {
         };
         onSetAuthUser({ authUser: userProfile });
         history.push(routes.DATAVIEW_GEO);
+
         // Jump to page
         // Create a user in your own accessible Firebase Database too
         // this.setState({ imgUpload: true });
-
-        db.addImgToStorage({ file: img.file, path: `usr/${authUser.uid}` })
-          .then(imgUrl => {
-            const userProfileWithImg = { ...userProfile, photoURL: imgUrl };
-            db.doCreateUser(userProfileWithImg)
-              .then(() => {
-                this.setState(() => ({ ...INITIAL_STATE }));
-                onSetAuthUser({ authUser: userProfileWithImg });
-              })
-              .catch(error => {
-                this.setState({ error, loading: false });
-              });
-          })
-          .catch(error => {
-            this.setState({ error, loading: false });
-          });
+        if (img !== null) {
+          db.addImgToStorage({ file: img.file, path: `usr/${authUser.uid}` })
+            .then(imgUrl => {
+              const userProfileWithImg = { ...userProfile, photoURL: imgUrl };
+              createUser(userProfileWithImg);
+            })
+            .catch(error => {
+              this.setState({ error, loading: false });
+            });
+        } else {
+          createUser(userProfile);
+        }
       })
       .catch(error => {
         this.setState({ error, loading: false });
@@ -140,11 +147,17 @@ class SignUpForm extends Component {
       passwordOne !== passwordTwo ||
       passwordOne === '' ||
       email === '' ||
-      username === '' ||
-      img === null;
+      username === '' ;
+      // img === null;
 
     return (
-      <div style={{ width: '90%' }}>
+      <div
+        style={{
+          width:
+            // TODO
+            '90%'
+        }}
+      >
         <form onSubmit={this.onSubmit}>
           <div className="form-group">
             <label htmlFor="pwd">User Photo:</label>

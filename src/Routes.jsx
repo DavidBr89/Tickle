@@ -10,7 +10,7 @@ import CardAuthor from './components/DataView/CardAuthor';
 import Admin from './components/Admin';
 import Account from './components/Account';
 import Diary from './components/MyCards';
-import DefaultLayout from './components/Layout';
+import DefaultLayout from './components/DefaultLayout';
 
 import Grid from './components/DataView/GridView';
 
@@ -38,9 +38,7 @@ const Routes = ({ history }) => (
           routes.AUTH_ENV
         }/${GEO}`}/:selectedCardId?/:showOption?/:flipped?`}
         render={() => (
-          <DefaultLayout>
             <CardAuthor dataView={GEO} />
-          </DefaultLayout>
         )}
       />
       <Route
@@ -49,9 +47,7 @@ const Routes = ({ history }) => (
           routes.DATAVIEW
         }/${GEO}/:selectedCardId?/:showOption?/:flipped?`}
         render={() => (
-          <DefaultLayout>
             <CardView dataView={GEO} />
-          </DefaultLayout>
         )}
       />
       <Route

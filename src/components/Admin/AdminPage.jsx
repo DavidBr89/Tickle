@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { sortBy, deepEqual } from 'lodash';
 
 import PreviewCard from 'Cards/PreviewCard';
-import CardStack from 'Utils/CardStack/CardStack';
+import CardStack from 'Utils/Stack';
 
 import { BareModal, Modal, ModalBody } from 'Utils/Modal';
 
@@ -11,7 +11,7 @@ import CardReview from 'Components/cards/ConnectedReviewCard';
 
 import usrPlaceholderImg from './user-placeholder.png';
 
-import memoizeOne from 'memoize-one';
+// import memoizeOne from 'memoize-one';
 
 import {
   CHALLENGE_STARTED,

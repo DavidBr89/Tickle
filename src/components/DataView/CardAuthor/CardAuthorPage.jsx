@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FLOORPLAN, GEO } from 'Constants/dataViews';
 
+import DefaultLayout from 'Components/DefaultLayout';
+import { Modal, BareModal, ModalBody } from 'Utils/Modal';
+
+import EditCard from 'Components/cards/ConnectedEditCard';
 // import * as d3 from 'd3';
 
 // import { Motion, spring } from 'react-motion';
@@ -176,6 +180,7 @@ class CardAuthorPage extends Component {
       tagColorScale,
       cardSets,
       selectedTags,
+      selectedCard,
       isSmartphone,
       tagVocabularyCreated,
       extCardId
@@ -186,70 +191,90 @@ class CardAuthorPage extends Component {
     // slotSize / cards.length < slotSize ? 100 : slotSize * cards.length;
 
     return (
-      <div
-        className="w-100 h-100 flexCol"
+      <DefaultLayout
+        className="w-full h-full flex-col"
         style={{ position: 'relative', overflow: 'hidden' }}
+        menu={
+          <CardTagSearch
+            allTags={tagVocabularyCreated}
+            key={filterSet.join(',')}
+            onChange={filterCards}
+            onClick={addCardFilter}
+            data={filterSet}
+            height={height / 2 - 50}
+          />
+        }
       >
-        <CardTagSearch
-          allTags={tagVocabularyCreated}
-          key={filterSet.join(',')}
-          onChange={filterCards}
-          onSelect={() => selectCard(null)}
-          onClick={addCardFilter}
-          height={height / 2}
-          data={filterSet}
-        />
-
+        <BareModal visible={extCardId !== null}>
+          <EditCard {...selectedCard} dataView={dataView} />
+        </BareModal>
         <div
-          className="mt-3"
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            transition: 'opacity 0.5s',
-            marginBottom: 25,
-            // TODO: fix later
-            zIndex: 200,
-            // height: '25%'
-            height: height / 5
-          }}
+          className="w-full h-full flexCol"
+          style={{ position: 'relative', overflow: 'hidden' }}
         >
-          <CardStack
-            cards={cards}
-            selectedCardId={selectedCardId}
-            touch={isSmartphone}
-            duration={600}
-            className="ml-1 mr-2"
-            width={cardStackWidth}
-            height={100}
-            cardHeight={height / 4}
-            unit="%"
-            onClick={previewCardAction}
-            tagColorScale={tagColorScale}
-            slotSize={slotSize}
+          <CardTagSearch
+            allTags={tagVocabularyCreated}
+            key={filterSet.join(',')}
+            onChange={filterCards}
+            onSelect={() => selectCard(null)}
+            onClick={addCardFilter}
+            height={height / 2}
+            data={filterSet}
+          />
+
+          <div
+            clssName="mt-3"
             style={{
-              zIndex: 1000
+              display: 'flex',
+              justifyContent: 'center',
+              transition: 'opacity 0.5s',
+              marginBottom: 25,
+              // TODO: fix later
+              zIndex: 200,
+              // height: '25%'
+              height: height / 5
             }}
+          >
+            <CardStack
+              cards={cards}
+              selectedCardId={selectedCardId}
+              touch={isSmartphone}
+              duration={600}
+              className="ml-1 mr-2"
+              width={cardStackWidth}
+              height={100}
+              cardHeight={height / 4}
+              unit="%"
+              onClick={previewCardAction}
+              tagColorScale={tagColorScale}
+              slotSize={slotSize}
+              style={{
+                zIndex: 1000
+              }}
+            />
+          </div>
+          <CardDragAuthorOverlay
+            dataView={dataView}
+            cards={cards}
+            cardSets={cardSets}
+            selectedTags={selectedTags}
+            tagColorScale={tagColorScale}
+            selectedCardId={selectedCardId}
+            extCardId={extCardId}
+            previewCardAction={previewCardAction}
+            style={{
+              // TODO: remvoe for topic map
+              flex: '1 1 70%',
+              top: 0,
+              left: 0,
+              // TODO remove
+              position:
+                dataView === FLOORPLAN || dataView === GEO ? 'absolute' : null
+            }}
+            className="flexCol"
           />
         </div>
-        <CardDragAuthorOverlay
-          dataView={dataView}
-          cards={cards}
-          cardSets={cardSets}
-          selectedTags={selectedTags}
-          tagColorScale={tagColorScale}
-          selectedCardId={selectedCardId}
-          extCardId={extCardId}
-          previewCardAction={previewCardAction}
-          style={{
-            // TODO: remvoe for topic map
-            flex: '1 1 70%',
-            //TODO remove
-            position:
-              dataView === FLOORPLAN || dataView === GEO ? 'absolute' : null
-          }}
-          className="flexCol"
-        />
-      </div>
+      </DefaultLayout>
     );
   }
 }

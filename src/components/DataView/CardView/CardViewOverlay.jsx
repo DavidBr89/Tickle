@@ -1,6 +1,5 @@
 import React, { Fragment, Component } from 'react';
 
-import ConnectedCard from 'Cards/ConnectedCard';
 import DataOverlay from '../ForceOverlay/DataOverlay';
 // TODO integrate
 // import Marker from '../Marker';
@@ -38,8 +37,6 @@ const CardViewOverlay = props => {
     routeSelectCard
   } = props;
 
-  const extendedCard =
-    extCardId !== null ? cards.find(c => c.id === extCardId) : null;
   return (
     <React.Fragment>
       <Modal visible={selectedCardLocked}>
@@ -58,9 +55,6 @@ const CardViewOverlay = props => {
         </ModalBody>
       </Modal>
 
-      <BareModal visible={extCardId !== null}>
-        <ConnectedCard {...extendedCard} />
-      </BareModal>
 
       <DataOverlay
         className={className}
@@ -75,7 +69,6 @@ const CardViewOverlay = props => {
         extCardId={extCardId}
         filterSet={filterSet}
         userLocation={userLocation}
-        previewCardAction={previewCardAction}
         routeSelectCard={routeSelectCard}
         userview
         mode={dataView}
@@ -89,6 +82,10 @@ const CardViewOverlay = props => {
       >
         {d => (
           <CardMarker
+            onClick={e => {
+              e.stopPropagation();
+              previewCardAction(d);
+            }}
             color="whitesmoke"
             style={{
               position: 'absolute',
@@ -98,7 +95,7 @@ const CardViewOverlay = props => {
               // TODO: zIndex not working
               width: selectedCardId === d.id ? 40 : 25,
               height: selectedCardId === d.id ? 50 : 30,
-              zIndex: selectedCardId === d.id ? 5000 : 0
+              zIndex: selectedCardId === d.id ? 1 : 0
               // transition: 'width 300ms, height 300ms'
               // transform: selectedCardId === d.id && 'scale(2)'
             }}

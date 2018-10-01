@@ -15,38 +15,18 @@ export function fetchUserInfo(uid) {
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
   return function(dispatch) {
+    if(uid === null) return dispatch(setAuthUserInfo({ uid: null }));
+
     dispatch(setAuthUserInfo({ uid }));
-    if (uid !== null) {
-      return db
-        .getDetailedUserInfo(uid)
-        .then(usrInfo => {
-          const {
-            interests,
-            createdCards,
-            collectedCards,
-            ...userDetails
-          } = usrInfo;
 
-          const cardSets = setify([...createdCards, ...collectedCards]);
-
-          const numCollectedCards = collectedCards.length;
-          const numCreatedCards = createdCards.length;
-
-          const detailInfo = {
-            ...userDetails,
-            interests,
-            cardSets,
-            skills: cardSets,
-            collectedCards,
-            createdCards,
-            numCollectedCards,
-            numCreatedCards
-          };
-
-          dispatch(setAuthUserInfo({ uid, ...detailInfo }));
-        })
-        .catch(err => console.log('err', err));
-    }
+    // console.log('CALL WITH uid', uid);
+    return db
+      .getUser(uid)
+      .then(usrInfo => {
+        console.log('retrieve USR INFO', usrInfo);
+        dispatch(setAuthUserInfo({ uid, ...usrInfo }));
+      })
+      .catch(err => console.log('err', err));
   };
 }
 

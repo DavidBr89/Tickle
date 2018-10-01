@@ -144,6 +144,8 @@ export default class PhotoUpload extends Component {
           onChange={e => {
             const files = [...e.target.files];
             const imgName = e.target.files[0].name;
+
+            //TODO remove
             const imgType = imgName.slice(
               ((imgName.lastIndexOf('.') - 1) >>> 0) + 2
             );
@@ -154,7 +156,7 @@ export default class PhotoUpload extends Component {
             compress
               .compress(files, {
                 size: 1.5,
-                quality: 0.75,
+                quality: 0.6,
                 maxWidth: 1920,
                 // maxHeight: 800,
                 resize: true
