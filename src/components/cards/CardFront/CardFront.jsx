@@ -54,7 +54,11 @@ const ImgOverlay = ({ src, className, style, children, footer, onClick }) => (
     <img
       src={src || placeholderImgSrc}
       alt="Card img"
-      style={{ width: '100%', height: 'auto', ...style }}
+      style={{
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover'
+      }}
     />
     <div
       style={{

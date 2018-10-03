@@ -64,18 +64,15 @@ export default class FileUpload extends Component {
 
     return (
       <div
+        className="flex w-full items-center"
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          width: '60%',
-          // TODO: style is not passed down
           ...style
         }}
       >
         <label
           htmlFor="all-file-upload"
           style={{ width: '100%' }}
-          className={`${css(stylesheet.btn)} mt-2 `}
+          className={`${css(stylesheet.btn)}`}
         >
           <div
             style={{

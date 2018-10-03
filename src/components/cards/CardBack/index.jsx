@@ -205,7 +205,7 @@ class CardBackSkeleton extends Component {
     return (
       <div
         ref={cont => (this.cont = cont)}
-        className="flexCol flex-100"
+        className="flex flex-col"
         style={{
           // TODO outsource
           // border: '5px black solid',
@@ -219,11 +219,10 @@ class CardBackSkeleton extends Component {
           // pointerEvents: 'all'
         }}
       >
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <div className="flex-grow flex flex-col">
           <BackField
             title="Author"
             extended
-            disabled
             style={displayStyle('author')}
             onClick={() => this.selectField('author')}
           >
@@ -241,7 +240,6 @@ class CardBackSkeleton extends Component {
               style={{ ...displayStyle('map') }}
               edit={edit}
               title="Location"
-              disabled
               borderColor={uiColor}
             >
               <MapAreaControl

@@ -287,7 +287,9 @@ class Map extends Component {
       height,
       isCardDragging,
       showUser,
-      userMove
+      userMove,
+      routeSelectCard,
+      selectedCardId
     } = this.props;
 
     const { latitude, longitude, zoom } = viewport;
@@ -315,9 +317,10 @@ class Map extends Component {
         width={width}
         height={height}
         onViewportChange={newViewport => {
-          if (!isCardDragging) {
+          // if (!isCardDragging) {
             this.props.changeMapViewport({ ...newViewport });
-          }
+            if (selectedCardId !== null) routeSelectCard(null);
+          // }
         }}
         dragPan={!isCardDragging}
         dragRotate={false}

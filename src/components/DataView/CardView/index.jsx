@@ -221,7 +221,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     selectedTags,
     selectedCardId,
     extCardId,
-    selectedCardLocked, extendedCard
+    selectedCardLocked,
+    extendedCard, selectedCard
   };
 };
 

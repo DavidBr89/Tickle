@@ -16,44 +16,6 @@ import CardMarker from 'Components/utils/PreviewMarker';
 
 import { connect } from 'react-redux';
 
-const Navigation = () => (
-  <AuthUserContext.Consumer>
-    {authUser => (authUser ? <NavigationAuth /> : <NavigationNonAuth />)}
-  </AuthUserContext.Consumer>
-);
-
-const NavigationAuth = () => (
-  <ul style={{ zIndex: 2000 }}>
-    <div className="mt-3">
-      <Link to={routes.DATAVIEW}>
-        <button className={css(stylesheet.btn)} style={styleButton}>
-          <h1>DataView</h1>
-        </button>
-      </Link>
-    </div>
-    <div className="mt-3">
-      <button className={css(stylesheet.btn)} style={styleButton}>
-        <h1>Account</h1>
-      </button>
-    </div>
-  </ul>
-);
-
-const NavigationNonAuth = () => (
-  <h3>
-    <Link to={routes.SIGN_IN}>Sign In</Link>
-  </h3>
-);
-
-/*
-        <MiniForce
-          data={d3.range(0, 50).map(d => ({ id: d }))}
-          targetPos={[width / 2, 50]}
-        >
-          {d => <CardMarker x={d.x} y={d.y} />}
-        </MiniForce>
-*/
-
 const LandingPage = ({ onClick, width }) => (
   <div
     style={{
@@ -65,8 +27,8 @@ const LandingPage = ({ onClick, width }) => (
       justifyContent: 'center',
       alignItems: 'center',
       zIndex: 3000,
-      height: '100vh',
-      width: '100vw'
+      height: '100%',
+      width: '100%'
       // background: 'rgba(0, 0, 0, 0.3)'
     }}
   >

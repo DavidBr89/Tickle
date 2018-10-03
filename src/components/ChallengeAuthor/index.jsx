@@ -5,7 +5,7 @@ import * as Icon from 'react-feather';
 import { UIthemeContext, modalBorder, createShadowStyle } from 'Cards/styles'; // eslint-disable-line
 import TextChallengeAuthor from './TextChallengeAuthor';
 
-import { Modal, StyledModalBody } from 'Utils/Modal';
+import { Modal, ModalBody } from 'Utils/Modal';
 
 // import LearningObject from './LearningObject';
 
@@ -230,7 +230,7 @@ class ChallengeAuthorModalBody extends React.Component {
     // challenge.img.url === null;
 
     return (
-      <StyledModalBody
+      <ModalBody
         uiColor={uiColor}
         onClose={onClose}
         title={title}
@@ -261,7 +261,7 @@ class ChallengeAuthorModalBody extends React.Component {
             });
           }}
         />
-      </StyledModalBody>
+      </ModalBody>
     );
   }
 }

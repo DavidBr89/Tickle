@@ -81,18 +81,6 @@ class PreviewCard extends Component {
     accessible: true
   };
 
-  shouldComponentUpdate(nextProps) {
-    // const { selected, title, tags, img } = this.props;
-    // return (
-    //   selected !== nextProps.selected ||
-    //   title !== nextProps.title ||
-    //   // TODO: fix array comparison
-    //   (tags !== null && tags.length !== nextProps.tags.length) ||
-    //   img !== nextProps.img
-    // );
-    return true;
-  }
-
   render() {
     const {
       title,
@@ -124,9 +112,9 @@ class PreviewCard extends Component {
 
     if (!accessible)
       return (
-        <div style={contStyle} onClick={onClick} className="flexCol">
+        <div style={contStyle} onClick={onClick} className="flex flex-col">
           <div
-            className="flexCol"
+            className="flex flex-col align-center"
             style={{
               flex: '0 1 100%',
               justifyContent: 'center',

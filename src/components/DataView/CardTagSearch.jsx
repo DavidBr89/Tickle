@@ -13,7 +13,7 @@ function CardTagSearch({
 }) {
   return (
     <div
-      className="m-2 z-50"
+      className="m-2 z-20"
       style={{
         display: 'flex',
         justifyContent: 'flex-end',

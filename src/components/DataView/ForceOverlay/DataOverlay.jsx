@@ -73,6 +73,7 @@ const SelectedComp = ({ ...props }) => {
           preview={d => routeSelectCard(d.id)}
           nodes={data}
           colorScale={colorScale}
+          routeSelectCard={routeSelectCard}
         >
           {children}
         </MapComp>

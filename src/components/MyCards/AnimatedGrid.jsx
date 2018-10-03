@@ -143,7 +143,7 @@ export default class MyDiary extends Component {
       height: '100%',
       display: 'grid',
       // gridAutoFlow: 'column dense',
-      gridTemplateColumns: `repeat(${tmpColNum}, ${100 / tmpColNum}%)`,
+      gridTemplateColumns: `repeat(auto-fill, minmax(200px, 1fr))`,
       gridTemplateRows: `repeat(${Math.ceil(
         cards.length / tmpColNum
       )}, ${tmpRowHeight}px)`
@@ -235,6 +235,7 @@ export default class MyDiary extends Component {
           visible={cardExtended}
           uiColor="grey"
           background="transparent"
+            style={{ margin: `auto` }}
         >
           <ConnectedCard {...selectedCard} />
         </BareModal>
@@ -246,9 +247,7 @@ export default class MyDiary extends Component {
           }}
         >
           <div>
-            Your {cardTypeText(selectedCardType)} {numSeenCards}/{
-              numCollectibleCards+' '
-            }
+            Your {cardTypeText(selectedCardType)} {numSeenCards}/{`${numCollectibleCards} `}
             cards
           </div>
           {cards.length === 0 ? (

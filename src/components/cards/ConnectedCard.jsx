@@ -25,7 +25,7 @@ import { PreviewTags } from 'Utils/Tag';
 import { stylesheet } from 'Src/styles/GlobalThemeContext';
 import { MediaList } from 'Utils/MediaUpload';
 
-//TODO: outsource
+// TODO: outsource
 const ChallengeResult = ({
   onClose,
   media,
@@ -123,6 +123,7 @@ const CardViewable = ({
           key={props.id}
           challengeSubmission={props.challengeSubmission}
           onUpdate={newChallengeSub => {
+            console.log('MEDIA CHALL props', props);
             onSubmitChallenge({
               cardId: props.id,
               ...newChallengeSub

@@ -292,24 +292,31 @@ class MediaChallenge extends Component {
       >
         <ScrollView ref={scroller => (this._scroller = scroller)}>
           <div
-            className="flexCol flex-full"
+            className="flex flex-col flex-grow"
             ref={cont => (this.cont = cont)}
-            style={{ minHeight: 300 }}
           >
-            <p
-              style={{
-                width: '100%',
-                maxHeight: '100%',
-                overflow: 'scroll',
-                flexShrink: 0,
-                flexGrow: 0
-              }}
+            <div
+              className="flex-initial"
+              style={{ width: '100%', flex: '0 0 150px' }}
             >
-              {description}
-            </p>
+              <p
+                style={{
+                  width: '100%',
+                  maxHeight: '100%',
+                  overflow: 'scroll',
+                  flexShrink: 0,
+                  flexGrow: 0
+                }}
+              >
+                {description}
+              </p>
+            </div>
 
             <ScrollElement name="textArea">
-              <div style={{ width: '100%', flexShrink: 0, flexGrow: 0 }}>
+              <div
+                className="border-grey"
+                style={{ width: '100%', flex: '0 0 150px' }}
+              >
                 <h5>Response</h5>
                 <textarea
                   style={{ width: '100%' }}
@@ -332,9 +339,9 @@ class MediaChallenge extends Component {
 
             <ScrollElement name="mediaUpload">
               <MediaUpload
+                className="flex-grow"
                 disabled={completed}
                 btnText="Upload Media"
-                style={{ width: '100%', flex: '0 0' }}
                 uploadPath={id => `challengeSubmissionFiles/${id}`}
                 media={media}
                 stylesheet={stylesheet}
@@ -347,7 +354,7 @@ class MediaChallenge extends Component {
             </ScrollElement>
             <div
               className="flexCol mb-3"
-              style={{ flex: '1 0 auto', justifyContent: 'flex-end' }}
+              style={{ justifyContent: 'flex-end' }}
             >
               <ScrollElement name="info">
                 <SubmitInfo

@@ -54,10 +54,11 @@ class DimensionsWrapper extends React.Component {
   }
 
   render() {
-    const { children } = this.props;
+    const { children, className} = this.props;
     const { width, height } = this.state;
     return (
       <div
+        className={className}
         ref={node => (this.node = node)}
         style={{ height: '100%', width: '100%' }}
       >

@@ -1,13 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
+
+import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 // import chroma from 'chroma-js';
 import { css } from 'aphrodite/no-important';
 import * as Icon from 'react-feather';
 
-import { connect } from 'react-redux';
+// import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
-import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 import {
   stylesheet as defaultStylesheet,
   uiColor as defaultUiColor
@@ -28,18 +30,29 @@ export const InlineModal = ({
     style={{
       width: '100%',
       height: '100%',
-      opacity: visible ? 1 : 0,
-      transition: 'opacity 1s',
-      pointerEvents: !visible  ? 'none' : null,
+      position: visible ? 'fixed' : 'absolute',
+      // opacity: visible ? 1 : 0,
+      transition: 'top 0.4s',
+      pointerEvents: !visible ? 'none' : null,
       zIndex: 30000,
       left: 0,
-      top: 0,
+      top: visible ? 0 : '200%',
+      // top: 0,
       right: 0,
-      bottom: 0,
-      position: 'fixed'
+      bottom: 0
     }}
   >
-    {children}
+    <div
+      className="h-full"
+      style={{
+        maxWidth: 500,
+        maxHeight: 800,
+        margin: 'auto',
+        ...style
+      }}
+    >
+      {children}
+    </div>
   </div>
 );
 
@@ -49,90 +62,7 @@ export const BareModal = props =>
     document.querySelector('body')
   );
 
-export const PureModal = ({
-  visible,
-  children,
-  style,
-  uiColor,
-  width,
-  height
-  // background,
-}) =>
-  ReactDOM.createPortal(
-    <div
-      style={{
-        width: '100%',
-        height: '100%',
-        background: 'rgba(0, 0, 0, 0.5)',
-        opacity: visible ? 1 : 0,
-        transition: 'opacity 1s',
-        zIndex: visible ? '100000' : '-10',
-        left: 0,
-        top: 0,
-        right: 0,
-        position: 'fixed'
-      }}
-    >
-      <div
-        className="modal fade show"
-        style={{
-          opacity: visible ? 1 : 0,
-          display: visible ? 'block' : 'none',
-          width: '100%',
-          height: '100%'
-        }}
-      >
-        <div
-          style={{
-            height: '100%',
-            margin: 'auto', // margin: '1.75rem auto',
-            transform: 'translate(0, 0)',
-            maxWidth: 500,
-            maxHeight: 800,
-            ...style
-          }}
-        >
-          <div
-            className="modal-content"
-            style={{
-              width: '100%',
-              height: '100%',
-              maxWidth: 500,
-              maxHeight: 800,
-              overflow: 'hidden'
-            }}
-          >
-            {children}
-          </div>
-        </div>
-      </div>
-    </div>,
-    document.querySelector('body')
-  );
-
-PureModal.propTypes = {
-  visible: PropTypes.bool,
-  background: PropTypes.string,
-  title: PropTypes.string,
-  children: PropTypes.node,
-  onClose: PropTypes.func,
-  onSave: PropTypes.func,
-  style: PropTypes.object,
-  uiColor: PropTypes.object,
-  footer: PropTypes.oneOf([PropTypes.node, null])
-};
-
-PureModal.defaultProps = {
-  visible: true,
-  title: null,
-  children: <div>test</div>,
-  onClose: () => null,
-  onSave: () => null,
-  style: {},
-  background: 'green',
-  uiColor: defaultUiColor,
-  footer: null
-};
+export const Modal = BareModal;
 
 // TODO: fix padding bottom
 // TODO: access child state
@@ -145,7 +75,18 @@ export const ModalBody = ({
   uiColor = defaultUiColor,
   onClose
 }) => (
-  <React.Fragment>
+  <div
+    className="modal-content flex flex-col"
+    style={{
+      height: '100%',
+      margin: 'auto', // margin: '1.75rem auto',
+      transform: 'translate(0, 0)',
+      maxWidth: 500,
+      maxHeight: 800,
+      background: 'whitesmoke',
+      ...style
+    }}
+  >
     <div
       style={{
         padding: '0.5rem',
@@ -163,8 +104,9 @@ export const ModalBody = ({
       </button>
     </div>
     <div
-      className="flexCol flex-100"
+      className="flex flex-col"
       style={{
+        flex: '1 1 auto',
         overflowY: 'scroll',
         paddingTop: '1rem',
         paddingLeft: '1rem',
@@ -187,29 +129,7 @@ export const ModalBody = ({
         {footer}
       </div>
     )}
-  </React.Fragment>
-);
-
-const mapStateToProps = state => ({ ...state.Screen });
-const mergeProps = (stateProps, dispatchProps, ownProps) => ({
-  ...stateProps,
-  ...ownProps
-});
-
-export const Modal = connect(
-  mapStateToProps,
-  null,
-  mergeProps
-)(PureModal);
-
-export const StyledModalBody = ({ children, ...props }) => (
-  <CardThemeConsumer>
-    {({ stylesheet }) => (
-      <ModalBody stylesheet={stylesheet} {...props}>
-        {children}
-      </ModalBody>
-    )}
-  </CardThemeConsumer>
+  </div>
 );
 
 ModalBody.propTypes = {
@@ -227,3 +147,23 @@ ModalBody.defaultProps = {
   uiColor: 'grey',
   styles: {}
 };
+
+const mapStateToProps = state => ({ ...state.Screen });
+
+const mergeProps = (stateProps, _, ownProps) => ({
+  ...stateProps,
+  ...ownProps
+});
+
+const ResponsiveModal = ({ isSmartphone, ...props }) => (
+  <BareModal
+    {...props}
+    style={{ margin: `${!isSmartphone ? '2.5rem' : ''} auto` }}
+  />
+);
+
+export const ConnectedResponsiveModal = connect(
+  mapStateToProps,
+  null,
+  mergeProps
+)(ResponsiveModal);

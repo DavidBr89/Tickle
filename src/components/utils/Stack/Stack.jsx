@@ -30,11 +30,6 @@ function centerLayout({
 
   const leftPositions = data
     .slice(0, selectedIndex)
-    // TODO: change later
-    // TODO: change later
-    // TODO: change later
-    // TODO: change later
-    // TODO: change later
     .slice(selectedIndex > 10 ? 7 : 0, selectedIndex)
     .map((c, j) => ({
       index: c.index,
@@ -123,7 +118,7 @@ class CardStack extends Component {
     duration: 100,
     width: 100,
     innerMargin: 0,
-    unit: 'vw',
+    unit: 'px',
     slotSize: 100 / 3,
     centered: true,
     children: d => d,
@@ -131,17 +126,10 @@ class CardStack extends Component {
     direction: 'horizontal'
   };
 
-  constructor(props) {
-    super(props);
-
-    // TODO: check later
-    // this.transitionStyles = transition.bind(this);
-  }
-
   render() {
     const {
       data,
-      innerMargin,
+      // innerMargin,
       style,
       className,
       children,
@@ -164,12 +152,12 @@ class CardStack extends Component {
       );
     // const { cardStacks } = this.state;
 
-    // TODO: change later
-    const tmpData = data.map((d, i) => ({ ...d, index: i }));
+    // TODO: change later, i as key is not good
+    const keyData = data.map((d, i) => ({ ...d, index: i }));
 
     const dataPos = centered
-      ? centerLayout({ ...this.props, data: tmpData })
-      : baseLayout({ ...this.props, data: tmpData });
+      ? centerLayout({ ...this.props, data: keyData })
+      : baseLayout({ ...this.props, data: keyData });
 
     const centerPos = c =>
       direction === 'vertical'
@@ -178,8 +166,8 @@ class CardStack extends Component {
 
     const size =
       direction === 'horizontal'
-        ? { width: `${slotSize - innerMargin}${unit}` }
-        : { height: `${slotSize - innerMargin}${unit}` };
+        ? { width: `${slotSize}${unit}` }
+        : { height: `${slotSize}${unit}` };
 
     return (
       <div
@@ -188,24 +176,22 @@ class CardStack extends Component {
           ...style,
           height: `${height}${unit}`,
           width: `${width}${unit}`,
-          position: 'relative',
-          display: 'flex',
-          justifyContent: 'center'
+          position: 'relative'
+          // display: 'flex',
+          // justifyContent: 'center'
         }}
       >
-        {tmpData.map((d, i) => {
+        {keyData.map((d, i) => {
           const p = dataPos.find(e => e.index === d.index) || null;
           if (p === null) return null;
           return (
             <div
-              key={p.index}
+              key={d.index}
               style={{
                 position: 'absolute',
-                paddingLeft: `${innerMargin / 2}${unit}`,
-                paddingRight: `${innerMargin / 2}${unit}`,
                 cursor: 'pointer',
                 transition: `left ${duration}ms, top ${duration}ms, transform ${duration}ms`,
-                zIndex: p.zIndex,
+                zIndex: d.index,
                 width: '100%',
                 height: '100%',
                 ...size,

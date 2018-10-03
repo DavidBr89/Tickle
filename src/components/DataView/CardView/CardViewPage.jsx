@@ -18,13 +18,13 @@ import ToggleSwitch from 'Utils/ToggleSwitch';
 
 import DefaultLayout from 'Components/DefaultLayout';
 
-
 import CardTagSearch from '../CardTagSearch';
 
 import CardViewOverlay from './CardViewOverlay';
 
+import CardModal from 'Components/cards/CardModal';
 import ConnectedCard from 'Cards/ConnectedCard';
-import { Modal, BareModal, ModalBody } from 'Utils/Modal';
+import { Modal, BareModal, ModalBody, ConnectedResponsiveModal} from 'Utils/Modal';
 
 // import { StyledButton } from 'Utils/StyledComps';
 
@@ -46,6 +46,7 @@ const LoadingScreen = ({ visible, style }) => {
   }
   return null;
 };
+
 class CardViewPage extends Component {
   static propTypes = {
     cards: PropTypes.array,
@@ -132,11 +133,14 @@ class CardViewPage extends Component {
       isLoadingCards,
       seeCard,
       extendedCard,
-      selectedCard
+      selectedCard,
+      width
     } = this.props;
 
-    const slotSize = 100 / 3.5;
-    const cardStackWidth = 100;
+    // const slotSize = width / 3;
+    // const cardStackWidth = width;
+    const slotSize = Math.min(width / 3.5, 200);
+    // const cardStackWidth = width;
 
     // TODO change later
     cards.map(c => !c.seen && seeCard(c.id));
@@ -167,15 +171,12 @@ class CardViewPage extends Component {
         >
           <CardStack
             cards={cards}
-            edit={false}
             touch={isSmartphone}
             selectedCardId={selectedCardId}
             duration={600}
             className="ml-1 mr-2"
-            width={cardStackWidth}
-            height={100}
-            cardHeight={height / 4}
-            unit="%"
+            width={width}
+            height={height / 4}
             onClick={previewCardAction}
             tagColorScale={tagColorScale}
             slotSize={slotSize}
@@ -186,12 +187,12 @@ class CardViewPage extends Component {
         </div>
         <LoadingScreen style={{ marginTop: 25 }} visible={isLoadingCards} />
 
-        <BareModal visible={extendedCard !== null}>
-          <ConnectedCard
-            {...selectedCard}
-            style={{ margin: `${!isSmartphone ? '5rem' : ''} auto` }}
-          />
-        </BareModal>
+        <ConnectedResponsiveModal
+          visible={extendedCard !== null}
+          style={{ margin: `${!isSmartphone ? '2.5rem' : ''} auto` }}
+        >
+          <ConnectedCard {...selectedCard} />
+        </ConnectedResponsiveModal>
 
         <CardViewOverlay
           {...this.props}

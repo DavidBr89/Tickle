@@ -64,7 +64,7 @@ class Menu extends Component {
               style={{ pointerEvents: 'inherit' }}
             />
           </button>
-          <div className="flex-grow">{ui}</div>
+          <div className="flex-grow flex items-center">{ui}</div>
         </nav>
 
         <div

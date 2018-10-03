@@ -13,7 +13,7 @@ import { css } from 'aphrodite/no-important';
 import ChallengeAuthorModalBody from 'Src/components/ChallengeAuthor';
 import { extractCardFields } from 'Constants/cardFields';
 
-import { Modal, StyledModalBody } from 'Utils/Modal';
+import { Modal, ModalBody } from 'Utils/Modal';
 import { MediaSearch, MediaOverview } from '../MediaSearch';
 import { coverPhotoStyle } from '../styles';
 
@@ -75,7 +75,7 @@ class NumberInput extends Component {
     const { value, error } = this.state;
     const disabled = error !== null;
     return (
-      <StyledModalBody
+      <ModalBody
         {...this.props}
         onClose={() => onClose()}
         footer={
@@ -99,7 +99,7 @@ class NumberInput extends Component {
           }}
         />
         <div>{error}</div>
-      </StyledModalBody>
+      </ModalBody>
     );
   }
 }
@@ -149,7 +149,7 @@ class TextAreaModal extends Component {
     const { text } = this.state;
 
     return (
-      <StyledModalBody
+      <ModalBody
         {...this.props}
         onClose={() => onUpdate(text)}
         footer={<FooterBtn onClick={() => onUpdate(text)}>Update</FooterBtn>}
@@ -168,7 +168,7 @@ class TextAreaModal extends Component {
             {text}
           </textarea>
         </div>
-      </StyledModalBody>
+      </ModalBody>
     );
   }
 }
@@ -187,7 +187,7 @@ class TitleModal extends Component {
     const { text } = this.state;
 
     return (
-      <StyledModalBody
+      <ModalBody
         {...this.props}
         onClose={() => onUpdate(text)}
         footer={<FooterBtn onClick={() => onUpdate(text)}>Update</FooterBtn>}
@@ -203,7 +203,7 @@ class TitleModal extends Component {
             value={text}
           />
         </div>
-      </StyledModalBody>
+      </ModalBody>
     );
   }
 }
@@ -222,7 +222,7 @@ class TitleModal extends Component {
 //     const { text } = this.state;
 //
 //     return (
-//       <StyledModalBody
+//       <ModalBody
 //         {...this.props}
 //         onClose={() => onUpdate(text)}
 //         footer={<FooterBtn onClick={() => onUpdate(text)}>Update</FooterBtn>}
@@ -238,7 +238,7 @@ class TitleModal extends Component {
 //             value={text}
 //           />
 //         </div>
-//       </StyledModalBody>
+//       </ModalBody>
 //     );
 //   }
 // }
@@ -335,7 +335,7 @@ class EditCardFront extends PureComponent {
         );
       case 'Tags':
         return (
-          <StyledModalBody
+          <ModalBody
             onClose={this.onCloseModal}
             {...modalProps}
             footer={closeBtn}
@@ -348,11 +348,11 @@ class EditCardFront extends PureComponent {
               data={tags}
               vocabulary={tagVocabulary}
             />
-          </StyledModalBody>
+          </ModalBody>
         );
       case 'Photo':
         return (
-          <StyledModalBody
+          <ModalBody
             {...modalProps}
             onClose={this.onCloseModal}
             footer={closeBtn}
@@ -367,7 +367,7 @@ class EditCardFront extends PureComponent {
                 this.updateField({ img: imgObj, dialog: null });
               }}
             />
-          </StyledModalBody>
+          </ModalBody>
         );
       case 'Description':
         return (
@@ -383,7 +383,7 @@ class EditCardFront extends PureComponent {
         );
       case 'Media':
         return (
-          <StyledModalBody
+          <ModalBody
             footer={closeBtn}
             {...modalProps}
             onClose={this.onCloseModal}
@@ -396,7 +396,7 @@ class EditCardFront extends PureComponent {
                 this.updateField({ media: mediaItems });
               }}
             />
-          </StyledModalBody>
+          </ModalBody>
         );
       case 'Challenge':
         return (

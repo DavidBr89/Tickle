@@ -29,7 +29,8 @@ class DataUploadForm extends Component {
     stylesheet: defaultStylesheet,
     style: {},
     buttonStyle: {},
-    btnText: 'Browse Files'
+    btnText: 'Browse Files',
+    fileName: null
   };
 
   state = { description: null, imgUrl: null, file: null, type: TEXT };
@@ -55,10 +56,7 @@ class DataUploadForm extends Component {
         style={{
           display: 'flex',
           alignItems: 'center',
-          // width: '70%',
           ...style
-          // justifyContent: 'space-between',
-          // height: '100%'
         }}
       >
         <FileUpload
@@ -70,26 +68,11 @@ class DataUploadForm extends Component {
             let ftype = TEXT;
             if (newFile.name.match(imgRegex)) ftype = IMG;
             if (newFile.name.match(videoRegex)) ftype = VIDEO;
-
-            this.setState({ imgUrl: url, file: newFile, type: ftype });
+            const st = { imgUrl: url, file: newFile, type: ftype };
+            onChange({ ...st });
+            this.setState(st);
           }}
         />
-        <button
-          className={`${css(btn)} ml-2`}
-          disabled={disabledUpload}
-          style={{
-            fontWeight: 'bold',
-            flex: '1 1 auto',
-            opacity: disabledUpload ? 0.6 : 1,
-            transition: 'opacity 200ms'
-          }}
-          onClick={() => {
-            onChange({ imgUrl, file, type });
-            this.setState({ imgUrl: null, file: null });
-          }}
-        >
-          Add
-        </button>
       </div>
     );
   }
@@ -213,7 +196,8 @@ class MediaUpload extends Component {
 
   state = { media: [], pendingMedia: [], ...this.props };
 
-  addMediaItem = ({ url, file, type }) => {
+  addMediaItem = ({ file, type }) => {
+    console.log('add media item', file, type);
     const { media } = this.state;
     const id = `${type}_${media.length}${file.name}`;
     const pendingMediaItem = { file, id, name: id, url: null, type };
@@ -241,16 +225,21 @@ class MediaUpload extends Component {
     const { onChange, uploadPath } = this.props;
     const { media, pendingMedia } = this.state;
 
+    console.log('pending media', pendingMedia);
     if (oldMedia.length !== media.length) {
       onChange(media);
     }
 
     if (pendingMedia.length > 0) {
-      const promises = pendingMedia.map(({ file, ...rest }) =>
-        db
-          .addFileToStorage({ file, path: uploadPath(rest.id) })
-          .then(url => ({ ...rest, name: rest.id, url }))
-      );
+      const promises = pendingMedia.map(({ file, ...rest }) => {
+        const path = uploadPath(rest.id);
+        console.log('path', path);
+        return db.addFileToStorage({ file, path }).then(url => ({
+          ...rest,
+          name: rest.id,
+          url
+        }));
+      });
 
       Promise.all(promises).then(uploadedMediaItems =>
         this.setState({
@@ -262,30 +251,31 @@ class MediaUpload extends Component {
   }
 
   render() {
+    const {
+      nodeWrapper,
+      style,
+      stylesheet,
+      disabled,
+      btnText,
+      className
+    } = this.props;
     const { media, pendingMedia } = this.state;
-    const { nodeWrapper, style, stylesheet, disabled, btnText} = this.props;
     const allMedia = [...media, ...pendingMedia];
     const maxHeight = '200%';
     return (
-      <div className="flexCol" style={{ flexShrink: 0 }}>
-        <DataUploadForm
-          btnText={btnText}
+      <div className={`${className} flex flex-col`}>
+        <FileUpload
           disabled={disabled}
-          style={{ width: '100%' }}
-          stylesheet={stylesheet}
-          onChange={this.addMediaItem}
+          btnText={btnText}
+          onChange={({ url, file: newFile }) => {
+            const ftype = TEXT;
+            const st = { imgUrl: url, file: newFile, type: ftype };
+            this.addMediaItem({ ...st });
+          }}
         />
-        <div
-          className={`mt-3 mb-3 p-1 ${css(stylesheet.border)}`}
-          style={
-            {
-              // border: '1px solid grey'
-            }
-          }
-        >
+        <div className="flex flex-col flex-grow mt-3 mb-3 p-1 border">
           {allMedia.length > 0 ? (
             <div
-              className="flexCol flex-100"
               style={{
                 flex: '0 0 100%'
               }}
@@ -299,13 +289,7 @@ class MediaUpload extends Component {
               />
             </div>
           ) : (
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
-            >
+            <div className="flex-grow flex justify-center items-center ">
               <div className="text-muted" style={{ fontSize: 'x-large' }}>
                 No Media added
               </div>

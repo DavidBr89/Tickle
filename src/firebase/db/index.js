@@ -31,8 +31,8 @@ const pruneFields = fields => {
 
 const thumbFileName = fileName => `thumb_${fileName}`;
 
-const CARDS = 'staging_vds_geo_cards';
-const USERS = 'staging_vds_geo_users';
+const CARDS = 'vds_geo_cards';
+const USERS = 'vds_geo_users';
 const getShallowCards = (uid = null) => {
   // console.log('UID', uid);
   const firePr =
