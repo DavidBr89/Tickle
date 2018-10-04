@@ -24,7 +24,7 @@ import { Modal, BareModal, ModalBody } from 'Utils/Modal';
 
 import Map from './Map';
 import UserMap from './UserMap';
-import Floorplan from './FloorPlanExp';
+import Floorplan from './FloorPlanExp/ClusteredFloor';
 import TreeMapCluster from './TreeMapCluster';
 
 const SelectedComp = ({ ...props }) => {
@@ -81,20 +81,18 @@ const SelectedComp = ({ ...props }) => {
     }
     case FLOORPLAN: {
       return (
-        <div ref={zc => (this.zoomCont = zc)}>
-          <Floorplan
-            {...this.props}
-            width={width}
-            height={height}
-            data={data}
-            edit={author}
-            colorScale={colorScale}
-            zoom
-            noPreview={noPreview}
-          >
-            {noPreview}
-          </Floorplan>
-        </div>
+        <Floorplan
+          {...props}
+          width={width}
+          height={height}
+          data={data}
+          edit={author}
+          colorScale={colorScale}
+          zoom
+          noPreview={noPreview}
+        >
+          {children}
+        </Floorplan>
       );
     }
     case TAGS: {

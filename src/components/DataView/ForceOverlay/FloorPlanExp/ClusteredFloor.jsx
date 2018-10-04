@@ -19,6 +19,23 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { addCardFilter, removeCardFilter } from 'Reducers/DataView/actions';
 
+import CardCluster from '../CardCluster';
+import Cluster from '../Cluster';
+
+import ArrayPipe from 'Components/utils/ArrayPipe';
+
+const Voronoi = ({ data, children, width, height }) => {
+  const vor = d3
+    .voronoi()
+    .x(d => d.x)
+    .y(d => d.y)
+    .extent([[-1, -1], [width + 1, height + 1]]);
+
+  const polys = vor.polygons(data);
+  console.log('polys', polys);
+  return children(polys.map(d3.polygonCentroid));
+};
+
 function ClusterPlaceholder({
   coords: [x, y],
   colorScale,
@@ -139,7 +156,7 @@ class ClusteredFloor extends Component {
 
     const card = data.filter(n => n.id === selectedCardId).map(children);
     return (
-      <div className="yo" ref={e => (this.container = e)}>
+      <div ref={e => (this.container = e)}>
         {card}
         <Floorplan {...this.props}>
           {nn => (
@@ -167,45 +184,54 @@ class ClusteredFloor extends Component {
                       transformOrigin: '0 0'
                     }}
                   />
-
-                  <FloorCluster
-                    radius={() => 50}
+                  <Cluster
+                    radius={() =>
+                      // console.log('d', d);
+                      40
+                    }
                     nodes={zn}
                     width={width}
                     height={height}
                     colorScale={colorScale}
                   >
-                    {cls =>
-                      cls.map(({ centerPos: [x, y], ...d }) => (
-                        <ClusterPlaceholder
-                          onClick={e => {
-                            e.preventDefault();
-                            console.log('d3.event', d3.event);
-                            // d3.event.stopImmmediatePropagation();
-                            const commons = intersection(
-                              ...d.values.map(e => e.tags)
-                            );
-                            const commonTag =
-                              commons.length > 0 ? commons[0] : null;
-
-                            if (
-                              commonTag !== null &&
-                              !filterSet.includes(commonTag)
-                            )
-                              addCardFilter(commonTag);
-                            else {
-                              removeCardFilter(commonTag);
-                            }
-                          }}
-                          coords={[x, y]}
-                          centroid={[x, y]}
-                          size={40}
-                          colorScale={colorScale}
-                          {...d}
-                        />
-                      ))
-                    }
-                  </FloorCluster>
+                    {clusters => (
+                      <React.Fragment>
+                        <ArrayPipe array={clusters}>
+                          {({ id, x, y, data: d }) => (
+                            <CardCluster
+                              id={id}
+                              coords={[x, y]}
+                              centroid={[x, y]}
+                              size={65}
+                              data={d}
+                              onClick={() => {
+                                // TODO
+                                // preview(d.values[0]);
+                              }}
+                            >
+                              {children}
+                            </CardCluster>
+                          )}
+                        </ArrayPipe>
+                        <Voronoi width={width} height={height} data={clusters}>
+                          {polygons =>
+                            polygons.map(p => (
+                              <div
+                                style={{
+                                  position: 'absolute',
+                                  left: p[0],
+                                  top: p[1],
+                                  background: 'gold',
+                                  width: 20,
+                                  height: 20
+                                }}
+                              />
+                            ))
+                          }
+                        </Voronoi>
+                      </React.Fragment>
+                    )}
+                  </Cluster>
                 </div>
               )}
             </ZoomCont>

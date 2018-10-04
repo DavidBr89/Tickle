@@ -148,7 +148,8 @@ class PreviewCard extends Component {
               style={{
                 display: 'block',
                 width: '100%',
-                height: '100%'
+                height: '100%',
+                objectFit: 'cover'
               }}
               src={selImg}
               alt="Card cap"

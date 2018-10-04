@@ -194,7 +194,16 @@ export function asyncRemoveCard(cid) {
 }
 
 export function asyncUpdateCard({ cardData, viewport, dataView }) {
-  const updatedCard = updateDataDim({ rawData: cardData, viewport, dataView });
+  const { x = null, y = null } = cardData;
+  console.log('X', x, 'Y', y);
+  const updatedCard =
+    x !== null && y !== null
+      ? {
+          ...cardData,
+          ...updateDataDim({ cardData, viewport, dataView })
+        }
+      : cardData;
+
   return function(dispatch) {
     dispatch(updateCard(updatedCard));
     return db

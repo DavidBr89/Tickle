@@ -77,20 +77,12 @@ class FloorEditor extends Component {
 
   render() {
     const { width, height, selectedCardId, children, zoom } = this.props;
-    return (
-      <FloorPlan {...this.props}>
-        {nn => (zoom ? this.zoomable(nn) : this.notZoomable(nn))}
-      </FloorPlan>
-    );
+    return <FloorPlan {...this.props}>{this.zoomable}</FloorPlan>;
   }
 }
 
 function index({ edit, children, ...props }) {
-  return edit ? (
-    <FloorEditor {...props}>{children}</FloorEditor>
-  ) : (
-    <ClusteredFloor {...props}>{children}</ClusteredFloor>
-  );
+  return <ClusteredFloor {...props}>{this.zoomable}</ClusteredFloor>;
 }
 
 index.defaultProps = {};

@@ -37,18 +37,21 @@ const Routes = ({ history }) => (
         path={`${`${
           routes.AUTH_ENV
         }/${GEO}`}/:selectedCardId?/:showOption?/:flipped?`}
-        render={() => (
-            <CardAuthor dataView={GEO} />
-        )}
+        render={() => <CardAuthor dataView={GEO} />}
+      />
+      <Route
+        exact
+        path={`${
+          routes.DATAVIEW
+        }/${FLOORPLAN}/:selectedCardId?/:showOption?/:flipped?`}
+        render={() => <CardView dataView={FLOORPLAN} />}
       />
       <Route
         exact
         path={`${
           routes.DATAVIEW
         }/${GEO}/:selectedCardId?/:showOption?/:flipped?`}
-        render={() => (
-            <CardView dataView={GEO} />
-        )}
+        render={() => <CardView dataView={GEO} />}
       />
       <Route
         exact

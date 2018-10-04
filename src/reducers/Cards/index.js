@@ -241,7 +241,7 @@ function reducer(state = INITIAL_STATE, action) {
       const { cardData, viewport, dataView } = action.options;
 
       const updatedTemplate = updCardDataDim({
-        rawData: { ...cardData, template: true },
+        cardData,
         viewport,
         dataView
       });

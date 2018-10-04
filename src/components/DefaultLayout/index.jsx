@@ -38,14 +38,19 @@ class Menu extends Component {
 
   // state = {
   //   open: false
-  //jhhhjj};
+  // jhhhjj};
 
   render() {
     const { style, open, children, onToggle, ui } = this.props;
     return (
-      <div className="z-50 w-full" style={{ ...style,
-        //TODO
-        zIndex: 30000 }}>
+      <div
+        className="z-50 w-full"
+        style={{
+          ...style,
+          // TODO
+          zIndex: 30000
+        }}
+      >
         <nav className="navbar flex">
           <button
             onClick={onToggle}
@@ -64,7 +69,7 @@ class Menu extends Component {
               style={{ pointerEvents: 'inherit' }}
             />
           </button>
-          <div className="flex-grow flex items-center">{ui}</div>
+          <div className="flex-grow flex justify-end">{ui}</div>
         </nav>
 
         <div

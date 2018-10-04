@@ -36,6 +36,8 @@ import { userMove, changeMapViewport } from 'Reducers/Map/actions';
 // TODO check whether it's only created once
 const history = createBrowserHistory();
 
+// db.readCopyUsers();
+
 const defaultLocation = {
   latitude: 50.85146,
   longitude: 4.315483,

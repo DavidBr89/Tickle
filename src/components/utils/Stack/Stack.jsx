@@ -162,12 +162,9 @@ class CardStack extends Component {
     const centerPos = c =>
       direction === 'vertical'
         ? { top: `${c.pos}${unit}` }
-        : { left: `${c.pos}${unit}` };
+        : { left: `${c.pos}${unit}`, zIndex: c.zIndex };
 
-    const size =
-      direction === 'horizontal'
-        ? { width: `${slotSize}${unit}` }
-        : { height: `${slotSize}${unit}` };
+    const slotWidth = `${slotSize}${unit}`;
 
     return (
       <div
@@ -177,13 +174,13 @@ class CardStack extends Component {
           height: `${height}${unit}`,
           width: `${width}${unit}`,
           position: 'relative'
-          // display: 'flex',
-          // justifyContent: 'center'
         }}
       >
         {keyData.map((d, i) => {
           const p = dataPos.find(e => e.index === d.index) || null;
           if (p === null) return null;
+
+          const pos = centerPos(p);
           return (
             <div
               key={d.index}
@@ -191,11 +188,9 @@ class CardStack extends Component {
                 position: 'absolute',
                 cursor: 'pointer',
                 transition: `left ${duration}ms, top ${duration}ms, transform ${duration}ms`,
-                zIndex: d.index,
-                width: '100%',
+                width: slotWidth,
                 height: '100%',
-                ...size,
-                ...centerPos(p)
+                ...pos
               }}
             >
               {children(d, i)}

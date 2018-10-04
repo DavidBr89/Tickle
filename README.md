@@ -24,6 +24,7 @@ TICKLE playground for our Project
 * fix drag and drop on mobile and bugs with map events (and the corresponding component)
 * untangle flip container from cardfront
 * find better abstraction for readcardfront and cardfront (with or without modal)
+* fix ID issue in (Card)Stack
 * See issues
 
 

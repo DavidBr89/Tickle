@@ -1,6 +1,21 @@
 import { firestore, storageRef } from '../firebase';
 import { extractCardFields } from 'Constants/cardFields';
 
+const USERS = 'users';
+
+const TICKLE_ENVS = 'tickle-environments';
+
+/* testing enviroments */
+const VDS_GEO = 'vds-geo';
+const VDS_TOPIC = 'vds-topic';
+const STAGING = 'vds-topic';
+
+const ENV = STAGING; // VDS_TOPIC;
+
+const TICKLE_DOC_REF = firestore.collection(TICKLE_ENVS).doc(ENV);
+
+// TICKLE_DOC_REF.get().then(e => console.log('yeah env', e.data()));
+
 const isDefined = a => a !== null && a !== undefined;
 
 const pruneFields = fields => {
@@ -31,16 +46,14 @@ const pruneFields = fields => {
 
 const thumbFileName = fileName => `thumb_${fileName}`;
 
-const CARDS = 'vds_geo_cards';
-const USERS = 'vds_geo_users';
 const getShallowCards = (uid = null) => {
   // console.log('UID', uid);
-  const firePr =
+  const refCards =
     uid !== null
-      ? firestore.collection(CARDS).where('uid', '==', uid)
-      : firestore.collection(CARDS);
+      ? TICKLE_DOC_REF.collection('cards') // .where('uid', '==', uid)
+      : TICKLE_DOC_REF.collection('cards');
 
-  return firePr.get().then(querySnapshot => {
+  return refCards.get().then(querySnapshot => {
     const data = [];
     querySnapshot.forEach(doc => {
       // const timestamp = doc.get('created_at');
@@ -51,12 +64,14 @@ const getShallowCards = (uid = null) => {
       data.push({ ...d });
     });
 
+    console.log('retrieved cards', data);
+
     // TODO; remove later
     const dataPromises = data.map(d => {
       if (!d.img) return d;
 
       const thumbNailRef = storageRef.child(
-        `images/cards/${thumbFileName(d.id)}`
+        `${ENV}/images/cards/${thumbFileName(d.id)}`
       );
       // return d;
       return thumbNailRef.getDownloadURL().then(
@@ -92,7 +107,7 @@ export const readCards = (fromUID, playerId) =>
 export const readCopyUsers = () => {
   console.log('readCopyUsers');
   firestore
-    .collection('vds_geo_users')
+    .collection('staging_vds_geo_cards')
     .get()
     .then(querySnapshot => {
       const data = [];
@@ -103,16 +118,17 @@ export const readCopyUsers = () => {
 
       data.forEach(d =>
         firestore
-          .collection('staging_vds_geo_users')
-          .doc(d.uid)
+          .collection('tickle-environments')
+          .doc('staging')
+          .collection('cards')
+          .doc(d.id)
           .set(d)
       );
     });
 };
 
 function getAllChallengeSubmissions(cid) {
-  const chSub = firestore
-    .collection(CARDS)
+  const chSub = TICKLE_DOC_REF.collection('cards')
     .doc(cid)
     .collection('challengeSubmissions');
 
@@ -128,8 +144,7 @@ function getAllChallengeSubmissions(cid) {
 }
 
 function getOneChallengeSubmission(cid, playerId) {
-  return firestore
-    .collection(CARDS)
+  return TICKLE_DOC_REF.collection('cards')
     .doc(cid)
     .collection('challengeSubmissions')
     .doc(playerId)
@@ -138,8 +153,7 @@ function getOneChallengeSubmission(cid, playerId) {
 }
 
 export function getOneEmailUser(email) {
-  return firestore
-    .collection(USERS)
+  return TICKLE_DOC_REF.collection('users')
     .where('email', '==', email)
     .get()
     .then(sn => sn.forEach(d => console.log('d', d.data())));
@@ -162,7 +176,7 @@ export const readCardsWithSubmissions = uid =>
 
 export const addFileToStorage = ({ file, path }) => {
   const metadata = { contentType: file.type };
-  const imgRef = storageRef.child(path);
+  const imgRef = storageRef.child(`${ENV}/${path}`);
   return imgRef
     .put(file, metadata)
     .then(() => new Promise(resolve => resolve(imgRef.getDownloadURL())))
@@ -183,7 +197,7 @@ export const removeFromStorage = path => {
 
 export const addImgToStorage = ({ file, path, id }) => {
   const metadata = { contentType: file.type };
-  const imgRef = storageRef.child(`images/${path}/${id}`);
+  const imgRef = storageRef.child(`${ENV}/images/${path}/${id}`);
   return imgRef
     .put(file, metadata)
     .then(() => new Promise(resolve => resolve(imgRef.getDownloadURL())))
@@ -204,7 +218,7 @@ const uploadImgFields = card => {
   return file
     ? addImgToStorage({
         file,
-        path: 'cards',
+      path: `${ENV}/cards`,
         id: card.id
       }).then(url => {
         const img = {
@@ -217,14 +231,12 @@ const uploadImgFields = card => {
 };
 
 export const doCreateUser = userProfile =>
-  firestore
-    .collection(USERS)
+  TICKLE_DOC_REF.collection('users')
     .doc(userProfile.uid)
     .set(userProfile);
 
 export const getUser = uid =>
-  firestore
-    .collection(USERS)
+  TICKLE_DOC_REF.collection('users')
     .doc(uid)
     .get()
     .then(
@@ -262,8 +274,7 @@ export const getDetailedUserInfo = uid =>
     .catch(err => console.log('err i getUser', err));
 
 export const onceGetUsers = () =>
-  firestore
-    .collection(USERS)
+  TICKLE_DOC_REF.collection('users')
     .get()
     .then(querySnapshot => {
       const data = [];
@@ -272,7 +283,7 @@ export const onceGetUsers = () =>
 
       const dataPromises = data.map(d => {
         const thumbNailRef = storageRef.child(
-          `images/usr/${thumbFileName(d.uid)}`
+          `${ENV}/images/usr/${thumbFileName(d.uid)}`
         );
         // return d;
         return thumbNailRef.getDownloadURL().then(
@@ -299,8 +310,7 @@ export const doCreateCard = card =>
       const newCard = extractCardFields({ ...card, img, timestamp });
       console.log('newCard', newCard);
 
-      return firestore
-        .collection(CARDS)
+      return TICKLE_DOC_REF.collection('cards')
         .doc(newCard.id)
         .set(newCard);
     }
@@ -310,15 +320,13 @@ export const doCreateCard = card =>
 export const doUpdateCard = doCreateCard;
 
 export const doDeleteCard = cid =>
-  firestore
-    .collection(CARDS)
+  TICKLE_DOC_REF.collection('cards')
     .doc(cid)
     .delete();
 
 // Add a new document with a generated id.
 export const addComment = ({ uid, cardId, text }) =>
-  firestore
-    .collection('cardComments')
+  TICKLE_DOC_REF.collection('cardComments')
     .doc(cardId)
     .collection('comments')
     // TODO: change later will break in future firebase release
@@ -326,8 +334,7 @@ export const addComment = ({ uid, cardId, text }) =>
     .add({ uid, text, date: new Date() });
 
 export const readComments = cardId =>
-  firestore
-    .collection('cardComments')
+  TICKLE_DOC_REF.collection('cardComments')
     .doc(cardId)
     .collection('comments')
     .get()
@@ -343,8 +350,7 @@ export const readComments = cardId =>
     });
 
 export const removeChallengeSubmission = ({ cardId, playerId }) =>
-  firestore
-    .collection(CARDS)
+  TICKLE_DOC_REF.collection('cards')
     .doc(cardId)
     .collection('challengeSubmissions')
     .doc(playerId)
@@ -356,8 +362,7 @@ export const removeChallengeSubmission = ({ cardId, playerId }) =>
     });
 
 export const addChallengeSubmission = ({ cardId, playerId, challengeData }) =>
-  firestore
-    .collection(CARDS)
+  TICKLE_DOC_REF.collection('cards')
     .doc(cardId)
     .collection('challengeSubmissions')
     .doc(playerId)
@@ -369,27 +374,11 @@ export const addChallengeSubmission = ({ cardId, playerId, challengeData }) =>
       // Handle any error that occurred in any of the previous
       // promises in the chain.
     });
-// );
 
 export function getOneUser(playerId) {
-  return firestore
-    .collection(USERS)
+  return TICKLE_DOC_REF.collection('users')
     .doc(playerId)
     .get()
     .then(doc => new Promise(resolve => resolve(doc.data() || {})))
     .then(d => console.log('user EMAIL', d.email));
 }
-
-// TODO: get authored cards
-// return firebase.firestore
-//   .collection('authoredCards')
-//   .get()
-//   .then(querySnapshot => {
-//     const data = [];
-//     querySnapshot.forEach(doc => data.push({ ...doc.data(), id: doc.id }));
-//     dispatch(receiveAuthoredCards(data));
-//   });
-
-// export const onceGetUsers = () => db.ref('users').once('value');
-
-// export default firestore;

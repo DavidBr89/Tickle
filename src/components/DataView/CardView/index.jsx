@@ -193,8 +193,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     .filter(d => filterByTag(d, filterSet))
     .map(c => {
       const visible = isInView(c.loc);
-      const accessible =
-        (visible && isInDistance(c.loc)) || (isCardSeen(c) && visible);
+      const accessible = true//visible;
+      // (visible && isInDistance(c.loc)) || (isCardSeen(c) && visible);
 
       return { ...c, accessible };
     })
@@ -222,7 +222,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     selectedCardId,
     extCardId,
     selectedCardLocked,
-    extendedCard, selectedCard
+    extendedCard,
+    selectedCard
   };
 };
 

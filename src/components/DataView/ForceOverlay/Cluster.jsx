@@ -135,7 +135,7 @@ class Cluster extends Component {
       // );
 
       return {
-        id: i,
+        id: tags.join(','),
         tags,
         count: values.length,
         values,
@@ -183,17 +183,19 @@ class Cluster extends Component {
       children
     } = this.props;
 
-    const clusters = this.findClusters();
+    const clusters = this.findClusters().map(
+      ({ centroid, centerPos, ...d }) => ({
+        centroid,
+        centerPos,
+        x: centerPos[0],
+        y: centerPos[1],
+        data: d
+      })
+    );
     // const cells = this.getVoronoiCells(clusters);
     // console.log('clusters', clusters);
 
-    return (
-      <Fragment>
-        {clusters.map(({ centroid, centerPos, ...d }) =>
-          children({ centroid, centerPos, data: d })
-        )}
-      </Fragment>
-    );
+    return <Fragment>{children(clusters)}</Fragment>;
   }
 }
 
