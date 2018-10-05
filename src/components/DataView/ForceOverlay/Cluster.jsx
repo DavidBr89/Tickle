@@ -115,6 +115,8 @@ class Cluster extends Component {
     radius: 1
   };
 
+  oldClusters = [];
+
   findClusters = () => {
     const { width, height, nodes, radius } = this.props;
 
@@ -124,15 +126,9 @@ class Cluster extends Component {
       radius,
       x: n => n.x,
       y: n => n.y
-    }).map((values, i) => {
+    }).map((values) => {
       const centerPos = findCenterPos(values);
       const tags = uniq(flatten(values.map(e => e.tags)));
-      // const values = uniqBy(
-      //   flatten(nestedValues.map(d => d.values)).map(d => ({
-      //     ...d
-      //   })),
-      //   'id'
-      // );
 
       return {
         id: tags.join(','),
@@ -142,6 +138,9 @@ class Cluster extends Component {
         centerPos
       };
     });
+
+    console.log('oldClusters', this.oldClusters);
+    this.oldClusters = clusters.map(d => d.values).flat();
     return clusters;
   };
 
@@ -195,7 +194,7 @@ class Cluster extends Component {
     // const cells = this.getVoronoiCells(clusters);
     // console.log('clusters', clusters);
 
-    return <Fragment>{children(clusters)}</Fragment>;
+    return children(clusters);
   }
 }
 

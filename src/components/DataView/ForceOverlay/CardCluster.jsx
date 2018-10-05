@@ -7,7 +7,7 @@ function CardCluster({
   coords: [x, y],
   colorScale,
   data,
-  centroid: [cx, cy],
+  // centroid: [cx, cy],
   size,
   transition,
   id,
@@ -21,6 +21,7 @@ function CardCluster({
   return (
     <div
       onClick={onClick}
+      key={id}
       className="cluster"
       style={{
         position: 'absolute',

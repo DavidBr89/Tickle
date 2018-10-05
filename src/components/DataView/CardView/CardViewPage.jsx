@@ -24,7 +24,12 @@ import CardViewOverlay from './CardViewOverlay';
 
 import CardModal from 'Components/cards/CardModal';
 import ConnectedCard from 'Cards/ConnectedCard';
-import { Modal, BareModal, ModalBody, ConnectedResponsiveModal} from 'Utils/Modal';
+import {
+  Modal,
+  BareModal,
+  ModalBody,
+  ConnectedResponsiveModal
+} from 'Utils/Modal';
 
 // import { StyledButton } from 'Utils/StyledComps';
 
@@ -150,14 +155,17 @@ class CardViewPage extends Component {
         className="w-full h-full flex-col"
         style={{ position: 'relative', overflow: 'hidden' }}
         menu={
-          <CardTagSearch
-            allTags={nestedTagVocabulary}
-            key={filterSet.join(',')}
-            onChange={filterCards}
-            onClick={addCardFilter}
-            data={filterSet}
-            height={height / 2 - 50}
-          />
+          <div className="flex items-center">
+            <div>mini</div>
+            <CardTagSearch
+              allTags={nestedTagVocabulary}
+              key={filterSet.join(',')}
+              onChange={filterCards}
+              onClick={addCardFilter}
+              data={filterSet}
+              height={height / 2 - 50}
+            />
+          </div>
         }
       >
         <div

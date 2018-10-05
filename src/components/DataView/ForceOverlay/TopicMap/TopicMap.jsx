@@ -24,6 +24,80 @@ import Cluster from '../Cluster';
 
 import ArrayPipe from 'Components/utils/ArrayPipe';
 
+function offsetPoint({ x0, y0, x1, y1, angle, distance }) {
+  const distX = x1 - x0;
+  const distY = y1 - y0;
+  const mX = distX < 0 ? -1 : 1;
+  const mY = distY < 0 ? -1 : 1;
+  const midX = x0 + distX * 0.2 + mX * 20;
+  const midY = y0 + distY * 0.2 + mY * 20;
+  return [midX, midY];
+}
+
+const Links = ({ data }) => data.map(d => <div />);
+
+const ToolTip = ({ x, y, cx, cy, px, py, angle, data }) => {
+  const { tags } = data;
+
+  const tagsLabel = (
+    <div className="flex border border-grey-dark flex-wrap">
+      {tags.slice(0, 3).map(d => <div className="m-1">{d}</div>)}
+    </div>
+  );
+
+  // console.log('tags', tags.slice(0, 3), 'angle', angle);
+  const offset = angle => {
+    const xOffset = () => {
+      const pad = 20;
+      if (x - cx > pad) return '-100%'; // orient.right
+
+      if (x - cx < pad) return '0%'; // orient.bottom
+
+      return '50%';
+    };
+
+    const yOffset = () => {
+      if (y - cy > 0) return '-100%'; // orient.right
+
+      if (y - cy < 0) return '0%'; // orient.bottom
+    };
+
+    return `${xOffset()},${yOffset()}`;
+  };
+  return (
+    <React.Fragment>
+      <div
+        style={{
+          maxWidth: 100,
+          position: 'absolute',
+          left: px,
+          top: py,
+          background: 'whitesmoke',
+          // width: 20,
+          // height: 20,
+          // borderRadius: '50%',
+          transform: `translate(${offset(angle)})`
+        }}
+      >
+        {tagsLabel}
+      </div>
+      <div
+        className="z-50"
+        style={{
+          position: 'absolute',
+          // display: 'none',
+          left: cx,
+          top: cy,
+          width: 20,
+          height: 20,
+          // background: 'blue',
+          transform: 'translate(50%,50%)'
+        }}
+      />
+    </React.Fragment>
+  );
+};
+
 const Voronoi = ({ data, children, width, height }) => {
   const vor = d3
     .voronoi()
@@ -31,9 +105,21 @@ const Voronoi = ({ data, children, width, height }) => {
     .y(d => d.y)
     .extent([[-1, -1], [width + 1, height + 1]]);
 
-  const polys = vor.polygons(data);
-  console.log('polys', polys);
-  return children(polys.map(d3.polygonCentroid));
+  const polys = vor.polygons(data).map(p => {
+    const [cx, cy] = d3.polygonCentroid(p);
+    const { x, y } = p.data;
+    const angle = Math.round((Math.atan2(cy - y, cx - x) / Math.PI) * 2);
+    const [px, py] = offsetPoint({
+      x0: x,
+      y0: y,
+      x1: cx,
+      y1: cy,
+      angle,
+      distance: -10
+    });
+    return { ...p.data, x, y, cx, cy, angle, px, py };
+  });
+  return polys.map(children);
 };
 
 function ClusterPlaceholder({
@@ -185,10 +271,7 @@ class ClusteredFloor extends Component {
                     }}
                   />
                   <Cluster
-                    radius={() =>
-                      // console.log('d', d);
-                      40
-                    }
+                    radius={() => 50}
                     nodes={zn}
                     width={width}
                     height={height}
@@ -199,7 +282,7 @@ class ClusteredFloor extends Component {
                         <ArrayPipe array={clusters}>
                           {({ id, x, y, data: d }) => (
                             <CardCluster
-                              id={id}
+                              id={`${x}${y}`}
                               coords={[x, y]}
                               centroid={[x, y]}
                               size={65}
@@ -213,21 +296,10 @@ class ClusteredFloor extends Component {
                             </CardCluster>
                           )}
                         </ArrayPipe>
+
+                        <Links data={clusters} />
                         <Voronoi width={width} height={height} data={clusters}>
-                          {polygons =>
-                            polygons.map(p => (
-                              <div
-                                style={{
-                                  position: 'absolute',
-                                  left: p[0],
-                                  top: p[1],
-                                  background: 'gold',
-                                  width: 20,
-                                  height: 20
-                                }}
-                              />
-                            ))
-                          }
+                          {p => <ToolTip {...p} />}
                         </Voronoi>
                       </React.Fragment>
                     )}

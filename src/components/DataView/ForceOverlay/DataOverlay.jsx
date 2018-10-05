@@ -24,7 +24,7 @@ import { Modal, BareModal, ModalBody } from 'Utils/Modal';
 
 import Map from './Map';
 import UserMap from './UserMap';
-import Floorplan from './FloorPlanExp/ClusteredFloor';
+import Floorplan from './TopicMap/TopicMap';
 import TreeMapCluster from './TreeMapCluster';
 
 const SelectedComp = ({ ...props }) => {
