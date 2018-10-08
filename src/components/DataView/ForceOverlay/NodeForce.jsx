@@ -4,7 +4,7 @@ import * as d3 from 'd3';
 
 import { differenceWith } from 'lodash';
 
-class Floorplan extends Component {
+class NodeForce extends Component {
   static propTypes = {
     children: PropTypes.node,
     width: PropTypes.number,
@@ -126,4 +126,4 @@ class Floorplan extends Component {
   }
 }
 
-export default Floorplan;
+export default NodeForce;

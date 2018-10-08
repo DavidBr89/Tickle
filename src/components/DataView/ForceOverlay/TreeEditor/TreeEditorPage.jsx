@@ -1,22 +1,30 @@
-import React, { Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import * as d3 from 'd3';
+
+import { differenceWith } from 'lodash';
+
+import NodeForce from '../NodeForce';
 
 class TreeEditorPage extends Component {
   static propTypes = {
     children: PropTypes.node,
-    className: PropTypes.string,
+    width: PropTypes.number,
+    height: PropTypes.number,
+    data: PropTypes.array
   };
 
-  constructor(props) {
-    super(props);
-  }
+  static defaultProps = {
+    children: d => d,
+    width: 400,
+    height: 400,
+    data: []
+  };
 
   render() {
+    const { children } = this.props;
     return (
-      <div>
-        test
-
-      </div>
+      <NodeForce {...this.props}>{nodes => nodes.map(children)}</NodeForce>
     );
   }
 }

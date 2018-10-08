@@ -4,59 +4,13 @@ import { DragSource, DropTarget } from 'react-dnd';
 
 import HTML5 from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
-import DragLayer from 'react-dnd/lib/DragLayer';
+// import DragLayer from 'react-dnd/lib/DragLayer';
 
 function collect(monitor) {
   return {
     sourceOffset: monitor.getSourceClientOffset()
   };
 }
-// import cxx from '../CardCreator.scss';
-
-// import update from 'immutability-helper';
-const CardDrag = ({ width, height, left, top, fill }) => (
-  <img
-    width={width}
-    height={height}
-    alt="icon"
-    background={fill}
-    style={{
-      position: !(left === null || top === null) ? 'absolute' : null,
-      border: '1px dashed gray',
-      left,
-      top
-      // zIndex: 2000
-    }}
-  />
-);
-
-CardDrag.propTypes = {
-  width: PropTypes.number,
-  height: PropTypes.number,
-  left: PropTypes.oneOf([null, PropTypes.number]),
-  top: PropTypes.oneOf([null, PropTypes.number])
-};
-
-CardDrag.defaultProps = {
-  width: 50,
-  height: 50,
-  left: null,
-  top: null,
-  fill: 'transparent'
-};
-
-export const CardDragPreview = DragLayer(collect)(CardDrag);
-
-// const style = {
-//   // border: '1px dashed gray',
-//   // backgroundColor: 'white',
-//   // padding: '0.5rem 1rem',
-//   // marginRight: '1.5rem',
-//   // marginBottom: '1.5rem',
-//   cursor: 'move',
-//   zIndex: 2000
-//   // float: 'left'
-// };
 
 const boxSource = {
   beginDrag(props) {
@@ -93,8 +47,8 @@ export class DragSourceCont extends PureComponent {
 
   static defaultProps = {
     dragHandler: d => d,
-    width: 150,
-    height: 150,
+    width: 80,
+    height: 80,
     selected: false,
     style: {}
   };
@@ -113,7 +67,7 @@ export class DragSourceCont extends PureComponent {
       children,
       width,
       height,
-      selected,
+      // selected,
       style
     } = this.props;
     // const { name } = this.props;
@@ -126,22 +80,16 @@ export class DragSourceCont extends PureComponent {
         style={{
           width,
           height,
-          // background: 'white',
-          // transform: 'translate(-50%,-50%)',
           opacity,
-          // border: 'black 1px dashed',
           ...style,
-          cursor: 'pointer',
-          // TODO: change later
-          // pointerEvents: 'all', // selected && 'all',
-          zIndex: selected && 5000
+          cursor: 'pointer'
         }}
       >
         {children}
       </div>
     );
 
-    return selected ? connectDragSource(cont) : cont;
+    return connectDragSource(cont);
   }
 }
 
@@ -152,7 +100,8 @@ const boxTarget = {
     const left = Math.round(item.x + delta.x);
     const top = Math.round(item.y + delta.y);
 
-    component.drop(item.data, left, top, props.dragged);
+    console.log('ITEM DATA', item);
+    component.drop(item.data, left, top);
   }
   // },
   // canDrop(props, monitor, component) {
@@ -167,7 +116,8 @@ const boxTarget = {
   clientOffset: monitor.getClientOffset(),
   sourceClientOffset: monitor.getSourceClientOffset(),
   diffFromInitialOffset: monitor.getDifferenceFromInitialOffset(),
-  isdropped: monitor.didDrop()
+  isDropped: monitor.didDrop(),
+  canDrop: monitor.canDrop()
 }))
 export class DropTargetCont extends PureComponent {
   static propTypes = {
@@ -186,68 +136,35 @@ export class DropTargetCont extends PureComponent {
     style: {}
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      top: 100,
-      left: 100,
-      data: null,
-      dropped: false
-    };
-  }
+  state = {
+    top: 100,
+    left: 100,
+    data: null,
+    dropped: false
+  };
 
   componentDidUpdate(prevProps) {
-    const { dropHandler, children } = this.props;
+    const { dropHandler, isDropped, canDrop } = this.props;
     const { left, top, data } = this.state;
-    // console.log('left top', left, top);
-    // console.log('yeah dropHandler', this.props);
-    // const newid = Math.random() * 100;
-    // console.log('dropped', dropped, 'prevDropped', prevState.dropped);
-    // console.log('this.props', this.props);
-    if (prevProps.dragged && !this.props.dragged) {
-      // console.log('D', data);
-      // TODO: CHANGE LATER
-      // TODO: CHANGE LATER
-      // TODO: CHANGE LATER
-      // TODO: CHANGE LATER
-      // TODO: CHANGE LATER
-      // const inverted = data.normalize
-      //   ? data.normalize.invert([left, top])
-      //   : [left, top];
 
-      // console.log('DROP inverted', inverted);
+    console.log('canDrop', data);
+    if (!prevProps.isDropped && isDropped) {
       dropHandler({
         ...data,
         x: left,
         y: top
-        // tx: left,
-        // ty: top,
-        // vx: left,
-        // vy: top
       });
     }
   }
 
-  drop(data, left, top, dropped) {
-    // console.log('left', left, 'top', top);
-    this.setState({ data, left, top, dropped });
+  drop(data, left, top) {
+    this.setState({ data, left, top });
   }
 
   // }
 
   render() {
-    const {
-      // canDrop,
-      // isOver,
-      connectDropTarget,
-      // clientOffset,
-      style,
-      className,
-      children
-    } = this.props;
-    // const { id, left, top, dropped } = this.state;
-    // const { x, y } = clientOffset || { x: 0, y: 0 };
-    // console.log('dropped', dropped);
+    const { connectDropTarget, style, className, children } = this.props;
 
     return connectDropTarget(
       <div style={style} className={className}>

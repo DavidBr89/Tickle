@@ -208,22 +208,9 @@ class CardAuthorPage extends Component {
         <BareModal visible={extCardId !== null}>
           <EditCard {...selectedCard} dataView={dataView} />
         </BareModal>
-        <div
-          className="w-full h-full flexCol"
-          style={{ position: 'relative', overflow: 'hidden' }}
-        >
-          <CardTagSearch
-            allTags={tagVocabularyCreated}
-            key={filterSet.join(',')}
-            onChange={filterCards}
-            onSelect={() => selectCard(null)}
-            onClick={addCardFilter}
-            height={height / 2}
-            data={filterSet}
-          />
-
           <div
-            clssName="mt-3"
+
+          className="mt-16 w-full h-full flexCol"
             style={{
               display: 'flex',
               justifyContent: 'center',
@@ -268,12 +255,9 @@ class CardAuthorPage extends Component {
               top: 0,
               left: 0,
               // TODO remove
-              position:
-                dataView === FLOORPLAN || dataView === GEO ? 'absolute' : null
+              position: 'absolute'
             }}
-            className="flexCol"
           />
-        </div>
       </DefaultLayout>
     );
   }

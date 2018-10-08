@@ -22,6 +22,8 @@ import { updateCardTemplate, dragCard } from 'Reducers/Cards/actions';
 import { asyncUpdateCard } from 'Reducers/Cards/async_actions';
 import { selectCard } from 'Reducers/DataView/actions';
 
+import DragElement from '../DragAndDrop/DragElement';
+
 // import { extendSelectedCard } from 'Reducers/DataView/actions';
 
 const CardAuthorOverlay = DragDropContextProvider(props => {
@@ -40,7 +42,7 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
     authEnv,
     // extendSelectedCard,
     extCardId,
-    dragCard,
+    // dragCard,
     createCard,
     // toggleCardChallenge,
     onCardUpdate,
@@ -52,69 +54,11 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
     previewCardAction
   } = props;
 
-  const DragPreviewCard = ({ ...d }) => {
-    const selected = selectedCardId === d.id;
-    const posStyle = {
-      position: 'absolute',
-      left: d.x,
-      top: d.y,
-      transform: 'translate(-50%, -50%)',
-      zIndex: selectedCardId === d.id ? 10 : 0
-    };
-    const elem = (
-      <div
-        onMouseDown={() => dragCard(true)}
-        onClick={e => {
-          e.stopPropagation();
-          previewCardAction(d);
-          dragCard(false);
-        }}
-        style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          border: selected && '2px dashed black',
-          borderRadius: '10%'
-        }}
-      >
-        <CardMarker
-          color="whitesmoke"
-          selected={selected}
-          style={{
-            width: 25,
-            height: 30
-          }}
-        />
-      </div>
-    );
-
-    if (!selected) return <div style={posStyle}>{elem}</div>;
-
-    return (
-      <div style={posStyle}>
-        <DragSourceCont
-          dragHandler={dragCard}
-          data={d}
-          x={d.x}
-          y={d.y}
-          width={80}
-          height={80}
-          selected={selected}
-        >
-          {elem}
-        </DragSourceCont>
-      </div>
-    );
-  };
-
   return (
     <DropTargetCont
       dropHandler={onCardDrop}
       dragged={isCardDragging}
       style={style}
-      colorScale={tagColorScale}
       className={className}
     >
       <DataOverlay
@@ -139,9 +83,29 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
           right: width / 5
         }}
         colorScale={tagColorScale}
-        draggable={DragPreviewCard}
       >
-        {DragPreviewCard}
+        {d =>
+          selectedCardId === d.id ? (
+            <DragElement {...d}>
+              <CardMarker
+                style={{
+                  transform: 'scale(1.4)'
+                  // transition: 'transform 500ms'
+                }}
+              />
+            </DragElement>
+          ) : (
+            <CardMarker
+              {...d}
+              style={{
+                position: 'absolute',
+                transform: 'translate(-50%,-50%)',
+                left: d.x,
+                top: d.y
+              }}
+            />
+          )
+        }
       </DataOverlay>
     </DropTargetCont>
   );
@@ -162,7 +126,7 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       updateCardTemplate,
-      dragCard,
+      // dragCard,
       asyncUpdateCard,
       selectCard
     },
@@ -171,18 +135,18 @@ const mapDispatchToProps = dispatch =>
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
   const { mapViewport, width, height, authUser } = state;
-  const { uid } = authUser;
   const { dataView, selectedCardId } = ownProps;
   const { asyncUpdateCard, updateCardTemplate } = dispatcherProps;
 
   const viewport = { ...mapViewport, width, height };
 
   const onCardDrop = cardData => {
-    if (selectedCardId === cardData.id) {
-      if (cardData.id === 'temp')
-        updateCardTemplate({ uid, cardData, viewport, dataView });
-      else asyncUpdateCard({ cardData, viewport, dataView });
-    }
+    console.log('DROP CARD DATA', cardData);
+    // if (selectedCardId === cardData.id) {
+    if (cardData.id === 'temp')
+      updateCardTemplate({ cardData, viewport, dataView });
+    else asyncUpdateCard({ cardData, viewport, dataView });
+    // }
   };
 
   return {

@@ -324,21 +324,21 @@ class Map extends Component {
         >
           {locNodes.map(children)}
 
-        <div
-          style={{
-            position: 'absolute',
-            left: userPos[0],
-            top: userPos[1]
-            // zIndex: 2000
-          }}
-        >
-          <img
-            src={userIcon}
-            width={50}
-            height={50}
-            style={{ transform: 'translate(-50%,-50%)' }}
-          />
-        </div>
+          <div
+            style={{
+              position: 'absolute',
+              left: userPos[0],
+              top: userPos[1]
+              // zIndex: 2000
+            }}
+          >
+            <img
+              src={userIcon}
+              width={50}
+              height={50}
+              style={{ transform: 'translate(-50%,-50%)' }}
+            />
+          </div>
         </div>
       </MapGL>
     );

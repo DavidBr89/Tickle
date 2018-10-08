@@ -240,13 +240,16 @@ function reducer(state = INITIAL_STATE, action) {
     case UPDATE_CARD_TEMPLATE: {
       const { cardData, viewport, dataView } = action.options;
 
-      const updatedTemplate = updCardDataDim({
+      console.log('CARD DATA', cardData);
+
+      const dataDim = updCardDataDim({
         cardData,
         viewport,
         dataView
       });
 
-      return { ...state, tmpCard: updatedTemplate };
+      // console.log('cardTemplate', updatedTemplate);
+      return { ...state, tmpCard: { ...cardData, ...dataDim } };
     }
     case DELETE_CARD: {
       const { createdCards } = state;

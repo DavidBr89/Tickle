@@ -10,7 +10,6 @@ import DimWrapper from 'Utils/DimensionsWrapper';
 // TODO: change
 import ExtendableMarker from 'Utils/ExtendableMarker';
 
-// import { dragCard } from 'Reducers/Cards/actions';
 import { changeMapViewport } from 'Reducers/Map/actions';
 import { GEO, TAGS, FLOORPLAN } from 'Constants/dataViews';
 
@@ -24,7 +23,7 @@ import { Modal, BareModal, ModalBody } from 'Utils/Modal';
 
 import Map from './Map';
 import UserMap from './UserMap';
-import Floorplan from './TopicMap/TopicMap';
+import TopicMap from './TopicMap/TopicMap';
 import TreeMapCluster from './TreeMapCluster';
 
 const SelectedComp = ({ ...props }) => {
@@ -46,13 +45,10 @@ const SelectedComp = ({ ...props }) => {
     filterSet,
     padding,
     colorScale,
-    // dragCard,
     extCardId,
     author,
-    // isCardDragging,
     // preview,
-    userview,
-    draggable
+    userview
   } = props;
 
   const MapComp = userview ? UserMap : Map;
@@ -81,7 +77,7 @@ const SelectedComp = ({ ...props }) => {
     }
     case FLOORPLAN: {
       return (
-        <Floorplan
+        <TopicMap
           {...props}
           width={width}
           height={height}
@@ -92,7 +88,7 @@ const SelectedComp = ({ ...props }) => {
           noPreview={noPreview}
         >
           {children}
-        </Floorplan>
+        </TopicMap>
       );
     }
     case TAGS: {

@@ -12,7 +12,7 @@ import floorplanImg from '../floorplan.png';
 
 import FloorCluster from '../FloorCluster';
 
-import Floorplan from './Floorplan';
+import NodeForce from '../NodeForce';
 import PreviewMarker from 'Utils/PreviewMarker';
 
 import { bindActionCreators } from 'redux';
@@ -216,15 +216,11 @@ function ClusterPlaceholder({
 ClusterPlaceholder.propTypes = { transition: PropTypes.array };
 ClusterPlaceholder.defaultProps = { transition: 500 };
 
-class ClusteredFloor extends Component {
+class TopicMap extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string
   };
-
-  constructor(props) {
-    super(props);
-  }
 
   render() {
     const {
@@ -240,76 +236,72 @@ class ClusteredFloor extends Component {
       filterSet
     } = this.props;
 
-    const card = data.filter(n => n.id === selectedCardId).map(children);
     return (
-      <div ref={e => (this.container = e)}>
-        {card}
-        <Floorplan {...this.props}>
-          {nn => (
-            <ZoomCont
-              {...this.props}
-              data={nn}
-              center={[width / 2, (height * 2) / 3]}
-              selectedId={selectedCardId}
-            >
-              {(zn, zHandler) => (
-                <div>
-                  <img
-                    width={width}
-                    height={(height * 2) / 3}
-                    src={floorplanImg}
-                    style={{
-                      position: 'absolute',
-                      left: 0,
-                      top: 0,
-                      pointerEvents: 'none',
-                      // zIndexx: 4000,
-                      transform: `translate(${zHandler.x}px,${
-                        zHandler.y
-                      }px) scale(${zHandler.k})`,
-                      transformOrigin: '0 0'
-                    }}
-                  />
-                  <Cluster
-                    radius={() => 50}
-                    nodes={zn}
-                    width={width}
-                    height={height}
-                    colorScale={colorScale}
-                  >
-                    {clusters => (
-                      <React.Fragment>
-                        <ArrayPipe array={clusters}>
-                          {({ id, x, y, data: d }) => (
-                            <CardCluster
-                              id={`${x}${y}`}
-                              coords={[x, y]}
-                              centroid={[x, y]}
-                              size={65}
-                              data={d}
-                              onClick={() => {
-                                // TODO
-                                // preview(d.values[0]);
-                              }}
-                            >
-                              {children}
-                            </CardCluster>
-                          )}
-                        </ArrayPipe>
+      <NodeForce {...this.props}>
+        {nn => (
+          <ZoomCont
+            {...this.props}
+            data={nn}
+            center={[width / 2, (height * 2) / 3]}
+            selectedId={selectedCardId}
+          >
+            {(zn, zHandler) => (
+              <div>
+                <img
+                  width={width}
+                  height={(height * 2) / 3}
+                  src={floorplanImg}
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    pointerEvents: 'none',
+                    // zIndexx: 4000,
+                    transform: `translate(${zHandler.x}px,${
+                      zHandler.y
+                    }px) scale(${zHandler.k})`,
+                    transformOrigin: '0 0'
+                  }}
+                />
+                <Cluster
+                  radius={() => 50}
+                  nodes={zn}
+                  width={width}
+                  height={height}
+                  colorScale={colorScale}
+                >
+                  {clusters => (
+                    <React.Fragment>
+                      <ArrayPipe array={clusters}>
+                        {({ id, x, y, data: d }) => (
+                          <CardCluster
+                            id={`${x}${y}`}
+                            coords={[x, y]}
+                            centroid={[x, y]}
+                            size={65}
+                            data={d}
+                            onClick={() => {
+                              // TODO
+                              // preview(d.values[0]);
+                            }}
+                          >
+                            {children}
+                          </CardCluster>
+                        )}
+                      </ArrayPipe>
 
-                        <Links data={clusters} />
-                        <Voronoi width={width} height={height} data={clusters}>
-                          {p => <ToolTip {...p} />}
-                        </Voronoi>
-                      </React.Fragment>
-                    )}
-                  </Cluster>
-                </div>
-              )}
-            </ZoomCont>
-          )}
-        </Floorplan>
-      </div>
+                      <Links data={clusters} />
+                      <Voronoi width={width} height={height} data={clusters}>
+                        {p => <ToolTip {...p} />}
+                      </Voronoi>
+                    </React.Fragment>
+                  )}
+                </Cluster>
+              </div>
+            )}
+          </ZoomCont>
+        )}
+      </NodeForce>
     );
   }
 }
@@ -334,4 +326,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps
-)(ClusteredFloor);
+)(TopicMap);
