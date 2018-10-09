@@ -11,6 +11,7 @@ import { render } from 'react-dom';
 // import './bootstrap.scss';
 import './styles/tailwind.css';
 import './styles/index.scss';
+import './styles/layout.scss';
 
 import App from './App';
 

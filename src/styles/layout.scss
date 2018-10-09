@@ -1,5 +1,23 @@
-
 .btn {
-    @apply py-2 px-4 rounded;
+    @apply .font-bold .py-2 .px-4 .border-2 .border-grey-darkest;
 }
 
+.btn:hover {
+  @apply .bg-grey-dark;
+}
+
+.btn-black {
+    @apply .bg-black .text-white;
+  }
+
+.btn-black:hover {
+  @apply .bg-grey-dark;
+}
+
+
+.content-margin {
+  // @extend .m-3;
+  margin-right: 15px;
+  margin-left: 15px;
+  margin-top: 60px !important;
+}

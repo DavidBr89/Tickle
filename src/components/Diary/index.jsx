@@ -94,9 +94,16 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   } = match.params;
   const extended = showOption === 'extended';
 
-  const cardAction = d => {
+  const selectCard = d => {
+    console.log('selectCard', d);
     // TODO: change later
     routeSelectCard({ path, history, id: d.id });
+    // routeExtendCard({ path, history, id: d.id, extended: !extended });
+  };
+
+  const extendCard = d => {
+    // TODO: change later
+    // routeSelectCard({ path, history, id: d.id });
     routeExtendCard({ path, history, id: d.id, extended: !extended });
   };
 
@@ -110,7 +117,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     ...dispatchProps,
     ...ownProps,
     selectedCardId: selectedCardId || null,
-    cardAction,
+    selectCard,
+    extendCard,
     selectedTags: [],
     selectedCard: includesSelectedCard ? selectedCard : null,
     cardExtended: includesSelectedCard && extended,

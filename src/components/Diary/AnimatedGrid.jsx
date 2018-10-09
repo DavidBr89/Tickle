@@ -9,6 +9,8 @@ import ConnectedCard from 'Components/cards/ConnectedCard';
 import { BareModal } from 'Utils/Modal';
 import DefaultLayout from 'Components/DefaultLayout';
 
+import TabMenu from './TabMenu';
+
 import {
   CHALLENGE_STARTED,
   CHALLENGE_SUBMITTED,
@@ -110,9 +112,8 @@ export default class MyDiary extends Component {
   render() {
     const {
       cards,
-      selectCard,
       selectedCardId,
-      cardAction,
+      selectCard,
       selectedCard,
       selectedTags,
       height,
@@ -156,27 +157,6 @@ export default class MyDiary extends Component {
     //     return acc;
     //   }, {});
 
-    const mapCell = d => {
-      const cardSelected = d.id === selectedCardId;
-
-      const style = {
-        transformOrigin: null,
-        transform: cardSelected ? 'scale(1.05)' : 'scale(1)',
-        zIndex: cardSelected && 5000,
-        transition: 'transform 500ms'
-      };
-
-      return (
-        <Cell
-          key={d.id}
-          {...d}
-          style={style}
-          onClick={() => cardAction(d)}
-          expanded={cardSelected}
-        />
-      );
-    };
-
     // const indices = cards.map((d, i) => i);
     // const mapSelectedCell = (d, i) => {
     //   const cardSelected = d.id === selectedCardId;
@@ -189,13 +169,14 @@ export default class MyDiary extends Component {
     //       key={d.id}
     //       {...d}
     //       style={selStyle}
-    //       onClick={() => cardAction(d)}
+    //       onClick={() => selectCard(d)}
     //       selected={isSelectedCardType(d)}
     //       expanded={cardSelected}
     //     />
     //   );
     // };
 
+    const cardSelected = selectedCardId !== null;
     return (
       <DefaultLayout
         menu={
@@ -235,30 +216,49 @@ export default class MyDiary extends Component {
           visible={cardExtended}
           uiColor="grey"
           background="transparent"
-            style={{ margin: `auto` }}
+          style={{ margin: `auto` }}
         >
           <ConnectedCard {...selectedCard} />
         </BareModal>
+
         <div
-          className="content-block flexCol"
+          className="h-full w-full flex flex-col"
           style={{
-            height: '100%',
-            overflow: 'scroll'
+            position: 'relative'
           }}
         >
-          <div>
-            Your {cardTypeText(selectedCardType)} {numSeenCards}/{`${numCollectibleCards} `}
-            cards
-          </div>
-          {cards.length === 0 ? (
-            <h3>No Cards</h3>
-          ) : (
+          <div
+            className="content-margin"
+            style={{
+              height: '100%',
+              overflow: 'scroll'
+            }}
+          >
+            <div>
+              Your {cardTypeText(selectedCardType)} {numSeenCards}/{`${numCollectibleCards} `}
+              cards
+            </div>
             <div className="flex-full">
               <div style={gridStyle} ref={el => (this.grid = el)}>
-                {cards.map(mapCell)}
+                {cards.map(d => (
+                  <Cell
+                    key={d.id}
+                    {...d}
+                    style={{
+                      transformOrigin: null,
+                      transform:
+                        selectedCardId === d.id ? 'scale(1.05)' : 'scale(1)',
+                      // zIndex: cardSelected && 5000,
+                      transition: 'transform 500ms'
+                    }}
+                    onClick={() => selectCard(d)}
+                    expanded={cardSelected}
+                  />
+                ))}
               </div>
             </div>
-          )}
+          </div>
+          <TabMenu className="bg-grey-lighter" />
         </div>
       </DefaultLayout>
     );

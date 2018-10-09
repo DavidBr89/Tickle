@@ -48,7 +48,7 @@ class Menu extends Component {
         style={{
           ...style,
           // TODO
-          zIndex: 30000
+          // zIndex: 30000
         }}
       >
         <nav className="navbar flex">

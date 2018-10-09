@@ -12,19 +12,19 @@ export default class TabNav extends React.Component {
     keys: PropTypes.array,
     preSelected: PropTypes.string,
     onChange: PropTypes.func,
-    uiColor: PropTypes.string,
-    stylesheet: PropTypes.object
+    style: PropTypes.object,
+    ui: PropTypes.oneOf([PropTypes.node, null])
   };
 
   static defaultProps = {
     className: '',
     keys: ['1', '2', '3'],
-    uiColor: 'black',
     children: d => d,
     preSelected: 'PhotoUpload',
     onChange: d => d,
     btnStyle: {},
-    stylesheet: {}
+    ui: null,
+    style: {}
   };
 
   state = { selected: this.props.preSelected };
@@ -36,60 +36,51 @@ export default class TabNav extends React.Component {
     }
   }
 
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   return true;
-  // }
-
   render() {
-    const { keys, children, btnStyle, uiColor } = this.props;
+    const { className, keys, children, btnStyle, style, ui } = this.props;
     const { selected } = this.state;
 
     const updState = sel => () => this.setState({ selected: sel });
 
     return (
-      <CardThemeConsumer>
-        {({ stylesheet }) => (
-          <div style={{ width: '100%' }}>
-            <div
-              className="mb-3 nav"
-              style={{
-                display: 'flex',
-                // justifyContent: 'center',
-                flexWrap: 'no-wrap'
-              }}
-              role="tablist"
-            >
-              {keys.map(key => (
-                <div className="pr-1" style={{ width: `${100 / keys.length}%` }}>
-                  <button
-                    style={{ width: '100%' }}
-                    className={`mr-1 ${css(
-                      key === selected ? stylesheet.btnActive : stylesheet.btn
-                    )}`}
-                    type="button"
-                    onClick={updState(key)}
-                    id={key}
-                  >
-                    <div
-                      style={{
-                        // TODO: does not work
-                        textOverflow: 'ellipsis'
-                      }}
-                    >
-                      {key}
-                    </div>
-                  </button>
+      <div className={className} style={style}>
+        <div
+          className="mb-3 nav"
+          style={{
+            display: 'flex',
+            // justifyContent: 'center',
+            flexWrap: 'no-wrap'
+          }}
+          role="tablist"
+        >
+          {keys.map(key => (
+            <div className="pr-1">
+              <button
+                style={{ width: '100%' }}
+                className={`mr-1 ${key === selected ? 'btn btn-black' : 'btn'}`}
+                type="button"
+                onClick={updState(key)}
+                id={key}
+              >
+                <div
+                  style={{
+                    // TODO: does not work
+                    textOverflow: 'ellipsis'
+                  }}
+                >
+                  {key}
                 </div>
-              ))}
+              </button>
             </div>
-            <div className="tab-content">
-              <div className="w-100 h-100" role="tabpanel">
-                {children(selected)}
-              </div>
-            </div>
+          ))}
+          {ui}
+        </div>
+        <div className="flex flex-col">
+          <div role="tabpanel" style={{flex: '1 1 100%'}}>
+            {children(selected)}
           </div>
-        )}
-      </CardThemeConsumer>
+        </div>
+      </div>
     );
   }
 }

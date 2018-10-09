@@ -188,9 +188,12 @@ class CardViewPage extends Component {
             onClick={previewCardAction}
             tagColorScale={tagColorScale}
             slotSize={slotSize}
-            style={{
-              zIndex: 1000
-            }}
+            className="z-10"
+            style={
+              {
+                // zIndex: 1000
+              }
+            }
           />
         </div>
         <LoadingScreen style={{ marginTop: 25 }} visible={isLoadingCards} />

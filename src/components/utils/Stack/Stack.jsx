@@ -13,6 +13,7 @@ function centerLayout({
   selectedIndex,
   direction
 }) {
+  //TODO: fix Pagination
   const size = direction === 'horizontal' ? width : height;
 
   const center = size / 2;
@@ -50,7 +51,7 @@ function centerLayout({
   const rightPositions = data
     .slice(selectedIndex + 1, data.length)
     // TODO: Pagination
-    .slice(0, 7)
+    // .slice(-7)
     .reverse()
     .map((c, j) => ({
       index: c.index,

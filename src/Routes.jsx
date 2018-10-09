@@ -9,7 +9,7 @@ import CardView from './components/DataView/CardView';
 import CardAuthor from './components/DataView/CardAuthor';
 import Admin from './components/Admin';
 import Account from './components/Account';
-import Diary from './components/MyCards';
+import Diary from './components/Diary';
 import DefaultLayout from './components/DefaultLayout';
 
 import Grid from './components/DataView/GridView';

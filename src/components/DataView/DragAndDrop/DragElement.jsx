@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import CardMarker from 'Components/cards/CardMarker';
 
-import { DragSourceCont } from './DragSourceTarget';
+import DragSource from './DragSourceCont';
 
 import { connect } from 'react-redux';
 
@@ -40,7 +40,7 @@ const DragElement = ({ dragCard, x, y, children, ...d }) => {
 
   return (
     <div style={posStyle}>
-      <DragSourceCont
+      <DragSource
         dragHandler={dragCard}
         data={d}
         x={x}
@@ -49,7 +49,7 @@ const DragElement = ({ dragCard, x, y, children, ...d }) => {
         height={80}
       >
         {elem}
-      </DragSourceCont>
+      </DragSource>
     </div>
   );
 };

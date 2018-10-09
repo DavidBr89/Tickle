@@ -161,7 +161,8 @@ const geoSuccess = pos => {
   // Oude Arendonkse Baan, Oud-Turnhout 51.313476, 5.001513
   //
   // const turnoud = { latitude: 51.313476, longitude: 5.001513 };
-  store.dispatch(userMove(coords));
+  // TODO: include back again
+  // store.dispatch(userMove(coords));
   // store.dispatch(changeMapViewport(coords));
 };
 

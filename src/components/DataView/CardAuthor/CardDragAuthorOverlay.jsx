@@ -6,16 +6,12 @@ import { bindActionCreators } from 'redux';
 
 import CardMarker from 'Components/cards/CardMarker';
 
-import {
-  DragSourceCont,
-  DropTargetCont,
-  DragDropContextProvider
-} from '../DragAndDrop/DragSourceTarget';
+import DropTargetCont from '../DragAndDrop/DragTargetCont';
+
+import DragDropContextProvider from '../DragAndDrop/DragContextProvider';
 
 // import { dragCard } from 'Reducers/Cards/actions';
 import DataOverlay from '../ForceOverlay/DataOverlay';
-
-import EditCard from 'Components/cards/ConnectedEditCard';
 
 import { updateCardTemplate, dragCard } from 'Reducers/Cards/actions';
 
@@ -24,7 +20,6 @@ import { selectCard } from 'Reducers/DataView/actions';
 
 import DragElement from '../DragAndDrop/DragElement';
 
-// import { extendSelectedCard } from 'Reducers/DataView/actions';
 
 const CardAuthorOverlay = DragDropContextProvider(props => {
   const {
@@ -141,12 +136,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const viewport = { ...mapViewport, width, height };
 
   const onCardDrop = cardData => {
-    console.log('DROP CARD DATA', cardData);
-    // if (selectedCardId === cardData.id) {
     if (cardData.id === 'temp')
       updateCardTemplate({ cardData, viewport, dataView });
     else asyncUpdateCard({ cardData, viewport, dataView });
-    // }
   };
 
   return {
