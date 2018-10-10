@@ -138,14 +138,14 @@ function reducer(state = INITIAL_STATE, action) {
 
     case RECEIVE_COLLECTIBLE_CARDS: {
       const cards = action.options;
-      const nestedTagVocabulary = setify(cards);
-      const tagVocabulary = uniq(
-        cards.reduce((acc, c) => [...acc, ...c.tags], [])
-      );
+      const tagVocabulary = setify(cards);
+      // const tagVocabulary = uniq(
+      //   cards.reduce((acc, c) => [...acc, ...c.tags], [])
+      // );
       return {
         ...state,
         collectibleCards: cards,
-        nestedTagVocabulary,
+        // nestedTagVocabulary,
         // submittedCards,
         // startedCards,
         tagVocabulary

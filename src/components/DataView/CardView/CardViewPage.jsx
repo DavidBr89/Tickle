@@ -125,7 +125,6 @@ class CardViewPage extends Component {
       filterCards,
       addCardFilter,
       tagVocabulary,
-      nestedTagVocabulary,
       // setDataView,
       filterSet,
       toggleAuthEnv,
@@ -158,7 +157,7 @@ class CardViewPage extends Component {
           <div className="flex items-center">
             <div>mini</div>
             <CardTagSearch
-              allTags={nestedTagVocabulary}
+              allTags={tagVocabulary}
               key={filterSet.join(',')}
               onChange={filterCards}
               onClick={addCardFilter}

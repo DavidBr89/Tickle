@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { ChevronsUp } from 'react-feather';
-
-import TabNav from 'Utils/TabNav';
+import { ChevronsUp, ChevronsDown } from 'react-feather';
 
 import Tree from 'Components/DataView/Tree';
+
+import RelatedTags from './RelatedTags';
 
 const RELATED_CARDS = 'Related Cards';
 const HIERARCHY_CARDS = 'Hierarchy';
@@ -58,34 +58,40 @@ class TabMenu extends Component {
     className: PropTypes.string
   };
 
-  state = { extended: false };
+  state = { extended: false, selectedTab: RELATED_CARDS };
 
   render() {
-    const { className, style, children } = this.props;
-    const { extended } = this.state;
+    const { className, style, nestedTags, children } = this.props;
+    const { extended, selectedTab } = this.state;
+    const compSwitch = () => {
+      switch (selectedTab) {
+        case RELATED_CARDS:
+          return <RelatedTags className="w-full h-full" nestedTags={nestedTags} />;
+        case HIERARCHY_CARDS:
+          return <Tree className="h-full" />;
+        default:
+          return null;
+      }
+    };
     return (
       <div
-        className="flex p-3 "
+        className={`${className} `}
         style={{
           // position: 'absolute',
           // width: '100%',
           width: '100%',
-          height: '100%', // extended ? '100%' : '0%',
+          flex: extended ? '1 0 98%' : '1 1 20%',
+          // height: '100%', // extended ? '100%' : '0%',
           zIndex: 1000000,
-          transition: 'top 400ms, translate 400ms',
+          transition: 'flex 400ms, top 400ms, translate 400ms',
           // transform: extended ? 'translateY(0%)' : 'translateY(-100%)',
-          position: 'absolute',
-          top: extended ? '0%' : '100%',
+          // position: 'absolute',
+          // top: extended ? '0%' : '100%',
           ...style
           // display: cardSelected ? 'block' : 'none'
         }}
       >
-        <div
-          className="flex flex-col bg-grey-lighter overflow-hidden"
-          style={{
-            flex: '0 1 100%'
-          }}
-        >
+        <div className="h-full flex flex-col bg-grey-lighter">
           <div className="flex justify-between">
             <Nav
               keys={[RELATED_CARDS, HIERARCHY_CARDS]}
@@ -95,10 +101,10 @@ class TabMenu extends Component {
               className="btn"
               onClick={() => this.setState({ extended: !extended })}
             >
-              <ChevronsUp />
+              {extended ? <ChevronsDown /> : <ChevronsUp />}
             </button>
           </div>
-          <Tree className="flex-grow" />
+          <div className="flex-grow relative">{compSwitch(selectedTab)}</div>
         </div>
       </div>
     );

@@ -26,7 +26,7 @@ import withAuthorization from 'Components/withAuthorization';
 
 const mapStateToProps = state => {
   // const { cardSets } = state.Account;
-  const { tagColorScale, collectibleCards } = state.Cards;
+  const { tagColorScale, tagVocabulary, collectibleCards } = state.Cards;
   const { selectedCardType } = state.Diary;
   // console.log('cards');
   //
@@ -34,16 +34,15 @@ const mapStateToProps = state => {
   //
   //
   const cards = collectibleCards
-    .map(d => {
-      const seen = isCardSeen(d);
-      return { ...d, seen };
-    })
+    .map(d =>
+      // const seen = isCardSeen(d);
+      ({ ...d, seen: true })
+    )
     .filter(challengeTypeMap[selectedCardType]);
 
   const numSeenCards = cards.filter(c => c.seen).length;
   const numCollectibleCards = collectibleCards.length;
 
-  console.log(' Cards', cards);
   //   .sort((a, b) => {
   //   if (isSelectedCardType(a)) return -1;
   //   if (isSelectedCardType(b)) return 1;
@@ -54,12 +53,12 @@ const mapStateToProps = state => {
     collectibleCards.reduce((acc, c) => [...acc, ...c.tags], [])
   );
 
-  console.log('State Diary', cards);
 
   return {
     authUser: {
       ...state.Session.authUser
     },
+    tagVocabulary,
     selectedCardType,
     numSeenCards,
     numCollectibleCards,

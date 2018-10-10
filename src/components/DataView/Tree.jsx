@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 
 import * as d3 from 'd3';
 
+import Dimensions from 'Components/utils/DimensionsWrapper';
+
 const treeData = {
   name: 'Top Level',
   children: [
@@ -10,11 +12,6 @@ const treeData = {
       name: 'Level 2: A',
       children: [{ name: 'Son of A' }, { name: 'Daughter of A' }]
     },
-    { name: 'Son of A' },
-    { name: 'Daughter of A' },
-    { name: 'Son of A' },
-    { name: 'Daughter of A' },
-    { name: 'Son of A' },
     { name: 'Daughter of A' },
     { name: 'Son of A' },
     { name: 'Daughter of A' },
@@ -36,7 +33,7 @@ class Tree extends Component {
   }
 
   render() {
-    const {className, style}=  this.props;
+    const { className, style } = this.props;
     // set the dimensions and margins of the diagram
     // let margin = { top: 40, right: 90, bottom: 50, left: 90 },
     //   width = 660 - margin.left - margin.right,
@@ -59,9 +56,18 @@ class Tree extends Component {
     const descendants = nodes.descendants();
 
     return (
-      <div className={className} style={{ ...style, position: 'relative' }}>
-        <div style={{ transform: 'translateX(100%)' }}>
-          <div>
+      <div
+        className={`${className} flex flex-col`}
+        style={{
+          ...style,
+          position: 'relative',
+          overflow: 'scroll'
+          // height: '100%'
+          // height: 1000
+        }}
+      >
+        <div className="flex-grow" style={{ transform: 'translateX(50%)' }}>
+          <div className="h-full">
             {descendants.map(n => (
               <div
                 style={{
@@ -82,4 +88,8 @@ class Tree extends Component {
   }
 }
 
-export default Tree;
+const TreeWrapper = ({ ...props }) => (
+  <Dimensions style={{position: 'absolute'}}>{(w, h) => <Tree {...props} width={w} height={h} />}</Dimensions>
+);
+
+export default TreeWrapper;

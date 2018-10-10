@@ -121,7 +121,7 @@ export default class MyDiary extends Component {
       selectCardType,
       selectedCardType,
       numCollectibleCards,
-      numSeenCards
+      numSeenCards, tagVocabulary
     } = this.props;
     const { colNum, rowNum } = this.state;
 
@@ -138,13 +138,13 @@ export default class MyDiary extends Component {
     const cardHeight = 1;
 
     const tmpColNum = 3;
-    const tmpRowHeight = height / 4;
+    const tmpRowHeight = 140; // height / 4;
 
     const gridStyle = {
-      height: '100%',
+      // height: '100%',
       display: 'grid',
       // gridAutoFlow: 'column dense',
-      gridTemplateColumns: `repeat(auto-fill, minmax(200px, 1fr))`,
+      gridTemplateColumns: `repeat(auto-fill, minmax(120px, 1fr))`,
       gridTemplateRows: `repeat(${Math.ceil(
         cards.length / tmpColNum
       )}, ${tmpRowHeight}px)`
@@ -222,43 +222,35 @@ export default class MyDiary extends Component {
         </BareModal>
 
         <div
-          className="h-full w-full flex flex-col"
+          className="h-full w-full flex flex-col content-block"
           style={{
             position: 'relative'
           }}
         >
-          <div
-            className="content-margin"
-            style={{
-              height: '100%',
-              overflow: 'scroll'
-            }}
-          >
-            <div>
-              Your {cardTypeText(selectedCardType)} {numSeenCards}/{`${numCollectibleCards} `}
-              cards
-            </div>
-            <div className="flex-full">
-              <div style={gridStyle} ref={el => (this.grid = el)}>
-                {cards.map(d => (
-                  <Cell
-                    key={d.id}
-                    {...d}
-                    style={{
-                      transformOrigin: null,
-                      transform:
-                        selectedCardId === d.id ? 'scale(1.05)' : 'scale(1)',
-                      // zIndex: cardSelected && 5000,
-                      transition: 'transform 500ms'
-                    }}
-                    onClick={() => selectCard(d)}
-                    expanded={cardSelected}
-                  />
-                ))}
-              </div>
+          <div>
+            Your {cardTypeText(selectedCardType)} {numSeenCards}/{`${numCollectibleCards} `}
+            cards
+          </div>
+          <div className="flex-shrink overflow-y-scroll">
+            <div style={gridStyle} ref={el => (this.grid = el)}>
+              {cards.map(d => (
+                <Cell
+                  key={d.id}
+                  {...d}
+                  style={{
+                    transformOrigin: null,
+                    transform:
+                      selectedCardId === d.id ? 'scale(1.05)' : 'scale(1)',
+                    // zIndex: cardSelected && 5000,
+                    transition: 'transform 500ms'
+                  }}
+                  onClick={() => selectCard(d)}
+                  expanded={cardSelected}
+                />
+              ))}
             </div>
           </div>
-          <TabMenu className="bg-grey-lighter" />
+          <TabMenu className="flex-grow bg-grey-lighter" nestedTags={tagVocabulary}/>
         </div>
       </DefaultLayout>
     );

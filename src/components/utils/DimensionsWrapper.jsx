@@ -7,7 +7,8 @@ class DimensionsWrapper extends React.Component {
     delay: PropTypes.oneOf([null, PropTypes.number])
   };
   static defaultProps = {
-    delay: null
+    delay: null,
+    style: {}
   };
 
   constructor(props) {
@@ -54,13 +55,13 @@ class DimensionsWrapper extends React.Component {
   }
 
   render() {
-    const { children, className} = this.props;
+    const { children, style, className } = this.props;
     const { width, height } = this.state;
     return (
       <div
         className={className}
         ref={node => (this.node = node)}
-        style={{ height: '100%', width: '100%' }}
+        style={{ height: '100%', width: '100%', ...style }}
       >
         {children(width, height)}
       </div>
