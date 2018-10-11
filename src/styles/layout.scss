@@ -2,6 +2,11 @@
     @apply .font-bold .py-2 .px-4 .border-2 .border-grey-darkest;
 }
 
+
+.bare-btn {
+    @apply .font-bold .py-2 .px-4 .border-2 .bg-grey-light;
+}
+
 .btn:hover {
   @apply .bg-grey-dark;
 }

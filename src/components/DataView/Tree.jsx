@@ -5,19 +5,30 @@ import * as d3 from 'd3';
 
 import Dimensions from 'Components/utils/DimensionsWrapper';
 
+import PreviewCardStack from 'Components/cards/PreviewCardStack';
+
 const treeData = {
-  name: 'Top Level',
+  tag: 'Top Level',
+  values: [],
   children: [
     {
-      name: 'Level 2: A',
-      children: [{ name: 'Son of A' }, { name: 'Daughter of A' }]
+      tag: 'Level 2: A',
+      values: [],
+      children: [
+        { tag: 'Son of A', values: [] },
+        { tag: 'Daughter of A', values: [] }
+      ]
     },
-    { name: 'Daughter of A' },
-    { name: 'Son of A' },
-    { name: 'Daughter of A' },
+    { tag: 'Daughter of A', values: [] },
+    { tag: 'Son of A', values: [] },
+    { tag: 'Daughter of A', values: [] },
     {
-      name: 'Level 2: B',
-      children: [{ name: 'Son of A' }, { name: 'Daughter of A' }]
+      tag: 'Level 2: B',
+      values: [],
+      children: [
+        { tag: 'Son of A', values: [] },
+        { tag: 'Daughter of A', values: [] }
+      ]
     }
   ]
 };
@@ -25,7 +36,16 @@ const treeData = {
 class Tree extends Component {
   static propTypes = {
     children: PropTypes.node,
-    className: PropTypes.string
+    className: PropTypes.string,
+    nodeWidth: PropTypes.number,
+    nodeHeight: PropTypes.number
+  };
+
+  static defaultProps = {
+    nodeHeight: 200,
+    nodeWidth: 180,
+    yPad: 100,
+    xPad: 20
   };
 
   constructor(props) {
@@ -33,27 +53,51 @@ class Tree extends Component {
   }
 
   render() {
-    const { className, style } = this.props;
+    const {
+      className,
+      style,
+      nodeWidth,
+      nodeHeight,
+      xPad,
+      yPad,
+      width,
+      height
+    } = this.props;
+
+    const nw = width / 5;
+    const nh = height / 5;
     // set the dimensions and margins of the diagram
     // let margin = { top: 40, right: 90, bottom: 50, left: 90 },
     //   width = 660 - margin.left - margin.right,
     //   height = 500 - margin.top - margin.bottom;
 
-    const nodeWidth = 200;
-    const nodeHeight = 200;
-    const yPad = 100;
-    const xPad = 20;
-    // declares a tree layout and assigns the size
-    const treemap = d3.tree().nodeSize([nodeWidth + xPad, nodeHeight + yPad]);
+    const tree = d3
+      .tree()
+      .separation((a, b) => (a.parent === b.parent ? 1 : 2) / a.depth)
+      // .size([width, height]);
+      .nodeSize([nw + xPad, nh + yPad]);
 
     //  assigns the data to a hierarchy using parent-child relationships
     const hierarchyData = d3.hierarchy(treeData);
-    console.log('hierarchyData', hierarchyData);
+    // console.log('hierarchyData', hierarchyData);
 
     // maps the node data to the tree layout
-    const nodes = treemap(hierarchyData);
-    console.log('Nodes', nodes);
-    const descendants = nodes.descendants();
+    const root = tree(hierarchyData);
+    // console.log('Nodes', nodes);
+    const descendants = root.descendants();
+
+    console.log('descendants', descendants);
+    const links = tree(root).links();
+    const drawLink = d3
+      .linkHorizontal()
+      .x(d => d.x + width / 2)
+      .y(d => d.y + nh);
+
+    //  var link = g.selectAll(".link")
+    //     .data()
+    //     .enter().append("path")
+    //       .attr("class", "link")
+    //       .attr("d", ;
 
     return (
       <div
@@ -61,23 +105,47 @@ class Tree extends Component {
         style={{
           ...style,
           position: 'relative',
-          overflow: 'scroll'
-          // height: '100%'
+          overflow: 'scroll',
+          height,
+          width
+          // transform: `translate(${root.x}px, ${root.y}px)`
           // height: 1000
         }}
       >
-        <div className="flex-grow" style={{ transform: 'translateX(50%)' }}>
-          <div className="h-full">
-            {descendants.map(n => (
-              <div
+        <svg
+          className="absolute"
+          style={{
+            width: width * 2,
+            height: height* 2
+            // transform: `translate(${nw / 2}px, ${nh / 2}px)`
+          }}
+        >
+          {links.map(l => (
+            <path d={drawLink(l)} style={{ fill: 'none', stroke: 'black' }} />
+          ))}
+        </svg>
+        <div
+          className="flex-grow "
+          style={
+            {
+              // transform: 'translateX(50%)'
+            }
+          }
+        >
+          <div className="">
+            {descendants.map(({ data, ...n }) => (
+              <PreviewCardStack
+                name={data.tag}
+                key={data.tag}
+                {...data}
                 style={{
-                  transform: 'translate(50%, 50%)',
+                  transform: 'translate(-50%,50%)',
                   position: 'absolute',
-                  left: n.x,
+                  left: n.x + width / 2,
                   top: n.y,
-                  width: nodeWidth,
-                  height: nodeHeight,
-                  border: '1px solid blue'
+                  width: nw,
+                  height: nh
+                  // border: '1px solid blue'
                 }}
               />
             ))}
@@ -89,7 +157,9 @@ class Tree extends Component {
 }
 
 const TreeWrapper = ({ ...props }) => (
-  <Dimensions style={{position: 'absolute'}}>{(w, h) => <Tree {...props} width={w} height={h} />}</Dimensions>
+  <Dimensions style={{ position: 'absolute' }}>
+    {(w, h) => <Tree {...props} width={w} height={h} />}
+  </Dimensions>
 );
 
 export default TreeWrapper;

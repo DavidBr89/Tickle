@@ -10,7 +10,9 @@ export default function setify(data) {
     .key(d => d.tag)
     .entries(spreadData)
     .map(d => {
-      const tags = uniq(flatten(d.values.map(e => e.tags)));
+      const tags = uniq(flatten(d.values.map(e => e.tags))).filter(
+        e => d.key !== e.key
+      );
       return { ...d, count: d.values.length, tags, tag: d.key };
     })
     .sort((a, b) => b.values.length - a.values.length);

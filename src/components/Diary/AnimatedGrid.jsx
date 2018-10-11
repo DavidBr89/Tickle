@@ -53,8 +53,8 @@ class Cell extends Component {
           zIndex: hovered && 2000,
           width: '100%',
           height: '100%',
-          opacity: selected ? 1 : 0.5,
           transition: 'opacity 500ms',
+          // background: selected && 'black',
           ...style
         }}
         onClick={seen ? onClick : null}
@@ -114,30 +114,34 @@ export default class MyDiary extends Component {
       cards,
       selectedCardId,
       selectCard,
+      extendCard,
       selectedCard,
       selectedTags,
+      relatedTags,
       height,
       cardExtended,
       selectCardType,
       selectedCardType,
       numCollectibleCards,
-      numSeenCards, tagVocabulary
+      numSeenCards,
+      tagVocabulary
     } = this.props;
     const { colNum, rowNum } = this.state;
 
-    const colWidth = 1;
-    const rowHeight = 1;
-    const colNumber = 3 * colWidth;
-
-    const rowNumber = rowHeight * 3; // Math.max(6, Math.ceil(Math.sqrt(cards.length)));
-    const centerCol = colWidth + 1; // Math.ceil(colNumber / 2);
-    const centerRow = rowHeight + 1; // Math.floor(rowNumber / 2);
-    const centerWidth = 1;
-    const centerHeight = 1;
-    const cardWidth = 1;
-    const cardHeight = 1;
+    // const colWidth = 1;
+    // const rowHeight = 1;
+    // const colNumber = 3 * colWidth;
+    //
+    // const rowNumber = rowHeight * 3; // Math.max(6, Math.ceil(Math.sqrt(cards.length)));
+    // const centerCol = colWidth + 1; // Math.ceil(colNumber / 2);
+    // const centerRow = rowHeight + 1; // Math.floor(rowNumber / 2);
+    // const centerWidth = 1;
+    // const centerHeight = 1;
+    // const cardWidth = 1;
+    // const cardHeight = 1;
 
     const tmpColNum = 3;
+
     const tmpRowHeight = 140; // height / 4;
 
     const gridStyle = {
@@ -145,36 +149,8 @@ export default class MyDiary extends Component {
       display: 'grid',
       // gridAutoFlow: 'column dense',
       gridTemplateColumns: `repeat(auto-fill, minmax(120px, 1fr))`,
-      gridTemplateRows: `repeat(${Math.ceil(
-        cards.length / tmpColNum
-      )}, ${tmpRowHeight}px)`
+      gridAutoRows: 150
     };
-
-    // const nonSelStyle = cards
-    //   .filter(c => c.id !== selectedCardId)
-    //   .reduce((acc, d, i) => {
-    //     acc[d.id] = findCellStyle(d, i);
-    //     return acc;
-    //   }, {});
-
-    // const indices = cards.map((d, i) => i);
-    // const mapSelectedCell = (d, i) => {
-    //   const cardSelected = d.id === selectedCardId;
-    //   const selStyle = {
-    //     gridColumn: `${centerCol} / span 3`,
-    //     gridRow: `${centerRow} / span 3`
-    //   };
-    //   return (
-    //     <Cell
-    //       key={d.id}
-    //       {...d}
-    //       style={selStyle}
-    //       onClick={() => selectCard(d)}
-    //       selected={isSelectedCardType(d)}
-    //       expanded={cardSelected}
-    //     />
-    //   );
-    // };
 
     const cardSelected = selectedCardId !== null;
     return (
@@ -240,17 +216,28 @@ export default class MyDiary extends Component {
                   style={{
                     transformOrigin: null,
                     transform:
-                      selectedCardId === d.id ? 'scale(1.05)' : 'scale(1)',
-                    // zIndex: cardSelected && 5000,
+                      selectedCardId === d.id ? 'scale(1.1)' : 'scale(1)',
+                    zIndex: selectedCardId === d.id ? 2 : 0,
                     transition: 'transform 500ms'
                   }}
-                  onClick={() => selectCard(d)}
+                  onClick={() =>
+                    selectedCardId === d.id
+                      ? extendCard(d.id)
+                      : selectCard(d.id)
+                  }
                   expanded={cardSelected}
                 />
               ))}
             </div>
           </div>
-          <TabMenu className="flex-grow bg-grey-lighter" nestedTags={tagVocabulary}/>
+          <TabMenu
+            onHeaderClick={() => selectCard(null)}
+            selectedTags={selectedTags}
+            relatedTags={relatedTags}
+            selectedCard={selectedCard}
+            className="flex-grow bg-grey-lighter"
+            nestedTags={tagVocabulary}
+          />
         </div>
       </DefaultLayout>
     );

@@ -53,7 +53,6 @@ const mapStateToProps = state => {
     collectibleCards.reduce((acc, c) => [...acc, ...c.tags], [])
   );
 
-
   return {
     authUser: {
       ...state.Session.authUser
@@ -80,7 +79,7 @@ const mapDispatchToProps = dispatch =>
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const { match, history } = ownProps;
-  const { cards } = stateProps;
+  const { cards, tagVocabulary } = stateProps;
 
   const { routeSelectCard, routeExtendCard } = dispatchProps;
   // console.log('match', match, history, id);
@@ -93,20 +92,25 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   } = match.params;
   const extended = showOption === 'extended';
 
-  const selectCard = d => {
-    console.log('selectCard', d);
-    // TODO: change later
-    routeSelectCard({ path, history, id: d.id });
-    // routeExtendCard({ path, history, id: d.id, extended: !extended });
+  const selectCard = id => {
+    routeSelectCard({ path, history, id });
   };
 
-  const extendCard = d => {
-    // TODO: change later
-    // routeSelectCard({ path, history, id: d.id });
-    routeExtendCard({ path, history, id: d.id, extended: !extended });
+  const extendCard = id => {
+    routeExtendCard({ path, history, id, extended: !extended });
   };
 
   const selectedCard = cards.find(c => c.id === selectedCardId) || null;
+  const selectedTags =
+    selectedCard !== null
+      ? selectedCard.tags.map(t => tagVocabulary.find(d => d.tag === t))
+      : [];
+
+  const relatedTags = selectedTags
+    .map(t => tagVocabulary.find(d => d.tags.includes(t.tag)))
+    .filter(t => !selectedTags.map(d => d.tag).includes(t.tag));
+  console.log('relatedTags', relatedTags);
+  // .map(d => d.tag);
 
   const includesSelectedCard =
     cards.filter(d => d.id !== null && d.id === selectedCardId).length === 1;
@@ -116,9 +120,10 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     ...dispatchProps,
     ...ownProps,
     selectedCardId: selectedCardId || null,
+    selectedTags,
+    relatedTags,
     selectCard,
     extendCard,
-    selectedTags: [],
     selectedCard: includesSelectedCard ? selectedCard : null,
     cardExtended: includesSelectedCard && extended,
     cards: cards.sort((a, b) => {

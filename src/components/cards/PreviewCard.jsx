@@ -92,7 +92,8 @@ class PreviewCard extends Component {
       tagColorScale,
       type,
       showImg,
-      accessible, className
+      accessible,
+      className
     } = this.props;
     const selImg = (() => {
       if (img && img.thumbnail) return img.thumbnail;
@@ -112,7 +113,12 @@ class PreviewCard extends Component {
 
     if (!accessible)
       return (
-        <div className={className} style={contStyle} onClick={onClick} className="flex flex-col">
+        <div
+          className={className}
+          style={contStyle}
+          onClick={onClick}
+          className="flex flex-col"
+        >
           <div
             className="flex flex-col align-center"
             style={{
