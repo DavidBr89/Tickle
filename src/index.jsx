@@ -2,6 +2,7 @@ import React from 'react';
 import WebFont from 'webfontloader';
 import { render } from 'react-dom';
 
+import 'event-propagation-path';
 // import 'font-awesome/css/font-awesome.css';
 // import 'material-icons/css/material-icons.css';
 // import 'bootstrap/dist/css/bootstrap.min.css';

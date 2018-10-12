@@ -72,7 +72,7 @@ export default class FileUpload extends Component {
         <label
           htmlFor="all-file-upload"
           style={{ width: '100%' }}
-          className={`${css(stylesheet.btn)}`}
+          className="btn"
         >
           <div
             style={{

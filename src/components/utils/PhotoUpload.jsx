@@ -76,6 +76,7 @@ export default class PhotoUpload extends Component {
     return (
       <div style={{ ...style }}>
         <div
+          className="mb-3"
           style={{
             // TODO: outsource
             height: '80%',
@@ -117,7 +118,7 @@ export default class PhotoUpload extends Component {
         </div>
         <label
           htmlFor="file-upload"
-          className={`${css(stylesheet.imgUploadBtn)} mt-2`}
+          className="btn mt-2"
           style={{
             width: '100%',
             display: null,
@@ -145,7 +146,7 @@ export default class PhotoUpload extends Component {
             const files = [...e.target.files];
             const imgName = e.target.files[0].name;
 
-            //TODO remove
+            // TODO remove
             const imgType = imgName.slice(
               ((imgName.lastIndexOf('.') - 1) >>> 0) + 2
             );

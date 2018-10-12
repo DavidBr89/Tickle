@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 
 import { dragCard } from 'Reducers/Cards/actions';
 
-const DragElement = ({ dragCard, x, y, children, ...d }) => {
+const DragElement = ({ dragCard, x, y, children, className, ...d }) => {
   const posStyle = {
     position: 'absolute',
     left: x,
@@ -39,7 +39,7 @@ const DragElement = ({ dragCard, x, y, children, ...d }) => {
   );
 
   return (
-    <div style={posStyle}>
+    <div style={posStyle} className={className}>
       <DragSource
         dragHandler={dragCard}
         data={d}

@@ -52,10 +52,6 @@ class NumberInput extends Component {
 
   state = { value: 0, error: null, ...this.state };
 
-  constructor(props) {
-    super(props);
-  }
-
   isPosInt = () => /^\+?(0|[1-9]\d*)$/.test(this.state.value);
 
   componentDidUpdate(prevProps, prevState) {
@@ -79,13 +75,14 @@ class NumberInput extends Component {
         {...this.props}
         onClose={() => onClose()}
         footer={
-          <FooterBtn
+          <button
+            className="btn"
             style={{ opacity: disabled ? 0.5 : 1, transition: 'opacity 200ms' }}
             disabled={disabled}
             onClick={() => onUpdate(value)}
           >
             Update
-          </FooterBtn>
+          </button>
         }
       >
         <input
@@ -152,22 +149,25 @@ class TextAreaModal extends Component {
       <ModalBody
         {...this.props}
         onClose={() => onUpdate(text)}
-        footer={<FooterBtn onClick={() => onUpdate(text)}>Update</FooterBtn>}
+        footer={
+          <button className="btn" onClick={() => onUpdate(text)}>
+            Update
+          </button>
+        }
       >
-        <div className="form-group">
-          <textarea
-            onChange={e =>
-              this.setState({
-                text: e.target.value || null
-              })
-            }
-            rows={5}
-            style={{ width: '100%' }}
-            placeholder={'<Please insert your description>'}
-          >
-            {text}
-          </textarea>
-        </div>
+        <textarea
+          className="form-control"
+          onChange={e =>
+            this.setState({
+              text: e.target.value || null
+            })
+          }
+          rows={5}
+          style={{ width: '100%' }}
+          placeholder={'<Please insert your description>'}
+        >
+          {text}
+        </textarea>
       </ModalBody>
     );
   }
@@ -190,7 +190,11 @@ class TitleModal extends Component {
       <ModalBody
         {...this.props}
         onClose={() => onUpdate(text)}
-        footer={<FooterBtn onClick={() => onUpdate(text)}>Update</FooterBtn>}
+        footer={
+          <button className="btn" onClick={() => onUpdate(text)}>
+            Update
+          </button>
+        }
       >
         <div className="form-group">
           <input
@@ -316,7 +320,11 @@ class EditCardFront extends PureComponent {
     } = this.props;
 
     const { title, tags, img, description, media, points } = data;
-    const closeBtn = <FooterBtn onClick={this.onCloseModal}>Close</FooterBtn>;
+    const closeBtn = (
+      <button className="btn" onClick={this.onCloseModal}>
+        Close
+      </button>
+    );
 
     const modalVisible = dialog !== null;
     const dialogTitle = dialog !== null ? dialog.title : null;
@@ -493,7 +501,8 @@ class EditCardFront extends PureComponent {
           }
           bottomControls={
             <React.Fragment>
-              <BigButton
+              <button
+                className="btn btn-black m-1"
                 onClick={() =>
                   this.setState({
                     dialog: { title: 'Challenge', data: challenge }
@@ -501,11 +510,11 @@ class EditCardFront extends PureComponent {
                 }
               >
                 {challenge === null ? 'Add Challenge' : 'Edit Challenge'}
-              </BigButton>
+              </button>
               {template && (
-                <BigButton className="ml-1" onClick={() => onCreate(data)}>
+                <button className="btn m-1" onClick={() => onCreate(data)}>
                   Create
-                </BigButton>
+                </button>
               )}
             </React.Fragment>
           }

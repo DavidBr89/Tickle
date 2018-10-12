@@ -19,6 +19,8 @@ import { GlobalThemeConsumer, stylesheet } from 'Src/styles/GlobalThemeContext';
 
 import { setAuthUser } from 'Reducers/Session/actions';
 
+import DefaultLayout from 'Components/DefaultLayout';
+
 const byPropKey = (propertyName, value) => () => ({
   [propertyName]: value
 });
@@ -42,17 +44,24 @@ function onSubmit(event) {
 }
 
 const SignInPage = ({ history }) => (
-  <div className="content-block">
-    <h1>SignIn</h1>
-    <SignInForm
-      onAuthenticate={usr => {
-        console.log('USR', usr);
-        history.push(`${routes.DATAVIEW_GEO}`);
-      }}
-    />
-    <PasswordForgetLink />
-    <SignUpLink />
-  </div>
+  <DefaultLayout
+    menu={
+      <div className="flex-grow flex justify-center items-center">
+        <h1>Sign In</h1>
+      </div>
+    }
+  >
+    <div className="content-margin">
+      <SignInForm
+        onAuthenticate={usr => {
+          console.log('USR', usr);
+          history.push(`${routes.DATAVIEW_GEO}`);
+        }}
+      />
+      <PasswordForgetLink />
+      <SignUpLink />
+    </div>
+  </DefaultLayout>
 );
 
 const INITIAL_STATE = {
@@ -106,8 +115,8 @@ const SignInPureForm = ({
   onEmailChange
 }) => (
   <form className="mb-1" onSubmit={onSubmit}>
-    <div className="flex flex-col mb-4">
-      <label className="mb-2 text-lg text-grey-darkest" htmlFor="first_name">
+    <div className="form-group">
+      <label className="label" htmlFor="first_name">
         Username
       </label>
       <input
@@ -115,11 +124,11 @@ const SignInPureForm = ({
         onChange={onEmailChange}
         type="text"
         placeholder="Email Address"
-        className="border py-2 px-3 text-grey-darkest"
+        className="form-control"
       />
     </div>
-    <div className="flex flex-col mb-4">
-      <label className="mb-2 text-lg text-grey-darkest" htmlFor="first_name">
+    <div className="form-group">
+      <label className="label" htmlFor="first_name">
         Password
       </label>
       <input
@@ -127,7 +136,7 @@ const SignInPureForm = ({
         onChange={onPasswordChange}
         type="password"
         placeholder="Password"
-        className="border py-2 px-3 text-grey-darkest"
+        className="form-control"
       />
     </div>
     {onSubmit && (

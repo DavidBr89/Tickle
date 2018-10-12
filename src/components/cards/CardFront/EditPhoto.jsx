@@ -101,7 +101,7 @@ class AddUrl extends Component {
                   />
                 </div>
                 <button
-                  className={css(stylesheet.btn)}
+                  className="btn"
                   style={{ width: '30%' }}
                   onClick={() => {
                     onChange({

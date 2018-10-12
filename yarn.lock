@@ -4625,6 +4625,11 @@ event-emitter@~0.3.5:
     d "1"
     es5-ext "~0.10.14"
 
+event-propagation-path@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/event-propagation-path/-/event-propagation-path-1.0.5.tgz#1eeffa9878c9043e314849cbfa275c7e6e8f15fc"
+  integrity sha512-1/UU/xRPq3h/7UrWejsYj3ZzJtEA3FdUxKZtWjQ26KLy6yDXxtD+z1wP5mdE+BrlZAIHk7W7cGyG1uaV/Cpstg==
+
 eventemitter3@1.x.x:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-1.2.0.tgz#1c86991d816ad1e504750e73874224ecf3bec508"

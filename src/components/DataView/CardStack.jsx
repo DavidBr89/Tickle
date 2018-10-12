@@ -47,7 +47,7 @@ function CardStackWrapper({
   const cardHeight = Math.min(height, 250);
 
   return (
-    <Dimensions className={className}>
+    <Dimensions className={`${className} z-10`}>
       {(w, h) => (
         <Stack
           data={cards}

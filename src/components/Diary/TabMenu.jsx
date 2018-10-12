@@ -121,6 +121,7 @@ class TabMenu extends Component {
       selectedTags,
       relatedTags
     } = this.props;
+
     const { extended, selectedTab } = this.state;
 
     const selectedTagLabels = selectedTags.map(d => d.tag);
@@ -150,9 +151,7 @@ class TabMenu extends Component {
             return (
               <div className="flex items-center">
                 <Tags className="w-full h-full" values={selectedTagLabels} />
-
                 <ArrowRight />
-
                 <div className="flex">
                   {relatedTagLabels.length === 0 ? 'No connections' : null}
                   <Tags className="w-full h-full" values={relatedTagLabels} />
@@ -189,6 +188,7 @@ class TabMenu extends Component {
         <div className="h-full flex flex-col bg-grey-lighter p-2">
           <div className="flex justify-between pb-2">
             <Nav
+              className="flex"
               keys={[RELATED_TAGS, HIERARCHY_CARDS]}
               onChange={selected => this.setState({ selectedTab: selected })}
             />

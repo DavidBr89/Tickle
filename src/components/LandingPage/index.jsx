@@ -45,9 +45,14 @@ const LandingPage = ({ onClick, width }) => (
         TICKLE
       </h1>
     </div>
-    <h3 className={css(stylesheet.btn)} style={{ zIndex: 2000 }}>
-      <Link to={routes.SIGN_IN}>Sign In</Link>
-    </h3>
+    <div className="flex">
+      <Link className="btn bg-white mr-1" to={routes.SIGN_IN}>
+        Sign In
+      </Link>
+      <Link className="btn bg-white" to={routes.SIGN_UP}>
+        Sign Up
+      </Link>
+    </div>
   </div>
 );
 

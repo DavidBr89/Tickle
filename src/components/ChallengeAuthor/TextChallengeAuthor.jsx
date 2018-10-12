@@ -51,16 +51,17 @@ class TextChallengeAuthor extends Component {
 
     return (
       <div
-        className={className}
+        className={`${className} w-full h-full`}
         style={{ width: '100%', height: '100%', ...styles }}
       >
         <div>
           <h4>Description</h4>
           <textarea
+            className="form-control w-full"
             onChange={e => this.setState({ description: e.target.value })}
             defaultValue={description}
             placeholder={placeholder}
-            style={{ width: '100%', minHeight: 50, height: 50 }}
+            style={{ minHeight: 200 }}
           />
         </div>
       </div>

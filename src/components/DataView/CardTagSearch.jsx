@@ -29,7 +29,7 @@ function CardTagSearch({
         height={height}
         vocabulary={allTags}
         style={{
-          width: '70%',
+          // width: '70%',
           maxWidth: 400
         }}
         onClick={onSubmit}

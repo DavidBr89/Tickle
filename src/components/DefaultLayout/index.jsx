@@ -46,21 +46,18 @@ class Menu extends Component {
       <div
         className="z-50 w-full"
         style={{
-          ...style,
+          ...style
           // TODO
           // zIndex: 30000
         }}
       >
-        <nav className="navbar flex">
+        <nav className="navbar flex relative">
           <button
+            className="m-2 p-2 border cursor-pointer"
             onClick={onToggle}
             style={{
-              background: 'whitesmoke',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
+              background: 'whitesmoke'
             }}
-            className="navbar-toggler m-2 p-2 border cursor-pointer"
             type="button"
           >
             <MenuIcon
@@ -69,7 +66,7 @@ class Menu extends Component {
               style={{ pointerEvents: 'inherit' }}
             />
           </button>
-          <div className="flex-grow flex justify-end">{ui}</div>
+          {ui}
         </nav>
 
         <div

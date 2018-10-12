@@ -53,27 +53,26 @@ class NodeForce extends Component {
     });
 
     const tmpNodes = forceNodes.map(({ tx, ty }, i) => ({
-      ...data[i],
       x: tx,
       y: ty
     }));
 
     this.setState({ nodes: tmpNodes });
 
-    this.force = this.force
-      .nodes(forceNodes)
-      .restart()
-      .alpha(1)
-      .alphaMin(0.97)
-      .force('x', d3.forceX(d => d.tx).strength(1))
-      .force('y', d3.forceY(d => d.ty).strength(1))
-      .force('coll', d3.forceCollide(10).strength(0.1))
-      .on('end', () => {
-        const nodes = forceNodes.map(({ x, y }) => ({ x, y }));
-        this.setState({
-          nodes
-        });
-      });
+    // this.force = this.force
+    //   .nodes(forceNodes)
+    //   .restart()
+    //   .alpha(1)
+    //   .alphaMin(0.97)
+    //   .force('x', d3.forceX(d => d.tx).strength(1))
+    //   .force('y', d3.forceY(d => d.ty).strength(1))
+    //   .force('coll', d3.forceCollide(10).strength(0.1))
+    //   .on('end', () => {
+    //     const nodes = forceNodes.map(({ x, y }) => ({ x, y }));
+    //     this.setState({
+    //       nodes
+    //     });
+    //   });
   };
   // }
 
@@ -106,7 +105,7 @@ class NodeForce extends Component {
   // }
 
   render() {
-    const { width, data, height, children } = this.props;
+    const { width, data, height, className, children } = this.props;
     const { nodes } = this.state;
     const nn = nodes.map((n, i) => ({
       ...data[i],
@@ -114,6 +113,7 @@ class NodeForce extends Component {
     }));
     return (
       <div
+        className={className}
         style={{
           width,
           height

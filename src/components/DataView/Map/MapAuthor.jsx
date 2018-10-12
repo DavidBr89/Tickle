@@ -109,7 +109,17 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
       style={style}
       className={className}
     >
-      {selectComp()}
+
+          <Map
+            width={width}
+            height={height}
+            preview={d => routeSelectCard(d.id)}
+            nodes={cards}
+            routeSelectCard={routeSelectCard}
+          >
+            {dragger}
+          </Map>
+
     </DropTargetCont>
   );
 });

@@ -183,7 +183,8 @@ class CardAuthorPage extends Component {
       selectedCard,
       isSmartphone,
       tagVocabularyCreated,
-      extCardId
+      extCardId,
+      children
     } = this.props;
 
     const slotSize = 100 / 3.5;
@@ -195,69 +196,49 @@ class CardAuthorPage extends Component {
         className="w-full h-full flex-col"
         style={{ position: 'relative', overflow: 'hidden' }}
         menu={
-          <CardTagSearch
-            allTags={tagVocabularyCreated}
-            key={filterSet.join(',')}
-            onChange={filterCards}
-            onClick={addCardFilter}
-            data={filterSet}
-            height={height / 2 - 50}
-          />
+          <div className="flex-grow flex justify-end items-center">
+            <CardTagSearch
+              allTags={tagVocabularyCreated}
+              key={filterSet.join(',')}
+              onChange={filterCards}
+              onClick={addCardFilter}
+              data={filterSet}
+              height={height / 2 - 50}
+            />
+          </div>
         }
       >
         <BareModal visible={extCardId !== null}>
           <EditCard {...selectedCard} dataView={dataView} />
         </BareModal>
-          <div
-
-          className="mt-16 w-full h-full flexCol"
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              transition: 'opacity 0.5s',
-              marginBottom: 25,
-              // TODO: fix later
-              zIndex: 200,
-              // height: '25%'
-              height: height / 5
-            }}
-          >
-            <CardStack
-              cards={cards}
-              selectedCardId={selectedCardId}
-              touch={isSmartphone}
-              duration={600}
-              className="ml-1 mr-2"
-              width={cardStackWidth}
-              height={100}
-              cardHeight={height / 4}
-              unit="%"
-              onClick={previewCardAction}
-              tagColorScale={tagColorScale}
-              slotSize={slotSize}
-              style={{
-                zIndex: 1000
-              }}
-            />
-          </div>
-          <CardDragAuthorOverlay
-            dataView={dataView}
+        <div
+          className="mt-16 flex justify-center"
+          style={{
+            transition: 'opacity 0.5s',
+            pointerEvents: 'none',
+            height: height / 5
+            // opacity: cardPanelVisible ? 1 : 0
+          }}
+        >
+          <CardStack
             cards={cards}
-            cardSets={cardSets}
-            selectedTags={selectedTags}
-            tagColorScale={tagColorScale}
             selectedCardId={selectedCardId}
-            extCardId={extCardId}
-            previewCardAction={previewCardAction}
+            touch={isSmartphone}
+            duration={600}
+            className="ml-1 mr-2"
+            width={cardStackWidth}
+            height={100}
+            cardHeight={height / 4}
+            unit="%"
+            onClick={previewCardAction}
+            tagColorScale={tagColorScale}
+            slotSize={slotSize}
             style={{
-              // TODO: remvoe for topic map
-              flex: '1 1 70%',
-              top: 0,
-              left: 0,
-              // TODO remove
-              position: 'absolute'
+              zIndex: 1000
             }}
           />
+        </div>
+        {children(this.props)}
       </DefaultLayout>
     );
   }

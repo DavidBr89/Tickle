@@ -10,6 +10,9 @@ import CardAuthor from './components/DataView/CardAuthor';
 import Admin from './components/Admin';
 import Account from './components/Account';
 import Diary from './components/Diary';
+
+import TopicMapAuthor from './components/DataView/ForceOverlay/TopicMap/DragTopicMap';
+import MapAuthor from './components/DataView/Map/MapAuthor.jsx';
 import DefaultLayout from './components/DefaultLayout';
 
 import Grid from './components/DataView/GridView';
@@ -37,7 +40,21 @@ const Routes = ({ history }) => (
         path={`${`${
           routes.AUTH_ENV
         }/${GEO}`}/:selectedCardId?/:showOption?/:flipped?`}
-        render={() => <CardAuthor dataView={GEO} />}
+        render={() => (
+          <CardAuthor dataView={GEO}>
+            {props => <MapAuthor {...props} className="absolute"/>}
+          </CardAuthor>
+        )}
+      />
+      <Route
+        path={`${`${
+          routes.AUTH_ENV
+        }/${FLOORPLAN}`}/:selectedCardId?/:showOption?/:flipped?`}
+        render={() => (
+          <CardAuthor dataView={FLOORPLAN}>
+            {props => <TopicMapAuthor {...props} />}
+          </CardAuthor>
+        )}
       />
       <Route
         exact
@@ -65,11 +82,7 @@ const Routes = ({ history }) => (
       <Route
         exact
         path={routes.SIGN_UP}
-        component={() => (
-          <DefaultLayout>
-            <SignUp admin={false} />
-          </DefaultLayout>
-        )}
+        component={() => <SignUp admin={false} />}
       />
       <Route
         exact
@@ -80,15 +93,7 @@ const Routes = ({ history }) => (
           </DefaultLayout>
         )}
       />
-      <Route
-        exact
-        path={routes.SIGN_IN}
-        component={() => (
-          <DefaultLayout>
-            <SignIn />
-          </DefaultLayout>
-        )}
-      />
+      <Route exact path={routes.SIGN_IN} component={() => <SignIn />} />
       <Route
         exact
         path={routes.HOME}

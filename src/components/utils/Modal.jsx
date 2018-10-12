@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 // import { connect } from 'react-redux';
 // import chroma from 'chroma-js';
 import { css } from 'aphrodite/no-important';
-import * as Icon from 'react-feather';
+import { X } from 'react-feather';
 
 // import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
@@ -99,8 +99,8 @@ export const ModalBody = ({
       }}
     >
       <h3 className="modal-title">{title}</h3>
-      <button className={css(stylesheet.btn)} onClick={onClose}>
-        <Icon.X />
+      <button className="btn" onClick={onClose}>
+        <X />
       </button>
     </div>
     <div

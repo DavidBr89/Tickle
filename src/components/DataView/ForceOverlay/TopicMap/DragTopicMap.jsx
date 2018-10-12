@@ -6,24 +6,21 @@ import { bindActionCreators } from 'redux';
 
 import CardMarker from 'Components/cards/CardMarker';
 
-import DropTargetCont from '../DragAndDrop/DragTargetCont';
+import DropTargetCont from '../../DragAndDrop/DragTargetCont';
 
-import DragDropContextProvider from '../DragAndDrop/DragContextProvider';
+import DragDropContextProvider from '../../DragAndDrop/DragContextProvider';
 
 // import { dragCard } from 'Reducers/Cards/actions';
-import DataOverlay from '../ForceOverlay/DataOverlay';
+import DataOverlay from '../../ForceOverlay/DataOverlay';
 
 import { updateCardTemplate, dragCard } from 'Reducers/Cards/actions';
 
 import { asyncUpdateCard } from 'Reducers/Cards/async_actions';
 import { selectCard } from 'Reducers/DataView/actions';
 
-import DragElement from '../DragAndDrop/DragElement';
+import DragElement from '../../DragAndDrop/DragElement';
 
-import Map from '../ForceOverlay/Map';
-import TopicMap from '../ForceOverlay/TopicMap/AuthorTopicMap';
-
-import { GEO, TAGS, FLOORPLAN } from 'Constants/dataViews';
+import AuthorTopicMap from './AuthorTopicMap';
 
 const CardAuthorOverlay = DragDropContextProvider(props => {
   const {
@@ -50,57 +47,8 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
     onSubmitChallenge,
     className,
     selectCard,
-    previewCardAction,
-    routeSelectCard
+    previewCardAction
   } = props;
-
-  const dragger = d =>
-    selectedCardId === d.id ? (
-      <DragElement {...d} className="drag">
-        <CardMarker
-          style={{
-            transform: 'scale(1.4)'
-            // transition: 'transform 500ms'
-          }}
-        />
-      </DragElement>
-    ) : (
-      <CardMarker
-        className="drag"
-        {...d}
-        style={{
-          position: 'absolute',
-          transform: 'translate(-50%,-50%)',
-          left: d.x,
-          top: d.y
-        }}
-      />
-    );
-
-  const selectComp = () => {
-    switch (dataView) {
-      case GEO:
-        return (
-          <Map
-            width={width}
-            height={height}
-            preview={d => routeSelectCard(d.id)}
-            nodes={cards}
-            routeSelectCard={routeSelectCard}
-          >
-            {dragger}
-          </Map>
-        );
-      case FLOORPLAN:
-        return (
-          <TopicMap {...props} width={width} height={height} data={cards} zoom>
-            {dragger}
-          </TopicMap>
-        );
-      default:
-        return null;
-    }
-  };
 
   return (
     <DropTargetCont
@@ -109,7 +57,52 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
       style={style}
       className={className}
     >
-      {selectComp()}
+      <AuthorTopicMap
+        className="absolute"
+        style={style}
+        author
+        data={cards}
+        disabled={isCardDragging}
+        sets={cardSets}
+        width={width}
+        height={height}
+        selectedTags={selectedTags}
+        selectedCardId={selectedCardId}
+        extCardId={extCardId}
+        filterSet={filterSet}
+        userLocation={userLocation}
+        mode={dataView}
+        padding={{
+          bottom: height / 5,
+          top: height / 5,
+          left: width / 5,
+          right: width / 5
+        }}
+        colorScale={tagColorScale}
+      >
+        {d =>
+          selectedCardId === d.id ? (
+            <DragElement {...d}>
+              <CardMarker
+                style={{
+                  transform: 'scale(1.4)'
+                  // transition: 'transform 500ms'
+                }}
+              />
+            </DragElement>
+          ) : (
+            <CardMarker
+              {...d}
+              style={{
+                position: 'absolute',
+                transform: 'translate(-50%,-50%)',
+                left: d.x,
+                top: d.y
+              }}
+            />
+          )
+        }
+      </AuthorTopicMap>
     </DropTargetCont>
   );
 });

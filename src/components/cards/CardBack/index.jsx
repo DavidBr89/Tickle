@@ -17,23 +17,16 @@ import CardControls from 'Components/cards/CardControls';
 
 //
 const DeleteButton = ({ style, onClick, color, className }) => (
-  <CardThemeConsumer>
-    {({ stylesheet: { btn, shallowBg, fieldSetBorder } }) => (
-      <button
-        className={`${css(btn)} bg-danger`}
-        style={{
-          background: color,
-          alignItems: 'center',
-          // display: 'flex',
-          // color: 'whitesmoke',
-          ...style
-        }}
-        onClick={onClick}
-      >
-        <Trash2 size={35} color="white" />
-      </button>
-    )}
-  </CardThemeConsumer>
+  <button
+    className="m-1 btn btn-black bg-danger"
+    style={{
+      alignItems: 'center',
+      ...style
+    }}
+    onClick={onClick}
+  >
+    <Trash2 size={30} />
+  </button>
 );
 
 const BackField = ({

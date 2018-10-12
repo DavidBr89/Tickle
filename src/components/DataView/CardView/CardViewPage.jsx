@@ -154,7 +154,7 @@ class CardViewPage extends Component {
         className="w-full h-full flex-col"
         style={{ position: 'relative', overflow: 'hidden' }}
         menu={
-          <div className="flex items-center">
+          <div className="flex-grow flex justify-end items-center">
             <div>mini</div>
             <CardTagSearch
               allTags={tagVocabulary}

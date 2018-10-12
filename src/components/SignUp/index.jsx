@@ -16,21 +16,29 @@ import { stylesheet } from 'Src/styles/GlobalThemeContext';
 
 import { setAuthUser } from 'Reducers/Session/actions';
 
+import DefaultLayout from 'Components/DefaultLayout';
+
 const SignUpPage = ({ admin, ...props }) => (
-  <div
-    style={{
-      overflowY: 'scroll',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      height: '100%'
-    }}
+  <DefaultLayout
+    menu={
+      <div className="flex-grow flex justify-center items-center">
+        <h1>SignUp {admin ? 'Admin' : null}</h1>
+      </div>
+    }
   >
-    <div className="mt-3">
-      <h1>SignUp {admin ? 'Admin' : null}</h1>
+    <div
+      className="content-margin"
+      style={{
+        overflowY: 'scroll',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        height: '100%'
+      }}
+    >
+      <SignUpForm {...props} admin={admin} />
     </div>
-    <SignUpForm {...props} admin={admin} />
-  </div>
+  </DefaultLayout>
 );
 
 SignUpPage.propTypes = {
@@ -147,22 +155,16 @@ class SignUpForm extends Component {
       passwordOne !== passwordTwo ||
       passwordOne === '' ||
       email === '' ||
-      username === '' ;
-      // img === null;
+      username === '';
+    // img === null;
 
     return (
-      <div
-        style={{
-          width:
-            // TODO
-            '90%'
-        }}
+      <div className="w-full"
       >
         <form onSubmit={this.onSubmit}>
           <div className="form-group">
-            <label htmlFor="pwd">User Photo:</label>
+            <label className="label">User Photo:</label>
             <PhotoUpload
-              style={{ height: 200, width: '100%' }}
               imgUrl={img !== null ? img.url : null}
               onChange={img => {
                 this.setState(byPropKey('img', img));
@@ -170,67 +172,61 @@ class SignUpForm extends Component {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="fullname">Full name:</label>
-            <div>
-              <input
-                className="form-control"
-                value={fullname || ''}
-                onChange={event =>
-                  this.setState(byPropKey('fullname', event.target.value))
-                }
-                type="text"
-                placeholder="Full Name"
-              />
-            </div>
+            <label className="label">Full name:</label>
+            <input
+              className="form-control"
+              value={fullname || ''}
+              onChange={event =>
+                this.setState(byPropKey('fullname', event.target.value))
+              }
+              type="text"
+              placeholder="Full Name"
+            />
           </div>
           <div className="form-group">
-            <label htmlFor="username">Username:</label>
-            <div>
-              <input
-                className="form-control"
-                value={username}
-                onChange={event =>
-                  this.setState(byPropKey('username', event.target.value))
-                }
-                type="text"
-                placeholder="Username"
-              />
-            </div>
+            <label className="label">Username :</label>
+            <input
+              className="form-control"
+              value={username}
+              onChange={event =>
+                this.setState(byPropKey('username', event.target.value))
+              }
+              type="text"
+              placeholder="Username"
+            />
           </div>
           <div className="form-group">
-            <label htmlFor="pwd">Email:</label>
-            <div>
-              <input
-                value={email}
-                className="form-control"
-                onChange={event =>
-                  this.setState(byPropKey('email', event.target.value))
-                }
-                type="text"
-                placeholder="Email Address"
-              />
-            </div>
+            <label className="label" htmlFor="pwd">
+              Email:
+            </label>
+            <input
+              value={email}
+              className="form-control"
+              onChange={event =>
+                this.setState(byPropKey('email', event.target.value))
+              }
+              type="text"
+              placeholder="Email Address"
+            />
           </div>
 
-          <div>
-            <div className="form-group">
-              <label htmlFor="pwd">Interests:</label>
-              <TagInput onChange={tags => this.setState({ interests: tags })} />
-            </div>
+          <div className="form-group">
+            <label className="label" htmlFor="pwd">
+              Interests:
+            </label>
+            <TagInput onChange={tags => this.setState({ interests: tags })} />
           </div>
           <div className="form-group">
-            <label htmlFor="pwd">Password:</label>
-            <div>
-              <input
-                className="form-control"
-                value={passwordOne}
-                onChange={event =>
-                  this.setState(byPropKey('passwordOne', event.target.value))
-                }
-                type="password"
-                placeholder="Password"
-              />
-            </div>
+            <label className="label">Password:</label>
+            <input
+              className="form-control"
+              value={passwordOne}
+              onChange={event =>
+                this.setState(byPropKey('passwordOne', event.target.value))
+              }
+              type="password"
+              placeholder="Password"
+            />
             <input
               className="form-control"
               value={passwordTwo}

@@ -33,6 +33,30 @@ function centerView(props) {
   return zoomHandler;
 }
 
+function zoomFactory(props) {
+  const { width, height, maxZoomScale } = props;
+
+  return d3
+    .zoom()
+    .duration(-2000)
+    .wheelDelta(() => (-d3.event.deltaY * (d3.event.deltaMode ? 50 : 1)) / 500)
+    .scaleExtent([1, maxZoomScale])
+    .extent([[0, 0], [width, height]])
+    .filter(() => {
+      // Take care: this is Polyfill: propagationPath
+      const pathClasses = d3.event.propagationPath().map(d => d.className);
+
+      return (
+        d3.event.deltaY !== undefined || !pathClasses.includes('dragSource')
+      );
+    })
+    .on('zoom', () => {
+      this.setState({
+        zoomHandler: d3.event.transform || d3.zoomIdentity
+      });
+    });
+}
+
 class ZoomContainer extends Component {
   static propTypes = {
     children: PropTypes.func,
@@ -67,7 +91,7 @@ class ZoomContainer extends Component {
   constructor(props) {
     super(props);
 
-    this.zoomFactory = this.zoomFactory.bind(this);
+    this.zoomFactory = zoomFactory.bind(this);
 
     // const zoomHandler = this.centerView(props);
     // this.state = { zoomHandler };
@@ -145,29 +169,6 @@ class ZoomContainer extends Component {
   //   // }
   // }
 
-  zoomFactory(props) {
-    const { width, height, maxZoomScale } = props;
-
-    return d3
-      .zoom()
-      .duration(-2000)
-      .wheelDelta(
-        () => (-d3.event.deltaY * (d3.event.deltaMode ? 50 : 1)) / 500
-      )
-      .scaleExtent([1, maxZoomScale])
-      .extent([[0, 0], [width, height]])
-      .filter(() => {
-        console.log('yeah', d3.event);
-        // return !d3.event.target.classList.contains('no-zoom');
-        return true;
-      })
-      .on('zoom', () => {
-        this.setState({
-          zoomHandler: d3.event.transform || d3.zoomIdentity
-        });
-      });
-  }
-
   render() {
     const {
       children,
@@ -204,7 +205,7 @@ class ZoomContainer extends Component {
             width,
             height,
             pointerEvents: 'all',
-            zIndex: 10,
+            // zIndex: 10,
             // overflow: 'hidden',
             // zIndex: 0,
             ...style

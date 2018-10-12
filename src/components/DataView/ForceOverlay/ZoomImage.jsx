@@ -32,6 +32,26 @@ function centerView(props) {
   return zoomHandler;
 }
 
+function zoomFactory() {
+  const { width, height, maxZoomScale } = this.props;
+  return d3
+    .zoom()
+    .wheelDelta(() => (-d3.event.deltaY * (d3.event.deltaMode ? 50 : 1)) / 500)
+    .scaleExtent([0, maxZoomScale])
+    .extent([[0, 0], [width, height]])
+    .filter(() => {
+      const isDrag = !d3.event.target.classList.contains('drag');
+      console.log('isDrag', isDrag);
+      return isDrag;
+      // return true;
+    })
+    .on('zoom', () => {
+      this.setState({
+        zoomHandler: d3.event.transform || d3.zoomIdentity
+      });
+    });
+}
+
 class ZoomContainer extends Component {
   static propTypes = {
     children: PropTypes.func,
@@ -66,7 +86,7 @@ class ZoomContainer extends Component {
   constructor(props) {
     super(props);
 
-    this.zoomFactory = this.zoomFactory.bind(this);
+    this.zoomFactory = zoomFactory.bind(this);
 
     // const zoomHandler = this.centerView(props);
     // this.state = { zoomHandler };
@@ -147,22 +167,6 @@ class ZoomContainer extends Component {
   //   // }
   // }
 
-  zoomFactory(props) {
-    const { width, height, maxZoomScale } = props;
-    return d3
-      .zoom()
-      .wheelDelta(
-        () => (-d3.event.deltaY * (d3.event.deltaMode ? 50 : 1)) / 500
-      )
-      .scaleExtent([0, maxZoomScale])
-      .extent([[0, 0], [width, height]])
-      .on('zoom', () => {
-        this.setState({
-          zoomHandler: d3.event.transform || d3.zoomIdentity
-        });
-      });
-  }
-
   render() {
     const {
       children,
@@ -174,11 +178,12 @@ class ZoomContainer extends Component {
       onZoom
     } = this.props;
     const { zoomHandler } = this.state;
-    const newNodes = nodes.map(d => {
-      const [x, y] = zoomHandler.apply([d.x, d.y]);
-      return { ...d, x, y };
-    });
-    // .filter(({ x, y }) => x > 0 && x < width && y > 0 && y < height);
+    const newNodes = nodes
+      .map(d => {
+        const [x, y] = zoomHandler.apply([d.x, d.y]);
+        return { ...d, x, y };
+      })
+      .filter(({ x, y }) => x > 0 && x < width && y > 0 && y < height);
     console.log('newNodes', newNodes);
 
     return (

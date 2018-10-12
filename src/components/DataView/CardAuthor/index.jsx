@@ -117,7 +117,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     routeSelectCard
   } = dispatcherProps;
 
-  const { dataView, history, match } = ownProps;
+  const { dataView, history, match, children } = ownProps;
   const { path } = match;
 
   const { selectedCardId = null, showOption = null } = match.params;
@@ -155,7 +155,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     preSelectCardId,
     dataView,
     selectedCardId,
-    extCardId,
+    extCardId, children
   };
 };
 
