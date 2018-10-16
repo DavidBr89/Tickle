@@ -11,11 +11,9 @@ import CardPin from './CardPin';
 
 import CardMarker from 'Components/cards/CardMarker';
 
-
 // import { UserOverlay } from '../../utils/map-layers/DivOverlay';
 
 import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
-
 
 import Cluster from '../ForceOverlay/Cluster';
 import CardCluster from '../ForceOverlay/CardCluster';

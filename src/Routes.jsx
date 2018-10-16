@@ -20,7 +20,7 @@ import DefaultLayout from './components/DefaultLayout';
 
 import Grid from './components/DataView/GridView';
 
-import UserMap from 'Components/DataView/CardView/UserMap';
+import UserMap from 'Components/DataView/Map/UserMap';
 
 import withAuthentication from './components/withAuthentication';
 // import AuthUserContext from './components/AuthUserContext';
