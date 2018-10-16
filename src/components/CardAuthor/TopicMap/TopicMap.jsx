@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 
+import CardMarker from 'Components/cards/CardMarker';
 // import ReactDOM from 'react-dom';
 
 import { intersection } from 'lodash';
@@ -285,7 +286,7 @@ class TopicMap extends Component {
                               // preview(d.values[0]);
                             }}
                           >
-                            {children}
+                            {c => <CardMarker />}
                           </CardCluster>
                         )}
                       </ArrayPipe>

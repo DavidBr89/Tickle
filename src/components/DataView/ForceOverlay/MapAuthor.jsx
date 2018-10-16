@@ -164,10 +164,8 @@ class Map extends Component {
   state = { ...this.props };
 
   componentDidMount() {
-    console.log('mapgl', this.mapgl);
+    // console.log('mapgl', this.mapgl);
     // const map = this.mapgl.getMap();
-    //
-    //
 
     // map.on('load', () => {
     //   map.addLayer({
@@ -301,7 +299,6 @@ class Map extends Component {
 
     return (
       <MapGL
-        ref={m => (this.mapgl = m)}
         width={width}
         height={height}
         onViewportChange={newViewport => {

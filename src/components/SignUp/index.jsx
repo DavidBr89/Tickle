@@ -159,8 +159,7 @@ class SignUpForm extends Component {
     // img === null;
 
     return (
-      <div className="w-full"
-      >
+      <div className="w-full">
         <form onSubmit={this.onSubmit}>
           <div className="form-group">
             <label className="label">User Photo:</label>
@@ -216,10 +215,10 @@ class SignUpForm extends Component {
             </label>
             <TagInput onChange={tags => this.setState({ interests: tags })} />
           </div>
-          <div className="form-group">
+          <div className="form-group ">
             <label className="label">Password:</label>
             <input
-              className="form-control"
+              className="form-control mb-1"
               value={passwordOne}
               onChange={event =>
                 this.setState(byPropKey('passwordOne', event.target.value))
@@ -245,11 +244,7 @@ class SignUpForm extends Component {
               justifyContent: 'space-between'
             }}
           >
-            <button
-              className={css(stylesheet.btn)}
-              disabled={isInvalid}
-              type="submit"
-            >
+            <button className="btn bg-white w-full" disabled={isInvalid} type="submit">
               Sign Up
             </button>
             {error && (

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { DropDown } from 'Utils/TagInput';
+import { TagDropDown } from 'Utils/TagInput';
 
 function CardTagSearch({
   allTags,
@@ -13,7 +13,7 @@ function CardTagSearch({
 }) {
   return (
     <div
-      className="m-2 z-20"
+      className="flex-grow m-2 z-20"
       style={{
         display: 'flex',
         justifyContent: 'flex-end',
@@ -21,17 +21,19 @@ function CardTagSearch({
         // width: 30
       }}
     >
-      <DropDown
+      <TagDropDown
         className="mr-1"
         key={data.join(',')}
         onChange={onChange}
         onInputSelect={onSelect}
         height={height}
         vocabulary={allTags}
-        style={{
-          // width: '70%',
-          maxWidth: 400
-        }}
+        style={
+          {
+            // width: '70%',
+            // maxWidth: 400
+          }
+        }
         onClick={onSubmit}
         data={data}
       />

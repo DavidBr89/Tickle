@@ -1,7 +1,6 @@
-import generate from 'firebase-auto-ids';
+// import generate from 'firebase-auto-ids';
 
 import fetch from 'cross-fetch';
-import updateDataDim from './updateDataDimension';
 
 import { extractCardFields } from 'Constants/cardFields';
 
@@ -9,7 +8,7 @@ import {
   receivePlaces,
   receiveCollectibleCards,
   receiveCreatedCards,
-  receiveCardTemplates,
+  // receiveCardTemplates,
   createCard,
   createCardSuccess,
   deleteCard,
@@ -190,27 +189,44 @@ export function asyncRemoveCard(cid) {
   };
 }
 
-export function asyncUpdateCard({ cardData, viewport, dataView }) {
-  const { x = null, y = null } = cardData;
-  console.log('X', x, 'Y', y);
-  const updatedCard =
-    x !== null && y !== null
-      ? {
-          ...cardData,
-          ...updateDataDim({ cardData, viewport, dataView })
-        }
-      : cardData;
-
-  return function(dispatch) {
-    dispatch(updateCard(updatedCard));
-    return db
-      .doUpdateCard(updatedCard)
+export function asyncUpdateCard(cardData) {
+  return dispatch => {
+    dispatch(updateCard(cardData));
+    db.doUpdateCard(cardData)
       .then(() => {
-        dispatch(updateCardSuccess(updatedCard));
+        dispatch(updateCardSuccess(cardData));
       })
       .catch(err => dispatch(updateCardError(err)));
   };
 }
+
+// const dispatchCardUpd = cardData => dispatch => {
+//   dispatch(updateCard(cardData));
+//   db.doUpdateCard(cardData)
+//     .then(() => {
+//       dispatch(updateCardSuccess(cardData));
+//     })
+//     .catch(err => dispatch(updateCardError(err)));
+// };
+
+// export function asyncUpdateCardLoc({ cardData, viewport, dataView }) {
+//   const updatedCard = {
+//     ...cardData,
+//     ...updateDataDim({ cardData, viewport, dataView })
+//   };
+//
+//   return dispatchCardUpd(updatedCard);
+//
+//   // function(dispatch) {
+//   //   dispatch(updateCard(updatedCard));
+//   //   return db
+//   //     .doUpdateCard(updatedCard)
+//   //     .then(() => {
+//   //       dispatch(updateCardSuccess(updatedCard));
+//   //     })
+//   //     .catch(err => dispatch(updateCardError(err)));
+//   // };
+// }
 
 export function asyncAddComment(
   commentObj = {

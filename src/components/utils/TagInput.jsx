@@ -9,10 +9,10 @@ const TagSelection = ({ data, style, onRemove }) => (
   <div style={style}>
     {data.map(key => (
       <button
-        className={`${css(stylesheet.bareBtn)} mr-1`}
+        className="tag-btn m-1"
         style={{
           position: 'relative',
-          maxWidth: 100,
+          maxWidth: 140,
           // zIndex: 4000,
           fontSize: 'small',
           fontWeight: 'bold',
@@ -20,14 +20,118 @@ const TagSelection = ({ data, style, onRemove }) => (
         }}
         onClick={() => onRemove(key)}
       >
-        <span className={`mr-1 ${css(stylesheet.truncate)}`}>{key}</span>
+        <span className="mr-1 truncate-text">{key}</span>
         <span>x</span>
       </button>
     ))}
   </div>
 );
 
-export const TagInput = class TagInput extends Component {
+export const EditTagInput = class EditTagInput extends Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string,
+    onSelect: PropTypes.func,
+    placeholder: PropTypes.string
+  };
+  static defaultProps = {
+    data: [],
+    onChange: d => d,
+    onAdd: d => d,
+    onRemove: d => d,
+    onTagInputChange: d => d,
+    onSelect: d => d,
+    placeholder: 'Add a tag',
+    inputTag: null
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    const { data } = this.props;
+
+    if (data.length !== prevProps.data.length) {
+      this.props.onBlur();
+      this.input.blur();
+    }
+  }
+  render() {
+    const {
+      onClick,
+      onAdd,
+      onRemove,
+      onTagInputChange,
+      data,
+      style,
+      inputTag,
+      onSelect,
+      vocabulary,
+      placeholder,
+      height,
+      editable,
+      onBlur,
+      className
+    } = this.props;
+
+    const tagMatches = vocabulary
+      .filter(d => !data.includes(d.key))
+      .filter(
+        d =>
+          inputTag === null ||
+          d.key.toLowerCase().includes(inputTag.toLowerCase())
+      );
+
+    return (
+      <div className={`${className} flex flex-col flex-grow`}>
+        <div
+          className="border p-1 mb-1 overflow-scroll"
+          style={{ flex: '0 0 100px', overflow: 'scroll' }}
+        >
+          {data.length === 0 && (
+            <div className="alert-warning p-2 mb-1">
+              <strong>Please add a tag!</strong>
+            </div>
+          )}
+          <TagSelection
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap'
+            }}
+            data={data}
+            onRemove={onRemove}
+          />
+        </div>
+        <form
+          className="flex mb-1"
+          onSubmit={event => {
+            event.preventDefault();
+            onAdd(inputTag);
+          }}
+        >
+          <input
+            className="border form-control flex-grow"
+            ref={input => (this.input = input)}
+            onBlur={onBlur}
+            onSelect={onSelect}
+            type="text"
+            placeholder={placeholder}
+            value={inputTag}
+            onChange={event => onTagInputChange(event.target.value)}
+          />
+          <button className="btn" style={{}} onClick={() => onAdd(inputTag)}>
+            Add
+          </button>
+        </form>
+        <SearchResults
+          className="flex-grow"
+          visible
+          data={tagMatches}
+          onAdd={onAdd}
+        />
+      </div>
+    );
+  }
+};
+
+export const ReadTagInput = class ReadTagInput extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
@@ -60,18 +164,18 @@ export const TagInput = class TagInput extends Component {
       onRemove,
       onTagInputChange,
       data,
-      style,
       inputTag,
       onSelect,
       vocabulary,
       placeholder,
       matchesVisible,
       height,
-      editable,
-      onBlur
+      onBlur,
+      className,
+      style
     } = this.props;
 
-    const slicedData = !editable ? data.slice(0, 5) : data;
+    const slicedData = data.slice(0, 5);
 
     const tagMatches = vocabulary
       .filter(d => !slicedData.includes(d.key))
@@ -83,31 +187,14 @@ export const TagInput = class TagInput extends Component {
 
     return (
       <div
+        className={className}
+        style={style}
         onMouseDown={e => {
           // TODO: important
           matchesVisible && e.preventDefault();
           // e.stopPropagation();
         }}
       >
-        {editable && (
-          <div style={{ minHeight: 50 }}>
-            {slicedData.length === 0 && (
-              <div className="alert-warning p-2 mb-1">
-                <strong>No Tag added!</strong>
-              </div>
-            )}
-            <TagSelection
-              style={{
-                display: 'flex',
-                // alignItems: 'center',
-                flexWrap: 'wrap'
-                // minHeight: 200
-              }}
-              data={slicedData}
-              onRemove={onRemove}
-            />
-          </div>
-        )}
         <div
           style={{
             display: 'flex',
@@ -154,52 +241,49 @@ export const TagInput = class TagInput extends Component {
                 // width: 80
               }}
             />
-            {editable &&
-              slicedData.length === 0 && (
-              <button
-                className={css(stylesheet.btn)}
-                onClick={() => onAdd(inputTag)}
-              >
-                  Add
-              </button>
-            )}
           </form>
-          {!editable && (
-            <TagSelection
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                flexWrap: 'no-wrap'
-              }}
-              data={slicedData}
-              onRemove={onRemove}
-            />
-          )}
+          <TagSelection
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              flexWrap: 'no-wrap'
+            }}
+            data={slicedData}
+            onRemove={onRemove}
+          />
         </div>
         <SearchResults
           visible={matchesVisible}
           height={height}
           data={tagMatches}
           onAdd={onAdd}
+          style={{ position: 'absolute' }}
         />
       </div>
     );
   }
 };
 
-const SearchResults = ({ data, text, onAdd, visible, height }) => (
+const SearchResults = ({
+  data,
+  text,
+  onAdd,
+  visible,
+  height,
+  className,
+  style
+}) => (
   <div
+    className={`border ${className}`}
     style={{
       display: !visible && 'none',
       width: '100%',
       maxHeight: height,
       background: 'white',
-      position: 'absolute',
+      // position: 'absolute',
       overflow: 'scroll',
       zIndex: 20000,
-      borderLeft: rawCSS.border,
-      borderRight: rawCSS.border,
-      borderBottom: rawCSS.border
+      ...style
     }}
   >
     {data.length > 0 && (
@@ -220,7 +304,7 @@ const SearchResults = ({ data, text, onAdd, visible, height }) => (
                   // width: 175
                 }
               }
-              className={css(stylesheet.bareBtn)}
+              className="bare-btn"
               onClick={() => onAdd(d.key)}
             >
               {d.key} ({d.values.length})
@@ -232,7 +316,7 @@ const SearchResults = ({ data, text, onAdd, visible, height }) => (
   </div>
 );
 
-export const DropDown = class DropDown extends Component {
+export const TagDropDown = class TagDropDown extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
@@ -249,9 +333,6 @@ export const DropDown = class DropDown extends Component {
     onInputSelect: null
   };
 
-  // .dropdown:hover .dropdown-content {
-  //     display: block;
-  // }
   componentDidUpdate(prevProps, prevState) {
     const { onChange } = this.props;
     const { curSet } = this.state;
@@ -274,57 +355,45 @@ export const DropDown = class DropDown extends Component {
     const { style, editable } = this.props;
     const { active, curSet, curKey, setList, matchesVisible } = this.state;
 
-    // const isCurSetNew =
-    //   curSet.length > 0 &&
-    //   setList.filter(s => intersection(curSet, s).length === curSet.length)
-    //     .length === 0;
+    const TagInput = editable ? EditTagInput : ReadTagInput;
 
     return (
-      <div
+      <TagInput
+        {...this.props}
+        className="relative border"
         style={{
-          alignItems: 'center',
-          backgroundColor: '#fff',
-          // maxWidth: '60%',
-          position: 'relative',
-          ...style
-          // border: '2px solid #ccc'
+          flex: matchesVisible ? '0 0 70%' : null,
+          transition: 'all 0.4s'
         }}
-      >
-        <TagInput
-          {...this.props}
-          onBlur={() => this.setState({ matchesVisible: false })}
-          onSelect={() => {
-            const { onInputSelect } = this.props;
-            this.setState({ matchesVisible: true });
-            if (onInputSelect) {
-              onInputSelect();
-            }
-          }}
-          style={{
-            border: '1px solid lightgrey'
-          }}
-          data={curSet}
-          matchesVisible={matchesVisible}
-          editable={editable}
-          onTagInputChange={key => this.setState({ curKey: key })}
-          inputTag={curKey}
-          onAdd={k => {
-            if (k && k !== '') {
-              this.setState(({ curSet: oldSet }) => ({
-                curSet: uniq([k, ...oldSet]),
-                curKey: ''
-                // matchesVisible: false
-              }));
-            }
-          }}
-          onRemove={k => {
+        onBlur={() => this.setState({ matchesVisible: false })}
+        onSelect={() => {
+          const { onInputSelect } = this.props;
+          this.setState({ matchesVisible: true });
+          // TODO
+          if (onInputSelect) {
+            onInputSelect();
+          }
+        }}
+        data={curSet}
+        matchesVisible={matchesVisible}
+        onTagInputChange={key => this.setState({ curKey: key })}
+        inputTag={curKey}
+        onAdd={k => {
+          if (k && k !== '') {
             this.setState(({ curSet: oldSet }) => ({
-              curSet: oldSet.filter(key => key !== k)
+              curSet: uniq([k, ...oldSet]),
+              curKey: ''
               // matchesVisible: false
             }));
-          }}
-        />
-      </div>
+          }
+        }}
+        onRemove={k => {
+          this.setState(({ curSet: oldSet }) => ({
+            curSet: oldSet.filter(key => key !== k)
+            // matchesVisible: false
+          }));
+        }}
+      />
     );
   }
 };

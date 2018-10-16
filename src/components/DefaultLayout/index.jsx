@@ -7,7 +7,6 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { stylesheet } from 'Src/styles/GlobalThemeContext';
 import { Menu as MenuIcon } from 'react-feather';
-import { css } from 'aphrodite';
 // import { Link } from 'react-router-dom';
 
 // import SignOutButton from '../SignOut';
@@ -51,12 +50,16 @@ class Menu extends Component {
           // zIndex: 30000
         }}
       >
-        <nav className="navbar flex relative">
+        <nav
+          className="navbar flex items-center relative m-2 "
+          style={{ minHeight: 48 }}
+        >
           <button
-            className="m-2 p-2 border cursor-pointer"
+            className="border cursor-pointer p-2 absolute z-50"
             onClick={onToggle}
             style={{
               background: 'whitesmoke'
+              // margin: 'auto'
             }}
             type="button"
           >
@@ -68,7 +71,6 @@ class Menu extends Component {
           </button>
           {ui}
         </nav>
-
         <div
           style={{
             position: 'relative',

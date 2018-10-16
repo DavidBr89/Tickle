@@ -21,9 +21,9 @@ import { Modal, BareModal, ModalBody } from 'Utils/Modal';
 
 // import louvain from './jlouvain';
 
-import Map from './Map';
-import UserMap from './UserMap';
-import TopicMap from './TopicMap/TopicMap';
+import Map from './MapAuthor';
+// import UserMap from './UserMap';
+// import TopicMap from './TopicMap/TopicMap';
 import TreeMapCluster from './TreeMapCluster';
 
 const SelectedComp = ({ ...props }) => {
@@ -51,7 +51,7 @@ const SelectedComp = ({ ...props }) => {
     userview
   } = props;
 
-  const MapComp = userview ? UserMap : Map;
+  // const MapComp = userview ? UserMap : Map;
 
   const noPreview = c =>
     extCardId === c.id ? (
@@ -77,19 +77,8 @@ const SelectedComp = ({ ...props }) => {
     }
     case FLOORPLAN: {
       return (
-        <TopicMap
-          {...props}
-          width={width}
-          height={height}
-          data={data}
-          edit={author}
-          colorScale={colorScale}
-          zoom
-          noPreview={noPreview}
-        >
-          {children}
-        </TopicMap>
-      );
+        null)
+
     }
     case TAGS: {
       return (

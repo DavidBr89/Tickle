@@ -1,9 +1,13 @@
 .btn {
-    @apply .flex .flex-col .items-center .justify-center .font-bold .p-2 .border-2 .border-grey-darkest .cursor-pointer;
+  @apply .flex .flex-col .items-center .justify-center .font-bold .p-2 .border-2 .border-grey-darkest .cursor-pointer;
 }
 
 .bare-btn {
-  @apply .font-bold .py-2 .px-4 .border-2 .bg-grey-light;
+  @apply .font-bold .py-2 .px-4 .border-2;
+}
+
+.tag-btn {
+  @apply .font-bold .py-2 .px-2 .border-2 .bg-grey-light;
 }
 
 .btn:hover {
@@ -11,7 +15,7 @@
 }
 
 .btn-black {
-    @apply .bg-black .text-white;
+  @apply .bg-black .text-white;
 }
 
 .btn-black:hover {
@@ -44,4 +48,15 @@
 
 h4 {
   @apply .font-semibold .mb-2
+}
+
+.truncate-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.tag-label {
+  @apply .py-1 .px-1 .border-2 .bg-grey-light;
 }

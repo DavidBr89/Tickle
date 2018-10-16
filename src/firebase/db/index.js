@@ -9,6 +9,7 @@ const TICKLE_ENVS = 'tickle-environments';
 const VDS_GEO = 'vds-geo';
 const VDS_TOPIC = 'vds-topic';
 const STAGING = 'vds-topic';
+const PEDAGOGY_DEP = 'pedagogy-dep';
 
 const ENV = STAGING; // VDS_TOPIC;
 

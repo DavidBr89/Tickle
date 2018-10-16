@@ -21,7 +21,7 @@ import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
 import CardFront from './CardFront';
 
-import { DropDown } from 'Utils/TagInput';
+import { TagDropDown } from 'Utils/TagInput';
 
 import {
   // FieldSet,
@@ -196,7 +196,7 @@ class TitleModal extends Component {
           </button>
         }
       >
-        <div className="form-group">
+        <div className="form-control">
           <input
             onChange={e =>
               this.setState({
@@ -348,12 +348,11 @@ class EditCardFront extends PureComponent {
             {...modalProps}
             footer={closeBtn}
           >
-            <DropDown
+            <TagDropDown
               style={{ width: '100%' }}
               onChange={newTags => this.updateField({ tags: [...newTags] })}
               editable
-              vocabulary={[]}
-              data={tags}
+              data={tags || []}
               vocabulary={tagVocabulary}
             />
           </ModalBody>

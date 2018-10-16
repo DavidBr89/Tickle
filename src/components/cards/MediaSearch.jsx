@@ -80,34 +80,26 @@ const navIcons = [
 
 const userContentUploadPath = id => `media/${id}`;
 
-const UploadUserContent = ({ onChange, ...props }) => (
-  <CardThemeConsumer>
-    {({ stylesheet }) => (
-      <div className="flexCol flex-100">
-        <MediaUpload
-          style={{ width: '100%', height: '60%' }}
-          {...props}
-          stylesheet={stylesheet}
-          nodeWrapper={({ url, name, loading }) => (
-            <div style={{ fontSize: 'large' }}>
-              {!loading ? name : 'loading'}
-            </div>
-          )}
-          onChange={media => {
-            onChange(
-              media.map(m => ({
-                ...m,
-                title: m.name,
-                thumbnail: m.url,
-                source: USER_CONTENT,
-                date: new Date()
-              }))
-            );
-          }}
-        />
-      </div>
+const UploadUserContent = ({ onChange, className, ...props }) => (
+  <MediaUpload
+    className="flex flex-col flex-grow"
+    style={{ width: '100%', height: '60%' }}
+    {...props}
+    nodeWrapper={({ url, name, loading }) => (
+      <div style={{ fontSize: 'large' }}>{!loading ? name : 'loading'}</div>
     )}
-  </CardThemeConsumer>
+    onChange={media => {
+      onChange(
+        media.map(m => ({
+          ...m,
+          title: m.name,
+          thumbnail: m.url,
+          source: USER_CONTENT,
+          date: new Date()
+        }))
+      );
+    }}
+  />
 );
 
 const SpanBG = ({ children, style }) => (
@@ -329,57 +321,54 @@ const CellDetail = ({
   url,
   onClick
 }) => (
-  <CardThemeConsumer>
-    {({ stylesheet: { shallowBg } }) => (
-      <div
+  <div
+    onClick={onClick}
+    style={{
+      overflow: 'hidden',
+      // backgroundImage: thumbnail !== null && `url('${thumbnail}')`,
+      // backgroundRepeat: thumbnail !== null && 'no-repeat',
+      // backgroundSize: thumbnail !== null && '100% 100%',
+      ...fullDim,
+      // height: 200
+      width: '100%'
+    }}
+  >
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <h2 style={{ ...truncateStyle, width: '100%' }}>
+        <NewTabLink
+          href={url}
+          style={{
+            display: 'inline-flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            width: '100%'
+          }}
+        >
+          <div className="mr-1" style={{ ...truncateStyle, width: '100%' }}>
+            {title}
+          </div>
+        </NewTabLink>
+      </h2>
+      <div>{/* React.createElement(mediaScale(type)) */}</div>
+    </div>
+    {thumbnail ? (
+      <img
         onClick={onClick}
+        src={thumbnail}
         style={{
           overflow: 'hidden',
-          // backgroundImage: thumbnail !== null && `url('${thumbnail}')`,
-          // backgroundRepeat: thumbnail !== null && 'no-repeat',
-          // backgroundSize: thumbnail !== null && '100% 100%',
-          ...fullDim,
+          display: 'block',
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover'
           // height: 200
-          width: '100%'
+          // width: '80%'
         }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <h4 style={{ ...truncateStyle, width: '100%' }}>
-            <NewTabLink
-              href={url}
-              style={{
-                display: 'inline-flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                width: '100%'
-              }}
-            >
-              <div className="mr-1" style={{ ...truncateStyle, width: '100%' }}>
-                {title}
-              </div>
-            </NewTabLink>
-          </h4>
-          <div>{/* React.createElement(mediaScale(type)) */}</div>
-        </div>
-        {thumbnail ? (
-          <div
-            onClick={onClick}
-            style={{
-              overflow: 'hidden',
-              backgroundImage: thumbnail !== null && `url('${thumbnail}')`,
-              backgroundRepeat: thumbnail !== null && 'no-repeat',
-              backgroundSize: thumbnail !== null && '100% 100%',
-              ...fullDim
-              // height: 200
-              // width: '80%'
-            }}
-          />
-        ) : (
-          <p>{descr}</p>
-        )}
-      </div>
+      />
+    ) : (
+      <p>{descr}</p>
     )}
-  </CardThemeConsumer>
+  </div>
 );
 
 CellDetail.propTypes = {
@@ -397,26 +386,20 @@ CellDetail.defaultProps = {
 };
 // props.selected ? css(stylesheet.bigBoxShadow) : css(stylesheet.border)}
 const CellWrapper = ({ btn, className, focusColor, style, ...props }) => (
-  <CardThemeConsumer>
-    {({ stylesheet }) => (
-      <div
-        className={`p-3 mb-3 ${css(stylesheet.extraShallowBg)} ${
-          props.selected ? css(stylesheet.bigBoxShadow) : css(stylesheet.border)
-        }`}
-        style={{
-          height: '100%',
-          width: '100%',
-          ...style,
-          cursor: 'pointer',
-          position: 'relative',
-          display: 'flex'
-        }}
-      >
-        <CellDetail {...props} />
-        <div className="ml-3">{btn}</div>
-      </div>
-    )}
-  </CardThemeConsumer>
+  <div
+    className="p-3 mb-3 border"
+    style={{
+      height: '100%',
+      width: '100%',
+      ...style,
+      cursor: 'pointer',
+      position: 'relative',
+      display: 'flex'
+    }}
+  >
+    <CellDetail {...props} />
+    <div className="ml-3">{btn}</div>
+  </div>
 );
 
 CellWrapper.propTypes = {
@@ -647,7 +630,14 @@ class UnstyledMediaSearch extends Component {
 
     switch (sel) {
       case OVERVIEW:
-        return <MediaOverview data={selectedMedia} edit onChange={onChange} />;
+        return (
+          <MediaOverview
+            className="flex-grow flex flex-col"
+            data={selectedMedia}
+            edit
+            onChange={onChange}
+          />
+        );
       case WIKIPEDIA:
         return (
           <MetaSearch
@@ -765,7 +755,7 @@ class UnstyledMediaSearch extends Component {
       case USER_CONTENT:
         return (
           <UploadUserContent
-            style={{ height: '65%' }}
+            className="flex flex-col flex-grow"
             media={selUserContent}
             uploadPath={userContentUploadPath}
             onChange={newUserContent => {
@@ -794,8 +784,7 @@ class UnstyledMediaSearch extends Component {
     const { selectedMedia, stylesheet, onChange } = this.props;
     const { selected } = this.state;
 
-    const btnClass = sel =>
-      sel === selected ? css(stylesheet.btnActive) : css(stylesheet.btn);
+    const btnClass = sel => (sel === selected ? 'btn btn-black' : 'btn');
 
     const navBtn = ({ key, node }) => (
       <button
@@ -809,7 +798,7 @@ class UnstyledMediaSearch extends Component {
     );
 
     return (
-      <div className="flexCol flex-100">
+      <div className="flex-grow flex flex-col">
         <div className="mb-3" role="tablist" style={{ flexShrink: 0 }}>
           <div style={{ display: 'flex' }}>{navIcons.map(navBtn)}</div>
         </div>
@@ -941,18 +930,16 @@ class MetaSearch extends Component {
 
     // TODO: fix view height
     return (
-      <div className="flex-100 flexCol" role="tabpanel">
+      <div className="flex flex-col" role="tabpanel">
         <div style={{ width: '100%' }}>
-          <div className="mb-3 w-100">
-            <input
-              type="text"
-              className="form-control"
-              placeholder={`Search...for instance ${defaultQuery}`}
-              onChange={evt => this.onSearch(evt.target.value)}
-            />
-          </div>
+          <input
+            type="text"
+            className="form-control mb-3 w-full"
+            placeholder={`Search...for instance ${defaultQuery}`}
+            onChange={evt => this.onSearch(evt.target.value)}
+          />
         </div>
-        <ScrollList data={data} maxHeight="100%" className="flex-100 p-1">
+        <ScrollList data={data} maxHeight="100%" className="flex flex-col p-1">
           {(d, isSelected) => (
             <CellWrapper
               className="mb-3"
@@ -1048,13 +1035,13 @@ class MediaOverview extends Component {
 
   render() {
     const { data } = this.state;
-    const { edit } = this.props;
+    const { edit, className } = this.props;
 
     // TODO: fix view height
 
     return (
       <div
-        className="flex-100 flexCol"
+        className={className}
         style={{
           justifyContent: data.length === 0 ? 'center' : null,
           alignItems: 'center'
@@ -1071,7 +1058,7 @@ class MediaOverview extends Component {
               btn={
                 edit && <MediaBtn selected onClick={() => this.removeItem(d)} />
               }
-              style={{ height: '30vh', minHeight: 200 }}
+              style={{ height: 300 }}
             />
           )}
         </ScrollList>

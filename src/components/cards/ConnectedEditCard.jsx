@@ -53,7 +53,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     width,
     height,
     authUser,
-    nestedTagVocabulary
+    tagVocabulary
   } = state;
   const { uid } = authUser;
 
@@ -76,7 +76,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   //   console.log('CARD DROP', selectedCardId);
   //   selectedCardId === 'temp'
   //     ? updateCardTemplate({ uid, cardData, viewport, dataView })
-  //     : asyncUpdateCard({ cardData, viewport, dataView });
+  //     : asyncUpdateCardAttr({ cardData, viewport, dataView });
   // };
 
   const createCard = cardData =>
@@ -84,8 +84,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const onCardUpdate = cardData =>
     cardData.id === 'temp'
-      ? updateCardTemplate({ cardData, viewport, dataView })
-      : asyncUpdateCard({ uid, cardData, viewport, dataView });
+      ? updateCardTemplate(cardData)
+      : asyncUpdateCard(cardData);
 
   const { routeExtendCard } = dispatcherProps;
   // TODO replace by regex
@@ -103,7 +103,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     closeCard,
     flipHandler,
     frontView: !flipped,
-    tagVocabulary: nestedTagVocabulary,
+    tagVocabulary,
     ...ownProps
   };
 };

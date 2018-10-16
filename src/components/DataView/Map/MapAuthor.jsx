@@ -6,24 +6,37 @@ import { bindActionCreators } from 'redux';
 
 import CardMarker from 'Components/cards/CardMarker';
 
-import DropTargetCont from '../DragAndDrop/DragTargetCont';
+import DropTargetCont from 'Components/DataView/DragAndDrop/DragTargetCont';
 
-import DragDropContextProvider from '../DragAndDrop/DragContextProvider';
+import DragDropContextProvider from 'Components/DataView/DragAndDrop/DragContextProvider';
+
+import {
+  // WebMercatorViewport,
+  PerspectiveMercatorViewport
+} from 'viewport-mercator-project';
 
 // import { dragCard } from 'Reducers/Cards/actions';
-import DataOverlay from '../ForceOverlay/DataOverlay';
 
 import { updateCardTemplate, dragCard } from 'Reducers/Cards/actions';
 
 import { asyncUpdateCard } from 'Reducers/Cards/async_actions';
 import { selectCard } from 'Reducers/DataView/actions';
 
-import DragElement from '../DragAndDrop/DragElement';
+import DragElement from 'Components/DataView/DragAndDrop/DragElement';
 
-import Map from '../ForceOverlay/Map';
-import TopicMap from '../ForceOverlay/TopicMap/AuthorTopicMap';
+import Map from 'Components/DataView/ForceOverlay/Map';
 
 import { GEO, TAGS, FLOORPLAN } from 'Constants/dataViews';
+
+function updCardLoc({ x, y }, mapViewport) {
+  const vp = new PerspectiveMercatorViewport(mapViewport);
+
+  const [longitude, latitude] = vp.unproject([
+    x, // || mapViewport.width / 2,
+    y // || mapViewport.height / 2
+  ]);
+  return { latitude, longitude };
+}
 
 const CardAuthorOverlay = DragDropContextProvider(props => {
   const {
@@ -77,30 +90,30 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
       />
     );
 
-  const selectComp = () => {
-    switch (dataView) {
-      case GEO:
-        return (
-          <Map
-            width={width}
-            height={height}
-            preview={d => routeSelectCard(d.id)}
-            nodes={cards}
-            routeSelectCard={routeSelectCard}
-          >
-            {dragger}
-          </Map>
-        );
-      case FLOORPLAN:
-        return (
-          <TopicMap {...props} width={width} height={height} data={cards} zoom>
-            {dragger}
-          </TopicMap>
-        );
-      default:
-        return null;
-    }
-  };
+  // const selectComp = () => {
+  //   switch (dataView) {
+  //     case GEO:
+  //       return (
+  //         <Map
+  //           width={width}
+  //           height={height}
+  //           preview={d => routeSelectCard(d.id)}
+  //           nodes={cards}
+  //           routeSelectCard={routeSelectCard}
+  //         >
+  //           {dragger}
+  //         </Map>
+  //       );
+  //     case FLOORPLAN:
+  //       return (
+  //         <TopicMap {...props} width={width} height={height} data={cards} zoom>
+  //           {dragger}
+  //         </TopicMap>
+  //       );
+  //     default:
+  //       return null;
+  //   }
+  // };
 
   return (
     <DropTargetCont
@@ -109,17 +122,15 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
       style={style}
       className={className}
     >
-
-          <Map
-            width={width}
-            height={height}
-            preview={d => routeSelectCard(d.id)}
-            nodes={cards}
-            routeSelectCard={routeSelectCard}
-          >
-            {dragger}
-          </Map>
-
+      <Map
+        width={width}
+        height={height}
+        preview={d => routeSelectCard(d.id)}
+        nodes={cards}
+        routeSelectCard={routeSelectCard}
+      >
+        {dragger}
+      </Map>
     </DropTargetCont>
   );
 });
@@ -154,9 +165,12 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const viewport = { ...mapViewport, width, height };
 
   const onCardDrop = cardData => {
-    if (cardData.id === 'temp')
-      updateCardTemplate({ cardData, viewport, dataView });
-    else asyncUpdateCard({ cardData, viewport, dataView });
+    console.log('card drop data', cardData);
+    const { x, y } = cardData;
+    const loc = updCardLoc({ x, y }, viewport);
+    const updatedCard = { ...cardData, loc };
+    if (cardData.id === 'temp') updateCardTemplate(updatedCard);
+    else asyncUpdateCard(updatedCard);
   };
 
   return {

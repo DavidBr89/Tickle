@@ -6,21 +6,21 @@ import * as d3 from 'd3';
 
 import { intersection } from 'lodash';
 
-import ZoomCont from '../ZoomContainer';
+import ZoomCont from 'Components/DataView/ForceOverlay/ZoomContainer';
 
-import floorplanImg from '../floorplan.png';
+import floorplanImg from 'Components/DataView/ForceOverlay/floorplan.png';
 
-import FloorCluster from '../FloorCluster';
+import FloorCluster from 'Components/DataView/ForceOverlay/FloorCluster';
 
-import NodeForce from '../NodeForce';
+import NodeForce from 'Components/DataView/ForceOverlay/NodeForce';
 import PreviewMarker from 'Utils/PreviewMarker';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { addCardFilter, removeCardFilter } from 'Reducers/DataView/actions';
 
-import CardCluster from '../CardCluster';
-import Cluster from '../Cluster';
+import CardCluster from 'Components/DataView/ForceOverlay/CardCluster';
+import Cluster from 'Components/DataView/ForceOverlay/Cluster';
 
 import ArrayPipe from 'Components/utils/ArrayPipe';
 

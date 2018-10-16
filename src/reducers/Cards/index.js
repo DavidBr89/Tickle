@@ -1,4 +1,4 @@
-import updCardDataDim from './updateDataDimension';
+// import updCardDataDim from './updateDataDimension';
 import setify from 'Components/utils/setify';
 
 import { union, uniq } from 'lodash';
@@ -238,18 +238,9 @@ function reducer(state = INITIAL_STATE, action) {
     }
 
     case UPDATE_CARD_TEMPLATE: {
-      const { cardData, viewport, dataView } = action.options;
-
-      console.log('CARD DATA', cardData);
-
-      const dataDim = updCardDataDim({
-        cardData,
-        viewport,
-        dataView
-      });
-
-      // console.log('cardTemplate', updatedTemplate);
-      return { ...state, tmpCard: { ...cardData, ...dataDim } };
+      const card = action.options;
+      console.log("TEMPLATE CARD", card);
+      return { ...state, tmpCard: { ...card } };
     }
     case DELETE_CARD: {
       const { createdCards } = state;

@@ -19,6 +19,7 @@ export const ADMIN = '/admin';
 export const PASSWORD_FORGET = '/pw-forget';
 export const HOME = '/home';
 export const MYCARDS = '/my-cards';
+export const ADMIN_SIGN_UP = '/signup-admin';
 
 const HOME_ROUTE = { HOME: { name: 'Home', path: HOME, subRoutes: [] } };
 const MYCARDS_ROUTE = {

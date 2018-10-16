@@ -215,6 +215,7 @@ const Tag = ({ title, onClick, edit, small, color }) => {
   return (
     <div
       key={title}
+      className="tag-label"
       style={{ ...tagStyle, background: color, cursor: 'pointer' }}
       onClick={onClick}
     >
