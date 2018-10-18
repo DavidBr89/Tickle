@@ -16,7 +16,7 @@ function CardCluster({
   // ...props
 }) {
   // TODO: fix
-  if (data.values.length === 1) return children(data.values[0]);
+  // if (data.values.length === 1) return children(data.values[0]);
 
   return (
     <div
@@ -28,8 +28,8 @@ function CardCluster({
         transition: `left ${transition}ms, top ${transition}ms, width ${transition}ms, height ${transition}ms`,
         width: size,
         height: size,
-        left: x,
-        top: y,
+        left: Math.round(x),
+        top: Math.round(y),
         transform: `translate(-50%,-50%)`,
         display: 'flex',
         justifyContent: 'center',

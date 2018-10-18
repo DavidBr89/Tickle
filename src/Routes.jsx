@@ -11,7 +11,9 @@ import Admin from './components/Admin';
 import Account from './components/Account';
 import Diary from './components/Diary';
 
+import TopicMap from './components/DataView/TopicMap/TopicMap';
 import TopicMapAuthor from './components/DataView/TopicMap/DragTopicMap';
+
 import MapAuthor from './components/DataView/Map/MapAuthor';
 
 import MapGL, { HTMLOverlay } from 'react-map-gl';
@@ -68,7 +70,7 @@ const Routes = ({ history }) => (
         }/${FLOORPLAN}/:selectedCardId?/:showOption?/:flipped?`}
         render={() => (
           <CardView>
-            {props => <UserMap className="absolute" {...props} />}
+            {props => <TopicMap className="absolute" {...props} />}
           </CardView>
         )}
       />
