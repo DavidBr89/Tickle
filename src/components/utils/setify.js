@@ -3,7 +3,10 @@ import { uniq, flatten } from 'lodash';
 
 export default function setify(data) {
   const spreadData = flatten(
-    data.map(({ tags, ...rest }) => tags.map(t => ({ ...rest, tag: t, tags })))
+    data.map(({ tags, ...rest }) => {
+      if (tags === null) console.log('tags NULL', rest);
+      return tags.map(t => ({ ...rest, tag: t, tags }));
+    })
   );
 
   const nested = nest()

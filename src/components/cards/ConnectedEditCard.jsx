@@ -124,7 +124,7 @@ const EditCard = ({
 }) => (
   <Card
     {...props}
-    front={<EditCardFront />}
+    front={<EditCardFront {...props} />}
     key={props.id}
     onClose={closeCard}
     template={template}
@@ -135,7 +135,10 @@ const EditCard = ({
     onUpdate={d => {
       onCardUpdate({ ...d, x, y });
     }}
-    onDelete={() => asyncRemoveCard(props.id)}
+    onDelete={() => {
+      closeCard();
+      asyncRemoveCard(props.id)
+    }}
     tagColorScale={tagColorScale}
     uiColor="grey"
     background="whitesmoke"

@@ -239,8 +239,8 @@ function reducer(state = INITIAL_STATE, action) {
 
     case UPDATE_CARD_TEMPLATE: {
       const card = action.options;
-      console.log("TEMPLATE CARD", card);
-      return { ...state, tmpCard: { ...card } };
+      console.log('TEMPLATE CARD', card);
+      return { ...state, tmpCard: { ...card, template: true } };
     }
     case DELETE_CARD: {
       const { createdCards } = state;

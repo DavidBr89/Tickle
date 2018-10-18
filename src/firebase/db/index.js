@@ -8,7 +8,7 @@ const TICKLE_ENVS = 'tickle-environments';
 /* testing enviroments */
 const VDS_GEO = 'vds-geo';
 const VDS_TOPIC = 'vds-topic';
-const STAGING = 'vds-topic';
+const STAGING = 'staging';
 const PEDAGOGY_DEP = 'pedagogy-dep';
 
 const ENV = STAGING; // VDS_TOPIC;
@@ -47,12 +47,10 @@ const pruneFields = fields => {
 
 const thumbFileName = fileName => `thumb_${fileName}`;
 
-const getShallowCards = (uid = null) => {
-  // console.log('UID', uid);
-  const refCards =
-    uid !== null
-      ? TICKLE_DOC_REF.collection('cards') // .where('uid', '==', uid)
-      : TICKLE_DOC_REF.collection('cards');
+const getShallowCards = (uid = null, allCards = false) => {
+  const refCards = allCards
+    ? TICKLE_DOC_REF.collection('cards')
+    : TICKLE_DOC_REF.collection('cards')//.where('uid', '==', uid);
 
   return refCards.get().then(querySnapshot => {
     const data = [];
@@ -65,11 +63,13 @@ const getShallowCards = (uid = null) => {
       data.push({ ...d });
     });
 
-    console.log('retrieved cards', data);
-
+    // console.log('retrieved SHallow cards', data);
+    //
     // TODO; remove later
     const dataPromises = data.map(d => {
       if (!d.img) return d;
+
+      console.log('shallow card', d);
 
       const thumbNailRef = storageRef.child(
         `${ENV}/images/cards/${thumbFileName(d.id)}`
@@ -79,7 +79,8 @@ const getShallowCards = (uid = null) => {
         url => ({ ...d, img: { ...d.img, thumbnail: url } }),
         err => {
           const img = { ...d.img, thumbnail: null };
-          return { ...d, ...img };
+          console.log('error', err);
+          return { ...d, img };
         }
       );
     });
@@ -119,7 +120,7 @@ export const readCopyUsers = () => {
 
       data.forEach(d =>
         firestore
-          .collection('tickle-environments')
+          .collection(TICKLE_ENVS)
           .doc('staging')
           .collection('cards')
           .doc(d.id)
@@ -160,8 +161,8 @@ export function getOneEmailUser(email) {
     .then(sn => sn.forEach(d => console.log('d', d.data())));
 }
 
-export const readCardsWithSubmissions = uid =>
-  getShallowCards(uid).then(data => {
+export const readCardsWithSubmissions = ({ uid, allCardsFlag = false }) =>
+  getShallowCards(uid, allCardsFlag).then(data => {
     const pendingPromises = data.map(d =>
       getAllChallengeSubmissions(d.id).then(
         allChallengeSubmissions =>
@@ -309,7 +310,7 @@ export const doCreateCard = card =>
     } else {
       const timestamp = null; // firestore.FieldValue.serverTimestamp();
       const newCard = extractCardFields({ ...card, img, timestamp });
-      console.log('newCard', newCard);
+      console.log('newCard UPD', newCard);
 
       return TICKLE_DOC_REF.collection('cards')
         .doc(newCard.id)
