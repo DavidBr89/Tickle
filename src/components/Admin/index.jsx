@@ -1,9 +1,9 @@
 // import React from 'react';
 
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { compose } from 'recompose';
-import { uniqBy } from 'lodash';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import {compose} from 'recompose';
+import {uniqBy} from 'lodash';
 import {
   isChallengeStarted,
   isChallengeSucceeded,
@@ -73,22 +73,23 @@ const mapStateToProps = state => {
 
   const cardSets = {
     [CHALLENGE_STARTED]: cardsWithSubmission.filter(
-      challengeTypeMap[CHALLENGE_STARTED]
+      challengeTypeMap[CHALLENGE_STARTED],
     ),
     [CHALLENGE_SUBMITTED]: cardsWithSubmission.filter(
-      challengeTypeMap[CHALLENGE_SUBMITTED]
+      challengeTypeMap[CHALLENGE_SUBMITTED],
     ),
     [CHALLENGE_SUCCEEDED]: cardsWithSubmission.filter(
-      challengeTypeMap[CHALLENGE_SUCCEEDED]
+      challengeTypeMap[CHALLENGE_SUCCEEDED],
     )
   };
 
+  console.log('cardSets', cardSets, 'cardFilters');
   const filteredCards = uniqBy(
     cardFilters.reduce(
       (acc, filterStr) => [...acc, ...cardSets[filterStr]],
-      {}
+      [],
     ),
-    'id'
+    'id',
   );
 
   console.log('filteredCards', filteredCards);
@@ -133,14 +134,14 @@ const mapDispatchToProps = dispatch =>
       fetchAllCardsWithSubmissions,
       submitChallengeReview: asyncSubmitChallengeReview
     },
-    dispatch
+    dispatch,
   );
 
 const authCondition = authUser => authUser !== null;
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
-  const { flipped } = stateProps;
-  const { flip } = dispatchProps;
+  const {flipped} = stateProps;
+  const {flip} = dispatchProps;
 
   return {
     ...stateProps,
@@ -154,6 +155,6 @@ export default compose(
   connect(
     mapStateToProps,
     mapDispatchToProps,
-    mergeProps
-  )
+    mergeProps,
+  ),
 )(AdminPage);

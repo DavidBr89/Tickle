@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 
-import { Link, withRouter } from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 
 import SignOutButton from './SignOut';
 import * as routes from 'Constants/routes';
@@ -15,7 +15,6 @@ import {
   adminRoutes,
   nonAuthRoutes
 } from 'Constants/routes';
-
 
 // import { setDataView } from 'Reducers/DataView/actions';
 
@@ -32,41 +31,22 @@ import {
 // );
 
 const includePath = (pathA, pathB) => {
-  // TODO: find regex
   const [splA, splB] = [pathA.split('/'), pathB.split('/')].map(p =>
-    p.filter(s => s !== '#' && s !== '')
+    p.filter(s => s !== '#' && s !== ''),
   );
-  // console.log(
-  //   'splA',
-  //   pathA,
-  //   /^\/([^/]*)\//.exec(pathA),
-  //   'splB',
-  //   pathB,
-  //   /([^/]*)\/([^/]*)\//.exec(pathB)
-  // );
   return splA[0] === splB[0];
 };
 
-const InnerLi = ({ name, path, curPath, active, children, subRoutes = [] }) => (
-  <li className="mb-2">
-    <Link
-      className={`nav-link bare-btn ${subRoutes.length > 0 &&
-        'mb-2'}`}
-      to={path}
-    >
-      {children}
-    </Link>
+const InnerLi = ({name, path, curPath, active, children, subRoutes = []}) => (
+  <li className={`nav-link bare-btn ${subRoutes.length > 0 && 'mb-1'}`}>
+    <Link to={path}>{children}</Link>
     {curPath.includes(path) && (
-      <ul>
+      <ul className="list-reset">
         {subRoutes.map(d => (
-          <li className="mb-1">
-            <Link
-              to={d.path}
-              className={`bare-btn nav-link`}
-              style={{ border: includePath(path, curPath) && '1px solid grey' }}
-            >
-              {d.name}
-            </Link>
+          <li
+            className="bare-btn nav-link"
+            style={{border: includePath(path, curPath) && '1px solid grey'}}>
+            <Link to={d.path}>{d.name}</Link>
           </li>
         ))}
       </ul>
@@ -83,7 +63,7 @@ const NavigationHelper = ({
   signOut,
   children
 }) => (
-  <ul className="navList">
+  <ul className="list-reset">
     {Object.keys(routes).map(key => (
       <InnerLi {...routes[key]} curPath={location.pathname}>
         {children(routes[key])}
@@ -129,7 +109,7 @@ NavigationHelper.defaultProps = {
 //   </ul>
 // );
 
-const Navigation = ({ authUser, ...props }) => {
+const Navigation = ({authUser, ...props}) => {
   if (authUser && authUser.admin) {
     return <NavigationHelper {...props} signOut routes={adminRoutes} />;
   }

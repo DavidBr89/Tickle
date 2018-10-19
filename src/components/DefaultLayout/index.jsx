@@ -1,19 +1,19 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-import { bindActionCreators } from 'redux';
+import {bindActionCreators} from 'redux';
 
-import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { stylesheet } from 'Src/styles/GlobalThemeContext';
-import { Menu as MenuIcon } from 'react-feather';
+import {Link} from 'react-router-dom';
+import {connect} from 'react-redux';
+import {stylesheet} from 'Src/styles/GlobalThemeContext';
+import {Menu as MenuIcon} from 'react-feather';
 // import { Link } from 'react-router-dom';
 
 // import SignOutButton from '../SignOut';
 
 import Navigation from '../Navigation';
 
-import { screenResize } from 'Reducers/Screen/actions';
+import {screenResize} from 'Reducers/Screen/actions';
 
 // import DocumentMeta from 'react-document-meta';
 
@@ -22,7 +22,7 @@ import { screenResize } from 'Reducers/Screen/actions';
 // import userPic from './user.png';
 // import cx from './DefaultLayout.scss';
 
-class Menu extends Component {
+class NavBar extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
@@ -40,7 +40,7 @@ class Menu extends Component {
   // jhhhjj};
 
   render() {
-    const { style, open, children, onToggle, ui } = this.props;
+    const {style, open, children, onToggle, ui} = this.props;
     return (
       <div
         className="z-50 w-full"
@@ -52,7 +52,7 @@ class Menu extends Component {
       >
         <nav
           className="navbar flex items-center relative m-2 "
-          style={{ minHeight: 48 }}
+          style={{minHeight: 48}}
         >
           <button
             className="border cursor-pointer p-2 absolute z-50"
@@ -66,7 +66,7 @@ class Menu extends Component {
             <MenuIcon
               size="30"
               color="grey"
-              style={{ pointerEvents: 'inherit' }}
+              style={{pointerEvents: 'inherit'}}
             />
           </button>
           {ui}
@@ -82,6 +82,7 @@ class Menu extends Component {
           <div
             className="p-3"
             style={{
+              width: '30%',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center'
@@ -107,7 +108,7 @@ class DefaultLayout extends Component {
     this.handleClick = this.handleClick.bind(this);
   }
 
-  state = { open: false };
+  state = {open: false};
 
   handleClick = () => {
     this.setState(prevState => ({
@@ -116,7 +117,7 @@ class DefaultLayout extends Component {
   };
 
   componentDidMount() {
-    const { screenResize } = this.props;
+    const {screenResize} = this.props;
     const android = /(android)/i.test(navigator.userAgent);
     const iOS =
       !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
@@ -130,31 +131,31 @@ class DefaultLayout extends Component {
   }
 
   render() {
-    const { children, activePath, menu } = this.props;
-    const { open } = this.state;
+    const {children, activePath, menu} = this.props;
+    const {open} = this.state;
 
     // style={{ height: isAndroid ? '100vh' : '100vh' }}
     return (
       <div id="content-container" ref={c => (this.cont = c)}>
-        <div style={{ display: 'flex' }}>
-          <Menu
+        <div style={{display: 'flex'}}>
+          <NavBar
             ui={menu}
             open={open}
-            style={{ position: 'absolute' }}
+            style={{position: 'absolute'}}
             onToggle={this.handleClick}
           >
             <Navigation>
-              {({ name }) => (
+              {({name}) => (
                 <div
                   onClick={() => {
-                    this.setState({ open: false });
+                    this.setState({open: false});
                   }}
                 >
                   {name}
                 </div>
               )}
             </Navigation>
-          </Menu>
+          </NavBar>
         </div>
         {children}
       </div>
@@ -162,14 +163,14 @@ class DefaultLayout extends Component {
   }
 }
 
-const mapStateToProps = state => ({ ...state.Screen });
+const mapStateToProps = state => ({...state.Screen});
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       screenResize
     },
-    dispatch
+    dispatch,
   );
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({
@@ -181,5 +182,5 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-  mergeProps
+  mergeProps,
 )(DefaultLayout);

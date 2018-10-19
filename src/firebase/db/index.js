@@ -1,5 +1,5 @@
-import { firestore, storageRef } from '../firebase';
-import { extractCardFields } from 'Constants/cardFields';
+import {firestore, storageRef} from '../firebase';
+import {extractCardFields} from 'Constants/cardFields';
 
 const USERS = 'users';
 
@@ -50,7 +50,7 @@ const thumbFileName = fileName => `thumb_${fileName}`;
 const getShallowCards = (uid = null, allCards = false) => {
   const refCards = allCards
     ? TICKLE_DOC_REF.collection('cards')
-    : TICKLE_DOC_REF.collection('cards')//.where('uid', '==', uid);
+    : TICKLE_DOC_REF.collection('cards'); // .where('uid', '==', uid);
 
   return refCards.get().then(querySnapshot => {
     const data = [];
@@ -60,7 +60,7 @@ const getShallowCards = (uid = null, allCards = false) => {
       // const date = timestamp.toDate();
       const d = doc.data();
 
-      data.push({ ...d });
+      data.push({...d});
     });
 
     // console.log('retrieved SHallow cards', data);
@@ -72,16 +72,16 @@ const getShallowCards = (uid = null, allCards = false) => {
       console.log('shallow card', d);
 
       const thumbNailRef = storageRef.child(
-        `${ENV}/images/cards/${thumbFileName(d.id)}`
+        `${ENV}/images/cards/${thumbFileName(d.id)}`,
       );
       // return d;
       return thumbNailRef.getDownloadURL().then(
-        url => ({ ...d, img: { ...d.img, thumbnail: url } }),
+        url => ({...d, img: {...d.img, thumbnail: url}}),
         err => {
-          const img = { ...d.img, thumbnail: null };
+          const img = {...d.img, thumbnail: null};
           console.log('error', err);
-          return { ...d, img };
-        }
+          return {...d, img};
+        },
       );
     });
 
@@ -94,15 +94,15 @@ export const readCards = (fromUID, playerId) =>
     const pendingPromises = data.map(d =>
       getOneChallengeSubmission(d.id, playerId).then(
         challengeSubmission =>
-          new Promise(resolve => resolve({ ...d, challengeSubmission }))
-      )
+          new Promise(resolve => resolve({...d, challengeSubmission})),
+      ),
     );
     return Promise.all(pendingPromises).then(
       data =>
         new Promise(
           resolve => resolve(data),
-          error => console.log('error in readCards', error)
-        )
+          error => console.log('error in readCards', error),
+        ),
     );
   });
 
@@ -124,7 +124,7 @@ export const readCopyUsers = () => {
           .doc('staging')
           .collection('cards')
           .doc(d.id)
-          .set(d)
+          .set(d),
       );
     });
 };
@@ -139,7 +139,7 @@ function getAllChallengeSubmissions(cid) {
     snapshot.forEach(item => {
       const d = item.data(); // will have 'todo_item.title' and 'todo_item.completed'
       // console.log('challengeSub', item);
-      challengeSubmissions.push({ ...d, cardId: cid, playerId: item.id });
+      challengeSubmissions.push({...d, cardId: cid, playerId: item.id});
     });
     return new Promise(resolve => resolve(challengeSubmissions));
   });
@@ -161,23 +161,25 @@ export function getOneEmailUser(email) {
     .then(sn => sn.forEach(d => console.log('d', d.data())));
 }
 
-export const readCardsWithSubmissions = ({ uid, allCardsFlag = false }) =>
-  getShallowCards(uid, allCardsFlag).then(data => {
+export const readCardsWithSubmissions = ({uid = null, allCards = false}) =>
+  getShallowCards(uid, allCards).then(data => {
     const pendingPromises = data.map(d =>
       getAllChallengeSubmissions(d.id).then(
         allChallengeSubmissions =>
-          new Promise(resolve => resolve({ ...d, allChallengeSubmissions }))
-      )
+          new Promise(resolve => resolve({...d, allChallengeSubmissions})),
+      ),
     );
     return Promise.all(pendingPromises).then(results =>
       new Promise(resolve => resolve(results)).catch(err => {
         throw new Error(`error in reading cards with submissions ${err}`);
-      })
+      }),
     );
   });
 
-export const addFileToStorage = ({ file, path }) => {
-  const metadata = { contentType: file.type };
+export const readAllCards = () => readCardsWithSubmissions({allCards: true});
+
+export const addFileToStorage = ({file, path}) => {
+  const metadata = {contentType: file.type};
   const imgRef = storageRef.child(`${ENV}/${path}`);
   return imgRef
     .put(file, metadata)
@@ -197,8 +199,8 @@ export const removeFromStorage = path => {
   });
 };
 
-export const addImgToStorage = ({ file, path, id }) => {
-  const metadata = { contentType: file.type };
+export const addImgToStorage = ({file, path, id}) => {
+  const metadata = {contentType: file.type};
   const imgRef = storageRef.child(`${ENV}/images/${path}/${id}`);
   return imgRef
     .put(file, metadata)
@@ -215,7 +217,7 @@ export const addImgToStorage = ({ file, path, id }) => {
 const uploadImgFields = card => {
   if (card.img === null) return new Promise(resolve => resolve(null));
 
-  const { file = null, ...restImgFields } = card.img;
+  const {file = null, ...restImgFields} = card.img;
 
   return file
     ? addImgToStorage({
@@ -229,7 +231,7 @@ const uploadImgFields = card => {
         };
         return new Promise(resolve => resolve(img));
       })
-    : new Promise(resolve => resolve({ ...restImgFields }));
+    : new Promise(resolve => resolve({...restImgFields}));
 };
 
 export const doCreateUser = userProfile =>
@@ -245,8 +247,8 @@ export const getUser = uid =>
       doc =>
         new Promise(
           resolve => resolve(doc.data()),
-          error => console.log('error in getUser, doc not existing', error)
-        )
+          error => console.log('error in getUser, doc not existing', error),
+        ),
     )
     .catch(err => console.log('err  getUser'));
 
@@ -270,8 +272,8 @@ export const getDetailedUserInfo = uid =>
             collectedCards: [],
             submittedCards: [],
             startedCards: []
-          })
-        )
+          }),
+        ),
     )
     .catch(err => console.log('err i getUser', err));
 
@@ -285,21 +287,21 @@ export const onceGetUsers = () =>
 
       const dataPromises = data.map(d => {
         const thumbNailRef = storageRef.child(
-          `${ENV}/images/usr/${thumbFileName(d.uid)}`
+          `${ENV}/images/usr/${thumbFileName(d.uid)}`,
         );
         // return d;
         return thumbNailRef.getDownloadURL().then(
-          url => ({ ...d, thumbnail: url }),
+          url => ({...d, thumbnail: url}),
           err => {
             // TODO: check later
-            const img = { ...d, thumbnail: null };
-            return { ...d, ...img };
-          }
+            const img = {...d, thumbnail: null};
+            return {...d, ...img};
+          },
         );
       });
 
       return Promise.all(dataPromises).catch(error =>
-        console.log('error in reading users', error)
+        console.log('error in reading users', error),
       );
     });
 
@@ -309,7 +311,7 @@ export const doCreateCard = card =>
       throw Error('error: temp card to create');
     } else {
       const timestamp = null; // firestore.FieldValue.serverTimestamp();
-      const newCard = extractCardFields({ ...card, img, timestamp });
+      const newCard = extractCardFields({...card, img, timestamp});
       console.log('newCard UPD', newCard);
 
       return TICKLE_DOC_REF.collection('cards')
@@ -327,13 +329,13 @@ export const doDeleteCard = cid =>
     .delete();
 
 // Add a new document with a generated id.
-export const addComment = ({ uid, cardId, text }) =>
+export const addComment = ({uid, cardId, text}) =>
   TICKLE_DOC_REF.collection('cardComments')
     .doc(cardId)
     .collection('comments')
     // TODO: change later will break in future firebase release
     // TODO: change later
-    .add({ uid, text, date: new Date() });
+    .add({uid, text, date: new Date()});
 
 export const readComments = cardId =>
   TICKLE_DOC_REF.collection('cardComments')
@@ -347,11 +349,11 @@ export const readComments = cardId =>
       console.log('querySnapshot', querySnapshot);
       return new Promise(
         resolve => resolve(comments),
-        error => console.log('error in readComments', error)
+        error => console.log('error in readComments', error),
       );
     });
 
-export const removeChallengeSubmission = ({ cardId, playerId }) =>
+export const removeChallengeSubmission = ({cardId, playerId}) =>
   TICKLE_DOC_REF.collection('cards')
     .doc(cardId)
     .collection('challengeSubmissions')
@@ -359,19 +361,19 @@ export const removeChallengeSubmission = ({ cardId, playerId }) =>
     .delete()
     .catch(err => {
       throw new Error(
-        `error adding challengesubmission for ${playerId} ${cardId} ${err}`
+        `error adding challengesubmission for ${playerId} ${cardId} ${err}`,
       );
     });
 
-export const addChallengeSubmission = ({ cardId, playerId, challengeData }) =>
+export const addChallengeSubmission = ({cardId, playerId, challengeData}) =>
   TICKLE_DOC_REF.collection('cards')
     .doc(cardId)
     .collection('challengeSubmissions')
     .doc(playerId)
-    .set({ ...challengeData, date: new Date(), playerId, cardId })
+    .set({...challengeData, date: new Date(), playerId, cardId})
     .catch(err => {
       throw new Error(
-        `error adding challengesubmission for ${playerId} ${err}`
+        `error adding challengesubmission for ${playerId} ${err}`,
       );
       // Handle any error that occurred in any of the previous
       // promises in the chain.

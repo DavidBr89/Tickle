@@ -1,4 +1,4 @@
-import React, { Component, PureComponent } from 'react';
+import React, {Component, PureComponent} from 'react';
 import PropTypes from 'prop-types';
 // import chroma from 'chroma-js';
 // import * as Icon from 'react-feather';
@@ -6,21 +6,20 @@ import PropTypes from 'prop-types';
 // import PhotoUpload from 'Utils/PhotoUpload';
 import EditPhoto from './EditPhoto';
 
-import { isEqual } from 'lodash';
+import {isEqual} from 'lodash';
 
 // import PhotoChallenge from 'Src/components/Challenges/MatchPhotoChallenge';
 import ChallengeAuthorModalBody from 'Src/components/ChallengeAuthor';
-import { extractCardFields } from 'Constants/cardFields';
+import {extractCardFields} from 'Constants/cardFields';
 
-import { Modal, ModalBody } from 'Utils/Modal';
-import { MediaSearch, MediaOverview } from '../MediaSearch';
-import { coverPhotoStyle } from '../styles';
+import {Modal, ModalBody} from 'Utils/Modal';
+import {MediaSearch, MediaOverview} from '../MediaSearch';
 
-import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
+import {CardThemeConsumer} from 'Src/styles/CardThemeContext';
 
 import CardFront from './CardFront';
 
-import { TagDropDown } from 'Utils/TagInput';
+import {TagDropDown} from 'Utils/TagInput';
 
 import {
   // FieldSet,
@@ -37,7 +36,7 @@ import {
   FlipButton
 } from '../layout';
 
-import { TagInput, PreviewTags } from 'Components/utils/Tag';
+import {TagInput, PreviewTags} from 'Components/utils/Tag';
 
 class NumberInput extends Component {
   static propTypes = {
@@ -49,25 +48,25 @@ class NumberInput extends Component {
     onChange: d => d
   };
 
-  state = { value: 0, error: null, ...this.state };
+  state = {value: 0, error: null, ...this.state};
 
   isPosInt = () => /^\+?(0|[1-9]\d*)$/.test(this.state.value);
 
   componentDidUpdate(prevProps, prevState) {
-    const { value } = this.state;
+    const {value} = this.state;
     if (value !== prevState.value) {
       if (this.isPosInt()) {
         // this.props.onChange(value);
-        this.setState({ error: null });
+        this.setState({error: null});
       } else {
-        this.setState({ error: 'Input is not a positive Integer' });
+        this.setState({error: 'Input is not a positive Integer'});
       }
     }
   }
 
   render() {
-    const { onUpdate, onClose } = this.props;
-    const { value, error } = this.state;
+    const {onUpdate, onClose} = this.props;
+    const {value, error} = this.state;
     const disabled = error !== null;
     return (
       <ModalBody
@@ -76,7 +75,7 @@ class NumberInput extends Component {
         footer={
           <button
             className="btn"
-            style={{ opacity: disabled ? 0.5 : 1, transition: 'opacity 200ms' }}
+            style={{opacity: disabled ? 0.5 : 1, transition: 'opacity 200ms'}}
             disabled={disabled}
             onClick={() => onUpdate(value)}
           >
@@ -91,7 +90,7 @@ class NumberInput extends Component {
           min="0"
           step="1"
           onChange={e => {
-            this.setState({ value: e.target.value });
+            this.setState({value: e.target.value});
           }}
         />
         <div>{error}</div>
@@ -100,23 +99,6 @@ class NumberInput extends Component {
   }
 }
 
-const FooterBtn = ({ onClick, children, disabled, style = {} }) => (
-  <CardThemeConsumer>
-    {({ stylesheet: { btn } }) => (
-      <button
-        className="btn"
-        style={{ ...style, zIndex: 5000, /* TODO: hack */ fontWeight: 'bold' }}
-        onClick={onClick}
-        disabled={disabled}
-      >
-        {children}
-      </button>
-    )}
-  </CardThemeConsumer>
-);
-// {id: null, floorX: 0.5, floorY: 0.5, img: null, loc: { latitude: 50.85146, longitude: 4.315483 }, media: null, title: null, tags: null, challenge: null,
-// }
-//
 const defaultProps = {
   title: null,
   challenge: null,
@@ -138,11 +120,11 @@ class TextAreaModal extends Component {
     className: PropTypes.string
   };
 
-  state = { ...this.props };
+  state = {...this.props};
 
   render() {
-    const { onUpdate } = this.props;
-    const { text } = this.state;
+    const {onUpdate} = this.props;
+    const {text} = this.state;
 
     return (
       <ModalBody
@@ -162,7 +144,7 @@ class TextAreaModal extends Component {
             })
           }
           rows={5}
-          style={{ width: '100%' }}
+          style={{width: '100%'}}
           placeholder={'<Please insert your description>'}
         >
           {text}
@@ -179,11 +161,11 @@ class TitleModal extends Component {
     onUpdate: PropTypes.func
   };
 
-  state = { ...this.props };
+  state = {...this.props};
 
   render() {
-    const { onUpdate } = this.props;
-    const { text } = this.state;
+    const {onUpdate} = this.props;
+    const {text} = this.state;
 
     return (
       <ModalBody
@@ -202,7 +184,7 @@ class TitleModal extends Component {
                 text: e.target.value || null
               })
             }
-            style={{ width: '100%' }}
+            style={{width: '100%'}}
             value={text}
           />
         </div>
@@ -264,7 +246,7 @@ class EditCardFront extends PureComponent {
 
   state = {
     data: {
-      ...extractCardFields({ ...this.props })
+      ...extractCardFields({...this.props})
     },
     added: !this.props.template,
     dialog: null
@@ -272,15 +254,15 @@ class EditCardFront extends PureComponent {
 
   componentDidUpdate(prevProps, prevState) {
     const prevData = prevState.data;
-    const { onUpdate } = this.props;
-    const { data } = this.state;
+    const {onUpdate} = this.props;
+    const {data} = this.state;
     // TODO: check the other attrs
     if (
       !isEqual(prevData, data) ||
       !isEqual(prevData.challenge, data.challenge) ||
       !isEqual(prevData.media, data.media)
     ) {
-      onUpdate({ ...data });
+      onUpdate({...data});
     }
   }
 
@@ -290,35 +272,34 @@ class EditCardFront extends PureComponent {
   // }
 
   onCloseModal = () => {
-    const { data } = this.state;
-    const { onUpdate } = this.props;
+    const {data} = this.state;
+    const {onUpdate} = this.props;
     // onUpdate({ ...data });
-    this.setState({ dialog: null });
+    this.setState({dialog: null});
   };
 
   updateField(field) {
-    this.setState(oldState => ({ data: { ...oldState.data, ...field } }));
+    this.setState(oldState => ({data: {...oldState.data, ...field}}));
   }
 
   updateFieldAndCloseModal(field) {
     this.setState(oldState => ({
-      data: { ...oldState.data, ...field },
+      data: {...oldState.data, ...field},
       dialog: null
     }));
   }
 
   modalWriteContent() {
-    const { data, dialog } = this.state;
-    const { challenge } = data;
+    const {data, dialog} = this.state;
+    const {challenge} = data;
     const {
       uiColor,
       tagColorScale,
-      stylesheet,
       height,
       tagVocabulary
     } = this.props;
 
-    const { title, tags, img, description, media, points } = data;
+    const {title, tags, img, description, media, points} = data;
     const closeBtn = (
       <button className="btn" onClick={this.onCloseModal}>
         Close
@@ -327,7 +308,7 @@ class EditCardFront extends PureComponent {
 
     const modalVisible = dialog !== null;
     const dialogTitle = dialog !== null ? dialog.title : null;
-    const modalProps = { visible: modalVisible, title: dialogTitle };
+    const modalProps = {visible: modalVisible, title: dialogTitle};
 
     switch (dialogTitle) {
       case 'Title':
@@ -336,7 +317,7 @@ class EditCardFront extends PureComponent {
             {...modalProps}
             text={title}
             onUpdate={newTitle =>
-              this.updateFieldAndCloseModal({ title: newTitle })
+              this.updateFieldAndCloseModal({title: newTitle})
             }
           />
         );
@@ -348,8 +329,8 @@ class EditCardFront extends PureComponent {
             footer={closeBtn}
           >
             <TagDropDown
-              style={{ width: '100%' }}
-              onChange={newTags => this.updateField({ tags: [...newTags] })}
+              style={{width: '100%'}}
+              onChange={newTags => this.updateField({tags: [...newTags]})}
               editable
               data={tags || []}
               vocabulary={tagVocabulary}
@@ -367,10 +348,9 @@ class EditCardFront extends PureComponent {
               uiColor="grey"
               imgUrl={img ? img.url : null}
               imgName={img && img.name}
-              stylesheet={stylesheet}
               onChange={imgObj => {
                 console.log('imgObj', imgObj);
-                this.updateField({ img: imgObj, dialog: null });
+                this.updateField({img: imgObj, dialog: null});
               }}
             />
           </ModalBody>
@@ -396,10 +376,9 @@ class EditCardFront extends PureComponent {
           >
             <MediaSearch
               selectedMedia={media}
-              stylesheet={stylesheet}
               onChange={mediaItems => {
                 console.log('mediasearch', mediaItems);
-                this.updateField({ media: mediaItems });
+                this.updateField({media: mediaItems});
               }}
             />
           </ModalBody>
@@ -413,7 +392,7 @@ class EditCardFront extends PureComponent {
             key={challenge ? challenge.id : 'newChallenge'}
             challenge={challenge}
             onChange={ch => {
-              this.updateField({ challenge: ch });
+              this.updateField({challenge: ch});
             }}
           />
         );
@@ -446,13 +425,11 @@ class EditCardFront extends PureComponent {
       tagColorScale,
       onSubmit,
       template,
-      stylesheet,
       smallScreen,
       onCreate
     } = this.props;
-    const { data, dialog } = this.state;
+    const {data, dialog} = this.state;
     const modalVisible = dialog !== null;
-    const { coverPhoto } = stylesheet;
     const {
       id,
       title,
@@ -473,28 +450,28 @@ class EditCardFront extends PureComponent {
           onClose={onClose}
           onTagsClick={() => {
             this.setState({
-              dialog: { title: 'Tags', data: tags }
+              dialog: {title: 'Tags', data: tags}
             });
           }}
           onTitleClick={() =>
             this.setState({
-              dialog: { title: 'Title', data: title }
+              dialog: {title: 'Title', data: title}
             })
           }
           onImgClick={() => {
             this.setState({
-              dialog: { title: 'Photo', data: tags }
+              dialog: {title: 'Photo', data: tags}
             });
           }}
           onDescriptionClick={() => {
             console.log('click description');
             this.setState({
-              dialog: { title: 'Description', data: description }
+              dialog: {title: 'Description', data: description}
             });
           }}
           onMediaClick={() =>
             this.setState({
-              dialog: { title: 'Media', data: media }
+              dialog: {title: 'Media', data: media}
             })
           }
           bottomControls={
@@ -503,7 +480,7 @@ class EditCardFront extends PureComponent {
                 className="btn btn-black m-1"
                 onClick={() =>
                   this.setState({
-                    dialog: { title: 'Challenge', data: challenge }
+                    dialog: {title: 'Challenge', data: challenge}
                   })
                 }
               >
@@ -518,7 +495,7 @@ class EditCardFront extends PureComponent {
           }
           onPointsClick={() =>
             this.setState({
-              dialog: { title: 'Points', data: points }
+              dialog: {title: 'Points', data: points}
             })
           }
           onFlip={flipHandler}
@@ -531,10 +508,4 @@ class EditCardFront extends PureComponent {
 
 EditCardFront.defaultProps = defaultProps;
 
-const StyledEditCardFront = props => (
-  <CardThemeConsumer>
-    {({ stylesheet }) => <EditCardFront {...props} stylesheet={stylesheet} />}
-  </CardThemeConsumer>
-);
-
-export default StyledEditCardFront;
+export default EditCardFront;

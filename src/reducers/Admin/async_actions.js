@@ -69,7 +69,7 @@ export function asyncSubmitChallengeReview(challengeSubmission) {
 export function fetchAllCardsWithSubmissions() {
   return function(dispatch) {
     // dispatch(loadingCards(true));
-    return db.readCardsWithSubmissions().then(cards => {
+    return db.readAllCards().then(cards => {
       // dispatch(loadingCards(false));
       dispatch(getCards(cards));
       db.onceGetUsers().then(users => {
