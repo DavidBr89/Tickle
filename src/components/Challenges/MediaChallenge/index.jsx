@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import * as Icon from 'react-feather';
-import { css } from 'aphrodite/no-important';
 
 import { ModalBody } from 'Utils/Modal';
 import MediaUpload from 'Utils/MediaUpload';

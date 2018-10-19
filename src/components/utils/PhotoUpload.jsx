@@ -3,13 +3,6 @@ import PropTypes from 'prop-types';
 
 import Compress from 'compress.js';
 
-import {
-  stylesheet as defaultStylesheet,
-  uiColor as defaultUIColor
-} from 'Src/styles/GlobalThemeContext';
-
-import { css } from 'aphrodite/no-important';
-
 const compress = new Compress();
 
 // import { DimWrapper } from 'Utils';
@@ -51,7 +44,6 @@ export default class PhotoUpload extends Component {
     width: 250,
     height: 250,
     maxHeight: 300,
-    stylesheet: defaultStylesheet,
     imgName: null,
     title: 'Browse Images'
   };
@@ -64,7 +56,6 @@ export default class PhotoUpload extends Component {
       onChange,
       uiColor,
       defaultImg,
-      stylesheet,
       title,
       maxHeight,
       // width,

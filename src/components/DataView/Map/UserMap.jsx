@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import MapGL, { HTMLOverlay } from 'react-map-gl';
-import { css } from 'aphrodite';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -307,7 +306,7 @@ class UserMap extends Component {
             style={{ position: 'absolute', bottom: 0, right: 0, zIndex: 4000 }}
           >
             <button
-              className={css(stylesheet.btn)}
+              className="btn"
               onClick={() =>
                 this.props.changeMapViewport({
                   width,

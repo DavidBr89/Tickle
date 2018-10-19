@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'aphrodite';
 
 import {
   stylesheet as defaultStylesheet,
@@ -73,7 +72,7 @@ export class TagList extends Component {
             onChange={({ target }) => this.setState({ value: target.value })}
           />
           <button
-            className={`${css(stylesheet.btn)} ml-2`}
+            className={`btn ml-2`}
             style={{ background: uiColor }}
             onClick={event => {
               this.setState({ value: '' });

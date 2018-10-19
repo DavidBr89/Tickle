@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { css } from 'aphrodite';
-
-import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
-
 export default class TabNav extends React.Component {
   static propTypes = {
     children: PropTypes.oneOf([PropTypes.func, PropTypes.node]),

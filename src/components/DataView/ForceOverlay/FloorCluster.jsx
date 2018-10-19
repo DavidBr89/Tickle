@@ -10,7 +10,7 @@ import * as d3 from 'd3';
 
 import { intersection, union, uniqBy, uniq, flatten } from 'lodash';
 // import TopicAnnotationOverlay from './TopicAnnotationOverlay';
-import dobbyscan from './cluster';
+import dobbyscan from './dobbyScanCluster';
 
 function getBoundingBox(coords, acc = d => [d[0], d[1]]) {
   const bounds = { minX: Infinity, maxX: 0, minY: Infinity, maxY: 0 };

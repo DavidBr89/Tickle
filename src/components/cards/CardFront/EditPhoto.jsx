@@ -3,9 +3,6 @@ import PropTypes from 'prop-types';
 
 import PhotoUpload from 'Utils/PhotoUpload';
 import TabNav from 'Utils/TabNav';
-import { css } from 'aphrodite';
-
-import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
 class AddUrl extends Component {
   static propTypes = {
@@ -30,8 +27,6 @@ class AddUrl extends Component {
     const { imgUrl } = this.state;
 
     return (
-      <CardThemeConsumer>
-        {({ stylesheet }) => (
           <div
             className={className}
             style={{ width: '100%', height: '100%', ...style }}
@@ -115,8 +110,6 @@ class AddUrl extends Component {
               </div>
             </div>
           </div>
-        )}
-      </CardThemeConsumer>
     );
   }
 }

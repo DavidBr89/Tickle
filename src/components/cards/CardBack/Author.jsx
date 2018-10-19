@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { scaleLinear, extent, range, scaleOrdinal } from 'd3';
-import { css } from 'aphrodite/no-important';
 
 import { db } from 'Firebase';
 
@@ -112,7 +111,7 @@ const ExtendedAuthor = ({
     </div>
     <FieldSet
       legend="Interests:"
-      className={css(stylesheet.shallowBg)}
+      className="bg-grey-light"
       style={noBorderStyle}
       legendStyle={legendStyle}
     >
@@ -121,7 +120,7 @@ const ExtendedAuthor = ({
     <FieldSet
       legend="skills:"
       style={noBorderStyle}
-      className={css(stylesheet.shallowBg)}
+      className="bg-grey-light"
       legendStyle={legendStyle}
     />
     <div className="mt-2" style={{ fontSize: '14px', fontWeight: 700 }}>
@@ -129,7 +128,7 @@ const ExtendedAuthor = ({
     </div>
     <FieldSet
       legend="Collected Cards"
-      className={css(stylesheet.shallowBg)}
+      className="bg-grey-light"
       style={noBorderStyle}
       legendStyle={legendStyle}
     >

@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import EditPhoto from './EditPhoto';
 
 import { isEqual } from 'lodash';
-import { css } from 'aphrodite/no-important';
 
 // import PhotoChallenge from 'Src/components/Challenges/MatchPhotoChallenge';
 import ChallengeAuthorModalBody from 'Src/components/ChallengeAuthor';
@@ -105,7 +104,7 @@ const FooterBtn = ({ onClick, children, disabled, style = {} }) => (
   <CardThemeConsumer>
     {({ stylesheet: { btn } }) => (
       <button
-        className={css(btn)}
+        className="btn"
         style={{ ...style, zIndex: 5000, /* TODO: hack */ fontWeight: 'bold' }}
         onClick={onClick}
         disabled={disabled}

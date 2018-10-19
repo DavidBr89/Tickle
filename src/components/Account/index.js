@@ -19,7 +19,6 @@ import {
 import * as actions from 'Reducers/Session/actions';
 import { screenResize } from 'Reducers/Screen/actions';
 
-import { makeTagColorScale } from 'Src/styles/GlobalThemeContext'; // eslint-disable-line
 
 import {
   isChallengeSucceeded,
@@ -38,7 +37,6 @@ const mapStateToProps = state => {
   const { tagColorScale, collectibleCards } = state.Cards;
   // console.log('cards');
   //
-  // const tagColorScale = makeTagColorScale(cardSets);
   //
   //
   const collectedCards = collectibleCards.filter(isChallengeSucceeded);

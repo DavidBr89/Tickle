@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { difference, intersection, uniq } from 'lodash';
 
-import { stylesheet, rawCSS } from 'Src/styles/GlobalThemeContext';
-import { css } from 'aphrodite';
-
 const TagSelection = ({ data, style, onRemove }) => (
   <div style={style}>
     {data.map(key => (

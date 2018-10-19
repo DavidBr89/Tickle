@@ -2,17 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { scaleLinear, extent, range, scaleOrdinal } from 'd3';
-import { css } from 'aphrodite';
 
 import { GlobalThemeConsumer, stylesheet } from 'Src/styles/GlobalThemeContext';
-//
-// import { db } from 'Firebase';
 
-// import colorClasses from '../utils/colorClasses';
 import usrPlaceholderImg from './user-placeholder.png';
 
-// import { skillTypes } from '../../dummyData';
-// import setify from 'Utils/setify';
 import CardMarker from 'Cards/CardMarker';
 import { FieldSet } from 'Components/utils/StyledComps';
 

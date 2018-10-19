@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
 // import * as chromatic from 'd3-scale-chromatic';
 // import hull from 'hull.js';
@@ -8,12 +8,12 @@ import * as d3 from 'd3';
 // import chroma from 'chroma-js';
 // import polylabel from '@mapbox/polylabel';
 
-import { intersection, union, uniqBy, uniq, flatten } from 'lodash';
+import {intersection, union, uniqBy, uniq, flatten} from 'lodash';
 // import TopicAnnotationOverlay from './TopicAnnotationOverlay';
-import dobbyscan from './cluster';
+import dobbyscan from './dobbyScanCluster';
 
 function getBoundingBox(coords, acc = d => [d[0], d[1]]) {
-  const bounds = { minX: Infinity, maxX: 0, minY: Infinity, maxY: 0 };
+  const bounds = {minX: Infinity, maxX: 0, minY: Infinity, maxY: 0};
 
   for (let j = 0; j < coords.length; j++) {
     const [x, y] = acc(coords[j]);
@@ -74,11 +74,11 @@ function groupPoints(
   nodes,
   offsetX = 0,
   offsetY = 0,
-  accessor = d => [d[0], d[1]]
+  accessor = d => [d[0], d[1]],
 ) {
   return nodes.reduce(
     (acc, d) => acc.concat(circle(accessor(d), offsetX, offsetY)),
-    []
+    [],
   );
 }
 function findCenterPos(values) {
@@ -93,10 +93,10 @@ function findCenterPos(values) {
       ],
       // values.map(d => [d.x, d.y]),
       20,
-      20
+      20,
     ),
     Infinity,
-    Infinity
+    Infinity,
   );
   const centerPos = d3.polygonCentroid(poly);
   return centerPos;
@@ -118,7 +118,7 @@ class Cluster extends Component {
   oldClusters = [];
 
   findClusters = () => {
-    const { width, height, nodes, radius } = this.props;
+    const {width, height, nodes, radius} = this.props;
 
     const clusters = dobbyscan({
       points: [...nodes],
@@ -126,7 +126,7 @@ class Cluster extends Component {
       radius,
       x: n => n.x,
       y: n => n.y
-    }).map((values) => {
+    }).map(values => {
       const centerPos = findCenterPos(values);
       const tags = uniq(flatten(values.map(e => e.tags)));
 
@@ -145,7 +145,7 @@ class Cluster extends Component {
   };
 
   getVoronoiCells = clusters => {
-    const { width, height } = this.props;
+    const {width, height} = this.props;
 
     const voronoi = d3
       .voronoi()
@@ -153,11 +153,11 @@ class Cluster extends Component {
       .y(d => d.centerPos[1])
       .extent([[-1, -1], [width + 1, height + 1]]);
 
-    const cells = voronoi.polygons(clusters).map(({ data, ...polygonObj }) => {
+    const cells = voronoi.polygons(clusters).map(({data, ...polygonObj}) => {
       const polygon = Object.values(polygonObj);
       const centroid = d3.polygonCentroid(polygon);
       const size = data.values.length * 30;
-      return { ...data, size, centroid, polygon };
+      return {...data, size, centroid, polygon};
     });
     return cells;
   };
@@ -182,15 +182,13 @@ class Cluster extends Component {
       children
     } = this.props;
 
-    const clusters = this.findClusters().map(
-      ({ centroid, centerPos, ...d }) => ({
-        centroid,
-        centerPos,
-        x: centerPos[0],
-        y: centerPos[1],
-        data: d
-      })
-    );
+    const clusters = this.findClusters().map(({centroid, centerPos, ...d}) => ({
+      centroid,
+      centerPos,
+      x: centerPos[0],
+      y: centerPos[1],
+      data: d
+    }));
     // const cells = this.getVoronoiCells(clusters);
     // console.log('clusters', clusters);
 

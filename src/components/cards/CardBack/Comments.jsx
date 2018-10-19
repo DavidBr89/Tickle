@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { css } from 'aphrodite';
 
 import { db } from 'Firebase';
 
@@ -15,7 +14,7 @@ class CommentsWrapper extends Component {
     cardId: PropTypes.string,
     addComment: PropTypes.func
   };
-  defaultProps: { author: {}, cardId: null, addComment: d => d, uid: null };
+  static defaultProps= { author: {}, cardId: null, addComment: d => d, uid: null };
 
   state = { comments: [], extended: false };
 
@@ -187,7 +186,7 @@ class AddComment extends Component {
           onChange={e => this.setState({ text: e.target.value })}
         />{' '}
         <button
-          className={`mb-1 ${css(stylesheet.btn)}`}
+          className="mb-1 btn"
           style={{ width: '100%' }}
           disabled={text === null || text === ''}
           onClick={() => {

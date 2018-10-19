@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { css } from 'aphrodite';
 import * as Icon from 'react-feather';
 
 import { db } from 'Firebase';
@@ -20,11 +19,6 @@ import { PreviewCard } from 'Cards';
 // import setify from 'Utils/setify';
 
 import { ScrollView, ScrollElement } from 'Utils/ScrollView';
-
-import {
-  GlobalThemeConsumer,
-  stylesheet as defaultStylesheet
-} from 'Src/styles/GlobalThemeContext';
 
 import EditUserInfo from './EditUserInfo';
 
@@ -112,7 +106,7 @@ export default class AccountPage extends React.Component {
                 maxHeight: 280,
                 width: 'auto'
               }}
-              className={`${css(defaultStylesheet.imgBorder)} mb-3`}
+              className={`border mb-3`}
             >
               <div
                 style={{

@@ -1,9 +1,18 @@
 {
   "presets": [
-    ["env", {
-      "modules": false,
-      "targets": { "browsers": [ "last 2 versions", "not dead" ]}
-    }], "react"
+  [
+      "@babel/preset-env",
+      {
+        "useBuiltIns": "entry"
+      }
+    ],
+    "@babel/preset-react"
   ],
-  "plugins": ["transform-object-rest-spread", "transform-decorators-legacy", "transform-class-properties", "react-hot-loader/babel", "transform-function-bind"],
+  "plugins": [
+    ["@babel/plugin-proposal-decorators", { legacy: true }],
+    "@babel/plugin-syntax-dynamic-import",
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-proposal-export-namespace-from",
+    "@babel/plugin-proposal-throw-expressions"
+  ]
 }

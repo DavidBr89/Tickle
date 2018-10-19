@@ -39,19 +39,14 @@ module.exports = [
     use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader']
   },
   {
-    test: /\.(ts|tsx)$/,
-    loader: 'ts-loader'
-  },
-  {
     // enforce: 'pre',
     test: /\.js$/,
-    loader: 'babel-loader?cacheDirectory=true',
+    loader: 'babel-loader',
     exclude: /(node_modules|bower_components|public)/
   },
   {
-    enforce: 'pre',
     test: /\.jsx$/,
-    use: ['babel-loader?cacheDirectory=true'],
+    loader: 'babel-loader',
     exclude: /(node_modules|bower_components|public)/
   },
   {

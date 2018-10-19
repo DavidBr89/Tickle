@@ -1,22 +1,21 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'aphrodite/no-important';
 
-import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
+import {CardThemeConsumer} from 'Src/styles/CardThemeContext';
 
-import { Trash2, Maximize, Minimize } from 'react-feather';
+import {Trash2, Maximize, Minimize} from 'react-feather';
 
-import { FlipButton } from '../layout';
-import { FieldSet } from 'Components/utils/StyledComps';
+import {FlipButton} from '../layout';
+import {FieldSet} from 'Components/utils/StyledComps';
 import Comments from './Comments';
 import CardHeader from '../CardHeader';
 import Author from './Author';
-import { MapAreaControl } from './MapAreaControl';
+import {MapAreaControl} from './MapAreaControl';
 
 import CardControls from 'Components/cards/CardControls';
 
 //
-const DeleteButton = ({ style, onClick, color, className }) => (
+const DeleteButton = ({style, onClick, color, className}) => (
   <button
     className="m-1 btn btn-black bg-danger"
     style={{
@@ -41,46 +40,37 @@ const BackField = ({
   disabled,
   extended
 }) => (
-  <CardThemeConsumer>
-    {({ stylesheet: { shallowBg, fieldSetBorder, bareBtn } }) => (
-      <div
-        className={`${css(shallowBg)} ${css(fieldSetBorder)}`}
-        onClick={!extended ? onClick : () => null}
-        style={{
-          // border: `1px solid ${uiColor}`,
-          // marginTop: '4px',
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          padding: 10,
-          ...style,
-          overflow: 'hidden'
-        }}
-      >
-        <div
-          className="mb-1"
-          style={{
-            display: 'flex',
-            // width: '100%',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}
-        >
-          <div style={{ fontSize: '1.25rem', flex: '0 0 auto' }}>{title}</div>
-          {!disabled && (
-            <button
-              className={css(bareBtn)}
-              onClick={extended ? onClick : () => null}
-            >
-              {extended ? <Minimize /> : <Maximize />}
-            </button>
-          )}
-        </div>
-        {children}
-      </div>
-    )}
-  </CardThemeConsumer>
+  <div
+    className="border"
+    onClick={!extended ? onClick : () => null}
+    style={{
+      // border: `1px solid ${uiColor}`,
+      // marginTop: '4px',
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      padding: 10,
+      ...style,
+      overflow: 'hidden',
+    }}>
+    <div
+      className="mb-1"
+      style={{
+        display: 'flex',
+        // width: '100%',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
+      <div style={{fontSize: '1.25rem', flex: '0 0 auto'}}>{title}</div>
+      {!disabled && (
+        <button className="bare-btn" onClick={extended ? onClick : () => null}>
+          {extended ? <Minimize /> : <Maximize />}
+        </button>
+      )}
+    </div>
+    {children}
+  </div>
 );
 
 DeleteButton.propTypes = {
@@ -97,9 +87,9 @@ DeleteButton.defaultProps = {
   className: ''
 };
 
-const StyledAuthor = ({ ...props }) => (
+const StyledAuthor = ({...props}) => (
   <CardThemeConsumer>
-    {({ stylesheet }) => <Author {...props} stylesheet={stylesheet} />}
+    {({stylesheet}) => <Author {...props} stylesheet={stylesheet} />}
   </CardThemeConsumer>
 );
 
@@ -128,7 +118,7 @@ class CardBackSkeleton extends Component {
 
   static defaultProps = {
     linkedCards: [],
-    loc: { latitude: 0, longitude: 0 },
+    loc: {latitude: 0, longitude: 0},
     author: {
       uid: null,
       username: 'defaulUser',
@@ -144,7 +134,7 @@ class CardBackSkeleton extends Component {
     onDelete: d => d
   };
 
-  state = { extended: null };
+  state = {extended: null};
 
   // TODO: check
   shouldComponentUpdate(nextProps, nextState) {
@@ -155,7 +145,7 @@ class CardBackSkeleton extends Component {
   }
 
   selectField = field => {
-    this.setState(({ extended: prevExtended }) => ({
+    this.setState(({extended: prevExtended}) => ({
       extended: prevExtended !== field ? field : null
     }));
   };
@@ -178,11 +168,11 @@ class CardBackSkeleton extends Component {
       onClose
     } = this.props;
 
-    const { extended } = this.state;
+    const {extended} = this.state;
 
     const isExtended = field => extended === field && extended !== null;
     const displayStyle = field => {
-      const defaultStyle = { transition: 'height 200ms', marginBottom: 2 };
+      const defaultStyle = {transition: 'height 200ms', marginBottom: 2};
       const isExt = isExtended(field);
       return {
         ...defaultStyle,
@@ -230,7 +220,7 @@ class CardBackSkeleton extends Component {
           {visible && (
             <BackField
               extended={isExtended('map')}
-              style={{ ...displayStyle('map') }}
+              style={{...displayStyle('map')}}
               edit={edit}
               title="Location"
               borderColor={uiColor}
@@ -269,7 +259,7 @@ class CardBackSkeleton extends Component {
               <DeleteButton
                 onClick={onDelete}
                 color={uiColor}
-                style={{ width: '20%' }}
+                style={{width: '20%'}}
               />
             ) : null}
           </CardControls>
@@ -279,7 +269,7 @@ class CardBackSkeleton extends Component {
   }
 }
 
-const CardBack = ({ style, ...props }) => (
+const CardBack = ({style, ...props}) => (
   <div style={style}>
     <CardBackSkeleton {...props} />
   </div>

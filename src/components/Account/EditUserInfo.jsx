@@ -4,15 +4,9 @@ import { SignInModalBody } from 'Components/SignIn';
 import PhotoUpload from 'Components/utils/PhotoUpload';
 import { userFields, compareUserFields } from 'Constants/userFields';
 
-import { css } from 'aphrodite';
 import { TagInput, PreviewTags, Tag } from 'Components/utils/Tag';
 
 import { ModalBody } from 'Utils/Modal';
-
-import {
-  GlobalThemeConsumer,
-  stylesheet as defaultStylesheet
-} from 'Src/styles/GlobalThemeContext';
 
 class EditUserPhoto extends React.Component {
   static propTypes = {
@@ -212,7 +206,7 @@ class UserInfoModalBody extends React.Component {
           <React.Fragment>
             <div className="mr-1">{errorMsg}</div>
             <button
-              className={css(defaultStylesheet.btn)}
+              className="btn"
               onClick={this.conditionalSubmit}
               disabled={!userUpdated}
             >

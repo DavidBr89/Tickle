@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'aphrodite/no-important';
 // import Grid from 'mygrid/dist';
 import { mediaScale } from 'Constants/mediaTypes';
 import { profileSrc, colorClass, colorScaleRandom } from './styles';
 
-import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 import { stylesheet } from 'Src/styles/GlobalThemeContext';
 import { FieldSet } from 'Components/utils/StyledComps';
 
@@ -118,10 +116,8 @@ export const BigButton = ({
   disabled,
   className
 }) => (
-  <CardThemeConsumer>
-    {({ uiColor, stylesheet }) => (
       <button
-        className={`${className} ${css(stylesheet.btn)}`}
+        className={`${className} btn`}
         disabled={disabled}
         style={{
           display: 'inline-flex',
@@ -154,8 +150,6 @@ export const BigButton = ({
       >
         <div style={{ fontWeight: 'bold', fontSize: 'large' }}>{children}</div>
       </button>
-    )}
-  </CardThemeConsumer>
 );
 
 BigButton.propTypes = {
@@ -215,18 +209,14 @@ export const Btn = ({
   style = {},
   stylesheet = stylesheet
 }) => (
-  <CardThemeConsumer>
-    {({ stylesheet: { btn } }) => (
       <button
-        className={`${css(btn)} ${className}`}
+        className={`btn ${className}`}
         style={{ ...style }}
         onClick={onClick}
         disabled={disabled}
       >
         {children}
       </button>
-    )}
-  </CardThemeConsumer>
 );
 
 // export const PreviewTags = ({

@@ -1,25 +1,23 @@
-import React, { Component, PureComponent } from 'react';
+import React, {Component, PureComponent} from 'react';
 import PropTypes from 'prop-types';
 
 // import { css } from 'aphrodite';
 
 import MediaChallenge from 'Components/Challenges/MediaChallenge';
-import { TagInput, PreviewTags } from 'Utils/Tag';
-import { Modal, ModalBody } from 'Utils/Modal';
+import {TagInput, PreviewTags} from 'Utils/Tag';
+import {Modal, ModalBody} from 'Utils/Modal';
 
-import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
-
-import { MediaOverview } from 'Components/cards/MediaSearch';
+import {MediaOverview} from 'Components/cards/MediaSearch';
 
 import placeholderImgSrc from '../placeholder.png';
 
 import CardFront from './CardFront';
 
-import { Btn } from 'Components/cards/layout';
+import {Btn} from 'Components/cards/layout';
 
-import { IMG } from 'Constants/mediaTypes';
+import {IMG} from 'Constants/mediaTypes';
 
-import { BigButton } from '../layout';
+import {BigButton} from '../layout';
 
 class ReadCardFront extends Component {
   static propTypes = {
@@ -65,7 +63,7 @@ class ReadCardFront extends Component {
     dialogKey: null
   };
 
-  closeModal = () => this.setState({ dialogKey: null });
+  closeModal = () => this.setState({dialogKey: null});
 
   modalReadContent(field) {
     const {
@@ -88,14 +86,14 @@ class ReadCardFront extends Component {
     } = this.props;
 
     const FooterBtn = () => (
-      <Btn onClick={() => this.setState({ dialogKey: null })}>Close</Btn>
+      <Btn onClick={() => this.setState({dialogKey: null})}>Close</Btn>
     );
 
     switch (field) {
       case 'title':
-        return <p style={{ width: '100%' }}>{title}</p>;
+        return <p style={{width: '100%'}}>{title}</p>;
       case 'Tags':
-        return <p style={{ width: '100%' }}>{tags}</p>;
+        return <p style={{width: '100%'}}>{tags}</p>;
       case 'Description':
         return (
           <ModalBody
@@ -103,7 +101,7 @@ class ReadCardFront extends Component {
             title="Description"
             footer={<FooterBtn />}
           >
-            <p style={{ width: '100%' }}>{description}</p>
+            <p style={{width: '100%'}}>{description}</p>
           </ModalBody>
         );
       case 'Img': {
@@ -145,13 +143,13 @@ class ReadCardFront extends Component {
   }
 
   btnText = () => {
-    const { challengeSubmission } = this.props;
+    const {challengeSubmission} = this.props;
     const challengeSubmitted =
       challengeSubmission !== null && challengeSubmission.completed;
     const challengeStarted =
       challengeSubmission !== null && !challengeSubmission.completed;
 
-    //TODO: fix later
+    // TODO: fix later
     const challengeCompleted =
       challengeSubmission !== null && challengeSubmission.feedback;
 
@@ -178,7 +176,6 @@ class ReadCardFront extends Component {
       flipHandler,
       // background,
       challengeSubmission,
-      stylesheet,
       tagColorScale,
       style,
       smallScreen,
@@ -186,14 +183,14 @@ class ReadCardFront extends Component {
       onClose
     } = this.props;
 
-    const { dialogKey, challengeSubmitted } = this.state;
+    const {dialogKey, challengeSubmitted} = this.state;
     const modalVisible = dialogKey !== null;
     return (
       <React.Fragment>
         <Modal
           visible={modalVisible}
           title={dialogKey}
-          onClose={() => this.setState({ dialogKey: null })}
+          onClose={() => this.setState({dialogKey: null})}
         >
           {this.modalReadContent(dialogKey)}
         </Modal>
@@ -211,7 +208,7 @@ class ReadCardFront extends Component {
               dialogKey: 'Description'
             })
           }
-          onMediaClick={() => this.setState({ dialogKey: 'Media' })}
+          onMediaClick={() => this.setState({dialogKey: 'Media'})}
           bottomControls={
             <BigButton
               onClick={() =>
@@ -230,26 +227,4 @@ class ReadCardFront extends Component {
   }
 }
 
-// <span className="ml-1">
-//                 <Icon.Lock />
-//
-//               </span>
-const StyledReadCardFront = props => (
-  <CardThemeConsumer>
-    {({ stylesheet }) => <ReadCardFront {...props} stylesheet={stylesheet} />}
-  </CardThemeConsumer>
-);
-
-// const mapStateToProps = state => ({ authUserId: state.Session.uid });
-
-// const mapDispatchToProps = dispatch =>
-//   bindActionCreators(
-//     {
-//       asyncSubmitChallenge
-//     },
-//     dispatch
-//   );
-//
-export default StyledReadCardFront;
-// mapStateToProps
-// mapDispatchToProps
+export default ReadCardFront;

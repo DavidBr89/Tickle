@@ -1,44 +1,38 @@
-import React, { Component, PureComponent } from 'react';
+import React, {Component, PureComponent} from 'react';
 import PropTypes from 'prop-types';
 
-import { css } from 'aphrodite';
-
-// import MediaChallenge from 'Components/Challenges/MediaChallenge';
-import { PreviewTags } from 'Utils/Tag';
-
-import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
+import {PreviewTags} from 'Utils/Tag';
 
 import placeholderImgSrc from '../placeholder.png';
 
-import { Edit } from 'react-feather';
+import {Edit} from 'react-feather';
 
-import { FieldSet } from 'Components/utils/StyledComps';
-import { mediaScale } from 'Constants/mediaTypes';
+import {FieldSet} from 'Components/utils/StyledComps';
+import {mediaScale} from 'Constants/mediaTypes';
 
-// import { mediaScale } from 'Constants/mediaTypes';
 import CardControls from 'Components/cards/CardControls';
 
 const defaultProps = {};
 
-const MediaIcons = ({ media }) => (
-  <div className="ml-1" style={{ display: 'flex', alignItems: 'center' }}>
+const MediaIcons = ({media}) => (
+  <div className="ml-1" style={{display: 'flex', alignItems: 'center'}}>
     {media.map(m =>
       React.createElement(mediaScale(m.type), {
         className: 'm-1',
-        style: { background: 'white' }
-      })
+        style: {background: 'white'}
+      }),
     )}
   </div>
 );
 
-const TagLabels = ({ tags, tagColorScale }) => (
+const TagLabels = ({tags, tagColorScale}) => (
   <PreviewTags
     colorScale={tagColorScale}
     data={tags && tags.length > 0 ? tags : ['No Tags']}
   />
 );
 
-const ImgOverlay = ({ src, className, style, children, footer, onClick }) => (
+const ImgOverlay = ({src, className, style, children, footer, onClick}) => (
   <div
     onClick={onClick}
     className={className}
@@ -75,7 +69,7 @@ const ImgOverlay = ({ src, className, style, children, footer, onClick }) => (
   </div>
 );
 
-const FieldIcon = ({ edit, className, style, onClick }) =>
+const FieldIcon = ({edit, className, style, onClick}) =>
   edit ? (
     <span
       className={className}
@@ -96,11 +90,11 @@ const FieldIcon = ({ edit, className, style, onClick }) =>
   ) : (
     <div
       className={className}
-      style={{ cursor: 'pointer', background: 'white', ...style }}
+      style={{cursor: 'pointer', background: 'white', ...style}}
     />
   );
 
-const Title = ({ onClick, edit, children }) => (
+const Title = ({onClick, edit, children}) => (
   <h1 className="text-truncate" onClick={onClick}>
     {children === null ? (
       <div>
@@ -123,24 +117,18 @@ const DescriptionField = ({
   style,
   edit
 }) => (
-  <CardThemeConsumer>
-    {({ uiColor, stylesheet: { shallowBg, shallowBorder } }) => (
-      <FieldSet
-        uiColor={uiColor}
-        className={`${css(shallowBg)} ${css(shallowBorder)} ${className}`}
-        legend="Description"
-        style={{ ...style, cursor: 'pointer' }}
-        onClick={onClick || onEdit}
-      >
-        <div style={{ display: 'flex' }}>
-          <div style={{ width: '100%' }}>
-            {text || <p style={{ fontStyle: 'italic' }}>{placeholder}</p>}
-          </div>
-          <FieldIcon edit={edit} />
-        </div>
-      </FieldSet>
-    )}
-  </CardThemeConsumer>
+  <FieldSet
+    className={`border ${className}`}
+    legend="Description"
+    style={{...style, cursor: 'pointer'}}
+    onClick={onClick || onEdit}>
+    <div style={{display: 'flex'}}>
+      <div style={{width: '100%'}}>
+        {text || <p style={{fontStyle: 'italic'}}>{placeholder}</p>}
+      </div>
+      <FieldIcon edit={edit} />
+    </div>
+  </FieldSet>
 );
 
 DescriptionField.propTypes = {
@@ -163,7 +151,7 @@ DescriptionField.defaultProps = {
   edit: false
 };
 
-const EditButton = ({ style, onClick, className }) => (
+const EditButton = ({style, onClick, className}) => (
   <button className={`close ml-1 ${className}`} style={style} onClick={onClick}>
     <Edit />
   </button>
@@ -175,7 +163,7 @@ EditButton.propTypes = {
   onClick: PropTypes.func
 };
 
-EditButton.defaultProps = { style: {}, onClick: () => null, className: '' };
+EditButton.defaultProps = {style: {}, onClick: () => null, className: ''};
 
 /*
 
@@ -284,8 +272,6 @@ class CardFront extends Component {
       bottomControls
     } = this.props;
 
-    const { cardLayout, btn } = stylesheet;
-
     // console.log('mediaIcons', mediaIcons);
     return (
       <div
@@ -294,8 +280,7 @@ class CardFront extends Component {
           zIndex: 3000,
           ...style
         }}
-        className={css(cardLayout)}
-      >
+        className="flex flex-col">
         <ImgOverlay
           onClick={!edit ? onImgClick : null}
           src={img ? img.url : null}
@@ -360,7 +345,7 @@ class CardFront extends Component {
 
           <div
             className="mb-1"
-            style={{ display: 'flex', alignItems: 'center' }}
+            style={{display: 'flex', alignItems: 'center'}}
             onClick={onTagsClick}
           >
             <TagLabels tags={tags} tagColorScale={tagColorScale} />
@@ -369,7 +354,7 @@ class CardFront extends Component {
           <DescriptionField
             text={description}
             placeholder="No Description"
-            style={{ flex: '0 1 auto' }}
+            style={{flex: '0 1 auto'}}
             edit={edit}
             onEdit={onDescriptionClick}
           />
@@ -379,7 +364,7 @@ class CardFront extends Component {
               className="mt-1"
               text={null}
               placeholder="Add Media"
-              style={{ flex: '0 1 auto' }}
+              style={{flex: '0 1 auto'}}
               edit={edit}
               onEdit={onMediaClick}
             />
@@ -388,7 +373,7 @@ class CardFront extends Component {
 
         <CardControls onFlip={onFlip} onClose={onClose}>
           <div
-            style={{ marginLeft: 'auto', marginRight: 'auto', display: 'flex' }}
+            style={{marginLeft: 'auto', marginRight: 'auto', display: 'flex'}}
           >
             {bottomControls}
           </div>
@@ -398,10 +383,4 @@ class CardFront extends Component {
   }
 }
 
-const StyledCardFront = props => (
-  <CardThemeConsumer>
-    {({ stylesheet }) => <CardFront {...props} stylesheet={stylesheet} />}
-  </CardThemeConsumer>
-);
-
-export default StyledCardFront;
+export default CardFront;

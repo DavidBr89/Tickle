@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { css } from 'aphrodite/no-important';
-
 import { GEO, TAGS, FLOORPLAN } from 'Constants/dataViews';
 // import { PreviewCard } from 'Components/cards';
 import CardStack from '../CardStack';
@@ -13,8 +11,6 @@ import {
   CHALLENGE_STARTED,
   CHALLENGE_NOT_SUBMITTED
 } from 'Constants/cardFields';
-
-import ToggleSwitch from 'Utils/ToggleSwitch';
 
 import DefaultLayout from 'Components/DefaultLayout';
 

@@ -4,8 +4,6 @@ import { connect } from 'react-redux';
 
 import { Link, withRouter } from 'react-router-dom';
 
-// import { intersection } from 'lodash';
-
 import SignOutButton from './SignOut';
 import * as routes from 'Constants/routes';
 
@@ -18,8 +16,6 @@ import {
   nonAuthRoutes
 } from 'Constants/routes';
 
-import { stylesheet } from 'Src/styles/GlobalThemeContext';
-import { css } from 'aphrodite';
 
 // import { setDataView } from 'Reducers/DataView/actions';
 
@@ -54,7 +50,7 @@ const includePath = (pathA, pathB) => {
 const InnerLi = ({ name, path, curPath, active, children, subRoutes = [] }) => (
   <li className="mb-2">
     <Link
-      className={`nav-link ${css(stylesheet.bareBtn)} ${subRoutes.length > 0 &&
+      className={`nav-link bare-btn ${subRoutes.length > 0 &&
         'mb-2'}`}
       to={path}
     >
@@ -66,7 +62,7 @@ const InnerLi = ({ name, path, curPath, active, children, subRoutes = [] }) => (
           <li className="mb-1">
             <Link
               to={d.path}
-              className={`${css(stylesheet.bareBtn)} nav-link`}
+              className={`bare-btn nav-link`}
               style={{ border: includePath(path, curPath) && '1px solid grey' }}
             >
               {d.name}
@@ -80,7 +76,6 @@ const InnerLi = ({ name, path, curPath, active, children, subRoutes = [] }) => (
 
 const NavigationHelper = ({
   activePath,
-  // stylesheet,
   uiColor,
   pathName,
   location,
@@ -88,7 +83,7 @@ const NavigationHelper = ({
   signOut,
   children
 }) => (
-  <ul className="navList ">
+  <ul className="navList">
     {Object.keys(routes).map(key => (
       <InnerLi {...routes[key]} curPath={location.pathname}>
         {children(routes[key])}

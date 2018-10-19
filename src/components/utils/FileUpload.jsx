@@ -1,12 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { css } from 'aphrodite';
-
-import {
-  GlobalThemeConsumer,
-  stylesheet as defaultStylesheet,
-  uiColor as defaultUIColor
-} from 'Src/styles/GlobalThemeContext';
 // import { DimWrapper } from 'Utils';
 
 // import { createShadowStyle, UIthemeContext } from 'Cards/style';
@@ -41,9 +34,7 @@ export default class FileUpload extends Component {
     className: '',
     style: {},
     onChange: d => d,
-    uiColor: defaultUIColor,
     placeholder: 'Add your description',
-    stylesheet: defaultStylesheet,
     className: '',
     fileName: null,
     disabled: false,
@@ -56,8 +47,6 @@ export default class FileUpload extends Component {
       fileName,
       style,
       onChange,
-      uiColor,
-      stylesheet,
       disabled,
       btnText
     } = this.props;
@@ -87,9 +76,8 @@ export default class FileUpload extends Component {
         <input
           id="all-file-upload"
           disabled={disabled}
-          className={className}
+          className={className + ' border'}
           style={{
-            border: `${uiColor} 1px solid`,
             overflow: 'hidden',
             ...style
           }}

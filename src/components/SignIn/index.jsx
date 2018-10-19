@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import { css } from 'aphrodite';
 // import { compose } from 'recompose';
 
 // import { bindActionCreators } from 'redux';
@@ -142,7 +141,7 @@ const SignInPureForm = ({
     {onSubmit && (
       <React.Fragment>
         <button
-          className={css(stylesheet.btn)}
+          className="btn"
           disabled={isInvalid}
           style={{ width: '100%' }}
           type="submit"
@@ -201,7 +200,7 @@ export class SignInModalBody extends Component {
         footer={
           <div>
             <button
-              className={css(stylesheet.btn)}
+              className={"btn"}
               onClick={onSubmit.bind(this)}
             >
               Sign In{' '}

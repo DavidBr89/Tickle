@@ -4,7 +4,6 @@ import { Link, withRouter } from 'react-router-dom';
 
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { css } from 'aphrodite';
 
 import * as routes from 'Constants/routes';
 import { auth, db } from 'Firebase';

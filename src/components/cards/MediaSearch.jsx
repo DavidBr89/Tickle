@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import fetchJsonp from 'fetch-jsonp';
 
 import { Trash2, PlusSquare, Youtube, AlignLeft } from 'react-feather';
-import { css } from 'aphrodite/no-important';
-
 import { uniqBy } from 'lodash';
 
 // import MyGrid from 'mygrid/dist';
@@ -105,7 +103,7 @@ const UploadUserContent = ({ onChange, className, ...props }) => (
 const SpanBG = ({ children, style }) => (
   <CardThemeConsumer>
     {({ stylesheet: { shallowBg } }) => (
-      <span className={`${css(shallowBg)} p-1 pr-2 pl-2`} style={style}>
+      <span className="bg-grey-light p-1 pr-2 pl-2" style={style}>
         {children}
       </span>
     )}
@@ -384,7 +382,6 @@ CellDetail.defaultProps = {
   uiColor: 'grey',
   focusColor: 'black'
 };
-// props.selected ? css(stylesheet.bigBoxShadow) : css(stylesheet.border)}
 const CellWrapper = ({ btn, className, focusColor, style, ...props }) => (
   <div
     className="p-3 mb-3 border"
@@ -490,8 +487,6 @@ class UrlMedia extends Component {
     const { url, title, descr, data } = this.state;
 
     return (
-      <CardThemeConsumer>
-        {({ stylesheet }) => (
           <div className="w-100" style={{ height: '100%' }}>
             <div className="mb-3">
               <form className="form-horizontal" onSubmit={this.onSubmit}>
@@ -530,7 +525,7 @@ class UrlMedia extends Component {
                     }
                   />
                 </div>
-                <button type="submit" className={css(stylesheet.btn)}>
+                <button type="submit" className="btn">
                   Add Link
                 </button>
               </form>
@@ -540,9 +535,7 @@ class UrlMedia extends Component {
                 <ScrollList data={data} maxHeight="90%">
                   {(d, isSelected) => (
                     <div
-                      className={` mb-3 p-3 ${css(
-                        stylesheet.border
-                      )} ${isSelected && css(stylesheet.bigBoxShadow)}`}
+                      className={`mb-3 p-3 border ${isSelected && 'shadow'}`}
                       selected={isSelected}
                       style={{
                         height: 150,
@@ -582,8 +575,6 @@ class UrlMedia extends Component {
               </div>
             )}
           </div>
-        )}
-      </CardThemeConsumer>
     );
   }
 }
@@ -810,25 +801,21 @@ class UnstyledMediaSearch extends Component {
 
 function MediaBtn({ selected, onClick }) {
   return (
-    <CardThemeConsumer>
-      {({ darkerUiColor, shallowBg }) => (
-        <div
-          className={css(shallowBg)}
-          style={{
-            color: selected ? 'tomato' : darkerUiColor
-          }}
-          onClick={onClick}
-        >
-          <span>
-            {selected ? (
-              <Trash2 fill="whitesmoke" size={40} />
-            ) : (
-              <PlusSquare fill="whitesmoke" size={40} />
-            )}
-          </span>
-        </div>
-      )}
-    </CardThemeConsumer>
+    <div
+      className="bg-light-grey"
+      style={{
+        color: selected ? 'tomato' : darkerUiColor
+      }}
+      onClick={onClick}
+    >
+      <span>
+        {selected ? (
+          <Trash2 fill="whitesmoke" size={40} />
+        ) : (
+          <PlusSquare fill="whitesmoke" size={40} />
+        )}
+      </span>
+    </div>
   );
 }
 

@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // import { EditButton } from './layout';
-import { css } from 'aphrodite/no-important';
 import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
 import * as Icon from 'react-feather';
@@ -83,7 +82,7 @@ const CardHeader = ({
               </div>
               <div style={{ position: 'absolute', right: 0 }}>
                 <button
-                  className={css(stylesheet.btn)}
+                  className="btn"
                   style={btnStyle}
                   onClick={onClose}
                 >

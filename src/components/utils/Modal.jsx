@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 // import { connect } from 'react-redux';
 // import chroma from 'chroma-js';
-import { css } from 'aphrodite/no-important';
 import { X } from 'react-feather';
 
 // import { CardThemeConsumer } from 'Src/styles/CardThemeContext';

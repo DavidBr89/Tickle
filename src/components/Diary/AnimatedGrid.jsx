@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, css } from 'aphrodite/no-important';
 import { wrapGrid } from 'animate-css-grid';
 
 import PreviewCard from 'Components/cards/PreviewCard';
