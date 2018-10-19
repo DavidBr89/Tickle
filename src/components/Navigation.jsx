@@ -38,7 +38,7 @@ const includePath = (pathA, pathB) => {
 };
 
 const InnerLi = ({name, path, curPath, active, children, subRoutes = []}) => (
-  <li className={`nav-link bare-btn ${subRoutes.length > 0 && 'mb-1'}`}>
+  <li className={`nav-link bare-btn mb-1 ${subRoutes.length > 0 && 'mb-3'}`}>
     <Link to={path}>{children}</Link>
     {curPath.includes(path) && (
       <ul className="list-reset">

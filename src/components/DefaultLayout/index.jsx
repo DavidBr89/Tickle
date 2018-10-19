@@ -74,6 +74,7 @@ class NavBar extends Component {
         <div
           style={{
             position: 'relative',
+            width: '30%',
             background: 'white',
             opacity: open ? 'show' : null,
             display: open ? 'block' : 'none'
@@ -82,7 +83,6 @@ class NavBar extends Component {
           <div
             className="p-3"
             style={{
-              width: '30%',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center'
