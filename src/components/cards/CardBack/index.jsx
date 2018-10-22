@@ -87,7 +87,7 @@ DeleteButton.defaultProps = {
   className: ''
 };
 
-class CardBackSkeleton extends Component {
+class CardBack extends Component {
   static propTypes = {
     comments: PropTypes.array.isRequired,
     author: PropTypes.shape({
@@ -262,12 +262,6 @@ class CardBackSkeleton extends Component {
     );
   }
 }
-
-const CardBack = ({style, ...props}) => (
-  <div style={style}>
-    <CardBackSkeleton {...props} />
-  </div>
-);
 
 CardBack.propTypes = {
   flipHandler: PropTypes.func,

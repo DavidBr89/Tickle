@@ -16,25 +16,7 @@ import {colorScale} from './styles';
 
 import {btnStyle} from 'Src/styles/helperStyles';
 
-import flipperCx from './flipper.scss';
-
-const Flipper = ({style, children, flipped, front, back}) => {
-  const commonStyles = {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-  };
-  return (
-    <div
-      className={`${flipperCx.flipContainer} ${flipped && flipperCx.flip}`}
-    >
-      <div className={`${flipperCx.flipper} ${flipped && flipperCx.flip}`}>
-        <div className={flipperCx.front}>{front}</div>
-        <div className={flipperCx.back}>{back}</div>
-      </div>
-    </div>
-  );
-};
+import Flipper from 'Components/utils/Flipper';
 
 class Card extends React.Component {
   static propTypes = {

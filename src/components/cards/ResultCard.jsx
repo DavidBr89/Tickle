@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { compose } from 'recompose';
+import {compose} from 'recompose';
 
-import { withRouter } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import {withRouter} from 'react-router-dom';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 
-import { Card } from './index';
+import {Card} from './index';
 
-import { asyncSubmitChallenge } from 'Reducers/Cards/async_actions';
+import {asyncSubmitChallenge} from 'Reducers/Cards/async_actions';
 
 import * as dataViewActions from 'Reducers/DataView/actions';
 import * as routeActions from 'Reducers/DataView/async_actions';
@@ -76,15 +76,15 @@ const mapDispatchToProps = dispatch =>
       asyncSubmitChallenge,
       ...routeActions
     },
-    dispatch
+    dispatch,
   );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const { match, history, id } = ownProps;
-  const { authUser } = state;
-  const { uid } = authUser;
-  const { path } = match;
-  const { flipped } = match.params;
+  const {match, history, id} = ownProps;
+  const {authUser} = state;
+  const {uid} = authUser;
+  const {path} = match;
+  const {flipped} = match.params;
   const {
     routeExtendCard,
     routeFlipCard,
@@ -93,15 +93,15 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   // TODO replace by regex
 
   const closeCard = () => {
-    routeExtendCard({ path, history, id, extended: false });
+    routeExtendCard({path, history, id, extended: false});
   };
 
   const onSubmitChallenge = challengeSubmission => {
-    asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
+    asyncSubmitChallenge({playerId: uid, ...challengeSubmission});
   };
 
   const flipHandler = () => {
-    routeFlipCard({ match, history });
+    routeFlipCard({match, history});
   };
 
   return {
@@ -121,6 +121,6 @@ export default compose(
   connect(
     mapStateToProps,
     mapDispatchToProps,
-    mergeProps
-  )
+    mergeProps,
+  ),
 )(CardViewable);
