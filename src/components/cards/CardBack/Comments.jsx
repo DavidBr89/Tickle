@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 
-import { db } from 'Firebase';
+import {db} from 'Firebase';
 
-import { addCommentSuccess } from 'Reducers/Cards/actions';
+import {addCommentSuccess} from 'Reducers/Cards/actions';
 
-import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
+import {CardThemeConsumer} from 'Src/styles/CardThemeContext';
 
 class CommentsWrapper extends Component {
   static propTypes = {
@@ -14,45 +14,45 @@ class CommentsWrapper extends Component {
     cardId: PropTypes.string,
     addComment: PropTypes.func
   };
-  static defaultProps= { author: {}, cardId: null, addComment: d => d, uid: null };
+  static defaultProps = {
+    author: {},
+    cardId: null,
+    addComment: d => d,
+    uid: null
+  };
 
-  state = { comments: [], extended: false };
+  state = {comments: [], extended: false};
 
   componentDidMount() {
-    const { cardId } = this.props;
+    const {cardId} = this.props;
     if (cardId && cardId !== null) {
       db.readComments(cardId).then(comments => {
         console.log('comments', comments);
-        this.setState({ comments });
+        this.setState({comments});
         const allProms = comments.map(c =>
-          db.getUser(c.uid).then(user => ({ ...c, ...user }))
+          db.getUser(c.uid).then(user => ({...c, ...user})),
         );
         Promise.all(allProms).then(commentsWithUser => {
-          this.setState({ comments: commentsWithUser });
+          this.setState({comments: commentsWithUser});
         });
       });
     }
   }
 
   render() {
-    const { comments } = this.state;
-    const { author, cardId, extended } = this.props;
+    const {comments} = this.state;
+    const {author, cardId, extended} = this.props;
     return (
-      <CardThemeConsumer>
-        {({ stylesheet }) => (
-          <CommentList
-            extended={extended}
-            data={comments}
-            author={author}
-            cardId={cardId}
-            stylesheet={stylesheet}
-            onChange={comment => {
-              addCommentSuccess();
-              this.setState({ comments: [...comments, comment] });
-            }}
-          />
-        )}
-      </CardThemeConsumer>
+      <CommentList
+        extended={extended}
+        data={comments}
+        author={author}
+        cardId={cardId}
+        onChange={comment => {
+          addCommentSuccess();
+          this.setState({comments: [...comments, comment]});
+        }}
+      />
     );
   }
 }
@@ -65,7 +65,7 @@ const CommentList = ({
   onChange,
   extended
 }) => {
-  const { uid } = author;
+  const {uid} = author;
   return (
     <div
       style={{
@@ -74,10 +74,10 @@ const CommentList = ({
         flexGrow: 1
       }}
     >
-      <div style={{ overflow: 'scroll' }}>
-        {data
-          .slice(0, extended ? 20 : 2)
-          .map(({ date, ...c }) => <OneComment {...c} date="" />)}
+      <div style={{overflow: 'scroll'}}>
+        {data.slice(0, extended ? 20 : 2).map(({date, ...c}) => (
+          <OneComment {...c} date="" />
+        ))}
         {data.length === 0 && (
           <div style={{}}>
             <h4>'No Comments'</h4>
@@ -89,9 +89,9 @@ const CommentList = ({
           user={author}
           stylesheet={stylesheet}
           onClick={text => {
-            const comment = { ...author, cardId, text };
-            db.addComment({ uid, cardId, text }).then(() =>
-              console.log('comment added', comment)
+            const comment = {...author, cardId, text};
+            db.addComment({uid, cardId, text}).then(() =>
+              console.log('comment added', comment),
             );
             onChange(comment);
           }}
@@ -109,8 +109,8 @@ CommentList.defaultProps = {
   stylesheet: {}
 };
 
-const OneComment = ({ photoURL, text, username, date }) => (
-  <div style={{ display: 'flex' }}>
+const OneComment = ({photoURL, text, username, date}) => (
+  <div style={{display: 'flex'}}>
     <div className="">
       <img
         className=" mr-3"
@@ -126,7 +126,7 @@ const OneComment = ({ photoURL, text, username, date }) => (
       />
     </div>
     <div className="media-body">
-      <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+      <div style={{overflow: 'hidden', textOverflow: 'ellipsis'}}>
         <small>{text}</small>
       </div>
       <div>
@@ -173,25 +173,25 @@ class AddComment extends Component {
     onClick: PropTypes.func
   };
 
-  state = { text: null };
+  state = {text: null};
 
   render() {
-    const { onClick, stylesheet } = this.props;
-    const { text } = this.state;
+    const {onClick, stylesheet} = this.props;
+    const {text} = this.state;
     return (
       <div style={{}} className="mt-3">
         <input
           className="form-control mb-1"
           type="text"
-          onChange={e => this.setState({ text: e.target.value })}
+          onChange={e => this.setState({text: e.target.value})}
         />{' '}
         <button
           className="mb-1 btn"
-          style={{ width: '100%' }}
+          style={{width: '100%'}}
           disabled={text === null || text === ''}
           onClick={() => {
             onClick(text);
-            this.setState({ text: null });
+            this.setState({text: null});
           }}
         >
           Submit
@@ -208,7 +208,7 @@ const mapDispatchToProps = dispatch => ({
   }
 });
 
-const mapStateToProps = state => ({ author: state.Session.authUser });
+const mapStateToProps = state => ({author: state.Session.authUser});
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...stateProps,
@@ -219,7 +219,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-  mergeProps
+  mergeProps,
 )(CommentsWrapper);
 
 // const CommentsCont = connect(

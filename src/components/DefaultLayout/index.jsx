@@ -11,16 +11,9 @@ import {Menu as MenuIcon} from 'react-feather';
 
 // import SignOutButton from '../SignOut';
 
-import Navigation from '../Navigation';
+import RouteNavigation from '../Navigation';
 
 import {screenResize} from 'Reducers/Screen/actions';
-
-// import DocumentMeta from 'react-document-meta';
-
-// import { findRoute } from '../utils';
-
-// import userPic from './user.png';
-// import cx from './DefaultLayout.scss';
 
 class NavBar extends Component {
   static propTypes = {
@@ -144,7 +137,7 @@ class DefaultLayout extends Component {
             style={{position: 'absolute'}}
             onToggle={this.handleClick}
           >
-            <Navigation>
+            <RouteNavigation>
               {({name}) => (
                 <div
                   onClick={() => {
@@ -154,7 +147,7 @@ class DefaultLayout extends Component {
                   {name}
                 </div>
               )}
-            </Navigation>
+            </RouteNavigation>
           </NavBar>
         </div>
         {children}

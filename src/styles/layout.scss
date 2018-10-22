@@ -6,6 +6,36 @@
   @apply .font-bold .py-2 .px-4 .border-2;
 }
 
+.nav-link {
+  @apply .py-2 .px-4 .border-2 .text-xl;
+  a {
+    @apply .no-underline;
+  }
+}
+
+.nav-link-selected {
+  @apply .nav-link .bg-grey-light;
+}
+
+.sub-link {
+  @apply .m-2 .p-2;
+}
+
+.sub-link-selected {
+  @apply .sub-link .bg-grey-light;
+}
+
+// .sub-link:hover {
+//   @apply .bg-grey-dark .text-white;
+// }
+
+.nav-link:hover, .sub-link:hover {
+  @apply .bg-grey-dark;
+  a {
+    @apply .text-white;
+  }
+}
+
 .tag-btn {
   @apply .font-bold .py-2 .px-2 .border-2 .bg-grey-light;
 }

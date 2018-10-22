@@ -1,22 +1,22 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 // import { compose } from 'recompose';
 
 // import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 
-import { SignUpLink } from '../SignUp';
-import { PasswordForgetLink } from '../Password';
+import {SignUpLink} from '../SignUp';
+import {PasswordForgetLink} from '../Password';
 
-import { auth } from 'Firebase';
-import { ModalBody } from 'Components/utils/Modal';
+import {auth} from 'Firebase';
+import {ModalBody} from 'Components/utils/Modal';
 
-import * as routes from 'Constants/routes';
+import {GEO_VIEW} from 'Constants/routes';
 
-import { GlobalThemeConsumer, stylesheet } from 'Src/styles/GlobalThemeContext';
+import {GlobalThemeConsumer, stylesheet} from 'Src/styles/GlobalThemeContext';
 
-import { setAuthUser } from 'Reducers/Session/actions';
+import {setAuthUser} from 'Reducers/Session/actions';
 
 import DefaultLayout from 'Components/DefaultLayout';
 
@@ -25,9 +25,9 @@ const byPropKey = (propertyName, value) => () => ({
 });
 
 function onSubmit(event) {
-  const { email, password } = this.state;
+  const {email, password} = this.state;
 
-  const { onAuthenticate } = this.props;
+  const {onAuthenticate} = this.props;
   // console.log('auth', auth);
 
   auth
@@ -42,7 +42,7 @@ function onSubmit(event) {
   event.preventDefault();
 }
 
-const SignInPage = ({ history }) => (
+const SignInPage = ({history}) => (
   <DefaultLayout
     menu={
       <div className="flex-grow flex justify-center items-center">
@@ -54,7 +54,7 @@ const SignInPage = ({ history }) => (
       <SignInForm
         onAuthenticate={usr => {
           console.log('USR', usr);
-          history.push(`${routes.DATAVIEW_GEO}`);
+          history.push(GEO_VIEW.path);
         }}
       />
       <PasswordForgetLink />
@@ -79,10 +79,10 @@ class SignInForm extends Component {
     history: null
   };
 
-  state = { ...INITIAL_STATE };
+  state = {...INITIAL_STATE};
 
   render() {
-    const { email, password, error } = this.state;
+    const {email, password, error} = this.state;
 
     const isInvalid = password === '' || email === '';
 
@@ -143,7 +143,7 @@ const SignInPureForm = ({
         <button
           className="btn"
           disabled={isInvalid}
-          style={{ width: '100%' }}
+          style={{width: '100%'}}
           type="submit"
         >
           Sign In
@@ -185,11 +185,11 @@ export class SignInModalBody extends Component {
     history: null
   };
 
-  state = { ...INITIAL_STATE };
+  state = {...INITIAL_STATE};
 
   render() {
-    const { onClose } = this.props;
-    const { email, password, error } = this.state;
+    const {onClose} = this.props;
+    const {email, password, error} = this.state;
 
     const isInvalid = password === '' || email === '';
 
@@ -199,10 +199,7 @@ export class SignInModalBody extends Component {
         onClose={onClose}
         footer={
           <div>
-            <button
-              className={"btn"}
-              onClick={onSubmit.bind(this)}
-            >
+            <button className="btn" onClick={onSubmit.bind(this)}>
               Sign In{' '}
             </button>
           </div>
@@ -248,4 +245,4 @@ export default withRouter(SignInPage);
 //   connect(mapStateToProps, mapDispatchToProps)
 // )(HomePage);
 
-export { SignInForm };
+export {SignInForm};

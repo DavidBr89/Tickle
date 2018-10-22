@@ -1,31 +1,31 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 
 import CardMarker from 'Components/cards/CardMarker';
 // import ReactDOM from 'react-dom';
 
-import { intersection } from 'lodash';
+import {intersection} from 'lodash';
 
-import ZoomCont from '../ZoomContainer';
+import ZoomCont from 'Components/DataView/ForceOverlay/ZoomContainer';
 
-import floorplanImg from '../floorplan.png';
+import floorplanImg from 'Components/DataView/ForceOverlay/floorplan.png';
 
-import FloorCluster from '../FloorCluster';
+import FloorCluster from 'Components/DataView/ForceOverlay/FloorCluster';
 
-import NodeForce from '../NodeForce';
+import NodeForce from 'Components/DataView/ForceOverlay/NodeForce';
 import PreviewMarker from 'Utils/PreviewMarker';
 
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { addCardFilter, removeCardFilter } from 'Reducers/DataView/actions';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import {addCardFilter, removeCardFilter} from 'Reducers/DataView/actions';
 
-import CardCluster from '../CardCluster';
-import Cluster from '../Cluster';
+import CardCluster from 'Components/DataView/ForceOverlay/CardCluster';
+import Cluster from 'Components/DataView/ForceOverlay/Cluster';
 
 import ArrayPipe from 'Components/utils/ArrayPipe';
 
-function offsetPoint({ x0, y0, x1, y1, angle, distance }) {
+function offsetPoint({x0, y0, x1, y1, angle, distance}) {
   const distX = x1 - x0;
   const distY = y1 - y0;
   const mX = distX < 0 ? -1 : 1;
@@ -35,14 +35,16 @@ function offsetPoint({ x0, y0, x1, y1, angle, distance }) {
   return [midX, midY];
 }
 
-const Links = ({ data }) => data.map(d => <div />);
+const Links = ({data}) => data.map(d => <div />);
 
-const ToolTip = ({ x, y, cx, cy, px, py, angle, data }) => {
-  const { tags } = data;
+const ToolTip = ({x, y, cx, cy, px, py, angle, data}) => {
+  const {tags} = data;
 
   const tagsLabel = (
     <div className="flex border border-grey-dark flex-wrap">
-      {tags.slice(0, 3).map(d => <div className="m-1">{d}</div>)}
+      {tags.slice(0, 3).map(d => (
+        <div className="m-1">{d}</div>
+      ))}
     </div>
   );
 
@@ -99,7 +101,7 @@ const ToolTip = ({ x, y, cx, cy, px, py, angle, data }) => {
   );
 };
 
-const Voronoi = ({ data, children, width, height }) => {
+const Voronoi = ({data, children, width, height}) => {
   const vor = d3
     .voronoi()
     .x(d => d.x)
@@ -108,7 +110,7 @@ const Voronoi = ({ data, children, width, height }) => {
 
   const polys = vor.polygons(data).map(p => {
     const [cx, cy] = d3.polygonCentroid(p);
-    const { x, y } = p.data;
+    const {x, y} = p.data;
     const angle = Math.round((Math.atan2(cy - y, cx - x) / Math.PI) * 2);
     const [px, py] = offsetPoint({
       x0: x,
@@ -118,7 +120,7 @@ const Voronoi = ({ data, children, width, height }) => {
       angle,
       distance: -10
     });
-    return { ...p.data, x, y, cx, cy, angle, px, py };
+    return {...p.data, x, y, cx, cy, angle, px, py};
   });
   return polys.map(children);
 };
@@ -203,9 +205,9 @@ function ClusterPlaceholder({
           style={{
             pointerEvents: 'none'
           }}
-          style={{ width: 25, height: 25 }}
+          style={{width: 25, height: 25}}
         >
-          <PreviewMarker style={{ pointerEvents: 'none' }} />
+          <PreviewMarker style={{pointerEvents: 'none'}} />
         </div>
       </div>
     </button>
@@ -214,8 +216,8 @@ function ClusterPlaceholder({
   return content;
   // return ReactDOM.createPortal(content, domNode);
 }
-ClusterPlaceholder.propTypes = { transition: PropTypes.array };
-ClusterPlaceholder.defaultProps = { transition: 500 };
+ClusterPlaceholder.propTypes = {transition: PropTypes.array};
+ClusterPlaceholder.defaultProps = {transition: 500};
 
 class TopicMap extends Component {
   static propTypes = {
@@ -233,12 +235,12 @@ class TopicMap extends Component {
       addCardFilter,
       removeCardFilter,
       children,
-      data,
-      filterSet
+      cards,
+      // filterSet
     } = this.props;
 
     return (
-      <NodeForce {...this.props}>
+      <NodeForce {...this.props} data={cards}>
         {nn => (
           <ZoomCont
             {...this.props}
@@ -273,8 +275,10 @@ class TopicMap extends Component {
                 >
                   {clusters => (
                     <React.Fragment>
-                      <ArrayPipe array={clusters}>
-                        {({ id, x, y, data: d }) => (
+                      <ArrayPipe
+                        array={clusters.filter(c => c.data.values.length > 1)}
+                      >
+                        {({id, x, y, data: d}) => (
                           <CardCluster
                             id={`${x}${y}`}
                             coords={[x, y]}
@@ -286,13 +290,17 @@ class TopicMap extends Component {
                               // preview(d.values[0]);
                             }}
                           >
-                            {c => <CardMarker />}
+                            {() => <CardMarker />}
                           </CardCluster>
                         )}
                       </ArrayPipe>
 
                       <Links data={clusters} />
-                      <Voronoi width={width} height={height} data={clusters}>
+                      <Voronoi
+                        width={width}
+                        height={height}
+                        data={clusters.filter(c => c.data.values.length > 1)}
+                      >
                         {p => <ToolTip {...p} />}
                       </Voronoi>
                     </React.Fragment>
@@ -307,7 +315,7 @@ class TopicMap extends Component {
   }
 }
 
-const mapStateToProps = state => ({ filterSet: state.DataView.filterSet });
+const mapStateToProps = state => ({filterSet: state.DataView.filterSet});
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
@@ -315,7 +323,7 @@ const mapDispatchToProps = dispatch =>
       addCardFilter,
       removeCardFilter
     },
-    dispatch
+    dispatch,
   );
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({
@@ -323,8 +331,9 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...ownProps
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-  mergeProps
-)(TopicMap);
+export default TopicMap;
+// export default connect(
+//   mapStateToProps,
+//   mapDispatchToProps,
+//   mergeProps,
+// )(TopicMap);

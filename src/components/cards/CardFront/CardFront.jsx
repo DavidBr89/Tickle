@@ -277,7 +277,7 @@ class CardFront extends Component {
       <div
         style={{
           height: '100%',
-          zIndex: 3000,
+          width: '100%',
           ...style
         }}
         className="flex flex-col">

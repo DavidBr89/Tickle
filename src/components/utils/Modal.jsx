@@ -2,10 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 // import { connect } from 'react-redux';
 // import chroma from 'chroma-js';
-import { X } from 'react-feather';
+import {X} from 'react-feather';
 
 // import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
@@ -42,7 +42,7 @@ export const InlineModal = ({
     }}
   >
     <div
-      className="h-full"
+      className="h-full w-full"
       style={{
         maxWidth: 500,
         maxHeight: 800,
@@ -58,7 +58,7 @@ export const InlineModal = ({
 export const BareModal = props =>
   ReactDOM.createPortal(
     <InlineModal {...props} />,
-    document.querySelector('body')
+    document.querySelector('body'),
   );
 
 export const Modal = BareModal;
@@ -147,22 +147,22 @@ ModalBody.defaultProps = {
   styles: {}
 };
 
-const mapStateToProps = state => ({ ...state.Screen });
+const mapStateToProps = state => ({...state.Screen});
 
 const mergeProps = (stateProps, _, ownProps) => ({
   ...stateProps,
   ...ownProps
 });
 
-const ResponsiveModal = ({ isSmartphone, ...props }) => (
+const ResponsiveModal = ({isSmartphone, ...props}) => (
   <BareModal
     {...props}
-    style={{ margin: `${!isSmartphone ? '2.5rem' : ''} auto` }}
+    style={{margin: `${!isSmartphone ? '2.5rem' : ''} auto`}}
   />
 );
 
 export const ConnectedResponsiveModal = connect(
   mapStateToProps,
   null,
-  mergeProps
+  mergeProps,
 )(ResponsiveModal);

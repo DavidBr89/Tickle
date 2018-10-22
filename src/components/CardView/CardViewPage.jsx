@@ -1,24 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { GEO, TAGS, FLOORPLAN } from 'Constants/dataViews';
-// import { PreviewCard } from 'Components/cards';
 import CardStack from '../CardStack';
-
-import { calcDataViewHeight, stylesheet } from 'Src/styles/GlobalThemeContext';
-
-import {
-  CHALLENGE_STARTED,
-  CHALLENGE_NOT_SUBMITTED
-} from 'Constants/cardFields';
 
 import DefaultLayout from 'Components/DefaultLayout';
 
 import CardTagSearch from '../CardTagSearch';
 
-import CardViewOverlay from './CardViewOverlay';
-
-import CardModal from 'Components/cards/CardModal';
 import ConnectedCard from 'Cards/ConnectedCard';
 import {
   Modal,
@@ -194,12 +182,12 @@ class CardViewPage extends Component {
         </div>
         <LoadingScreen style={{ marginTop: 25 }} visible={isLoadingCards} />
 
-        <ConnectedResponsiveModal
+        <BareModal
           visible={extendedCard !== null}
           style={{ margin: `${!isSmartphone ? '2.5rem' : ''} auto` }}
         >
           <ConnectedCard {...selectedCard} />
-        </ConnectedResponsiveModal>
+        </BareModal>
 
         {children(this.props)}
       </DefaultLayout>

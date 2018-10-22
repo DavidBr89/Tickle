@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Link, withRouter } from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 
-import * as routes from 'Constants/routes';
+import {SIGN_UP, SIGN_IN, ADMIN_SIGN_UP} from 'Constants/routes';
 
 import AuthUserContext from '../AuthUserContext';
 
@@ -16,34 +16,34 @@ import CardMarker from 'Components/utils/PreviewMarker';
 
 import DefaultLayout from 'Components/DefaultLayout';
 
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 
-const LandingPage = ({ onClick, width }) => (
-  <DefaultLayout >
+const LandingPage = ({onClick, width}) => (
+  <DefaultLayout>
     <div
       className="flex-grow flex flex-col items-center justify-center"
       style={{}}
     >
-      <div style={{ position: 'relative' }}>
-        <h1 style={{ fontWeight: 'bold', fontSize: 100, zIndex: 2000 }}>
+      <div style={{position: 'relative'}}>
+        <h1 style={{fontWeight: 'bold', fontSize: 100, zIndex: 2000}}>
           TICKLE
         </h1>
       </div>
       <div className="flex mb-1">
-        <Link className="btn bg-white mr-1" to={routes.SIGN_IN}>
+        <Link className="btn bg-white mr-1" to={SIGN_IN.path}>
           Sign In
         </Link>
-        <Link className="btn bg-white" to={routes.SIGN_UP}>
+        <Link className="btn bg-white" to={SIGN_UP.path}>
           Sign Up
         </Link>
       </div>
-      <Link className="btn bg-white" to={routes.ADMIN_SIGN_UP}>
+      <Link className="btn bg-white" to={ADMIN_SIGN_UP.path}>
         ADMIN Sign Up
       </Link>
     </div>
   </DefaultLayout>
 );
 
-const mapStateToProps = state => ({ ...state.Screen });
+const mapStateToProps = state => ({...state.Screen});
 
 export default connect(mapStateToProps)(LandingPage);

@@ -1,34 +1,45 @@
 import React from 'react';
-import { Route, HashRouter, Switch } from 'react-router-dom';
+import {Route, HashRouter, Switch} from 'react-router-dom';
 
 import SignUp from './components/SignUp';
 import SignIn from './components/SignIn';
 import LandingPage from './components/LandingPage';
 import Home from './components/Home';
 import CardView from './components/CardView';
-import CardAuthor from './components/CardAuthor';
 import Admin from './components/Admin';
 import Account from './components/Account';
 import Diary from './components/Diary';
 
-import TopicMap from './components/DataView/TopicMap/TopicMap';
-import TopicMapAuthor from './components/DataView/TopicMap/DragTopicMap';
+import {MapCardAuthorPage, TopicMapAuthorPage} from './components/CardAuthor';
 
-import MapAuthor from './components/DataView/Map/MapAuthor';
+import {MapViewPage, TopicMapViewPage} from './components/CardView';
 
-import MapGL, { HTMLOverlay } from 'react-map-gl';
+// import MapAuthor from './components/DataView/Map/MapAuthor';
 
 import DefaultLayout from './components/DefaultLayout';
-
-import Grid from './components/DataView/GridView';
 
 import UserMap from 'Components/DataView/Map/UserMap';
 
 import withAuthentication from './components/withAuthentication';
 // import AuthUserContext from './components/AuthUserContext';
 
-import * as routes from 'Constants/routes';
-import { TAGS, GEO, FLOORPLAN } from 'Constants/dataViews';
+import {
+  MYCARDS,
+  GEO_VIEW,
+  TAG_VIEW,
+  TOPIC_VIEW,
+  AUTHOR,
+  ACCOUNT,
+  GEO_AUTHOR,
+  TAG_AUTHOR,
+  TOPIC_AUTHOR,
+  SIGN_UP,
+  SIGN_IN,
+  HOME,
+  ADMIN,
+  ADMIN_SIGN_UP,
+  LANDING
+} from 'Constants/routes';
 
 // const GRID = 'grid';
 
@@ -36,74 +47,54 @@ import { TAGS, GEO, FLOORPLAN } from 'Constants/dataViews';
 
 // import Login from './components/Login';
 
-const Routes = ({ history }) => (
+const Routes = () => (
   <HashRouter>
     <Switch>
       <Route
-        path={`${routes.MYCARDS}/:selectedCardId?/:showOption?/:flipped?`}
+        path={`${MYCARDS.path}/:selectedCardId?/:showOption?/:flipped?`}
         render={() => <Diary />}
       />
       <Route
-        path={`${`${
-          routes.AUTH_ENV
-        }/${GEO}`}/:selectedCardId?/:showOption?/:flipped?`}
-        render={() => (
-          <CardAuthor dataView={GEO}>
-            {props => <MapAuthor {...props} className="absolute" />}
-          </CardAuthor>
-        )}
+        path={`${GEO_AUTHOR.path}/:selectedCardId?/:showOption?/:flipped?`}
+        render={() => <MapCardAuthorPage />}
       />
       <Route
-        path={`${`${
-          routes.AUTH_ENV
-        }/${FLOORPLAN}`}/:selectedCardId?/:showOption?/:flipped?`}
-        render={() => (
-          <CardAuthor dataView={FLOORPLAN}>
-            {props => <TopicMapAuthor {...props} />}
-          </CardAuthor>
-        )}
+        path={`${TOPIC_AUTHOR.path}/:selectedCardId?/:showOption?/:flipped?`}
+        render={() => <TopicMapAuthorPage />}
       />
       <Route
         exact
-        path={`${
-          routes.DATAVIEW
-        }/${FLOORPLAN}/:selectedCardId?/:showOption?/:flipped?`}
-        render={() => (
-          <CardView>
-            {props => <TopicMap className="absolute" {...props} />}
-          </CardView>
-        )}
+        path={`${TOPIC_VIEW.path}/:selectedCardId?/:showOption?/:flipped?`}
+        render={() => <TopicMapViewPage />}
       />
       <Route
         exact
-        path={`${
-          routes.DATAVIEW
-        }/${GEO}/:selectedCardId?/:showOption?/:flipped?`}
+        path={`${GEO_VIEW.path}/:selectedCardId?/:showOption?/:flipped?`}
         render={() => (
           <CardView>
             {props => <UserMap {...props} className="absolute" />}
           </CardView>
         )}
       />
-      <Route exact path={routes.LANDING} render={() => <LandingPage />} />
+      <Route exact path={LANDING.path} render={() => <LandingPage />} />
       <Route
         exact
-        path={routes.SIGN_UP}
+        path={SIGN_UP.path}
         component={() => <SignUp admin={false} />}
       />
       <Route
         exact
-        path="/admin-signup"
+        path={ADMIN_SIGN_UP.path}
         component={() => (
           <DefaultLayout>
             <SignUp admin />
           </DefaultLayout>
         )}
       />
-      <Route exact path={routes.SIGN_IN} component={() => <SignIn />} />
+      <Route exact path={SIGN_IN.path} component={() => <SignIn />} />
       <Route
         exact
-        path={routes.HOME}
+        path={HOME.path}
         component={() => (
           <DefaultLayout>
             <Home />
@@ -112,7 +103,7 @@ const Routes = ({ history }) => (
       />
       <Route
         exact
-        path={routes.ADMIN}
+        path={ADMIN.path}
         component={() => (
           <DefaultLayout>
             <Admin />
@@ -121,7 +112,7 @@ const Routes = ({ history }) => (
       />
       <Route
         exact
-        path={routes.ACCOUNT}
+        path={ACCOUNT.path}
         component={() => (
           <DefaultLayout>
             <Account />

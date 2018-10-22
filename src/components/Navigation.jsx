@@ -34,18 +34,25 @@ const includePath = (pathA, pathB) => {
   const [splA, splB] = [pathA.split('/'), pathB.split('/')].map(p =>
     p.filter(s => s !== '#' && s !== ''),
   );
+  console.log('curPath', pathA, 'path', pathB);
   return splA[0] === splB[0];
 };
 
-const InnerLi = ({name, path, curPath, active, children, subRoutes = []}) => (
-  <li className={`nav-link bare-btn mb-1 ${subRoutes.length > 0 && 'mb-3'}`}>
-    <Link to={path}>{children}</Link>
-    {curPath.includes(path) && (
-      <ul className="list-reset">
+const ListItem = ({name, path, curPath, active, children, subRoutes = []}) => (
+  <li className="mb-1">
+    <div
+      className={`nav-link  ${includePath(curPath, path) &&
+        'nav-link-selected'}`}
+    >
+      <Link to={path}>{children}</Link>
+    </div>
+    {includePath(curPath, path) && (
+      <ul className="ml-5 list-reset">
         {subRoutes.map(d => (
           <li
-            className="bare-btn nav-link"
-            style={{border: includePath(path, curPath) && '1px solid grey'}}>
+            className={`sub-link ${curPath === d.path &&
+              'sub-link-selected'} `}
+          >
             <Link to={d.path}>{d.name}</Link>
           </li>
         ))}
@@ -64,10 +71,10 @@ const NavigationHelper = ({
   children
 }) => (
   <ul className="list-reset">
-    {Object.keys(routes).map(key => (
-      <InnerLi {...routes[key]} curPath={location.pathname}>
-        {children(routes[key])}
-      </InnerLi>
+    {routes.map(r => (
+      <ListItem {...r} curPath={location.pathname}>
+        {children(r)}
+      </ListItem>
     ))}
     {signOut && (
       <li>
@@ -85,31 +92,7 @@ NavigationHelper.defaultProps = {
   signOut: false
 };
 
-// console.log('adminRoutes', adminRoutes);
-
-// const NavigationAdmin = ({
-//   activePath,
-//   location
-// }) => (
-//   <ul className="navList ">
-//     {Object.keys(adminRoutes).map(key => (
-//       <InnerLi {...authRoutes[key]} hash={location.hash} />
-//     ))}
-//     <li>
-//       <SignOutButton />
-//     </li>
-//   </ul>
-// );
-
-// const NavigationNonAuth = ({ activePath, stylesheet, uiColor, location }) => (
-//   <ul className="navList">
-//     {Object.keys(nonAuthRoutes).map(key => (
-//       <InnerLi key={key} {...nonAuthRoutes[key]} hash={location.hash} />
-//     ))}
-//   </ul>
-// );
-
-const Navigation = ({authUser, ...props}) => {
+const RouteNavigation = ({authUser, ...props}) => {
   if (authUser && authUser.admin) {
     return <NavigationHelper {...props} signOut routes={adminRoutes} />;
   }
@@ -124,4 +107,4 @@ const mapStateToProps = state => ({
   ...state.router
 });
 
-export default connect(mapStateToProps)(withRouter(Navigation));
+export default connect(mapStateToProps)(withRouter(RouteNavigation));

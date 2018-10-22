@@ -103,7 +103,6 @@ const CardViewable = ({
     tagColorScale={tagColorScale}
     uiColor="grey"
     background="whitesmoke"
-    style={{ zIndex: 4000 }}
     frontView={flipped}
     {...props}
     challengeComp={
@@ -123,7 +122,6 @@ const CardViewable = ({
           key={props.id}
           challengeSubmission={props.challengeSubmission}
           onUpdate={newChallengeSub => {
-            console.log('MEDIA CHALL props', props);
             onSubmitChallenge({
               cardId: props.id,
               ...newChallengeSub

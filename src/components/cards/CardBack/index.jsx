@@ -87,12 +87,6 @@ DeleteButton.defaultProps = {
   className: ''
 };
 
-const StyledAuthor = ({...props}) => (
-  <CardThemeConsumer>
-    {({stylesheet}) => <Author {...props} stylesheet={stylesheet} />}
-  </CardThemeConsumer>
-);
-
 class CardBackSkeleton extends Component {
   static propTypes = {
     comments: PropTypes.array.isRequired,
@@ -210,7 +204,7 @@ class CardBackSkeleton extends Component {
             onClick={() => this.selectField('author')}
           >
             {visible && (
-              <StyledAuthor
+              <Author
                 uid={uid}
                 extended={extended === 'author'}
                 tagColorScale={tagColorScale}

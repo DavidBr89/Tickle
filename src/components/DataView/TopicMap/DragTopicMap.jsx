@@ -1,8 +1,8 @@
-import React, { Fragment, Component } from 'react';
+import React, {Fragment, Component} from 'react';
 import PropTypes from 'prop-types';
 
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 
 import CardMarker from 'Components/cards/CardMarker';
 
@@ -13,14 +13,14 @@ import DragDropContextProvider from '../DragAndDrop/DragContextProvider';
 // import { dragCard } from 'Reducers/Cards/actions';
 import DataOverlay from '../ForceOverlay/DataOverlay';
 
-import { updateCardTemplate, dragCard } from 'Reducers/Cards/actions';
+import {updateCardTemplate, dragCard} from 'Reducers/Cards/actions';
 
-import { asyncUpdateCard } from 'Reducers/Cards/async_actions';
-import { selectCard } from 'Reducers/DataView/actions';
+import {asyncUpdateCard} from 'Reducers/Cards/async_actions';
+import {selectCard} from 'Reducers/DataView/actions';
 
 import DragElement from '../DragAndDrop/DragElement';
 
-import AuthorTopicMap from './AuthorTopicMap';
+import AuthorTopicMapVis from './AuthorTopicMapVis';
 
 const CardAuthorOverlay = DragDropContextProvider(props => {
   const {
@@ -57,7 +57,7 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
       style={style}
       className={className}
     >
-      <AuthorTopicMap
+      <AuthorTopicMapVis
         className="absolute"
         style={style}
         author
@@ -102,7 +102,7 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
             />
           )
         }
-      </AuthorTopicMap>
+      </AuthorTopicMapVis>
     </DropTargetCont>
   );
 });
@@ -126,20 +126,20 @@ const mapDispatchToProps = dispatch =>
       asyncUpdateCard,
       selectCard
     },
-    dispatch
+    dispatch,
   );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const { mapViewport, width, height, authUser } = state;
-  const { dataView, selectedCardId } = ownProps;
-  const { asyncUpdateCard, updateCardTemplate } = dispatcherProps;
+  const {mapViewport, width, height, authUser} = state;
+  const {dataView, selectedCardId} = ownProps;
+  const {asyncUpdateCard, updateCardTemplate} = dispatcherProps;
 
-  const viewport = { ...mapViewport, width, height };
+  const viewport = {...mapViewport, width, height};
 
   const onCardDrop = cardData => {
     if (cardData.id === 'temp')
-      updateCardTemplate({ cardData, viewport, dataView });
-    else asyncUpdateCard({ cardData, viewport, dataView });
+      updateCardTemplate({cardData, viewport, dataView});
+    else asyncUpdateCard({cardData, viewport, dataView});
   };
 
   return {
@@ -153,7 +153,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 const ConnectedCardAuthorOverlay = connect(
   mapStateToProps,
   mapDispatchToProps,
-  mergeProps
+  mergeProps,
 )(CardAuthorOverlay);
 
 export default ConnectedCardAuthorOverlay;

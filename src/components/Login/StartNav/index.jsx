@@ -13,7 +13,6 @@ const StartNav = () => (
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      zIndex: 3000,
       height: '100vh',
       width: '100vw',
       background: 'rgba(0, 0, 0, 0.3)'

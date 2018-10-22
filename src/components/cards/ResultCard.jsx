@@ -41,7 +41,6 @@ const CardViewable = ({
     tagColorScale={tagColorScale}
     uiColor="grey"
     background="whitesmoke"
-    style={{ zIndex: 4000 }}
     frontView={flipped}
     {...props}
     challengeComp={
