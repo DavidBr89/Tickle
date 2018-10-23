@@ -12,8 +12,6 @@ import {mediaScale} from 'Constants/mediaTypes';
 
 import CardControls from 'Components/cards/CardControls';
 
-const defaultProps = {};
-
 const MediaIcons = ({media}) => (
   <div className="ml-1" style={{display: 'flex', alignItems: 'center'}}>
     {media.map(m =>
@@ -269,7 +267,8 @@ class CardFront extends Component {
       template,
       points,
       onPointsClick,
-      bottomControls
+      bottomControls,
+      className
     } = this.props;
 
     // console.log('mediaIcons', mediaIcons);
@@ -280,7 +279,8 @@ class CardFront extends Component {
           width: '100%',
           ...style
         }}
-        className="flex flex-col">
+        className={`flex flex-col ${className}`}
+      >
         <ImgOverlay
           onClick={!edit ? onImgClick : null}
           src={img ? img.url : null}
@@ -290,17 +290,7 @@ class CardFront extends Component {
             minHeight: 0
           }}
         >
-          <div
-            style={{
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              justifyContent: 'flex-end',
-              alignItems: 'flex-end',
-              zIndex: 1
-            }}
-          >
+          <div className="absolute w-full h-full flex justify-end items-end">
             <FieldIcon
               edit={edit}
               className="m-1"
@@ -308,47 +298,18 @@ class CardFront extends Component {
             />
           </div>
 
-          <div
-            style={{
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              alignItems: 'flex-end',
-              zIndex: 0
-            }}
-          >
+          <div className="z-0 absolute w-full h-full flex justify-end items-end">
             <MediaIcons media={media} />
           </div>
-          <div
-            style={{
-              // width: '100%',
-              // height: '100%',
-              display: 'flex',
-              justifyContent: 'flex-end'
-              // alignItems: 'flex-end'
-            }}
-          />
+          <div className="flex justify-end" />
         </ImgOverlay>
-        <div
-          className="mt-3 mr-3 ml-3 mb-1"
-          style={{
-            flex: '0 1 auto',
-            display: 'flex',
-            flexDirection: 'column'
-            // justifyContent: 'space-around'
-          }}
-        >
+        <div className="flex flex-col mt-3 mr-3 ml-3 mb-1">
           <Title edit={edit} onClick={onTitleClick}>
             {title}
           </Title>
 
-          <div
-            className="mb-1"
-            style={{display: 'flex', alignItems: 'center'}}
-            onClick={onTagsClick}
-          >
-            <TagLabels tags={tags} tagColorScale={tagColorScale} />
+          <div className="flex items-center mb-1" onClick={onTagsClick}>
+            <TagLabels tags={tags} />
             <FieldIcon edit={edit} className="ml-1" />
           </div>
           <DescriptionField
@@ -372,11 +333,7 @@ class CardFront extends Component {
         </div>
 
         <CardControls onFlip={onFlip} onClose={onClose}>
-          <div
-            style={{marginLeft: 'auto', marginRight: 'auto', display: 'flex'}}
-          >
-            {bottomControls}
-          </div>
+          <div className="flex ml-auto mr-auto">{bottomControls}</div>
         </CardControls>
       </div>
     );

@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
 
 import { firebase } from '../firebase';
-import * as routes from '../constants/routes';
+import * as routes from 'Constants/routeSpec';
 
 import { fetchUserInfo } from 'Reducers/Session/async_actions';
 
@@ -16,7 +16,7 @@ const withAuthorization = condition => Component => {
       firebase.auth.onAuthStateChanged(authUser => {
         if (!condition(authUser)) {
           onSetAuthUser(null);
-          this.props.history.push(routes.SIGN_IN);
+          this.props.history.push(routes.SIGN_IN.path);
         } else {
           console.log('authUser UID', authUser);
           onSetAuthUser(authUser.uid);

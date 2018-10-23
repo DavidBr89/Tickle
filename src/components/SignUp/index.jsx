@@ -1,23 +1,23 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { Link, withRouter } from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 
-import { compose } from 'recompose';
-import { connect } from 'react-redux';
+import {compose} from 'recompose';
+import {connect} from 'react-redux';
 
-import * as routes from 'Constants/routes';
-import { auth, db } from 'Firebase';
+import * as routes from 'Constants/routeSpec';
+import {auth, db} from 'Firebase';
 
 import PhotoUpload from 'Utils/PhotoUpload';
-import { TagInput } from 'Utils/Tag';
+import {TagInput} from 'Utils/Tag';
 
-import { stylesheet } from 'Src/styles/GlobalThemeContext';
+import {stylesheet} from 'Src/styles/GlobalThemeContext';
 
-import { setAuthUser } from 'Reducers/Session/actions';
+import {setAuthUser} from 'Reducers/Session/actions';
 
 import DefaultLayout from 'Components/DefaultLayout';
 
-const SignUpPage = ({ admin, ...props }) => (
+const SignUpPage = ({admin, ...props}) => (
   <DefaultLayout
     menu={
       <div className="flex-grow flex justify-center items-center">
@@ -69,28 +69,21 @@ class SignUpForm extends Component {
   state = INITIAL_STATE;
 
   onSubmit = event => {
-    const {
-      username,
-      email,
-      fullname,
-      passwordOne,
-      img,
-      interests
-    } = this.state;
+    const {username, email, fullname, passwordOne, img, interests} = this.state;
 
-    const { history, onSetAuthUser, admin } = this.props;
+    const {history, onSetAuthUser, admin} = this.props;
 
-    this.setState({ loading: true });
+    this.setState({loading: true});
 
     const createUser = profile =>
       db
         .doCreateUser(profile)
         .then(() => {
-          this.setState(() => ({ ...INITIAL_STATE }));
-          onSetAuthUser({ authUser: profile });
+          this.setState(() => ({...INITIAL_STATE}));
+          onSetAuthUser({authUser: profile});
         })
         .catch(error => {
-          this.setState({ error, loading: false });
+          this.setState({error, loading: false});
         });
     auth
       .doCreateUserWithEmailAndPassword(email, passwordOne)
@@ -105,27 +98,27 @@ class SignUpForm extends Component {
           interests,
           admin
         };
-        onSetAuthUser({ authUser: userProfile });
-        history.push(routes.DATAVIEW_GEO);
+        onSetAuthUser({authUser: userProfile});
+        history.push(routes.GEO_VIEW);
 
         // Jump to page
         // Create a user in your own accessible Firebase Database too
         // this.setState({ imgUpload: true });
         if (img !== null) {
-          db.addImgToStorage({ file: img.file, path: `usr/${authUser.uid}` })
+          db.addImgToStorage({file: img.file, path: `usr/${authUser.uid}`})
             .then(imgUrl => {
-              const userProfileWithImg = { ...userProfile, photoURL: imgUrl };
+              const userProfileWithImg = {...userProfile, photoURL: imgUrl};
               createUser(userProfileWithImg);
             })
             .catch(error => {
-              this.setState({ error, loading: false });
+              this.setState({error, loading: false});
             });
         } else {
           createUser(userProfile);
         }
       })
       .catch(error => {
-        this.setState({ error, loading: false });
+        this.setState({error, loading: false});
       });
 
     event.preventDefault();
@@ -212,7 +205,7 @@ class SignUpForm extends Component {
             <label className="label" htmlFor="pwd">
               Interests:
             </label>
-            <TagInput onChange={tags => this.setState({ interests: tags })} />
+            <TagInput onChange={tags => this.setState({interests: tags})} />
           </div>
           <div className="form-group ">
             <label className="label">Password:</label>
@@ -243,7 +236,11 @@ class SignUpForm extends Component {
               justifyContent: 'space-between'
             }}
           >
-            <button className="btn bg-white w-full" disabled={isInvalid} type="submit">
+            <button
+              className="btn bg-white w-full"
+              disabled={isInvalid}
+              type="submit"
+            >
               Sign Up
             </button>
             {error && (
@@ -251,7 +248,7 @@ class SignUpForm extends Component {
             )}
             {!error &&
               loading && (
-              <div clasName="ml-2" style={{ fontSize: 'large' }}>
+              <div clasName="ml-2" style={{fontSize: 'large'}}>
                   Loading...
               </div>
             )}
@@ -285,8 +282,8 @@ export default compose(
   connect(
     null,
     mapDispatchToProps,
-    mergeProps
-  )
+    mergeProps,
+  ),
 )(SignUpPage);
 
-export { SignUpForm, SignUpLink };
+export {SignUpForm, SignUpLink};

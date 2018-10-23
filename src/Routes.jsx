@@ -9,6 +9,7 @@ import CardView from './components/CardView';
 import Admin from './components/Admin';
 import Account from './components/Account';
 import Diary from './components/Diary';
+import TagView from './components/DataView/ForceOverlay/TreeMapCluster';
 
 import {MapCardAuthorPage, TopicMapAuthorPage} from './components/CardAuthor';
 
@@ -39,7 +40,7 @@ import {
   ADMIN,
   ADMIN_SIGN_UP,
   LANDING
-} from 'Constants/routes';
+} from 'Constants/routeSpec';
 
 // const GRID = 'grid';
 
@@ -73,6 +74,15 @@ const Routes = () => (
         render={() => (
           <CardView>
             {props => <UserMap {...props} className="absolute" />}
+          </CardView>
+        )}
+      />
+      <Route
+        exact
+        path={`${TAG_VIEW.path}/:selectedCardId?/:showOption?/:flipped?`}
+        render={() => (
+          <CardView>
+            {props => <TagView {...props} className="absolute" />}
           </CardView>
         )}
       />

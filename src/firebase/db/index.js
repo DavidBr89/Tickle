@@ -11,7 +11,7 @@ const VDS_TOPIC = 'vds-topic';
 const STAGING = 'staging';
 const PEDAGOGY_DEP = 'pedagogy-dep';
 
-const ENV = STAGING; // VDS_TOPIC;
+const ENV = VDS_TOPIC;
 
 const TICKLE_DOC_REF = firestore.collection(TICKLE_ENVS).doc(ENV);
 

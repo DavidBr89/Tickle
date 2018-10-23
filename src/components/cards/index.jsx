@@ -56,7 +56,6 @@ class Card extends React.Component {
     description: null,
     // TODO: remove
     challenge: null,
-    type: null,
     loc: {
       longitude: 0,
       latitude: 0,
@@ -82,7 +81,6 @@ class Card extends React.Component {
       edit,
       challenge,
       onUpdate,
-      type,
       tagColorScale,
       onSubmit,
       author,
@@ -94,35 +92,35 @@ class Card extends React.Component {
       front
     } = this.props;
     // const { frontView } = this.state;
-    const {onCollect, frontView} = this.props;
+    const {frontView} = this.props;
+    const className = 'bg-white border-4 border-black flex flex-col';
 
     return (
       <Flipper
         flipped={!frontView}
+        frontClassName="flex flex-col"
         front={React.cloneElement(front, {
           ...this.props,
+          className,
           background,
           flipHandler,
           uiColor,
           tagColorScale,
           onUpdate,
         })}
+        backClassName="flex flex-col h-full"
         back={
           <CardBack
             {...this.props}
+            className={className}
             visible={!frontView}
-            style={{}}
             edit={edit && !template}
             background={background}
-            uiColor={uiColor}
             flipHandler={flipHandler}
             tagColorScale={tagColorScale}
             author={author}
             onUpdate={comments => this.setState({comments})}
-            setMapRadius={mapRadius =>
-              // onUpdate({ ...this.props, mapRadius });
-              null
-            }
+            setMapRadius={mapRadius => null}
           />
         }
       />

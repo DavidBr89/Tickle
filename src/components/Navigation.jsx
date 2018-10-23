@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import {Link, withRouter} from 'react-router-dom';
 
 import SignOutButton from './SignOut';
-import * as routes from 'Constants/routes';
+// import * as routes from 'Constants/routeSpec';
 
 import AuthUserContext from './AuthUserContext';
 
@@ -14,7 +14,7 @@ import {
   authRoutes,
   adminRoutes,
   nonAuthRoutes
-} from 'Constants/routes';
+} from 'Constants/routeSpec';
 
 // import { setDataView } from 'Reducers/DataView/actions';
 

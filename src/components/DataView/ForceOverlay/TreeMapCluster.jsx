@@ -1,15 +1,16 @@
-import React, { Component, Fragment } from 'react';
+import React, {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+
+import Dimensions from 'Utils/DimensionsWrapper';
 
 // import { addCardFilter, removeCardFilter } from 'Reducers/DataView/actions';
-import { tagFilter } from 'Reducers/DataView/async_actions';
+import {tagFilter} from 'Reducers/DataView/async_actions';
 
 // import * as chromatic from 'd3-scale-chromatic';
 // import hull from 'hull.js';
 // import hull from 'concaveman';
-import * as d3 from 'd3';
 
 // import chroma from 'chroma-js';
 // import polylabel from '@mapbox/polylabel';
@@ -17,7 +18,7 @@ import * as d3 from 'd3';
 // import { getBoundingBox, bounds, setify } from '../utils';
 // import { groupPoints } from './utils';
 
-import { intersection, union, uniqBy, uniq, flatten } from 'lodash';
+import {intersection, union, uniqBy, uniq, flatten} from 'lodash';
 // import TopicAnnotationOverlay from './TopicAnnotationOverlay';
 // import dobbyscan from './cluster';
 import TagCloud from './TagCloud';
@@ -27,40 +28,6 @@ const euclDist = (x1, y1, x2, y2) => Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 
 function distance(a, b) {
   return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
-}
-
-function makeTreemap({ data, width, height, padX, padY }) {
-  const ratio = 2;
-  const sorted = data.sort((a, b) => b.values.length - a.count);
-  const treemap = d3
-    .treemap()
-    .size([width / ratio, height])
-    .paddingInner(0)
-    .paddingOuter(0)
-    .round(true)
-    .tile(d3.treemapResquarify);
-
-  const size = d3
-    .scaleLinear()
-    .domain(d3.extent(data, d => d.count))
-    .range([20, 25]);
-
-  const first = { name: 'root', children: sorted };
-  const root = d3.hierarchy(first).sum(d => size(d.count));
-
-  treemap(root);
-  if (!root.children) return [];
-  root.children.forEach(d => {
-    d.left = padX / 2 + Math.round(d.x0 * ratio);
-    d.top = padY / 2 + Math.round(d.y0);
-
-    d.width = Math.round(d.x1 * ratio) - Math.round(d.x0 * ratio) - padX / 2;
-    d.height = Math.round(d.y1) - Math.round(d.y0) - padY / 2;
-  });
-
-  return root.children;
-  // const padY = 10;
-  // const padX = 20;
 }
 
 // function rects(quadtree) {
@@ -105,45 +72,36 @@ class Cluster extends Component {
       sets,
       labels,
       filterSet,
-      children
+      children,
+      tagVocabulary,
+      cardSets
     } = this.props;
 
-    const trData = makeTreemap({
-      data: sets,
-      width,
-      height,
-      // TODO
-      padX: 10,
-      padY: 10
-    });
-    // const clusters = this.findClusters();
-
     return (
-      <div>
-        <TagCloud
-          {...this.props}
-          data={trData}
-          width={width}
-          height={height}
-          padX={10}
-          padY={10}
-          colorScale={colorScale}
-          filterSet={filterSet}
-        />
-        {data.map(d => children({ ...d, x: width / 2, y: height / 2 }))}
+      <div className="ml-1 mr-1 mb-1 mt-5 flex flex-col flex-grow">
+        <Dimensions className="flex-grow">
+          {(w, h) => (
+            <TagCloud
+              {...this.props}
+              data={cardSets}
+              width={w}
+              height={h}
+              padX={10}
+              padY={10}
+              colorScale={colorScale}
+              filterSet={filterSet}
+            />
+          )}
+        </Dimensions>
       </div>
     );
   }
 }
 
-function mapStateToProps() {
-  return {};
-}
-
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ tagFilter }, dispatch);
+  bindActionCreators({tagFilter}, dispatch);
 
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+  null,
+  mapDispatchToProps,
 )(Cluster);

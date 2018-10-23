@@ -1,25 +1,21 @@
 // import React from 'react';
 import WebMercatorViewport from 'viewport-mercator-project';
 
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { compose } from 'recompose';
-import { withRouter } from 'react-router-dom';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {compose} from 'recompose';
+import {withRouter} from 'react-router-dom';
 
-import { intersection } from 'lodash';
-import {
-  resizeCardWindow,
-  userMove,
-  changeViewport
-} from 'Reducers/Map/actions';
+import {intersection} from 'lodash';
+import {resizeCardWindow, userMove, changeViewport} from 'Reducers/Map/actions';
 
 import setify from 'Utils/setify';
 import distanceLoc from 'Components/utils/distanceLoc';
 // rename path
-import { makeTagColorScale } from 'Src/styles/GlobalThemeContext';
-import { isCardSeen } from 'Constants/cardFields';
+import {makeTagColorScale} from 'Src/styles/GlobalThemeContext';
+import {isCardSeen} from 'Constants/cardFields';
 
-import { screenResize } from 'Reducers/Screen/actions';
+import {screenResize} from 'Reducers/Screen/actions';
 import * as cardActions from 'Reducers/Cards/actions';
 
 import * as asyncActions from 'Reducers/Cards/async_actions';
@@ -28,10 +24,7 @@ import * as dataViewAsyncActions from 'Reducers/DataView/async_actions';
 
 import withAuthorization from 'Src/components/withAuthorization';
 
-import {
-  CHALLENGE_SUBMITTED,
-  isChallengeSubmitted
-} from 'Constants/cardFields';
+import {CHALLENGE_SUBMITTED, isChallengeSubmitted} from 'Constants/cardFields';
 
 import CardViewPage from './CardViewPage';
 // import mapViewReducer from './reducer';
@@ -50,7 +43,7 @@ const filterByTag = (doc, filterSet) =>
 // Container
 const mapStateToProps = state => {
   console.log('new Action', 'yeah');
-  const { collectibleCards } = state.Cards;
+  const {collectibleCards} = state.Cards;
 
   const {
     // selectedCardId,
@@ -60,15 +53,15 @@ const mapStateToProps = state => {
   } = state.DataView;
 
   // TODO: own dim reducer
-  const { width, height, userLocation, mapViewport } = state.MapView;
+  const {width, height, userLocation, mapViewport} = state.MapView;
 
   // const { authEnv } = state.DataView;
   const {
-    authUser: { uid }
+    authUser: {uid}
   } = state.Session;
 
   // console.log('mercator', FlatMercatorViewport);
-  const mercator = new WebMercatorViewport({ ...mapViewport });
+  const mercator = new WebMercatorViewport({...mapViewport});
 
   // TODO: make more specific
   return {
@@ -95,13 +88,13 @@ const mapDispatchToProps = dispatch =>
       ...cardActions,
       ...asyncActions,
       ...dataViewActions,
+      ...dataViewAsyncActions,
       resizeCardWindow,
       userMove,
       screenResize,
       changeViewport,
-      ...dataViewAsyncActions
     },
-    dispatch
+    dispatch,
   );
 
 // });
@@ -117,10 +110,11 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     width,
     height
   } = state;
-  const { dataView, history, match } = ownProps;
-  const { path } = match;
 
-  const { selectedCardId = null, showOption = null } = match.params;
+  const {dataView, history, match} = ownProps;
+  const {path} = match;
+
+  const {selectedCardId = null, showOption = null} = match.params;
 
   const extCardId = showOption === 'extended' ? selectedCardId : null;
 
@@ -164,7 +158,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   };
 
   const routeSelectCard = id => {
-    otherActions.routeSelectCard({ path, history, id });
+    otherActions.routeSelectCard({path, history, id});
   };
 
   const previewCardAction = d => {
@@ -193,10 +187,10 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     .filter(d => filterByTag(d, filterSet))
     .map(c => {
       const visible = isInView(c.loc);
-      const accessible = true//visible;
+      const accessible = true; // visible;
       // (visible && isInDistance(c.loc)) || (isCardSeen(c) && visible);
 
-      return { ...c, accessible };
+      return {...c, accessible};
     })
     .filter(d => d.accessible);
 
@@ -223,7 +217,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     extCardId,
     selectedCardLocked,
     extendedCard,
-    selectedCard, ...ownProps
+    selectedCard,
+    ...ownProps
   };
 };
 
@@ -235,6 +230,6 @@ export default compose(
   connect(
     mapStateToProps,
     mapDispatchToProps,
-    mergeProps
-  )
+    mergeProps,
+  ),
 )(CardViewPage);

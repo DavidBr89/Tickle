@@ -12,7 +12,7 @@ import {PasswordForgetLink} from '../Password';
 import {auth} from 'Firebase';
 import {ModalBody} from 'Components/utils/Modal';
 
-import {GEO_VIEW} from 'Constants/routes';
+import {GEO_VIEW} from 'Constants/routeSpec';
 
 import {GlobalThemeConsumer, stylesheet} from 'Src/styles/GlobalThemeContext';
 

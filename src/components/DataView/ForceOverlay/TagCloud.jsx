@@ -1,33 +1,51 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { range } from 'd3';
+import {range} from 'd3';
 // import tsnejs from 'tsne';
 // import _ from 'lodash';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 
 import chroma from 'chroma-js';
+import * as d3 from 'd3';
 
 // import ReactDom from 'react-dom';
 // import sketchy from '../utils/d3.sketchy';
 
-import { CardMarker } from 'Cards';
+import {CardMarker} from 'Cards';
 
-const CardStack = ({ number }) => (
-  <div style={{ display: 'flex' }}>
-    {range(0, number).map(() => (
-      <CardMarker style={{ width: '2vh', height: '2vh' }} />
-    ))}
-    {number === 0 && <div>No Cards!</div>}
-  </div>
-);
+function calcTreeMap({data, width, height, padX, padY}) {
+  const ratio = 2;
+  const sorted = data.sort((a, b) => b.values.length - a.count);
+  const treemap = d3
+    .treemap()
+    .size([width / ratio, height])
+    .paddingInner(0)
+    .paddingOuter(0)
+    .round(true)
+    .tile(d3.treemapResquarify);
 
-// const setChildrenToInheritFontSize = el => {
-//   el.style.fontSize = 'inherit';
-//   console.log('children', el.children);
-//   _.each(el.children, child => {
-//     setChildrenToInheritFontSize(child);
-//   });
-// };
+  const size = d3
+    .scaleLinear()
+    .domain(d3.extent(data, d => d.count))
+    .range([20, 25]);
+
+  const first = {name: 'root', children: sorted};
+  const root = d3.hierarchy(first).sum(d => size(d.count));
+
+  treemap(root);
+  if (!root.children) return [];
+  root.children.forEach(d => {
+    d.left = padX / 2 + Math.round(d.x0 * ratio);
+    d.top = padY / 2 + Math.round(d.y0);
+
+    d.width = Math.round(d.x1 * ratio) - Math.round(d.x0 * ratio) - padX / 2;
+    d.height = Math.round(d.y1) - Math.round(d.y0) - padY / 2;
+  });
+
+  return root.children;
+  // const padY = 10;
+  // const padX = 20;
+}
 
 class Tag extends React.Component {
   static propTypes = {
@@ -90,27 +108,24 @@ class Tag extends React.Component {
       height,
       position: 'absolute',
       transition: `left ${transition}ms, top ${transition}ms, width ${transition}ms, height ${transition}ms`,
-      cursor: 'pointer',
-      background: highlighted
-        ? color
-        : chroma(color)
-            .alpha(0.4)
-            .css()
-      // border: selected ? 'grey dashed 4px' : `${color} solid 4px`,
-      // display: 'flex',
-      // alignItems: 'center'
-      // paddingTop: height / 4,
-      // paddingBottom: height / 4
     };
 
     return (
-      <div className="flexCol" style={st} onClick={() => onClick(children)}>
-        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-          <div style={{ position: 'absolute', zIndex: 100 }}><span>{children} ({count})</span></div>
+      <div
+        className={`flex flex-col border-4 border-black ${selected &&
+          'bg-grey-light'}`}
+        style={st}
+        onClick={() => onClick(children)}
+      >
+        <div className="flex-grow" style={{position: 'relative'}}>
+          <div className="absolute">
+            <span>
+              {children} ({count})
+            </span>
+          </div>
           <div
-            className="flexCol"
+            className="absolute flex flex-col items-center justify-center"
             style={{
-              position: 'absolute',
               width: '100%',
               height: '100%',
               justifyContent: 'center',
@@ -118,9 +133,8 @@ class Tag extends React.Component {
             }}
           >
             <div
-              className="flexCol"
+              className="border-2 flex flex-col items-center justify-center"
               style={{
-                // border: 'grey 1px solid',
                 borderRadius: '50%',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -130,7 +144,7 @@ class Tag extends React.Component {
               }}
             >
               <CardMarker
-                style={{ width: 20, height: 20, transform: null, zIndex: 0 }}
+                style={{width: 20, height: 20, transform: null, zIndex: 0}}
               />
             </div>
           </div>
@@ -155,24 +169,31 @@ class TagCloud extends React.Component {
       colorScale,
       data,
       selectedTags,
-      // addCardFilter,
-      // removeCardFilter,
-      //
-      //
-      isSmartphone,
+      width,
+      height,
       tagFilter,
       filterSet
     } = this.props;
 
-    const treemap = data.map((d, i) => (
+    console.log('treemap props', this.props);
+    const trData = calcTreeMap({
+      data,
+      width,
+      height,
+      // TODO
+      padX: 10,
+      padY: 10
+    });
+
+    const treemap = trData.map((d, i) => (
       <Tag
         {...d}
-        small={isSmartphone}
+        small={false}
         {...d.data}
         key={d.data.key}
         filterSet={filterSet}
-        onClick={tag => tagFilter({ tag, filterSet })}
-        color={colorScale(d.data.key)}
+        onClick={tag => tagFilter({tag, filterSet})}
+        color="grey"
         highlighted={selectedTags.includes(d.data.key)}
         selected={filterSet.includes(d.data.key)}
       >
@@ -180,7 +201,7 @@ class TagCloud extends React.Component {
       </Tag>
     ));
 
-    return <div style={{ position: 'relative' }}>{treemap}</div>;
+    return <div style={{position: 'relative'}}>{treemap}</div>;
   }
 }
 
@@ -194,7 +215,7 @@ TagCloud.defaultProps = {
   getCoords: d => d
 };
 
-const mapStateToProps = state => ({ ...state.Screen });
+const mapStateToProps = state => ({...state.Screen});
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...stateProps,
@@ -204,5 +225,5 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
 export default connect(
   mapStateToProps,
   null,
-  mergeProps
+  mergeProps,
 )(TagCloud);

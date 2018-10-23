@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Link, withRouter} from 'react-router-dom';
 
-import {SIGN_UP, SIGN_IN, ADMIN_SIGN_UP} from 'Constants/routes';
+import {SIGN_UP, SIGN_IN, ADMIN_SIGN_UP} from 'Constants/routeSpec';
 
 import AuthUserContext from '../AuthUserContext';
 

@@ -9,7 +9,7 @@ import {FlipButton} from '../layout';
 import {FieldSet} from 'Components/utils/StyledComps';
 import Comments from './Comments';
 import CardHeader from '../CardHeader';
-import Author from './Author';
+import BackAuthor from './BackAuthor.jsx';
 import {MapAreaControl} from './MapAreaControl';
 
 import CardControls from 'Components/cards/CardControls';
@@ -41,33 +41,20 @@ const BackField = ({
   extended
 }) => (
   <div
-    className="border"
+    className="border overflow-hidden relative flex flex-col"
     onClick={!extended ? onClick : () => null}
     style={{
-      // border: `1px solid ${uiColor}`,
-      // marginTop: '4px',
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      padding: 10,
       ...style,
-      overflow: 'hidden',
     }}>
     <div
-      className="mb-1"
-      style={{
-        display: 'flex',
-        // width: '100%',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}>
-      <div style={{fontSize: '1.25rem', flex: '0 0 auto'}}>{title}</div>
-      {!disabled && (
-        <button className="bare-btn" onClick={extended ? onClick : () => null}>
-          {extended ? <Minimize /> : <Maximize />}
-        </button>
-      )}
+      className="mb-1 z-10 absolute flex-grow flex justify-end items-center"
+      style={{right: 0}}
+    >
+      <button
+        className="btn bg-white m-2"
+        onClick={extended ? onClick : () => null}>
+        {extended ? <Minimize /> : <Maximize />}
+      </button>
     </div>
     {children}
   </div>
@@ -154,48 +141,28 @@ class CardBack extends Component {
       flipHandler,
       onDelete,
       tagColorScale,
-      template,
       id: cardId,
       uid,
       style,
-      visible,
-      onClose
+      onClose,
+      className
     } = this.props;
 
     const {extended} = this.state;
 
     const isExtended = field => extended === field && extended !== null;
+
     const displayStyle = field => {
-      const defaultStyle = {transition: 'height 200ms', marginBottom: 2};
-      const isExt = isExtended(field);
+      const fieldExtended = isExtended(field);
       return {
-        ...defaultStyle,
-        height: isExt ? '100%' : 0,
-        minHeight: 0,
-        flex: '1 1 auto',
-        // position: field === 'map' && 'absolute',
-        // flex: '1 1 auto',
-        overflow: isExt ? 'scroll' : 'hidden'
+        transition: 'all 200ms',
+        flexGrow: fieldExtended ? 0.4 : '0',
+        overflow: fieldExtended ? 'scroll' : 'hidden'
       };
     };
 
     return (
-      <div
-        ref={cont => (this.cont = cont)}
-        className="flex flex-col"
-        style={{
-          // TODO outsource
-          // border: '5px black solid',
-          height: '100%',
-          // display: 'flex',
-          alignContent: 'center'
-          // flexDirection: 'column'
-          // zIndex: 10000
-          // ...style
-          // justifyContent: 'space-around'
-          // pointerEvents: 'all'
-        }}
-      >
+      <div className={`flex flex-col flex-grow ${className}`}>
         <div className="flex-grow flex flex-col">
           <BackField
             title="Author"
@@ -203,44 +170,32 @@ class CardBack extends Component {
             style={displayStyle('author')}
             onClick={() => this.selectField('author')}
           >
-            {visible && (
-              <Author
-                uid={uid}
-                extended={extended === 'author'}
-                tagColorScale={tagColorScale}
-              />
-            )}
+            <BackAuthor uid={uid} extended={extended === 'author'} />
           </BackField>
-          {visible && (
-            <BackField
+          <BackField
+            extended={isExtended('map')}
+            style={displayStyle('map')}
+            edit={edit}
+            title="Location"
+          >
+            <MapAreaControl
+              {...this.props}
+              {...loc}
               extended={isExtended('map')}
-              style={{...displayStyle('map')}}
+              uiColor={uiColor}
+              onChange={r => setMapRadius(r)}
+              radius={mapRadius}
               edit={edit}
-              title="Location"
-              borderColor={uiColor}
-            >
-              <MapAreaControl
-                {...this.props}
-                {...loc}
-                extended={isExtended('map')}
-                uiColor={uiColor}
-                onChange={r => setMapRadius(r)}
-                radius={mapRadius}
-                edit={edit}
-              />
-            </BackField>
-          )}
-          {visible && (
-            <BackField
-              extended={isExtended('comments')}
-              onClick={() => this.selectField('comments')}
-              title="Comments"
-              style={displayStyle('comments')}
-              borderColor={uiColor}
-            >
-              <Comments cardId={cardId} extended={extended === 'comments'} />
-            </BackField>
-          )}
+            />
+          </BackField>
+          <BackField
+            extended={isExtended('comments')}
+            onClick={() => this.selectField('comments')}
+            title="Comments"
+            style={displayStyle('comments')}
+            borderColor={uiColor}>
+            <Comments cardId={cardId} extended={extended === 'comments'} />
+          </BackField>
           <CardControls
             onFlip={flipHandler}
             onClose={onClose}
