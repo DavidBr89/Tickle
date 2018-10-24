@@ -83,7 +83,7 @@ module.exports = [
   {
     test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
     // exclude: /(node_modules|bower_components)/,
-    include: re,
+    // include: re,
     loader: 'url-loader?limit=10000&mimetype=image/svg+xml'
   },
   {

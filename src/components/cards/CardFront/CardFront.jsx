@@ -121,31 +121,18 @@ const EditIcon = ({edit, className, style, onClick}) => (
   </IconCont>
 );
 
-const Title = ({onClick, edit, children, className}) => {
-  const emptyTitle = (
-    <React.Fragment>
-      <h1 className="text-muted">No Title</h1> <EditIcon />
-    </React.Fragment>
-  );
-  const titleHeader = (
-    <React.Fragment>
-      <h1>{children}</h1> <EditIcon />
-    </React.Fragment>
-  );
-
-  return (
-    <div className={`flex items-center ${className}`} onClick={onClick}>
-      <div className="flex flex-grow justify-between">
-        {children === null ? (
-          <h1 className="text-muted">No Title</h1>
-        ) : (
-          <h1>{children}</h1>
-        )}
-        <EditIcon />
-      </div>
+const Title = ({onClick, edit, children, className}) => (
+  <div className={`flex items-center ${className}`} onClick={onClick}>
+    <div className="flex flex-grow justify-between">
+      {children === null ? (
+        <h1 className="text-muted">No Title</h1>
+      ) : (
+        <h1>{children}</h1>
+      )}
+      {edit && <EditIcon />}
     </div>
-  );
-};
+  </div>
+);
 
 const DescriptionField = ({
   text,
@@ -164,7 +151,7 @@ const DescriptionField = ({
       <div className="flex-grow text-xl">
         {text || <p style={{fontStyle: 'italic'}}>{placeholder}</p>}
       </div>
-      <EditIcon />
+      { edit && <EditIcon /> }
     </div>
   </div>
 );
@@ -335,7 +322,7 @@ class CardFront extends Component {
 
           <div className="flex justify-between m-1" onClick={onTagsClick}>
             <PreviewTags values={tags} className="" />
-            <EditIcon edit={edit} className="ml-1" />
+            {edit && <EditIcon edit={edit} className="ml-1" />}
           </div>
           <DescriptionField
             text={description}

@@ -78,7 +78,7 @@ export const readCards = ({authorId = null, playerId = null}) => {
   };
 
   const refCards =
-    !authorId && !playerId
+    !authorId
       ? TICKLE_DOC_REF.collection('cards')
       : TICKLE_DOC_REF.collection('cards').where('uid', '==', authorId);
 
