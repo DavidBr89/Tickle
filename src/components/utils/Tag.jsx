@@ -254,7 +254,6 @@ export const PreviewTags = ({
       flexWrap: 'wrap',
       overflow: 'hidden',
       ...style,
-      ...tagsStyle
       // overflowY: 'visible'
       // flexWrap: 'no-wrap'
       // alignItems: 'center'

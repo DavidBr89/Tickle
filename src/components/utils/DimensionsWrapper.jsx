@@ -34,7 +34,6 @@ class DimensionsWrapper extends React.Component {
     const width = this.node.offsetWidth;
     const height = this.node.offsetHeight;
 
-    console.log('UPDATE DIM', width, height);
     if (prevState.width !== width || prevState.height !== height) {
       this.setState({ width, height });
     }

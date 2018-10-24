@@ -9,7 +9,7 @@ import {db} from 'Firebase';
 import CardMarker from '../CardMarker';
 import setify from 'Utils/setify';
 
-const ExtendedAuthor = ({
+const AuthorDetails = ({
   onClose,
   color,
   style,
@@ -21,107 +21,70 @@ const ExtendedAuthor = ({
   stylesheet,
   placeholderImgUrl,
   numCollectedCards,
+  className,
   numCreatedCards,
   ...authorPreviewProps
 }) => (
   <div
-    className="flex flex-col relative justify-center"
+    className={className}
     style={{
       ...style
     }}
   >
-    <AuthorPreview {...authorPreviewProps} />
-    <div className="mt-2" style={{fontSize: '14px', fontWeight: 700}}>
-      Personal
+    <div className="bg-grey-light">
+      <h2>Top Interests</h2>
+      {skills.map(d => (
+        <div className="text-xl capitalize">#{d}</div>
+      ))}
     </div>
-    <div legend="Interests:" className="bg-grey-light" />
-    <div className="mt-2" style={{fontSize: '14px', fontWeight: 700}}>
-      Activity
-    </div>
-    <div legend="Collected Cards" className="bg-grey-light" />
-    <div legend="Created Cards" className="bg-grey-light" />
+    <div className="bg-grey-light" />
   </div>
 );
 
-const AuthorPreview = ({photoURL, style, username, name, email}) => (
+const AuthorPreview = ({className, photoURL, style, username, name, email}) => (
   <div
-    className="relative flex"
+    className={className}
     style={{
       ...style
     }}
   >
     <img
-      width="100%"
-      height="100%"
+      className="absolute h-full w-full"
       src={photoURL}
       alt="alt"
       style={{objectFit: 'cover'}}
     />
-    <div className="absolute ml-3">
-      <h2 className="">{username}</h2>
+    <div className="absolute m-3">
+      <h1 className="text-white">{username}</h1>
     </div>
   </div>
 );
 
-class Author extends React.Component {
-  static propTypes = {
-    children: PropTypes.node,
-    className: PropTypes.string
-  };
+const BackAuthor = ({
+  extended,
+  style,
+  detailedUserInfo,
+  basicUserInfo,
+  ...props
+}) => (
+  <div className="flex flex-grow flex-col justify-center" style={style}>
+    <AuthorPreview
+      {...basicUserInfo}
+      className="flex-col-wrapper flex-grow relative"
+    />
+    {extended && (
+      <AuthorDetails
+        className="flex-col-wrapper relative justify-center"
+        {...detailedUserInfo}
+      />
+    )}
+  </div>
+);
 
-  state = {
-    ...this.props,
-    collectedCards: [],
-    createdCards: [],
-    numCollectedCards: 0,
-    numCreatedCards: 0
-  };
-
-  componentDidMount() {
-    const {uid} = this.props;
-    if (!uid) return;
-    db.getDetailedUserInfo(uid).then(res => {
-      const {
-        interests: plainInterests,
-        createdCards,
-        collectedCards,
-        ...userDetails
-      } = res;
-
-      const interests = plainInterests.map(key => ({key, count: 10}));
-      const skills = setify([...createdCards, ...collectedCards]).slice(0, 5);
-
-      const numCollectedCards = collectedCards.length;
-      const numCreatedCards = createdCards.length;
-
-      this.setState({
-        ...userDetails,
-        interests,
-        skills,
-        collectedCards,
-        createdCards,
-        numCollectedCards,
-        numCreatedCards
-      });
-    });
-  }
-
-  render() {
-    const {extended, uid} = this.props;
-
-    return extended ? (
-      <ExtendedAuthor {...this.state} key={uid} />
-    ) : (
-      <AuthorPreview {...this.state} key={uid} />
-    );
-  }
-}
-
-Author.defaultProps = {
+BackAuthor.defaultProps = {
   // TODO: check
   placeholderImgUrl:
     'http://sunfieldfarm.org/wp-content/uploads/2014/02/profile-placeholder.png',
-  // profile: {
   skills: [
     {key: 'arts', level: 22},
     {key: 'music', level: 14},
@@ -134,4 +97,35 @@ Author.defaultProps = {
   extended: false
 };
 
-export default Author;
+class BackAuthorWrapper extends React.Component {
+  componentDidMount() {
+    const {uid} = this.props;
+    db.getDetailedUserInfo(uid).then(
+      ({interests, createdCards, collectedCards, ...basicUserInfo}) => {
+        const skills = setify([...createdCards, ...collectedCards])
+          .slice(0, 5)
+          .map(d => d.key);
+
+        const detailedUserInfo = {
+          interests,
+          createdCards,
+          collectedCards,
+          skills
+        };
+
+        this.setState({
+          basicUserInfo,
+          detailedUserInfo
+        });
+      },
+    );
+  }
+
+  state = {detailedUserInfo: {}, basicUserInfo: {}};
+
+  render() {
+    return <BackAuthor {...this.props} {...this.state} />;
+  }
+}
+
+export default BackAuthorWrapper;

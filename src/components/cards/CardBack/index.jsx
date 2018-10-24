@@ -41,7 +41,7 @@ const BackField = ({
   extended
 }) => (
   <div
-    className="border overflow-hidden relative flex flex-col"
+    className="border overflow-hidden relative flex-col-wrapper"
     onClick={!extended ? onClick : () => null}
     style={{
       ...style,
@@ -156,63 +156,58 @@ class CardBack extends Component {
       const fieldExtended = isExtended(field);
       return {
         transition: 'all 200ms',
-        flexGrow: fieldExtended ? 0.4 : '0',
+        flexGrow: fieldExtended ? '0.5' : '0.3',
         overflow: fieldExtended ? 'scroll' : 'hidden'
       };
     };
 
     return (
       <div className={`flex flex-col flex-grow ${className}`}>
-        <div className="flex-grow flex flex-col">
-          <BackField
-            title="Author"
-            extended
-            style={displayStyle('author')}
-            onClick={() => this.selectField('author')}
-          >
-            <BackAuthor uid={uid} extended={extended === 'author'} />
-          </BackField>
-          <BackField
+        <BackField
+          title="Author"
+          extended
+          style={displayStyle('author')}
+          onClick={() => this.selectField('author')}>
+          { uid && <BackAuthor uid={uid} extended={extended === 'author'} /> }
+        </BackField>
+        <BackField
+          extended={isExtended('map')}
+          style={displayStyle('map')}
+          edit={edit}
+          title="Location">
+          <MapAreaControl
+            {...this.props}
+            {...loc}
             extended={isExtended('map')}
-            style={displayStyle('map')}
+            uiColor={uiColor}
+            onChange={r => setMapRadius(r)}
+            radius={mapRadius}
             edit={edit}
-            title="Location"
-          >
-            <MapAreaControl
-              {...this.props}
-              {...loc}
-              extended={isExtended('map')}
-              uiColor={uiColor}
-              onChange={r => setMapRadius(r)}
-              radius={mapRadius}
-              edit={edit}
+          />
+        </BackField>
+        <BackField
+          extended={isExtended('comments')}
+          onClick={() => this.selectField('comments')}
+          title="Comments"
+          style={displayStyle('comments')}
+          borderColor={uiColor}>
+          <Comments cardId={cardId} extended={extended === 'comments'} />
+        </BackField>
+        <CardControls
+          onFlip={flipHandler}
+          onClose={onClose}
+          style={{
+            width: '100%',
+            flexShrink: 0,
+          }}>
+          {edit ? (
+            <DeleteButton
+              onClick={onDelete}
+              color={uiColor}
+              style={{width: '20%'}}
             />
-          </BackField>
-          <BackField
-            extended={isExtended('comments')}
-            onClick={() => this.selectField('comments')}
-            title="Comments"
-            style={displayStyle('comments')}
-            borderColor={uiColor}>
-            <Comments cardId={cardId} extended={extended === 'comments'} />
-          </BackField>
-          <CardControls
-            onFlip={flipHandler}
-            onClose={onClose}
-            style={{
-              width: '100%',
-              flexShrink: 0
-            }}
-          >
-            {edit ? (
-              <DeleteButton
-                onClick={onDelete}
-                color={uiColor}
-                style={{width: '20%'}}
-              />
-            ) : null}
-          </CardControls>
-        </div>
+          ) : null}
+        </CardControls>
       </div>
     );
   }

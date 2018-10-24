@@ -48,7 +48,7 @@ class NavBar extends Component {
           style={{minHeight: 48}}
         >
           <button
-            className="border cursor-pointer p-2 absolute z-50"
+            className="border cursor-pointer p-2 absolute z-50 flex-col-wrapper items-center"
             onClick={onToggle}
             style={{
               background: 'whitesmoke'

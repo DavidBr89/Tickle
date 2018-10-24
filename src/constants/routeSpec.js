@@ -72,7 +72,7 @@ export const AUTHOR = {
   name: 'Author Cards',
   // TODO: change later
   path: GEO_AUTHOR_PATH,
-  subRoutes: [GEO_AUTHOR, TOPIC_AUTHOR, TAG_AUTHOR]
+  subRoutes: [GEO_AUTHOR, TOPIC_AUTHOR]
 };
 
 export const ACCOUNT = {name: 'Account', path: ACCOUNT_PATH};

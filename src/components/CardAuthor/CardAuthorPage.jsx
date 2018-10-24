@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { FLOORPLAN, GEO } from 'Constants/dataViews';
+import {FLOORPLAN, GEO} from 'Constants/dataViews';
 
 import DefaultLayout from 'Components/DefaultLayout';
-import { Modal, BareModal, ModalBody } from 'Utils/Modal';
+import {Modal, BareModal, ModalBody} from 'Utils/Modal';
 
 import EditCard from 'Components/cards/ConnectedEditCard';
 // import * as d3 from 'd3';
@@ -28,8 +28,8 @@ import CardStack from '../CardStack';
 // import ExtendableMarker from 'Utils/ExtendableMarker';
 // import { Modal, ModalBody } from 'Utils/Modal';
 
-import { DropDown } from 'Utils/TagInput';
-import { calcDataViewHeight } from 'Src/styles/GlobalThemeContext';
+import {DropDown} from 'Utils/TagInput';
+import {calcDataViewHeight} from 'Src/styles/GlobalThemeContext';
 
 // import CardDragAuthorOverlay from './CardDragAuthorOverlay';
 
@@ -71,7 +71,7 @@ import CardTagSearch from '../CardTagSearch';
 
 // const TimoutGrid = ReactTimeout(CardStack);
 
-function SpeechBubble({ ...props }) {
+function SpeechBubble({...props}) {
   return (
     <div
       style={{
@@ -194,7 +194,7 @@ class CardAuthorPage extends Component {
     return (
       <DefaultLayout
         className="w-full h-full flex-col"
-        style={{ position: 'relative', overflow: 'hidden' }}
+        style={{position: 'relative', overflow: 'hidden'}}
         menu={
           <div className="flex-grow flex justify-end items-center">
             <CardTagSearch
@@ -225,7 +225,6 @@ class CardAuthorPage extends Component {
             selectedCardId={selectedCardId}
             touch={isSmartphone}
             duration={600}
-            className="ml-1 mr-2"
             width={cardStackWidth}
             height={100}
             cardHeight={height / 4}

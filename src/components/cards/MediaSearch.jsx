@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import fetchJsonp from 'fetch-jsonp';
 
-import { Trash2, PlusSquare, Youtube, AlignLeft } from 'react-feather';
-import { uniqBy } from 'lodash';
+import {Trash2, PlusSquare, Youtube, AlignLeft} from 'react-feather';
+import {uniqBy} from 'lodash';
 
 // import MyGrid from 'mygrid/dist';
 import giphyReq from 'giphy-api';
@@ -11,18 +11,18 @@ import ScrollList from 'Components/utils/ScrollList';
 // import fetchJsonp from 'fetch-jsonp';
 
 // import { DDG } from 'node-ddg-api';
-import { db } from 'Firebase';
-import { mediaScale } from 'Constants/mediaTypes';
+import {db} from 'Firebase';
+import {mediaScale} from 'Constants/mediaTypes';
 
 import MediaUpload from 'Utils/MediaUpload';
 import DimWrapper from 'Utils/DimensionsWrapper';
 
 // import { createShadowStyle } from './styles';
 
-import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
-import { NewTabLink } from 'Components/utils/StyledComps';
+import {CardThemeConsumer} from 'Src/styles/CardThemeContext';
+import {NewTabLink} from 'Components/utils/StyledComps';
 
-import { GIF, TEXT, VIDEO, IMG, URL } from 'Constants/mediaTypes';
+import {GIF, TEXT, VIDEO, IMG, URL} from 'Constants/mediaTypes';
 
 const WIKIPEDIA = 'wikipedia';
 const GIPHY = 'giphy';
@@ -70,21 +70,19 @@ const navIcons = [
   },
   {
     key: OVERVIEW,
-    node: (
-      <span style={{ fontWeight: 'bold', fontSize: 'large' }}>Overview</span>
-    )
+    node: <span style={{fontWeight: 'bold', fontSize: 'large'}}>Overview</span>
   }
 ];
 
 const userContentUploadPath = id => `media/${id}`;
 
-const UploadUserContent = ({ onChange, className, ...props }) => (
+const UploadUserContent = ({onChange, className, ...props}) => (
   <MediaUpload
     className="flex flex-col flex-grow"
-    style={{ width: '100%', height: '60%' }}
+    style={{width: '100%', height: '60%'}}
     {...props}
-    nodeWrapper={({ url, name, loading }) => (
-      <div style={{ fontSize: 'large' }}>{!loading ? name : 'loading'}</div>
+    nodeWrapper={({url, name, loading}) => (
+      <div style={{fontSize: 'large'}}>{!loading ? name : 'loading'}</div>
     )}
     onChange={media => {
       onChange(
@@ -94,15 +92,15 @@ const UploadUserContent = ({ onChange, className, ...props }) => (
           thumbnail: m.url,
           source: USER_CONTENT,
           date: new Date()
-        }))
+        })),
       );
     }}
   />
 );
 
-const SpanBG = ({ children, style }) => (
+const SpanBG = ({children, style}) => (
   <CardThemeConsumer>
-    {({ stylesheet: { shallowBg } }) => (
+    {({stylesheet: {shallowBg}}) => (
       <span className="bg-grey-light p-1 pr-2 pl-2" style={style}>
         {children}
       </span>
@@ -110,9 +108,9 @@ const SpanBG = ({ children, style }) => (
   </CardThemeConsumer>
 );
 
-const giphy = giphyReq({ https: true });
+const giphy = giphyReq({https: true});
 
-const fullDim = { width: '100%', height: '100%' };
+const fullDim = {width: '100%', height: '100%'};
 
 const truncateStyle = {
   whiteSpace: 'nowrap',
@@ -125,7 +123,7 @@ const flickrUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.se
   process.env.FlickrAccessToken
 }`;
 
-const youtubeUrl = ({ part, q, type, maxResults, order }) =>
+const youtubeUrl = ({part, q, type, maxResults, order}) =>
   `https://www.googleapis.com/youtube/v3/search?part=${part}&q=${q}&type=${type}&maxResult=${maxResults}&order=${order}&key=${
     process.env.youtube
   }`;
@@ -172,7 +170,7 @@ const wikiUrl = q =>
 const searchWikipedia = q =>
   fetchJsonp(wikiUrl(q), {})
     .then(res => res.json())
-    .then(({ query: { pages } }) => {
+    .then(({query: {pages}}) => {
       const values = Object.values(pages);
       const results = values.map(d => ({
         title: d.title,
@@ -197,10 +195,10 @@ const searchYoutube = (q = '') =>
         maxResults: 20,
         order: 'viewCount'
         // publishedAfter: '2015-01-01T00:00:00Z'
-      })
+      }),
     )
       .then(res => res.json())
-      .then(({ items }) => {
+      .then(({items}) => {
         console.log('items', items);
         const res = items.map(d => ({
           // url2: `http://www.youtube.com/embed/${d.id.videoId}`,
@@ -213,12 +211,12 @@ const searchYoutube = (q = '') =>
           type: VIDEO
         }));
         resolve(res);
-      })
+      }),
   );
 
 const searchGiphy = (q = 'pokemon') =>
   new Promise(resolve =>
-    giphy.search(q, (_, { data }) =>
+    giphy.search(q, (_, {data}) =>
       resolve(
         data.map(d => ({
           url: d.embed_url,
@@ -229,16 +227,16 @@ const searchGiphy = (q = 'pokemon') =>
           gifurl: d.url,
           source: GIPHY,
           type: IMG
-        }))
-      )
-    )
+        })),
+      ),
+    ),
   );
 
 const pinterestUrl =
   'https://api.pinterest.com/v3/users/jessicamalba/?access_token=2222904fa9e29280188a94b9f940eea54fdc2344f4c666f7aa86a3187d47858d';
 
 //
-const Iframe = ({ title, url, onClick, edit, style }) => (
+const Iframe = ({title, url, onClick, edit, style}) => (
   <div
     style={{
       position: 'relative',
@@ -247,7 +245,7 @@ const Iframe = ({ title, url, onClick, edit, style }) => (
       // border: '10px tomato solid'
     }}
   >
-    <div style={{ position: 'absolute', ...fullDim }}>
+    <div style={{position: 'absolute', ...fullDim}}>
       <iframe
         title={title}
         type="text/html"
@@ -255,7 +253,7 @@ const Iframe = ({ title, url, onClick, edit, style }) => (
         height="100%"
         src={url}
         frameBorder="0"
-        style={{ zIndex: '-1', position: 'absolute' }}
+        style={{zIndex: '-1', position: 'absolute'}}
       />
     </div>
   </div>
@@ -277,7 +275,7 @@ Iframe.defaultProps = {
   edit: false
 };
 
-const Article = ({ url, title, descr, onClick }) => (
+const Article = ({url, title, descr, onClick}) => (
   <div
     onClick={onClick}
     style={{
@@ -331,8 +329,8 @@ const CellDetail = ({
       width: '100%'
     }}
   >
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <h2 style={{ ...truncateStyle, width: '100%' }}>
+    <div style={{display: 'flex', alignItems: 'center'}}>
+      <h2 style={{...truncateStyle, width: '100%'}}>
         <NewTabLink
           href={url}
           style={{
@@ -342,7 +340,7 @@ const CellDetail = ({
             width: '100%'
           }}
         >
-          <div className="mr-1" style={{ ...truncateStyle, width: '100%' }}>
+          <div className="mr-1" style={{...truncateStyle, width: '100%'}}>
             {title}
           </div>
         </NewTabLink>
@@ -382,7 +380,7 @@ CellDetail.defaultProps = {
   uiColor: 'grey',
   focusColor: 'black'
 };
-const CellWrapper = ({ btn, className, focusColor, style, ...props }) => (
+const CellWrapper = ({btn, className, focusColor, style, ...props}) => (
   <div
     className="p-3 mb-3 border"
     style={{
@@ -446,7 +444,7 @@ class UrlMedia extends Component {
   onSubmit = event => {
     event.preventDefault();
 
-    const { url, title, descr } = this.state;
+    const {url, title, descr} = this.state;
     const urlItem = {
       id: url,
       url,
@@ -458,7 +456,7 @@ class UrlMedia extends Component {
     };
 
     // TODO: check later
-    this.setState(({ data: oldData }) => ({
+    this.setState(({data: oldData}) => ({
       data: uniqBy([urlItem, ...oldData], 'id'),
       title: '',
       url: '',
@@ -467,15 +465,15 @@ class UrlMedia extends Component {
   };
 
   removeItem = id => {
-    this.setState(({ data: oldData }) => ({
+    this.setState(({data: oldData}) => ({
       data: oldData.filter(d => d.id !== id)
     }));
   };
 
   componentDidUpdate(prevProps, prevState) {
-    const { onChange } = this.props;
-    const { data: oldData } = prevState;
-    const { data } = this.state;
+    const {onChange} = this.props;
+    const {data: oldData} = prevState;
+    const {data} = this.state;
 
     if (oldData.length !== data.length) {
       onChange(data);
@@ -483,110 +481,100 @@ class UrlMedia extends Component {
   }
 
   render() {
-    const { focusColor, uiColor } = this.props;
-    const { url, title, descr, data } = this.state;
+    const {focusColor, uiColor} = this.props;
+    const {url, title, descr, data} = this.state;
 
     return (
-          <div className="w-100" style={{ height: '100%' }}>
-            <div className="mb-3">
-              <form className="form-horizontal" onSubmit={this.onSubmit}>
-                <div className="form-group">
-                  <div>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Title"
-                      value={title}
-                      onChange={event => {
-                        this.setState({ title: event.target.value });
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Description"
-                    value={descr}
-                    onChange={event =>
-                      this.setState({ descr: event.target.value })
-                    }
-                  />
-                </div>
-                <div className="form-group">
-                  <input
-                    type="url"
-                    placeholder="Url"
-                    className="form-control"
-                    value={url}
-                    onChange={event =>
-                      this.setState({ url: event.target.value })
-                    }
-                  />
-                </div>
-                <button type="submit" className="btn">
-                  Add Link
-                </button>
-              </form>
+      <div className="w-100" style={{height: '100%'}}>
+        <div className="mb-3">
+          <form className="form-horizontal" onSubmit={this.onSubmit}>
+            <div className="form-group">
+              <div>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Title"
+                  value={title}
+                  onChange={event => {
+                    this.setState({title: event.target.value});
+                  }}
+                />
+              </div>
             </div>
-            {data.length > 0 ? (
-              <div style={{ width: '100%', height: '100%' }}>
-                <ScrollList data={data} maxHeight="90%">
-                  {(d, isSelected) => (
-                    <div
-                      className={`mb-3 p-3 border ${isSelected && 'shadow'}`}
-                      selected={isSelected}
+            <div className="form-group">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Description"
+                value={descr}
+                onChange={event => this.setState({descr: event.target.value})}
+              />
+            </div>
+            <div className="form-group">
+              <input
+                type="url"
+                placeholder="Url"
+                className="form-control"
+                value={url}
+                onChange={event => this.setState({url: event.target.value})}
+              />
+            </div>
+            <button type="submit" className="btn">
+              Add Link
+            </button>
+          </form>
+        </div>
+        {data.length > 0 ? (
+          <div style={{width: '100%', height: '100%'}}>
+            <ScrollList data={data} maxHeight="90%">
+              {(d, isSelected) => (
+                <div
+                  className={`mb-3 p-3 border ${isSelected && 'shadow'}`}
+                  selected={isSelected}
+                  style={{
+                    height: 150,
+                    // width: '100%',
+                    cursor: 'pointer',
+                  }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                    }}>
+                    <h3
                       style={{
-                        height: 150,
-                        // width: '100%',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between'
-                        }}
-                      >
-                        <h3
-                          style={{
-                            overflow: 'hidden',
-                            whiteSpace: 'no-wrap',
-                            textOverflow: 'ellipsis'
-                          }}
-                        >
-                          {d.title}
-                        </h3>
-                        <MediaBtn
-                          selected
-                          onClick={() => this.removeItem(d.id)}
-                        />
-                      </div>
-                      <small>{d.url}</small>
-                      <div>{d.descr}</div>
-                    </div>
-                  )}
-                </ScrollList>
-              </div>
-            ) : (
-              <div className="m-3 text-muted">
-                <h3>No Urls added</h3>
-              </div>
-            )}
+                        overflow: 'hidden',
+                        whiteSpace: 'no-wrap',
+                        textOverflow: 'ellipsis',
+                      }}>
+                      {d.title}
+                    </h3>
+                    <MediaBtn selected onClick={() => this.removeItem(d.id)} />
+                  </div>
+                  <small>{d.url}</small>
+                  <div>{d.descr}</div>
+                </div>
+              )}
+            </ScrollList>
           </div>
+        ) : (
+          <div className="m-3 text-muted">
+            <h3>No Urls added</h3>
+          </div>
+        )}
+      </div>
     );
   }
 }
 
-class UnstyledMediaSearch extends Component {
+class MediaSearch extends Component {
   static propTypes = {
     onChange: PropTypes.func
   };
 
-  static defaultProps = { onChange: () => null, media: [] };
+  static defaultProps = {onChange: () => null, media: []};
 
-  state = { selected: 'wikipedia', mySelectedMedia: [] };
+  state = {selected: 'wikipedia', mySelectedMedia: []};
 
   // componentDidMount() {
   //   gapi.load('client', () => {
@@ -608,7 +596,7 @@ class UnstyledMediaSearch extends Component {
   // }
 
   activeTab = sel => {
-    const { selectedMedia, onChange } = this.props;
+    const {selectedMedia, onChange} = this.props;
     const selArticles = selectedMedia.filter(m => m.source === WIKIPEDIA);
     const selVideos = selectedMedia.filter(m => m.source === YOUTUBE);
     const selGIFs = selectedMedia.filter(m => m.source === GIPHY);
@@ -632,7 +620,7 @@ class UnstyledMediaSearch extends Component {
       case WIKIPEDIA:
         return (
           <MetaSearch
-            style={{ height: '85%' }}
+            style={{height: '85%'}}
             onChange={newArticles =>
               onChange(
                 sortByDate([
@@ -642,7 +630,7 @@ class UnstyledMediaSearch extends Component {
                   // ...selPhotos,
                   ...selURLs,
                   ...selUserContent
-                ])
+                ]),
               )
             }
             preSelected={selArticles}
@@ -655,7 +643,7 @@ class UnstyledMediaSearch extends Component {
       case YOUTUBE:
         return (
           <MetaSearch
-            style={{ height: '85%' }}
+            style={{height: '85%'}}
             onChange={newVideos =>
               onChange(
                 sortByDate([
@@ -665,7 +653,7 @@ class UnstyledMediaSearch extends Component {
                   // ...selPhotos,
                   ...selURLs,
                   ...selUserContent
-                ])
+                ]),
               )
             }
             preSelected={selVideos}
@@ -678,7 +666,7 @@ class UnstyledMediaSearch extends Component {
       case GIPHY:
         return (
           <MetaSearch
-            style={{ height: '85%' }}
+            style={{height: '85%'}}
             preSelected={selGIFs}
             onChange={newGIFs =>
               onChange(
@@ -689,7 +677,7 @@ class UnstyledMediaSearch extends Component {
                   // ...selPhotos,
                   ...selURLs,
                   ...selUserContent
-                ])
+                ]),
               )
             }
             searchFn={searchGiphy}
@@ -724,7 +712,7 @@ class UnstyledMediaSearch extends Component {
       case URL:
         return (
           <UrlMedia
-            style={{ height: '85%' }}
+            style={{height: '85%'}}
             preSelected={selURLs}
             onChange={newUrls =>
               onChange(
@@ -735,7 +723,7 @@ class UnstyledMediaSearch extends Component {
                   ...selGIFs,
                   // ...selPhotos,
                   ...selUserContent
-                ])
+                ]),
               )
             }
             source={URL}
@@ -758,7 +746,7 @@ class UnstyledMediaSearch extends Component {
                   // ...selPhotos,
                   ...selURLs,
                   ...newUserContent
-                ])
+                ]),
               );
             }}
             preSelected={selVideos}
@@ -772,16 +760,16 @@ class UnstyledMediaSearch extends Component {
   };
 
   render() {
-    const { selectedMedia, stylesheet, onChange } = this.props;
-    const { selected } = this.state;
+    const {selectedMedia, stylesheet, onChange} = this.props;
+    const {selected} = this.state;
 
     const btnClass = sel => (sel === selected ? 'btn btn-black' : 'btn');
 
-    const navBtn = ({ key, node }) => (
+    const navBtn = ({key, node}) => (
       <button
         className={`${btnClass(key)} m-1`}
         type="button"
-        onClick={() => this.setState({ selected: key })}
+        onClick={() => this.setState({selected: key})}
         id={key}
       >
         {node}
@@ -790,8 +778,8 @@ class UnstyledMediaSearch extends Component {
 
     return (
       <div className="flex-grow flex flex-col">
-        <div className="mb-3" role="tablist" style={{ flexShrink: 0 }}>
-          <div style={{ display: 'flex' }}>{navIcons.map(navBtn)}</div>
+        <div className="mb-3" role="tablist" style={{flexShrink: 0}}>
+          <div style={{display: 'flex'}}>{navIcons.map(navBtn)}</div>
         </div>
         {this.activeTab(selected)}
       </div>
@@ -799,7 +787,7 @@ class UnstyledMediaSearch extends Component {
   }
 }
 
-function MediaBtn({ selected, onClick }) {
+function MediaBtn({selected, onClick}) {
   return (
     <div
       className="bg-light-grey"
@@ -855,20 +843,18 @@ class MetaSearch extends Component {
   };
 
   componentDidMount() {
-    const { searchFn, defaultQuery } = this.props;
-    searchFn(defaultQuery).then(
-      data => this.mounted && this.setState({ data })
-    );
+    const {searchFn, defaultQuery} = this.props;
+    searchFn(defaultQuery).then(data => this.mounted && this.setState({data}));
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { onChange } = this.props;
-    const { data, selectedIds } = this.state;
+    const {onChange} = this.props;
+    const {data, selectedIds} = this.state;
 
     if (selectedIds.length !== prevState.selectedIds.length) {
       const newData = data
         .filter(d => selectedIds.includes(d.id))
-        .map(d => ({ ...d, date: new Date() }));
+        .map(d => ({...d, date: new Date()}));
       onChange(newData);
     }
 
@@ -882,9 +868,9 @@ class MetaSearch extends Component {
   // }
 
   onSearch = searchStr => {
-    const { searchFn, source, type } = this.props;
+    const {searchFn, source, type} = this.props;
     searchFn(searchStr).then(items => {
-      this.setState({ data: items.map(d => ({ ...d, source, type })) });
+      this.setState({data: items.map(d => ({...d, source, type}))});
     });
     // else {
     //   this.setState({
@@ -907,8 +893,8 @@ class MetaSearch extends Component {
   };
 
   render() {
-    const { data, selectedIds } = this.state;
-    const { defaultQuery, style } = this.props;
+    const {data, selectedIds} = this.state;
+    const {defaultQuery, style} = this.props;
     // let GoogleAuth;
     // const SCOPE = 'https://www.googleapis.com/auth/youtube.force-ssl';
     // Load the API's client and auth2 modules.
@@ -918,7 +904,7 @@ class MetaSearch extends Component {
     // TODO: fix view height
     return (
       <div className="flex flex-col" role="tabpanel">
-        <div style={{ width: '100%' }}>
+        <div style={{width: '100%'}}>
           <input
             type="text"
             className="form-control mb-3 w-full"
@@ -968,7 +954,7 @@ class MetaSearch extends Component {
 //
 //
 //
-export class MediaPreview extends Component {
+class MediaPreview extends Component {
   static propTypes = {};
   static defaultProps = {
     data: [],
@@ -976,10 +962,10 @@ export class MediaPreview extends Component {
   };
 
   render() {
-    const { data } = this.props;
+    const {data} = this.props;
 
     return (
-      <div style={{ width: '100%' }}>
+      <div style={{width: '100%'}}>
         {data.length === 0 && <h3>{'No media added to this Card!'} </h3>}
         <ScrollList data={data}>
           {(d, selected) => (
@@ -998,11 +984,11 @@ class MediaOverview extends Component {
     edit: false
   };
 
-  state = { data: this.props.data };
+  state = {data: this.props.data};
 
-  componentDidUpdate(_, { data: oldData }) {
-    const { data } = this.state;
-    const { onChange } = this.props;
+  componentDidUpdate(_, {data: oldData}) {
+    const {data} = this.state;
+    const {onChange} = this.props;
     if (oldData.length !== data.length) {
       onChange(data);
     }
@@ -1012,7 +998,7 @@ class MediaOverview extends Component {
     if (m.source === USER_CONTENT) {
       db.removeFromStorage(userContentUploadPath(m.id)).then(() =>
         // TODO: action
-        console.log('removedMediaItem Success', m.id)
+        console.log('removedMediaItem Success', m.id),
       );
     }
     this.setState(oldState => ({
@@ -1021,8 +1007,8 @@ class MediaOverview extends Component {
   };
 
   render() {
-    const { data } = this.state;
-    const { edit, className } = this.props;
+    const {data} = this.state;
+    const {edit, className} = this.props;
 
     // TODO: fix view height
 
@@ -1045,7 +1031,7 @@ class MediaOverview extends Component {
               btn={
                 edit && <MediaBtn selected onClick={() => this.removeItem(d)} />
               }
-              style={{ height: 300 }}
+              style={{height: 300}}
             />
           )}
         </ScrollList>
@@ -1054,12 +1040,4 @@ class MediaOverview extends Component {
   }
 }
 
-const MediaSearch = ({ ...props }) => (
-  <CardThemeConsumer>
-    {({ stylesheet }) => (
-      <UnstyledMediaSearch {...props} stylesheet={stylesheet} />
-    )}
-  </CardThemeConsumer>
-);
-
-export { MediaSearch, MediaOverview };
+export {MediaSearch, MediaOverview, MediaPreview};

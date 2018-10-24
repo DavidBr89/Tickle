@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { PreviewCard } from 'Cards';
+import {PreviewCard} from 'Cards';
 import Stack from 'Utils/Stack';
 import DelayClick from 'Components/utils/DelayClick';
 
@@ -12,12 +12,12 @@ import Swipe from 'react-easy-swipe';
 
 const isPosInt = n => Number.isInteger(n) && n >= 0;
 
-const TouchableCard = ({ touch, onClick, className, ...d }) =>
+const TouchableCard = ({touch, onClick, className, ...d}) =>
   touch && !d.selected ? (
     <Swipe
       className={className}
       onSwipeStart={onClick}
-      style={{ width: '100%', height: '100%' }}
+      style={{width: '100%', height: '100%'}}
     >
       <PreviewCard {...d} />
     </Swipe>
@@ -67,7 +67,6 @@ function CardStackWrapper({
                 // e.stopPropagation();
                 onClick(d);
               }}
-              tagColorScale={tagColorScale}
               key={d.id}
               edit={d.template}
               selected={selectedCardId === d.id}
@@ -89,8 +88,27 @@ function CardStackWrapper({
   );
 }
 
-CardStackWrapper.defaultProps = {};
+CardStackWrapper.defaultProps = {
+  className: 'ml-1 mr-1',
+  cards: [],
+  selectedCardId: null,
+  width: 0,
+  height: 0,
+  slotSize: 0,
+  onClick: d => d,
+  unit: 'px',
+  touch: false,
+};
 
-CardStackWrapper.propTypes = {};
+CardStackWrapper.propTypes = {className: PropTypes.string,
+  cards: PropTypes.array,
+  selectedCardId: PropTypes.oneOf([ null, PropTypes.number ]),
+  width: PropTypes.number,
+  height: PropTypes.number,
+  slotSize: PropTypes.number,
+  onClick: PropTypes.func,
+  unit: PropTypes.string,
+  touch: PropTypes.bool,
+};
 
 export default CardStackWrapper;

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
 import CardStack from '../CardStack';
@@ -17,7 +17,7 @@ import {
 
 // import { StyledButton } from 'Utils/StyledComps';
 
-const LoadingScreen = ({ visible, style }) => {
+const LoadingScreen = ({visible, style}) => {
   if (visible) {
     return (
       <div
@@ -131,13 +131,9 @@ class CardViewPage extends Component {
     const slotSize = Math.min(width / 3.5, 200);
     // const cardStackWidth = width;
 
-    // TODO change later
-    cards.map(c => !c.seen && seeCard(c.id));
-
     return (
       <DefaultLayout
-        className="w-full h-full flex-col"
-        style={{ position: 'relative', overflow: 'hidden' }}
+        className="w-full h-full relative overflow-hidden flex-col-wrapper"
         menu={
           <div className="flex-grow flex justify-end items-center">
             <div>mini</div>
@@ -166,13 +162,11 @@ class CardViewPage extends Component {
             touch={isSmartphone}
             selectedCardId={selectedCardId}
             duration={600}
-            className="ml-1 mr-2"
             width={width}
             height={height / 4}
             onClick={previewCardAction}
             tagColorScale={tagColorScale}
             slotSize={slotSize}
-            className="z-10"
             style={
               {
                 // zIndex: 1000
@@ -180,11 +174,11 @@ class CardViewPage extends Component {
             }
           />
         </div>
-        <LoadingScreen style={{ marginTop: 25 }} visible={isLoadingCards} />
+        <LoadingScreen style={{marginTop: 25}} visible={isLoadingCards} />
 
         <BareModal
           visible={extendedCard !== null}
-          style={{ margin: `${!isSmartphone ? '2.5rem' : ''} auto` }}
+          style={{margin: `${!isSmartphone ? '2.5rem' : ''} auto`}}
         >
           <ConnectedCard {...selectedCard} />
         </BareModal>

@@ -2,7 +2,7 @@
 
 import fetch from 'cross-fetch';
 
-import { extractCardFields } from 'Constants/cardFields';
+import {extractCardFields} from 'Constants/cardFields';
 
 import {
   receivePlaces,
@@ -25,11 +25,11 @@ import {
   submitChallengeSuccess
 } from './actions';
 
-import { selectCard, extendSelectedCard } from '../DataView/actions';
+import {selectCard, extendSelectedCard} from '../DataView/actions';
 
 import NearbyPlaces from '../places.json';
 
-import { db, firebase } from 'Firebase';
+import {db, firebase} from 'Firebase';
 import idGenerate from 'Src/idGenerator';
 
 // export const REQUEST_CHALLENGES = 'REQUEST_CHALLENGES';
@@ -84,44 +84,47 @@ import idGenerate from 'Src/idGenerator';
 // });
 
 // const haaike = 'PpNOHOQLtXatZzcaAYVCMQQP5XT2';
-export function fetchCollectibleCards(uid) {
+export function fetchCollectibleCards(playerId) {
   // Thunk middleware knows how to handle functions.
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
   return function(dispatch) {
     dispatch(loadingCards(true));
     // TODO: change later with obj params
-    return db.readCards(null, uid).then(data => {
-      dispatch(loadingCards(false));
-      dispatch(
-        receiveCollectibleCards(
-          data.map(extractCardFields) // .filter(d => d.challengeSubmission === null || d.challengeSubmission.completed)
-        )
-      );
-    });
+    return db.readCards({playerId}).then(
+      data => {
+        dispatch(loadingCards(false));
+        dispatch(
+          receiveCollectibleCards(
+            data.map(extractCardFields), // .filter(d => d.challengeSubmission === null || d.challengeSubmission.completed)
+          ),
+        );
+      },
+      err => console.log('fetch createdCards', err),
+    );
   };
 }
 
 export function fetchAllCardsWithSubmissions() {
   return function(dispatch) {
     dispatch(loadingCards(true));
-    return db
-      .readCardsWithSubmissions({ uid: null, allCardsFlag: true })
-      .then(data => {
-        dispatch(loadingCards(false));
-        dispatch(receiveCreatedCards(data));
-      });
-  };
-}
-
-export function fetchCreatedCards(uid) {
-  return function(dispatch) {
-    dispatch(loadingCards(true));
-    console.log("fetchCreatedCards", uid);
-    return db.readCardsWithSubmissions({ uid }).then(data => {
+    return db.readCards().then(data => {
       dispatch(loadingCards(false));
       dispatch(receiveCreatedCards(data));
     });
+  };
+}
+
+export function fetchCreatedCards(authorId) {
+  return function(dispatch) {
+    dispatch(loadingCards(true));
+    return db.readCards({authorId, playerId: null}).then(
+      data => {
+        dispatch(loadingCards(false));
+        dispatch(receiveCreatedCards(data));
+      },
+      err => console.log('fetch createdCards', err),
+    );
   };
 }
 
@@ -154,14 +157,14 @@ export function fetchCardTemplates(uid) {
       .get()
       .then(querySnapshot => {
         const data = [];
-        querySnapshot.forEach(doc => data.push({ ...doc.data(), id: doc.id }));
+        querySnapshot.forEach(doc => data.push({...doc.data(), id: doc.id}));
         // dispatch(loadingCards(false));
         dispatch(receiveCreatedCards(data));
       });
   };
 }
 
-export function asyncCreateCard({ cardData, uid, viewport, dataView }) {
+export function asyncCreateCard({cardData, uid, viewport, dataView}) {
   const newCard = {
     ...cardData,
     id: idGenerate(),
@@ -235,8 +238,8 @@ export function asyncAddComment(
   commentObj = {
     authorId: null,
     cardId: null,
-    comment: { uid: '', text: '', date: null }
-  }
+    comment: {uid: '', text: '', date: null}
+  },
 ) {
   return function(dispatch) {
     dispatch(addComment(commentObj));
@@ -268,7 +271,7 @@ export function fetchNearByPlaces() {
       fetch(
         `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=50.847109,4.352439&radius=500&key=${
           process.env.GoogleAccessToken
-        }${PROXY_URL}`
+        }${PROXY_URL}`,
       )
         // .then(
         //   response => console.log('nearbysearch', response),
@@ -288,13 +291,13 @@ export function fetchNearByPlaces() {
 export function asyncSubmitChallenge(challengeSubmission) {
   return function(dispatch) {
     console.log('response', db, challengeSubmission);
-    const { cardId, playerId, ...challengeData } = challengeSubmission;
+    const {cardId, playerId, ...challengeData} = challengeSubmission;
 
-    console.log('challengeSubmission', { cardId, playerId, challengeData });
+    console.log('challengeSubmission', {cardId, playerId, challengeData});
 
     dispatch(submitChallenge(challengeSubmission));
     return db
-      .addChallengeSubmission({ cardId, playerId, challengeData })
+      .addChallengeSubmission({cardId, playerId, challengeData})
       .then(() => dispatch(submitChallengeSuccess()))
       .catch(err => {
         throw new Error('error saving challenge submission');
@@ -320,11 +323,11 @@ export function asyncSubmitChallenge(challengeSubmission) {
 // }
 
 export function removeChallengeSubmission(challengeSubmission) {
-  const { cardId, playerId } = challengeSubmission;
+  const {cardId, playerId} = challengeSubmission;
 
   return function(dispatch) {
     // dispatch(submitChallenge(challengeSubmission));
-    return db.removeChallengeSubmission({ cardId, playerId });
+    return db.removeChallengeSubmission({cardId, playerId});
     //   .then(() => dispatch(submitChallengeSuccess()))
     //   .catch(err => {
     //     throw new Error('error saving challenge submission');

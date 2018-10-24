@@ -1,34 +1,79 @@
 import React, {Component, PureComponent} from 'react';
 import PropTypes from 'prop-types';
 
-import {PreviewTags} from 'Utils/Tag';
-
 import placeholderImgSrc from '../placeholder.png';
 
 import {Edit} from 'react-feather';
 
-import {FieldSet} from 'Components/utils/StyledComps';
 import {mediaScale} from 'Constants/mediaTypes';
 
 import CardControls from 'Components/cards/CardControls';
 
-const MediaIcons = ({media}) => (
-  <div className="ml-1" style={{display: 'flex', alignItems: 'center'}}>
-    {media.map(m =>
-      React.createElement(mediaScale(m.type), {
-        className: 'm-1',
-        style: {background: 'white'}
-      }),
-    )}
+const createIcon = type =>
+  React.createElement(type, {
+    style: {color: 'white'},
+  });
+
+// const iconClasses =
+//   'border border-white p-1 m-1 flex-col-wrapper items-center text-white';
+
+const IconCont = ({className, styles, onClick, children}) => (
+  <div className="ml-1 flex items-center cursor-pointer" onClick={onClick}>
+    <div className={`flex-col-wrapper justify-center ${className}`}>
+      {children}
+    </div>
   </div>
 );
 
-const TagLabels = ({tags, tagColorScale}) => (
-  <PreviewTags
-    colorScale={tagColorScale}
-    data={tags && tags.length > 0 ? tags : ['No Tags']}
-  />
+IconCont.defaultProps = {
+  className: 'text-white',
+};
+
+const MediaIcons = ({media}) => (
+  <div className="ml-1 flex items-center">
+    {media.map(m => (
+      <IconCont className="p-1 m-1 border-white border-2">
+        {createIcon(mediaScale(m.type))}
+      </IconCont>
+    ))}
+  </div>
 );
+
+export const PreviewTags = ({
+  values,
+  style,
+  placeholder,
+  small,
+  colorScale,
+  onClick,
+  className
+}) => {
+  const tagData = values && values.length > 0 ? values : ['No Tags'];
+  return (
+    <div
+      onClick={onClick}
+      className={`flex ${className} overflow-hidden`}
+      style={{
+        flexWrap: 'wrap',
+        ...style,
+      }}>
+      {tagData.map(t => (
+        <div className="tag-label text-xl">{t} </div>
+      ))}
+    </div>
+  );
+};
+
+PreviewTags.propTypes = {
+  values: PropTypes.oneOfType([PropTypes.array, null]),
+  style: PropTypes.object,
+  placeholder: PropTypes.string,
+};
+
+PreviewTags.defaultProps = {
+  values: null,
+  style: {},
+};
 
 const ImgOverlay = ({src, className, style, children, footer, onClick}) => (
   <div
@@ -67,44 +112,40 @@ const ImgOverlay = ({src, className, style, children, footer, onClick}) => (
   </div>
 );
 
-const FieldIcon = ({edit, className, style, onClick}) =>
-  edit ? (
-    <span
-      className={className}
-      onClick={onClick}
-      style={{
-        cursor: 'pointer',
+const EditIcon = ({edit, className, style, onClick}) => (
+  <IconCont
+    className={`text-black ${className}`}
+    onClick={onClick}
+    style={style}>
+    <Edit size={30} />
+  </IconCont>
+);
 
-        ...style
-      }}
-    >
-      <Edit
-        size={25}
-        style={{
-          background: 'white'
-        }}
-      />
-    </span>
-  ) : (
-    <div
-      className={className}
-      style={{cursor: 'pointer', background: 'white', ...style}}
-    />
+const Title = ({onClick, edit, children, className}) => {
+  const emptyTitle = (
+    <React.Fragment>
+      <h1 className="text-muted">No Title</h1> <EditIcon />
+    </React.Fragment>
+  );
+  const titleHeader = (
+    <React.Fragment>
+      <h1>{children}</h1> <EditIcon />
+    </React.Fragment>
   );
 
-const Title = ({onClick, edit, children}) => (
-  <h1 className="text-truncate" onClick={onClick}>
-    {children === null ? (
-      <div>
-        <span className="text-muted">No Title</span> <FieldIcon edit={edit} />
+  return (
+    <div className={`flex items-center ${className}`} onClick={onClick}>
+      <div className="flex flex-grow justify-between">
+        {children === null ? (
+          <h1 className="text-muted">No Title</h1>
+        ) : (
+          <h1>{children}</h1>
+        )}
+        <EditIcon />
       </div>
-    ) : (
-      <React.Fragment>
-        {children} <FieldIcon edit={edit} />
-      </React.Fragment>
-    )}
-  </h1>
-);
+    </div>
+  );
+};
 
 const DescriptionField = ({
   text,
@@ -115,18 +156,17 @@ const DescriptionField = ({
   style,
   edit
 }) => (
-  <FieldSet
-    className={`border ${className}`}
-    legend="Description"
+  <div
+    className={`${className}`}
     style={{...style, cursor: 'pointer'}}
     onClick={onClick || onEdit}>
-    <div style={{display: 'flex'}}>
-      <div style={{width: '100%'}}>
+    <div className="flex">
+      <div className="flex-grow text-xl">
         {text || <p style={{fontStyle: 'italic'}}>{placeholder}</p>}
       </div>
-      <FieldIcon edit={edit} />
+      <EditIcon />
     </div>
-  </FieldSet>
+  </div>
 );
 
 DescriptionField.propTypes = {
@@ -148,20 +188,6 @@ DescriptionField.defaultProps = {
   style: {},
   edit: false
 };
-
-const EditButton = ({style, onClick, className}) => (
-  <button className={`close ml-1 ${className}`} style={style} onClick={onClick}>
-    <Edit />
-  </button>
-);
-
-EditButton.propTypes = {
-  style: PropTypes.object,
-  className: PropTypes.string,
-  onClick: PropTypes.func
-};
-
-EditButton.defaultProps = {style: {}, onClick: () => null, className: ''};
 
 /*
 
@@ -190,7 +216,7 @@ EditButton.defaultProps = {style: {}, onClick: () => null, className: ''};
                       height: '50%'
                     }}
                   >
-                    <FieldIcon edit={edit} />
+                    <EditIcon edit={edit} />
                   </div>
                 )}
               </div>
@@ -287,33 +313,33 @@ class CardFront extends Component {
           style={{
             flex: '0 1 50%',
             cursor: !edit && 'pointer',
-            minHeight: 0
           }}
         >
-          <div className="absolute w-full h-full flex justify-end items-end">
-            <FieldIcon
-              edit={edit}
-              className="m-1"
-              onClick={edit ? onImgClick : null}
-            />
+          <div className="absolute z-10 w-full h-full flex items-end">
+            {edit && (
+              <EditIcon
+                className="m-1 p-1 text-white"
+                onClick={edit ? onImgClick : null}
+              />
+            )}
           </div>
 
           <div className="z-0 absolute w-full h-full flex justify-end items-end">
             <MediaIcons media={media} />
           </div>
-          <div className="flex justify-end" />
         </ImgOverlay>
         <div className="flex flex-col mt-3 mr-3 ml-3 mb-1">
-          <Title edit={edit} onClick={onTitleClick}>
+          <Title edit={edit} className="m-1" onClick={onTitleClick}>
             {title}
           </Title>
 
-          <div className="flex items-center mb-1" onClick={onTagsClick}>
-            <TagLabels tags={tags} />
-            <FieldIcon edit={edit} className="ml-1" />
+          <div className="flex justify-between m-1" onClick={onTagsClick}>
+            <PreviewTags values={tags} className="" />
+            <EditIcon edit={edit} className="ml-1" />
           </div>
           <DescriptionField
             text={description}
+            className="m-1"
             placeholder="No Description"
             style={{flex: '0 1 auto'}}
             edit={edit}
@@ -322,7 +348,7 @@ class CardFront extends Component {
 
           {edit && (
             <DescriptionField
-              className="mt-1"
+              className="m-1"
               text={null}
               placeholder="Add Media"
               style={{flex: '0 1 auto'}}
