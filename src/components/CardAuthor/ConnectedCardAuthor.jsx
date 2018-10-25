@@ -1,10 +1,10 @@
 // import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { compose } from 'recompose';
-import { withRouter } from 'react-router-dom';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {compose} from 'recompose';
+import {withRouter} from 'react-router-dom';
 
-import { intersection } from 'lodash';
+import {intersection} from 'lodash';
 import {
   resizeCardWindow,
   userMove,
@@ -13,7 +13,7 @@ import {
 
 import setify from 'Utils/setify'; // eslint-disable-line
 import { makeTagColorScale } from 'Src/styles/GlobalThemeContext'; // eslint-disable-line
-import { screenResize } from 'Reducers/Screen/actions';
+import {screenResize} from 'Reducers/Screen/actions';
 import * as cardActions from 'Reducers/Cards/actions';
 import * as asyncActions from 'Reducers/Cards/async_actions';
 import * as dataViewActions from 'Reducers/DataView/actions';
@@ -30,17 +30,17 @@ import withAuthorization from 'Src/components/withAuthorization';
 
 // Container
 const mapStateToProps = state => {
-  const { createdCards, tmpCard } = state.Cards;
+  const {createdCards, tmpCard} = state.Cards;
 
-  const { selectedCardId, filterSet } = state.DataView;
+  const {selectedCardId, filterSet} = state.DataView;
   // console.log('selectedCardid', selectedCardId);
 
   // TODO: own dim reducer
-  const { width, height, userLocation } = state.MapView;
+  const {width, height, userLocation} = state.MapView;
 
   // const { authEnv } = state.DataView;
   const {
-    authUser: { uid, admin }
+    authUser: {uid, admin}
   } = state.Session;
 
   console.log('userLocation', userLocation);
@@ -53,7 +53,7 @@ const mapStateToProps = state => {
   const filteredCards = createdCards.filter(
     d =>
       filterSet.length === 0 ||
-      intersection(d.tags, filterSet).length === filterSet.length
+      intersection(d.tags, filterSet).length === filterSet.length,
   );
 
   const cards = [templateCard, ...filteredCards];
@@ -101,13 +101,13 @@ const mapDispatchToProps = dispatch =>
       changeMapViewport,
       userMove
     },
-    dispatch
+    dispatch,
   );
 
 // });
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const { uid, admin, templateCard, createdCards, cards, filterSet } = state;
+  const {uid, admin, templateCard, createdCards, cards, filterSet} = state;
   console.log('card author state', state);
   const {
     selectCard,
@@ -118,10 +118,11 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     routeSelectCard
   } = dispatcherProps;
 
-  const { dataView, history, match, children } = ownProps;
-  const { path } = match;
+  const env = 'staging';
+  const {dataView, history, match, children} = ownProps;
+  const {path} = match;
 
-  const { selectedCardId = null, showOption = null } = match.params;
+  const {selectedCardId = null, showOption = null} = match.params;
 
   const extCardId = showOption === 'extended' ? selectedCardId : null;
   console.log(match.params, 'extCardId', showOption, extCardId);
@@ -142,12 +143,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
       });
   };
 
-  // const previewCardAction = d =>
-  //   selectedCardId === d.id ? extendSelectedCard(d.id) : selectCard(d.id);
+  const fetchCards = () => fetchCreatedCards(uid);
 
-  const fetchCards = () => {
-    fetchCreatedCards(uid);
-  };
   const preSelectCardId = () => selectCard(templateCard.id);
 
   return {
@@ -176,6 +173,6 @@ export default compose(
   connect(
     mapStateToProps,
     mapDispatchToProps,
-    mergeProps
-  )
+    mergeProps,
+  ),
 )(CardAuthorPage);

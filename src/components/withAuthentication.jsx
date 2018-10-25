@@ -1,12 +1,13 @@
 import React from 'react';
 // import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { firebase } from 'Firebase';
+import {connect} from 'react-redux';
+import {firebase} from 'Firebase';
 
-import { fetchCollectibleCards } from 'Reducers/Cards/async_actions';
+import {fetchCollectibleCards} from 'Reducers/Cards/async_actions';
 
-import { fetchUserInfo } from 'Reducers/Session/async_actions';
-import { setAuthUser } from 'Reducers/Session/actions';
+import {fetchUserInfo} from 'Reducers/Session/async_actions';
+import {setAuthUser} from 'Reducers/Session/actions';
+import {nonAuthRoutes} from 'Constants/routeSpec';
 
 const withAuthentication = Component => {
   class WithAuthentication extends React.Component {
@@ -14,43 +15,38 @@ const withAuthentication = Component => {
       const {
         onSetAuthUser,
         getCreatedCards,
-        fetchCollectibleCards
+        fetchCollectibleCards,
+        authUser
       } = this.props;
 
+      if (authUser === null) history.push(nonAuthRoutes.SIGN_IN);
       firebase.auth.onAuthStateChanged(authUser => {
         if (authUser) {
-          const { uid } = authUser;
-          // const userProfile = authUser.providerData[0]:
-          // console.log('authenticated', authUser.providerData[0]);
-          // console.log('authUser', uid);
-          // onSetAuthUser({ uid });
-          // TODO: change
-          // TODO: change
-          // TODO: change
-          // TODO: change
-          // TODO: change
-          // getReadableCards(uid);
-          // getCreatedCards(uid);
-          console.log('login', uid);
-          if (uid) {
-            fetchUserInfo(uid);
-          }
+          const {uid} = authUser;
+          fetchUserInfo(uid);
+
+          //TODO: remove
           fetchCollectibleCards(uid);
-          // fetchAllCards(uid);
         } else {
-          onSetAuthUser({ authUser: null });
+          onSetAuthUser({authUser: null});
+
+          history.push(nonAuthRoutes.SIGN_IN);
         }
       });
     }
 
-    // componentDidUpdate(prevProps, prevState) {
-    //   this.props.onSetAuthUser('xHmRrkdqetZuOtcksOJoIYUKNmU2');
-    // }
+    componentDidUpdate(prevProps, prevState) {
+      const {authUser} = this.props;
+
+      if (authUser === null) history.push(nonAuthRoutes.SIGN_IN);
+    }
 
     render() {
       return <Component {...this.props} />;
     }
   }
+
+  const mapStateToProps = state => ({...state.Session.authUser});
 
   const mergeProps = (stateProps, dispatchProps, ownProps) => {
     console.log('ownProps', stateProps, dispatchProps, ownProps);
@@ -73,9 +69,9 @@ const withAuthentication = Component => {
   });
 
   return connect(
-    null,
+    mapStateToProps,
     mapDispatchToProps,
-    mergeProps
+    mergeProps,
   )(WithAuthentication);
 };
 

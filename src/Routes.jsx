@@ -11,7 +11,11 @@ import Account from './components/Account';
 import Diary from './components/Diary';
 import TagView from './components/DataView/ForceOverlay/TreeMapCluster';
 
-import {MapCardAuthorPage, TopicMapAuthorPage} from './components/CardAuthor';
+import {
+  MapCardAuthorPage,
+  TopicMapAuthorPage,
+  CardEnvSettings
+} from './components/CardAuthor';
 
 import {MapViewPage, TopicMapViewPage} from './components/CardView';
 
@@ -55,6 +59,16 @@ const Routes = () => (
         path={`${MYCARDS.path}/:selectedCardId?/:showOption?/:flipped?`}
         render={() => <Diary />}
       />
+
+      <Route
+        path={AUTHOR.path}
+        render={() => (
+          <DefaultLayout>
+            <CardEnvSettings />
+          </DefaultLayout>
+        )}
+      />
+
       <Route
         path={`${GEO_AUTHOR.path}/:selectedCardId?/:showOption?/:flipped?`}
         render={() => <MapCardAuthorPage />}

@@ -15,7 +15,7 @@ import {db} from 'Firebase';
 import {mediaScale} from 'Constants/mediaTypes';
 
 import MediaUpload from 'Utils/MediaUpload';
-import DimWrapper from 'Utils/DimensionsWrapper';
+// import DimWrapper from 'Utils/DimensionsWrapper';
 
 // import { createShadowStyle } from './styles';
 

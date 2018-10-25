@@ -1,3 +1,5 @@
+import {DB} from 'Firebase';
+
 import {
   AUTH_USER_SET,
   SET_AUTH_USER_INFO,
@@ -21,41 +23,42 @@ const INITIAL_STATE = {
   selectedCardId: null,
   extendedCardId: null,
   userInfoExtended: false,
-  device: { smallScreen: false, iOs: false }
+  device: {smallScreen: false, iOs: false},
+  dbEnv: 'staging'
 };
 
 function sessionReducer(state = INITIAL_STATE, action) {
   switch (action.type) {
     case SELECT_CARD_ID: {
       const selectedCardId = action.options;
-      return { ...state, selectedCardId };
+      return {...state, selectedCardId};
     }
     case EXTEND_USER_INFO: {
-      return { ...state, userInfoExtended: !state.userInfoExtended };
+      return {...state, userInfoExtended: !state.userInfoExtended};
     }
     case EXTEND_CARD_ID: {
-      const { id, source } = action.options;
-      return { ...state, extendedCardId: id, source };
+      const {id, source} = action.options;
+      return {...state, extendedCardId: id, source};
     }
     case RECEIVE_USER_INFO: {
       const userInfo = action.options;
-      return { ...state, ...userInfo };
+      return {...state, ...userInfo};
     }
     case AUTH_USER_SET: {
-      const { options } = action;
-      return { ...state, ...options };
+      const {options} = action;
+      return {...state, ...options};
     }
     case SET_AUTH_USER_INFO: {
-      const { options } = action;
-      return { ...state, authUser: { ...state.authUser, ...options } };
+      const {options} = action;
+      return {...state, authUser: {...state.authUser, ...options}};
     }
     case ERROR_SUBMIT_USER: {
-      const { options } = action;
-      return { ...state, errorUpdateUserMsg: options };
+      const {options} = action;
+      return {...state, errorUpdateUserMsg: options};
     }
     case SUBMIT_USER_INFO_TO_DB_SUCCESS: {
       // const { options } = action;
-      return { ...state, userInfoExtended: false, errorUpdateUserMsg: null };
+      return {...state, userInfoExtended: false, errorUpdateUserMsg: null};
     }
     default:
       return state;

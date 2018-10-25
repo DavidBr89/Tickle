@@ -1,25 +1,26 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { compose } from 'recompose';
-import { withRouter } from 'react-router-dom';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import {compose} from 'recompose';
+import {withRouter} from 'react-router-dom';
 
-import { firebase } from '../firebase';
+import {firebase} from '../firebase';
 import * as routes from 'Constants/routeSpec';
 
-import { fetchUserInfo } from 'Reducers/Session/async_actions';
+import * as asyncActions from 'Reducers/Session/async_actions';
 
 const withAuthorization = condition => Component => {
   class WithAuthorization extends React.Component {
     state = {};
     componentDidMount() {
-      const { onSetAuthUser } = this.props;
+      const {fetchUserInfo} = this.props;
       firebase.auth.onAuthStateChanged(authUser => {
         if (!condition(authUser)) {
-          onSetAuthUser(null);
+          fetchUserInfo(null);
           this.props.history.push(routes.SIGN_IN.path);
         } else {
-          console.log('authUser UID', authUser);
-          onSetAuthUser(authUser.uid);
+          console.log('User is authorized', authUser.uid);
+          fetchUserInfo(authUser.uid);
           // this.setState({ authUser });
         }
       });
@@ -39,24 +40,26 @@ const withAuthorization = condition => Component => {
   });
 
   const mapDispatchToProps = dispatch => ({
-    onSetAuthUser: uid => {
-      dispatch(fetchUserInfo(uid));
-    }
+    ...bindActionCreators(asyncActions, dispatch)
   });
 
-  const mergeProps = (stateProps, dispatchProps, ownProps) => ({
-    ...stateProps,
-    ...dispatchProps,
-    ...ownProps
-  });
+  const mergeProps = (stateProps, dispatchProps, ownProps) =>
+  // const {dbEnv} = stateProps;
+
+    ({
+      ...stateProps,
+      ...dispatchProps,
+      ...ownProps
+      // onSetAuthUser
+    });
 
   return compose(
     withRouter,
     connect(
       mapStateToProps,
       mapDispatchToProps,
-      mergeProps
-    )
+      mergeProps,
+    ),
   )(WithAuthorization);
 };
 

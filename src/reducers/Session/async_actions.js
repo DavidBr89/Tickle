@@ -2,29 +2,72 @@ import {
   setAuthUser,
   setAuthUserInfo,
   submitUserInfoToDBSuccess,
-  errorSubmitUser
+  errorSubmitUser,
 } from './actions';
 
-import { db, auth } from 'Firebase';
-import setify from 'Utils/setify';
+import {createDbEnv, auth} from 'Firebase';
 
-import { userFields } from 'Constants/userFields';
+import {userFields} from 'Constants/userFields';
 
 export function fetchUserInfo(uid) {
   // Thunk middleware knows how to handle functions.
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
-  return function(dispatch) {
-    if(uid === null) return dispatch(setAuthUserInfo({ uid: null }));
+  return function(dispatch, getState) {
+    if (uid === null) return dispatch(setAuthUserInfo({uid: null}));
 
-    dispatch(setAuthUserInfo({ uid }));
+    dispatch(setAuthUserInfo({uid}));
 
     // console.log('CALL WITH uid', uid);
+    const db = createDbEnv(getState());
     return db
       .getUser(uid)
       .then(usrInfo => {
         console.log('retrieve USR INFO', usrInfo);
-        dispatch(setAuthUserInfo({ uid, ...usrInfo }));
+        dispatch(setAuthUserInfo(userFields({uid, ...usrInfo})));
+      })
+      .catch(err => console.log('err', err));
+  };
+}
+
+export function setUserEnvList(envList) {
+  console.log('envList', envList);
+  // Thunk middleware knows how to handle functions.
+  // It passes the dispatch method as an argument to the function,
+  // thus making it able to dispatch actions itself.
+  return function(dispatch, getState) {
+    // console.log('CALL WITH uid', uid);
+    const db = createDbEnv(getState());
+    const {authUser} = getState().Session;
+
+    const {userEnvs: oldEnvList} = authUser;
+    const updatedUser = {...authUser, userEnvs: envList};
+
+    return db
+      .doUpdateUser(updatedUser)
+      .then(usrInfo => {
+        console.log('retrieve USR INFO', usrInfo);
+        dispatch(setAuthUserInfo(userFields(updatedUser)));
+      })
+      .catch(err => console.log('err', err));
+  };
+}
+
+export function updateAuthUserInfo({...usrProfile}) {
+  // Thunk middleware knows how to handle functions.
+  // It passes the dispatch method as an argument to the function,
+  // thus making it able to dispatch actions itself.
+  return function(dispatch, getState) {
+    // console.log('CALL WITH uid', uid);
+    const db = createDbEnv(getState());
+    const {authUser} = getState().Session;
+
+    const updatedUser = {...authUser, usrProfile};
+    return db
+      .updateUser()
+      .then(usrInfo => {
+        console.log('retrieve USR INFO', usrInfo);
+        dispatch(setAuthUserInfo(userFields(updatedUser)));
       })
       .catch(err => console.log('err', err));
   };
@@ -36,12 +79,12 @@ export function submitUserInfoToDB(userData) {
 
     const usr = userFields(userData);
     const submitUserDispatchWrapper = () => {
-      const { file, uid } = userData;
+      const {file, uid} = userData;
       if (file) {
         return db
-          .addImgToStorage({ file, path: 'usr', id: uid })
+          .addImgToStorage({file, path: 'usr', id: uid})
           .then(photoURL => {
-            const newUsr = { ...usr, photoURL };
+            const newUsr = {...usr, photoURL};
             db.doCreateUser(newUsr).then(() => {
               dispatch(submitUserInfoToDBSuccess(newUsr));
             });
@@ -64,7 +107,7 @@ export function submitUserInfoToDB(userData) {
         });
     }
 
-    const { passwordOne, passwordTwo } = userData;
+    const {passwordOne, passwordTwo} = userData;
     if (passwordOne || passwordTwo) {
       if (passwordOne === passwordTwo) {
         return auth

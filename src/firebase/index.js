@@ -1,5 +1,12 @@
 import * as firebase from './firebase';
 import * as auth from './auth';
-import * as db from './db';
+// import {store} from 'Src/App';
 
-export { auth, firebase, db };
+import DB from './db';
+
+// TODO: remove
+const db = new DB('staging');
+
+const createDbEnv = ({Session: {dbEnv}}) => DB(dbEnv);
+
+export {auth, firebase, DB, db, createDbEnv};

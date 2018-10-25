@@ -29,7 +29,7 @@ import {selectCard, extendSelectedCard} from '../DataView/actions';
 
 import NearbyPlaces from '../places.json';
 
-import {db, firebase} from 'Firebase';
+import {createDbEnv} from 'Firebase';
 import idGenerate from 'Src/idGenerator';
 
 // export const REQUEST_CHALLENGES = 'REQUEST_CHALLENGES';
@@ -83,12 +83,15 @@ import idGenerate from 'Src/idGenerator';
 //     );
 // });
 
+
 // const haaike = 'PpNOHOQLtXatZzcaAYVCMQQP5XT2';
 export function fetchCollectibleCards(playerId) {
   // Thunk middleware knows how to handle functions.
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
-  return function(dispatch) {
+  return function(dispatch, getState) {
+    const db = createDbEnv(getState());
+    console.log('GET_STATE', getState());
     dispatch(loadingCards(true));
     // TODO: change later with obj params
     return db.readCards({playerId}).then(
@@ -106,7 +109,8 @@ export function fetchCollectibleCards(playerId) {
 }
 
 export function fetchAllCardsWithSubmissions() {
-  return function(dispatch) {
+  return function(dispatch, getState) {
+    const db = createDbEnv(getState());
     dispatch(loadingCards(true));
     return db.readCards().then(data => {
       dispatch(loadingCards(false));
@@ -116,8 +120,9 @@ export function fetchAllCardsWithSubmissions() {
 }
 
 export function fetchCreatedCards(authorId) {
-  return function(dispatch) {
+  return function(dispatch, getState) {
     dispatch(loadingCards(true));
+    const db = createDbEnv(getState());
     return db.readCards({authorId, playerId: null}).then(
       data => {
         dispatch(loadingCards(false));
@@ -125,42 +130,6 @@ export function fetchCreatedCards(authorId) {
       },
       err => console.log('fetch createdCards', err),
     );
-  };
-}
-
-export function fetchAllCards(uid) {
-  return function(dispatch) {
-    // dispatch(loadingCards());
-    // TODO
-    // TODO
-    // db.readCards(uid, 'collectibleCards').then(collectibleCards => {
-    //   dispatch(receiveCollectibleCards(collectibleCards));
-    // });
-    //
-    // db.readCards(uid, 'createdCards').then(createdCards => {
-    //   console.log('UID', uid);
-    //   dispatch(receiveCreatedCards(createdCards));
-    // });
-  };
-}
-
-export function fetchCardTemplates(uid) {
-  // Thunk middleware knows how to handle functions.
-  // It passes the dispatch method as an argument to the function,
-  // thus making it able to dispatch actions itself.
-  return function(dispatch) {
-    // dispatch(loadingCards(true));
-    return firebase.firestore
-      .collection('users')
-      .doc(uid)
-      .collection('authoredCards')
-      .get()
-      .then(querySnapshot => {
-        const data = [];
-        querySnapshot.forEach(doc => data.push({...doc.data(), id: doc.id}));
-        // dispatch(loadingCards(false));
-        dispatch(receiveCreatedCards(data));
-      });
   };
 }
 
@@ -173,7 +142,8 @@ export function asyncCreateCard({cardData, uid, viewport, dataView}) {
     date: new Date()
   };
 
-  return function(dispatch) {
+  return function(dispatch, getState) {
+    const db = createDbEnv(getState());
     dispatch(createCard(newCard));
     dispatch(extendSelectedCard(null));
     dispatch(selectCard(newCard.id));
@@ -185,7 +155,8 @@ export function asyncCreateCard({cardData, uid, viewport, dataView}) {
 }
 
 export function asyncRemoveCard(cid) {
-  return function(dispatch) {
+  return function(dispatch, getState) {
+    const db = createDbEnv(getState());
     dispatch(deleteCard(cid));
     dispatch(selectCard(null));
     // TODO: remove dependencies
@@ -196,8 +167,9 @@ export function asyncRemoveCard(cid) {
 }
 
 export function asyncUpdateCard(cardData) {
-  return dispatch => {
+  return (dispatch, getState) => {
     dispatch(updateCard(cardData));
+    const db = createDbEnv(getState());
     db.doUpdateCard(cardData)
       .then(() => {
         dispatch(updateCardSuccess(cardData));
@@ -241,7 +213,8 @@ export function asyncAddComment(
     comment: {uid: '', text: '', date: null}
   },
 ) {
-  return function(dispatch) {
+  return function(dispatch, getState) {
+    const db = createDbEnv(getState());
     dispatch(addComment(commentObj));
     return db
       .addComment(commentObj)
@@ -289,7 +262,8 @@ export function fetchNearByPlaces() {
 }
 
 export function asyncSubmitChallenge(challengeSubmission) {
-  return function(dispatch) {
+  return function(dispatch, getState) {
+    const db = createDbEnv(getState());
     console.log('response', db, challengeSubmission);
     const {cardId, playerId, ...challengeData} = challengeSubmission;
 
@@ -325,7 +299,8 @@ export function asyncSubmitChallenge(challengeSubmission) {
 export function removeChallengeSubmission(challengeSubmission) {
   const {cardId, playerId} = challengeSubmission;
 
-  return function(dispatch) {
+  return function(dispatch, getState) {
+    const db = createDbEnv(getState());
     // dispatch(submitChallenge(challengeSubmission));
     return db.removeChallengeSubmission({cardId, playerId});
     //   .then(() => dispatch(submitChallengeSuccess()))

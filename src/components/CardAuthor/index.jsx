@@ -1,11 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+
 import ConnectedCardAuthor from './ConnectedCardAuthor';
 
 import MapAuthor from 'Components/DataView/Map/MapAuthor';
 
 import TopicMapAuthor from 'Components/DataView/TopicMap/DragTopicMap';
+import CardEnvSettings from './CardEnvSettings';
+
 
 export function MapCardAuthorPage() {
   return (
@@ -27,6 +30,8 @@ export function TopicMapAuthorPage() {
   );
 }
 
-//TODO Hierarchy View
+
+export {CardEnvSettings};
+// TODO Hierarchy View
 
 export default ConnectedCardAuthor;
