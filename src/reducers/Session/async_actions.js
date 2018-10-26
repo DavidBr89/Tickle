@@ -1,8 +1,10 @@
+import {uniqBy} from 'lodash';
 import {
   setAuthUser,
   setAuthUserInfo,
   submitUserInfoToDBSuccess,
   errorSubmitUser,
+  setUserEnvSelection
 } from './actions';
 
 import {createDbEnv, auth} from 'Firebase';
@@ -30,8 +32,7 @@ export function fetchUserInfo(uid) {
   };
 }
 
-export function setUserEnvList(envList) {
-  console.log('envList', envList);
+export function removeUserEnv(env) {
   // Thunk middleware knows how to handle functions.
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
@@ -39,15 +40,39 @@ export function setUserEnvList(envList) {
     // console.log('CALL WITH uid', uid);
     const db = createDbEnv(getState());
     const {authUser} = getState().Session;
+    const {userEnvs, uid} = authUser;
 
-    const {userEnvs: oldEnvList} = authUser;
-    const updatedUser = {...authUser, userEnvs: envList};
+    const updatedUserEnv = {userEnvs: userEnvs.filter(u => u.id !== env.id)};
 
     return db
-      .doUpdateUser(updatedUser)
+      .removeUserEnv({uid, envId: env.id})
       .then(usrInfo => {
         console.log('retrieve USR INFO', usrInfo);
-        dispatch(setAuthUserInfo(userFields(updatedUser)));
+        dispatch(setAuthUserInfo(updatedUserEnv));
+      })
+      .catch(err => console.log('err', err));
+  };
+}
+
+export function addUserEnv(env) {
+  // Thunk middleware knows how to handle functions.
+  // It passes the dispatch method as an argument to the function,
+  // thus making it able to dispatch actions itself.
+  return function(dispatch, getState) {
+    // console.log('CALL WITH uid', uid);
+    const db = createDbEnv(getState());
+    const {authUser} = getState().Session;
+    const {uid} = authUser;
+
+    const {userEnvs} = authUser;
+
+    const updatedUser = {userEnvs: uniqBy([...userEnvs, env], 'id')};
+
+    return db
+      .addUserEnv({uid, env})
+      .then(usrInfo => {
+        console.log('retrieve USR INFO', usrInfo);
+        dispatch(setAuthUserInfo(updatedUser));
       })
       .catch(err => console.log('err', err));
   };
@@ -73,8 +98,31 @@ export function updateAuthUserInfo({...usrProfile}) {
   };
 }
 
+export function selectUserEnv(env) {
+  return function(dispatch, getState) {
+    const db = createDbEnv(getState());
+    const {
+      authUser: {userEnvs}
+    } = getState().Session;
+    const newUserEnvs = userEnvs.map(u => ({...u, selected: u.id === env.id}));
+
+    const {authUser} = getState().Session;
+    const {uid} = authUser;
+
+    dispatch(setUserEnvSelection(env.id));
+    return db
+      .addUserEnv({uid, env})
+      .then(usrInfo => {
+        console.log('retrieve USR INFO', usrInfo);
+        dispatch(setAuthUserInfo({userEnvs: newUserEnvs}));
+      })
+      .catch(err => console.log('err', err));
+  };
+}
+
 export function submitUserInfoToDB(userData) {
-  return function(dispatch) {
+  return function(dispatch, getState) {
+    const db = createDbEnv(getState());
     // dispatch(setAuthUserInfo(userInfo));
 
     const usr = userFields(userData);

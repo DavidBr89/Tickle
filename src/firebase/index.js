@@ -7,6 +7,6 @@ import DB from './db';
 // TODO: remove
 const db = new DB('staging');
 
-const createDbEnv = ({Session: {dbEnv}}) => DB(dbEnv);
+const createDbEnv = ({Session: {userEnvSelectedId}}) => DB(userEnvSelectedId);
 
 export {auth, firebase, DB, db, createDbEnv};

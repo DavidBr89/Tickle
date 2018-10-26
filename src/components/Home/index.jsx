@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { compose } from 'recompose';
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {compose} from 'recompose';
 
-import { db } from 'Firebase';
+import {db} from 'Firebase';
 
 import withAuthorization from '../withAuthorization';
 
@@ -16,18 +16,18 @@ class HomePage extends Component {
   }
 
   componentDidMount() {
-    const { onSetUsers } = this.props;
+    const {onSetUsers} = this.props;
     db.onceGetUsers().then(snapshot => {
       const users = [];
       snapshot.forEach(d => users.push(d.data()));
-      onSetUsers({ users });
+      onSetUsers({users});
     });
   }
 
   render() {
-    const { users } = this.props;
+    const {users} = this.props;
 
-        // {users.map(d => <div>{Object.values(d)}</div>)}
+    // {users.map(d => <div>{Object.values(d)}</div>)}
     return (
       <div className="content-block">
         <h1>Home</h1>
@@ -42,12 +42,15 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onSetUsers: users => dispatch({ type: 'USERS_SET', users })
+  onSetUsers: users => dispatch({type: 'USERS_SET', users})
 });
 
 const authCondition = authUser => !!authUser;
 
 export default compose(
-  withAuthorization(authCondition),
-  connect(mapStateToProps, mapDispatchToProps)
+  withAuthorization(),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
 )(HomePage);

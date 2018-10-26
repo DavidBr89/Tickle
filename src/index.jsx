@@ -12,6 +12,7 @@ import 'event-propagation-path';
 import './styles/tailwind.css';
 import './styles/index.scss';
 import './styles/layout.scss';
+import './styles/comps.scss';
 
 import App from './App';
 

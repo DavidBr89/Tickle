@@ -39,25 +39,17 @@ const includePath = (pathA, pathB) => {
 };
 
 const ListItem = ({name, path, curPath, active, children, subRoutes = []}) => (
-  <li className="mb-1">
-    <div
-      className={`nav-link  ${includePath(curPath, path) &&
-        'nav-link-selected'}`}
-    >
+  <li className="list-item mb-1">
+    <div className={`${subRoutes.length > 0 && 'list-item' } ${includePath(curPath, path) && 'active'}`}>
       <Link to={path}>{children}</Link>
     </div>
-    {includePath(curPath, path) && (
-      <ul className="ml-5 list-reset">
-        {subRoutes.map(d => (
-          <li
-            className={`sub-link ${curPath === d.path &&
-              'sub-link-selected'} `}
-          >
-            <Link to={d.path}>{d.name}</Link>
-          </li>
-        ))}
-      </ul>
-    )}
+    <ul className="ml-5 list-reset">
+      {subRoutes.map(d => (
+        <li className={` list-item ${curPath === d.path && 'active'} `}>
+          <Link to={d.path}>{d.name}</Link>
+        </li>
+      ))}
+    </ul>
   </li>
 );
 

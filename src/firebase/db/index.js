@@ -255,14 +255,9 @@ const makeUserFuncs = ({TICKLE_ENV_REF, readCards}) => {
     TICKLE_ENV_REF.collection('users')
       .doc(uid)
       .get()
-      .then(
-        doc =>
-          new Promise(
-            resolve => resolve(doc.data()),
-            error => console.log('error in getUser, doc not existing', error),
-          ),
-      )
-      .catch(err => console.log('err  getUser'));
+      .then(doc => new Promise(resolve => resolve(doc.data())))
+      .then(usr => getUserEnvs(uid).then(userEnvs => ({...usr, userEnvs})))
+      .catch(err => console.log('err  getUser', err));
 
   const getDetailedUserInfo = uid =>
     getUser(uid)
@@ -275,12 +270,47 @@ const makeUserFuncs = ({TICKLE_ENV_REF, readCards}) => {
       )
       .catch(err => console.log('err i getUser', err));
 
+  const getUserEnvs = uid =>
+    TICKLE_ENV_REF.collection('users')
+      .doc(uid)
+      .collection('userEnvs')
+      .get()
+      .then(querySnapshot => {
+        const data = [];
+        querySnapshot.forEach(doc => data.push(doc.data()));
+
+        console.log('userEnv', data);
+        return new Promise(
+          resolve => resolve(data),
+          error => console.log('error in getUser, doc not existing', error),
+        );
+      })
+      .catch(err => console.log('err  getUser'));
+
+  const addUserEnv = ({uid, env}) =>
+    TICKLE_ENV_REF.collection('users')
+      .doc(uid)
+      .collection('userEnvs')
+      .doc(env.id)
+      .set(env)
+      .catch(err => console.log('addUserEnv err', err));
+
+  const removeUserEnv = ({uid, envId}) =>
+    TICKLE_ENV_REF.collection('users')
+      .doc(uid)
+      .collection('userEnvs')
+      .doc(envId)
+      .delete()
+      .catch(err => console.log('addUserEnv err', err));
+
   return {
     getDetailedUserInfo,
     getUser,
     doCreateUser,
     doUpdateUser: doCreateUser,
-    onceGetUsers
+    onceGetUsers,
+    addUserEnv,
+    removeUserEnv
   };
 };
 

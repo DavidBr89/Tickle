@@ -9,6 +9,7 @@ import {
   EXTEND_CARD_ID,
   EXTEND_USER_INFO,
   SUBMIT_USER_INFO_TO_DB_SUCCESS,
+  SET_USER_ENV_SELECTION
   // SET_DEVICE
 } from './actions';
 
@@ -24,7 +25,7 @@ const INITIAL_STATE = {
   extendedCardId: null,
   userInfoExtended: false,
   device: {smallScreen: false, iOs: false},
-  dbEnv: 'staging'
+  userEnvSelectedId: 'staging'
 };
 
 function sessionReducer(state = INITIAL_STATE, action) {
@@ -55,6 +56,10 @@ function sessionReducer(state = INITIAL_STATE, action) {
     case ERROR_SUBMIT_USER: {
       const {options} = action;
       return {...state, errorUpdateUserMsg: options};
+    }
+    case SET_USER_ENV_SELECTION: {
+      const {options: userEnvSelectedId} = action;
+      return {...state, userEnvSelectedId};
     }
     case SUBMIT_USER_INFO_TO_DB_SUCCESS: {
       // const { options } = action;

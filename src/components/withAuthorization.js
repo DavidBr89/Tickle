@@ -9,7 +9,7 @@ import * as routes from 'Constants/routeSpec';
 
 import * as asyncActions from 'Reducers/Session/async_actions';
 
-const withAuthorization = condition => Component => {
+const withAuthorization = ( condition= authUser => !!authUser ) => Component => {
   class WithAuthorization extends React.Component {
     state = {};
     componentDidMount() {

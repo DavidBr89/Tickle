@@ -26,11 +26,8 @@ import withAuthorization from 'Src/components/withAuthorization';
 
 import {CHALLENGE_SUBMITTED, isChallengeSubmitted} from 'Constants/cardFields';
 
-import {store} from 'Src/App';
-
 import CardViewPage from './CardViewPage';
 
-console.log('store', store);
 // import mapViewReducer from './reducer';
 
 const lowercase = s => s.toLowerCase();

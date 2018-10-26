@@ -24,9 +24,9 @@ export function updatePersonalInfo(options) {
   return {type: UPDATE_USER_PERSONAL_INFO, options};
 }
 
-export const SELECT_USER_ENV = 'SELECT_USER_ENV';
-export function selectUserEnv(options) {
-  return {type: SELECT_USER_ENV, options};
+export const SET_USER_ENV_SELECTION = 'SET_USER_ENV_SELECTION';
+export function setUserEnvSelection(options) {
+  return {type: SET_USER_ENV_SELECTION, options};
 }
 
 export const SET_USERS = 'SET_USERS';
@@ -37,16 +37,6 @@ export function setUsers(options) {
 export const RECEIVE_USER_INFO = 'RECEIVE_USER_INFO';
 export function receiveUserInfo(options) {
   return {type: RECEIVE_USER_INFO, options};
-}
-
-export const SELECT_CARD_ID = 'SELECT_CARD_ID_ACC';
-export function selectCard(options) {
-  return {type: SELECT_CARD_ID, options};
-}
-
-export const EXTEND_CARD_ID = 'EXTEND_CARD_ID_ACC';
-export function extendCard(options) {
-  return {type: EXTEND_CARD_ID, options};
 }
 
 export const EXTEND_USER_INFO = 'EXTEND_USER_INFO';

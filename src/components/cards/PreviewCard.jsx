@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 // import styles from './PreviewCard.css';
 import placeholderImg from './placeholder.png';
-import { shadowStyle, colorClass, colorScale } from './styles';
-import { Lock as LockF } from 'react-feather';
+import {shadowStyle, colorClass, colorScale} from './styles';
+import {Lock as LockF} from 'react-feather';
 
-import { PreviewTags } from 'Utils/Tag';
+import {PreviewTags} from 'Utils/Tag';
 
-const PlaceholderField = ({ text, style, fullHeight }) => (
+const PlaceholderField = ({text, style, fullHeight}) => (
   <div
     className="mb-1"
     style={{
@@ -74,7 +74,7 @@ class PreviewCard extends Component {
     style: {},
     selected: false,
     // TODO: include only type
-    challenge: { type: null },
+    challenge: {type: null},
     edit: false,
     type: null,
     showImg: true,
@@ -114,10 +114,9 @@ class PreviewCard extends Component {
     if (!accessible)
       return (
         <div
-          className={className}
+          className={`${className} flex flex-col border-4 border-black`}
           style={contStyle}
           onClick={onClick}
-          className="flex flex-col"
         >
           <div
             className="flex flex-col align-center"
@@ -133,21 +132,23 @@ class PreviewCard extends Component {
       );
     // img.thumbnail ? img.thumbnail || img.url : placeholderImg;
     return (
-      <div className={className} style={contStyle} onClick={onClick}>
+      <div
+        className={`${className} flex flex-col border-2 border-black`}
+        style={contStyle} onClick={onClick}>
         {title !== null ? (
           <div
             className="text-truncate"
-            style={{ fontSize: '16px', margin: '4px 0' }}
+            style={{fontSize: '16px', margin: '4px 0'}}
           >
             {title}
           </div>
         ) : (
-          <PlaceholderField text="Title" style={{ fontSize: '18px' }} />
+          <PlaceholderField text="Title" style={{fontSize: '18px'}} />
         )}
 
         <div
           className="mt-1 mb-1"
-          style={{ height: '50%', background: '#ffd70080' }}
+          style={{height: '50%', background: '#ffd70080'}}
         >
           {showImg && img !== null ? (
             <img
@@ -164,7 +165,7 @@ class PreviewCard extends Component {
             <PlaceholderField
               text="IMG"
               fullHeight
-              style={{ fontSize: '18px' }}
+              style={{fontSize: '18px'}}
             />
           )}
         </div>
