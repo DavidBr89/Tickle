@@ -115,7 +115,11 @@ const Routes = () => (
           </DefaultLayout>
         )}
       />
-      <Route exact path={SIGN_IN.path} component={() => <SignIn />} />
+      <Route
+        exact
+        path={`${SIGN_IN.path}/:userEnv?`}
+        component={() => <SignIn />}
+      />
       <Route
         exact
         path={HOME.path}

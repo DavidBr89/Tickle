@@ -9,18 +9,18 @@ import * as routes from 'Constants/routeSpec';
 
 import * as asyncActions from 'Reducers/Session/async_actions';
 
-const withAuthorization = ( condition= authUser => !!authUser ) => Component => {
+const withAuthorization = (condition = authUser => !!authUser) => Component => {
   class WithAuthorization extends React.Component {
     state = {};
     componentDidMount() {
       const {fetchUserInfo} = this.props;
       firebase.auth.onAuthStateChanged(authUser => {
         if (!condition(authUser)) {
-          fetchUserInfo(null);
+          // fetchUserInfo(null);
           this.props.history.push(routes.SIGN_IN.path);
         } else {
           console.log('User is authorized', authUser.uid);
-          fetchUserInfo(authUser.uid);
+          // fetchUserInfo(authUser.uid);
           // this.setState({ authUser });
         }
       });

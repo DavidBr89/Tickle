@@ -5,67 +5,71 @@ import {firebase} from 'Firebase';
 
 import {fetchCollectibleCards} from 'Reducers/Cards/async_actions';
 
-import {fetchUserInfo} from 'Reducers/Session/async_actions';
-import {setAuthUser} from 'Reducers/Session/actions';
+import * as asyncActions from 'Reducers/Session/async_actions';
+import {bindActionCreators} from 'redux';
+
+import {setAuthUserInfo} from 'Reducers/Session/actions';
 import {nonAuthRoutes} from 'Constants/routeSpec';
 
 const withAuthentication = Component => {
   class WithAuthentication extends React.Component {
+    state = {authUser: null};
     componentDidMount() {
       const {
-        onSetAuthUser,
+        setAuthUserInfo,
         getCreatedCards,
         fetchCollectibleCards,
-        authUser
+        authUser,
+        fetchUserInfo
       } = this.props;
 
-      if (authUser === null) history.push(nonAuthRoutes.SIGN_IN);
       firebase.auth.onAuthStateChanged(authUser => {
-        if (authUser) {
+        console.log('authUser Changed', authUser);
+        if (authUser !== null) {
           const {uid} = authUser;
           fetchUserInfo(uid);
 
-          //TODO: remove
           fetchCollectibleCards(uid);
         } else {
-          onSetAuthUser({authUser: null});
+          setAuthUserInfo({authUser: null});
 
-          history.push(nonAuthRoutes.SIGN_IN);
+          // history.push(nonAuthRoutes.SIGN_IN);
         }
+        // this.setState({authUser});
       });
     }
 
-    componentDidUpdate(prevProps, prevState) {
-      const {authUser} = this.props;
-
-      if (authUser === null) history.push(nonAuthRoutes.SIGN_IN);
-    }
+    // componentDidUpdate(prevProps, prevState) {
+    //   const {authUser} = this.props;
+    //
+    //   // if (authUser === null) history.push(nonAuthRoutes.SIGN_IN);
+    // }
 
     render() {
-      return <Component {...this.props} />;
+      const {authUser} = this.props;
+      return authUser !== null ? (
+        <Component {...this.props} />
+      ) : (
+        <div>not authenticated</div>
+      );
     }
   }
 
-  const mapStateToProps = state => ({...state.Session.authUser});
+  const mapStateToProps = state => ({
+    authUser: state.Session.authUser
+  });
 
-  const mergeProps = (stateProps, dispatchProps, ownProps) => {
-    console.log('ownProps', stateProps, dispatchProps, ownProps);
-    return {
-      ...stateProps,
-      ...dispatchProps,
-      ...ownProps
-    };
-  };
+  const mergeProps = (stateProps, dispatchProps, ownProps) => ({
+    ...stateProps,
+    ...dispatchProps,
+    ...ownProps
+  });
 
   const mapDispatchToProps = dispatch => ({
-    // TODO: import sessionreducer
-    onSetAuthUser: authUser => {
-      dispatch(setAuthUser(authUser));
-    },
-    fetchUserInfo: uid => dispatch(fetchUserInfo(uid)),
-    fetchCollectibleCards: uid => dispatch(fetchCollectibleCards(uid))
-    // getReadableCards: uid => dispatch(fetchReadableCards(uid)),
-    // getCreatedCards: uid => dispatch(fetchCreatedCards(uid))
+    ...bindActionCreators(
+      {...asyncActions, fetchCollectibleCards, setAuthUserInfo},
+      dispatch,
+    )
   });
 
   return connect(

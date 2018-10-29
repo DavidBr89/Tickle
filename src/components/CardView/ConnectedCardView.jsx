@@ -23,6 +23,7 @@ import * as dataViewActions from 'Reducers/DataView/actions';
 import * as dataViewAsyncActions from 'Reducers/DataView/async_actions';
 
 import withAuthorization from 'Src/components/withAuthorization';
+import withAuthentication from 'Src/components/withAuthentication';
 
 import {CHALLENGE_SUBMITTED, isChallengeSubmitted} from 'Constants/cardFields';
 
@@ -227,7 +228,7 @@ const authCondition = authUser => authUser !== null;
 
 export default compose(
   withRouter,
-  withAuthorization(authCondition),
+  withAuthentication,
   connect(
     mapStateToProps,
     mapDispatchToProps,

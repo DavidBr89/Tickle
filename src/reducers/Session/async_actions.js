@@ -1,4 +1,5 @@
 import {uniqBy} from 'lodash';
+
 import {
   setAuthUser,
   setAuthUserInfo,
@@ -7,7 +8,7 @@ import {
   setUserEnvSelection
 } from './actions';
 
-import {createDbEnv, auth} from 'Firebase';
+import {createDbEnv, DB, auth} from 'Firebase';
 
 import {userFields} from 'Constants/userFields';
 
@@ -31,6 +32,37 @@ export function fetchUserInfo(uid) {
       .catch(err => console.log('err', err));
   };
 }
+
+export const signIn = ({
+  email,
+  password,
+  userEnv,
+  onSuccess = d => d,
+  onError = d => d
+}) => (dispatch, getState) => {
+  const db = DB(userEnv);
+  return auth
+    .doSignInWithEmailAndPassword(email, password)
+    .then(resp => {
+      console.log('response', resp);
+      const {user} = resp;
+      const {uid} = user;
+
+      return db
+        .getUser(uid)
+        .then(usrInfo => {
+          console.log('logged in', usrInfo);
+          dispatch(setAuthUserInfo(userFields({uid, ...usrInfo})));
+          dispatch(setUserEnvSelection(userEnv));
+          return usrInfo
+        })
+        .catch(err => console.log('err', err));
+    })
+    .catch(error => {
+      console.log('response failure', error);
+      return onError(error.message);
+    });
+};
 
 export function removeUserEnv(env) {
   // Thunk middleware knows how to handle functions.

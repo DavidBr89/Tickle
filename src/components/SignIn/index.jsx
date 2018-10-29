@@ -1,6 +1,10 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import {bindActionCreators} from 'redux';
 import {withRouter} from 'react-router-dom';
+import {compose} from 'recompose';
+
+import {signIn} from 'Reducers/Session/async_actions';
 // import { compose } from 'recompose';
 
 // import { bindActionCreators } from 'redux';
@@ -16,7 +20,7 @@ import {GEO_VIEW} from 'Constants/routeSpec';
 
 import {GlobalThemeConsumer, stylesheet} from 'Src/styles/GlobalThemeContext';
 
-import {setAuthUser} from 'Reducers/Session/actions';
+import {fetchCollectibleCards} from 'Reducers/Cards/async_actions';
 
 import DefaultLayout from 'Components/DefaultLayout';
 
@@ -28,40 +32,47 @@ function onSubmit(event) {
   const {email, password} = this.state;
 
   const {onAuthenticate} = this.props;
-  // console.log('auth', auth);
-
-  auth
-    .doSignInWithEmailAndPassword(email, password)
-    .then(usr => {
-      onAuthenticate(usr);
-    })
-    .catch(error => {
-      this.setState(byPropKey('error', error));
-    });
-
-  event.preventDefault();
 }
 
-const SignInPage = ({history}) => (
-  <DefaultLayout
-    menu={
-      <div className="flex-grow flex justify-center items-center">
-        <h1>Sign In</h1>
+const SignInPage = ({signIn, fetchCollectibleCards, ...props}) => {
+  const {match, history} = props;
+  const {
+    params: {userEnv},
+  } = match;
+
+  // console.log('history p', history);
+
+  return (
+    <DefaultLayout
+      menu={
+        <div className="flex-grow flex justify-center items-center">
+          <h1>Sign In {userEnv}</h1>
+        </div>
+      }
+    >
+      <div className="content-margin">
+        <SignInFormWrapper
+          {...props}
+          onSubmit={({email, password, onError}) =>
+            signIn({
+              userEnv,
+              email,
+              password,
+              onError
+            }).then(() => {
+              history.push(GEO_VIEW.path);
+              // fetchCollectibleCards(uid);
+              // console.log('yeah', uid);
+            })
+          }
+        />
+        <PasswordForgetLink />
+        <SignUpLink />
+        {!userEnv && <div>You did not specify a user environment</div>}
       </div>
-    }
-  >
-    <div className="content-margin">
-      <SignInForm
-        onAuthenticate={usr => {
-          console.log('USR', usr);
-          history.push(GEO_VIEW.path);
-        }}
-      />
-      <PasswordForgetLink />
-      <SignUpLink />
-    </div>
-  </DefaultLayout>
-);
+    </DefaultLayout>
+  );
+};
 
 const INITIAL_STATE = {
   email: null,
@@ -69,7 +80,7 @@ const INITIAL_STATE = {
   error: null
 };
 
-class SignInForm extends Component {
+class SignInFormWrapper extends Component {
   static propTypes = {
     onAuthenticate: PropTypes.func
   };
@@ -82,13 +93,21 @@ class SignInForm extends Component {
   state = {...INITIAL_STATE};
 
   render() {
+    const {onSubmit} = this.props;
     const {email, password, error} = this.state;
 
     const isInvalid = password === '' || email === '';
+    // console.log('routerProps', this.props);
 
     return (
-      <SignInPureForm
-        onSubmit={onSubmit.bind(this)}
+      <SignInForm
+        onSubmit={() =>
+          onSubmit({
+            email,
+            password,
+            onError: err => this.setState({error: err})
+          })
+        }
         email={email}
         onEmailChange={event =>
           this.setState(byPropKey('email', event.target.value))
@@ -104,7 +123,7 @@ class SignInForm extends Component {
   }
 }
 
-const SignInPureForm = ({
+const SignInForm = ({
   email,
   onSubmit,
   password,
@@ -113,7 +132,13 @@ const SignInPureForm = ({
   onPasswordChange,
   onEmailChange
 }) => (
-  <form className="mb-1" onSubmit={onSubmit}>
+  <div
+    className="mb-1"
+    onSubmit={e => {
+      e.preventDefault();
+      onSubmit();
+    }}
+  >
     <div className="form-group">
       <label className="label" htmlFor="first_name">
         Username
@@ -138,23 +163,25 @@ const SignInPureForm = ({
         className="form-control"
       />
     </div>
-    {onSubmit && (
-      <React.Fragment>
-        <button
-          className="btn"
-          disabled={isInvalid}
-          style={{width: '100%'}}
-          type="submit"
-        >
-          Sign In
-        </button>
-        {error && <p>{error.message}</p>}
-      </React.Fragment>
+
+    <button
+      className="btn"
+      disabled={isInvalid}
+      style={{width: '100%'}}
+      type="submit"
+      onClick={onSubmit}>
+      Sign In
+    </button>
+    {error !== null && (
+      <div
+className="alert mt-3" role="alert">
+        <span className="block sm:inline">{error}</span>
+      </div>
     )}
-  </form>
+  </div>
 );
 
-SignInPureForm.propTypes = {
+SignInForm.propTypes = {
   email: PropTypes.string,
   onSubmit: PropTypes.func,
   password: PropTypes.string,
@@ -164,7 +191,7 @@ SignInPureForm.propTypes = {
   onEmailChange: PropTypes.func
 };
 
-SignInPureForm.defaultProps = {
+SignInForm.defaultProps = {
   email: null,
   onSubmit: null,
   password: null,
@@ -174,61 +201,66 @@ SignInPureForm.defaultProps = {
   onEmailChange: null
 };
 
-export class SignInModalBody extends Component {
-  static propTypes = {
-    onAuthenticate: PropTypes.func,
-    history: PropTypes.object
-  };
-
-  static defaultProps = {
-    onAuthenticate: history => history.push(routes.DATAVIEW_TAGS),
-    history: null
-  };
-
-  state = {...INITIAL_STATE};
-
-  render() {
-    const {onClose} = this.props;
-    const {email, password, error} = this.state;
-
-    const isInvalid = password === '' || email === '';
-
-    return (
-      <ModalBody
-        title="User Sign-In"
-        onClose={onClose}
-        footer={
-          <div>
-            <button className="btn" onClick={onSubmit.bind(this)}>
-              Sign In{' '}
-            </button>
-          </div>
-        }
-      >
-        <SignInPureForm
-          email={email}
-          onEmailChange={event =>
-            this.setState(byPropKey('email', event.target.value))
-          }
-          password={password}
-          onPasswordChange={event =>
-            this.setState(byPropKey('password', event.target.value))
-          }
-          isInvalid={isInvalid}
-          error={error}
-        />
-      </ModalBody>
-    );
-  }
-}
-
+// export class SignInModalBody extends Component {
+//   static propTypes = {
+//     onAuthenticate: PropTypes.func,
+//     history: PropTypes.object
+//   };
+//
+//   static defaultProps = {
+//     onAuthenticate: history => history.push(routes.DATAVIEW_TAGS),
+//     history: null
+//   };
+//
+//   state = {...INITIAL_STATE};
+//
+//   render() {
+//     const {onClose} = this.props;
+//     const {email, password, error} = this.state;
+//
+//     const isInvalid = password === '' || email === '';
+//
+//     return (
+//       <ModalBody
+//         title="User Sign-In"
+//         onClose={onClose}
+//         footer={
+//           <div>
+//             <button className="btn" onClick={onSubmit}>
+//               Sign In{' '}
+//             </button>
+//           </div>
+//         }
+//       >
+//         <SignInPureForm
+//           email={email}
+//           onEmailChange={event =>
+//             this.setState(byPropKey('email', event.target.value))
+//           }
+//           password={password}
+//           onPasswordChange={event =>
+//             this.setState(byPropKey('password', event.target.value))
+//           }
+//           isInvalid={isInvalid}
+//           error={error}
+//         />
+//       </ModalBody>
+//     );
+//   }
+// }
+//
 // const mapStateToProps = state => ({
 //   users: state.User.users
 // });
 
-// const mapDispatchToProps = dispatch => ({
-//   getCardsAction: users => dispatch(getCards)
-// });
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      signIn,
+      fetchCollectibleCards
+    },
+    dispatch,
+  );
 //
 // const authCondition = authUser => !!authUser;
 //
@@ -238,11 +270,19 @@ export class SignInModalBody extends Component {
 // )(HomePage);
 //
 
-export default withRouter(SignInPage);
+const mergeProps = (stateProps, dispatchProps, ownProps) => ({
+  ...stateProps,
+  ...dispatchProps,
+  ...ownProps
+});
 
-// export default compose(
-//   withAuthorization(authCondition),
-//   connect(mapStateToProps, mapDispatchToProps)
-// )(HomePage);
+export default compose(
+  withRouter,
+  connect(
+    null,
+    mapDispatchToProps,
+    mergeProps,
+  ),
+)(SignInPage);
 
-export {SignInForm};
+// export {SignInForm};

@@ -9,19 +9,13 @@ import {PreviewTags} from 'Utils/Tag';
 
 const PlaceholderField = ({text, style, fullHeight}) => (
   <div
-    className="mb-1"
+    className="mb-1 flex-grow flex-col-wrapper justify-center items-center"
     style={{
-      display: 'flex',
-      border: 'grey 1px dashed',
-      justifyContent: 'center',
-      alignItems: 'center',
       height: fullHeight ? '100%' : null
     }}
   >
     <div
       style={{
-        // marginTop: '4px',
-        // marginBottom: '4px',
         color: 'grey',
         paddingLeft: '2px',
         fontWeight: 'bold',
@@ -133,8 +127,10 @@ class PreviewCard extends Component {
     // img.thumbnail ? img.thumbnail || img.url : placeholderImg;
     return (
       <div
-        className={`${className} flex flex-col border-2 border-black`}
-        style={contStyle} onClick={onClick}>
+        className={`${className} flex-col-wrapper border-2 border-black`}
+        style={contStyle}
+        onClick={onClick}
+      >
         {title !== null ? (
           <div
             className="text-truncate"
@@ -147,11 +143,12 @@ class PreviewCard extends Component {
         )}
 
         <div
-          className="mt-1 mb-1"
-          style={{height: '50%', background: '#ffd70080'}}
+          className="flex-grow mt-1 mb-1 relative"
+          style={{background: '#ffd70080'}}
         >
           {showImg && img !== null ? (
             <img
+              className="absolute"
               style={{
                 display: 'block',
                 width: '100%',
@@ -162,11 +159,7 @@ class PreviewCard extends Component {
               alt="Card cap"
             />
           ) : (
-            <PlaceholderField
-              text="IMG"
-              fullHeight
-              style={{fontSize: '18px'}}
-            />
+            <PlaceholderField text="IMG" style={{fontSize: '18px'}} />
           )}
         </div>
       </div>

@@ -76,6 +76,10 @@
   @apply .bg-grey-light;
 }
 
+.alert {
+  @apply .bg-red-lightest .border-4 .border-red-light .text-red-dark .px-4 .py-3
+}
+
 // .list-item.active {
 //   @apply .bg-grey-dark;
 // }

@@ -1,23 +1,21 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
 import * as Icon from 'react-feather';
 
-import { ModalBody } from 'Utils/Modal';
+import {ModalBody} from 'Utils/Modal';
 import MediaUpload from 'Utils/MediaUpload';
 
-import { ScrollView, ScrollElement } from 'Utils/ScrollView';
-// import ScrollList from 'Utils/ScrollList';
+import {ScrollView, ScrollElement} from 'Utils/ScrollView';
 
-import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
-import { ChevronsDown } from 'react-feather';
+import {ChevronsDown} from 'react-feather';
 
 import DelayClick from 'Components/utils/DelayClick';
 
-import { db } from 'Firebase';
+import {db} from 'Firebase';
 
 // TODO: untangle later
-import { Btn } from 'Components/cards/layout';
+import {Btn} from 'Components/cards/layout';
 
 /*
         <Btn
@@ -38,7 +36,7 @@ import { Btn } from 'Components/cards/layout';
         </Btn>
 */
 
-const DefaultControls = ({ ...props }) => {
+const DefaultControls = ({...props}) => {
   const {
     media,
     text,
@@ -104,10 +102,10 @@ const DefaultControls = ({ ...props }) => {
   );
 };
 
-const TextAreaControls = ({ onClick }) => (
-  <div style={{ display: 'flex' }}>
+const TextAreaControls = ({onClick}) => (
+  <div style={{display: 'flex'}}>
     <Btn className="mr-1" onClick={onClick}>
-      <div style={{ display: 'flex' }}>
+      <div style={{display: 'flex'}}>
         <div>Disable Keyboard</div>
         <ChevronsDown />
       </div>
@@ -115,7 +113,7 @@ const TextAreaControls = ({ onClick }) => (
   </div>
 );
 
-const SubmitInfo = ({ challengeSubmitted, challengeInvalid }) => {
+const SubmitInfo = ({challengeSubmitted, challengeInvalid}) => {
   if (challengeSubmitted)
     return (
       <div className="alert alert-success mb-3 p-3">
@@ -198,8 +196,8 @@ class MediaChallenge extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    const { focusTextArea, media, response, completed } = this.state;
-    const { onUpdate } = this.props;
+    const {focusTextArea, media, response, completed} = this.state;
+    const {onUpdate} = this.props;
 
     clearTimeout(this.textAreaTimeoutId);
 
@@ -244,7 +242,7 @@ class MediaChallenge extends Component {
       bookmarkable,
       onRemoveSubmission
     } = this.props;
-    const { media, response, completed, started, focusTextArea } = this.state;
+    const {media, response, completed, started, focusTextArea} = this.state;
 
     const challengeStarted = challengeSubmission !== null;
     const challengeSubmitted = completed;
@@ -259,7 +257,7 @@ class MediaChallenge extends Component {
           //   (challengeSubmission && challengeSubmission.response !== response)
           // )
           if (!completed) {
-            onUpdate({ response, media, completed });
+            onUpdate({response, media, completed});
           }
         }}
         title={title}
@@ -272,11 +270,11 @@ class MediaChallenge extends Component {
             focusTextArea={focusTextArea}
             onChallengeStart={() => {
               // clearTimeout(this.textAreaTimeoutId);
-              onUpdate({ media, response, completed: false });
+              onUpdate({media, response, completed: false});
             }}
             onChallengeSubmit={() => {
               // clearTimeout(this.textAreaTimeoutId);
-              onUpdate({ media, response, completed: true });
+              onUpdate({media, response, completed: true});
               this.setState({
                 completed: true,
                 focusTextArea: false,
@@ -284,7 +282,7 @@ class MediaChallenge extends Component {
               });
             }}
             onDisableKeyboard={() => {
-              this.setState({ focusTextArea: false });
+              this.setState({focusTextArea: false});
             }}
           />
         }
@@ -296,7 +294,7 @@ class MediaChallenge extends Component {
           >
             <div
               className="flex-initial"
-              style={{ width: '100%', flex: '0 0 150px' }}
+              style={{width: '100%', flex: '0 0 150px'}}
             >
               <p
                 style={{
@@ -314,17 +312,17 @@ class MediaChallenge extends Component {
             <ScrollElement name="textArea">
               <div
                 className="border-grey"
-                style={{ width: '100%', flex: '0 0 150px' }}
+                style={{width: '100%', flex: '0 0 150px'}}
               >
                 <h5>Response</h5>
                 <textarea
-                  style={{ width: '100%' }}
+                  style={{width: '100%'}}
                   disabled={challengeSubmitted}
                   rows="4"
                   placeholder="write your response"
                   value={response}
-                  onFocus={() => this.setState({ focusTextArea: true })}
-                  onBlur={() => this.setState({ focusTextArea: false })}
+                  onFocus={() => this.setState({focusTextArea: true})}
+                  onBlur={() => this.setState({focusTextArea: false})}
                   onChange={e => {
                     const text = e.target.value;
                     this.setState({
@@ -344,17 +342,14 @@ class MediaChallenge extends Component {
                 uploadPath={id => `challengeSubmissionFiles/${id}`}
                 media={media}
                 stylesheet={stylesheet}
-                buttonStyle={{ width: 30 }}
+                buttonStyle={{width: 30}}
                 onChange={newMedia => {
-                  this.setState({ media: newMedia, completed: false });
-                  onUpdate({ media: newMedia, response, completed: false });
+                  this.setState({media: newMedia, completed: false});
+                  onUpdate({media: newMedia, response, completed: false});
                 }}
               />
             </ScrollElement>
-            <div
-              className="flexCol mb-3"
-              style={{ justifyContent: 'flex-end' }}
-            >
+            <div className="flexCol mb-3" style={{justifyContent: 'flex-end'}}>
               <ScrollElement name="info">
                 <SubmitInfo
                   challengeSubmitted={challengeSubmitted}
@@ -369,10 +364,4 @@ class MediaChallenge extends Component {
   }
 }
 
-const StyledMediaChallenge = props => (
-  <CardThemeConsumer>
-    {({ stylesheet }) => <MediaChallenge {...props} stylesheet={stylesheet} />}
-  </CardThemeConsumer>
-);
-
-export default StyledMediaChallenge;
+export default MediaChallenge;
