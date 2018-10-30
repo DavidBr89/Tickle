@@ -46,12 +46,7 @@ const withAuthentication = Component => {
     // }
 
     render() {
-      const {authUser} = this.props;
-      return authUser !== null ? (
-        <Component {...this.props} />
-      ) : (
-        <div>not authenticated</div>
-      );
+      return <Component {...this.props} />;
     }
   }
 

@@ -228,6 +228,7 @@ const authCondition = authUser => authUser !== null;
 
 export default compose(
   withRouter,
+  withAuthorization(authCondition),
   withAuthentication,
   connect(
     mapStateToProps,

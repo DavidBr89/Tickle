@@ -153,6 +153,7 @@ class CardAuthorPage extends Component {
       changeMapViewport
     } = this.props;
 
+    console.log('DID MOUNT');
     fetchCards();
     // screenResize({
     //   width: this.cont.offsetWidth,

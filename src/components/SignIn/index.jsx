@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {bindActionCreators} from 'redux';
-import {withRouter} from 'react-router-dom';
+import {withRouter, Redirect} from 'react-router-dom';
 import {compose} from 'recompose';
 
 import {signIn} from 'Reducers/Session/async_actions';
@@ -16,9 +16,7 @@ import {PasswordForgetLink} from '../Password';
 import {auth} from 'Firebase';
 import {ModalBody} from 'Components/utils/Modal';
 
-import {GEO_VIEW} from 'Constants/routeSpec';
-
-import {GlobalThemeConsumer, stylesheet} from 'Src/styles/GlobalThemeContext';
+import {GEO_VIEW, SIGN_IN} from 'Constants/routeSpec';
 
 import {fetchCollectibleCards} from 'Reducers/Cards/async_actions';
 
@@ -37,8 +35,9 @@ function onSubmit(event) {
 const SignInPage = ({signIn, fetchCollectibleCards, ...props}) => {
   const {match, history} = props;
   const {
-    params: {userEnv},
+    params: {userEnv}
   } = match;
+  // const userEnv = params.userEnv || props.userEnv;
 
   // console.log('history p', history);
 
@@ -53,6 +52,7 @@ const SignInPage = ({signIn, fetchCollectibleCards, ...props}) => {
       <div className="content-margin">
         <SignInFormWrapper
           {...props}
+          disabled={!userEnv}
           onSubmit={({email, password, onError}) =>
             signIn({
               userEnv,
@@ -66,9 +66,15 @@ const SignInPage = ({signIn, fetchCollectibleCards, ...props}) => {
             })
           }
         />
-        <PasswordForgetLink />
-        <SignUpLink />
-        {!userEnv && <div>You did not specify a user environment</div>}
+        <div>
+          <PasswordForgetLink />
+          <SignUpLink userEnv={userEnv} />
+        </div>
+        {!userEnv && (
+          <div className="alert mt-3">
+            You did not specify a user environment! Please change the URL
+          </div>
+        )}
       </div>
     </DefaultLayout>
   );
@@ -93,7 +99,7 @@ class SignInFormWrapper extends Component {
   state = {...INITIAL_STATE};
 
   render() {
-    const {onSubmit} = this.props;
+    const {onSubmit, disabled} = this.props;
     const {email, password, error} = this.state;
 
     const isInvalid = password === '' || email === '';
@@ -101,11 +107,19 @@ class SignInFormWrapper extends Component {
 
     return (
       <SignInForm
+        disabled={disabled}
         onSubmit={() =>
           onSubmit({
             email,
             password,
-            onError: err => this.setState({error: err})
+            // onError: err => {
+            //   console.log('ERROR in sign in', err);
+            //   // this.setState({error: err});
+            // }
+          }).catch(err => {
+            console.log('caught err', err.message);
+
+            this.setState({error: err.message});
           })
         }
         email={email}
@@ -130,9 +144,10 @@ const SignInForm = ({
   isInvalid,
   error,
   onPasswordChange,
-  onEmailChange
+  onEmailChange,
+  disabled
 }) => (
-  <div
+  <form
     className="mb-1"
     onSubmit={e => {
       e.preventDefault();
@@ -145,6 +160,7 @@ const SignInForm = ({
       </label>
       <input
         value={email}
+        disabled={disabled}
         onChange={onEmailChange}
         type="text"
         placeholder="Email Address"
@@ -157,6 +173,7 @@ const SignInForm = ({
       </label>
       <input
         value={password}
+        disabled={disabled}
         onChange={onPasswordChange}
         type="password"
         placeholder="Password"
@@ -169,7 +186,7 @@ const SignInForm = ({
       disabled={isInvalid}
       style={{width: '100%'}}
       type="submit"
-      onClick={onSubmit}>
+    >
       Sign In
     </button>
     {error !== null && (
@@ -178,7 +195,7 @@ className="alert mt-3" role="alert">
         <span className="block sm:inline">{error}</span>
       </div>
     )}
-  </div>
+  </form>
 );
 
 SignInForm.propTypes = {
@@ -249,9 +266,9 @@ SignInForm.defaultProps = {
 //   }
 // }
 //
-// const mapStateToProps = state => ({
-//   users: state.User.users
-// });
+const mapStateToProps = state => ({
+  userEnv: state.Session.userEnvSelectedId
+});
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
@@ -279,10 +296,14 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
 export default compose(
   withRouter,
   connect(
-    null,
+    mapStateToProps,
     mapDispatchToProps,
     mergeProps,
   ),
 )(SignInPage);
 
-// export {SignInForm};
+const SignInRedirectPure = ({userEnv}) => (
+  <Redirect to={`/${userEnv}/${SIGN_IN.path}`} />
+);
+
+export const SignInRedirect = connect(mapStateToProps)(SignInRedirectPure);

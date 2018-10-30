@@ -256,8 +256,17 @@ const makeUserFuncs = ({TICKLE_ENV_REF, readCards}) => {
       .doc(uid)
       .get()
       .then(doc => new Promise(resolve => resolve(doc.data())))
-      .then(usr => getUserEnvs(uid).then(userEnvs => ({...usr, userEnvs})))
-      .catch(err => console.log('err  getUser', err));
+      .then(usr => {
+        console.log('USR RESULT', usr);
+        if (!usr)
+          return Promise.reject({
+            code: 'User has no access to this environment',
+            message: 'User has no access to this environment'
+          });
+
+        return getUserEnvs(uid).then(userEnvs => ({...usr, userEnvs}));
+      });
+  // .catch(err => console.log('err  getUser', err));
 
   const getDetailedUserInfo = uid =>
     getUser(uid)

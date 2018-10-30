@@ -1,23 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 // import chroma from 'chroma-js';
-import { compose } from 'recompose';
+import {compose} from 'recompose';
 
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 
-import { Card } from './index';
-import { withRouter } from 'react-router-dom';
+import {Card} from './index';
+import {withRouter} from 'react-router-dom';
 
-import { updateCardTemplate, dragCard } from 'Reducers/Cards/actions';
+import {updateCardTemplate, dragCard} from 'Reducers/Cards/actions';
 
-import { changeMapViewport } from 'Reducers/Map/actions';
+import {changeMapViewport} from 'Reducers/Map/actions';
 
 import * as asyncCardActions from 'Reducers/Cards/async_actions';
 
 import * as routeActions from 'Reducers/DataView/async_actions';
 
-import { BigButton } from './layout';
+import {BigButton} from './layout';
 
 import EditCardFront from './CardFront/EditCardFront';
 
@@ -43,7 +43,7 @@ const mapDispatchToProps = dispatch =>
       changeMapViewport,
       ...routeActions
     },
-    dispatch
+    dispatch,
   );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
@@ -55,12 +55,12 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     authUser,
     tagVocabulary
   } = state;
-  const { uid } = authUser;
+  const {uid} = authUser;
 
-  const { dataView, match, history, id } = ownProps;
-  const { path } = match;
+  const {dataView, match, history, id} = ownProps;
+  const {path} = match;
 
-  const { flipped } = match.params;
+  const {flipped} = match.params;
 
   const {
     asyncUpdateCard,
@@ -70,7 +70,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     routeFlipCard
   } = dispatcherProps;
 
-  const viewport = { ...mapViewport, width, height };
+  // const viewport = {...mapViewport, width, height};
 
   // const onCardDrop = cardData => {
   //   console.log('CARD DROP', selectedCardId);
@@ -79,21 +79,20 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   //     : asyncUpdateCardAttr({ cardData, viewport, dataView });
   // };
 
-  const createCard = cardData =>
-    asyncCreateCard({ uid, cardData, viewport, dataView });
+  const createCard = cardData => asyncCreateCard({cardData, uid});
 
   const onCardUpdate = cardData =>
     cardData.id === 'temp'
       ? updateCardTemplate(cardData)
       : asyncUpdateCard(cardData);
 
-  const { routeExtendCard } = dispatcherProps;
+  const {routeExtendCard} = dispatcherProps;
   // TODO replace by regex
 
   const closeCard = () => {
-    routeExtendCard({ path, history, id, extended: false });
+    routeExtendCard({path, history, id, extended: false});
   };
-  const flipHandler = () => routeFlipCard({ match, history });
+  const flipHandler = () => routeFlipCard({match, history});
 
   return {
     ...state,
@@ -129,20 +128,20 @@ const EditCard = ({
     onClose={closeCard}
     template={template}
     onCreate={d => {
-      createCard({ ...d, x, y });
+      createCard({...d, x, y});
       closeCard();
     }}
     onUpdate={d => {
-      onCardUpdate({ ...d, x, y });
+      onCardUpdate({...d, x, y});
     }}
     onDelete={() => {
       closeCard();
-      asyncRemoveCard(props.id)
+      asyncRemoveCard(props.id);
     }}
     tagColorScale={tagColorScale}
     uiColor="grey"
     background="whitesmoke"
-    style={{ zIndex: 4000 }}
+    style={{zIndex: 4000}}
     edit
   />
 );
@@ -152,6 +151,6 @@ export default compose(
   connect(
     mapStateToProps,
     mapDispatchToProps,
-    mergeProps
-  )
+    mergeProps,
+  ),
 )(EditCard);

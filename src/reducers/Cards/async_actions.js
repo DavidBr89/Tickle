@@ -83,18 +83,21 @@ import idGenerate from 'Src/idGenerator';
 //     );
 // });
 
-
 // const haaike = 'PpNOHOQLtXatZzcaAYVCMQQP5XT2';
-export function fetchCollectibleCards(playerId) {
+export function fetchCollectibleCards() {
   // Thunk middleware knows how to handle functions.
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
   return function(dispatch, getState) {
     const db = createDbEnv(getState());
-    console.log('GET_STATE', getState());
+    const {
+      Session: {
+        authUser: {uid}
+      }
+    } = getState();
     dispatch(loadingCards(true));
     // TODO: change later with obj params
-    return db.readCards({playerId}).then(
+    return db.readCards({playerId: uid}).then(
       data => {
         dispatch(loadingCards(false));
         dispatch(
@@ -121,9 +124,14 @@ export function fetchAllCardsWithSubmissions() {
 
 export function fetchCreatedCards(authorId) {
   return function(dispatch, getState) {
+    const {
+      Session: {
+        authUser: {uid}
+      }
+    } = getState();
     dispatch(loadingCards(true));
     const db = createDbEnv(getState());
-    return db.readCards({authorId, playerId: null}).then(
+    return db.readCards({authorId: uid, playerId: null}).then(
       data => {
         dispatch(loadingCards(false));
         dispatch(receiveCreatedCards(data));
@@ -144,6 +152,7 @@ export function asyncCreateCard({cardData, uid, viewport, dataView}) {
 
   return function(dispatch, getState) {
     const db = createDbEnv(getState());
+    console.log();
     dispatch(createCard(newCard));
     dispatch(extendSelectedCard(null));
     dispatch(selectCard(newCard.id));

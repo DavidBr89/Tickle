@@ -2,7 +2,7 @@ import React from 'react';
 import {Route, HashRouter, Switch} from 'react-router-dom';
 
 import SignUp from './components/SignUp';
-import SignIn from './components/SignIn';
+import SignIn, {SignInRedirect} from './components/SignIn';
 import LandingPage from './components/LandingPage';
 import Home from './components/Home';
 import CardView from './components/CardView';
@@ -56,12 +56,15 @@ const Routes = () => (
   <HashRouter>
     <Switch>
       <Route
-        path={`${MYCARDS.path}/:selectedCardId?/:showOption?/:flipped?`}
+        path={`:userEnv/${
+          MYCARDS.path
+        }/:selectedCardId?/:showOption?/:flipped?`}
         render={() => <Diary />}
       />
 
       <Route
         path={AUTHOR.path}
+        exact
         render={() => (
           <DefaultLayout>
             <CardEnvSettings />
@@ -70,21 +73,29 @@ const Routes = () => (
       />
 
       <Route
-        path={`${GEO_AUTHOR.path}/:selectedCardId?/:showOption?/:flipped?`}
+        path={`/:userEnv/${
+          GEO_AUTHOR.path
+        }/:selectedCardId?/:showOption?/:flipped?`}
         render={() => <MapCardAuthorPage />}
       />
       <Route
-        path={`${TOPIC_AUTHOR.path}/:selectedCardId?/:showOption?/:flipped?`}
+        path={`/:userEnv/${
+          TOPIC_AUTHOR.path
+        }/:selectedCardId?/:showOption?/:flipped?`}
         render={() => <TopicMapAuthorPage />}
       />
       <Route
         exact
-        path={`${TOPIC_VIEW.path}/:selectedCardId?/:showOption?/:flipped?`}
+        path={`/:userEnv/${
+          TOPIC_VIEW.path
+        }/:selectedCardId?/:showOption?/:flipped?`}
         render={() => <TopicMapViewPage />}
       />
       <Route
         exact
-        path={`${GEO_VIEW.path}/:selectedCardId?/:showOption?/:flipped?`}
+        path={`/:userEnv/${
+          GEO_VIEW.path
+        }/:selectedCardId?/:showOption?/:flipped?`}
         render={() => (
           <CardView>
             {props => <UserMap {...props} className="absolute" />}
@@ -93,17 +104,18 @@ const Routes = () => (
       />
       <Route
         exact
-        path={`${TAG_VIEW.path}/:selectedCardId?/:showOption?/:flipped?`}
+        path={`/:userEnv/${
+          TAG_VIEW.path
+        }/:selectedCardId?/:showOption?/:flipped?`}
         render={() => (
           <CardView>
             {props => <TagView {...props} className="absolute" />}
           </CardView>
         )}
       />
-      <Route exact path={LANDING.path} render={() => <LandingPage />} />
       <Route
         exact
-        path={SIGN_UP.path}
+        path={`/:userEnv/:admin?/${SIGN_UP.path}`}
         component={() => <SignUp admin={false} />}
       />
       <Route
@@ -115,11 +127,7 @@ const Routes = () => (
           </DefaultLayout>
         )}
       />
-      <Route
-        exact
-        path={`${SIGN_IN.path}/:userEnv?`}
-        component={() => <SignIn />}
-      />
+      <Route path={`/:userEnv/${SIGN_IN.path}`} component={() => <SignIn />} />
       <Route
         exact
         path={HOME.path}

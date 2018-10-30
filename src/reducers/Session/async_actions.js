@@ -33,6 +33,40 @@ export function fetchUserInfo(uid) {
   };
 }
 
+export function signUp({user, password, img, userEnv}) {
+  const {email} = user;
+
+  return dispatch => {
+    const db = DB(userEnv);
+
+    const createUser = profile =>
+      db.doCreateUser(profile).then(() => {
+        dispatch(setUserEnvSelection(userEnv));
+        dispatch(setAuthUserInfo({authUser: profile}));
+      });
+
+    return auth.doCreateUserWithEmailAndPassword(email, password).then(res => {
+      const {uid} = res.user;
+      // setAuthUser({authUser: user});
+
+      if (img !== null) {
+        return db
+          .addImgToStorage({file: img.file, path: `usr/${uid}`})
+          .then(imgUrl => {
+            const userAndImg = {...user, uid, photoURL: imgUrl};
+
+            createUser(userAndImg);
+          })
+          .catch(error => {
+            this.setState({error, loading: false});
+          });
+      }
+      console.log('user to add', user);
+      return createUser({...user, uid});
+    });
+  };
+}
+
 export const signIn = ({
   email,
   password,
@@ -41,27 +75,26 @@ export const signIn = ({
   onError = d => d
 }) => (dispatch, getState) => {
   const db = DB(userEnv);
-  return auth
-    .doSignInWithEmailAndPassword(email, password)
-    .then(resp => {
-      console.log('response', resp);
-      const {user} = resp;
-      const {uid} = user;
+  return auth.doSignInWithEmailAndPassword(email, password).then(resp => {
+    console.log('response', resp);
+    const {user} = resp;
+    const {uid} = user;
 
-      return db
-        .getUser(uid)
-        .then(usrInfo => {
-          console.log('logged in', usrInfo);
-          dispatch(setAuthUserInfo(userFields({uid, ...usrInfo})));
-          dispatch(setUserEnvSelection(userEnv));
-          return usrInfo
-        })
-        .catch(err => console.log('err', err));
-    })
-    .catch(error => {
-      console.log('response failure', error);
-      return onError(error.message);
+    return db.getUser(uid).then(usrInfo => {
+      dispatch(setAuthUserInfo(userFields({uid, ...usrInfo})));
+      dispatch(setUserEnvSelection(userEnv));
+      return usrInfo;
     });
+    // .catch(err => {
+    //   console.log('login Err', err);
+    //
+    //   onError(err.message);
+    // });
+  });
+  // .catch(error => {
+  //   console.log('response failure', error);
+  //   return onError(error.message);
+  // });
 };
 
 export function removeUserEnv(env) {

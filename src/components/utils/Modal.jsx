@@ -22,10 +22,11 @@ export const InlineModal = ({
   children,
   onClose,
   style,
-  uiColor
+  uiColor, className
   // background,
 }) => (
   <div
+    className={`z-40 ${className}`}
     style={{
       width: '100%',
       height: '100%',
@@ -33,7 +34,7 @@ export const InlineModal = ({
       // opacity: visible ? 1 : 0,
       transition: 'top 0.4s',
       pointerEvents: !visible ? 'none' : null,
-      zIndex: 30000,
+      // zIndex: 30000,
       left: 0,
       top: visible ? 0 : '200%',
       // top: 0,

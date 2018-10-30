@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {Link, withRouter} from 'react-router-dom';
+import {bindActionCreators} from 'redux';
 
 import {compose} from 'recompose';
 import {connect} from 'react-redux';
@@ -13,32 +14,29 @@ import {TagInput} from 'Utils/Tag';
 
 import {stylesheet} from 'Src/styles/GlobalThemeContext';
 
-import {setAuthUser} from 'Reducers/Session/actions';
+import {signUp} from 'Reducers/Session/async_actions';
 
 import DefaultLayout from 'Components/DefaultLayout';
 
-const SignUpPage = ({admin, ...props}) => (
-  <DefaultLayout
-    menu={
-      <div className="flex-grow flex justify-center items-center">
-        <h1>SignUp {admin ? 'Admin' : null}</h1>
+const SignUpPage = ({match, ...props}) => {
+  const {params} = match;
+  const {admin, userEnv} = params;
+  const isAdmin = admin === 'admin';
+
+  console.log('admin', admin, 'params');
+  return (
+    <DefaultLayout
+      menu={
+        <div className="flex-grow flex justify-center items-center">
+          <h1>SignUp {admin ? 'Admin' : null}</h1>
+        </div>
+      }>
+      <div className="content-margin overflow-scroll flex-col-wrapper">
+        <SignUpForm {...props} userEnv={userEnv} admin={isAdmin} />
       </div>
-    }
-  >
-    <div
-      className="content-margin"
-      style={{
-        overflowY: 'scroll',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        height: '100%'
-      }}
-    >
-      <SignUpForm {...props} admin={admin} />
-    </div>
-  </DefaultLayout>
-);
+    </DefaultLayout>
+  );
+};
 
 SignUpPage.propTypes = {
   admin: PropTypes.bool
@@ -70,54 +68,20 @@ class SignUpForm extends Component {
 
   onSubmit = event => {
     const {username, email, fullname, passwordOne, img, interests} = this.state;
+    const {history, onSetAuthUser, admin, signUp, userEnv} = this.props;
 
-    const {history, onSetAuthUser, admin} = this.props;
+    const user = {username, email, fullname, admin, interests};
 
     this.setState({loading: true});
 
-    const createUser = profile =>
-      db
-        .doCreateUser(profile)
-        .then(() => {
-          this.setState(() => ({...INITIAL_STATE}));
-          onSetAuthUser({authUser: profile});
-        })
-        .catch(error => {
-          this.setState({error, loading: false});
-        });
-    auth
-      .doCreateUserWithEmailAndPassword(email, passwordOne)
-      .then(res => {
-        const authUser = res.user;
-        const userProfile = {
-          uid: authUser.uid,
-          fullname,
-          username,
-          photoURL: null,
-          email,
-          interests,
-          admin
-        };
-        onSetAuthUser({authUser: userProfile});
-        history.push(routes.GEO_VIEW);
-
-        // Jump to page
-        // Create a user in your own accessible Firebase Database too
-        // this.setState({ imgUpload: true });
-        if (img !== null) {
-          db.addImgToStorage({file: img.file, path: `usr/${authUser.uid}`})
-            .then(imgUrl => {
-              const userProfileWithImg = {...userProfile, photoURL: imgUrl};
-              createUser(userProfileWithImg);
-            })
-            .catch(error => {
-              this.setState({error, loading: false});
-            });
-        } else {
-          createUser(userProfile);
-        }
+    signUp({user, img, userEnv, password: passwordOne})
+      .then(() => {
+        this.setState(() => ({...INITIAL_STATE}));
+        // todo
+        history.push(routes.GEO_VIEW.path);
       })
       .catch(error => {
+        console.log('error', error);
         this.setState({error, loading: false});
       });
 
@@ -259,17 +223,20 @@ class SignUpForm extends Component {
   }
 }
 
-const SignUpLink = () => (
+const SignUpLink = ({userEnv}) => (
   <p>
-    Do not have an account? <Link to={routes.SIGN_UP}>Sign Up</Link>
+    Do not have an account?{' '}
+    <Link to={`${routes.SIGN_UP.path}/${userEnv}`}>Sign Up</Link>
   </p>
 );
 
-const mapDispatchToProps = dispatch => ({
-  onSetAuthUser: authUser => {
-    dispatch(setAuthUser(authUser));
-  }
-});
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      signUp
+    },
+    dispatch,
+  );
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...stateProps,

@@ -154,7 +154,7 @@ class TextAreaModal extends Component {
   }
 }
 
-class TitleModal extends Component {
+class TitleModalBody extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
@@ -292,12 +292,7 @@ class EditCardFront extends PureComponent {
   modalWriteContent() {
     const {data, dialog} = this.state;
     const {challenge} = data;
-    const {
-      uiColor,
-      tagColorScale,
-      height,
-      tagVocabulary
-    } = this.props;
+    const {uiColor, tagColorScale, height, tagVocabulary} = this.props;
 
     const {title, tags, img, description, media, points} = data;
     const closeBtn = (
@@ -313,7 +308,7 @@ class EditCardFront extends PureComponent {
     switch (dialogTitle) {
       case 'Title':
         return (
-          <TitleModal
+          <TitleModalBody
             {...modalProps}
             text={title}
             onUpdate={newTitle =>
@@ -444,7 +439,9 @@ class EditCardFront extends PureComponent {
 
     return (
       <React.Fragment>
-        <Modal visible={modalVisible}>{this.modalWriteContent()}</Modal>
+        <Modal className="z-50" visible={modalVisible}>
+          {this.modalWriteContent()}
+        </Modal>
         <CardFront
           {...this.props}
           onClose={onClose}

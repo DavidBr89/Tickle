@@ -12,6 +12,7 @@ import AuthUserContext from './AuthUserContext';
 import {
   DATAVIEW,
   authRoutes,
+  makeUserEnvRoutes,
   adminRoutes,
   nonAuthRoutes
 } from 'Constants/routeSpec';
@@ -38,14 +39,27 @@ const includePath = (pathA, pathB) => {
   return splA[0] === splB[0];
 };
 
-const ListItem = ({name, path, curPath, active, children, subRoutes = []}) => (
+const ListItem = ({
+  name,
+  path,
+  userEnv,
+  curPath,
+  active,
+  children,
+  subRoutes = []
+}) => (
   <li className="list-item mb-1">
-    <div className={`${subRoutes.length > 0 && 'list-item' } ${includePath(curPath, path) && 'active'}`}>
+    <div
+      className={`${subRoutes.length > 0 && 'list-item'} ${includePath(
+        curPath,
+        path,
+      ) && 'active'}`}
+    >
       <Link to={path}>{children}</Link>
     </div>
     <ul className="ml-5 list-reset">
       {subRoutes.map(d => (
-        <li className={` list-item ${curPath === d.path && 'active'} `}>
+        <li className={`list-item ${curPath === d.path && 'active'} `}>
           <Link to={d.path}>{d.name}</Link>
         </li>
       ))}
@@ -60,7 +74,8 @@ const NavigationHelper = ({
   location,
   routes,
   signOut,
-  children
+  children,
+  userEnv
 }) => (
   <ul className="list-reset">
     {routes.map(r => (
@@ -70,7 +85,7 @@ const NavigationHelper = ({
     ))}
     {signOut && (
       <li>
-        <SignOutButton />
+        <SignOutButton userEnv={userEnv} />
       </li>
     )}
   </ul>
@@ -84,18 +99,22 @@ NavigationHelper.defaultProps = {
   signOut: false
 };
 
-const RouteNavigation = ({authUser, ...props}) => {
+const RouteNavigation = ({authUser, userEnv, ...props}) => {
+  const userAuthRoutes = makeUserEnvRoutes(userEnv, authRoutes);
+  const adminAuthRoutes = makeUserEnvRoutes(userEnv, adminRoutes);
+  console.log('userAuthRoutes', userAuthRoutes);
   if (authUser && authUser.admin) {
-    return <NavigationHelper {...props} signOut routes={adminRoutes} />;
+    return <NavigationHelper {...props} routes={adminAuthRoutes} />;
   }
   if (authUser !== null)
-    return <NavigationHelper {...props} signOut routes={authRoutes} />;
+    return <NavigationHelper {...props} signOut routes={userAuthRoutes} />;
 
   return <NavigationHelper {...props} routes={nonAuthRoutes} />;
 };
 
 const mapStateToProps = state => ({
   authUser: state.Session.authUser,
+  userEnv: state.Session.userEnvSelectedId,
   ...state.router
 });
 

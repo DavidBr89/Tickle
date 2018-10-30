@@ -2,26 +2,26 @@ export const TAGS = 'TAGS';
 export const GEO = 'GEO';
 export const TopicMap = 'topic-map';
 
-export const SIGN_UP_PATH = '/signup';
-export const SIGN_IN_PATH = '/signin';
+export const SIGN_UP_PATH = 'signup';
+export const SIGN_IN_PATH = 'signin';
 export const LANDING_PATH = '/';
 
-export const DATAVIEW_PATH = '/dataview';
+export const DATAVIEW_PATH = 'dataview';
 export const GEO_VIEW_PATH = `${DATAVIEW_PATH}/${GEO}`;
 export const TOPICMAP_VIEW_PATH = `${DATAVIEW_PATH}/${TopicMap}`;
 export const TAG_VIEW_PATH = `${DATAVIEW_PATH}/${TAGS}`;
 
-export const AUTHOR_PATH = '/card_authoring';
+export const AUTHOR_PATH = 'card_authoring';
 export const GEO_AUTHOR_PATH = `${AUTHOR_PATH}/${GEO}`;
 export const TOPIC_AUTHOR_PATH = `${AUTHOR_PATH}/${TopicMap}`;
 export const TAG_AUTHOR_PATH = `${AUTHOR_PATH}/${TAGS}`;
 
-export const ACCOUNT_PATH = '/account';
-export const ADMIN_PATH = '/admin';
+export const ACCOUNT_PATH = 'account';
+export const ADMIN_PATH = 'admin';
 export const PASSWORD_FORGET_PATH = '/pw-forget';
-export const HOME_PATH = '/home';
-export const MYCARDS_PATH = '/my-cards';
-export const ADMIN_SIGN_UP_PATH = '/signup-admin';
+export const HOME_PATH = 'home';
+export const MYCARDS_PATH = 'my-cards';
+export const ADMIN_SIGN_UP_PATH = 'signup-admin';
 
 export const HOME = {name: 'Home', path: HOME_PATH, subRoutes: []};
 export const MYCARDS = {
@@ -75,8 +75,8 @@ export const AUTHOR = {
   subRoutes: [GEO_AUTHOR, TOPIC_AUTHOR]
 };
 
-export const ACCOUNT = {name: 'Account', path: ACCOUNT_PATH};
-export const ADMIN = {name: 'Admin', path: ADMIN_PATH};
+export const ACCOUNT = {name: 'Account', path: ACCOUNT_PATH, subRoutes: []};
+export const ADMIN = {name: 'Admin', path: ADMIN_PATH, subRoutes: []};
 
 export const PASSWORD_FORGET = {
   name: 'Forget Password ?',
@@ -105,6 +105,18 @@ export const authRoutes = [
   ACCOUNT,
   MYCARDS
 ];
+
+const addPath = (env, path) => `/${env}/${path}`;
+
+export const makeUserEnvRoutes = (env, routes) =>
+  routes.map(({path, subRoutes, ...d}) => ({
+    ...d,
+    path: addPath(env, path),
+    subRoutes: subRoutes.map(({path: sb, ...e}) => ({
+      ...e,
+      path: addPath(env, sb),
+    })),
+  }));
 
 export const adminRoutes = [HOME, DATAVIEW, AUTHOR, ADMIN, ACCOUNT, MYCARDS];
 

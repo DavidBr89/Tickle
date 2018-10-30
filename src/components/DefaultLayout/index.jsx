@@ -124,7 +124,7 @@ class DefaultLayout extends Component {
   }
 
   render() {
-    const {children, activePath, menu} = this.props;
+    const {children, activePath, userEnv, menu} = this.props;
     const {open} = this.state;
 
     // style={{ height: isAndroid ? '100vh' : '100vh' }}
@@ -137,6 +137,7 @@ class DefaultLayout extends Component {
             style={{position: 'absolute'}}
             onToggle={this.handleClick}
           >
+            <div>{userEnv}</div>
             <RouteNavigation>
               {({name}) => (
                 <div
@@ -156,7 +157,10 @@ class DefaultLayout extends Component {
   }
 }
 
-const mapStateToProps = state => ({...state.Screen});
+const mapStateToProps = state => ({
+  ...state.Screen,
+  userEnv: state.Session.selectedUserEnvId
+});
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(

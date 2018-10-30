@@ -13,13 +13,12 @@ const withAuthorization = (condition = authUser => !!authUser) => Component => {
   class WithAuthorization extends React.Component {
     state = {};
     componentDidMount() {
-      const {fetchUserInfo} = this.props;
+      const {fetchUserInfo, userEnv} = this.props;
       firebase.auth.onAuthStateChanged(authUser => {
         if (!condition(authUser)) {
           // fetchUserInfo(null);
-          this.props.history.push(routes.SIGN_IN.path);
+          this.props.history.push(`${routes.SIGN_IN.path}/${userEnv}`);
         } else {
-          console.log('User is authorized', authUser.uid);
           // fetchUserInfo(authUser.uid);
           // this.setState({ authUser });
         }
@@ -36,7 +35,8 @@ const withAuthorization = (condition = authUser => !!authUser) => Component => {
   }
 
   const mapStateToProps = state => ({
-    authUser: state.Session.authUser
+    authUser: state.Session.authUser,
+    userEnv: state.Session.userEnvSelectedId
   });
 
   const mapDispatchToProps = dispatch => ({
