@@ -73,8 +73,8 @@ const Routes = () => (
       <Route
         path={`/:userEnv/${
           MYCARDS.path
-        }/query/:selectedCardId?/:showOption?/:flipped?`}
-        render={props => <Diary  />}
+        }/:selectedCardId?/:showOption?/:flipped?`}
+        render={props => <Diary {...basePath(props)} />}
       />
 
       <Route

@@ -60,7 +60,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const {dataView, match, history, id} = ownProps;
   const {path} = match;
 
-  const {flipped} = match.params;
+  const {flipped, userEnv} = match.params;
 
   const {
     asyncUpdateCard,
@@ -70,21 +70,12 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     routeFlipCard
   } = dispatcherProps;
 
-  // const viewport = {...mapViewport, width, height};
-
-  // const onCardDrop = cardData => {
-  //   console.log('CARD DROP', selectedCardId);
-  //   selectedCardId === 'temp'
-  //     ? updateCardTemplate({ uid, cardData, viewport, dataView })
-  //     : asyncUpdateCardAttr({ cardData, viewport, dataView });
-  // };
-
-  const createCard = cardData => asyncCreateCard({cardData, uid});
+  const createCard = cardData => asyncCreateCard({cardData, userEnv});
 
   const onCardUpdate = cardData =>
     cardData.id === 'temp'
       ? updateCardTemplate(cardData)
-      : asyncUpdateCard(cardData);
+      : createCard(cardData);
 
   const {routeExtendCard} = dispatcherProps;
   // TODO replace by regex

@@ -163,7 +163,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   // TODO replace by regex
 
   const closeCard = () => {
-    routeExtendCard({path, history, id, extended: false});
+    routeExtendCard({match, history, extended: false});
   };
 
   const onSubmitChallenge = challengeSubmission => {

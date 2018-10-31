@@ -1,6 +1,10 @@
 import React from 'react';
 // import { bindActionCreators } from 'redux';
 import {connect} from 'react-redux';
+
+import {compose} from 'recompose';
+import {withRouter} from 'react-router-dom';
+
 import {firebase} from 'Firebase';
 
 import {fetchCollectibleCards} from 'Reducers/Cards/async_actions';
@@ -20,16 +24,19 @@ const withAuthentication = Component => {
         getCreatedCards,
         fetchCollectibleCards,
         authUser,
-        fetchUserInfo
+        fetchUserInfo,
+        match
       } = this.props;
 
+      const {userEnv} = match.params;
+
       firebase.auth.onAuthStateChanged(authUser => {
-        console.log('authUser Changed', authUser);
         if (authUser !== null) {
           const {uid} = authUser;
           fetchUserInfo(uid);
 
-          fetchCollectibleCards(uid);
+          console.log('authUser Changed', fetchCollectibleCards);
+          fetchCollectibleCards({userEnv});
         } else {
           setAuthUserInfo({authUser: null});
 
@@ -67,10 +74,13 @@ const withAuthentication = Component => {
     )
   });
 
-  return connect(
-    mapStateToProps,
-    mapDispatchToProps,
-    mergeProps,
+  return compose(
+    withRouter,
+    connect(
+      mapStateToProps,
+      mapDispatchToProps,
+      mergeProps,
+    ),
   )(WithAuthentication);
 };
 

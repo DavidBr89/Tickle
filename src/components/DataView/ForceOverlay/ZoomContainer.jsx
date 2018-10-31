@@ -1,14 +1,16 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 
-import { getBoundingBox } from '../utils';
+import 'event-propagation-path';
+
+// import { getBoundingBox } from '../utils';
 
 function centerView(props) {
-  const { data, width, center, height } = props;
+  const {data, width, center, height} = props;
   if (data.length === 1) {
     console.log('start', center);
-    const { x, y } = data[0];
+    const {x, y} = data[0];
     const scale = 1;
 
     return d3.zoomIdentity
@@ -34,7 +36,7 @@ function centerView(props) {
 }
 
 function zoomFactory(props) {
-  const { width, height, maxZoomScale } = props;
+  const {width, height, maxZoomScale} = props;
 
   return d3
     .zoom()
@@ -68,7 +70,7 @@ class ZoomContainer extends Component {
       PropTypes.shape({
         x: PropTypes.number,
         y: PropTypes.number
-      })
+      }),
     ),
     selectedId: PropTypes.oneOf(PropTypes.number, null),
     delay: PropTypes.number
@@ -108,10 +110,10 @@ class ZoomContainer extends Component {
   // }
 
   componentDidUpdate(prevProps, prevState) {
-    const { width, height, center, data, selectedId } = this.props;
+    const {width, height, center, data, selectedId} = this.props;
     const scale = 2;
     if (this.props.selectedId && prevProps.selectedId !== selectedId) {
-      const { x, y } = data.find(n => n.id === selectedId);
+      const {x, y} = data.find(n => n.id === selectedId);
       // const zoomHandler = d3.zoomIdentity
       //   .translate(center[0] - x * scale, center[1] - y * scale)
       //   .scale(scale);
@@ -179,7 +181,7 @@ class ZoomContainer extends Component {
       data,
       onZoom
     } = this.props;
-    const { zoomHandler } = this.state;
+    const {zoomHandler} = this.state;
 
     const constrainZoom = () => {
       // t[0] = Math.max(0, Math.min(t[0], width - s * 50));
@@ -187,7 +189,7 @@ class ZoomContainer extends Component {
     };
     const zoomedNodes = data.map(d => {
       const [x, y] = zoomHandler.apply([d.x, d.y]);
-      return { ...d, x, y };
+      return {...d, x, y};
     });
     // .filter(({ x, y }) => x > 0 && x < width && y > 0 && y < height);
     //

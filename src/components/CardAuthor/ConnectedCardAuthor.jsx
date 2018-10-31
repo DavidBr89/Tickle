@@ -43,7 +43,6 @@ const mapStateToProps = state => {
     authUser: {uid, admin}
   } = state.Session;
 
-  console.log('userLocation', userLocation);
   const templateCard = {
     loc: userLocation,
     ...tmpCard,
@@ -122,7 +121,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const {dataView, history, match, children} = ownProps;
   const {path} = match;
 
-  const {selectedCardId = null, showOption = null} = match.params;
+  const {selectedCardId = null, showOption = null, userEnv} = match.params;
 
   const extCardId = showOption === 'extended' ? selectedCardId : null;
   console.log(match.params, 'extCardId', showOption, extCardId);
@@ -143,16 +142,13 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
       });
   };
 
-  const fetchCards = () => fetchCreatedCards(uid);
-
-  const preSelectCardId = () => selectCard(templateCard.id);
+  const fetchCards = () => fetchCreatedCards({ userEnv });
 
   return {
     ...state,
     ...dispatcherProps,
     previewCardAction,
     fetchCards,
-    preSelectCardId,
     dataView,
     selectedCardId,
     extCardId,

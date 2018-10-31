@@ -24,6 +24,7 @@ import * as dataViewAsyncActions from 'Reducers/DataView/async_actions';
 
 import withAuthorization from 'Src/components/withAuthorization';
 import withAuthentication from 'Src/components/withAuthentication';
+import cardRoutes from 'Src/Routes/cardRoutes';
 
 import {CHALLENGE_SUBMITTED, isChallengeSubmitted} from 'Constants/cardFields';
 
@@ -113,10 +114,15 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     height
   } = state;
 
-  const {dataView, history, match} = ownProps;
-  const {path} = match;
+  const {dataView, history, location, match} = ownProps;
+  const {pathname: path} = location;
+  console.log('match params', match);
 
-  const {selectedCardId = null, showOption = null} = match.params;
+  const {
+    selectedCardId = null,
+    showOption = null,
+    userEnv = null
+  } = match.params;
 
   const extCardId = showOption === 'extended' ? selectedCardId : null;
 
@@ -143,47 +149,34 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     return pos[0] > 0 && pos[0] < width && pos[1] > 0 && pos[1] < height;
   };
 
-  const routeLockedCard = id =>
-    otherActions.routeLockedCard({
-      path,
-      history,
-      id
-    });
-
-  const routeExtendCard = () => {
-    otherActions.routeExtendCard({
-      path,
-      history,
-      id: selectedCardId,
-      extended: extCardId === null
-    });
-  };
-
-  const routeSelectCard = id => {
-    otherActions.routeSelectCard({path, history, id});
-  };
+  const {routeSelectCard, routeLockedCard, routeExtendCard} = cardRoutes({
+    basePathName: ({userEnv, dataview, type}) =>
+      `/${userEnv}/${dataview}/${type}`,
+    path: `/:userEnv/:dataview/:type/:selectedCardId?/:extended?/:flipped?`,
+    history,
+    match,
+  });
 
   const previewCardAction = d => {
     if (selectedCardId === d.id) {
       if (!d.accessible) {
         return routeLockedCard(d.id);
       }
-
       return routeExtendCard();
     }
     return routeSelectCard(d.id);
   };
 
-  console.log('fetchCollectibleCards', fetchCollectibleCards);
+  // console.log('fetchCollectibleCards', fetchCollectibleCards);
   const fetchCards = () => {
-    fetchCollectibleCards(uid);
+    fetchCollectibleCards({userEnv});
   };
 
   const preSelectCardId = () => selectCard(null);
 
   // TODO: hack
-  const isInDistance = loc =>
-    distanceLoc(userLocation, loc) < accessibleRadius / 2 + 1;
+  // const isInDistance = loc =>
+  //   distanceLoc(userLocation, loc) < accessibleRadius / 2 + 1;
 
   const filteredCards = collectibleCards
     .filter(d => filterByTag(d, filterSet))
@@ -228,8 +221,8 @@ const authCondition = authUser => authUser !== null;
 
 export default compose(
   withRouter,
-  withAuthorization(authCondition),
   withAuthentication,
+  withAuthorization(authCondition),
   connect(
     mapStateToProps,
     mapDispatchToProps,
