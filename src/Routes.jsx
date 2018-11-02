@@ -70,12 +70,7 @@ const Routes = () => (
         render={() => <Redirect to={`/staging/${SIGN_IN.path}`} />}
       />
 
-      <Route
-        path={`/:userEnv/${
-          MYCARDS.path
-        }/query/:selectedCardId?/:showOption?/:flipped?`}
-        render={props => <Diary  />}
-      />
+      <Route path={`/:userEnv/${MYCARDS.path}/`} render={props => <Diary />} />
 
       <Route
         path={`:/userEnv/${AUTHOR.path}`}
@@ -88,31 +83,21 @@ const Routes = () => (
       />
 
       <Route
-        path={`/:userEnv/${
-          GEO_AUTHOR.path
-        }/:selectedCardId?/:showOption?/:flipped?`}
-        render={props => (
-          <MapCardAuthorPage {...basePath(props, GEO_AUTHOR.path)} />
-        )}
+        path={`/:userEnv/${GEO_AUTHOR.path}/`}
+        render={props => <MapCardAuthorPage />}
       />
       <Route
-        path={`/:userEnv/${
-          TOPIC_AUTHOR.path
-        }/:selectedCardId?/:showOption?/:flipped?`}
+        path={`/:userEnv/${TOPIC_AUTHOR.path}`}
         render={() => <TopicMapAuthorPage />}
       />
       <Route
         exact
-        path={`/:userEnv/${
-          TOPIC_VIEW.path
-        }/:selectedCardId?/:showOption?/:flipped?`}
+        path={`/:userEnv/${TOPIC_VIEW.path}`}
         render={() => <TopicMapViewPage />}
       />
       <Route
         exact
-        path={`/:userEnv/${
-          GEO_VIEW.path
-        }/:selectedCardId?/:showOption?/:flipped?`}
+        path={`/:userEnv/${GEO_VIEW.path}`}
         render={() => (
           <CardView>
             {props => <UserMap {...props} className="absolute" />}
@@ -121,9 +106,7 @@ const Routes = () => (
       />
       <Route
         exact
-        path={`/:userEnv/${
-          TAG_VIEW.path
-        }/:selectedCardId?/:showOption?/:flipped?`}
+        path={`/:userEnv/${TAG_VIEW.path}`}
         render={() => (
           <CardView>
             {props => <TagView {...props} className="absolute" />}

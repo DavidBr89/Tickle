@@ -114,22 +114,20 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     height
   } = state;
 
-  const {dataView, history, location, match} = ownProps;
-  const {pathname: path} = location;
-  console.log('match params', match);
+  const {dataView, history, location} = ownProps;
 
   const {
-    selectedCardId = null,
-    showOption = null,
-    userEnv = null
-  } = match.params;
+    query: {selectedCardId, extended, flipped},
+    routing: {routeSelectCard, routeExtendCard}
+  } = cardRoutes({history, location});
 
-  const extCardId = showOption === 'extended' ? selectedCardId : null;
+
+  const extCardId = extended ? selectedCardId : null;
 
   const extendedCard =
     extCardId !== null ? collectibleCards.find(c => c.id === extCardId) : null;
 
-  const selectedCardLocked = showOption === 'locked';
+  // const selectedCardLocked = showOption === 'locked';
 
   // console.log('match', match);
 
@@ -149,28 +147,17 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     return pos[0] > 0 && pos[0] < width && pos[1] > 0 && pos[1] < height;
   };
 
-  const {routeSelectCard, routeLockedCard, routeExtendCard} = cardRoutes({
-    basePathName: ({userEnv, dataview, type}) =>
-      `/${userEnv}/${dataview}/${type}`,
-    path: `/:userEnv/:dataview/:type/:selectedCardId?/:extended?/:flipped?`,
-    history,
-    match,
-  });
-
   const previewCardAction = d => {
     if (selectedCardId === d.id) {
-      if (!d.accessible) {
-        return routeLockedCard(d.id);
-      }
       return routeExtendCard();
     }
     return routeSelectCard(d.id);
   };
 
   // console.log('fetchCollectibleCards', fetchCollectibleCards);
-  const fetchCards = () => {
-    fetchCollectibleCards({userEnv});
-  };
+  // const fetchCards = () => {
+  //   fetchCollectibleCards({userEnv});
+  // };
 
   const preSelectCardId = () => selectCard(null);
 
@@ -202,15 +189,15 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     ...dispatcherProps,
     previewCardAction,
     routeSelectCard,
-    fetchCards,
+    // fetchCards,
     preSelectCardId,
     dataView,
     cards: filteredCards,
     cardSets,
     selectedTags,
     selectedCardId,
-    extCardId,
-    selectedCardLocked,
+    // extCardId,
+    // selectedCardLocked,
     extendedCard,
     selectedCard,
     ...ownProps

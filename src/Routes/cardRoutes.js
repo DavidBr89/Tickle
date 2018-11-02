@@ -1,51 +1,63 @@
 import {matchPath} from 'react-router';
+import queryString from 'query-string';
 
 export default function cardRoutes({
-  basePathName,
   path,
-  match: {url},
+  location: {pathname, search},
   history
 }) {
-  const {params} = matchPath(url, {path});
+  const {
+    selectedCardId = null,
+    extended = null,
+    flipped = null
+  } = queryString.parse(search);
 
-  const constructPath = ({...rest}) => {
-    const {selectedCardId = null, extended = null, flipped = null} = params;
+  const cardParam = id => (id !== null ? `selectedCardId=${id}` : '');
 
-    const bp = basePathName(params);
+  const extParam = ext => (ext ? `&extended=${true}` : '');
 
-    if (selectedCardId) {
-      if (extended) {
-        if (flipped) {
-          return `${bp}/${selectedCardId}/${extended}/${flipped}`;
-        }
-        return `${bp}/${selectedCardId}/${extended}`;
-      }
-      return `${bp}/${selectedCardId}`;
-    }
-    return bp;
+  const routeSelectCard = (cardId = null) => {
+    history.push(`${pathname}?${cardParam(cardId)}`); //
   };
 
-  const routeSelectCard = selectedCardId => {
-    const {params} = matchPath(url, {path});
+  const routeExtendCard = () => {
+    const newExt = extended === null;
+    console.log('extended', extended, newExt);
+    const newExtendedParam = extParam(newExt);
+    console.log('newExtendedParam', newExtendedParam);
 
-    history.push(constructPath({selectedCardId})); //
-    // dispatch(selectCard(id));
+    history.push(`${pathname}?${cardParam(selectedCardId)}${newExtendedParam}`); //
   };
 
-  const routeExtendCard = extended => {
-    history.push(constructPath({extended: extended ? 'extended' : null}));
-    // dispatch(extendSelectedCard(id));
-  };
-
-  const routeLockedCard = id => {
-    history.push(`${path}/${id}/locked`);
-    // dispatch(extendSelectedCard(id));
-  };
+  // const routeLockedCard = id => {
+  //   history.push(`${path}/${id}/locked`);
+  //   // dispatch(extendSelectedCard(id));
+  // };
 
   const routeFlipCard = () => {
-    const {params} = matchPath(url, {path});
-    history.push(constructPath({flipped: !params.flipped}));
+    const newFlipped = !flipped;
+    console.log('routing flipCard');
+    console.log('search', search, 'pathname', pathname);
+    console.log('flipped', flipped, 'newFlipped', newFlipped);
+    const newFlippedParam = newFlipped ? `&flipped=${true}` : '';
+
+    history.push(
+      `${pathname}?${cardParam(selectedCardId)}${extParam(
+        extended,
+      )}${newFlippedParam}`,
+    );
     // dispatch(flipCard(!flipped));
   };
-  return {routeSelectCard, routeExtendCard, routeLockedCard, routeFlipCard};
+  return {
+    query: {
+      selectedCardId,
+      extended,
+      flipped,
+    },
+    routing: {
+      routeSelectCard,
+      routeExtendCard,
+      routeFlipCard
+    }
+  };
 }

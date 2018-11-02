@@ -9,7 +9,7 @@ import {FlipButton} from '../layout';
 import {FieldSet} from 'Components/utils/StyledComps';
 import Comments from './Comments';
 import CardHeader from '../CardHeader';
-import BackAuthor from './BackAuthor.jsx';
+import BackAuthor from './BackAuthor';
 import {MapAreaControl} from './MapAreaControl';
 
 import CardControls from 'Components/cards/CardControls';
@@ -20,10 +20,9 @@ const DeleteButton = ({style, onClick, color, className}) => (
     className="m-1 btn btn-black bg-danger"
     style={{
       alignItems: 'center',
-      ...style
+      ...style,
     }}
-    onClick={onClick}
-  >
+    onClick={onClick}>
     <Trash2 size={30} />
   </button>
 );
@@ -38,21 +37,22 @@ const BackField = ({
   icon,
   children,
   disabled,
-  extended
+  extended,
 }) => (
   <div
     className="border overflow-hidden relative flex-col-wrapper"
     onClick={!extended ? onClick : () => null}
     style={{
-      ...style,
-    }}>
+      ...style
+    }}
+  >
     <div
       className="mb-1 z-10 absolute flex-grow flex justify-end items-center"
-      style={{right: 0}}
-    >
+      style={{right: 0}}>
       <button
         className="btn bg-white m-2"
-        onClick={extended ? onClick : () => null}>
+        onClick={extended ? onClick : () => null}
+      >
         {extended ? <Minimize /> : <Maximize />}
       </button>
     </div>
@@ -64,14 +64,14 @@ DeleteButton.propTypes = {
   style: PropTypes.object,
   onClick: PropTypes.func,
   color: PropTypes.string,
-  className: PropTypes.string
+  className: PropTypes.string,
 };
 
 DeleteButton.defaultProps = {
   style: {},
   onClick: d => d,
   color: 'black',
-  className: ''
+  className: '',
 };
 
 class CardBack extends Component {
@@ -81,20 +81,20 @@ class CardBack extends Component {
       username: PropTypes.string,
       email: PropTypes.string,
       uid: PropTypes.string,
-      usrImgUrl: PropTypes.oneOf(null, PropTypes.string)
+      usrImgUrl: PropTypes.oneOf(null, PropTypes.string),
     }),
-    flipHandler: PropTypes.func.isRequired,
+    onFlip: PropTypes.func.isRequired,
     linkedCards: PropTypes.array,
     cardSets: PropTypes.array,
     loc: PropTypes.shape({
       latitude: PropTypes.number,
-      longitude: PropTypes.number
+      longitude: PropTypes.number,
     }),
     uiColor: PropTypes.string,
     edit: PropTypes.bool,
     mapRadius: PropTypes.number,
     setMapRadius: PropTypes.func,
-    onDelete: PropTypes.func
+    onDelete: PropTypes.func,
   };
 
   static defaultProps = {
@@ -104,30 +104,22 @@ class CardBack extends Component {
       uid: null,
       username: 'defaulUser',
       email: 'default@gmail.com',
-      usrImgUrl: null
+      usrImgUrl: null,
     },
     cardSets: [],
     uiColor: 'grey',
     edit: false,
-    flipHandler: d => d,
+    onFlip: d => d,
     mapRadius: 100,
     setMapRadius: d => d,
-    onDelete: d => d
+    onDelete: d => d,
   };
 
   state = {extended: null};
 
-  // TODO: check
-  shouldComponentUpdate(nextProps, nextState) {
-    return (
-      this.state.extended !== nextState.extended ||
-      this.props.visible !== nextProps.visible
-    );
-  }
-
   selectField = field => {
     this.setState(({extended: prevExtended}) => ({
-      extended: prevExtended !== field ? field : null
+      extended: prevExtended !== field ? field : null,
     }));
   };
 
@@ -138,14 +130,15 @@ class CardBack extends Component {
       edit,
       setMapRadius,
       mapRadius,
-      flipHandler,
+      onFlip,
       onDelete,
       tagColorScale,
       id: cardId,
       uid,
       style,
       onClose,
-      className
+      className,
+      fetchAuthorData
     } = this.props;
 
     const {extended} = this.state;
@@ -157,7 +150,7 @@ class CardBack extends Component {
       return {
         transition: 'all 200ms',
         flexGrow: fieldExtended ? '0.5' : '0.3',
-        overflow: fieldExtended ? 'scroll' : 'hidden'
+        overflow: fieldExtended ? 'scroll' : 'hidden',
       };
     };
 
@@ -167,39 +160,35 @@ class CardBack extends Component {
           title="Author"
           extended
           style={displayStyle('author')}
-          onClick={() => this.selectField('author')}>
-          { uid && <BackAuthor uid={uid} extended={extended === 'author'} /> }
+          onClick={() => this.selectField('author')}
+        >
+          <BackAuthor uid={uid} extended={extended === 'author'}
+          fetchData={fetchAuthorData}
+          /> }
         </BackField>
         <BackField
           extended={isExtended('map')}
           style={displayStyle('map')}
           edit={edit}
-          title="Location">
-          <MapAreaControl
-            {...this.props}
-            {...loc}
-            extended={isExtended('map')}
-            uiColor={uiColor}
-            onChange={r => setMapRadius(r)}
-            radius={mapRadius}
-            edit={edit}
-          />
-        </BackField>
+          title="Location"
+        />
         <BackField
           extended={isExtended('comments')}
           onClick={() => this.selectField('comments')}
           title="Comments"
           style={displayStyle('comments')}
-          borderColor={uiColor}>
+          borderColor={uiColor}
+        >
           <Comments cardId={cardId} extended={extended === 'comments'} />
         </BackField>
         <CardControls
-          onFlip={flipHandler}
+          onFlip={onFlip}
           onClose={onClose}
           style={{
             width: '100%',
-            flexShrink: 0,
-          }}>
+            flexShrink: 0
+          }}
+        >
           {edit ? (
             <DeleteButton
               onClick={onDelete}
@@ -214,23 +203,23 @@ class CardBack extends Component {
 }
 
 CardBack.propTypes = {
-  flipHandler: PropTypes.func,
+  onFlip: PropTypes.func,
   onClose: PropTypes.func,
   edit: PropTypes.bool,
   background: PropTypes.string,
   uiColor: PropTypes.string,
   title: PropTypes.oneOf([PropTypes.string, null]),
-  setMapRadius: PropTypes.func
+  setMapRadius: PropTypes.func,
 };
 
 CardBack.defaultProps = {
-  flipHandler: d => d,
+  onFlip: d => d,
   edit: false,
   onClose: d => d,
   background: 'black',
   uiColor: 'black',
   title: null,
-  setMapRadius: d => d
+  setMapRadius: d => d,
 };
 
 export default CardBack;

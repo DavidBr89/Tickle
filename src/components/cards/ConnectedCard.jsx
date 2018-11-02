@@ -6,14 +6,16 @@ import {withRouter} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
-import {Card} from './index';
+import CardFrame from './CardFrame';
+
+import ReadCardFront from './CardFront/ReadCardFront';
+import CardBack from './CardBack';
 
 import {asyncSubmitChallenge} from 'Reducers/Cards/async_actions';
 
 import * as dataViewActions from 'Reducers/DataView/actions';
 import * as routeActions from 'Reducers/DataView/async_actions';
 import MediaChallenge from 'Components/Challenges/MediaChallenge';
-import ReadCardFront from './CardFront/ReadCardFront';
 
 import StarRating from 'Components/utils/StarRating';
 
@@ -24,6 +26,9 @@ import {PreviewTags} from 'Utils/Tag';
 
 import {stylesheet} from 'Src/styles/GlobalThemeContext';
 import {MediaList} from 'Utils/MediaUpload';
+import {DB} from 'Firebase';
+
+import cardRoutes from 'Src/Routes/cardRoutes';
 
 // TODO: outsource
 const ChallengeResult = ({
@@ -80,58 +85,66 @@ const ChallengeResult = ({
 );
 
 const CardViewable = ({
-  iOS,
-  smallScreen,
-  closeCard,
-  tagColorScale,
-  onSubmitChallenge,
-  isSmartphone,
   flipped,
-  android,
-  onChallengeClick,
-  onCreate,
-  template,
+  onSubmitChallenge,
+  userEnvSelectedId,
+  uid,
+  onFlip,
+  onClose,
   ...props
 }) => (
-  <Card
-    iOS={iOS}
-    smallScreen={smallScreen}
+  <CardFrame
     key={props.id}
-    bookmarkable
-    front={<ReadCardFront />}
-    onClose={closeCard}
-    tagColorScale={tagColorScale}
-    uiColor="grey"
-    background="whitesmoke"
-    frontView={flipped}
+    front={
+      <ReadCardFront
+        {...props}
+        onFlip={onFlip}
+        onClose={() => {
+          onClose();
+        }}
+      />
+    }
+    back={
+      <CardBack
+        {...props}
+        getAuthorData={() => DB(userEnvSelectedId).getDetailedUserInfo(uid)}
+        onClose={() => {
+          console.log('close');
+          onClose();
+        }}
+        onFlip={onFlip}
+        edit={false}
+      />
+    }
+    flipped={flipped}
     {...props}
     challengeComp={
-      props.challengeSubmission && props.challengeSubmission.feedback ? (
-        <ChallengeResult
-          tags={props.tags}
-          {...props.challengeSubmission}
-          {...props.challengeSubmission.feedback}
-        />
-      ) : (
-        <MediaChallenge
-          {...props.challenge}
-          bookmarkable
-          removable
-          title="Challenge"
-          isSmartphone={isSmartphone}
-          key={props.id}
-          challengeSubmission={props.challengeSubmission}
-          onUpdate={newChallengeSub => {
-            onSubmitChallenge({
-              cardId: props.id,
-              ...newChallengeSub
-            });
-          }}
-        />
-      )
+      <MediaChallenge
+        {...props.challenge}
+        bookmarkable
+        removable
+        title="Challenge"
+        isSmartphone={false}
+        key={props.id}
+        challengeSubmission={props.challengeSubmission}
+        onUpdate={newChallengeSub => {
+          onSubmitChallenge({
+            cardId: props.id,
+            ...newChallengeSub,
+          });
+        }}
+      />
     }
   />
 );
+
+// props.challengeSubmission && props.challengeSubmission.feedback ? (
+//   <ChallengeResult
+//     tags={props.tags}
+//     {...props.challengeSubmission}
+//     {...props.challengeSubmission.feedback}
+//   />
+// ) : (
 
 const mapStateToProps = state => ({
   ...state.Screen,
@@ -150,39 +163,44 @@ const mapDispatchToProps = dispatch =>
   );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const {match, history, id} = ownProps;
+  const {location, match, history, id} = ownProps;
   const {authUser} = state;
   const {uid} = authUser;
-  const {path} = match;
-  const {flipped} = match.params;
-  const {
-    routeExtendCard,
-    routeFlipCard,
-    asyncSubmitChallenge
-  } = dispatcherProps;
+  const {asyncSubmitChallenge} = dispatcherProps;
   // TODO replace by regex
 
-  const closeCard = () => {
-    routeExtendCard({match, history, extended: false});
+  const {userEnv} = match.params;
+
+  const {
+    query: {selectedCardId, extended, flipped},
+    routing: {routeFlipCard, routeExtendCard}
+  } = cardRoutes({history, location});
+
+  // console.log('render');
+
+  const onClose = () => {
+    routeExtendCard();
   };
 
   const onSubmitChallenge = challengeSubmission => {
     asyncSubmitChallenge({playerId: uid, ...challengeSubmission});
   };
 
-  const flipHandler = () => {
-    routeFlipCard({match, history});
+  const onFlip = () => {
+    routeFlipCard();
   };
+
+  const db = DB(userEnv);
+  const fetchAuthorData = () => db.getDetailedUserInfo(uid);
 
   return {
     ...state,
     ...dispatcherProps,
     ...ownProps,
     onSubmitChallenge,
-    closeCard,
-    flipHandler,
-    // TODO refactor
-    frontView: !flipped
+    onClose,
+    onFlip,
+    flipped
   };
 };
 

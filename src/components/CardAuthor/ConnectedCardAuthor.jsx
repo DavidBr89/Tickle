@@ -5,6 +5,7 @@ import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
 
 import {intersection} from 'lodash';
+
 import {
   resizeCardWindow,
   userMove,
@@ -20,11 +21,14 @@ import * as dataViewActions from 'Reducers/DataView/actions';
 // TODO: refactor these actions
 import * as routeActions from 'Reducers/DataView/async_actions';
 
+import cardRoutes from 'Src/Routes/cardRoutes';
+
 // import { fetchDirection } from 'Reducers/Map/async_actions';
 
 import CardAuthorPage from './CardAuthorPage';
 
 import withAuthorization from 'Src/components/withAuthorization';
+import withAuthentication from 'Src/components/withAuthentication';
 
 // import mapViewReducer from './reducer';
 
@@ -32,7 +36,7 @@ import withAuthorization from 'Src/components/withAuthorization';
 const mapStateToProps = state => {
   const {createdCards, tmpCard} = state.Cards;
 
-  const {selectedCardId, filterSet} = state.DataView;
+  const {filterSet} = state.DataView;
   // console.log('selectedCardid', selectedCardId);
 
   // TODO: own dim reducer
@@ -48,6 +52,7 @@ const mapStateToProps = state => {
     ...tmpCard,
     uid
   };
+  console.log('templateCard', templateCard);
 
   const filteredCards = createdCards.filter(
     d =>
@@ -57,18 +62,6 @@ const mapStateToProps = state => {
 
   const cards = [templateCard, ...filteredCards];
 
-  const cardSets = setify(cards);
-
-  // const tagColorScale = makeTagColorScale(cardSets);
-
-  // TODO: outsource action
-  // TODO: outsource action
-  // TODO: outsource action
-  // TODO: outsource action
-  const selectedCard = cards.find(d => d.id === selectedCardId) || null;
-
-  const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
-
   return {
     ...state.MapView,
     ...state.DataView,
@@ -76,13 +69,9 @@ const mapStateToProps = state => {
     ...state.Screen,
     uid,
     admin,
-    selectedCardId,
     filterSet,
     templateCard,
-    cardSets,
     cards,
-    selectedTags,
-    selectedCard
     // tagColorScale
   };
 };
@@ -107,48 +96,43 @@ const mapDispatchToProps = dispatch =>
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
   const {uid, admin, templateCard, createdCards, cards, filterSet} = state;
-  console.log('card author state', state);
   const {
     selectCard,
     extendSelectedCard,
     // fetchReadableCards,
     fetchCreatedCards,
-    routeExtendCard,
-    routeSelectCard
   } = dispatcherProps;
 
   const env = 'staging';
-  const {dataView, history, match, children} = ownProps;
-  const {path} = match;
+  const {dataView, history, location, children} = ownProps;
 
-  const {selectedCardId = null, showOption = null, userEnv} = match.params;
+  const {
+    query: {selectedCardId, extended, flipped},
+    routing: {routeSelectCard, routeLockedCard, routeExtendCard}
+  } = cardRoutes({history, location});
 
-  const extCardId = showOption === 'extended' ? selectedCardId : null;
-  console.log(match.params, 'extCardId', showOption, extCardId);
+  const extCardId = extended ? selectedCardId : null;
 
-  // TODO: refactor
+  const cardSets = setify(cards);
+
+  const selectedCard = cards.find(d => d.id === selectedCardId) || null;
+  console.log('selectedCard', selectedCard)
+
+  const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
+
   const previewCardAction = d => {
-    selectedCardId === d.id
-      ? routeExtendCard({
-        path,
-        history,
-        id: selectedCardId,
-        extended: extCardId === null
-      })
-      : routeSelectCard({
-        path,
-        history,
-        id: d.id
-      });
+    selectedCardId === d.id ? routeExtendCard() : routeSelectCard(d.id);
   };
-
-  const fetchCards = () => fetchCreatedCards({ userEnv });
 
   return {
     ...state,
     ...dispatcherProps,
     previewCardAction,
-    fetchCards,
+    cardSets,
+    selectCard,
+    selectedCard,
+    selectedTags,
+    // fetchCards,
     dataView,
     selectedCardId,
     extCardId,
@@ -164,6 +148,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 const authCondition = authUser => authUser !== null;
 
 export default compose(
+  withAuthentication,
   withAuthorization(authCondition),
   withRouter,
   connect(

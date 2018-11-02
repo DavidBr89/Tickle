@@ -292,7 +292,7 @@ class EditCardFront extends PureComponent {
   modalWriteContent() {
     const {data, dialog} = this.state;
     const {challenge} = data;
-    const {uiColor, tagColorScale, height, tagVocabulary} = this.props;
+    const {tagVocabulary} = this.props;
 
     const {title, tags, img, description, media, points} = data;
     const closeBtn = (
@@ -413,7 +413,7 @@ class EditCardFront extends PureComponent {
   render() {
     const {
       onClose,
-      flipHandler,
+      onFlip,
       style,
       background,
       uiColor,
@@ -424,6 +424,7 @@ class EditCardFront extends PureComponent {
       onCreate
     } = this.props;
     const {data, dialog} = this.state;
+    console.log('state data', data);
     const modalVisible = dialog !== null;
     const {
       id,
@@ -445,6 +446,7 @@ class EditCardFront extends PureComponent {
         <CardFront
           {...this.props}
           onClose={onClose}
+          onFlip={onFlip}
           onTagsClick={() => {
             this.setState({
               dialog: {title: 'Tags', data: tags}
@@ -495,7 +497,6 @@ class EditCardFront extends PureComponent {
               dialog: {title: 'Points', data: points}
             })
           }
-          onFlip={flipHandler}
           edit
         />
       </React.Fragment>

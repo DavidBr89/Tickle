@@ -29,7 +29,7 @@ class ReadCardFront extends Component {
     description: PropTypes.string.isRequired,
     img: PropTypes.oneOf([PropTypes.object, null]),
     onClose: PropTypes.func,
-    flipHandler: PropTypes.func,
+    onFlip: PropTypes.func,
     style: PropTypes.object,
     background: PropTypes.string,
     tagColorScale: PropTypes.func,
@@ -52,7 +52,7 @@ class ReadCardFront extends Component {
     radius: 500,
     media: [],
     comments: [],
-    flipHandler: d => d,
+    onFlip: d => d,
     tagColorScale: () => 'green',
     bookmarkable: false,
     onRemoveChallengeSubmission: d => d,
@@ -173,7 +173,7 @@ class ReadCardFront extends Component {
       media,
       title,
       uiColor,
-      flipHandler,
+      onFlip,
       // background,
       challengeSubmission,
       tagColorScale,
@@ -198,6 +198,7 @@ class ReadCardFront extends Component {
         <CardFront
           {...this.props}
           onClose={onClose}
+          onFlip={onFlip}
           onImgClick={() =>
             this.setState({
               dialogKey: 'Img'
@@ -220,7 +221,6 @@ class ReadCardFront extends Component {
               {this.btnText()}
             </BigButton>
           }
-          onFlip={flipHandler}
         />
       </React.Fragment>
     );

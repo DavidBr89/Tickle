@@ -22,7 +22,8 @@ export const InlineModal = ({
   children,
   onClose,
   style,
-  uiColor, className
+  uiColor,
+  className
   // background,
 }) => (
   <div

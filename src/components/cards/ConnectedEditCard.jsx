@@ -6,8 +6,10 @@ import {compose} from 'recompose';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
-import {Card} from './index';
+import CardFrame from './CardFrame';
 import {withRouter} from 'react-router-dom';
+
+import {DB} from 'Firebase';
 
 import {updateCardTemplate, dragCard} from 'Reducers/Cards/actions';
 
@@ -17,9 +19,11 @@ import * as asyncCardActions from 'Reducers/Cards/async_actions';
 
 import * as routeActions from 'Reducers/DataView/async_actions';
 
-import {BigButton} from './layout';
-
 import EditCardFront from './CardFront/EditCardFront';
+
+import CardBack from './CardBack';
+
+import cardRoutes from 'Src/Routes/cardRoutes';
 
 function mapStateToProps(state) {
   return {
@@ -47,93 +51,101 @@ const mapDispatchToProps = dispatch =>
   );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
+  const {mapViewport, width, height, authUser, tagVocabulary} = state;
+  // const {uid} = authUser;
+  const {match, location, history, uid} = ownProps;
+  console.log('ownProps CARD', ownProps);
+
+  const {userEnv} = match.params;
+
   const {
-    selectedCardId,
-    mapViewport,
-    width,
-    height,
-    authUser,
-    tagVocabulary
-  } = state;
-  const {uid} = authUser;
-
-  const {dataView, match, history, id} = ownProps;
-  const {path} = match;
-
-  const {flipped, userEnv} = match.params;
+    query: {selectedCardId, extended, flipped},
+    routing: {routeFlipCard, routeExtendCard}
+  } = cardRoutes({history, location});
 
   const {
     asyncUpdateCard,
     updateCardTemplate,
     asyncCreateCard,
     asyncRemoveCard,
-    routeFlipCard
   } = dispatcherProps;
 
-  const createCard = cardData => asyncCreateCard({cardData, userEnv});
+  const createCard = cardData => {
+    console.log('yo', cardData, userEnv);
+    asyncCreateCard({cardData, userEnv});
+  };
 
   const onCardUpdate = cardData =>
     cardData.id === 'temp'
       ? updateCardTemplate(cardData)
       : createCard(cardData);
 
-  const {routeExtendCard} = dispatcherProps;
-  // TODO replace by regex
+  const onClose = routeExtendCard;
 
-  const closeCard = () => {
-    routeExtendCard({path, history, id, extended: false});
-  };
-  const flipHandler = () => routeFlipCard({match, history});
+  const onFlip = routeFlipCard;
+  const db = DB(userEnv);
+  const fetchAuthorData = () => db.getDetailedUserInfo(uid);
 
   return {
     ...state,
     ...dispatcherProps,
     onCardUpdate,
     createCard,
-    closeCard,
-    flipHandler,
-    frontView: !flipped,
+    onClose,
+    onFlip,
+    flipped,
     tagVocabulary,
+    fetchAuthorData,
     ...ownProps
   };
 };
 
 const EditCard = ({
-  extendSelectedCard,
   createCard,
   asyncRemoveCard,
   onCardUpdate,
-  tagColorScale,
   x,
   y,
-  closeCard,
+  onClose,
+  flipped,
   onChallengeClick,
   onCreate,
   template,
+  onFlip,
+  fetchAuthorData,
   ...props
 }) => (
-  <Card
-    {...props}
-    front={<EditCardFront {...props} />}
+  <CardFrame
     key={props.id}
-    onClose={closeCard}
-    template={template}
-    onCreate={d => {
-      createCard({...d, x, y});
-      closeCard();
-    }}
-    onUpdate={d => {
-      onCardUpdate({...d, x, y});
-    }}
-    onDelete={() => {
-      closeCard();
-      asyncRemoveCard(props.id);
-    }}
-    tagColorScale={tagColorScale}
-    uiColor="grey"
-    background="whitesmoke"
-    style={{zIndex: 4000}}
-    edit
+    flipped={flipped}
+    front={
+      <EditCardFront
+        {...props}
+        template={template}
+        onClose={onClose}
+        onFlip={onFlip}
+        onCreate={d => {
+          createCard({...d, x, y});
+          onClose();
+        }}
+        onUpdate={d => {
+          onCardUpdate({...d, x, y});
+        }}
+      />
+    }
+    back={
+      <CardBack
+        {...props}
+        onClose={onClose}
+        fetchAuthorData={fetchAuthorData}
+        onFlip={onFlip}
+        edit
+        onDelete={() => {
+          onClose();
+          asyncRemoveCard(props.id);
+        }}
+      />
+    }
   />
 );
 

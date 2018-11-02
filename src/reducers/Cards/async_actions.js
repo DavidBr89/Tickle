@@ -87,15 +87,15 @@ export function fetchCreatedCards({userEnv}) {
 export function asyncCreateCard({cardData, userEnv}) {
   return function(dispatch, getState) {
     const db = new DB(userEnv);
-    const {
-      Session: {uid}
-    } = getState();
+    // const {
+    //   Session: {
+    //     authUser: {uid}
+    //   }
+    // } = getState();
 
     const newCard = {
       ...cardData,
       id: idGenerate(),
-      uid,
-      // TODO: does not transmit correctly
       date: new Date(),
     };
     console.log();

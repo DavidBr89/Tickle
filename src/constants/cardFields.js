@@ -55,7 +55,7 @@ export const extractCardFields = ({
   floorX = 0.5,
   floorY = 0.5,
   img = null,
-  loc: { latitude = 50.85146, longitude = 4.315483 },
+  loc = {latitude: 50.85146, longitude: 4.315483},
   tags = [],
   media = null,
   title = null,
@@ -71,7 +71,7 @@ export const extractCardFields = ({
   floorX: floorX || 0.5,
   floorY: floorY || 0.5,
   img, // {url, thumbnail, title}
-  loc: { longitude, latitude },
+  loc,
   timestamp,
   tags,
   media,

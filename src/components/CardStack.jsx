@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {PreviewCard} from 'Cards';
+import PreviewCard from 'Components/cards/PreviewCard';
 import Stack from 'Utils/Stack';
 import DelayClick from 'Components/utils/DelayClick';
 
@@ -100,9 +100,10 @@ CardStackWrapper.defaultProps = {
   touch: false,
 };
 
-CardStackWrapper.propTypes = {className: PropTypes.string,
+CardStackWrapper.propTypes = {
+  className: PropTypes.string,
   cards: PropTypes.array,
-  selectedCardId: PropTypes.oneOf([ null, PropTypes.number ]),
+  selectedCardId: PropTypes.oneOf([null, PropTypes.number]),
   width: PropTypes.number,
   height: PropTypes.number,
   slotSize: PropTypes.number,

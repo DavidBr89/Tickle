@@ -98,9 +98,13 @@ BackAuthor.defaultProps = {
 };
 
 class BackAuthorWrapper extends React.Component {
+  static defaultProps = {
+    fetchData: () => new Promise(resolve => resolve(null))
+  };
   componentDidMount() {
-    const {uid} = this.props;
-    db.getDetailedUserInfo(uid).then(
+    const {uid, fetchData} = this.props;
+    // TODO
+    uid && fetchData(uid).then(
       ({interests, createdCards, collectedCards, ...basicUserInfo}) => {
         const skills = setify([...createdCards, ...collectedCards])
           .slice(0, 5)

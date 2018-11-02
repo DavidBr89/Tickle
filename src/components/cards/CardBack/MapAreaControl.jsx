@@ -1,26 +1,19 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import MapGL from 'react-map-gl';
 
-import { scaleOrdinal } from 'd3';
+import {scaleOrdinal} from 'd3';
 
 // TODO remove
 import MapAreaRadius from '../../utils/map-layers/MapAreaRadius';
 import CardMarker from '../CardMarker';
 // TODO remove
-import { DivOverlay } from '../../utils/map-layers/DivOverlay';
+import {DivOverlay} from '../../utils/map-layers/DivOverlay';
 
 import DimWrapper from 'Utils/DimensionsWrapper';
 
-function MapAreaForm({ ...props }) {
-  const {
-    style,
-    className,
-    onChange,
-    scaleRad,
-    uiColor,
-    selectedRadius
-  } = props;
+function MapAreaForm({...props}) {
+  const {style, className, onChange, scaleRad, uiColor, selectedRadius} = props;
   const isSelected = d => scaleRad(d) === selectedRadius;
 
   const btnStyle = d => ({
@@ -105,13 +98,13 @@ class MapAreaControl extends Component {
 
   constructor(props) {
     super(props);
-    const { latitude, longitude, radius } = props;
-    this.state = { userLocation: { latitude: 0, longitude: 0 }, radius };
+    const {latitude, longitude, radius} = props;
+    this.state = {userLocation: {latitude: 0, longitude: 0}, radius};
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { onChange } = this.props;
-    const { radius } = this.state;
+    const {onChange} = this.props;
+    const {radius} = this.state;
     // TODO: why prevState
     // if (!prevState.extended) onChange(radius);
   }
@@ -129,7 +122,7 @@ class MapAreaControl extends Component {
       loc
     } = this.props;
 
-    const { userLocation, radius } = this.state;
+    const {userLocation, radius} = this.state;
     const radRange = [100, 1000, 5000, 10000];
     const scaleRad = scaleOrdinal()
       .domain(radRange.map(d => `${d}m`))
@@ -141,7 +134,7 @@ class MapAreaControl extends Component {
 
     const mapViewport = (width, height) => ({
       width,
-      height: height ,
+      height,
       latitude,
       longitude,
       zoom: scaleZoom(radius)
@@ -178,10 +171,16 @@ class MapAreaControl extends Component {
     //   radius={radius}
     // />
     return (
-      <div style={{ height: '100%', width: '100%' }}>
+      <div style={{height: '100%', width: '100%'}}>
         <DimWrapper delay={200}>
-          {(width, height) => (
-            <MapGL {...mapViewport(width, height)}>
+          {(width, height) => <MapGL {...mapViewport(width, height)} />}
+        </DimWrapper>
+      </div>
+    );
+  }
+}
+
+/*
               <DivOverlay {...mapViewport(width, height)} data={[{ loc }]}>
                 {(_, [left, top]) => (
                   <div
@@ -197,11 +196,6 @@ class MapAreaControl extends Component {
                   </div>
                 )}
               </DivOverlay>
-            </MapGL>
-          )}
-        </DimWrapper>
-      </div>
-    );
-  }
-}
-export { MapAreaControl };
+              */
+
+export {MapAreaControl};

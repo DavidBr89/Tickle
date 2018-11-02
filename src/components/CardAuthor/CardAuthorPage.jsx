@@ -210,7 +210,7 @@ class CardAuthorPage extends Component {
         }
       >
         <BareModal visible={extCardId !== null}>
-          <EditCard {...selectedCard} dataView={dataView} />
+          <EditCard {...selectedCard} />
         </BareModal>
         <div
           className="mt-16 flex justify-center"

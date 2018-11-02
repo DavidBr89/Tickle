@@ -44,7 +44,7 @@
     "memoize-one": "^3.1.1",
     "node-ddg-api": "^0.1.4",
     "prop-types": "^15.6.0",
-    "query-string": "^6.1.0",
+    "query-string": "^6.2.0",
     "react": "^16.5.0",
     "react-dnd": "^2.5.4",
     "react-dnd-html5-backend": "^2.5.4",

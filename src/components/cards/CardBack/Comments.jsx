@@ -24,19 +24,19 @@ class CommentsWrapper extends Component {
   state = {comments: [], extended: false};
 
   componentDidMount() {
-    const {cardId} = this.props;
-    if (cardId && cardId !== null) {
-      db.readComments(cardId).then(comments => {
-        console.log('comments', comments);
-        this.setState({comments});
-        const allProms = comments.map(c =>
-          db.getUser(c.uid).then(user => ({...c, ...user})),
-        );
-        Promise.all(allProms).then(commentsWithUser => {
-          this.setState({comments: commentsWithUser});
-        });
-      });
-    }
+    // const {cardId} = this.props;
+    // if (cardId && cardId !== null) {
+    //   db.readComments(cardId).then(comments => {
+    //     console.log('comments', comments);
+    //     this.setState({comments});
+    //     const allProms = comments.map(c =>
+    //       db.getUser(c.uid).then(user => ({...c, ...user})),
+    //     );
+    //     Promise.all(allProms).then(commentsWithUser => {
+    //       this.setState({comments: commentsWithUser});
+    //     });
+    //   });
+    // }
   }
 
   render() {

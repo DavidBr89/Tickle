@@ -44,8 +44,6 @@ class CardViewPage extends Component {
     selectedCardId: PropTypes.oneOf([PropTypes.string, null]),
     width: PropTypes.number,
     height: PropTypes.number,
-    authEnv: PropTypes.boolean,
-    dataView: PropTypes.boolean,
     previewCardAction: PropTypes.func,
     selectCard: PropTypes.func,
     filterCards: PropTypes.func,
@@ -55,7 +53,6 @@ class CardViewPage extends Component {
     toggleAuthEnv: PropTypes.func,
     tagColorScale: PropTypes.func,
     screenResize: PropTypes.func,
-    fetchCards: PropTypes.func
   };
 
   static defaultProps = {
@@ -65,8 +62,6 @@ class CardViewPage extends Component {
     selectedCardId: null,
     width: 500,
     height: 500,
-    authEnv: false,
-    dataView: 'geo',
     previewCardAction: d => d,
     selectCard: d => d,
     filterCards: d => d,
@@ -111,19 +106,18 @@ class CardViewPage extends Component {
       tagVocabulary,
       // setDataView,
       filterSet,
-      toggleAuthEnv,
       tagColorScale,
       isSmartphone,
       cardPanelVisible,
       toggleCardPanel,
       filterByChallengeState,
-      challengeStateFilter,
       isLoadingCards,
       seeCard,
       extendedCard,
       selectedCard,
       width,
-      children
+      children,
+      extCard
     } = this.props;
 
     // const slotSize = width / 3;
