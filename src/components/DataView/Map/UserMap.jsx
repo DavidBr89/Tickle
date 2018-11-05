@@ -303,7 +303,8 @@ class UserMap extends Component {
             />
           </div>
           <div
-            style={{ position: 'absolute', bottom: 0, right: 0, zIndex: 4000 }}
+              className="z-20 absolute"
+            style={{ position: 'absolute', bottom: 0, right: 0, }}
           >
             <button
               className="btn"

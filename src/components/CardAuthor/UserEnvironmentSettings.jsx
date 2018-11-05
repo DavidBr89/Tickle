@@ -14,7 +14,7 @@ import withAuthentication from 'Src/components/withAuthentication.jsx';
 
 import {CloseIcon} from 'Src/styles/menu_icons';
 
-class UserEnvSettingsView extends Component {
+class UserEnvironmentSettings extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
@@ -32,12 +32,12 @@ class UserEnvSettingsView extends Component {
       removeUserEnv,
       selectUserEnv,
       userEnvs,
-      userEnvSelectedId,
+      selectedUserEnvId,
     } = this.props;
     const {tmpEnvName} = this.state;
     return (
       <div className="content-margin">
-        <h1>Create User Environments</h1>
+        <h1 className="mb-3">Create User Environments</h1>
         <div>
           <form
             className="flex justify-between mb-3"
@@ -47,9 +47,10 @@ class UserEnvSettingsView extends Component {
             }}
           >
             <input
-              className="form-control"
+              className="form-control text-xl"
               style={{flexGrow: 0.75}}
               value={tmpEnvName}
+              placeholder="Add a card environment for your users"
               onChange={e => this.setState({tmpEnvName: e.target.value})}
             />
             <button type="submit" className="ml-1 btn" style={{flexGrow: 0.25}}>
@@ -59,8 +60,8 @@ class UserEnvSettingsView extends Component {
           <ul className="list-reset">
             {userEnvs.map(d => (
               <li
-                onClick={() => selectUserEnv(d)}
-                className={`list-item ${userEnvSelectedId === d.id &&
+                onClick={() => selectUserEnv(d.id)}
+                className={`list-item ${selectedUserEnvId === d.id &&
                   'active'}`}>
                 <div>{d.id}</div>
                 <CloseIcon
@@ -93,12 +94,16 @@ const mapDispatchToProps = dispatch =>
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const {addUserEnv, selectUserEnv, removeUserEnv} = dispatchProps;
-  const {authUser} = stateProps;
+  const {match} = ownProps;
+  const {
+    params: {userEnv}
+  } = match;
 
   return {
     ...stateProps,
     ...dispatchProps,
-    ...ownProps
+    ...ownProps,
+    addUserEnv: env => addUserEnv(env)
   };
 };
 
@@ -111,4 +116,4 @@ export default compose(
     mapDispatchToProps,
     mergeProps,
   ),
-)(UserEnvSettingsView);
+)(UserEnvironmentSettings);

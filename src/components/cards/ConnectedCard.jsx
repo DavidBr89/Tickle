@@ -90,7 +90,7 @@ const CardViewable = ({
   userEnvSelectedId,
   uid,
   onFlip,
-  onClose,
+  onClose, fetchAuthorData,
   ...props
 }) => (
   <CardFrame
@@ -107,9 +107,8 @@ const CardViewable = ({
     back={
       <CardBack
         {...props}
-        getAuthorData={() => DB(userEnvSelectedId).getDetailedUserInfo(uid)}
+        fetchAuthorData={fetchAuthorData}
         onClose={() => {
-          console.log('close');
           onClose();
         }}
         onFlip={onFlip}
@@ -198,6 +197,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     ...dispatcherProps,
     ...ownProps,
     onSubmitChallenge,
+    fetchAuthorData,
     onClose,
     onFlip,
     flipped

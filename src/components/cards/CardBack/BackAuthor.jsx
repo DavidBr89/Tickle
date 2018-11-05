@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import PreviewCard from 'Components/cards/PreviewCard';
+
 import {scaleLinear, extent, range, scaleOrdinal} from 'd3';
 
 import {db} from 'Firebase';
@@ -11,33 +13,40 @@ import setify from 'Utils/setify';
 
 const AuthorDetails = ({
   onClose,
-  color,
   style,
-  tagColorScale,
-  name,
   skills,
   activity,
-  interests,
-  stylesheet,
-  placeholderImgUrl,
-  numCollectedCards,
   className,
-  numCreatedCards,
+  collectedCards,
+  createdCards,
   ...authorPreviewProps
 }) => (
   <div
-    className={className}
+    className={`${className} flex-col-wrapper`}
     style={{
       ...style
     }}
   >
-    <div className="bg-grey-light">
+    <div className="" style={{flexShrink: 0}}>
       <h2>Top Interests</h2>
       {skills.map(d => (
         <div className="text-xl capitalize">#{d}</div>
       ))}
     </div>
-    <div className="bg-grey-light" />
+    <div className="flex-grow">
+      {collectedCards.map(d => (
+        <PreviewCard {...d} />
+      ))}{' '}
+    </div>
+    <div className="flex flex-wrap flex-grow relative">
+      {createdCards.map(d => (
+          <PreviewCard
+            {...d}
+            className="m-1 w-2/5 p-2"
+            style={{width: 100, height: 120}}
+          />
+      ))}
+    </div>
   </div>
 );
 
@@ -60,6 +69,8 @@ const AuthorPreview = ({className, photoURL, style, username, name, email}) => (
   </div>
 );
 
+AuthorPreview.defaultProps = {photoURL: ''};
+
 const BackAuthor = ({
   extended,
   style,
@@ -74,28 +85,14 @@ const BackAuthor = ({
     />
     {extended && (
       <AuthorDetails
-        className="flex-col-wrapper relative justify-center"
+        className="flex-grow flex-col-wrapper relative "
         {...detailedUserInfo}
       />
     )}
   </div>
 );
 
-BackAuthor.defaultProps = {
-  // TODO: check
-  placeholderImgUrl:
-    'http://sunfieldfarm.org/wp-content/uploads/2014/02/profile-placeholder.png',
-  skills: [
-    {key: 'arts', level: 22},
-    {key: 'music', level: 14},
-    {key: 'sports', level: 10}
-  ],
-  interests: [{key: 'movies'}, {key: 'football'}, {key: 'xbox'}],
-  activity: {collectedCards: 20, createdCards: 13},
-  // },
-  style: {},
-  extended: false
-};
+BackAuthor.defaultProps = {};
 
 class BackAuthorWrapper extends React.Component {
   static defaultProps = {
@@ -104,25 +101,31 @@ class BackAuthorWrapper extends React.Component {
   componentDidMount() {
     const {uid, fetchData} = this.props;
     // TODO
-    uid && fetchData(uid).then(
-      ({interests, createdCards, collectedCards, ...basicUserInfo}) => {
-        const skills = setify([...createdCards, ...collectedCards])
-          .slice(0, 5)
-          .map(d => d.key);
+    fetchData().then(authorInfo => {
+      const {
+        interests,
+        createdCards,
+        collectedCards,
+        ...basicUserInfo
+      } = authorInfo;
 
-        const detailedUserInfo = {
-          interests,
-          createdCards,
-          collectedCards,
-          skills
-        };
+      console.log('authorInfo', authorInfo);
+      const skills = setify([...createdCards, ...collectedCards])
+        .slice(0, 5)
+        .map(d => d.key);
 
-        this.setState({
-          basicUserInfo,
-          detailedUserInfo
-        });
-      },
-    );
+      const detailedUserInfo = {
+        interests,
+        createdCards,
+        collectedCards,
+        skills,
+      };
+
+      this.setState({
+        basicUserInfo,
+        detailedUserInfo,
+      });
+    });
   }
 
   state = {detailedUserInfo: {}, basicUserInfo: {}};

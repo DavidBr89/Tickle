@@ -24,9 +24,9 @@ export function updatePersonalInfo(options) {
   return {type: UPDATE_USER_PERSONAL_INFO, options};
 }
 
-export const SET_USER_ENV_SELECTION = 'SET_USER_ENV_SELECTION';
-export function setUserEnvSelection(options) {
-  return {type: SET_USER_ENV_SELECTION, options};
+export const SET_USER_ENV = 'SET_USER_ENV';
+export function setUserEnv(options) {
+  return {type: SET_USER_ENV, options};
 }
 
 export const SET_USERS = 'SET_USERS';

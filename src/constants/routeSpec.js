@@ -11,7 +11,7 @@ export const GEO_VIEW_PATH = `${DATAVIEW_PATH}/${GEO}`;
 export const TOPICMAP_VIEW_PATH = `${DATAVIEW_PATH}/${TopicMap}`;
 export const TAG_VIEW_PATH = `${DATAVIEW_PATH}/${TAGS}`;
 
-export const AUTHOR_PATH = 'card_authoring';
+export const AUTHOR_PATH = 'card-author';
 export const GEO_AUTHOR_PATH = `${AUTHOR_PATH}/${GEO}`;
 export const TOPIC_AUTHOR_PATH = `${AUTHOR_PATH}/${TopicMap}`;
 export const TAG_AUTHOR_PATH = `${AUTHOR_PATH}/${TAGS}`;

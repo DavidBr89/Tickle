@@ -55,7 +55,7 @@ const SignInPage = ({signIn, fetchCollectibleCards, ...props}) => {
           disabled={!userEnv}
           onSubmit={({email, password, onError}) =>
             signIn({
-              userEnv,
+              userEnvId: userEnv,
               email,
               password,
               onError

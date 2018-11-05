@@ -14,7 +14,7 @@ import TagView from './components/DataView/ForceOverlay/TreeMapCluster';
 import {
   MapCardAuthorPage,
   TopicMapAuthorPage,
-  CardEnvSettings
+  UserEnvironmentSettings,
 } from './components/CardAuthor';
 
 import {MapViewPage, TopicMapViewPage} from './components/CardView';
@@ -24,8 +24,7 @@ import {MapViewPage, TopicMapViewPage} from './components/CardView';
 import DefaultLayout from './components/DefaultLayout';
 
 import UserMap from 'Components/DataView/Map/UserMap';
-
-import withAuthentication from './components/withAuthentication';
+// import withAuthentication from './components/withAuthentication';
 // import AuthUserContext from './components/AuthUserContext';
 
 import {
@@ -43,8 +42,16 @@ import {
   HOME,
   ADMIN,
   ADMIN_SIGN_UP,
-  LANDING
+  LANDING,
 } from 'Constants/routeSpec';
+
+const NoMatch = () => (
+  <DefaultLayout>
+    <div className="content-margin">
+      <h1>No Match</h1>
+    </div>
+  </DefaultLayout>
+);
 
 // const GRID = 'grid';
 
@@ -73,17 +80,17 @@ const Routes = () => (
       <Route path={`/:userEnv/${MYCARDS.path}/`} render={props => <Diary />} />
 
       <Route
-        path={`:/userEnv/${AUTHOR.path}`}
+        path={ `/:userEnv/${AUTHOR.path}` }
         exact
         render={() => (
           <DefaultLayout>
-            <CardEnvSettings />
+            <UserEnvironmentSettings />
           </DefaultLayout>
         )}
       />
 
       <Route
-        path={`/:userEnv/${GEO_AUTHOR.path}/`}
+        path={`/:userEnv/${GEO_AUTHOR.path}`}
         render={props => <MapCardAuthorPage />}
       />
       <Route
@@ -155,6 +162,8 @@ const Routes = () => (
           </DefaultLayout>
         )}
       />
+
+      <Route component={NoMatch} />
     </Switch>
   </HashRouter>
 );

@@ -14,7 +14,7 @@ import {
   authRoutes,
   makeUserEnvRoutes,
   adminRoutes,
-  nonAuthRoutes
+  nonAuthRoutes,
 } from 'Constants/routeSpec';
 
 // import { setDataView } from 'Reducers/DataView/actions';
@@ -46,15 +46,14 @@ const ListItem = ({
   curPath,
   active,
   children,
-  subRoutes = []
+  subRoutes = [],
 }) => (
   <li className="list-item mb-1">
     <div
       className={`${subRoutes.length > 0 && 'list-item'} ${includePath(
         curPath,
         path,
-      ) && 'active'}`}
-    >
+      ) && 'active'}`}>
       <Link to={path}>{children}</Link>
     </div>
     <ul className="ml-5 list-reset">
@@ -75,7 +74,7 @@ const NavigationHelper = ({
   routes,
   signOut,
   children,
-  userEnv
+  userEnv,
 }) => (
   <ul className="list-reset">
     {routes.map(r => (
@@ -92,30 +91,28 @@ const NavigationHelper = ({
 );
 
 NavigationHelper.propTypes = {
-  signOut: PropTypes.boolean
+  signOut: PropTypes.boolean,
 };
 
 NavigationHelper.defaultProps = {
-  signOut: false
+  signOut: false,
 };
 
-const RouteNavigation = ({authUser, userEnv, ...props}) => {
-  const userAuthRoutes = makeUserEnvRoutes(userEnv, authRoutes);
-  const adminAuthRoutes = makeUserEnvRoutes(userEnv, adminRoutes);
-  console.log('userAuthRoutes', userAuthRoutes);
-  if (authUser && authUser.admin) {
-    return <NavigationHelper {...props} routes={adminAuthRoutes} />;
-  }
-  if (authUser !== null)
+const RouteNavigation = ({authUser, selectedUserEnvId, ...props}) => {
+  if (authUser) {
+    if (authUser.admin) {
+      const adminAuthRoutes = makeUserEnvRoutes(selectedUserEnvId, adminRoutes);
+      return <NavigationHelper {...props} routes={adminAuthRoutes} />;
+    }
+    const userAuthRoutes = makeUserEnvRoutes(selectedUserEnvId, authRoutes);
     return <NavigationHelper {...props} signOut routes={userAuthRoutes} />;
+  }
 
   return <NavigationHelper {...props} routes={nonAuthRoutes} />;
 };
 
 const mapStateToProps = state => ({
-  authUser: state.Session.authUser,
-  userEnv: state.Session.userEnvSelectedId,
-  ...state.router
+  ...state.Session,
 });
 
 export default connect(mapStateToProps)(withRouter(RouteNavigation));

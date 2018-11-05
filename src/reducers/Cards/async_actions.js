@@ -32,15 +32,9 @@ import NearbyPlaces from '../places.json';
 import {createDbEnv, DB} from 'Firebase';
 import idGenerate from 'Src/idGenerator';
 
-export function fetchCollectibleCards({userEnv}) {
+export function fetchCollectibleCards({uid, userEnv}) {
   return function(dispatch, getState) {
     const db = new DB(userEnv);
-    console.log('USER ENV', userEnv);
-    const {
-      Session: {
-        authUser: {uid}
-      }
-    } = getState();
     dispatch(loadingCards(true));
     // TODO: change later with obj params
     return db.readCards({playerId: uid}).then(
@@ -64,13 +58,9 @@ export function fetchAllCardsWithSubmissions({userEnv}) {
   };
 }
 
-export function fetchCreatedCards({userEnv}) {
+export function fetchCreatedCards({userEnv, uid}) {
   return function(dispatch, getState) {
-    const {
-      Session: {
-        authUser: {uid}
-      }
-    } = getState();
+
     dispatch(loadingCards(true));
 
     const db = new DB(userEnv);

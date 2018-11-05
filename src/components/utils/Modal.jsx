@@ -27,7 +27,7 @@ export const InlineModal = ({
   // background,
 }) => (
   <div
-    className={`z-40 ${className}`}
+    className={`z-50 ${className}`}
     style={{
       width: '100%',
       height: '100%',
@@ -56,6 +56,10 @@ export const InlineModal = ({
     </div>
   </div>
 );
+
+InlineModal.defaultProps = {
+  className: ''
+};
 
 export const BareModal = props =>
   ReactDOM.createPortal(

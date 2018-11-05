@@ -7,7 +7,10 @@ import {withRouter} from 'react-router-dom';
 
 import {firebase} from 'Firebase';
 
-import {fetchCollectibleCards} from 'Reducers/Cards/async_actions';
+import {
+  fetchCollectibleCards,
+  fetchCreatedCards
+} from 'Reducers/Cards/async_actions';
 
 import * as asyncActions from 'Reducers/Session/async_actions';
 import {bindActionCreators} from 'redux';
@@ -23,24 +26,39 @@ const withAuthentication = Component => {
         setAuthUserInfo,
         getCreatedCards,
         fetchCollectibleCards,
+        fetchCreatedCards,
+        selectUserEnv,
         authUser,
+        history,
         fetchUserInfo,
         match
       } = this.props;
 
       const {userEnv} = match.params;
+      console.log('params', match);
 
       firebase.auth.onAuthStateChanged(authUser => {
+        const userSourceEnv = sessionStorage.getItem('userSourceEnv');
+        console.log('userSourceEnv', userSourceEnv);
         if (authUser !== null) {
           const {uid} = authUser;
-          fetchUserInfo(uid);
 
-          console.log('authUser Changed', fetchCollectibleCards);
-          fetchCollectibleCards({userEnv});
+          //  var displayName = user.displayName;
+          // var email = user.email;
+          // var emailVerified = user.emailVerified;
+          // var photoURL = user.photoURL;
+          // var isAnonymous = user.isAnonymous;
+          // var uid = user.uid;
+          // var providerData = user.providerData;
+
+          // fetchUserInfo({uid, userEnv: userSourceEnv});
+
+          fetchCollectibleCards({userEnv, uid});
+          fetchCreatedCards({userEnv, uid});
+          // selectUserEnv(userEnv);
         } else {
           setAuthUserInfo({authUser: null});
-
-          // history.push(nonAuthRoutes.SIGN_IN);
+          history.push(nonAuthRoutes.SIGN_IN.path);
         }
         // this.setState({authUser});
       });
@@ -69,7 +87,12 @@ const withAuthentication = Component => {
 
   const mapDispatchToProps = dispatch => ({
     ...bindActionCreators(
-      {...asyncActions, fetchCollectibleCards, setAuthUserInfo},
+      {
+        ...asyncActions,
+        fetchCollectibleCards,
+        fetchCreatedCards,
+        setAuthUserInfo
+      },
       dispatch,
     )
   });

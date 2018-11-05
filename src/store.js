@@ -4,8 +4,10 @@ import {createLogger} from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
 
 import rootReducer from './reducers';
+import {saveState, loadState} from './localStorage';
 
 import {DB} from 'Firebase';
+import throttle from 'lodash/throttle';
 
 // const defaultCards = [...dummyCards];
 const mapZoom = 9;
@@ -92,6 +94,19 @@ function configureStore(rootReducer, initialState) {
   return store;
 }
 
-const store = configureStore(rootReducer);
+const persistedState = loadState();
+const store = configureStore(rootReducer, persistedState);
+
+store.subscribe(
+  throttle(() => {
+    saveState({
+      Session: {
+        ...store.getState().Session,
+        // authUser: store.getState().Session.authUser
+      }
+    });
+  }),
+  1000,
+);
 
 export default store;

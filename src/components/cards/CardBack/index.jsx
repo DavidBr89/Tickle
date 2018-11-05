@@ -164,7 +164,7 @@ class CardBack extends Component {
         >
           <BackAuthor uid={uid} extended={extended === 'author'}
           fetchData={fetchAuthorData}
-          /> }
+          />
         </BackField>
         <BackField
           extended={isExtended('map')}

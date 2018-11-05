@@ -8,12 +8,7 @@ import {Lock as LockF} from 'react-feather';
 import {PreviewTags} from 'Utils/Tag';
 
 const PlaceholderField = ({text, style, fullHeight}) => (
-  <div
-    className="mb-1 flex-grow flex-col-wrapper justify-center items-center"
-    style={{
-      height: fullHeight ? '100%' : null
-    }}
-  >
+  <div className="mb-1 flex-grow flex-col-wrapper justify-center items-center h-full">
     <div
       style={{
         color: 'grey',
@@ -21,9 +16,7 @@ const PlaceholderField = ({text, style, fullHeight}) => (
         fontWeight: 'bold',
         ...style
       }}
-    >
-      {text}
-    </div>
+    />
     <i
       className="fa fa-1x fa-plus"
       aria-hidden="true"
@@ -105,50 +98,19 @@ class PreviewCard extends Component {
       // maxHeight: '120px'
     };
 
-    if (!accessible)
-      return (
-        <div
-          className={`${className} flex flex-col border-4 border-black`}
-          style={contStyle}
-          onClick={onClick}
-        >
-          <div
-            className="flex flex-col align-center"
-            style={{
-              flex: '0 1 100%',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
-            <LockF size={90} />
-          </div>
-        </div>
-      );
-    // img.thumbnail ? img.thumbnail || img.url : placeholderImg;
     return (
       <div
         className={`${className} flex-col-wrapper border-2 border-black`}
         style={contStyle}
         onClick={onClick}
       >
-        {title !== null ? (
-          <div
-            className="text-truncate"
-            style={{fontSize: '16px', margin: '4px 0'}}
-          >
-            {title}
-          </div>
-        ) : (
-          <PlaceholderField text="Title" style={{fontSize: '18px'}} />
-        )}
-
         <div
           className="flex-grow mt-1 mb-1 relative"
           style={{background: '#ffd70080'}}
         >
-          {showImg && img !== null ? (
+          {img !== null ? (
             <img
-              className="absolute"
+              className="absolute z-0"
               style={{
                 display: 'block',
                 width: '100%',
@@ -161,6 +123,14 @@ class PreviewCard extends Component {
           ) : (
             <PlaceholderField text="IMG" style={{fontSize: '18px'}} />
           )}
+
+          <div className="p-1 absolute">
+            <div
+              className="pl-1 pr-1 text-truncate bg-white"
+              style={{fontSize: '16px', margin: '4px 0'}}>
+              {title}
+            </div>
+          </div>
         </div>
       </div>
     );
