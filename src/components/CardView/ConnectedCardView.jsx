@@ -1,21 +1,18 @@
 // import React from 'react';
 import WebMercatorViewport from 'viewport-mercator-project';
 
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import {compose} from 'recompose';
-import {withRouter} from 'react-router-dom';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { compose } from 'recompose';
+import { withRouter } from 'react-router-dom';
 
-import {intersection} from 'lodash';
-import {resizeCardWindow, userMove, changeViewport} from 'Reducers/Map/actions';
+import { intersection } from 'lodash';
+import { resizeCardWindow, userMove, changeViewport } from 'Reducers/Map/actions';
 
 import setify from 'Utils/setify';
 import distanceLoc from 'Components/utils/distanceLoc';
 // rename path
-import {makeTagColorScale} from 'Src/styles/GlobalThemeContext';
-import {isCardSeen} from 'Constants/cardFields';
-
-import {screenResize} from 'Reducers/Screen/actions';
+import { screenResize } from 'Reducers/Screen/actions';
 import * as cardActions from 'Reducers/Cards/actions';
 
 import * as asyncActions from 'Reducers/Cards/async_actions';
@@ -26,17 +23,16 @@ import withAuthorization from 'Src/components/withAuthorization';
 import withAuthentication from 'Src/components/withAuthentication';
 import cardRoutes from 'Src/Routes/cardRoutes';
 
-import {CHALLENGE_SUBMITTED, isChallengeSubmitted} from 'Constants/cardFields';
+import { CHALLENGE_SUBMITTED, isChallengeSubmitted } from 'Constants/cardFields';
 
 import CardViewPage from './CardViewPage';
 
 // import mapViewReducer from './reducer';
 
 const lowercase = s => s.toLowerCase();
-const filterByTag = (doc, filterSet) =>
-  filterSet.length === 0 ||
-  intersection(doc.tags.map(lowercase), filterSet.map(lowercase)).length ===
-    filterSet.length;
+const filterByTag = (doc, filterSet) => filterSet.length === 0
+  || intersection(doc.tags.map(lowercase), filterSet.map(lowercase)).length
+    === filterSet.length;
 
 // const applyFilter = challengeState => d => {
 //   if (challengeState === CHALLENGE_SUBMITTED) return isChallengeSubmitted(d);
@@ -44,9 +40,9 @@ const filterByTag = (doc, filterSet) =>
 // };
 
 // Container
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   console.log('new Action', 'yeah');
-  const {collectibleCards} = state.Cards;
+  const { collectibleCards } = state.Cards;
 
   const {
     // selectedCardId,
@@ -56,15 +52,17 @@ const mapStateToProps = state => {
   } = state.DataView;
 
   // TODO: own dim reducer
-  const {width, height, userLocation, mapViewport} = state.MapView;
+  const {
+    width, height, userLocation, mapViewport
+  } = state.MapView;
 
   // const { authEnv } = state.DataView;
   const {
-    authUser: {uid}
+    authUser: { uid }
   } = state.Session;
 
   // console.log('mercator', FlatMercatorViewport);
-  const mercator = new WebMercatorViewport({...mapViewport});
+  const mercator = new WebMercatorViewport({ ...mapViewport });
 
   // TODO: make more specific
   return {
@@ -85,20 +83,19 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      ...cardActions,
-      ...asyncActions,
-      ...dataViewActions,
-      ...dataViewAsyncActions,
-      resizeCardWindow,
-      userMove,
-      screenResize,
-      changeViewport,
-    },
-    dispatch,
-  );
+const mapDispatchToProps = dispatch => bindActionCreators(
+  {
+    ...cardActions,
+    ...asyncActions,
+    ...dataViewActions,
+    ...dataViewAsyncActions,
+    resizeCardWindow,
+    userMove,
+    screenResize,
+    changeViewport
+  },
+  dispatch,
+);
 
 // });
 
@@ -114,18 +111,17 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     height
   } = state;
 
-  const {dataView, history, location} = ownProps;
+  const { dataView, history, location } = ownProps;
 
   const {
-    query: {selectedCardId, extended, flipped},
-    routing: {routeSelectCard, routeExtendCard}
-  } = cardRoutes({history, location});
+    query: { selectedCardId, extended, flipped },
+    routing: { routeSelectCard, routeExtendCard }
+  } = cardRoutes({ history, location });
 
 
   const extCardId = extended ? selectedCardId : null;
 
-  const extendedCard =
-    extCardId !== null ? collectibleCards.find(c => c.id === extCardId) : null;
+  const extendedCard = extCardId !== null ? collectibleCards.find(c => c.id === extCardId) : null;
 
   // const selectedCardLocked = showOption === 'locked';
 
@@ -141,13 +137,13 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     ...otherActions
   } = dispatcherProps;
 
-  const isInView = loc => {
+  const isInView = (loc) => {
     const coords = [loc.longitude, loc.latitude];
     const pos = mercator.project(coords);
     return pos[0] > 0 && pos[0] < width && pos[1] > 0 && pos[1] < height;
   };
 
-  const previewCardAction = d => {
+  const previewCardAction = (d) => {
     if (selectedCardId === d.id) {
       return routeExtendCard();
     }
@@ -167,12 +163,12 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const filteredCards = collectibleCards
     .filter(d => filterByTag(d, filterSet))
-    .map(c => {
+    .map((c) => {
       const visible = isInView(c.loc);
       const accessible = true; // visible;
       // (visible && isInDistance(c.loc)) || (isCardSeen(c) && visible);
 
-      return {...c, accessible};
+      return { ...c, accessible };
     })
     .filter(d => d.accessible);
 

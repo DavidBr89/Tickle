@@ -3,54 +3,58 @@ import PropTypes from 'prop-types';
 
 import PreviewCard from 'Components/cards/PreviewCard';
 
-import {scaleLinear, extent, range, scaleOrdinal} from 'd3';
+import {
+  scaleLinear, extent, range, scaleOrdinal
+} from 'd3';
 
-import {db} from 'Firebase';
+import { db } from 'Firebase';
 
 // import { skillTypes } from '../../dummyData';
-import CardMarker from '../CardMarker';
 import setify from 'Utils/setify';
+import CardMarker from '../CardMarker';
 
 const AuthorDetails = ({
   onClose,
   style,
-  skills,
+  // skills,
   activity,
   className,
   collectedCards,
   createdCards,
   ...authorPreviewProps
-}) => (
-  <div
-    className={`${className} flex-col-wrapper`}
-    style={{
-      ...style
-    }}
-  >
-    <div className="" style={{flexShrink: 0}}>
-      <h2>Top Interests</h2>
-      {skills.map(d => (
-        <div className="text-xl capitalize">#{d}</div>
-      ))}
-    </div>
-    <div className="flex-grow">
-      {collectedCards.map(d => (
-        <PreviewCard {...d} />
-      ))}{' '}
-    </div>
-    <div className="flex flex-wrap flex-grow relative">
-      {createdCards.map(d => (
+}) => {
+  const skills = setify([...collectedCards, ...createdCards]);
+
+  return (
+    <div
+      className={`${className} flex-col-wrapper`}
+      style={{ ...style }}
+    >
+      <div className="flex-no-shrink mb-3">
+        <h2 className="mb-1">Top Interests</h2>
+        <div className="flex">
+          {skills.map(d => (
+            <div className="text-xl capitalize bg-black tag-label">{d.key}</div>
+          ))}
+        </div>
+      </div>
+      <h2 className="mb-1">Top Cards</h2>
+      <div className="flex flex-wrap relative" style={{ flex: '1 0 100px' }}>
+        {createdCards.slice(0, 4).map(d => (
           <PreviewCard
             {...d}
-            className="m-1 w-2/5 p-2"
-            style={{width: 100, height: 120}}
+            className="m-1 p-2"
+            style={{ flex: '0 0 100px', height: 130 }}
           />
-      ))}
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
-const AuthorPreview = ({className, photoURL, style, username, name, email}) => (
+const AuthorPreview = ({
+  className, photoURL, style, username, name, email
+}) => (
   <div
     className={className}
     style={{
@@ -61,15 +65,15 @@ const AuthorPreview = ({className, photoURL, style, username, name, email}) => (
       className="absolute h-full w-full"
       src={photoURL}
       alt="alt"
-      style={{objectFit: 'cover'}}
+      style={{ objectFit: 'cover' }}
     />
     <div className="absolute m-3">
-      <h1 className="text-white">{username}</h1>
+      <h1 className="text-white tag-label">{username}</h1>
     </div>
   </div>
 );
 
-AuthorPreview.defaultProps = {photoURL: ''};
+AuthorPreview.defaultProps = { photoURL: 'https://images.unsplash.com/photo-1522602398-e378288fe36d?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=75ef40ce9a4927d016af73bb4aa7ac55&auto=format&fit=crop&w=3350&q=80' };
 
 const BackAuthor = ({
   extended,
@@ -85,7 +89,7 @@ const BackAuthor = ({
     />
     {extended && (
       <AuthorDetails
-        className="flex-grow flex-col-wrapper relative "
+        className="flex-grow flex-col-wrapper relative p-1"
         {...detailedUserInfo}
       />
     )}
@@ -98,10 +102,11 @@ class BackAuthorWrapper extends React.Component {
   static defaultProps = {
     fetchData: () => new Promise(resolve => resolve(null))
   };
+
   componentDidMount() {
-    const {uid, fetchData} = this.props;
+    const { uid, fetchData } = this.props;
     // TODO
-    fetchData().then(authorInfo => {
+    fetchData().then((authorInfo) => {
       const {
         interests,
         createdCards,
@@ -118,17 +123,17 @@ class BackAuthorWrapper extends React.Component {
         interests,
         createdCards,
         collectedCards,
-        skills,
+        skills
       };
 
       this.setState({
         basicUserInfo,
-        detailedUserInfo,
+        detailedUserInfo
       });
     });
   }
 
-  state = {detailedUserInfo: {}, basicUserInfo: {}};
+  state = { detailedUserInfo: {}, basicUserInfo: {} };
 
   render() {
     return <BackAuthor {...this.props} {...this.state} />;

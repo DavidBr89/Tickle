@@ -5,8 +5,7 @@ import {bindActionCreators} from 'redux';
 
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
-import {stylesheet} from 'Src/styles/GlobalThemeContext';
-import {Menu as MenuIcon} from 'react-feather';
+import MenuIcon from 'react-feather/dist/icons/menu';
 // import { Link } from 'react-router-dom';
 
 // import SignOutButton from '../SignOut';

@@ -1,26 +1,23 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {Link, withRouter} from 'react-router-dom';
-import {bindActionCreators} from 'redux';
+import { Link, withRouter } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
 
-import {compose} from 'recompose';
-import {connect} from 'react-redux';
+import { compose } from 'recompose';
+import { connect } from 'react-redux';
 
 import * as routes from 'Constants/routeSpec';
-import {auth, db} from 'Firebase';
 
 import PhotoUpload from 'Utils/PhotoUpload';
-import {TagInput} from 'Utils/Tag';
+import { TagInput } from 'Utils/Tag';
 
-import {stylesheet} from 'Src/styles/GlobalThemeContext';
-
-import {signUp} from 'Reducers/Session/async_actions';
+import { signUp } from 'Reducers/Session/async_actions';
 
 import DefaultLayout from 'Components/DefaultLayout';
 
-const SignUpPage = ({match, ...props}) => {
-  const {params} = match;
-  const {admin, userEnv} = params;
+const SignUpPage = ({ match, ...props }) => {
+  const { params } = match;
+  const { admin, userEnv } = params;
   const isAdmin = admin === 'admin';
 
   console.log('admin', admin, 'params');
@@ -28,9 +25,13 @@ const SignUpPage = ({match, ...props}) => {
     <DefaultLayout
       menu={
         <div className="flex-grow flex justify-center items-center">
-          <h1>SignUp {admin ? 'Admin' : null}</h1>
+          <h1>
+SignUp
+            {admin ? 'Admin' : null}
+          </h1>
         </div>
-      }>
+      }
+    >
       <div className="content-margin overflow-scroll flex-col-wrapper">
         <SignUpForm {...props} userEnv={userEnv} admin={isAdmin} />
       </div>
@@ -66,23 +67,31 @@ const byPropKey = (propertyName, value) => () => ({
 class SignUpForm extends Component {
   state = INITIAL_STATE;
 
-  onSubmit = event => {
-    const {username, email, fullname, passwordOne, img, interests} = this.state;
-    const {history, onSetAuthUser, admin, signUp, userEnv} = this.props;
+  onSubmit = (event) => {
+    const {
+      username, email, fullname, passwordOne, img, interests
+    } = this.state;
+    const {
+      history, onSetAuthUser, admin, signUp, userEnv
+    } = this.props;
 
-    const user = {username, email, fullname, admin, interests};
+    const user = {
+      username, email, fullname, admin, interests
+    };
 
-    this.setState({loading: true});
+    this.setState({ loading: true });
 
-    signUp({user, img, userEnv, password: passwordOne})
+    signUp({
+      user, img, userEnv, password: passwordOne
+    })
       .then(() => {
-        this.setState(() => ({...INITIAL_STATE}));
+        this.setState(() => ({ ...INITIAL_STATE }));
         // todo
         history.push(routes.GEO_VIEW.path);
       })
-      .catch(error => {
+      .catch((error) => {
         console.log('error', error);
-        this.setState({error, loading: false});
+        this.setState({ error, loading: false });
       });
 
     event.preventDefault();
@@ -107,11 +116,10 @@ class SignUpForm extends Component {
       fullname
     } = this.state;
 
-    const isInvalid =
-      passwordOne !== passwordTwo ||
-      passwordOne === '' ||
-      email === '' ||
-      username === '';
+    const isInvalid = passwordOne !== passwordTwo
+      || passwordOne === ''
+      || email === ''
+      || username === '';
     // img === null;
 
     return (
@@ -121,7 +129,7 @@ class SignUpForm extends Component {
             <label className="label">User Photo:</label>
             <PhotoUpload
               imgUrl={img !== null ? img.url : null}
-              onChange={img => {
+              onChange={(img) => {
                 this.setState(byPropKey('img', img));
               }}
             />
@@ -131,8 +139,7 @@ class SignUpForm extends Component {
             <input
               className="form-control"
               value={fullname || ''}
-              onChange={event =>
-                this.setState(byPropKey('fullname', event.target.value))
+              onChange={event => this.setState(byPropKey('fullname', event.target.value))
               }
               type="text"
               placeholder="Full Name"
@@ -143,8 +150,7 @@ class SignUpForm extends Component {
             <input
               className="form-control"
               value={username}
-              onChange={event =>
-                this.setState(byPropKey('username', event.target.value))
+              onChange={event => this.setState(byPropKey('username', event.target.value))
               }
               type="text"
               placeholder="Username"
@@ -157,8 +163,7 @@ class SignUpForm extends Component {
             <input
               value={email}
               className="form-control"
-              onChange={event =>
-                this.setState(byPropKey('email', event.target.value))
+              onChange={event => this.setState(byPropKey('email', event.target.value))
               }
               type="text"
               placeholder="Email Address"
@@ -169,15 +174,14 @@ class SignUpForm extends Component {
             <label className="label" htmlFor="pwd">
               Interests:
             </label>
-            <TagInput onChange={tags => this.setState({interests: tags})} />
+            <TagInput onChange={tags => this.setState({ interests: tags })} />
           </div>
           <div className="form-group ">
             <label className="label">Password:</label>
             <input
               className="form-control mb-1"
               value={passwordOne}
-              onChange={event =>
-                this.setState(byPropKey('passwordOne', event.target.value))
+              onChange={event => this.setState(byPropKey('passwordOne', event.target.value))
               }
               type="password"
               placeholder="Password"
@@ -185,8 +189,7 @@ class SignUpForm extends Component {
             <input
               className="form-control"
               value={passwordTwo}
-              onChange={event =>
-                this.setState(byPropKey('passwordTwo', event.target.value))
+              onChange={event => this.setState(byPropKey('passwordTwo', event.target.value))
               }
               type="password"
               placeholder="Confirm Password"
@@ -210,9 +213,9 @@ class SignUpForm extends Component {
             {error && (
               <div className="ml-2 alert alert-danger">{error.message}</div>
             )}
-            {!error &&
-              loading && (
-              <div clasName="ml-2" style={{fontSize: 'large'}}>
+            {!error
+              && loading && (
+              <div clasName="ml-2" style={{ fontSize: 'large' }}>
                   Loading...
               </div>
             )}
@@ -223,20 +226,20 @@ class SignUpForm extends Component {
   }
 }
 
-const SignUpLink = ({userEnv}) => (
+const SignUpLink = ({ userEnv }) => (
   <p>
-    Do not have an account?{' '}
+    Do not have an account?
+    {' '}
     <Link to={`${routes.SIGN_UP.path}/${userEnv}`}>Sign Up</Link>
   </p>
 );
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      signUp
-    },
-    dispatch,
-  );
+const mapDispatchToProps = dispatch => bindActionCreators(
+  {
+    signUp
+  },
+  dispatch,
+);
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...stateProps,
@@ -253,4 +256,4 @@ export default compose(
   ),
 )(SignUpPage);
 
-export {SignUpForm, SignUpLink};
+export { SignUpForm, SignUpLink };

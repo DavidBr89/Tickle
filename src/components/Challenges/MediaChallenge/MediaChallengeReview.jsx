@@ -1,20 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { Star } from 'react-feather';
-import { range } from 'd3';
-// import { css } from 'aphrodite/no-important';
-
 import { ModalBody } from 'Utils/Modal';
-// import ScrollList from 'Utils/ScrollList';
-
-import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
-// TODO: untangle later
-import { Btn } from 'Components/cards/layout';
 
 import { MediaList } from 'Utils/MediaUpload';
-
-import { stylesheet } from 'Src/styles/GlobalThemeContext';
 
 import { TagInput, PreviewTags } from 'Utils/Tag';
 

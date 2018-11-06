@@ -1,17 +1,13 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {compose} from 'recompose';
+import { compose } from 'recompose';
 
-import {withRouter} from 'react-router-dom';
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
-import CardFrame from './CardFrame';
 
-import ReadCardFront from './CardFront/ReadCardFront';
-import CardBack from './CardBack';
-
-import {asyncSubmitChallenge} from 'Reducers/Cards/async_actions';
+import { asyncSubmitChallenge } from 'Reducers/Cards/async_actions';
 
 import * as dataViewActions from 'Reducers/DataView/actions';
 import * as routeActions from 'Reducers/DataView/async_actions';
@@ -19,16 +15,18 @@ import MediaChallenge from 'Components/Challenges/MediaChallenge';
 
 import StarRating from 'Components/utils/StarRating';
 
-import {ModalBody} from 'Utils/Modal';
+import { ModalBody } from 'Utils/Modal';
 
-import {PreviewTags} from 'Utils/Tag';
+import { PreviewTags } from 'Utils/Tag';
 // import { BigButton } from './layout';
 
-import {stylesheet} from 'Src/styles/GlobalThemeContext';
-import {MediaList} from 'Utils/MediaUpload';
-import {DB} from 'Firebase';
+import { MediaList } from 'Utils/MediaUpload';
+import { DB } from 'Firebase';
 
 import cardRoutes from 'Src/Routes/cardRoutes';
+import CardBack from './CardBack';
+import ReadCardFront from './CardFront/ReadCardFront';
+import CardFrame from './CardFrame';
 
 // TODO: outsource
 const ChallengeResult = ({
@@ -43,7 +41,7 @@ const ChallengeResult = ({
   <ModalBody
     onClose={onClose}
     title={title}
-    style={{background: 'whitesmoke'}}
+    style={{ background: 'whitesmoke' }}
     footer={
       <button
         onClick={() => {
@@ -58,7 +56,7 @@ const ChallengeResult = ({
       <h4>Tags</h4>
       <PreviewTags data={tags} />
     </div>
-    <div className="flex-full flexCol" style={{background: 'smokewhite'}}>
+    <div className="flex-full flexCol" style={{ background: 'smokewhite' }}>
       <div>
         <h4>User Response</h4>
         <p>{response}</p>
@@ -68,13 +66,12 @@ const ChallengeResult = ({
         <MediaList
           data={media}
           className="mb-3"
-          stylesheet={stylesheet}
           disabled
         />
       </div>
       <div>
         <h4>Feedback</h4>
-        <p style={{width: '100%'}}>{text}</p>
+        <p style={{ width: '100%' }}>{text}</p>
       </div>
       <div>
         <h4>Rating</h4>
@@ -126,10 +123,10 @@ const CardViewable = ({
         isSmartphone={false}
         key={props.id}
         challengeSubmission={props.challengeSubmission}
-        onUpdate={newChallengeSub => {
+        onUpdate={(newChallengeSub) => {
           onSubmitChallenge({
             cardId: props.id,
-            ...newChallengeSub,
+            ...newChallengeSub
           });
         }}
       />
@@ -150,30 +147,31 @@ const mapStateToProps = state => ({
   ...state.Session
 });
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      // dragCard,
-      ...dataViewActions,
-      asyncSubmitChallenge,
-      ...routeActions
-    },
-    dispatch,
-  );
+const mapDispatchToProps = dispatch => bindActionCreators(
+  {
+    // dragCard,
+    ...dataViewActions,
+    asyncSubmitChallenge,
+    ...routeActions
+  },
+  dispatch,
+);
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const {location, match, history, id} = ownProps;
-  const {authUser} = state;
-  const {uid} = authUser;
-  const {asyncSubmitChallenge} = dispatcherProps;
+  const {
+    location, match, history, id
+  } = ownProps;
+  const { authUser } = state;
+  const { uid } = authUser;
+  const { asyncSubmitChallenge } = dispatcherProps;
   // TODO replace by regex
 
-  const {userEnv} = match.params;
+  const { userEnv } = match.params;
 
   const {
-    query: {selectedCardId, extended, flipped},
-    routing: {routeFlipCard, routeExtendCard}
-  } = cardRoutes({history, location});
+    query: { selectedCardId, extended, flipped },
+    routing: { routeFlipCard, routeExtendCard }
+  } = cardRoutes({ history, location });
 
   // console.log('render');
 
@@ -181,8 +179,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     routeExtendCard();
   };
 
-  const onSubmitChallenge = challengeSubmission => {
-    asyncSubmitChallenge({playerId: uid, ...challengeSubmission});
+  const onSubmitChallenge = (challengeSubmission) => {
+    asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
   };
 
   const onFlip = () => {

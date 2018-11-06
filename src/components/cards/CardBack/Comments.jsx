@@ -1,12 +1,10 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
-import {db} from 'Firebase';
+import { db } from 'Firebase';
 
-import {addCommentSuccess} from 'Reducers/Cards/actions';
-
-import {CardThemeConsumer} from 'Src/styles/CardThemeContext';
+import { addCommentSuccess } from 'Reducers/Cards/actions';
 
 class CommentsWrapper extends Component {
   static propTypes = {
@@ -14,6 +12,7 @@ class CommentsWrapper extends Component {
     cardId: PropTypes.string,
     addComment: PropTypes.func
   };
+
   static defaultProps = {
     author: {},
     cardId: null,
@@ -21,7 +20,7 @@ class CommentsWrapper extends Component {
     uid: null
   };
 
-  state = {comments: [], extended: false};
+  state = { comments: [], extended: false };
 
   componentDidMount() {
     // const {cardId} = this.props;
@@ -40,17 +39,17 @@ class CommentsWrapper extends Component {
   }
 
   render() {
-    const {comments} = this.state;
-    const {author, cardId, extended} = this.props;
+    const { comments } = this.state;
+    const { author, cardId, extended } = this.props;
     return (
       <CommentList
         extended={extended}
         data={comments}
         author={author}
         cardId={cardId}
-        onChange={comment => {
+        onChange={(comment) => {
           addCommentSuccess();
-          this.setState({comments: [...comments, comment]});
+          this.setState({ comments: [...comments, comment] });
         }}
       />
     );
@@ -65,7 +64,7 @@ const CommentList = ({
   onChange,
   extended
 }) => {
-  const {uid} = author;
+  const { uid } = author;
   return (
     <div
       style={{
@@ -74,8 +73,8 @@ const CommentList = ({
         flexGrow: 1
       }}
     >
-      <div style={{overflow: 'scroll'}}>
-        {data.slice(0, extended ? 20 : 2).map(({date, ...c}) => (
+      <div style={{ overflow: 'scroll' }}>
+        {data.slice(0, extended ? 20 : 2).map(({ date, ...c }) => (
           <OneComment {...c} date="" />
         ))}
         {data.length === 0 && (
@@ -88,11 +87,9 @@ const CommentList = ({
         <AddComment
           user={author}
           stylesheet={stylesheet}
-          onClick={text => {
-            const comment = {...author, cardId, text};
-            db.addComment({uid, cardId, text}).then(() =>
-              console.log('comment added', comment),
-            );
+          onClick={(text) => {
+            const comment = { ...author, cardId, text };
+            db.addComment({ uid, cardId, text }).then(() => console.log('comment added', comment), );
             onChange(comment);
           }}
         />
@@ -109,8 +106,10 @@ CommentList.defaultProps = {
   stylesheet: {}
 };
 
-const OneComment = ({photoURL, text, username, date}) => (
-  <div style={{display: 'flex'}}>
+const OneComment = ({
+  photoURL, text, username, date
+}) => (
+  <div style={{ display: 'flex' }}>
     <div className="">
       <img
         className=" mr-3"
@@ -126,12 +125,16 @@ const OneComment = ({photoURL, text, username, date}) => (
       />
     </div>
     <div className="media-body">
-      <div style={{overflow: 'hidden', textOverflow: 'ellipsis'}}>
+      <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
         <small>{text}</small>
       </div>
       <div>
         <small className="font-italic">
-          - {username} {date}
+          -
+          {' '}
+          {username}
+          {' '}
+          {date}
         </small>
       </div>
     </div>
@@ -173,25 +176,26 @@ class AddComment extends Component {
     onClick: PropTypes.func
   };
 
-  state = {text: null};
+  state = { text: null };
 
   render() {
-    const {onClick, stylesheet} = this.props;
-    const {text} = this.state;
+    const { onClick, stylesheet } = this.props;
+    const { text } = this.state;
     return (
       <div style={{}} className="mt-3">
         <input
           className="form-control mb-1"
           type="text"
-          onChange={e => this.setState({text: e.target.value})}
-        />{' '}
+          onChange={e => this.setState({ text: e.target.value })}
+        />
+        {' '}
         <button
           className="mb-1 btn"
-          style={{width: '100%'}}
+          style={{ width: '100%' }}
           disabled={text === null || text === ''}
           onClick={() => {
             onClick(text);
-            this.setState({text: null});
+            this.setState({ text: null });
           }}
         >
           Submit
@@ -203,12 +207,12 @@ class AddComment extends Component {
 
 // TODO: remove
 const mapDispatchToProps = dispatch => ({
-  addComment: c => {
+  addComment: (c) => {
     dispatch(addCommentSuccess(c));
   }
 });
 
-const mapStateToProps = state => ({author: state.Session.authUser});
+const mapStateToProps = state => ({ author: state.Session.authUser });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...stateProps,

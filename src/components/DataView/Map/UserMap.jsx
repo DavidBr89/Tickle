@@ -4,9 +4,9 @@ import MapGL, { HTMLOverlay } from 'react-map-gl';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { MapPin } from 'react-feather';
+import MapPin from 'react-feather/dist/icons/map-pin';
 
-import CardPin from './CardPin';
+import { geoProject } from 'Lib/geo';
 
 import CardMarker from 'Components/cards/CardMarker';
 
@@ -14,20 +14,18 @@ import CardMarker from 'Components/cards/CardMarker';
 
 import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 
+import { changeMapViewport, userMove } from 'Reducers/Map/actions';
+import ArrayPipe from 'Components/utils/ArrayPipe';
 import Cluster from '../ForceOverlay/Cluster';
 import CardCluster from '../ForceOverlay/CardCluster';
 // import ForceCollide from '../ForceOverlay/MiniForceCollide';
 
-import { changeMapViewport, userMove } from 'Reducers/Map/actions';
-
-import { stylesheet } from 'Src/styles/GlobalThemeContext';
-
-import ArrayPipe from 'Components/utils/ArrayPipe';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 import userIcon from '../ForceOverlay/user.svg';
 
+// TODO: constant
 const mapStyleUrl = 'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l';
 
 const defaultLocation = {
@@ -63,7 +61,9 @@ class UserMap extends Component {
   static defaultProps = {
     disabled: false,
     maxZoom: 16,
-    viewport: { ...defaultLocation, width: 100, height: 100, zoom: 10 },
+    viewport: {
+      ...defaultLocation, width: 100, height: 100, zoom: 10
+    },
     cards: [],
     showUser: false
   };
@@ -73,104 +73,10 @@ class UserMap extends Component {
   componentDidMount() {
     console.log('mapgl', this.mapgl);
     const map = this.mapgl.getMap();
-    //
-    // // TODO: START END 4.989203,51.314682;5.013693,51.311366
-    // map.on('load', () => {
-    //   map.addLayer({
-    //     id: 'route',
-    //     type: 'line',
-    //     source: {
-    //       type: 'geojson',
-    //       cards: {
-    //         type: 'Feature',
-    //         properties: {},
-    //         geometry: {
-    //           type: 'LineString',
-    //           coordinates: [
-    //             [4.991218, 51.31484],
-    //             [4.99684, 51.314709],
-    //             [4.997494, 51.314592],
-    //             [4.999943, 51.31378],
-    //             [5.002289, 51.313371],
-    //             [5.00321, 51.313367],
-    //             [5.00878, 51.313932],
-    //             [5.009547, 51.313655],
-    //             [5.013749, 51.311311]
-    //           ]
-    //         }
-    //       }
-    //     },
-    //     layout: {
-    //       'line-join': 'round',
-    //       'line-cap': 'round'
-    //     },
-    //     paint: {
-    //       'line-color': 'red',
-    //       'line-width': 8,
-    //       'line-opacity': 0.4
-    //     }
-    //   });
-    //
-    //   map.addLayer({
-    //     id: 'points',
-    //     type: 'symbol',
-    //     source: {
-    //       type: 'geojson',
-    //       cards: {
-    //         type: 'FeatureCollection',
-    //         features: [
-    //           {
-    //             type: 'Feature',
-    //             geometry: {
-    //               type: 'Point',
-    //               coordinates: [4.989203, 51.314682]
-    //             },
-    //             properties: {
-    //               title: 'START',
-    //               icon: 'marker'
-    //             }
-    //           },
-    //           {
-    //             type: 'Feature',
-    //             geometry: {
-    //               type: 'Point',
-    //               coordinates: [5.013693, 51.311366]
-    //             },
-    //             properties: {
-    //               title: 'END',
-    //               icon: 'marker'
-    //             }
-    //           }
-    //         ]
-    //       }
-    //     },
-    //     layout: {
-    //       'icon-image': '{icon}-15',
-    //       'text-field': '{title}',
-    //       'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-    //       'text-offset': [0, 0.6],
-    //       'text-anchor': 'top'
-    //     }
-    //   });
-    // });
   }
-
-  // static getDerivedStateFromProps({ latitude, longitude }, prevState) {
-  //   return { latitude, longitude };
-  // }
 
   componentDidUpdate(prevProps, prevState) {
     const { nodes, selectedCardId, maxZoom } = this.props;
-    // if ( selectedCardId !== null && prevProps.selectedCardId !== selectedCardId
-    // ) {
-    //   const selectedNode = nodes.find(n => selectedCardId === n.id);
-    //   const {
-    //     loc: { longitude, latitude }
-    //   } = selectedNode;
-    //
-    //   const vp = { ...this.state, longitude, latitude };
-    //   this.props.changeMapViewport({ ...vp });
-    // }
   }
 
   render() {
@@ -198,13 +104,8 @@ class UserMap extends Component {
 
     const vp = new PerspectiveMercatorViewport({ ...viewport, width, height });
 
-    const locNodes = cards.reduce((acc, n) => {
-      const [x, y] = vp.project([n.loc.longitude, n.loc.latitude]);
-      if (x > 0 && x < width && y > 0 && y < height) {
-        return [{ ...n, x, y }, ...acc];
-      }
-      return acc;
-    }, []);
+
+    const locNodes = geoProject({ viewport: vp, data: cards });
 
     const userPos = vp.project([userLocation.longitude, userLocation.latitude]);
 
@@ -219,7 +120,7 @@ class UserMap extends Component {
           }}
           width={width}
           height={height}
-          onViewportChange={newViewport => {
+          onViewportChange={(newViewport) => {
             // if (!isCardDragging) {
             this.props.changeMapViewport({ ...newViewport });
             if (selectedCardId !== null) routeSelectCard(null);
@@ -233,9 +134,7 @@ class UserMap extends Component {
           zoom={zoom}
         >
           <Cluster
-            radius={() =>
-              // console.log('d', d);
-              40
+            radius={() => 40
             }
             nodes={locNodes}
             width={width}
@@ -244,7 +143,9 @@ class UserMap extends Component {
           >
             {clusters => (
               <ArrayPipe array={clusters}>
-                {({ id, x, y, data: d }) => (
+                {({
+                  id, x, y, data: d
+                }) => (
                   <CardCluster
                     id={id}
                     coords={[x, y]}
@@ -303,18 +204,17 @@ class UserMap extends Component {
             />
           </div>
           <div
-              className="z-20 absolute"
-            style={{ position: 'absolute', bottom: 0, right: 0, }}
+            className="z-20 absolute"
+            style={{ position: 'absolute', bottom: 0, right: 0 }}
           >
             <button
               className="btn"
-              onClick={() =>
-                this.props.changeMapViewport({
-                  width,
-                  height,
-                  zoom,
-                  ...userLocation
-                })
+              onClick={() => this.props.changeMapViewport({
+                width,
+                height,
+                zoom,
+                ...userLocation
+              })
               }
               className="p-3 m-2"
               style={{
@@ -337,7 +237,9 @@ class UserMap extends Component {
 
 // TODO: change this later
 const mapStateToProps = ({
-  MapView: { mapViewport, userLocation, width, height, accessibleRadius },
+  MapView: {
+    mapViewport, userLocation, width, height, accessibleRadius
+  },
   DataView: { selectedCardId },
   Cards: { isCardDragging },
   Screen
@@ -349,14 +251,13 @@ const mapStateToProps = ({
   isCardDragging
 });
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      changeMapViewport,
-      userMove
-    },
-    dispatch
-  );
+const mapDispatchToProps = dispatch => bindActionCreators(
+  {
+    changeMapViewport,
+    userMove
+  },
+  dispatch
+);
 
 const mergeProps = (state, dispatcherProps, ownProps) => ({
   ...state,

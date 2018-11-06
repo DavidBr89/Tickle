@@ -4,7 +4,6 @@
   },
   "plugins": [
     "react",
-    "jsx-a11y",
     "import"
   ],
   "parser": "babel-eslint",
@@ -47,8 +46,9 @@
       "extensions": [".js", ".jsx"]
     }],
     "jsx-a11y/href-no-hash": 0,
+    "jsx-a11y/click-events-have-key-events": 0,
     "react/jsx-wrap-multilines": 0,
     "jsx-a11y/no-static-element-interactions": 0
   },
-  "extends": ["airbnb", "plugin:prettier/recommended"]
+  "extends": ["airbnb"]
 }

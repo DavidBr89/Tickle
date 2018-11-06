@@ -3,7 +3,7 @@
 }
 
 .form-control {
-  @apply .border-4 .border-black .py-2 .px-3 .text-grey-darkest
+  @apply .border-4 .border-black .text-lg .py-2 .px-3 .text-grey-darkest
 }
 
 .form-group {
@@ -11,11 +11,15 @@
 }
 
 .tag-label {
-  @apply .py-1 .px-1 .border-2 .bg-grey-light;
+  @apply .py-2 .px-2 .bg-black .font-bold .text-white;
 }
 
 .btn {
-  @apply .flex .flex-col .items-center .justify-center .font-bold .p-2 .border-4 .border-grey-darkest .cursor-pointer .border-black;
+  @apply .flex .flex-col .items-center .justify-center .text-lg .font-bold .p-2 .border-4 .border-grey-darkest .cursor-pointer .border-black;
+}
+
+.btn-black {
+  @apply .btn .bg-black .text-white .text-xl;
 }
 
 .bare-btn {

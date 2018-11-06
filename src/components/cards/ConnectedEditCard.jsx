@@ -54,7 +54,6 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const {mapViewport, width, height, authUser, tagVocabulary} = state;
   // const {uid} = authUser;
   const {match, location, history, uid} = ownProps;
-  console.log('ownProps CARD', ownProps);
 
   const {userEnv} = match.params;
 
@@ -71,7 +70,6 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   } = dispatcherProps;
 
   const createCard = cardData => {
-    console.log('yo', cardData, userEnv);
     asyncCreateCard({cardData, userEnv});
   };
 

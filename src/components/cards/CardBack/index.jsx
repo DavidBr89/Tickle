@@ -1,46 +1,56 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import {CardThemeConsumer} from 'Src/styles/CardThemeContext';
-
-import {Trash2, Maximize, Minimize} from 'react-feather';
-
-import {FlipButton} from '../layout';
-import {FieldSet} from 'Components/utils/StyledComps';
-import Comments from './Comments';
-import CardHeader from '../CardHeader';
-import BackAuthor from './BackAuthor';
-import {MapAreaControl} from './MapAreaControl';
+import Trash2 from 'react-feather/dist/icons/trash-2';
+import Minimize from 'react-feather/dist/icons/minimize';
+import Maximize from 'react-feather/dist/icons/maximize';
 
 import CardControls from 'Components/cards/CardControls';
+import Comments from './Comments';
+import BackAuthor from './BackAuthor';
+import { MapAreaControl } from './MapAreaControl';
 
 //
-const DeleteButton = ({style, onClick, color, className}) => (
+const DeleteButton = ({ style, className, onClick }) => (
   <button
-    className="m-1 btn btn-black bg-danger"
+    className={`m-1 btn btn-black bg-danger ${className}`}
+    type="button"
     style={{
       alignItems: 'center',
-      ...style,
+      ...style
     }}
-    onClick={onClick}>
+    onClick={onClick}
+  >
     <Trash2 size={30} />
   </button>
 );
+
+DeleteButton.propTypes = {
+  style: PropTypes.object,
+  onClick: PropTypes.func,
+  className: PropTypes.string
+};
+
+DeleteButton.defaultProps = {
+  style: {},
+  onClick: d => d,
+  className: ''
+};
 
 const BackField = ({
   onClick,
   onControlClick,
   style,
-  bodyStyle,
   title,
   legendStyle,
+  className,
   icon,
   children,
   disabled,
-  extended,
+  extended
 }) => (
   <div
-    className="border overflow-hidden relative flex-col-wrapper"
+    className={`overflow-hidden relative flex-col-wrapper ${className}`}
     onClick={!extended ? onClick : () => null}
     style={{
       ...style
@@ -48,8 +58,10 @@ const BackField = ({
   >
     <div
       className="mb-1 z-10 absolute flex-grow flex justify-end items-center"
-      style={{right: 0}}>
+      style={{ right: 0 }}
+    >
       <button
+        type="button"
         className="btn bg-white m-2"
         onClick={extended ? onClick : () => null}
       >
@@ -60,19 +72,6 @@ const BackField = ({
   </div>
 );
 
-DeleteButton.propTypes = {
-  style: PropTypes.object,
-  onClick: PropTypes.func,
-  color: PropTypes.string,
-  className: PropTypes.string,
-};
-
-DeleteButton.defaultProps = {
-  style: {},
-  onClick: d => d,
-  color: 'black',
-  className: '',
-};
 
 class CardBack extends Component {
   static propTypes = {
@@ -81,30 +80,30 @@ class CardBack extends Component {
       username: PropTypes.string,
       email: PropTypes.string,
       uid: PropTypes.string,
-      usrImgUrl: PropTypes.oneOf(null, PropTypes.string),
+      usrImgUrl: PropTypes.oneOf(null, PropTypes.string)
     }),
     onFlip: PropTypes.func.isRequired,
     linkedCards: PropTypes.array,
     cardSets: PropTypes.array,
     loc: PropTypes.shape({
       latitude: PropTypes.number,
-      longitude: PropTypes.number,
+      longitude: PropTypes.number
     }),
     uiColor: PropTypes.string,
     edit: PropTypes.bool,
     mapRadius: PropTypes.number,
     setMapRadius: PropTypes.func,
-    onDelete: PropTypes.func,
+    onDelete: PropTypes.func
   };
 
   static defaultProps = {
     linkedCards: [],
-    loc: {latitude: 0, longitude: 0},
+    loc: { latitude: 0, longitude: 0 },
     author: {
       uid: null,
       username: 'defaulUser',
       email: 'default@gmail.com',
-      usrImgUrl: null,
+      usrImgUrl: null
     },
     cardSets: [],
     uiColor: 'grey',
@@ -112,14 +111,14 @@ class CardBack extends Component {
     onFlip: d => d,
     mapRadius: 100,
     setMapRadius: d => d,
-    onDelete: d => d,
+    onDelete: d => d
   };
 
-  state = {extended: null};
+  state = { extended: null };
 
-  selectField = field => {
-    this.setState(({extended: prevExtended}) => ({
-      extended: prevExtended !== field ? field : null,
+  selectField = (field) => {
+    this.setState(({ extended: prevExtended }) => ({
+      extended: prevExtended !== field ? field : null
     }));
   };
 
@@ -141,59 +140,58 @@ class CardBack extends Component {
       fetchAuthorData
     } = this.props;
 
-    const {extended} = this.state;
+    const { extended } = this.state;
 
     const isExtended = field => extended === field && extended !== null;
 
-    const displayStyle = field => {
+    const displayStyle = (field) => {
       const fieldExtended = isExtended(field);
       return {
         transition: 'all 200ms',
-        flexGrow: fieldExtended ? '0.5' : '0.3',
-        overflow: fieldExtended ? 'scroll' : 'hidden',
+        flexGrow: fieldExtended ? 1 : 0.3,
+        overflow: fieldExtended ? 'scroll' : 'hidden'
       };
     };
 
     return (
       <div className={`flex flex-col flex-grow ${className}`}>
-        <BackField
-          title="Author"
-          extended
-          style={displayStyle('author')}
-          onClick={() => this.selectField('author')}
-        >
-          <BackAuthor uid={uid} extended={extended === 'author'}
-          fetchData={fetchAuthorData}
-          />
-        </BackField>
-        <BackField
-          extended={isExtended('map')}
-          style={displayStyle('map')}
-          edit={edit}
-          title="Location"
-        />
-        <BackField
-          extended={isExtended('comments')}
-          onClick={() => this.selectField('comments')}
-          title="Comments"
-          style={displayStyle('comments')}
-          borderColor={uiColor}
-        >
-          <Comments cardId={cardId} extended={extended === 'comments'} />
-        </BackField>
+        <div className="flex-col-wrapper flex-grow p-3">
+          <BackField
+            className="mb-2"
+            style={displayStyle('author')}
+            onClick={() => this.selectField('author')}
+          >
+            <BackAuthor
+              uid={uid}
+              extended={extended === 'author'}
+              fetchData={fetchAuthorData}
+            />
+          </BackField>
+          <BackField
+            className="relative mb-2"
+            onClick={() => this.selectField('map')}
+            extended={extended === 'map'}
+            style={displayStyle('map')}
+          >
+            <MapAreaControl {...this.props} />
+          </BackField>
+          <BackField
+            extended={isExtended('comments')}
+            onClick={() => this.selectField('comments')}
+            style={displayStyle('comments')}
+          >
+            <Comments cardId={cardId} extended={extended === 'comments'} />
+          </BackField>
+        </div>
         <CardControls
           onFlip={onFlip}
           onClose={onClose}
-          style={{
-            width: '100%',
-            flexShrink: 0
-          }}
+          style={{ width: '100%', flexShrink: 0 }}
         >
           {edit ? (
             <DeleteButton
               onClick={onDelete}
-              color={uiColor}
-              style={{width: '20%'}}
+              style={{ width: '20%' }}
             />
           ) : null}
         </CardControls>
@@ -206,10 +204,8 @@ CardBack.propTypes = {
   onFlip: PropTypes.func,
   onClose: PropTypes.func,
   edit: PropTypes.bool,
-  background: PropTypes.string,
   uiColor: PropTypes.string,
-  title: PropTypes.oneOf([PropTypes.string, null]),
-  setMapRadius: PropTypes.func,
+  setMapRadius: PropTypes.func
 };
 
 CardBack.defaultProps = {
@@ -219,7 +215,7 @@ CardBack.defaultProps = {
   background: 'black',
   uiColor: 'black',
   title: null,
-  setMapRadius: d => d,
+  setMapRadius: d => d
 };
 
 export default CardBack;

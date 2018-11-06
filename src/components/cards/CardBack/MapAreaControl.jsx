@@ -1,75 +1,15 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import MapGL from 'react-map-gl';
 
-import {scaleOrdinal} from 'd3';
+import { scaleOrdinal } from 'd3';
 
 // TODO remove
+import DimWrapper from 'Utils/DimensionsWrapper';
+import { geoProject } from 'Lib/geo';
 import MapAreaRadius from '../../utils/map-layers/MapAreaRadius';
 import CardMarker from '../CardMarker';
-// TODO remove
-import {DivOverlay} from '../../utils/map-layers/DivOverlay';
 
-import DimWrapper from 'Utils/DimensionsWrapper';
-
-function MapAreaForm({...props}) {
-  const {style, className, onChange, scaleRad, uiColor, selectedRadius} = props;
-  const isSelected = d => scaleRad(d) === selectedRadius;
-
-  const btnStyle = d => ({
-    border: '1px solid black',
-    background: isSelected(d) ? uiColor : null
-    // borderRadius: '50%',
-    // height: '30px',
-    // width: '30px'
-  });
-  const changeHandler = m => () => onChange(m);
-
-  return (
-    <div
-      className={className}
-      style={{
-        height: '100%',
-        width: '25%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-evenly',
-        ...style
-        // marginTop: '40px'
-      }}
-    >
-      {scaleRad.domain().map(d => (
-        <button
-          className={`btn ${isSelected(d) ? 'btn-active' : null}`}
-          style={btnStyle(d)}
-          onClick={changeHandler(scaleRad(d))}
-        >
-          {d}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-MapAreaForm.propTypes = {
-  style: PropTypes.object,
-  className: PropTypes.string,
-  onChange: PropTypes.func,
-  selectedRadius: PropTypes.number,
-  scaleRad: PropTypes.func,
-  uiColor: PropTypes.string
-};
-
-MapAreaForm.defaultProps = {
-  style: {},
-  className: '',
-  onChange: d => d,
-  selectedRadius: 100,
-  uiColor: 'black',
-  scaleRad: scaleOrdinal()
-    .domain(['100m', '1km', '5km', '10km'])
-    .range([100, 1000, 5000, 10000])
-};
 
 class MapAreaControl extends Component {
   static propTypes = {
@@ -93,21 +33,12 @@ class MapAreaControl extends Component {
     onChange: d => d,
     edit: false,
     markerHeight: 40,
-    markerWidth: 30
+    markerWidth: 30,
+    loc: {
+      latitude: 0,
+      longitude: 0
+    }
   };
-
-  constructor(props) {
-    super(props);
-    const {latitude, longitude, radius} = props;
-    this.state = {userLocation: {latitude: 0, longitude: 0}, radius};
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const {onChange} = this.props;
-    const {radius} = this.state;
-    // TODO: why prevState
-    // if (!prevState.extended) onChange(radius);
-  }
 
   render() {
     const {
@@ -122,58 +53,30 @@ class MapAreaControl extends Component {
       loc
     } = this.props;
 
-    const {userLocation, radius} = this.state;
-    const radRange = [100, 1000, 5000, 10000];
-    const scaleRad = scaleOrdinal()
-      .domain(radRange.map(d => `${d}m`))
-      .range(radRange);
-
-    const scaleZoom = scaleOrdinal()
-      .domain(radRange)
-      .range([16, 13.5, 11, 10]);
-
     const mapViewport = (width, height) => ({
       width,
       height,
-      latitude,
-      longitude,
-      zoom: scaleZoom(radius)
+      ...loc,
+      zoom: 14
     });
 
-    // {extended && (
-    //   <div
-    //     style={{
-    //       position: 'absolute',
-    //       zIndex: 2000,
-    //       right: 0
-    //     }}
-    //   >
-    //     {edit && (
-    //       <div style={{ height, width }}>
-    //         <MapAreaForm
-    //           className="ml-3"
-    //           width={width}
-    //           height={height}
-    //           selectedRadius={radius}
-    //           uiColor={uiColor}
-    //           scaleRad={scaleRad}
-    //           onChange={r => this.setState({ radius: r })}
-    //         />
-    //       </div>
-    //     )}
-    //   </div>
-    // )}
+    // const [locNode] = geoProject({});
 
-    // <MapAreaRadius
-    //   userLocation={userLocation}
-    //   mapViewport={mapViewport(width, height)}
-    //   cardPosition={{ ...loc }}
-    //   radius={radius}
-    // />
     return (
-      <div style={{height: '100%', width: '100%'}}>
-        <DimWrapper delay={200}>
-          {(width, height) => <MapGL {...mapViewport(width, height)} />}
+      <div className="absolute" style={{ height: '100%', width: '100%' }}>
+        <DimWrapper delay={100}>
+          {(width, height) => (<div className="relative">
+
+            <MapGL {...mapViewport(width, height)} />
+            <CardMarker
+              className="absolute"
+              style={{
+                left: width / 2, top: height / 2
+              }}
+            />
+
+                               </div>)
+          }
         </DimWrapper>
       </div>
     );
@@ -198,4 +101,4 @@ class MapAreaControl extends Component {
               </DivOverlay>
               */
 
-export {MapAreaControl};
+export { MapAreaControl };

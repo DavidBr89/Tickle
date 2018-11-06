@@ -3,10 +3,6 @@ import setify from 'Components/utils/setify';
 
 import { union, uniq } from 'lodash';
 
-import { makeTagColorScale } from 'Src/styles/GlobalThemeContext';
-
-import { tagColor } from 'Src/styles/GlobalThemeContext';
-
 import {
   RECEIVE_PLACES,
   UPDATE_CARD,
@@ -80,7 +76,6 @@ const INITIAL_STATE = {
   cardChallengeOpen: false,
   selectedTags: [],
   // TODO: change later
-  tagColorScale: () => tagColor
   // filterSet: []
   // TODO: outsource
   //
@@ -102,7 +97,7 @@ function reducer(state = INITIAL_STATE, action) {
       const { collectibleCards } = state;
       const id = action.options;
 
-      const updatedCollectibleCards = collectibleCards.map(d => {
+      const updatedCollectibleCards = collectibleCards.map((d) => {
         if (d.id === id) return { ...d, seen: true };
         return d;
       });
@@ -190,7 +185,7 @@ function reducer(state = INITIAL_STATE, action) {
       const { createdCards, collectibleCards } = state;
       const updatedCard = action.options;
 
-      const doUpdateCard = c => {
+      const doUpdateCard = (c) => {
         if (c.id === updatedCard.id) {
           return updatedCard;
         }
@@ -214,7 +209,7 @@ function reducer(state = INITIAL_STATE, action) {
 
       const challengeSubmission = action.options;
 
-      const updatedCards = collectibleCards.map(c => {
+      const updatedCards = collectibleCards.map((c) => {
         if (c.id === challengeSubmission.cardId) {
           return { ...c, challengeSubmission };
         }

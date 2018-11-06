@@ -124,7 +124,7 @@ const EditIcon = ({edit, className, style, onClick}) => (
 const Title = ({onClick, edit, children, className}) => (
   <div className={`flex items-center ${className}`} onClick={onClick}>
     <div className="flex flex-grow justify-between">
-      <h1 className="text-muted text-white bg-black pl-2 pr-2">{children}</h1>
+      <h1 className="text-muted">{children}</h1>
       {edit && <EditIcon />}
     </div>
   </div>

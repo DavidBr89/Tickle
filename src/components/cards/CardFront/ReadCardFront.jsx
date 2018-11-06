@@ -13,11 +13,7 @@ import placeholderImgSrc from '../placeholder.png';
 
 import CardFront from './CardFront';
 
-import {Btn} from 'Components/cards/layout';
-
 import {IMG} from 'Constants/mediaTypes';
-
-import {BigButton} from '../layout';
 
 class ReadCardFront extends Component {
   static propTypes = {
@@ -86,7 +82,12 @@ class ReadCardFront extends Component {
     } = this.props;
 
     const FooterBtn = () => (
-      <Btn onClick={() => this.setState({dialogKey: null})}>Close</Btn>
+      <button
+        className="btn-black"
+        onClick={() => this.setState({dialogKey: null})}
+      >
+        Close
+      </button>
     );
 
     switch (field) {
@@ -211,7 +212,8 @@ class ReadCardFront extends Component {
           }
           onMediaClick={() => this.setState({dialogKey: 'Media'})}
           bottomControls={
-            <BigButton
+            <button
+              className="btn-black"
               onClick={() =>
                 this.setState({
                   dialogKey: 'Challenge'
@@ -219,7 +221,7 @@ class ReadCardFront extends Component {
               }
             >
               {this.btnText()}
-            </BigButton>
+            </button>
           }
         />
       </React.Fragment>

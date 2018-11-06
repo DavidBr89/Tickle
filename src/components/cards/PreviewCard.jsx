@@ -1,18 +1,16 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 // import styles from './PreviewCard.css';
+import { PreviewTags } from 'Utils/Tag';
+import IcAk from 'Styles/alphabet_icons/ic_ak.svg';
 import placeholderImg from './placeholder.png';
-import {shadowStyle, colorClass, colorScale} from './styles';
-import {Lock as LockF} from 'react-feather';
 
-import {PreviewTags} from 'Utils/Tag';
 
-const PlaceholderField = ({text, style, fullHeight}) => (
+const PlaceholderField = ({ text, style, fullHeight }) => (
   <div className="mb-1 flex-grow flex-col-wrapper justify-center items-center h-full">
     <div
       style={{
         color: 'grey',
-        paddingLeft: '2px',
         fontWeight: 'bold',
         ...style
       }}
@@ -61,7 +59,7 @@ class PreviewCard extends Component {
     style: {},
     selected: false,
     // TODO: include only type
-    challenge: {type: null},
+    challenge: { type: null },
     edit: false,
     type: null,
     showImg: true,
@@ -89,46 +87,36 @@ class PreviewCard extends Component {
     })();
     const contStyle = {
       padding: '5px',
-      height: '100%',
-      background: colorScale(type),
       boxShadow: '0.2rem 0.2rem grey',
-      overflow: 'hidden',
       ...style
-      // minWidth: '100px'
-      // maxHeight: '120px'
     };
 
     return (
       <div
-        className={`${className} flex-col-wrapper border-2 border-black`}
+        className={`${className} overflow-hidden bg-white flex-col-wrapper border-2 border-black`}
         style={contStyle}
         onClick={onClick}
       >
         <div
-          className="flex-grow mt-1 mb-1 relative"
-          style={{background: '#ffd70080'}}
+          className="flex-col-wrapper flex-grow relative"
+          style={{ background: '#ffd70080' }}
         >
-          {img !== null ? (
+          {img !== null && (
             <img
-              className="absolute z-0"
+              className="absolute z-0 w-full h-full"
               style={{
                 display: 'block',
-                width: '100%',
-                height: '100%',
                 objectFit: 'cover'
               }}
               src={selImg}
               alt="Card cap"
             />
-          ) : (
-            <PlaceholderField text="IMG" style={{fontSize: '18px'}} />
           )}
 
-          <div className="p-1 absolute">
-            <div
-              className="pl-1 pr-1 text-truncate bg-white"
-              style={{fontSize: '16px', margin: '4px 0'}}>
-              {title}
+          <div className="flex-grow flex-col-wrapper">
+            <h1 className=" m-1 flex-no-shrink pl-1 pr-1 bg-white text-xl break-words">{title}</h1>
+            <div className="p-2 flex-1 flex-col-wrapper justify-center">
+              <img className="w-full h-full" src={IcAk} style={{ maxHeight: 120 }} />
             </div>
           </div>
         </div>

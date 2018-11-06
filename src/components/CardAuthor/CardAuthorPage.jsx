@@ -1,35 +1,13 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {FLOORPLAN, GEO} from 'Constants/dataViews';
 
 import DefaultLayout from 'Components/DefaultLayout';
-import {Modal, BareModal, ModalBody} from 'Utils/Modal';
+import { Modal, BareModal, ModalBody } from 'Utils/Modal';
 
 import EditCard from 'Components/cards/ConnectedEditCard';
-// import * as d3 from 'd3';
 
-// import { Motion, spring } from 'react-motion';
-// import * as Icon from 'react-feather';
-// import Spinner from 'react-loader-spinner';
-// import * as d3 from 'd3';
-// import { intersection, union } from 'lodash';
-
-// TODO: { LinearInterpolator, FlyToInterpolator }
-// import { default as TouchBackend } from 'react-dnd-touch-backend';
-// import HTML5Backend from 'react-dnd-html5-backend';
-// import { DragDropContextProvider } from 'react-dnd';
-
-// import PreviewMarker from 'Components/utils/PreviewMarker';
-
-// import { colorScale, cardTypeColorScale } from 'Cards/styles';
-
-// import { Card, CardMarker, PreviewCard } from 'Cards';
+import { DropDown } from 'Utils/TagInput';
 import CardStack from '../CardStack';
-// import ExtendableMarker from 'Utils/ExtendableMarker';
-// import { Modal, ModalBody } from 'Utils/Modal';
-
-import {DropDown} from 'Utils/TagInput';
-import {calcDataViewHeight} from 'Src/styles/GlobalThemeContext';
 
 // import CardDragAuthorOverlay from './CardDragAuthorOverlay';
 
@@ -71,7 +49,7 @@ import CardTagSearch from '../CardTagSearch';
 
 // const TimoutGrid = ReactTimeout(CardStack);
 
-function SpeechBubble({...props}) {
+function SpeechBubble({ ...props }) {
   return (
     <div
       style={{
@@ -195,7 +173,7 @@ class CardAuthorPage extends Component {
     return (
       <DefaultLayout
         className="w-full h-full flex-col"
-        style={{position: 'relative', overflow: 'hidden'}}
+        style={{ position: 'relative', overflow: 'hidden' }}
         menu={
           <div className="flex-grow flex justify-end items-center">
             <CardTagSearch

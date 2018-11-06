@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import {
-  stylesheet as defaultStylesheet,
-  uiColor as defaultUIColor,
-  tagColor
-} from 'Src/styles/GlobalThemeContext';
 
 const tagsStyle = { display: 'flex', marginBottom: 4 };
 const tagStyle = {
@@ -35,8 +30,6 @@ export class TagList extends Component {
     handleDelete: d => d,
     handleAddition: d => d,
     data: [],
-    uiColor: defaultUIColor,
-    colorScale: () => defaultUIColor,
     style: {}
   };
 
@@ -58,8 +51,7 @@ export class TagList extends Component {
       handleDelete,
       handleAddition,
       className,
-      style,
-      stylesheet
+      style
     } = this.props;
     const { value } = this.state;
     return (
@@ -72,9 +64,9 @@ export class TagList extends Component {
             onChange={({ target }) => this.setState({ value: target.value })}
           />
           <button
-            className={`btn ml-2`}
+            className="btn ml-2"
             style={{ background: uiColor }}
-            onClick={event => {
+            onClick={(event) => {
               this.setState({ value: '' });
               handleAddition(value);
               event.preventDefault();
@@ -104,8 +96,7 @@ export class TagInput extends React.Component {
     tags: PropTypes.oneOf([PropTypes.arrayOf(PropTypes.string), null]),
     uiColor: PropTypes.string,
     colorScale: PropTypes.func,
-    style: PropTypes.object,
-    stylesheet: PropTypes.object
+    style: PropTypes.object
   };
 
   static defaultProps = {
@@ -113,8 +104,6 @@ export class TagInput extends React.Component {
     tags: [],
     onChange: d => d,
     uiColor: '',
-    colorScale: () => defaultUIColor,
-    stylesheet: defaultStylesheet,
     className: '',
     style: {}
   };
@@ -152,7 +141,9 @@ export class TagInput extends React.Component {
 
   render() {
     const { tags } = this.state;
-    const { uiColor, colorScale, className, style } = this.props;
+    const {
+      uiColor, colorScale, className, style
+    } = this.props;
 
     return (
       <TagList
@@ -189,33 +180,29 @@ Tags.defaultProps = { data: ['tag1', 'exampleTag'] };
 //   </div>
 // );
 //
-const Tag = ({ title, onClick, edit, small, color }) => {
+const Tag = ({
+  title, onClick, edit, small
+}) => {
   const children = (
     <span style={{ whiteSpace: 'no-wrap' }}>
       {title}
-      {edit && <span style={{ marginLeft: '2px' }}>x</span>}
+      {edit && <span className="ml-1">x</span>}
     </span>
   );
-  if (small)
+  if (small) {
     return (
       <small
         key={title}
-        style={{
-          ...tagStyle,
-          background: color,
-          cursor: 'pointer'
-        }}
         onClick={onClick}
       >
-        {/* TODO: put small out */}
         {children}
       </small>
     );
+  }
   return (
     <div
       key={title}
-      className="tag-label"
-      style={{ ...tagStyle, background: color, cursor: 'pointer' }}
+      className="tag-label tag-label cursor-pointer"
       onClick={onClick}
     >
       {children}
@@ -225,7 +212,6 @@ const Tag = ({ title, onClick, edit, small, color }) => {
 
 Tag.propTypes = {
   title: PropTypes.string,
-  color: PropTypes.string,
   onClick: PropTypes.func,
   edit: PropTypes.bool,
   small: PropTypes.bool
@@ -235,8 +221,7 @@ Tag.defaultProps = {
   title: '',
   onClick: d => d,
   edit: false,
-  small: false,
-  color: tagColor
+  small: false
 };
 
 export const PreviewTags = ({
@@ -253,15 +238,15 @@ export const PreviewTags = ({
       alignItems: 'center',
       flexWrap: 'wrap',
       overflow: 'hidden',
-      ...style,
+      ...style
       // overflowY: 'visible'
       // flexWrap: 'no-wrap'
       // alignItems: 'center'
     }}
   >
-    {data !== null &&
-      data.length > 0 &&
-      data.map(t => <Tag title={t} color={tagColor} small={small} />)}
+    {data !== null
+      && data.length > 0
+      && data.map(t => <Tag title={t} color={tagColor} small={small} />)}
   </div>
 );
 

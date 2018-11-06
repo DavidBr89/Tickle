@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import IcAk from 'Styles/alphabet_icons/ic_ak.svg';
+
 import { shadowStyle, colorScale } from './styles';
+
 
 class CardMarker extends Component {
   static propTypes = {
@@ -30,7 +33,6 @@ class CardMarker extends Component {
     center: true,
     marginTop: '6%',
     background: 'black',
-    imgColor: 'yellow',
     shadow: true
   };
 
@@ -50,7 +52,6 @@ class CardMarker extends Component {
       height,
       marginTop,
       color,
-      imgColor,
       shadow,
       // tags,
       barHeight = '12%',
@@ -62,72 +63,28 @@ class CardMarker extends Component {
     const { hovered } = this.state;
     return (
       <div
-        className="cardmarker"
+        className={`cardmarker ${className}`}
         style={{
-          // pointerEvents: 'none',
-          // padding: '15%',
           width: 25,
           height: 30,
-          // zIndex: 100,
+          // transform: 'translate(-50%,-50%)',
           background: 'white',
           ...style
-          // transform: hovered || (selected && 'scale(2)')
         }}
         onMouseOver={() => this.setState({ hovered: true })}
         onMouseOut={() => this.setState({ hovered: false })}
         onClick={onClick}
       >
         <div
-          style={{
-            background: color,
-            width: '100%',
-            height: '100%',
-            padding: '7%',
-            pointerEvents: 'none',
-            // boxShadow: shadow ? 'grey 0.3rem 0.3rem' : null,
-            border: '1px solid grey'
-            // border: '1px solid grey',
-            // border: edit ? '2px dashed black' : null,
-          }}
+          className="w-full h-full border-2 border-black flex-col-wrapper"
         >
           <div
+            className="flex-grow flex-col-wrapper relative justify-center"
             style={{
-              opacity: 0.5,
-              width: '100%',
-              height: '100%',
-              pointerEvents: 'none'
+              background: 'rgba(255, 215, 0, 0.5)'
             }}
           >
-            <div
-              style={{
-                width: '100%',
-                height: barHeight,
-                background: barColor,
-                marginTop,
-                pointerEvents: 'none'
-                // borderRadius: '4px'
-              }}
-            />
-            <div
-              style={{
-                width: '100%',
-                height: barHeight,
-                background: barColor,
-                marginTop,
-                pointerEvents: 'none'
-                // borderRadius: '4px'
-              }}
-            />
-            <div
-              style={{
-                width: '100%',
-                height: '50%',
-                background: imgColor,
-                marginTop,
-                pointerEvents: 'none'
-                // borderRadius: '4px'
-              }}
-            />
+            <img src={IcAk} className="p-1" />
           </div>
         </div>
       </div>

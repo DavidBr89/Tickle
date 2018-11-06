@@ -2,17 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 // import { connect } from 'react-redux';
 // import chroma from 'chroma-js';
-import {X} from 'react-feather';
+import X from 'react-feather/dist/icons/x';
 
 // import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
-
-import {
-  stylesheet as defaultStylesheet,
-  uiColor as defaultUiColor
-} from 'Src/styles/GlobalThemeContext';
 
 // const ddg = new DDG('tickle');
 
@@ -22,7 +17,6 @@ export const InlineModal = ({
   children,
   onClose,
   style,
-  uiColor,
   className
   // background,
 }) => (
@@ -32,13 +26,10 @@ export const InlineModal = ({
       width: '100%',
       height: '100%',
       position: visible ? 'fixed' : 'absolute',
-      // opacity: visible ? 1 : 0,
       transition: 'top 0.4s',
       pointerEvents: !visible ? 'none' : null,
-      // zIndex: 30000,
       left: 0,
       top: visible ? 0 : '200%',
-      // top: 0,
       right: 0,
       bottom: 0
     }}
@@ -61,11 +52,10 @@ InlineModal.defaultProps = {
   className: ''
 };
 
-export const BareModal = props =>
-  ReactDOM.createPortal(
-    <InlineModal {...props} />,
-    document.querySelector('body'),
-  );
+export const BareModal = props => ReactDOM.createPortal(
+  <InlineModal {...props} />,
+  document.querySelector('body'),
+);
 
 export const Modal = BareModal;
 
@@ -76,8 +66,6 @@ export const ModalBody = ({
   footer,
   style,
   title,
-  stylesheet = defaultStylesheet,
-  uiColor = defaultUiColor,
   onClose
 }) => (
   <div
@@ -93,9 +81,9 @@ export const ModalBody = ({
     }}
   >
     <div
+      className="border-2 border-black justify-between"
       style={{
         padding: '0.5rem',
-        borderBottom: `1px solid ${uiColor}`,
         justifyContent: 'space-between',
         display: 'flex',
         alignItems: 'center',
@@ -153,17 +141,17 @@ ModalBody.defaultProps = {
   styles: {}
 };
 
-const mapStateToProps = state => ({...state.Screen});
+const mapStateToProps = state => ({ ...state.Screen });
 
 const mergeProps = (stateProps, _, ownProps) => ({
   ...stateProps,
   ...ownProps
 });
 
-const ResponsiveModal = ({isSmartphone, ...props}) => (
+const ResponsiveModal = ({ isSmartphone, ...props }) => (
   <BareModal
     {...props}
-    style={{margin: `${!isSmartphone ? '2.5rem' : ''} auto`}}
+    style={{ margin: `${!isSmartphone ? '5.5rem' : ''} auto` }}
   />
 );
 
