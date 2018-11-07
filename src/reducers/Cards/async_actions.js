@@ -2,8 +2,10 @@
 
 import fetch from 'cross-fetch';
 
-import {extractCardFields} from 'Constants/cardFields';
+import { extractCardFields } from 'Constants/cardFields';
 
+import { createDbEnv, DB } from 'Firebase';
+import idGenerate from 'Src/idGenerator';
 import {
   receivePlaces,
   receiveCollectibleCards,
@@ -25,20 +27,18 @@ import {
   submitChallengeSuccess
 } from './actions';
 
-import {selectCard, extendSelectedCard} from '../DataView/actions';
+import { selectCard, extendSelectedCard } from '../DataView/actions';
 
 import NearbyPlaces from '../places.json';
 
-import {createDbEnv, DB} from 'Firebase';
-import idGenerate from 'Src/idGenerator';
 
-export function fetchCollectibleCards({uid, userEnv}) {
+export function fetchCollectibleCards({ uid, userEnv }) {
   return function(dispatch, getState) {
     const db = new DB(userEnv);
     dispatch(loadingCards(true));
     // TODO: change later with obj params
-    return db.readCards({playerId: uid}).then(
-      data => {
+    return db.readCards({ playerId: uid }).then(
+      (data) => {
         dispatch(loadingCards(false));
         dispatch(receiveCollectibleCards(data.map(extractCardFields)));
       },
@@ -47,25 +47,24 @@ export function fetchCollectibleCards({uid, userEnv}) {
   };
 }
 
-export function fetchAllCardsWithSubmissions({userEnv}) {
+export function fetchAllCardsWithSubmissions({ userEnv }) {
   return function(dispatch, getState) {
     const db = new DB(userEnv);
     dispatch(loadingCards(true));
-    return db.readCards().then(data => {
+    return db.readCards().then((data) => {
       dispatch(loadingCards(false));
       dispatch(receiveCreatedCards(data));
     });
   };
 }
 
-export function fetchCreatedCards({userEnv, uid}) {
+export function fetchCreatedCards({ userEnv, uid }) {
   return function(dispatch, getState) {
-
     dispatch(loadingCards(true));
 
     const db = new DB(userEnv);
-    return db.readCards({authorId: uid, playerId: null}).then(
-      data => {
+    return db.readCards({ authorId: uid, playerId: null }).then(
+      (data) => {
         dispatch(loadingCards(false));
         dispatch(receiveCreatedCards(data));
       },
@@ -74,19 +73,14 @@ export function fetchCreatedCards({userEnv, uid}) {
   };
 }
 
-export function asyncCreateCard({cardData, userEnv}) {
+export function asyncCreateCard({ cardData, userEnv }) {
   return function(dispatch, getState) {
     const db = new DB(userEnv);
-    // const {
-    //   Session: {
-    //     authUser: {uid}
-    //   }
-    // } = getState();
 
     const newCard = {
       ...cardData,
       id: idGenerate(),
-      date: new Date(),
+      date: new Date()
     };
     console.log();
     dispatch(createCard(newCard));
@@ -99,22 +93,22 @@ export function asyncCreateCard({cardData, userEnv}) {
   };
 }
 
-export function asyncRemoveCard(cid) {
+export function asyncRemoveCard({ cardId, userEnv }) {
   return function(dispatch, getState) {
-    const db = createDbEnv(getState());
-    dispatch(deleteCard(cid));
+    const db = new DB(userEnv); // createDbEnv(getState());
+    dispatch(deleteCard(cardId));
     dispatch(selectCard(null));
     // TODO: remove dependencies
-    return db.doDeleteCard(cid).then(querySnapshot => {
-      dispatch(deleteCardSuccess(cid));
+    return db.doDeleteCard(cardId).then((querySnapshot) => {
+      dispatch(deleteCardSuccess(cardId));
     });
   };
 }
 
-export function asyncUpdateCard(cardData) {
+export function asyncUpdateCard({ cardData, userEnv }) {
   return (dispatch, getState) => {
     dispatch(updateCard(cardData));
-    const db = createDbEnv(getState());
+    const db = new DB(userEnv); // createDbEnv(getState());
     db.doUpdateCard(cardData)
       .then(() => {
         dispatch(updateCardSuccess(cardData));
@@ -127,7 +121,7 @@ export function asyncAddComment(
   commentObj = {
     authorId: null,
     cardId: null,
-    comment: {uid: '', text: '', date: null}
+    comment: { uid: '', text: '', date: null }
   },
   userEnv,
 ) {
@@ -143,28 +137,28 @@ export function asyncAddComment(
   };
 }
 
-export function asyncSubmitChallenge({challengeSubmission, userEnv}) {
+export function asyncSubmitChallenge({ challengeSubmission, userEnv }) {
   return function(dispatch, getState) {
     const db = DB(userEnv);
-    const {cardId, playerId, ...challengeData} = challengeSubmission;
+    const { cardId, playerId, ...challengeData } = challengeSubmission;
 
     dispatch(submitChallenge(challengeSubmission));
     return db
-      .addChallengeSubmission({cardId, playerId, challengeData})
+      .addChallengeSubmission({ cardId, playerId, challengeData })
       .then(() => dispatch(submitChallengeSuccess()))
-      .catch(err => {
+      .catch((err) => {
         throw new Error('error saving challenge submission');
       });
   };
 }
 
-export function removeChallengeSubmission({challengeSubmission, userEnv}) {
-  const {cardId, playerId} = challengeSubmission;
+export function removeChallengeSubmission({ challengeSubmission, userEnv }) {
+  const { cardId, playerId } = challengeSubmission;
 
   return function(dispatch, getState) {
     const db = DB(userEnv); // createDbEnv(getState());
     // dispatch(submitChallenge(challengeSubmission));
-    return db.removeChallengeSubmission({cardId, playerId});
+    return db.removeChallengeSubmission({ cardId, playerId });
     //   .then(() => dispatch(submitChallengeSuccess()))
     //   .catch(err => {
     //     throw new Error('error saving challenge submission');

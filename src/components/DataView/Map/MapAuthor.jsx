@@ -38,7 +38,7 @@ function updCardLoc({ x, y }, mapViewport) {
   return { latitude, longitude };
 }
 
-const CardAuthorOverlay = DragDropContextProvider(props => {
+const CardAuthorOverlay = DragDropContextProvider((props) => {
   const {
     onCardDrop,
     isCardDragging,
@@ -67,28 +67,27 @@ const CardAuthorOverlay = DragDropContextProvider(props => {
     routeSelectCard
   } = props;
 
-  const dragger = d =>
-    selectedCardId === d.id ? (
-      <DragElement {...d} className="drag">
-        <CardMarker
-          style={{
-            transform: 'scale(1.4)'
-            // transition: 'transform 500ms'
-          }}
-        />
-      </DragElement>
-    ) : (
+  const dragger = d => (selectedCardId === d.id ? (
+    <DragElement {...d} className="drag">
       <CardMarker
-        className="drag"
-        {...d}
         style={{
-          position: 'absolute',
-          transform: 'translate(-50%,-50%)',
-          left: d.x,
-          top: d.y
+          transform: 'scale(1.4)'
+          // transition: 'transform 500ms'
         }}
       />
-    );
+    </DragElement>
+  ) : (
+    <CardMarker
+      className="drag"
+      {...d}
+      style={{
+        position: 'absolute',
+        transform: 'translate(-50%,-50%)',
+        left: d.x,
+        top: d.y
+      }}
+    />
+  ));
 
   // const selectComp = () => {
   //   switch (dataView) {
@@ -146,31 +145,33 @@ function mapStateToProps(state) {
   };
 }
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      updateCardTemplate,
-      // dragCard,
-      asyncUpdateCard,
-      selectCard
-    },
-    dispatch
-  );
+const mapDispatchToProps = dispatch => bindActionCreators(
+  {
+    updateCardTemplate,
+    // dragCard,
+    asyncUpdateCard,
+    selectCard
+  },
+  dispatch
+);
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const { mapViewport, width, height, authUser } = state;
+  const {
+    mapViewport, width, height, authUser
+  } = state;
   const { dataView, selectedCardId } = ownProps;
   const { asyncUpdateCard, updateCardTemplate } = dispatcherProps;
 
   const viewport = { ...mapViewport, width, height };
 
-  const onCardDrop = cardData => {
+  const onCardDrop = (cardData) => {
     console.log('card drop data', cardData);
     const { x, y } = cardData;
     const loc = updCardLoc({ x, y }, viewport);
     const updatedCard = { ...cardData, loc };
+    //TODO: fix user env
     if (cardData.id === 'temp') updateCardTemplate(updatedCard);
-    else asyncUpdateCard(updatedCard);
+    else asyncUpdateCard({ cardData: updatedCard, userEnv: 'staging' });
   };
 
   return {
