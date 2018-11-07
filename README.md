@@ -3,7 +3,6 @@
 TICKLE playground for our Project
 
 ## What is left to do?
-  * ~~proportional scaling~~
   * Localisation (different languages)
   * Card template Editor
   * Learning Analytics (User profile and recommendation) and Web Analytics (Google Analytics)
@@ -18,6 +17,7 @@ TICKLE playground for our Project
   * User Diary (show related cards)
   * create Mission editor and reward cards
   * Manually creating Content for Cards
+  * add routing for location of cards and open navigation in google maps
   * add neighborhood range in geo card author (define the bounds of the card)
 
 ### Todo bugfixes
