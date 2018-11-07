@@ -1,34 +1,22 @@
-import {firestore, storageRef} from '../firebase';
-import {extractCardFields} from 'Constants/cardFields';
+import firebase from '@firebase/app';
 
-const USERS = 'users';
+import { extractCardFields } from 'Constants/cardFields';
+
+import { firestore, Timestamp, storageRef } from '../firebase';
+
 
 const TICKLE_ENVS = 'tickle-environments';
 
-/* testing enviroments */
-const VDS_GEO = 'vds-geo';
-const VDS_TOPIC = 'vds-topic';
-const STAGING = 'staging';
-const PEDAGOGY_DEP = 'pedagogy-dep';
-
-const ENV_STR = STAGING;
-
-const TICKLE_ENV_REF = firestore.collection(TICKLE_ENVS).doc(ENV_STR);
-
-// TICKLE_ENV_REF.get().then(e => console.log('yeah ENV_STR', e.data()));
-
 const isDefined = a => a !== null && a !== undefined;
 
-const pruneFields = fields => {
-  const isNotFileOrFunc = val =>
-    !(val instanceof File) && !(val instanceof Function);
+const pruneFields = (fields) => {
+  const isNotFileOrFunc = val => !(val instanceof File) && !(val instanceof Function);
 
-  const pruneObject = obj =>
-    Object.keys(obj).reduce((acc, attr) => {
-      const val = obj[attr];
-      if (isNotFileOrFunc(val)) acc[attr] = val;
-      return acc;
-    }, {});
+  const pruneObject = obj => Object.keys(obj).reduce((acc, attr) => {
+    const val = obj[attr];
+    if (isNotFileOrFunc(val)) acc[attr] = val;
+    return acc;
+  }, {});
 
   return Object.keys(fields).reduce((acc, attr) => {
     const val = fields[attr];
@@ -52,41 +40,39 @@ export const readCopyUsers = () => {
   firestore
     .collection('staging_vds_geo_cards')
     .get()
-    .then(querySnapshot => {
+    .then((querySnapshot) => {
       const data = [];
-      querySnapshot.forEach(doc => {
+      querySnapshot.forEach((doc) => {
         const d = doc.data();
         data.push(d);
       });
 
-      data.forEach(d =>
-        firestore
-          .collection(TICKLE_ENVS)
-          .doc('staging')
-          .collection('cards')
-          .doc(d.id)
-          .set(d),
-      );
+      data.forEach(d => firestore
+        .collection(TICKLE_ENVS)
+        .doc('staging')
+        .collection('cards')
+        .doc(d.id)
+        .set(d), );
     });
 };
 
 // const haaike = 'PpNOHOQLtXatZzcaAYVCMQQP5XT2';
 
-const removeFromStorage = path => {
+const removeFromStorage = (path) => {
   const imgRef = storageRef.child(path);
-  return imgRef.delete().catch(error => {
+  return imgRef.delete().catch((error) => {
     console.log('error', error);
     throw new Error(`error in deleting file${path} ${error}`);
   });
 };
 
-const addFileToStorage = ({file, path, id}) => {
-  const metadata = {contentType: file.type};
+const addFileToStorage = ({ file, path, id }) => {
+  const metadata = { contentType: file.type };
   const imgRef = storageRef.child(`${path}/${id}`);
   return imgRef
     .put(file, metadata)
     .then(() => new Promise(resolve => resolve(imgRef.getDownloadURL())))
-    .catch(err => {
+    .catch((err) => {
       console.log('err', err);
       throw new Error(`error in uploading img for ${file.name}`);
       // Handle any error that occurred in any of the previous
@@ -100,49 +86,47 @@ const makeCardFuncs = ({
   getOneChallengeSubmission,
   getAllChallengeSubmissions
 }) => {
-  const doDeleteCard = cid =>
-    TICKLE_ENV_REF.collection('cards')
-      .doc(cid)
-      .delete();
+  const doDeleteCard = cid => TICKLE_ENV_REF.collection('cards')
+    .doc(cid)
+    .delete();
 
   // TODO: error handling
-  const uploadImgFields = card => {
+  const uploadImgFields = (card) => {
     if (card.img === null) return new Promise(resolve => resolve(null));
 
-    const {file = null, ...restImgFields} = card.img;
+    const { file = null, ...restImgFields } = card.img;
 
     return file
       ? addFileToStorage({
         file,
         path: `${ENV_STR}/cards/images`,
         id: card.id
-        }).then(url => {
+      }).then((url) => {
         const img = {
-            ...restImgFields,
+          ...restImgFields,
           url
-          };
+        };
         return new Promise(resolve => resolve(img));
       })
-      : new Promise(resolve => resolve({...restImgFields}));
+      : new Promise(resolve => resolve({ ...restImgFields }));
   };
 
-  const doCreateCard = card =>
-    uploadImgFields(card).then(img => {
-      if (card.id === 'temp') {
-        throw Error('error: temp card to create');
-      } else {
-        const timestamp = null; // firestore.FieldValue.serverTimestamp();
-        const newCard = extractCardFields({...card, img, timestamp});
-        console.log('newCard UPD', newCard);
+  const doCreateCard = card => uploadImgFields(card).then((img) => {
+    if (card.id === 'temp') {
+      throw Error('error: temp card to create');
+    } else {
+      const timestamp = null; // firestore.FieldValue.serverTimestamp();
+      const newCard = extractCardFields({ ...card, img, timestamp });
+      console.log('newCard UPD', newCard);
 
-        return TICKLE_ENV_REF.collection('cards')
-          .doc(newCard.id)
-          .set(newCard);
-      }
-    });
+      return TICKLE_ENV_REF.collection('cards')
+        .doc(newCard.id)
+        .set(newCard);
+    }
+  });
 
-  const readCards = ({authorId = null, playerId = null}) => {
-    const thumbnailPromise = d => {
+  const readCards = ({ authorId = null, playerId = null }) => {
+    const thumbnailPromise = (d) => {
       if (!d.img) return new Promise(resolve => resolve(d));
 
       const thumbNailRef = storageRef.child(
@@ -150,24 +134,24 @@ const makeCardFuncs = ({
       );
 
       return thumbNailRef.getDownloadURL().then(
-        url => ({...d, img: {...d.img, thumbnail: url}}),
-        err => {
-          const img = {...d.img, thumbnail: null};
+        url => ({ ...d, img: { ...d.img, thumbnail: url } }),
+        (err) => {
+          const img = { ...d.img, thumbnail: null };
           console.log('No thumbnail error', err);
-          return {...d, img};
+          return { ...d, img };
         },
       );
     };
 
-    const challengePromise = c => {
+    const challengePromise = (c) => {
       if (playerId) {
-        return getOneChallengeSubmission({cardId: c.id, playerId}).then(
-          challengeSubmission => ({...c, challengeSubmission}),
+        return getOneChallengeSubmission({ cardId: c.id, playerId }).then(
+          challengeSubmission => ({ ...c, challengeSubmission }),
         );
       }
       return getAllChallengeSubmissions(c.id).then(allChallengeSubmissions => ({
         ...c,
-        allChallengeSubmissions,
+        allChallengeSubmissions
       }));
     };
 
@@ -177,140 +161,131 @@ const makeCardFuncs = ({
 
     return refCards
       .get()
-      .then(querySnapshot => {
+      .then((querySnapshot) => {
         const tmpData = [];
-        querySnapshot.forEach(doc => {
+        querySnapshot.forEach((doc) => {
           tmpData.push(doc.data());
         });
         return tmpData;
       })
-      .then(data =>
-        Promise.all(data.map(e => thumbnailPromise(e).then(challengePromise))),
-      );
+      .then(data => Promise.all(data.map(e => thumbnailPromise(e).then(challengePromise))), );
   };
 
-  return {doCreateCard, doUpdateCard: doCreateCard, doDeleteCard, readCards};
+  return {
+    doCreateCard, doUpdateCard: doCreateCard, doDeleteCard, readCards
+  };
 };
 
-const makeCommentFuncs = ({TICKLE_ENV_REF}) => {
-  const readComments = cardId =>
-    TICKLE_ENV_REF.collection('cardComments')
-      .doc(cardId)
-      .collection('comments')
-      .get()
-      .then(querySnapshot => {
-        const comments = [];
-        querySnapshot.forEach(doc => comments.push(doc.data()));
-        return new Promise(
-          resolve => resolve(comments),
-          error => console.log('error in readComments', error),
-        );
+const makeCommentFuncs = ({ TICKLE_ENV_REF }) => {
+  const readComments = cardId => TICKLE_ENV_REF.collection('cards')
+    .doc(cardId)
+    .collection('comments')
+    .get()
+    .then((querySnapshot) => {
+      const comments = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        comments.push({ ...data, date: data.timestamp.toDate() });
       });
+      return new Promise(
+        resolve => resolve(comments),
+        error => console.log('error in readComments', error),
+      );
+    });
 
-  const addComment = ({uid, cardId, text}) =>
-    TICKLE_ENV_REF.collection('cardComments')
-      .doc(cardId)
-      .collection('comments')
-      // TODO: change later will break in future firebase release
-      // TODO: change later
-      .add({uid, text, date: new Date()});
+  const addComment = ({ uid, cardId, text }) => TICKLE_ENV_REF.collection('cards')
+    .doc(cardId)
+    .collection('comments')
+  // TODO: change later will break in future firebase release
+  // TODO: change later
+    .add({ uid, text, timestamp: Timestamp.fromDate(new Date()) });
 
-  return {readComments, addComment};
+  return { readComments, addComment };
 };
 
-const makeUserFuncs = ({TICKLE_ENV_REF, readCards}) => {
-  const onceGetUsers = () =>
-    TICKLE_ENV_REF.collection('users')
-      .get()
-      .then(querySnapshot => {
-        const data = [];
-        querySnapshot.forEach(doc => data.push(doc.data()));
+const makeUserFuncs = ({ TICKLE_ENV_REF, ENV_STR, readCards }) => {
+  const onceGetUsers = () => TICKLE_ENV_REF.collection('users')
+    .get()
+    .then((querySnapshot) => {
+      const data = [];
+      querySnapshot.forEach(doc => data.push(doc.data()));
 
-        const dataPromises = data.map(d => {
-          const thumbNailRef = storageRef.child(
-            `${ENV_STR}/images/usr/${thumbFileName(d.uid)}`,
-          );
+      const dataPromises = data.map((d) => {
+        const thumbNailRef = storageRef.child(
+          `${ENV_STR}/images/usr/${thumbFileName(d.uid)}`,
+        );
           // return d;
-          return thumbNailRef.getDownloadURL().then(
-            url => ({...d, thumbnail: url}),
-            err => {
-              // TODO: check later
-              const img = {...d, thumbnail: null};
-              return {...d, ...img};
-            },
-          );
-        });
-
-        return Promise.all(dataPromises).catch(error =>
-          console.log('error in reading users', error),
+        return thumbNailRef.getDownloadURL().then(
+          url => ({ ...d, thumbnail: url }),
+          (err) => {
+            // TODO: check later
+            const img = { ...d, thumbnail: null };
+            return { ...d, ...img };
+          },
         );
       });
 
-  const doCreateUser = userProfile =>
-    TICKLE_ENV_REF.collection('users')
-      .doc(userProfile.uid)
-      .set(userProfile);
+      return Promise.all(dataPromises).catch(error => console.log('error in reading users', error), );
+    });
 
-  const getUser = uid =>
-    TICKLE_ENV_REF.collection('users')
-      .doc(uid)
-      .get()
-      .then(doc => new Promise(resolve => resolve(doc.data())))
-      .then(usr => {
-        console.log('USR RESULT', usr);
-        if (!usr)
-          return Promise.reject({
-            code: 'User has no access to this environment',
-            message: 'User has no access to this environment'
-          });
+  const doCreateUser = userProfile => TICKLE_ENV_REF.collection('users')
+    .doc(userProfile.uid)
+    .set(userProfile);
 
-        return getUserEnvs(uid).then(userEnvs => ({...usr, userEnvs}));
-      });
+  const getUser = uid => TICKLE_ENV_REF.collection('users')
+    .doc(uid)
+    .get()
+    .then(doc => new Promise(resolve => resolve(doc.data())))
+    .then((usr) => {
+      console.log('USR RESULT', usr);
+      if (!usr) {
+        return Promise.reject({
+          code: 'User has no access to this environment',
+          message: 'User has no access to this environment'
+        });
+      }
+
+      return getUserEnvs(uid).then(userEnvs => ({ ...usr, userEnvs }));
+    });
   // .catch(err => console.log('err  getUser', err));
 
-  const getDetailedUserInfo = uid =>
-    getUser(uid)
-      .then(usr =>
-        readCards({authorId: uid}).then(createdCards => ({
-          ...usr,
-          createdCards,
-          collectedCards: []
-        })),
-      )
-      .catch(err => console.log('err i getUser', err));
+  const getDetailedUserInfo = uid => getUser(uid)
+    .then(usr => readCards({ authorId: uid }).then(createdCards => ({
+      ...usr,
+      createdCards,
+      collectedCards: []
+    })), )
+    .catch(err => console.log('err i getUser', err));
 
-  const getUserEnvs = uid =>
-    TICKLE_ENV_REF.collection('users')
-      .doc(uid)
-      .collection('userEnvs')
-      .get()
-      .then(querySnapshot => {
-        const data = [];
-        querySnapshot.forEach(doc => data.push(doc.data()));
+  const getUserEnvs = uid => TICKLE_ENV_REF.collection('users')
+    .doc(uid)
+    .collection('userEnvs')
+    .get()
+    .then((querySnapshot) => {
+      const data = [];
+      querySnapshot.forEach(doc => data.push(doc.data()));
 
-        console.log('userEnv', data);
-        return new Promise(
-          resolve => resolve(data),
-          error => console.log('error in getUser, doc not existing', error),
-        );
-      })
-      .catch(err => console.log('err  getUser'));
+      console.log('userEnv', data);
+      return new Promise(
+        resolve => resolve(data),
+        error => console.log('error in getUser, doc not existing', error),
+      );
+    })
+    .catch(err => console.log('err  getUser'));
 
-  const addUserEnv = ({uid, env}) =>
-    TICKLE_ENV_REF.collection('users')
-      .doc(uid)
-      .collection('userEnvs')
-      .doc(env.id)
-      .set(env)
-      .catch(err => console.log('addUserEnv err', err));
+  const addUserEnv = ({ uid, env }) => TICKLE_ENV_REF.collection('users')
+    .doc(uid)
+    .collection('userEnvs')
+    .doc(env.id)
+    .set(env)
+    .catch(err => console.log('addUserEnv err', err));
 
-  const removeUserEnv = ({uid, envId}) =>
-    TICKLE_ENV_REF.collection('users')
-      .doc(uid)
-      .collection('userEnvs')
-      .doc(envId)
-      .delete()
-      .catch(err => console.log('addUserEnv err', err));
+  const removeUserEnv = ({ uid, envId }) => TICKLE_ENV_REF.collection('users')
+    .doc(uid)
+    .collection('userEnvs')
+    .doc(envId)
+    .delete()
+    .catch(err => console.log('addUserEnv err', err));
 
   return {
     getDetailedUserInfo,
@@ -323,56 +298,55 @@ const makeUserFuncs = ({TICKLE_ENV_REF, readCards}) => {
   };
 };
 
-const makeChallengFuncs = ({TICKLE_ENV_REF}) => {
-  const getAllChallengeSubmissions = cid => {
+const makeChallengFuncs = ({ TICKLE_ENV_REF }) => {
+  const getAllChallengeSubmissions = (cid) => {
     const chSub = TICKLE_ENV_REF.collection('cards')
       .doc(cid)
       .collection('challengeSubmissions');
 
     const challengeSubmissions = [];
-    return chSub.get().then(snapshot => {
-      snapshot.forEach(item => {
+    return chSub.get().then((snapshot) => {
+      snapshot.forEach((item) => {
         const d = item.data(); // will have 'todo_item.title' and 'todo_item.completed'
         // console.log('challengeSub', item);
-        challengeSubmissions.push({...d, cardId: cid, playerId: item.id});
+        challengeSubmissions.push({ ...d, cardId: cid, playerId: item.id });
       });
       return new Promise(resolve => resolve(challengeSubmissions));
     });
   };
 
-  const getOneChallengeSubmission = ({cardId, playerId}) =>
-    TICKLE_ENV_REF.collection('cards')
-      .doc(cardId)
-      .collection('challengeSubmissions')
-      .doc(playerId)
-      .get()
-      .then(doc => new Promise(resolve => resolve(doc.data() || null)));
+  const getOneChallengeSubmission = ({ cardId, playerId }) => TICKLE_ENV_REF.collection('cards')
+    .doc(cardId)
+    .collection('challengeSubmissions')
+    .doc(playerId)
+    .get()
+    .then(doc => new Promise(resolve => resolve(doc.data() || null)));
 
-  const addChallengeSubmission = ({cardId, playerId, challengeData}) =>
-    TICKLE_ENV_REF.collection('cards')
-      .doc(cardId)
-      .collection('challengeSubmissions')
-      .doc(playerId)
-      .set({...challengeData, date: new Date(), playerId, cardId})
-      .catch(err => {
-        throw new Error(
-          `error adding challengesubmission for ${playerId} ${err}`,
-        );
-        // Handle any error that occurred in any of the previous
-        // promises in the chain.
-      });
+  const addChallengeSubmission = ({ cardId, playerId, challengeData }) => TICKLE_ENV_REF.collection('cards')
+    .doc(cardId)
+    .collection('challengeSubmissions')
+    .doc(playerId)
+    .set({
+      ...challengeData, date: new Date(), playerId, cardId
+    })
+    .catch((err) => {
+      throw new Error(
+        `error adding challengesubmission for ${playerId} ${err}`,
+      );
+      // Handle any error that occurred in any of the previous
+      // promises in the chain.
+    });
 
-  const removeChallengeSubmission = ({cardId, playerId}) =>
-    TICKLE_ENV_REF.collection('cards')
-      .doc(cardId)
-      .collection('challengeSubmissions')
-      .doc(playerId)
-      .delete()
-      .catch(err => {
-        throw new Error(
-          `error adding challengesubmission for ${playerId} ${cardId} ${err}`,
-        );
-      });
+  const removeChallengeSubmission = ({ cardId, playerId }) => TICKLE_ENV_REF.collection('cards')
+    .doc(cardId)
+    .collection('challengeSubmissions')
+    .doc(playerId)
+    .delete()
+    .catch((err) => {
+      throw new Error(
+        `error adding challengesubmission for ${playerId} ${cardId} ${err}`,
+      );
+    });
 
   return {
     getAllChallengeSubmissions,
@@ -385,14 +359,16 @@ const makeChallengFuncs = ({TICKLE_ENV_REF}) => {
 export default function DB(ENV_STR) {
   const TICKLE_ENV_REF = firestore.collection(TICKLE_ENVS).doc(ENV_STR);
 
-  const challengeFuncs = makeChallengFuncs({TICKLE_ENV_REF});
+  const challengeFuncs = makeChallengFuncs({ TICKLE_ENV_REF });
   const cardFuncs = makeCardFuncs({
     TICKLE_ENV_REF,
     ENV_STR,
     ...challengeFuncs
   });
-  const userFuncs = makeUserFuncs({TICKLE_ENV_REF, ...cardFuncs});
-  const commentFuncs = makeCommentFuncs({TICKLE_ENV_REF});
+  const userFuncs = makeUserFuncs({ TICKLE_ENV_REF, ENV_STR, ...cardFuncs });
+  const commentFuncs = makeCommentFuncs({ TICKLE_ENV_REF });
 
-  return {...challengeFuncs, ...cardFuncs, ...userFuncs, ...commentFuncs};
+  return {
+    ...challengeFuncs, ...cardFuncs, ...userFuncs, ...commentFuncs
+  };
 }

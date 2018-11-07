@@ -15,9 +15,7 @@ class CardMarker extends Component {
     width: PropTypes.oneOf([PropTypes.number, null]),
     height: PropTypes.oneOf([PropTypes.number, null]),
     center: PropTypes.bool,
-    marginTop: PropTypes.string,
     shadow: PropTypes.bool,
-    barHeight: PropTypes.string
   };
 
   static defaultProps = {
@@ -25,13 +23,9 @@ class CardMarker extends Component {
     tags: ['tag1', 'tag2', 'tag3'],
     style: {},
     selected: false,
-    // TODO: include only type
-    challenge: { type: null },
-    edit: false,
     width: null,
     height: null,
     center: true,
-    marginTop: '6%',
     background: 'black',
     shadow: true
   };
@@ -50,12 +44,9 @@ class CardMarker extends Component {
       onClick,
       width,
       height,
-      marginTop,
       color,
       shadow,
       // tags,
-      barHeight = '12%',
-      barColor = 'black',
       className,
       selected
     } = this.props;
@@ -63,12 +54,10 @@ class CardMarker extends Component {
     const { hovered } = this.state;
     return (
       <div
-        className={`cardmarker ${className}`}
+        className={`cardmarker bg-white ${className}`}
         style={{
           width: 25,
           height: 30,
-          // transform: 'translate(-50%,-50%)',
-          background: 'white',
           ...style
         }}
         onMouseOver={() => this.setState({ hovered: true })}
@@ -77,6 +66,7 @@ class CardMarker extends Component {
       >
         <div
           className="w-full h-full border-2 border-black flex-col-wrapper"
+          style={{ padding: 2 }}
         >
           <div
             className="flex-grow flex-col-wrapper relative justify-center"

@@ -17,6 +17,8 @@ import config from './firebase_api_keys.json';
 
 const app = firebase.initializeApp(config);
 const firestore = firebase.firestore(app);
+const { Timestamp } = firebase.firestore;
+console.log('Timestamp', Timestamp);
 const settings = { /* your settings... */ timestampsInSnapshots: true };
 firestore.settings(settings);
 
@@ -24,4 +26,6 @@ const auth = firebase.auth();
 
 const storageRef = firebase.storage().ref();
 
-export { firestore, auth, storageRef };
+export {
+  firestore, Timestamp, auth, storageRef
+};

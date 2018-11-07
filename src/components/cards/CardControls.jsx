@@ -4,9 +4,6 @@ import PropTypes from 'prop-types';
 import { X, RotateCcw } from 'react-feather';
 import CloseCorner from './CloseCorner';
 import FlipCorner from './FlipCorner';
-// import FlipCorner from './styles/flip_corner.svg';
-
-// console.log('CloseCorner', CloseCorner);
 
 const CardControls = ({
   onFlip,

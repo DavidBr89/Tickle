@@ -42,15 +42,7 @@ const ChallengeResult = ({
     onClose={onClose}
     title={title}
     style={{ background: 'whitesmoke' }}
-    footer={
-      <button
-        onClick={() => {
-          onClose();
-        }}
-      >
-        Close
-      </button>
-    }
+    footer={<button onClick={onClose}> Close </button>}
   >
     <div>
       <h4>Tags</h4>
@@ -87,27 +79,24 @@ const CardViewable = ({
   userEnvSelectedId,
   uid,
   onFlip,
-  onClose, fetchAuthorData,
+  onClose,
+  id,
   ...props
 }) => (
   <CardFrame
-    key={props.id}
+    key={id}
     front={
       <ReadCardFront
         {...props}
         onFlip={onFlip}
-        onClose={() => {
-          onClose();
-        }}
+        onClose={onClose}
       />
     }
     back={
       <CardBack
         {...props}
-        fetchAuthorData={fetchAuthorData}
-        onClose={() => {
-          onClose();
-        }}
+        id={id}
+        onClose={onClose}
         onFlip={onFlip}
         edit={false}
       />
@@ -121,7 +110,7 @@ const CardViewable = ({
         removable
         title="Challenge"
         isSmartphone={false}
-        key={props.id}
+        key={id}
         challengeSubmission={props.challengeSubmission}
         onUpdate={(newChallengeSub) => {
           onSubmitChallenge({
@@ -188,7 +177,12 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   };
 
   const db = DB(userEnv);
-  const fetchAuthorData = () => db.getDetailedUserInfo(uid);
+  const fetchAuthorData = () => {
+
+    console.log('uid', uid)
+    return db.getDetailedUserInfo(uid) };
+  const fetchComments = id ? () => db.readComments(id) : null;
+  const addComment = text => db.addComment({ uid, cardId: id, text });
 
   return {
     ...state,
@@ -196,6 +190,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     ...ownProps,
     onSubmitChallenge,
     fetchAuthorData,
+    fetchComments,
+    addComment,
     onClose,
     onFlip,
     flipped

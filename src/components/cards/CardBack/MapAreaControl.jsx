@@ -63,7 +63,7 @@ class MapAreaControl extends Component {
     // const [locNode] = geoProject({});
 
     return (
-      <div className="absolute" style={{ height: '100%', width: '100%' }}>
+      <div className="absolute w-full h-full">
         <DimWrapper delay={100}>
           {(width, height) => (<div className="relative">
 
@@ -71,7 +71,7 @@ class MapAreaControl extends Component {
             <CardMarker
               className="absolute"
               style={{
-                left: width / 2, top: height / 2
+                left: width / 2, top: height / 2, width: 35, height: 45
               }}
             />
 

@@ -48,10 +48,9 @@ const mapStateToProps = (state) => {
 
   const templateCard = {
     loc: userLocation,
+    uid, id: 'temp',
     ...tmpCard,
-    uid
   };
-  console.log('templateCard', templateCard);
 
   const filteredCards = createdCards.filter(
     d => filterSet.length === 0
@@ -117,7 +116,6 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const cardSets = setify(cards);
 
   const selectedCard = cards.find(d => d.id === selectedCardId) || null;
-  console.log('selectedCard', selectedCard);
 
   const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
 

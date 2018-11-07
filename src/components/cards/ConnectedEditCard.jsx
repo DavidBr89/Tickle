@@ -1,29 +1,29 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 // import chroma from 'chroma-js';
-import {compose} from 'recompose';
+import { compose } from 'recompose';
 
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
-import CardFrame from './CardFrame';
-import {withRouter} from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
-import {DB} from 'Firebase';
+import { DB } from 'Firebase';
 
-import {updateCardTemplate, dragCard} from 'Reducers/Cards/actions';
+import { updateCardTemplate, dragCard } from 'Reducers/Cards/actions';
 
-import {changeMapViewport} from 'Reducers/Map/actions';
+import { changeMapViewport } from 'Reducers/Map/actions';
 
 import * as asyncCardActions from 'Reducers/Cards/async_actions';
 
 import * as routeActions from 'Reducers/DataView/async_actions';
 
+import cardRoutes from 'Src/Routes/cardRoutes';
 import EditCardFront from './CardFront/EditCardFront';
 
 import CardBack from './CardBack';
 
-import cardRoutes from 'Src/Routes/cardRoutes';
+import CardFrame from './CardFrame';
 
 function mapStateToProps(state) {
   return {
@@ -36,53 +36,62 @@ function mapStateToProps(state) {
   };
 }
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      // dragCard,
-      updateCardTemplate,
-      ...routeActions,
-      dragCard,
-      ...asyncCardActions,
-      changeMapViewport,
-      ...routeActions
-    },
-    dispatch,
-  );
+const mapDispatchToProps = dispatch => bindActionCreators(
+  {
+    // dragCard,
+    updateCardTemplate,
+    ...routeActions,
+    dragCard,
+    ...asyncCardActions,
+    changeMapViewport,
+    ...routeActions
+  },
+  dispatch,
+);
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const {mapViewport, width, height, authUser, tagVocabulary} = state;
+  const {
+    mapViewport, width, height, authUser, tagVocabulary
+  } = state;
   // const {uid} = authUser;
-  const {match, location, history, uid} = ownProps;
+  const {
+    match, location, history, uid, id: cardId
+  } = ownProps;
 
-  const {userEnv} = match.params;
+  const { userEnv } = match.params;
 
   const {
-    query: {selectedCardId, extended, flipped},
-    routing: {routeFlipCard, routeExtendCard}
-  } = cardRoutes({history, location});
+    query: { selectedCardId, extended, flipped },
+    routing: { routeFlipCard, routeExtendCard }
+  } = cardRoutes({ history, location });
 
   const {
     asyncUpdateCard,
     updateCardTemplate,
     asyncCreateCard,
-    asyncRemoveCard,
+    asyncRemoveCard
   } = dispatcherProps;
 
-  const createCard = cardData => {
-    asyncCreateCard({cardData, userEnv});
+  const createCard = (cardData) => {
+    asyncCreateCard({ cardData, userEnv });
   };
 
-  const onCardUpdate = cardData =>
-    cardData.id === 'temp'
-      ? updateCardTemplate(cardData)
-      : createCard(cardData);
+  const onCardUpdate = cardData => (cardData.id === 'temp'
+    ? updateCardTemplate(cardData)
+    : createCard(cardData));
+
+  const db = DB(userEnv);
+  const fetchComments = cardId ? () => db.readComments(cardId) : null;
+  const addComment = text => db.addComment({ uid, cardId, text });
+  const fetchAuthorData = () => {
+    console.log('ownProps', ownProps, 'state', state);
+
+    return db.getDetailedUserInfo(uid);
+  };
 
   const onClose = routeExtendCard;
 
   const onFlip = routeFlipCard;
-  const db = DB(userEnv);
-  const fetchAuthorData = () => db.getDetailedUserInfo(uid);
 
   return {
     ...state,
@@ -93,6 +102,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     onFlip,
     flipped,
     tagVocabulary,
+    fetchComments,
+    addComment,
     fetchAuthorData,
     ...ownProps
   };
@@ -110,30 +121,32 @@ const EditCard = ({
   onCreate,
   template,
   onFlip,
-  fetchAuthorData,
+  fetchAuthorData, id,
   ...props
 }) => (
   <CardFrame
-    key={props.id}
+    key={id}
     flipped={flipped}
     front={
       <EditCardFront
         {...props}
+        id={id}
         template={template}
         onClose={onClose}
         onFlip={onFlip}
-        onCreate={d => {
-          createCard({...d, x, y});
+        onCreate={(d) => {
+          createCard({ ...d, x, y });
           onClose();
         }}
-        onUpdate={d => {
-          onCardUpdate({...d, x, y});
+        onUpdate={(d) => {
+          onCardUpdate({ ...d, x, y });
         }}
       />
     }
     back={
       <CardBack
         {...props}
+        id={id}
         onClose={onClose}
         fetchAuthorData={fetchAuthorData}
         onFlip={onFlip}

@@ -1,11 +1,9 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import CardStack from '../CardStack';
 
 import DefaultLayout from 'Components/DefaultLayout';
 
-import CardTagSearch from '../CardTagSearch';
 
 import ConnectedCard from 'Cards/ConnectedCard';
 import {
@@ -14,10 +12,12 @@ import {
   ModalBody,
   ConnectedResponsiveModal
 } from 'Utils/Modal';
+import CardTagSearch from '../CardTagSearch';
+import CardStack from '../CardStack';
 
 // import { StyledButton } from 'Utils/StyledComps';
 
-const LoadingScreen = ({visible, style}) => {
+const LoadingScreen = ({ visible, style }) => {
   if (visible) {
     return (
       <div
@@ -52,7 +52,7 @@ class CardViewPage extends Component {
     filterSet: PropTypes.func,
     toggleAuthEnv: PropTypes.func,
     tagColorScale: PropTypes.func,
-    screenResize: PropTypes.func,
+    screenResize: PropTypes.func
   };
 
   static defaultProps = {
@@ -168,13 +168,13 @@ class CardViewPage extends Component {
             }
           />
         </div>
-        <LoadingScreen style={{marginTop: 25}} visible={isLoadingCards} />
+        <LoadingScreen style={{ marginTop: 25 }} visible={isLoadingCards} />
 
         <BareModal
           visible={extendedCard !== null}
-          style={{margin: `${!isSmartphone ? '2.5rem' : ''} auto`}}
+          style={{ margin: `${!isSmartphone ? '2.5rem' : ''} auto` }}
         >
-          <ConnectedCard {...selectedCard} />
+          {selectedCard !== null && <ConnectedCard {...selectedCard} />}
         </BareModal>
 
         {children(this.props)}

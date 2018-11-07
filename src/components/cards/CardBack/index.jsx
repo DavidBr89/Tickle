@@ -72,6 +72,16 @@ const BackField = ({
   </div>
 );
 
+BackField.defaultProps = {
+  onClick: d => d,
+  onControlClick: d => d,
+  style: {},
+  className: '',
+  children: null,
+  disabled: false,
+  extended: false
+};
+
 
 class CardBack extends Component {
   static propTypes = {
@@ -137,7 +147,9 @@ class CardBack extends Component {
       style,
       onClose,
       className,
-      fetchAuthorData
+      fetchAuthorData,
+      fetchComments,
+      addComment, authUser
     } = this.props;
 
     const { extended } = this.state;
@@ -148,40 +160,49 @@ class CardBack extends Component {
       const fieldExtended = isExtended(field);
       return {
         transition: 'all 200ms',
-        flexGrow: fieldExtended ? 1 : 0.3,
+        flex: fieldExtended ? '1 0 70%' : '0 10 33%',
         overflow: fieldExtended ? 'scroll' : 'hidden'
       };
     };
 
     return (
       <div className={`flex flex-col flex-grow ${className}`}>
-        <div className="flex-col-wrapper flex-grow p-3">
-          <BackField
-            className="mb-2"
-            style={displayStyle('author')}
-            onClick={() => this.selectField('author')}
-          >
-            <BackAuthor
-              uid={uid}
-              extended={extended === 'author'}
-              fetchData={fetchAuthorData}
-            />
-          </BackField>
-          <BackField
-            className="relative mb-2"
-            onClick={() => this.selectField('map')}
-            extended={extended === 'map'}
-            style={displayStyle('map')}
-          >
-            <MapAreaControl {...this.props} />
-          </BackField>
-          <BackField
-            extended={isExtended('comments')}
-            onClick={() => this.selectField('comments')}
-            style={displayStyle('comments')}
-          >
-            <Comments cardId={cardId} extended={extended === 'comments'} />
-          </BackField>
+        <div className="flex-grow m-2 relative">
+          <div className="absolute h-full w-full flex-col-wrapper ">
+            <BackField
+              className="mb-2"
+              style={displayStyle('author')}
+              onClick={() => this.selectField('author')}
+            >
+              <BackAuthor
+                uid={uid}
+                extended={extended === 'author'}
+                fetchData={fetchAuthorData}
+              />
+            </BackField>
+            <BackField
+              className="relative mb-2"
+              onClick={() => this.selectField('map')}
+              extended={extended === 'map'}
+              style={displayStyle('map')}
+            >
+              <MapAreaControl {...this.props} />
+            </BackField>
+            <BackField
+              className="relative"
+              extended={isExtended('comments')}
+              onClick={() => this.selectField('comments')}
+              style={displayStyle('comments')}
+            >
+              <Comments
+                author={authUser}
+                cardId={cardId}
+                extended={extended === 'comments'}
+                fetchComments={fetchComments}
+                addComment={addComment}
+              />
+            </BackField>
+          </div>
         </div>
         <CardControls
           onFlip={onFlip}
