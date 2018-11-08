@@ -1,36 +1,30 @@
 import React from 'react';
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
-import {compose} from 'recompose';
-import {withRouter} from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
+import { withRouter } from 'react-router-dom';
 
-import {firebase} from '../firebase';
-import * as routes from 'Constants/routeSpec';
+import { SIGN_IN } from 'Constants/routeSpec';
 
 import * as asyncActions from 'Reducers/Session/async_actions';
+import { firebase } from '../firebase';
 
-const withAuthorization = (condition = authUser => !!authUser) => Component => {
+const withAuthorization = (condition = authUser => !!authUser) => (Component) => {
   class WithAuthorization extends React.Component {
     state = {};
+
     componentDidMount() {
-      const {fetchUserInfo, userEnv} = this.props;
-      firebase.auth.onAuthStateChanged(authUser => {
-        if (!condition(authUser)) {
-          // fetchUserInfo(null);
-          this.props.history.push(`${routes.SIGN_IN.path}/${userEnv}`);
-        } else {
-          // fetchUserInfo(authUser.uid);
-          // this.setState({ authUser });
-        }
+      const { match, history } = this.props;
+      const { params } = match;
+      const { userEnv } = params;
+      firebase.auth.onAuthStateChanged((authUser) => {
+        if (!condition(authUser)) history.push(`/${userEnv}/signin`);
       });
     }
 
     render() {
-      return this.props.authUser ? (
-        <Component {...this.props} />
-      ) : (
-        <div>No access</div>
-      );
+      const { authUser } = this.props;
+      return authUser ? <Component {...this.props} /> : null;
     }
   }
 
@@ -43,15 +37,12 @@ const withAuthorization = (condition = authUser => !!authUser) => Component => {
     ...bindActionCreators(asyncActions, dispatch)
   });
 
-  const mergeProps = (stateProps, dispatchProps, ownProps) =>
-  // const {dbEnv} = stateProps;
-
-    ({
-      ...stateProps,
-      ...dispatchProps,
-      ...ownProps
-      // onSetAuthUser
-    });
+  const mergeProps = (stateProps, dispatchProps, ownProps) => ({
+    ...stateProps,
+    ...dispatchProps,
+    ...ownProps
+    // onSetAuthUser
+  });
 
   return compose(
     withRouter,

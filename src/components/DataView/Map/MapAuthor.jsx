@@ -11,22 +11,17 @@ import DropTargetCont from 'Components/DataView/DragAndDrop/DragTargetCont';
 import DragDropContextProvider from 'Components/DataView/DragAndDrop/DragContextProvider';
 
 import {
-  // WebMercatorViewport,
   PerspectiveMercatorViewport
 } from 'viewport-mercator-project';
 
-// import { dragCard } from 'Reducers/Cards/actions';
 
-import { updateCardTemplate, dragCard } from 'Reducers/Cards/actions';
+import { updateCardTemplate } from 'Reducers/Cards/actions';
 
 import { asyncUpdateCard } from 'Reducers/Cards/async_actions';
-import { selectCard } from 'Reducers/DataView/actions';
 
 import DragElement from 'Components/DataView/DragAndDrop/DragElement';
 
 import Map from 'Components/DataView/ForceOverlay/Map';
-
-import { GEO, TAGS, FLOORPLAN } from 'Constants/dataViews';
 
 function updCardLoc({ x, y }, mapViewport) {
   const vp = new PerspectiveMercatorViewport(mapViewport);
@@ -44,25 +39,11 @@ const CardAuthorOverlay = DragDropContextProvider((props) => {
     isCardDragging,
     width,
     height,
-    cardSets,
-    selectedTags,
     selectedCardId,
-    filterSet,
-    userLocation,
-    dataView,
-    tagColorScale,
-    authEnv,
-    // extendSelectedCard,
-    extCardId,
-    // dragCard,
-    createCard,
-    // toggleCardChallenge,
-    onCardUpdate,
     cards,
     style,
     onSubmitChallenge,
     className,
-    selectCard,
     previewCardAction,
     routeSelectCard
   } = props;
@@ -146,14 +127,7 @@ function mapStateToProps(state) {
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators(
-  {
-    updateCardTemplate,
-    // dragCard,
-    asyncUpdateCard,
-    selectCard
-  },
-  dispatch
-);
+  { updateCardTemplate, asyncUpdateCard }, dispatch);
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
   const {
@@ -169,7 +143,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     const { x, y } = cardData;
     const loc = updCardLoc({ x, y }, viewport);
     const updatedCard = { ...cardData, loc };
-    //TODO: fix user env
+    // TODO: fix user env
     if (cardData.id === 'temp') updateCardTemplate(updatedCard);
     else asyncUpdateCard({ cardData: updatedCard, userEnv: 'staging' });
   };

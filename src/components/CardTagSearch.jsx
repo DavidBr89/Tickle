@@ -13,13 +13,7 @@ function CardTagSearch({
 }) {
   return (
     <div
-      className="flex-grow m-2 z-20"
-      style={{
-        display: 'flex',
-        justifyContent: 'flex-end',
-        position: 'relative'
-        // width: 30
-      }}
+      className="flex justify-end relative m-2 z-20"
     >
       <TagDropDown
         className="mr-1"
@@ -28,12 +22,6 @@ function CardTagSearch({
         onInputSelect={onSelect}
         height={height}
         vocabulary={allTags}
-        style={
-          {
-            // width: '70%',
-            // maxWidth: 400
-          }
-        }
         onClick={onSubmit}
         data={data}
       />

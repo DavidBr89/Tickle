@@ -59,7 +59,7 @@ export function fetchAllCardsWithSubmissions({ userEnv }) {
 }
 
 export function fetchCreatedCards({ userEnv, uid }) {
-  return function(dispatch, getState) {
+  return function(dispatch) {
     dispatch(loadingCards(true));
 
     const db = new DB(userEnv);
@@ -82,7 +82,6 @@ export function asyncCreateCard({ cardData, userEnv }) {
       id: idGenerate(),
       date: new Date()
     };
-    console.log();
     dispatch(createCard(newCard));
     dispatch(extendSelectedCard(null));
     dispatch(selectCard(newCard.id));
@@ -94,12 +93,11 @@ export function asyncCreateCard({ cardData, userEnv }) {
 }
 
 export function asyncRemoveCard({ cardId, userEnv }) {
-  return function(dispatch, getState) {
+  return function(dispatch) {
     const db = new DB(userEnv); // createDbEnv(getState());
     dispatch(deleteCard(cardId));
     dispatch(selectCard(null));
-    // TODO: remove dependencies
-    return db.doDeleteCard(cardId).then((querySnapshot) => {
+    return db.doDeleteCard(cardId).then(() => {
       dispatch(deleteCardSuccess(cardId));
     });
   };

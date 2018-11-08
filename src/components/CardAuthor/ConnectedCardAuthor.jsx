@@ -22,8 +22,6 @@ import * as routeActions from 'Reducers/DataView/async_actions';
 
 import cardRoutes from 'Src/Routes/cardRoutes';
 
-// import { fetchDirection } from 'Reducers/Map/async_actions';
-
 
 import withAuthorization from 'Src/components/withAuthorization';
 import withAuthentication from 'Src/components/withAuthentication';
@@ -48,8 +46,9 @@ const mapStateToProps = (state) => {
 
   const templateCard = {
     loc: userLocation,
-    uid, id: 'temp',
-    ...tmpCard,
+    uid,
+    id: 'temp',
+    ...tmpCard
   };
 
   const filteredCards = createdCards.filter(
@@ -80,7 +79,6 @@ const mapDispatchToProps = dispatch => bindActionCreators(
     ...dataViewActions,
     ...routeActions,
     resizeCardWindow,
-    userMove,
     screenResize,
     changeMapViewport,
     userMove
@@ -94,21 +92,15 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const {
     uid, admin, templateCard, createdCards, cards, filterSet
   } = state;
-  const {
-    selectCard,
-    extendSelectedCard,
-    // fetchReadableCards,
-    fetchCreatedCards
-  } = dispatcherProps;
 
-  const env = 'staging';
+
   const {
     dataView, history, location, children
   } = ownProps;
 
   const {
-    query: { selectedCardId, extended, flipped },
-    routing: { routeSelectCard, routeLockedCard, routeExtendCard }
+    query: { selectedCardId, extended },
+    routing: { routeSelectCard, routeExtendCard }
   } = cardRoutes({ history, location });
 
   const extCardId = extended ? selectedCardId : null;
@@ -128,10 +120,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     ...dispatcherProps,
     previewCardAction,
     cardSets,
-    selectCard,
     selectedCard,
     selectedTags,
-    // fetchCards,
     dataView,
     selectedCardId,
     extCardId,

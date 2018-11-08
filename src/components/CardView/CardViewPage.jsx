@@ -105,7 +105,7 @@ class CardViewPage extends Component {
       addCardFilter,
       tagVocabulary,
       // setDataView,
-      filterSet,
+      // filterSet = [],
       tagColorScale,
       isSmartphone,
       cardPanelVisible,
@@ -120,9 +120,12 @@ class CardViewPage extends Component {
       extCard
     } = this.props;
 
+    console.log('this props', this.props);
+    const filterSet = [];
     // const slotSize = width / 3;
     // const cardStackWidth = width;
     const slotSize = Math.min(width / 3.5, 200);
+    console.log('Filterset', filterSet);
     // const cardStackWidth = width;
 
     return (
@@ -130,7 +133,7 @@ class CardViewPage extends Component {
         className="w-full h-full relative overflow-hidden flex-col-wrapper"
         menu={
           <div className="flex-grow flex justify-end items-center">
-            <div>mini</div>
+            <div>minimize</div>
             <CardTagSearch
               allTags={tagVocabulary}
               key={filterSet.join(',')}
@@ -143,7 +146,7 @@ class CardViewPage extends Component {
         }
       >
         <div
-          className="mt-16 flex justify-center"
+          className="mt-24 flex justify-center"
           style={{
             transition: 'opacity 0.5s',
             pointerEvents: 'none',
@@ -161,11 +164,6 @@ class CardViewPage extends Component {
             onClick={previewCardAction}
             tagColorScale={tagColorScale}
             slotSize={slotSize}
-            style={
-              {
-                // zIndex: 1000
-              }
-            }
           />
         </div>
         <LoadingScreen style={{ marginTop: 25 }} visible={isLoadingCards} />
@@ -177,13 +175,10 @@ class CardViewPage extends Component {
           {selectedCard !== null && <ConnectedCard {...selectedCard} />}
         </BareModal>
 
-        {children(this.props)}
+        {children}
       </DefaultLayout>
     );
   }
 }
 
 export default CardViewPage;
-// export default withAuthorization(authCondition)(CardViewPage);
-
-// export default MapView;

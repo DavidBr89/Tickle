@@ -69,20 +69,19 @@ export const ModalBody = ({
   onClose
 }) => (
   <div
-    className="modal-content flex flex-col bg-white"
+    className="modal-content flex flex-col"
     style={{
-      // height: '100%',
+      height: '100%',
       margin: 'auto', // margin: '1.75rem auto',
       transform: 'translate(0, 0)',
-      minHeight: 500,
       maxWidth: 500,
       maxHeight: 800,
-      boxShadow: 'black 0.2rem 0.2rem',
+      background: 'whitesmoke',
       ...style
     }}
   >
     <div
-      className="flex justify-between items-center p-4"
+      className="flex justify-between items-center p-2"
       style={{
         // padding: '0.5rem',
         // justifyContent: 'space-between',
@@ -98,7 +97,7 @@ export const ModalBody = ({
       </button>
     </div>
     <div
-      className="flex flex-col p-4 flex-grow overflow-y-auto"
+      className="flex flex-col p-2 overflow-y-auto"
       style={{
         // flex: '1 1 auto',
         // paddingTop: '1rem',
@@ -110,7 +109,13 @@ export const ModalBody = ({
     </div>
     {footer && (
       <div
-        className="modal-footer flex justify-end flex-no-shrink p-4"
+        className="modal-footer flex justify-end flex-no-shrink"
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          flexShrink: 0,
+          padding: '0.5rem'
+        }}
       >
         {footer}
       </div>
@@ -143,11 +148,8 @@ const mergeProps = (stateProps, _, ownProps) => ({
 
 const ResponsiveModal = ({ isSmartphone, ...props }) => (
   <BareModal
-    className=""
     {...props}
-    style={{
-      margin: `${!isSmartphone ? '5.5rem' : ''} auto`
-    }}
+    style={{ margin: `${!isSmartphone ? '5.5rem' : ''} auto` }}
   />
 );
 

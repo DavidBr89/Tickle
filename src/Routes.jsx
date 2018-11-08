@@ -1,32 +1,9 @@
 import React from 'react';
-import {Route, HashRouter, Redirect, Switch} from 'react-router-dom';
-
-import SignUp from './components/SignUp';
-import SignIn, {SignInRedirect} from './components/SignIn';
-import LandingPage from './components/LandingPage';
-import Home from './components/Home';
-import CardView from './components/CardView';
-import Admin from './components/Admin';
-import Account from './components/Account';
-import Diary from './components/Diary';
-import TagView from './components/DataView/ForceOverlay/TreeMapCluster';
-
 import {
-  MapCardAuthorPage,
-  TopicMapAuthorPage,
-  UserEnvironmentSettings,
-} from './components/CardAuthor';
-
-import {MapViewPage, TopicMapViewPage} from './components/CardView';
-
-// import MapAuthor from './components/DataView/Map/MapAuthor';
-
-import DefaultLayout from './components/DefaultLayout';
+  Route, HashRouter, Redirect, Switch
+} from 'react-router-dom';
 
 import UserMap from 'Components/DataView/Map/UserMap';
-// import withAuthentication from './components/withAuthentication';
-// import AuthUserContext from './components/AuthUserContext';
-
 import {
   MYCARDS,
   GEO_VIEW,
@@ -42,8 +19,32 @@ import {
   HOME,
   ADMIN,
   ADMIN_SIGN_UP,
-  LANDING,
+  LANDING
 } from 'Constants/routeSpec';
+import SignUp from './components/SignUp';
+import SignIn, { SignInRedirect } from './components/SignIn';
+import LandingPage from './components/LandingPage';
+import Home from './components/Home';
+import Admin from './components/Admin';
+import Account from './components/Account';
+import Diary from './components/Diary';
+import TagView from './components/DataView/ForceOverlay/TreeMapCluster';
+
+import {
+  MapCardAuthorPage,
+  TopicMapAuthorPage,
+  UserEnvironmentSettings
+} from './components/CardAuthor';
+
+import { MapViewPage, TopicMapViewPage } from './components/CardView';
+
+// import MapAuthor from './components/DataView/Map/MapAuthor';
+
+import DefaultLayout from './components/DefaultLayout';
+
+// import withAuthentication from './components/withAuthentication';
+// import AuthUserContext from './components/AuthUserContext';
+
 
 const NoMatch = () => (
   <DefaultLayout>
@@ -67,7 +68,7 @@ const Routes = () => (
         exact
         render={({
           match: {
-            params: {userEnv}
+            params: { userEnv }
           }
         }) => <Redirect to={`/${userEnv}/${SIGN_IN.path}`} />}
       />
@@ -80,7 +81,7 @@ const Routes = () => (
       <Route path={`/:userEnv/${MYCARDS.path}/`} render={props => <Diary />} />
 
       <Route
-        path={ `/:userEnv/${AUTHOR.path}` }
+        path={`/:userEnv/${AUTHOR.path}`}
         exact
         render={() => (
           <DefaultLayout>
@@ -91,34 +92,26 @@ const Routes = () => (
 
       <Route
         path={`/:userEnv/${GEO_AUTHOR.path}`}
-        render={props => <MapCardAuthorPage />}
+        render={MapCardAuthorPage}
       />
       <Route
         path={`/:userEnv/${TOPIC_AUTHOR.path}`}
-        render={() => <TopicMapAuthorPage />}
+        component={TopicMapAuthorPage}
       />
       <Route
         exact
         path={`/:userEnv/${TOPIC_VIEW.path}`}
-        render={() => <TopicMapViewPage />}
+        component={TopicMapViewPage}
       />
       <Route
         exact
         path={`/:userEnv/${GEO_VIEW.path}`}
-        render={() => (
-          <CardView>
-            {props => <UserMap {...props} className="absolute" />}
-          </CardView>
-        )}
+        component={MapViewPage}
       />
       <Route
         exact
         path={`/:userEnv/${TAG_VIEW.path}`}
-        render={() => (
-          <CardView>
-            {props => <TagView {...props} className="absolute" />}
-          </CardView>
-        )}
+        component={TopicMapViewPage}
       />
       <Route
         exact
@@ -134,7 +127,7 @@ const Routes = () => (
           </DefaultLayout>
         )}
       />
-      <Route path={`/:userEnv/${SIGN_IN.path}`} component={() => <SignIn />} />
+      <Route path={`/:userEnv/${SIGN_IN.path}`} component={SignIn} />
       <Route
         exact
         path={HOME.path}

@@ -148,21 +148,19 @@ class TitleModalBody extends Component {
         {...this.props}
         onClose={() => onUpdate(text)}
         footer={
-          <button className="btn" onClick={() => onUpdate(text)}>
+          <button type="button" className="btn" onClick={() => onUpdate(text)}>
             Update
           </button>
         }
       >
-        <div className="form-control">
-          <input
-            onChange={e => this.setState({
-              text: e.target.value || null
-            })
-            }
-            style={{ width: '100%' }}
-            value={text}
-          />
-        </div>
+        <input
+          className="form-control w-full"
+          onChange={e => this.setState({
+            text: e.target.value || null
+          })
+          }
+          value={text}
+        />
       </ModalBody>
     );
   }

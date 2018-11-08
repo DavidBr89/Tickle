@@ -5,7 +5,7 @@ import { extractCardFields } from 'Constants/cardFields';
 import { firestore, Timestamp, storageRef } from '../firebase';
 
 
-const TICKLE_ENVS = 'tickle-environments';
+const CARD_ENVS = 'card-environments';
 
 const isDefined = a => a !== null && a !== undefined;
 
@@ -48,7 +48,7 @@ export const readCopyUsers = () => {
       });
 
       data.forEach(d => firestore
-        .collection(TICKLE_ENVS)
+        .collection(CARD_ENVS)
         .doc('staging')
         .collection('cards')
         .doc(d.id)
@@ -66,7 +66,7 @@ const removeFromStorage = (path) => {
   });
 };
 
-const addFileToStorage = ({ file, path, id }) => {
+const addFileToFirebaseStorage = ({ file, path, id }) => {
   const metadata = { contentType: file.type };
   const imgRef = storageRef.child(`${path}/${id}`);
   return imgRef
@@ -97,7 +97,7 @@ const makeCardFuncs = ({
     const { file = null, ...restImgFields } = card.img;
 
     return file
-      ? addFileToStorage({
+      ? addFileToFirebaseStorage({
         file,
         path: `${ENV_STR}/cards/images`,
         id: card.id
@@ -203,8 +203,8 @@ const makeCommentFuncs = ({ TICKLE_ENV_REF }) => {
   return { readComments, addComment };
 };
 
-const makeUserFuncs = ({ TICKLE_ENV_REF, ENV_STR, readCards }) => {
-  const onceGetUsers = () => TICKLE_ENV_REF.collection('users')
+const makeUserFuncs = ({ ENV_STR, readCards }) => {
+  const onceGetUsers = () => firestore.collection('users')
     .get()
     .then((querySnapshot) => {
       const data = [];
@@ -212,7 +212,7 @@ const makeUserFuncs = ({ TICKLE_ENV_REF, ENV_STR, readCards }) => {
 
       const dataPromises = data.map((d) => {
         const thumbNailRef = storageRef.child(
-          `${ENV_STR}/images/usr/${thumbFileName(d.uid)}`,
+          `/images/usr/${thumbFileName(d.uid)}`,
         );
           // return d;
         return thumbNailRef.getDownloadURL().then(
@@ -225,14 +225,12 @@ const makeUserFuncs = ({ TICKLE_ENV_REF, ENV_STR, readCards }) => {
         );
       });
 
-      return Promise.all(dataPromises).catch(error => console.log('error in reading users', error), );
+      return Promise.all(dataPromises)
+        .catch(error => console.log('error in reading users', error));
     });
 
-  const doCreateUser = userProfile => TICKLE_ENV_REF.collection('users')
-    .doc(userProfile.uid)
-    .set(userProfile);
 
-  const getUser = uid => TICKLE_ENV_REF.collection('users')
+  const getUser = uid => firestore.collection('users')
     .doc(uid)
     .get()
     .then(doc => new Promise(resolve => resolve(doc.data())))
@@ -254,10 +252,10 @@ const makeUserFuncs = ({ TICKLE_ENV_REF, ENV_STR, readCards }) => {
       ...usr,
       createdCards,
       collectedCards: []
-    })), )
+    })))
     .catch(err => console.log('err i getUser', err));
 
-  const getUserEnvs = uid => TICKLE_ENV_REF.collection('users')
+  const getUserEnvs = uid => firestore.collection('users')
     .doc(uid)
     .collection('userEnvs')
     .get()
@@ -273,19 +271,27 @@ const makeUserFuncs = ({ TICKLE_ENV_REF, ENV_STR, readCards }) => {
     })
     .catch(err => console.log('err  getUser'));
 
-  const addUserEnv = ({ uid, env }) => TICKLE_ENV_REF.collection('users')
+  const addUserEnv = ({ uid, env }) => firestore.collection('users')
     .doc(uid)
     .collection('userEnvs')
     .doc(env.id)
     .set(env)
     .catch(err => console.log('addUserEnv err', err));
 
-  const removeUserEnv = ({ uid, envId }) => TICKLE_ENV_REF.collection('users')
+  const removeUserEnv = ({ uid, envId }) => firestore.collection('users')
     .doc(uid)
     .collection('userEnvs')
     .doc(envId)
     .delete()
     .catch(err => console.log('addUserEnv err', err));
+
+  const doCreateUser = userProfile => firestore.collection('users')
+    .doc(userProfile.uid)
+    .set(userProfile)
+    .then(() => {
+      const env = { id: ENV_STR, timestamp: Timestamp.fromDate(new Date()) };
+      return addUserEnv({ uid: userProfile.uid, env });
+    });
 
   return {
     getDetailedUserInfo,
@@ -357,7 +363,7 @@ const makeChallengFuncs = ({ TICKLE_ENV_REF }) => {
 };
 
 export default function DB(ENV_STR) {
-  const TICKLE_ENV_REF = firestore.collection(TICKLE_ENVS).doc(ENV_STR);
+  const TICKLE_ENV_REF = firestore.collection(CARD_ENVS).doc(ENV_STR);
 
   const challengeFuncs = makeChallengFuncs({ TICKLE_ENV_REF });
   const cardFuncs = makeCardFuncs({
@@ -368,7 +374,13 @@ export default function DB(ENV_STR) {
   const userFuncs = makeUserFuncs({ TICKLE_ENV_REF, ENV_STR, ...cardFuncs });
   const commentFuncs = makeCommentFuncs({ TICKLE_ENV_REF });
 
+  const addFileToEnv = ({ file, path, id }) => addFileToFirebaseStorage({ file, path: `${ENV_STR}/${path}`, id });
+
   return {
-    ...challengeFuncs, ...cardFuncs, ...userFuncs, ...commentFuncs
+    ...challengeFuncs,
+    ...cardFuncs,
+    ...userFuncs,
+    ...commentFuncs,
+    addFileToEnv
   };
 }

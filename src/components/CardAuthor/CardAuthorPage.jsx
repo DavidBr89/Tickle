@@ -176,6 +176,7 @@ class CardAuthorPage extends Component {
         style={{ position: 'relative', overflow: 'hidden' }}
         menu={
           <div className="flex-grow flex justify-end items-center">
+            <button type="button" className="btn btn-big">New Card</button>
             <CardTagSearch
               allTags={tagVocabularyCreated}
               key={filterSet.join(',')}
@@ -192,7 +193,7 @@ class CardAuthorPage extends Component {
           }
         </BareModal>
         <div
-          className="mt-16 flex justify-center"
+          className="mt-24 flex justify-center"
           style={{
             transition: 'opacity 0.5s',
             pointerEvents: 'none',
@@ -217,7 +218,7 @@ class CardAuthorPage extends Component {
             }}
           />
         </div>
-        {children(this.props)}
+        {children}
       </DefaultLayout>
     );
   }

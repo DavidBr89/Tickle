@@ -66,19 +66,24 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   } = cardRoutes({ history, location });
 
   const {
-    asyncUpdateCard,
     updateCardTemplate,
     asyncCreateCard,
+    asyncUpdateCard,
     asyncRemoveCard
   } = dispatcherProps;
 
   const createCard = (cardData) => {
     asyncCreateCard({ cardData, userEnv });
   };
+  const updateCard = (cardData) => {
+    asyncUpdateCard({ cardData, userEnv });
+  };
+
+  const removeCard = id => asyncRemoveCard({ cardId: id, userEnv });
 
   const onCardUpdate = cardData => (cardData.id === 'temp'
     ? updateCardTemplate(cardData)
-    : createCard(cardData));
+    : updateCard(cardData));
 
   const db = DB(userEnv);
   const fetchComments = cardId ? () => db.readComments(cardId) : null;
@@ -101,6 +106,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     onClose,
     onFlip,
     flipped,
+    removeCard,
     tagVocabulary,
     fetchComments,
     addComment,
@@ -111,7 +117,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
 const EditCard = ({
   createCard,
-  asyncRemoveCard,
+  removeCard,
   onCardUpdate,
   x,
   y,
@@ -153,7 +159,7 @@ const EditCard = ({
         edit
         onDelete={() => {
           onClose();
-          asyncRemoveCard(props.id);
+          removeCard(props.id);
         }}
       />
     }

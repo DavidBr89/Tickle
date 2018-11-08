@@ -102,7 +102,7 @@ const RouteNavigation = ({authUser, selectedUserEnvId, ...props}) => {
   if (authUser) {
     if (authUser.admin) {
       const adminAuthRoutes = makeUserEnvRoutes(selectedUserEnvId, adminRoutes);
-      return <NavigationHelper {...props} routes={adminAuthRoutes} />;
+      return <NavigationHelper {...props} signOut routes={adminAuthRoutes} />;
     }
     const userAuthRoutes = makeUserEnvRoutes(selectedUserEnvId, authRoutes);
     return <NavigationHelper {...props} signOut routes={userAuthRoutes} />;
