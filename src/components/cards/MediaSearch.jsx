@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import fetchJsonp from 'fetch-jsonp';
 
 import PlusSquare from 'react-feather/dist/icons/plus-square';
+import Trash2 from 'react-feather/dist/icons/trash-2';
 import Youtube from 'react-feather/dist/icons/youtube';
 import AlignLeft from 'react-feather/dist/icons/align-left';
 
@@ -792,7 +793,7 @@ function MediaBtn({ selected, onClick }) {
     <div
       className="bg-light-grey"
       style={{
-        color: selected ? 'tomato' : darkerUiColor
+        color: selected ? 'tomato' : 'black'
       }}
       onClick={onClick}
     >
