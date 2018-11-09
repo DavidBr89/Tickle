@@ -1,19 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {range} from 'd3';
-// import tsnejs from 'tsne';
-// import _ from 'lodash';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
-import chroma from 'chroma-js';
 import * as d3 from 'd3';
 
-// import ReactDom from 'react-dom';
-// import sketchy from '../utils/d3.sketchy';
+import icAk from 'Styles/alphabet_icons/ic_ak.svg';
 
-import {CardMarker} from 'Cards';
 
-function calcTreeMap({data, width, height, padX, padY}) {
+function calcTreeMap({
+  data, width, height, padX, padY
+}) {
   const ratio = 2;
   const sorted = data.sort((a, b) => b.values.length - a.count);
   const treemap = d3
@@ -29,12 +25,12 @@ function calcTreeMap({data, width, height, padX, padY}) {
     .domain(d3.extent(data, d => d.count))
     .range([20, 25]);
 
-  const first = {name: 'root', children: sorted};
+  const first = { name: 'root', children: sorted };
   const root = d3.hierarchy(first).sum(d => size(d.count));
 
   treemap(root);
   if (!root.children) return [];
-  root.children.forEach(d => {
+  root.children.forEach((d) => {
     d.left = padX / 2 + Math.round(d.x0 * ratio);
     d.top = padY / 2 + Math.round(d.y0);
 
@@ -79,26 +75,9 @@ class Tag extends React.Component {
 
   render() {
     const {
-      left,
-      top,
-      width,
-      height,
-      color,
-      data,
-      onMouseEnter,
-      onMouseLeave,
-      padding,
-      highlighted,
-      count,
-      addCardFilter,
-      removeCardFilter,
-      filterSet,
-      selected,
-      onClick,
-      key,
-      children,
-      transition,
-      small
+      left, top, width, height, color, data, onMouseEnter, onMouseLeave,
+      padding, highlighted, count, addCardFilter, removeCardFilter,
+      filterSet, selected, onClick, key, children, transition, small
     } = this.props;
 
     const st = {
@@ -107,45 +86,29 @@ class Tag extends React.Component {
       width,
       height,
       position: 'absolute',
-      transition: `left ${transition}ms, top ${transition}ms, width ${transition}ms, height ${transition}ms`,
+      transition: `left ${transition}ms, top ${transition}ms, width ${transition}ms, height ${transition}ms`
     };
 
     return (
       <div
-        className={`flex flex-col border-4 border-black ${selected &&
-          'bg-grey-light'}`}
+        className={`flex flex-col border-8 border-black p-4 ${selected
+          && 'bg-grey-light'}`}
         style={st}
         onClick={() => onClick(children)}
       >
-        <div className="flex-grow" style={{position: 'relative'}}>
-          <div className="absolute">
-            <span>
-              {children} ({count})
-            </span>
-          </div>
+        <div className="relative flex flex-col flex-grow">
+          <h1 className="absolute">
+            {children}
+          </h1>
           <div
-            className="absolute flex flex-col items-center justify-center"
-            style={{
-              width: '100%',
-              height: '100%',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
+            className="flex-grow flex flex-col items-center justify-center"
           >
             <div
-              className="border-2 flex flex-col items-center justify-center"
-              style={{
-                borderRadius: '50%',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 50,
-                height: 50,
-                zIndez: 0
-              }}
+              className="p-4 flex items-center justify-center"
             >
-              <CardMarker
-                style={{width: 20, height: 20, transform: null, zIndex: 0}}
-              />
+              <div className=" border-4 border-black "><img className="m-2" src={icAk} /></div>
+              <div className="text-2xl font-bold ml-2">{count}</div>
+
             </div>
           </div>
         </div>
@@ -188,12 +151,10 @@ class TagCloud extends React.Component {
     const treemap = trData.map((d, i) => (
       <Tag
         {...d}
-        small={false}
         {...d.data}
         key={d.data.key}
         filterSet={filterSet}
-        onClick={tag => tagFilter({tag, filterSet})}
-        color="grey"
+        onClick={tag => tagFilter({ tag, filterSet })}
         highlighted={selectedTags.includes(d.data.key)}
         selected={filterSet.includes(d.data.key)}
       >
@@ -201,7 +162,7 @@ class TagCloud extends React.Component {
       </Tag>
     ));
 
-    return <div style={{position: 'relative'}}>{treemap}</div>;
+    return <div style={{ position: 'relative' }}>{treemap}</div>;
   }
 }
 
@@ -215,7 +176,7 @@ TagCloud.defaultProps = {
   getCoords: d => d
 };
 
-const mapStateToProps = state => ({...state.Screen});
+const mapStateToProps = state => ({ ...state.Screen });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...stateProps,

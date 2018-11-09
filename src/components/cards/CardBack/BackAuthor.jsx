@@ -32,9 +32,9 @@ const AuthorDetails = ({
     >
       <div className="flex-no-shrink mb-3">
         <h2 className="mb-1">Top Interests</h2>
-        <div className="flex">
+        <div className="flex w-full flex-wrap">
           {skills.map(d => (
-            <div className="text-xl capitalize bg-black tag-label">{d.key}</div>
+            <div className="text-xl capitalize bg-black tag-label m-1">{d.key}</div>
           ))}
         </div>
       </div>
@@ -105,7 +105,7 @@ class BackAuthorWrapper extends React.Component {
 
   componentDidMount() {
     const { uid, fetchData } = this.props;
-    // TODO
+    // TODO OUTSOURCE
     fetchData().then((authorInfo) => {
       const {
         interests,
@@ -114,7 +114,6 @@ class BackAuthorWrapper extends React.Component {
         ...basicUserInfo
       } = authorInfo;
 
-      console.log('authorInfo', authorInfo);
       const skills = setify([...createdCards, ...collectedCards])
         .slice(0, 5)
         .map(d => d.key);

@@ -448,7 +448,7 @@ class EditCardFront extends PureComponent {
           bottomControls={
             <React.Fragment>
               <button
-                className="btn btn-black m-1"
+                className="btn btn-black"
                 onClick={() => this.setState({
                   dialog: { title: 'Challenge', data: challenge }
                 })
@@ -457,7 +457,11 @@ class EditCardFront extends PureComponent {
                 {challenge === null ? 'Add Challenge' : 'Edit Challenge'}
               </button>
               {template && (
-                <button className="btn m-1" onClick={() => onCreate(data)}>
+                <button
+                  type="button"
+                  className="btn btn-black ml-2"
+                  onClick={() => onCreate(data)}
+                >
                   Create
                 </button>
               )}

@@ -54,33 +54,12 @@ const DefaultControls = ({ ...props }) => {
       }}
     >
       <div className="mr-3">
-        <DelayClick delay={200} onClick={onStart}>
-          <Btn
-            disabled={challengeStarted}
-            style={{
-              opacity: challengeStarted && 0.6
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center'
-              }}
-            >
-              <div className="mr-1">
-                {!challengeStarted ? 'Start' : 'Started'}
-              </div>
-              {challengeStarted && <div>{iconLock}</div>}
-            </div>
-          </Btn>
-        </DelayClick>
-      </div>
-      <DelayClick delay={200} onClick={onSubmit}>
         <button
-          className="btn-black"
-          disabled={submitDisabled}
+          className="btn"
+          type="button"
+          disabled={challengeStarted}
           style={{
-            opacity: submitDisabled && 0.6
+            opacity: challengeStarted && 0.6
           }}
         >
           <div
@@ -89,11 +68,31 @@ const DefaultControls = ({ ...props }) => {
               alignItems: 'center'
             }}
           >
-            <div className="mr-1">{completed ? 'Submitted' : 'Submit'}</div>
-            {submitDisabled && <div>{iconLock}</div>}
+            <div className="mr-1">
+              {!challengeStarted ? 'Start' : 'Started'}
+            </div>
+            {challengeStarted && <div>{iconLock}</div>}
           </div>
         </button>
-      </DelayClick>
+      </div>
+      <button
+        type="button"
+        className="btn-black"
+        disabled={submitDisabled}
+        style={{
+          opacity: submitDisabled && 0.6
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center'
+          }}
+        >
+          <div className="mr-1">{completed ? 'Submitted' : 'Submit'}</div>
+          {submitDisabled && <div>{iconLock}</div>}
+        </div>
+      </button>
     </div>
   );
 };
@@ -161,7 +160,7 @@ const Footer = ({
   return gcontrol;
 };
 
-class MediaChallenge extends Component {
+export default class MediaChallenge extends Component {
   static propTypes = {
     className: PropTypes.string,
     description: PropTypes.string,
@@ -365,5 +364,3 @@ class MediaChallenge extends Component {
     );
   }
 }
-
-export default MediaChallenge;

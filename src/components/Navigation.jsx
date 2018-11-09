@@ -1,21 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
-import {Link, withRouter} from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 
-import SignOutButton from './SignOut';
-// import * as routes from 'Constants/routeSpec';
-
-import AuthUserContext from './AuthUserContext';
+import { compose } from 'recompose';
 
 import {
   DATAVIEW,
   authRoutes,
   makeUserEnvRoutes,
   adminRoutes,
-  nonAuthRoutes,
+  nonAuthRoutes
 } from 'Constants/routeSpec';
+import SignOutButton from './SignOut';
+// import * as routes from 'Constants/routeSpec';
+
+import AuthUserContext from './AuthUserContext';
+
 
 // import { setDataView } from 'Reducers/DataView/actions';
 
@@ -32,9 +34,7 @@ import {
 // );
 
 const includePath = (pathA, pathB) => {
-  const [splA, splB] = [pathA.split('/'), pathB.split('/')].map(p =>
-    p.filter(s => s !== '#' && s !== ''),
-  );
+  const [splA, splB] = [pathA.split('/'), pathB.split('/')].map(p => p.filter(s => s !== '#' && s !== ''), );
   console.log('curPath', pathA, 'path', pathB);
   return splA[0] === splB[0];
 };
@@ -46,14 +46,15 @@ const ListItem = ({
   curPath,
   active,
   children,
-  subRoutes = [],
+  subRoutes = []
 }) => (
   <li className="list-item mb-1">
     <div
       className={`${subRoutes.length > 0 && 'list-item'} ${includePath(
         curPath,
         path,
-      ) && 'active'}`}>
+      ) && 'active'}`}
+    >
       <Link to={path}>{children}</Link>
     </div>
     <ul className="ml-5 list-reset">
@@ -74,7 +75,7 @@ const NavigationHelper = ({
   routes,
   signOut,
   children,
-  userEnv,
+  userEnv
 }) => (
   <ul className="list-reset">
     {routes.map(r => (
@@ -91,14 +92,15 @@ const NavigationHelper = ({
 );
 
 NavigationHelper.propTypes = {
-  signOut: PropTypes.boolean,
+  signOut: PropTypes.boolean
 };
 
 NavigationHelper.defaultProps = {
-  signOut: false,
+  signOut: false
 };
 
-const RouteNavigation = ({authUser, selectedUserEnvId, ...props}) => {
+const RouteNavigation = ({ authUser, match, ...props }) => {
+  const { params: { userEnv: selectedUserEnvId } } = match;
   if (authUser) {
     if (authUser.admin) {
       const adminAuthRoutes = makeUserEnvRoutes(selectedUserEnvId, adminRoutes);
@@ -112,7 +114,10 @@ const RouteNavigation = ({authUser, selectedUserEnvId, ...props}) => {
 };
 
 const mapStateToProps = state => ({
-  ...state.Session,
+  ...state.Session
 });
 
-export default connect(mapStateToProps)(withRouter(RouteNavigation));
+export default compose(
+  withRouter,
+  connect(mapStateToProps)
+)(RouteNavigation);

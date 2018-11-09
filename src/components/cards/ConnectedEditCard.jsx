@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 // import chroma from 'chroma-js';
 import { compose } from 'recompose';
 
+import Trash2 from 'react-feather/dist/icons/trash-2';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -32,9 +33,37 @@ function mapStateToProps(state) {
     ...state.DataView,
     ...state.Screen,
     userLocation: state.MapView.userLocation,
-    authUser: state.Session.authUser
+    ...state.Session
   };
 }
+
+
+const DeleteButton = ({ style, className, onClick }) => (
+  <button
+    className={`pl-10 pr-10 btn btn-black bg-danger ${className}`}
+    type="button"
+    style={{
+      alignItems: 'center',
+      ...style
+    }}
+    onClick={onClick}
+  >
+    <div><Trash2 size={30} /></div>
+  </button>
+);
+
+DeleteButton.propTypes = {
+  style: PropTypes.object,
+  onClick: PropTypes.func,
+  className: PropTypes.string
+};
+
+DeleteButton.defaultProps = {
+  style: {},
+  onClick: d => d,
+  className: ''
+};
+
 
 const mapDispatchToProps = dispatch => bindActionCreators(
   {
@@ -58,6 +87,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     match, location, history, uid, id: cardId
   } = ownProps;
 
+  // TODO: BUILD IN check
   const { userEnv } = match.params;
 
   const {
@@ -72,14 +102,18 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     asyncRemoveCard
   } = dispatcherProps;
 
-  const createCard = (cardData) => {
-    asyncCreateCard({ cardData, userEnv });
+  const createCard = ({ tags: tmpTags, title: tmpTitle, ...cardData }) => {
+    const tags = tmpTags && tmpTags.length > 0 ? tmpTags : ['general'];
+    const title = tmpTitle !== null ? tmpTitle : 'Card without title';
+    console.log('CARD tmpTitle', tmpTitle);
+
+    asyncCreateCard({ cardData: { ...cardData, title, tags }, userEnv });
   };
   const updateCard = (cardData) => {
     asyncUpdateCard({ cardData, userEnv });
   };
 
-  const removeCard = id => asyncRemoveCard({ cardId: id, userEnv });
+  const removeCard = () => asyncRemoveCard({ cardId, userEnv });
 
   const onCardUpdate = cardData => (cardData.id === 'temp'
     ? updateCardTemplate(cardData)
@@ -88,11 +122,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const db = DB(userEnv);
   const fetchComments = cardId ? () => db.readComments(cardId) : null;
   const addComment = text => db.addComment({ uid, cardId, text });
-  const fetchAuthorData = () => {
-    console.log('ownProps', ownProps, 'state', state);
-
-    return db.getDetailedUserInfo(uid);
-  };
+  const fetchAuthorData = () => db.getDetailedUserInfo(uid);
 
   const onClose = routeExtendCard;
 
@@ -157,10 +187,11 @@ const EditCard = ({
         fetchAuthorData={fetchAuthorData}
         onFlip={onFlip}
         edit
-        onDelete={() => {
+        controls={!template ? (<DeleteButton onClick={() => {
           onClose();
           removeCard(props.id);
         }}
+        />) : null}
       />
     }
   />

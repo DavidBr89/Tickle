@@ -14,10 +14,10 @@ import withAuthentication from 'Src/components/withAuthentication.jsx';
 
 import { CloseIcon } from 'Src/styles/menu_icons';
 
-import { AUTHOR } from 'Constants/routeSpec';
+import { DATAVIEW } from 'Constants/routeSpec';
 
 
-class UserEnvironmentSettings extends Component {
+class SelectUserEnv extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string
@@ -41,26 +41,8 @@ class UserEnvironmentSettings extends Component {
     const { tmpEnvName } = this.state;
     return (
       <div className="content-margin">
-        <h1 className="mb-3">Create User Environments</h1>
+        <h1 className="mb-3">Select User Environments</h1>
         <div>
-          <form
-            className="flex justify-between mb-3"
-            onSubmit={(e) => {
-              e.preventDefault();
-              addUserEnv({ id: tmpEnvName });
-            }}
-          >
-            <input
-              className="form-control text-xl"
-              style={{ flexGrow: 0.75 }}
-              value={tmpEnvName}
-              placeholder="Add a card environment for your users"
-              onChange={e => this.setState({ tmpEnvName: e.target.value })}
-            />
-            <button type="submit" className="ml-1 btn" style={{ flexGrow: 0.25 }}>
-              Add
-            </button>
-          </form>
           <ul className="list-reset">
             {userEnvs.map(d => (
               <li
@@ -69,12 +51,6 @@ class UserEnvironmentSettings extends Component {
                   && 'active'}`}
               >
                 <div>{d.id}</div>
-                <CloseIcon
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeUserEnv(d);
-                  }}
-                />
               </li>
             ))}
           </ul>
@@ -89,25 +65,18 @@ const mapStateToProps = state => ({
   userEnvs: state.Session.authUser ? state.Session.authUser.userEnvs : []
 });
 
-/*
-exampleAction: authUser => {
-    dispatch(setAuthUser(authUser));
-  }
-*/
 const mapDispatchToProps = dispatch => bindActionCreators(asyncActions, dispatch);
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
-  const { addUserEnv, selectUserEnv, removeUserEnv } = dispatchProps;
+  const { addUserEnv } = dispatchProps;
   const { match, history } = ownProps;
 
+  const { params: { userEnv } } = match;
 
-  const {
-    params: { userEnv }
-  } = match;
+  const routeUserEnv = env => history.push(`/${env}/${DATAVIEW.path}`);
 
-  const routeUserEnv = env => history.push(`/${env}/${AUTHOR.path}`);
-
-  return { ...stateProps,
+  return {
+    ...stateProps,
     ...dispatchProps,
     ...ownProps,
     routeUserEnv,
@@ -125,4 +94,4 @@ export default compose(
     mapDispatchToProps,
     mergeProps,
   ),
-)(UserEnvironmentSettings);
+)(SelectUserEnv);

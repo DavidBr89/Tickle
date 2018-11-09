@@ -9,14 +9,15 @@ import { firebase } from 'Firebase';
 
 import * as cardActions from 'Reducers/Cards/async_actions';
 
-import * as sessionActions from 'Reducers/Session/async_actions';
+import * as sessionAsyncActions from 'Reducers/Session/async_actions';
+import * as sessionActions from 'Reducers/Session/actions';
 import { bindActionCreators } from 'redux';
 
 const withAuthentication = (Component) => {
   class WithAuthentication extends React.Component {
     componentDidMount() {
       const {
-        setAuthUserInfo, fetchCollectibleCards, fetchCreatedCards, match
+        clearAuthUser, fetchCollectibleCards, fetchCreatedCards, match
       } = this.props;
 
       const { userEnv } = match.params;
@@ -27,7 +28,7 @@ const withAuthentication = (Component) => {
           fetchCollectibleCards({ userEnv, uid });
           fetchCreatedCards({ userEnv, uid });
         } else {
-          setAuthUserInfo({ authUser: null });
+          clearAuthUser();
         }
       });
     }
@@ -48,7 +49,11 @@ const withAuthentication = (Component) => {
   });
 
   const mapDispatchToProps = dispatch => ({
-    ...bindActionCreators({ ...sessionActions, ...cardActions }, dispatch)
+    ...bindActionCreators({
+      ...sessionAsyncActions,
+      ...sessionActions,
+      ...cardActions
+    }, dispatch)
   });
 
   return compose(

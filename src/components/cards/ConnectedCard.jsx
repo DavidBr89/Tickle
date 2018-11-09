@@ -28,6 +28,8 @@ import CardBack from './CardBack';
 import ReadCardFront from './CardFront/ReadCardFront';
 import CardFrame from './CardFrame';
 
+console.log('MediaChallenge', MediaChallenge);
+
 // TODO: outsource
 const ChallengeResult = ({
   onClose,
@@ -90,6 +92,17 @@ const CardViewable = ({
         {...props}
         onFlip={onFlip}
         onClose={onClose}
+        challengeComp={
+          <MediaChallenge
+            key={id}
+            onUpdate={(newChallengeSub) => {
+              onSubmitChallenge({
+                cardId: props.id,
+                ...newChallengeSub
+              });
+            }}
+          />
+        }
       />
     }
     back={
@@ -103,23 +116,6 @@ const CardViewable = ({
     }
     flipped={flipped}
     {...props}
-    challengeComp={
-      <MediaChallenge
-        {...props.challenge}
-        bookmarkable
-        removable
-        title="Challenge"
-        isSmartphone={false}
-        key={id}
-        challengeSubmission={props.challengeSubmission}
-        onUpdate={(newChallengeSub) => {
-          onSubmitChallenge({
-            cardId: props.id,
-            ...newChallengeSub
-          });
-        }}
-      />
-    }
   />
 );
 
@@ -178,9 +174,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const db = DB(userEnv);
   const fetchAuthorData = () => {
-
-    console.log('uid', uid)
-    return db.getDetailedUserInfo(uid) };
+    console.log('uid', uid);
+    return db.getDetailedUserInfo(uid);
+  };
   const fetchComments = id ? () => db.readComments(id) : null;
   const addComment = text => db.addComment({ uid, cardId: id, text });
 

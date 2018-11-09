@@ -1,5 +1,7 @@
 const isDefined = a => a !== null && a !== undefined;
 
+export const TEMP_ID = 'temp';
+
 export const isChallengeSucceeded = c =>
   isDefined(c.challengeSubmission) &&
   c.challengeSubmission.feedback &&

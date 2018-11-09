@@ -5,22 +5,11 @@ import {
 
 import UserMap from 'Components/DataView/Map/UserMap';
 import {
-  MYCARDS,
-  GEO_VIEW,
-  TAG_VIEW,
-  TOPIC_VIEW,
-  AUTHOR,
-  ACCOUNT,
-  GEO_AUTHOR,
-  TAG_AUTHOR,
-  TOPIC_AUTHOR,
-  SIGN_UP,
-  SIGN_IN,
-  HOME,
-  ADMIN,
-  ADMIN_SIGN_UP,
-  LANDING
+  MYCARDS, GEO_VIEW, TAG_VIEW, TOPIC_VIEW, AUTHOR, ACCOUNT, GEO_AUTHOR,
+  TAG_AUTHOR, TOPIC_AUTHOR, SIGN_UP, SIGN_IN, HOME, ADMIN, ADMIN_SIGN_UP,
+  LANDING, DATAVIEW
 } from 'Constants/routeSpec';
+
 import SignUp from './components/SignUp';
 import SignIn, { SignInRedirect } from './components/SignIn';
 import LandingPage from './components/LandingPage';
@@ -36,7 +25,9 @@ import {
   UserEnvironmentSettings
 } from './components/CardAuthor';
 
-import { MapViewPage, TopicMapViewPage } from './components/CardView';
+import {
+  MapViewPage, TopicMapViewPage, SelectUserEnv, TagViewPage
+} from './components/CardView';
 
 // import MapAuthor from './components/DataView/Map/MapAuthor';
 
@@ -79,7 +70,6 @@ const Routes = () => (
       />
 
       <Route path={`/:userEnv/${MYCARDS.path}/`} render={props => <Diary />} />
-
       <Route
         path={`/:userEnv/${AUTHOR.path}`}
         exact
@@ -98,6 +88,16 @@ const Routes = () => (
         path={`/:userEnv/${TOPIC_AUTHOR.path}`}
         component={TopicMapAuthorPage}
       />
+
+      <Route
+        exact
+        path={`/:userEnv/${DATAVIEW.path}/`}
+        component={() => (
+          <DefaultLayout>
+            <SelectUserEnv />
+          </DefaultLayout>
+        )}
+      />
       <Route
         exact
         path={`/:userEnv/${TOPIC_VIEW.path}`}
@@ -111,11 +111,11 @@ const Routes = () => (
       <Route
         exact
         path={`/:userEnv/${TAG_VIEW.path}`}
-        component={TopicMapViewPage}
+        component={TagViewPage}
       />
       <Route
         exact
-        path={`/:userEnv/:admin?/${SIGN_UP.path}`}
+        path={`/:userEnv/${SIGN_UP.path}/:admin?`}
         component={() => <SignUp admin={false} />}
       />
       <Route

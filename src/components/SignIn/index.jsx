@@ -1,41 +1,41 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {bindActionCreators} from 'redux';
-import {withRouter, Redirect} from 'react-router-dom';
-import {compose} from 'recompose';
+import { bindActionCreators } from 'redux';
+import { withRouter, Redirect } from 'react-router-dom';
+import { compose } from 'recompose';
 
-import {signIn} from 'Reducers/Session/async_actions';
+import { signIn } from 'Reducers/Session/async_actions';
 // import { compose } from 'recompose';
 
 // import { bindActionCreators } from 'redux';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
-import {SignUpLink} from '../SignUp';
-import {PasswordForgetLink} from '../Password';
 
-import {auth} from 'Firebase';
-import {ModalBody} from 'Components/utils/Modal';
+import { auth } from 'Firebase';
+import { ModalBody } from 'Components/utils/Modal';
 
-import {GEO_VIEW, SIGN_IN} from 'Constants/routeSpec';
+import { GEO_VIEW, SIGN_IN } from 'Constants/routeSpec';
 
-import {fetchCollectibleCards} from 'Reducers/Cards/async_actions';
+import { fetchCollectibleCards } from 'Reducers/Cards/async_actions';
 
 import DefaultLayout from 'Components/DefaultLayout';
+import { PasswordForgetLink } from '../Password';
+import { SignUpLink } from '../SignUp';
 
 const byPropKey = (propertyName, value) => () => ({
   [propertyName]: value
 });
 
 function onSubmit(event) {
-  const {email, password} = this.state;
+  const { email, password } = this.state;
 
-  const {onAuthenticate} = this.props;
+  const { onAuthenticate } = this.props;
 }
 
-const SignInPage = ({signIn, fetchCollectibleCards, ...props}) => {
-  const {match, history} = props;
+const SignInPage = ({ signIn, fetchCollectibleCards, ...props }) => {
+  const { match, history } = props;
   const {
-    params: {userEnv}
+    params: { userEnv }
   } = match;
   // const userEnv = params.userEnv || props.userEnv;
 
@@ -45,7 +45,7 @@ const SignInPage = ({signIn, fetchCollectibleCards, ...props}) => {
     <DefaultLayout
       menu={
         <div className="flex-grow flex justify-center items-center">
-          <h1>Sign In {userEnv}</h1>
+          <h1>Sign-In {' '} {` ${userEnv}`} </h1>
         </div>
       }
     >
@@ -53,21 +53,19 @@ const SignInPage = ({signIn, fetchCollectibleCards, ...props}) => {
         <SignInFormWrapper
           {...props}
           disabled={!userEnv}
-          onSubmit={({email, password, onError}) =>
-            signIn({
-              userEnvId: userEnv,
-              email,
-              password,
-              onError
-            }).then(() => {
-              history.push(GEO_VIEW.path);
-              // fetchCollectibleCards(uid);
-              // console.log('yeah', uid);
-            })
+          onSubmit={({ email, password, onError }) => signIn({
+            userEnvId: userEnv,
+            email,
+            password,
+            onError
+          }).then(() => {
+            history.push(`/${userEnv}/${GEO_VIEW.path}`);
+            // fetchCollectibleCards(uid);
+            // console.log('yeah', uid);
+          })
           }
         />
         <div>
-          <PasswordForgetLink />
           <SignUpLink userEnv={userEnv} />
         </div>
         {!userEnv && (
@@ -96,11 +94,11 @@ class SignInFormWrapper extends Component {
     history: null
   };
 
-  state = {...INITIAL_STATE};
+  state = { ...INITIAL_STATE };
 
   render() {
-    const {onSubmit, disabled} = this.props;
-    const {email, password, error} = this.state;
+    const { onSubmit, disabled } = this.props;
+    const { email, password, error } = this.state;
 
     const isInvalid = password === '' || email === '';
     // console.log('routerProps', this.props);
@@ -108,27 +106,24 @@ class SignInFormWrapper extends Component {
     return (
       <SignInForm
         disabled={disabled}
-        onSubmit={() =>
-          onSubmit({
-            email,
-            password,
-            // onError: err => {
-            //   console.log('ERROR in sign in', err);
-            //   // this.setState({error: err});
-            // }
-          }).catch(err => {
-            console.log('caught err', err.message);
+        onSubmit={() => onSubmit({
+          email,
+          password
+          // onError: err => {
+          //   console.log('ERROR in sign in', err);
+          //   // this.setState({error: err});
+          // }
+        }).catch((err) => {
+          console.log('caught err', err.message);
 
-            this.setState({error: err.message});
-          })
+          this.setState({ error: err.message });
+        })
         }
         email={email}
-        onEmailChange={event =>
-          this.setState(byPropKey('email', event.target.value))
+        onEmailChange={event => this.setState(byPropKey('email', event.target.value))
         }
         password={password}
-        onPasswordChange={event =>
-          this.setState(byPropKey('password', event.target.value))
+        onPasswordChange={event => this.setState(byPropKey('password', event.target.value))
         }
         isInvalid={isInvalid}
         error={error}
@@ -149,7 +144,7 @@ const SignInForm = ({
 }) => (
   <form
     className="mb-1"
-    onSubmit={e => {
+    onSubmit={(e) => {
       e.preventDefault();
       onSubmit();
     }}
@@ -184,14 +179,16 @@ const SignInForm = ({
     <button
       className="btn"
       disabled={isInvalid}
-      style={{width: '100%'}}
+      style={{ width: '100%' }}
       type="submit"
     >
       Sign In
     </button>
     {error !== null && (
       <div
-className="alert mt-3" role="alert">
+        className="alert mt-3"
+        role="alert"
+      >
         <span className="block sm:inline">{error}</span>
       </div>
     )}
@@ -270,14 +267,13 @@ const mapStateToProps = state => ({
   userEnv: state.Session.userEnvSelectedId
 });
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      signIn,
-      fetchCollectibleCards
-    },
-    dispatch,
-  );
+const mapDispatchToProps = dispatch => bindActionCreators(
+  {
+    signIn,
+    fetchCollectibleCards
+  },
+  dispatch,
+);
 //
 // const authCondition = authUser => !!authUser;
 //
@@ -302,7 +298,7 @@ export default compose(
   ),
 )(SignInPage);
 
-const SignInRedirectPure = ({userEnv}) => (
+const SignInRedirectPure = ({ userEnv }) => (
   <Redirect to={`/${userEnv}/${SIGN_IN.path}`} />
 );
 

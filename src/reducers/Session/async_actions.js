@@ -16,12 +16,11 @@ export function fetchUserInfo({ uid, userEnv }) {
   // Thunk middleware knows how to handle functions.
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
-  return function(dispatch, getState) {
+  return function(dispatch) {
     const db = new DB(userEnv);
     return db
       .getUser(uid)
       .then((usrInfo) => {
-        console.log('retrieve USR INFO', usrInfo);
         dispatch(setAuthUserInfo(userFields({ uid, ...usrInfo })));
       })
       .catch(err => console.log('err', err));
@@ -36,8 +35,8 @@ export function signUp({
   return (dispatch) => {
     const db = DB(userEnv);
 
-    const createUser = profile => db.doCreateUser(profile).then(() => {
-      dispatch(setAuthUserInfo({ authUser: profile }));
+    const createUser = profile => db.doCreateUser(profile).then((authUser) => {
+      dispatch(setAuthUserInfo({ ...authUser }));
       dispatch(setUserEnv(userEnv));
     });
 
@@ -118,24 +117,24 @@ export function removeUserEnv(env) {
   };
 }
 
-export function addUserEnv(userEnv) {
+export function addUserEnv({ envId, newEnv }) {
   // Thunk middleware knows how to handle functions.
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
   return function(dispatch, getState) {
     // console.log('CALL WITH uid', uid);
     const { authUser } = getState().Session;
-    const { envId } = authUser;
+    // const { envId } = authUser;
 
     const { uid } = authUser;
 
     const { userEnvs } = authUser;
 
-    const updatedUser = { userEnvs: uniqBy([...userEnvs, userEnv], 'id') };
+    const updatedUser = { userEnvs: uniqBy([...userEnvs, newEnv], 'id') };
     const db = DB(envId);
 
     return db
-      .addUserEnv({ uid, env: userEnv })
+      .addUserEnv({ uid, env: newEnv })
       .then((usrInfo) => {
         dispatch(setAuthUserInfo(updatedUser));
       })
@@ -185,62 +184,62 @@ export function selectUserEnv(env) {
   };
 }
 
-export function submitUserInfoToDB({ userData, userEnv }) {
-  return function(dispatch) {
-    const db = DB(userEnv);
-    // dispatch(setAuthUserInfo(userInfo));
-
-    const usr = userFields(userData);
-    const submitUserDispatchWrapper = () => {
-      const { file, uid } = userData;
-      if (file) {
-        return db
-          .addFileToEnv({ file, path: 'users/images', id: uid })
-          .then((photoURL) => {
-            const newUsr = { ...usr, photoURL };
-            db.doCreateUser(newUsr).then(() => {
-              dispatch(submitUserInfoToDBSuccess(newUsr));
-            });
-          });
-      }
-      return db.doCreateUser(usr).then(() => {
-        dispatch(submitUserInfoToDBSuccess(usr));
-      });
-    };
-
-    if (auth.getEmail() !== usr.email) {
-      return auth
-        .doEmailUpdate(usr.email)
-        .then(() => {
-          submitUserDispatchWrapper();
-        })
-        .catch((error) => {
-          console.log('error', error.message);
-          dispatch(errorSubmitUser(error.message));
-        });
-    }
-
-    const { passwordOne, passwordTwo } = userData;
-    if (passwordOne || passwordTwo) {
-      if (passwordOne === passwordTwo) {
-        return auth
-          .doPasswordUpdate(userData.passwordOne)
-          .then(() => {
-            submitUserDispatchWrapper();
-          })
-          .catch((error) => {
-            dispatch(errorSubmitUser(error.message));
-          });
-      }
-      return dispatch(errorSubmitUser('Passwords are not matching'));
-    }
-
-    return submitUserDispatchWrapper();
-    // return db
-    //   .getUser(uid)
-    //   .then(usrInfo => {
-    //     dispatch(setAuthUserInfo(usrInfo));
-    //   })
-    //   .catch(err => console.log('err', err));
-  };
-}
+// export function submitUserInfoToDB({ userData, userEnv }) {
+//   return function(dispatch) {
+//     const db = DB(userEnv);
+//     // dispatch(setAuthUserInfo(userInfo));
+//
+//     const usr = userFields(userData);
+//     const submitUserDispatchWrapper = () => {
+//       const { file, uid } = userData;
+//       if (file) {
+//         return db
+//           .addFileToEnv({ file, path: 'users/images', id: uid })
+//           .then((photoURL) => {
+//             const newUsr = { ...usr, photoURL };
+//             db.doCreateUser(newUsr).then(() => {
+//               dispatch(submitUserInfoToDBSuccess(newUsr));
+//             });
+//           });
+//       }
+//       return db.doCreateUser(usr).then(() => {
+//         dispatch(submitUserInfoToDBSuccess(usr));
+//       });
+//     };
+//
+//     if (auth.getEmail() !== usr.email) {
+//       return auth
+//         .doEmailUpdate(usr.email)
+//         .then(() => {
+//           submitUserDispatchWrapper();
+//         })
+//         .catch((error) => {
+//           console.log('error', error.message);
+//           dispatch(errorSubmitUser(error.message));
+//         });
+//     }
+//
+//     const { passwordOne, passwordTwo } = userData;
+//     if (passwordOne || passwordTwo) {
+//       if (passwordOne === passwordTwo) {
+//         return auth
+//           .doPasswordUpdate(userData.passwordOne)
+//           .then(() => {
+//             submitUserDispatchWrapper();
+//           })
+//           .catch((error) => {
+//             dispatch(errorSubmitUser(error.message));
+//           });
+//       }
+//       return dispatch(errorSubmitUser('Passwords are not matching'));
+//     }
+//
+//     return submitUserDispatchWrapper();
+//     // return db
+//     //   .getUser(uid)
+//     //   .then(usrInfo => {
+//     //     dispatch(setAuthUserInfo(usrInfo));
+//     //   })
+//     //   .catch(err => console.log('err', err));
+//   };
+// }

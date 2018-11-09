@@ -168,7 +168,7 @@ const makeCardFuncs = ({
         });
         return tmpData;
       })
-      .then(data => Promise.all(data.map(e => thumbnailPromise(e).then(challengePromise))), );
+      .then(data => Promise.all(data.map(e => thumbnailPromise(e).then(challengePromise))));
   };
 
   return {
@@ -263,7 +263,6 @@ const makeUserFuncs = ({ ENV_STR, readCards }) => {
       const data = [];
       querySnapshot.forEach(doc => data.push(doc.data()));
 
-      console.log('userEnv', data);
       return new Promise(
         resolve => resolve(data),
         error => console.log('error in getUser, doc not existing', error),
@@ -276,6 +275,7 @@ const makeUserFuncs = ({ ENV_STR, readCards }) => {
     .collection('userEnvs')
     .doc(env.id)
     .set(env)
+    .then(() => env)
     .catch(err => console.log('addUserEnv err', err));
 
   const removeUserEnv = ({ uid, envId }) => firestore.collection('users')
@@ -288,10 +288,11 @@ const makeUserFuncs = ({ ENV_STR, readCards }) => {
   const doCreateUser = userProfile => firestore.collection('users')
     .doc(userProfile.uid)
     .set(userProfile)
-    .then(() => {
-      const env = { id: ENV_STR, timestamp: Timestamp.fromDate(new Date()) };
-      return addUserEnv({ uid: userProfile.uid, env });
-    });
+    .then(() => addUserEnv({ uid: userProfile.uid, env: { id: ENV_STR } })
+      .then(env => ({
+        ...userProfile, userEnvs: [env]
+      })));
+  // TODO: catch and remove user when registration fails
 
   return {
     getDetailedUserInfo,

@@ -60,7 +60,7 @@ export const PreviewTags = ({
       }}
     >
       {tagData.map(t => (
-        <div className="tag-label text-xl">
+        <div className="tag-label text-xl mr-1 mb-1">
           {t}
           {' '}
         </div>

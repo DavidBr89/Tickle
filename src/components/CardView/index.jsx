@@ -8,11 +8,10 @@ import { bindActionCreators } from 'redux';
 import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
 
-
 import TopicMapVis from 'Components/DataView/TopicMap/TopicMapVis';
+import TagVis from 'Components/DataView/ForceOverlay/TreeMapCluster';
 
 import UserMap from 'Components/DataView/Map/UserMap';
-
 
 import { intersection } from 'lodash';
 import { resizeCardWindow, userMove, changeViewport } from 'Reducers/Map/actions';
@@ -32,6 +31,7 @@ import withAuthentication from 'Src/components/withAuthentication';
 import cardRoutes from 'Src/Routes/cardRoutes';
 
 import CardViewPage from './CardViewPage';
+import SelectUserEnv from './SelectUserEnv';
 
 // import mapViewReducer from './reducer';
 
@@ -231,6 +231,17 @@ PureMapViewPage.defaultProps = {};
 
 PureMapViewPage.propTypes = {};
 
+function PureTagViewPage({ ...props }) {
+  return (
+    <CardViewPage {...props}>
+      <TagVis {...props} />
+    </CardViewPage>
+  );
+}
+
+PureTagViewPage.defaultProps = {};
+
+PureTagViewPage.propTypes = {};
 
 const authCondition = authUser => authUser !== null;
 
@@ -247,5 +258,6 @@ const composeScaffold = comp => compose(
 
 export const MapViewPage = composeScaffold(PureMapViewPage);
 export const TopicMapViewPage = composeScaffold(PureTopicMapViewPage);
+export const TagViewPage = composeScaffold(PureTagViewPage);
 
-console.log('MapViewPage', MapViewPage);
+export { SelectUserEnv };

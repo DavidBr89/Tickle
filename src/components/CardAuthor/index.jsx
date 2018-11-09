@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import MapAuthor from 'Components/DataView/Map/MapAuthor';
 
 import TopicMapAuthor from 'Components/DataView/TopicMap/DragTopicMap';
+import { TEMP_ID } from 'Constants/cardFields';
 
 
 // import React from 'react';
@@ -57,7 +58,6 @@ const mapStateToProps = (state) => {
     loc: userLocation,
     uid,
     id: 'temp',
-    title: 'New Card',
     ...tmpCard
   };
 
@@ -123,17 +123,21 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const previewCardAction = (d) => {
     selectedCardId === d.id ? routeExtendCard() : routeSelectCard(d.id);
   };
+  const selectTemplate = () => routeSelectCard(TEMP_ID);
+  const templateSelected = selectedCardId === TEMP_ID;
 
   return {
     ...state,
     ...dispatcherProps,
     previewCardAction,
+    selectTemplate,
     cardSets,
     selectedCard,
     selectedTags,
     dataView,
     selectedCardId,
     extCardId,
+    templateSelected,
     children
   };
 };

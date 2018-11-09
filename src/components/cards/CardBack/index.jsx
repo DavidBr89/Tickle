@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import Trash2 from 'react-feather/dist/icons/trash-2';
 import Minimize from 'react-feather/dist/icons/minimize';
 import Maximize from 'react-feather/dist/icons/maximize';
 
@@ -11,31 +10,6 @@ import BackAuthor from './BackAuthor';
 import { MapAreaControl } from './MapAreaControl';
 
 //
-const DeleteButton = ({ style, className, onClick }) => (
-  <button
-    className={`m-1 btn btn-black bg-danger ${className}`}
-    type="button"
-    style={{
-      alignItems: 'center',
-      ...style
-    }}
-    onClick={onClick}
-  >
-    <Trash2 size={30} />
-  </button>
-);
-
-DeleteButton.propTypes = {
-  style: PropTypes.object,
-  onClick: PropTypes.func,
-  className: PropTypes.string
-};
-
-DeleteButton.defaultProps = {
-  style: {},
-  onClick: d => d,
-  className: ''
-};
 
 const BackField = ({
   onClick,
@@ -134,22 +108,9 @@ class CardBack extends Component {
 
   render() {
     const {
-      loc,
-      uiColor,
-      edit,
-      setMapRadius,
-      mapRadius,
-      onFlip,
-      onDelete,
-      tagColorScale,
-      id: cardId,
-      uid,
-      style,
-      onClose,
-      className,
-      fetchAuthorData,
-      fetchComments,
-      addComment, authUser
+      loc, edit, setMapRadius, mapRadius, onFlip, onDelete,
+      tagColorScale, id: cardId, uid, style, onClose, className,
+      fetchAuthorData, fetchComments, addComment, authUser, controls
     } = this.props;
 
     const { extended } = this.state;
@@ -209,12 +170,7 @@ class CardBack extends Component {
           onClose={onClose}
           style={{ width: '100%', flexShrink: 0 }}
         >
-          {edit ? (
-            <DeleteButton
-              onClick={onDelete}
-              style={{ width: '20%' }}
-            />
-          ) : null}
+          {controls}
         </CardControls>
       </div>
     );

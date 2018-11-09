@@ -27,7 +27,7 @@ const SignUpPage = ({ match, ...props }) => {
         <div className="flex-grow flex justify-center items-center">
           <h1>
 SignUp
-            {admin ? 'Admin' : null}
+            {admin ? ' Admin' : null}
           </h1>
         </div>
       }
@@ -72,7 +72,7 @@ class SignUpForm extends Component {
       username, email, fullname, passwordOne, img, interests
     } = this.state;
     const {
-      history, onSetAuthUser, admin, signUp, userEnv
+      history, admin, signUp, userEnv
     } = this.props;
 
     const user = {
@@ -86,8 +86,8 @@ class SignUpForm extends Component {
     })
       .then(() => {
         this.setState(() => ({ ...INITIAL_STATE }));
-        // todo
-        history.push(routes.GEO_VIEW.path);
+        console.log('routes geo view', routes.GEO_VIEW.path);
+        history.push(`/${userEnv}/${routes.GEO_VIEW.path}`);
       })
       .catch((error) => {
         console.log('error', error);
@@ -227,11 +227,18 @@ class SignUpForm extends Component {
 }
 
 const SignUpLink = ({ userEnv }) => (
-  <p>
-    Do not have an account?
-    {' '}
-    <Link to={`${routes.SIGN_UP.path}/${userEnv}`}>Sign Up</Link>
-  </p>
+  <div>
+    <p className="text-lg mb-1">
+      Do not have an account?
+      {' '}
+      <Link to={`/${userEnv}/${routes.SIGN_UP.path}`}>Sign Up</Link>
+    </p>
+    <p className="text-lg">
+      Or register as Administrator?
+      {' '}
+      <Link to={`/${userEnv}/${routes.SIGN_UP.path}/admin`}>Sign Up</Link>
+    </p>
+  </div>
 );
 
 const mapDispatchToProps = dispatch => bindActionCreators(

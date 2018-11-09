@@ -1,12 +1,12 @@
-import React, {Component, Fragment} from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import Dimensions from 'Utils/DimensionsWrapper';
 
 // import { addCardFilter, removeCardFilter } from 'Reducers/DataView/actions';
-import {tagFilter} from 'Reducers/DataView/async_actions';
+import { tagFilter } from 'Reducers/DataView/async_actions';
 
 // import * as chromatic from 'd3-scale-chromatic';
 // import hull from 'hull.js';
@@ -18,7 +18,9 @@ import {tagFilter} from 'Reducers/DataView/async_actions';
 // import { getBoundingBox, bounds, setify } from '../utils';
 // import { groupPoints } from './utils';
 
-import {intersection, union, uniqBy, uniq, flatten} from 'lodash';
+import {
+  intersection, union, uniqBy, uniq, flatten
+} from 'lodash';
 // import TopicAnnotationOverlay from './TopicAnnotationOverlay';
 // import dobbyscan from './cluster';
 import TagCloud from './TagCloud';
@@ -98,8 +100,7 @@ class Cluster extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators({tagFilter}, dispatch);
+const mapDispatchToProps = dispatch => bindActionCreators({ tagFilter }, dispatch);
 
 export default connect(
   null,

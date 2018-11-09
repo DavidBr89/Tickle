@@ -49,36 +49,6 @@ import CardTagSearch from '../CardTagSearch';
 
 // const TimoutGrid = ReactTimeout(CardStack);
 
-function SpeechBubble({ ...props }) {
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        transform: 'translate(-50%, -130%)',
-        // zIndex: 6000,
-        background: 'whitesmoke'
-      }}
-    >
-      <div
-        className="m-1"
-        style={{
-          width: 270,
-          // position: 'relative',
-          // zIndex: 4000,
-          border: '2px dashed grey'
-        }}
-      >
-        <div className="m-1">
-          <h3>drag and drop Card to change position</h3>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-SpeechBubble.defaultProps = {};
-
-SpeechBubble.propTypes = {};
 
 class CardAuthorPage extends Component {
   static propTypes = {
@@ -163,7 +133,8 @@ class CardAuthorPage extends Component {
       isSmartphone,
       tagVocabularyCreated,
       extCardId,
-      children
+      children,
+      selectTemplate, templateSelected
     } = this.props;
 
     const slotSize = 100 / 3.5;
@@ -172,11 +143,16 @@ class CardAuthorPage extends Component {
 
     return (
       <DefaultLayout
-        className="w-full h-full flex-col"
-        style={{ position: 'relative', overflow: 'hidden' }}
+        className="relative overflow-hidden w-full h-full flex-col"
         menu={
           <div className="flex-grow flex justify-end items-center">
-            <button type="button" className="btn btn-big">New Card</button>
+            <button
+              type="button"
+              className={`btn btn-lg ${templateSelected && 'btn-black'}`}
+              onClick={selectTemplate}
+            >
+              New Card
+            </button>
             <CardTagSearch
               allTags={tagVocabularyCreated}
               key={filterSet.join(',')}
@@ -198,7 +174,6 @@ class CardAuthorPage extends Component {
             transition: 'opacity 0.5s',
             pointerEvents: 'none',
             height: height / 5
-            // opacity: cardPanelVisible ? 1 : 0
           }}
         >
           <CardStack

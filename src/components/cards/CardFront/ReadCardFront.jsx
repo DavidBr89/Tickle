@@ -1,19 +1,19 @@
-import React, {Component, PureComponent} from 'react';
+import React, { Component, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
 // import { css } from 'aphrodite';
 
 import MediaChallenge from 'Components/Challenges/MediaChallenge';
-import {TagInput, PreviewTags} from 'Utils/Tag';
-import {Modal, ModalBody} from 'Utils/Modal';
+import { TagInput, PreviewTags } from 'Utils/Tag';
+import { Modal, ModalBody } from 'Utils/Modal';
 
-import {MediaOverview} from 'Components/cards/MediaSearch';
+import { MediaOverview } from 'Components/cards/MediaSearch';
 
+import { IMG } from 'Constants/mediaTypes';
 import placeholderImgSrc from '../placeholder.png';
 
 import CardFront from './CardFront';
 
-import {IMG} from 'Constants/mediaTypes';
 
 class ReadCardFront extends Component {
   static propTypes = {
@@ -59,7 +59,7 @@ class ReadCardFront extends Component {
     dialogKey: null
   };
 
-  closeModal = () => this.setState({dialogKey: null});
+  closeModal = () => this.setState({ dialogKey: null });
 
   modalReadContent(field) {
     const {
@@ -84,7 +84,7 @@ class ReadCardFront extends Component {
     const FooterBtn = () => (
       <button
         className="btn-black"
-        onClick={() => this.setState({dialogKey: null})}
+        onClick={() => this.setState({ dialogKey: null })}
       >
         Close
       </button>
@@ -92,9 +92,9 @@ class ReadCardFront extends Component {
 
     switch (field) {
       case 'title':
-        return <p style={{width: '100%'}}>{title}</p>;
+        return <p style={{ width: '100%' }}>{title}</p>;
       case 'Tags':
-        return <p style={{width: '100%'}}>{tags}</p>;
+        return <p style={{ width: '100%' }}>{tags}</p>;
       case 'Description':
         return (
           <ModalBody
@@ -102,7 +102,7 @@ class ReadCardFront extends Component {
             title="Description"
             footer={<FooterBtn />}
           >
-            <p style={{width: '100%'}}>{description}</p>
+            <p style={{ width: '100%' }}>{description}</p>
           </ModalBody>
         );
       case 'Img': {
@@ -133,7 +133,6 @@ class ReadCardFront extends Component {
         );
       }
       case 'Challenge':
-        // TODO
         return React.cloneElement(challengeComp, {
           onClose: this.closeModal,
           challengeSubmission
@@ -144,15 +143,12 @@ class ReadCardFront extends Component {
   }
 
   btnText = () => {
-    const {challengeSubmission} = this.props;
-    const challengeSubmitted =
-      challengeSubmission !== null && challengeSubmission.completed;
-    const challengeStarted =
-      challengeSubmission !== null && !challengeSubmission.completed;
+    const { challengeSubmission } = this.props;
+    const challengeSubmitted = challengeSubmission !== null && challengeSubmission.completed;
+    const challengeStarted = challengeSubmission !== null && !challengeSubmission.completed;
 
     // TODO: fix later
-    const challengeCompleted =
-      challengeSubmission !== null && challengeSubmission.feedback;
+    const challengeCompleted = challengeSubmission !== null && challengeSubmission.feedback;
 
     if (challengeCompleted) return 'See Results';
 
@@ -184,14 +180,14 @@ class ReadCardFront extends Component {
       onClose
     } = this.props;
 
-    const {dialogKey, challengeSubmitted} = this.state;
+    const { dialogKey, challengeSubmitted } = this.state;
     const modalVisible = dialogKey !== null;
     return (
       <React.Fragment>
         <Modal
           visible={modalVisible}
           title={dialogKey}
-          onClose={() => this.setState({dialogKey: null})}
+          onClose={() => this.setState({ dialogKey: null })}
         >
           {this.modalReadContent(dialogKey)}
         </Modal>
@@ -200,24 +196,21 @@ class ReadCardFront extends Component {
           {...this.props}
           onClose={onClose}
           onFlip={onFlip}
-          onImgClick={() =>
-            this.setState({
-              dialogKey: 'Img'
-            })
+          onImgClick={() => this.setState({
+            dialogKey: 'Img'
+          })
           }
-          onDescriptionClick={() =>
-            this.setState({
-              dialogKey: 'Description'
-            })
+          onDescriptionClick={() => this.setState({
+            dialogKey: 'Description'
+          })
           }
-          onMediaClick={() => this.setState({dialogKey: 'Media'})}
+          onMediaClick={() => this.setState({ dialogKey: 'Media' })}
           bottomControls={
             <button
-              className="btn-black"
-              onClick={() =>
-                this.setState({
-                  dialogKey: 'Challenge'
-                })
+              className="btn btn-black"
+              onClick={() => this.setState({
+                dialogKey: 'Challenge'
+              })
               }
             >
               {this.btnText()}
