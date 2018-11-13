@@ -20,6 +20,7 @@ import * as asyncCardActions from 'Reducers/Cards/async_actions';
 import * as routeActions from 'Reducers/DataView/async_actions';
 
 import cardRoutes from 'Src/Routes/cardRoutes';
+import makeBackCardFuncs from './backCardDbFuncs';
 import EditCardFront from './CardFront/EditCardFront';
 
 import CardBack from './CardBack';
@@ -82,9 +83,10 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const {
     mapViewport, width, height, authUser, tagVocabulary
   } = state;
-  // const {uid} = authUser;
+  const { uid: authorId } = authUser;
+
   const {
-    match, location, history, uid, id: cardId
+    match, location, history, id: cardId
   } = ownProps;
 
   // TODO: BUILD IN check
@@ -120,9 +122,18 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     : updateCard(cardData));
 
   const db = DB(userEnv);
-  const fetchComments = cardId ? () => db.readComments(cardId) : null;
-  const addComment = text => db.addComment({ uid, cardId, text });
-  const fetchAuthorData = () => db.getDetailedUserInfo(uid);
+
+  const filePath = `cards/${authorId}/${cardId}`;
+  const removeFromStorage = fileId => db.removeFileFromEnv({
+    path: filePath, id: fileId
+  });
+  const addToStorage = ({ file, id }) => db.addFileToEnv({ file, path: filePath, id });
+  // const fetchComments = cardId ? () => db.readComments(cardId) : null;
+  // const addComment = text => db.addComment({ uid: authorId, cardId, text });
+
+  const backCardFuncs = makeBackCardFuncs({
+    userEnv, cardId, playerId: authorId, authorId
+  });
 
   const onClose = routeExtendCard;
 
@@ -138,9 +149,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     flipped,
     removeCard,
     tagVocabulary,
-    fetchComments,
-    addComment,
-    fetchAuthorData,
+    addToStorage,
+    removeFromStorage,
+    ...backCardFuncs,
     ...ownProps
   };
 };

@@ -22,11 +22,10 @@ class CommentsWrapper extends Component {
   state = { comments: [], extended: false };
 
   componentDidMount() {
-    const { cardId, fetchComments } = this.props;
-    if (fetchComments) {
-      fetchComments().then((comments) => {
-        console.log('fetchComments', comments);
-        this.setState({ comments });
+    const { cardId, commentPromises } = this.props;
+    commentPromises.then((comments) => {
+      console.log('fetchComments', comments);
+      this.setState({ comments });
       // const allProms = comments.map(c =>
       //   db.getUser(c.uid).then(user => ({...c, ...user})),
       // );
@@ -34,19 +33,19 @@ class CommentsWrapper extends Component {
       // Promise.all(allProms).then(commentsWithUser => {
       //   this.setState({comments: commentsWithUser});
       // });
-      });
-    }
+    });
   }
 
   render() {
     const { comments } = this.state;
     const {
-      author, cardId, addComment, extended
+      author, cardId, addComment, extended, userInfoPromise
     } = this.props;
     const { uid } = author;
     return (
       <CommentList
         extended={extended}
+        userInfoPromise={userInfoPromise}
         data={comments}
         author={author}
         cardId={cardId}
@@ -66,31 +65,18 @@ class CommentsWrapper extends Component {
 }
 
 const CommentList = ({
-  data,
-  author,
-  cardId,
-  stylesheet,
-  onAdd,
-  extended
+  data, author, onAdd, extended
 }) => {
   const { uid } = author;
-  // const slicedComments = data.slice(0, extended ? 20 : 2);
-  // console.log('slicedComments', slicedComments);
   return (
     <div
       className="m-2 flex-col-wrapper flex-grow flex-shrink"
     >
-      {data.length === 0 && (
-        <h1>'No Comments'</h1>
-      )}
-      <div className="mb-auto overflow-scroll">
-        {data.map(({ ...c }) => (
-          <OneComment {...c} />
-        ))}
+      {data.length === 0 && (<h1>No Comments</h1>)}
+      <div className="mb-auto overflow-auto">
+        {data.map(({ ...c }) => (<OneComment {...c} />))}
       </div>
-      {extended && (
-        <AddComment className="" onClick={onAdd} />
-      )}
+      {extended && (<AddComment onClick={onAdd} />)}
     </div>
   );
 };
@@ -103,38 +89,51 @@ CommentList.defaultProps = {
   stylesheet: {}
 };
 
-const formatTime = timeFormat('%B %d, %Y');
-const OneComment = ({
-  photoURL, text, username, date
-}) => (
-  <div className="flex mb-2">
-    <div className="mr-2 border-2 border-black flex-col-wrapper justify-center">
-      {photoURL !== null
-        ? <img
-          width="30"
-          height="30"
-          src={photoURL}
-          alt="alt"
-        /> : <User />
 
-      }
-    </div>
-    <div className="media-body">
-      <div>
-        {text}
+class OneComment extends Component {
+  static propTypes = {
+    date: PropTypes.object,
+    text: PropTypes.string
+  };
+
+  static defaultProps ={ date: new Date(), text: '' }
+
+
+  render() {
+    const {
+      text, username, photoURL, date
+    } = this.props;
+
+    const formatTime = timeFormat('%B %d, %Y');
+
+    return (<div className="flex mb-2">
+      <div className="mr-2 border-2 border-black flex-col-wrapper justify-center">
+        {photoURL !== null
+          ? <img
+            width="30"
+            height="30"
+            src={photoURL}
+            alt="alt"
+          /> : <User />
+
+        }
       </div>
       <div>
-        <small className="italic">
+        <div className="mb-1">
+          {text}
+        </div>
+        <div className="italic text-sm">
           {' '}
-          {username}
-          {' '}
+          <span className="font-bold">{username}</span>
+          {', '}
           {formatTime(date)}
-        </small>
-
+        </div>
       </div>
-    </div>
-  </div>
-);
+        </div>
+    );
+  }
+}
+
 
 OneComment.defaultProps = {
   photoURL: null

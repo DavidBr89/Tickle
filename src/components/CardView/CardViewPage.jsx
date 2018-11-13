@@ -6,12 +6,7 @@ import DefaultLayout from 'Components/DefaultLayout';
 
 
 import ConnectedCard from 'Cards/ConnectedCard';
-import {
-  Modal,
-  BareModal,
-  ModalBody,
-  ConnectedResponsiveModal
-} from 'Utils/Modal';
+import { BlackModal, ConnectedResponsiveModal } from 'Utils/Modal';
 import CardTagSearch from '../CardTagSearch';
 import CardStack from '../CardStack';
 
@@ -168,12 +163,12 @@ class CardViewPage extends Component {
         </div>
         <LoadingScreen style={{ marginTop: 25 }} visible={isLoadingCards} />
 
-        <BareModal
+        <BlackModal
           visible={extendedCard !== null}
           style={{ margin: `${!isSmartphone ? '2.5rem' : ''} auto` }}
         >
           {selectedCard !== null && <ConnectedCard {...selectedCard} />}
-        </BareModal>
+        </BlackModal>
 
         {children}
       </DefaultLayout>

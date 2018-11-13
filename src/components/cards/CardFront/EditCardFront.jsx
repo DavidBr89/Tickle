@@ -33,8 +33,8 @@ class NumberInput extends Component {
     const { value } = this.state;
     if (value !== prevState.value) {
       if (this.isPosInt()) {
-        // this.props.onChange(value);
         this.setState({ error: null });
+
       } else {
         this.setState({ error: 'Input is not a positive Integer' });
       }
@@ -266,7 +266,7 @@ class EditCardFront extends PureComponent {
   modalWriteContent() {
     const { data, dialog } = this.state;
     const { challenge } = data;
-    const { tagVocabulary } = this.props;
+    const { tagVocabulary, addToStorage, removeFromStorage} = this.props;
 
     const {
       title, tags, img, description, media, points
@@ -345,9 +345,10 @@ class EditCardFront extends PureComponent {
             onClose={this.onCloseModal}
           >
             <MediaSearch
+              addToStorage={addToStorage}
+              removeFromStorage={removeFromStorage}
               selectedMedia={media}
               onChange={(mediaItems) => {
-                console.log('mediasearch', mediaItems);
                 this.updateField({ media: mediaItems });
               }}
             />

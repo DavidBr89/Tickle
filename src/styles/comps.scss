@@ -26,6 +26,10 @@
   @apply .bg-black .text-white .text-xl;
 }
 
+.btn-disabled {
+  opacity: 0.5;
+}
+
 .btn-big {
   @apply .p-3;
 }

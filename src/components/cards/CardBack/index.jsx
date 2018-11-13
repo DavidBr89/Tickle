@@ -110,7 +110,7 @@ class CardBack extends Component {
     const {
       loc, edit, setMapRadius, mapRadius, onFlip, onDelete,
       tagColorScale, id: cardId, uid, style, onClose, className,
-      fetchAuthorData, fetchComments, addComment, authUser, controls
+      authorDataPromise, commentPromises, addComment, authUser, controls
     } = this.props;
 
     const { extended } = this.state;
@@ -138,7 +138,7 @@ class CardBack extends Component {
               <BackAuthor
                 uid={uid}
                 extended={extended === 'author'}
-                fetchData={fetchAuthorData}
+                dataPromise={authorDataPromise}
               />
             </BackField>
             <BackField
@@ -159,7 +159,7 @@ class CardBack extends Component {
                 author={authUser}
                 cardId={cardId}
                 extended={extended === 'comments'}
-                fetchComments={fetchComments}
+                commentPromises={commentPromises}
                 addComment={addComment}
               />
             </BackField>

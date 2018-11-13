@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 
+
 import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -24,64 +25,65 @@ import { MediaList } from 'Utils/MediaUpload';
 import { DB } from 'Firebase';
 
 import cardRoutes from 'Src/Routes/cardRoutes';
+import makeBackCardFuncs from './backCardDbFuncs';
 import CardBack from './CardBack';
 import ReadCardFront from './CardFront/ReadCardFront';
 import CardFrame from './CardFrame';
 
-console.log('MediaChallenge', MediaChallenge);
-
 // TODO: outsource
-const ChallengeResult = ({
-  onClose,
-  media,
-  tags,
-  response,
-  title,
-  rating,
-  text
-}) => (
-  <ModalBody
-    onClose={onClose}
-    title={title}
-    style={{ background: 'whitesmoke' }}
-    footer={<button onClick={onClose}> Close </button>}
-  >
-    <div>
-      <h4>Tags</h4>
-      <PreviewTags data={tags} />
-    </div>
-    <div className="flex-full flexCol" style={{ background: 'smokewhite' }}>
-      <div>
-        <h4>User Response</h4>
-        <p>{response}</p>
-      </div>
-      <div>
-        <h4>Submitted Media</h4>
-        <MediaList
-          data={media}
-          className="mb-3"
-          disabled
-        />
-      </div>
-      <div>
-        <h4>Feedback</h4>
-        <p style={{ width: '100%' }}>{text}</p>
-      </div>
-      <div>
-        <h4>Rating</h4>
-        <StarRating disabled num={5} highlighted={rating} />
-      </div>
-    </div>
-  </ModalBody>
-);
+// const ChallengeResult = ({
+//   onClose,
+//   media,
+//   tags,
+//   response,
+//   title,
+//   rating,
+//   text
+// }) => (
+//   <ModalBody
+//     onClose={onClose}
+//     title={title}
+//     style={{ background: 'whitesmoke' }}
+//     footer={<button onClick={onClose}> Close </button>}
+//   >
+//     <div>
+//       <h4>Tags</h4>
+//       <PreviewTags data={tags} />
+//     </div>
+//     <div className="flex-full flexCol" style={{ background: 'smokewhite' }}>
+//       <div>
+//         <h4>User Response</h4>
+//         <p>{response}</p>
+//       </div>
+//       <div>
+//         <h4>Submitted Media</h4>
+//         <MediaList
+//           data={media}
+//           className="mb-3"
+//           disabled
+//         />
+//       </div>
+//       <div>
+//         <h4>Feedback</h4>
+//         <p style={{ width: '100%' }}>{text}</p>
+//       </div>
+//       <div>
+//         <h4>Rating</h4>
+//         <StarRating disabled num={5} highlighted={rating} />
+//       </div>
+//     </div>
+//   </ModalBody>
+// );
 
 const CardViewable = ({
   flipped,
+  removeFromStorage, addToStorage,
   onSubmitChallenge,
   userEnvSelectedId,
   uid,
   onFlip,
   onClose,
+  challengeSubmission,
   id,
   ...props
 }) => (
@@ -94,13 +96,11 @@ const CardViewable = ({
         onClose={onClose}
         challengeComp={
           <MediaChallenge
+            {...challengeSubmission}
             key={id}
-            onUpdate={(newChallengeSub) => {
-              onSubmitChallenge({
-                cardId: props.id,
-                ...newChallengeSub
-              });
-            }}
+            removeFromStorage={removeFromStorage}
+            addToStorage={addToStorage}
+            onSubmit={onSubmitChallenge}
           />
         }
       />
@@ -144,10 +144,10 @@ const mapDispatchToProps = dispatch => bindActionCreators(
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
   const {
-    location, match, history, id
+    location, match, history, id: cardId, uid: authorId
   } = ownProps;
   const { authUser } = state;
-  const { uid } = authUser;
+  const { uid: playerId } = authUser;
   const { asyncSubmitChallenge } = dispatcherProps;
   // TODO replace by regex
 
@@ -164,30 +164,38 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     routeExtendCard();
   };
 
-  const onSubmitChallenge = (challengeSubmission) => {
-    asyncSubmitChallenge({ playerId: uid, ...challengeSubmission });
-  };
-
-  const onFlip = () => {
-    routeFlipCard();
+  const onSubmitChallenge = (challData) => {
+    asyncSubmitChallenge({
+      ...challData, playerId, cardId, userEnv
+    });
   };
 
   const db = DB(userEnv);
-  const fetchAuthorData = () => {
-    console.log('uid', uid);
-    return db.getDetailedUserInfo(uid);
-  };
-  const fetchComments = id ? () => db.readComments(id) : null;
-  const addComment = text => db.addComment({ uid, cardId: id, text });
+
+  const filePath = `challengeSubmissions/${cardId}/${playerId}`;
+  const removeFromStorage = fileId => db.removeFileFromEnv({
+    path: filePath, id: fileId
+  });
+  const addToStorage = ({ file, id }) => db.addFileToEnv({ file, path: filePath, id });
+
+  const onFlip = routeFlipCard;
+
+  // const authorDataPromise = db.getDetailedUserInfo(authorId);
+  // const fetchComments = cardId ? () => db.readComments(cardId) : null;
+  // const addComment = text => db.addComment({ uid: playerId, cardId, text });
+
+  const backCardFuncs = makeBackCardFuncs({
+    userEnv, cardId, playerId, authorId
+  });
 
   return {
     ...state,
     ...dispatcherProps,
     ...ownProps,
     onSubmitChallenge,
-    fetchAuthorData,
-    fetchComments,
-    addComment,
+    ...backCardFuncs,
+    addToStorage,
+    removeFromStorage,
     onClose,
     onFlip,
     flipped

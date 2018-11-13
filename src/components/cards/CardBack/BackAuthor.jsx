@@ -85,7 +85,7 @@ const BackAuthor = ({
   <div className="flex flex-grow flex-col justify-center" style={style}>
     <AuthorPreview
       {...basicUserInfo}
-      className="flex-col-wrapper flex-grow relative"
+      className="flex flex-col flex-grow relative flex-no-shrink"
     />
     {extended && (
       <AuthorDetails
@@ -100,13 +100,13 @@ BackAuthor.defaultProps = {};
 
 class BackAuthorWrapper extends React.Component {
   static defaultProps = {
-    fetchData: () => new Promise(resolve => resolve(null))
+    fetchData: new Promise(resolve => resolve(null))
   };
 
   componentDidMount() {
-    const { uid, fetchData } = this.props;
+    const { uid, dataPromise } = this.props;
     // TODO OUTSOURCE
-    fetchData().then((authorInfo) => {
+    dataPromise.then((authorInfo) => {
       const {
         interests,
         createdCards,

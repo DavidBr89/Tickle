@@ -135,14 +135,13 @@ export function asyncAddComment(
   };
 }
 
-export function asyncSubmitChallenge({ challengeSubmission, userEnv }) {
-  return function(dispatch, getState) {
+export function asyncSubmitChallenge({ userEnv, ...challengeSubmission }) {
+  return function(dispatch) {
     const db = DB(userEnv);
-    const { cardId, playerId, ...challengeData } = challengeSubmission;
 
     dispatch(submitChallenge(challengeSubmission));
     return db
-      .addChallengeSubmission({ cardId, playerId, challengeData })
+      .addChallengeSubmission(challengeSubmission)
       .then(() => dispatch(submitChallengeSuccess()))
       .catch((err) => {
         throw new Error('error saving challenge submission');

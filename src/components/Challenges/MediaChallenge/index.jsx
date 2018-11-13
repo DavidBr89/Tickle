@@ -1,16 +1,21 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import * as Icon from 'react-feather';
+import { withRouter } from 'react-router-dom';
+import { compose } from 'recompose';
 
-import { ModalBody } from 'Utils/Modal';
+import * as Icon from 'react-feather';
+import withAuthorization from 'Components/withAuthorization';
+
 import MediaUpload from 'Utils/MediaUpload';
 
 import { ScrollView, ScrollElement } from 'Utils/ScrollView';
 
 import ChevronsDown from 'react-feather/dist/icons/chevron-down';
 
-import DelayClick from 'Components/utils/DelayClick';
+import { BlackModal, ModalBody } from 'Utils/Modal';
+
+// import DelayClick from 'Components/utils/DelayClick';
 
 /*
         <Btn
@@ -18,7 +23,7 @@ import DelayClick from 'Components/utils/DelayClick';
           onClick={() => {
             if (!started) {
               this.setState({ started: true });
-              onUpdate({ media, response, completed: false });
+              addChallengeSubmission({ media, response, completed: false });
             } else {
               onRemoveSubmission();
             }
@@ -31,136 +36,36 @@ import DelayClick from 'Components/utils/DelayClick';
         </Btn>
 */
 
-const DefaultControls = ({ ...props }) => {
-  const {
-    media,
-    text,
-    completed,
-    challengeSubmitted,
-    challengeInvalid,
-    challengeStarted,
-    onSubmit,
-    onStart
-  } = props;
+// class AddMedia extends Component {
+//   static propTypes = {
+//     children: PropTypes.node,
+//     className: PropTypes.string
+//   };
+//
+//   render() {
+//     const {
+//       response, media, addToStorage, removeFromStorage
+//     } = this.props;
+//     return (
+//       <div>
+//
+//         <MediaUpload
+//           onAdd={addToStorage}
+//           onRemove={removeFromStorage}
+//           className="flex-grow"
+//           btnText="Upload Media"
+//           media={media}
+//           buttonStyle={{ width: 30 }}
+//           onChange={(newMedia) => {
+//           }}
+//         />
+//       </div>
+//     );
+//   }
+// }
 
-  const iconLock = <Icon.Lock size={15} />;
-  const submitDisabled = challengeInvalid || challengeSubmitted;
-  return (
-    <div
-      style={{
-        display: 'flex',
-        justifyItems: 'space-between',
-        alignItems: 'center'
-      }}
-    >
-      <div className="mr-3">
-        <button
-          className="btn"
-          type="button"
-          disabled={challengeStarted}
-          style={{
-            opacity: challengeStarted && 0.6
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center'
-            }}
-          >
-            <div className="mr-1">
-              {!challengeStarted ? 'Start' : 'Started'}
-            </div>
-            {challengeStarted && <div>{iconLock}</div>}
-          </div>
-        </button>
-      </div>
-      <button
-        type="button"
-        className="btn-black"
-        disabled={submitDisabled}
-        style={{
-          opacity: submitDisabled && 0.6
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center'
-          }}
-        >
-          <div className="mr-1">{completed ? 'Submitted' : 'Submit'}</div>
-          {submitDisabled && <div>{iconLock}</div>}
-        </div>
-      </button>
-    </div>
-  );
-};
 
-const TextAreaControls = ({ onClick }) => (
-  <div style={{ display: 'flex' }}>
-    <button className="btn-black mr-1" onClick={onClick}>
-      <div style={{ display: 'flex' }}>
-        <div>Disable Keyboard</div>
-        <ChevronsDown />
-      </div>
-    </button>
-  </div>
-);
-
-const SubmitInfo = ({ challengeSubmitted, challengeInvalid }) => {
-  if (challengeSubmitted) {
-    return (
-      <div className="alert alert-success mb-3 p-3">
-        <strong>Challenge is submitted!</strong>
-      </div>
-    );
-  }
-
-  if (!challengeInvalid) return null;
-
-  if (challengeInvalid) {
-    return (
-      <div className="alert alert-warning mb-3 p-3">
-        <strong>Please enter some info to fulfill the challenge!</strong>
-      </div>
-    );
-  }
-
-  return null;
-};
-
-const Footer = ({
-  isSmartphone,
-  challengeStarted,
-  challengeSubmitted,
-  challengeInvalid,
-  focusTextArea,
-  onChallengeStart,
-  onChallengeSubmit,
-  onDisableKeyboard
-}) => {
-  const gcontrol = (
-    <DefaultControls
-      challengeStarted={challengeStarted}
-      challengeSubmitted={challengeSubmitted}
-      challengeInvalid={challengeInvalid}
-      onStart={onChallengeStart}
-      onSubmit={onChallengeSubmit}
-    />
-  );
-
-  if (isSmartphone) {
-    return !focusTextArea ? (
-      gcontrol
-    ) : (
-      <TextAreaControls onClick={onDisableKeyboard} />
-    );
-  }
-  return gcontrol;
-};
-
-export default class MediaChallenge extends Component {
+class PureMediaChallenge extends Component {
   static propTypes = {
     className: PropTypes.string,
     description: PropTypes.string,
@@ -175,192 +80,110 @@ export default class MediaChallenge extends Component {
     className: '',
     description: 'placeholder challenge',
     challengeSubmission: null,
-    data: {},
-    styles: {},
-    stylesheet: {},
-    bookmarkable: false,
-    removable: false,
-    isSmartphone: false
+    media: [],
+    response: null
   };
 
   state = {
     media: [],
     response: null,
     completed: false,
-    focusTextArea: false,
-    ...this.props.challengeSubmission,
-    started: this.props.challengeSubmission !== null
+    ...this.props
   };
-
-  componentDidUpdate(prevProps, prevState) {
-    const {
-      focusTextArea, media, response, completed
-    } = this.state;
-    const { onUpdate } = this.props;
-
-    clearTimeout(this.textAreaTimeoutId);
-
-    if (focusTextArea && prevState.focusTextArea !== focusTextArea) {
-      this.scrollTo('textArea');
-    }
-
-    if (media.length !== prevState.media.length) {
-      this.scrollTo('mediaUpload');
-    }
-
-    // if (!completed && !focusTextArea && prevState.focusTextArea) {
-    //   console.log('trigger text area', this.state);
-    //   const sub = { media, response, completed };
-    //   this.textAreaTimeoutId = setTimeout(() => onUpdate(sub), 1000);
-    // }
-    //
-    if (completed && !prevState.completed) {
-      this.scrollTo('info');
-    }
-  }
 
   textAreaTimeoutId = null;
 
-  scrollTo = (name, opts) => {
-    this._scroller.scrollTo(name, opts);
-  };
 
   render() {
     const {
-      // className,
-      description,
-      onUpdate,
-      onClose,
-      styles,
-      stylesheet,
-      title,
-      onSubmit,
-      challengeSubmission,
-      isSmartphone,
-      // smallScreen,
-      bookmarkable,
-      onRemoveSubmission
+      description, addChallengeSubmission, onClose, styles, title, onSubmit,
+      addToStorage, removeFromStorage, media
     } = this.props;
-    const {
-      media, response, completed, started, focusTextArea
-    } = this.state;
 
-    const challengeStarted = challengeSubmission !== null;
-    const challengeSubmitted = completed;
-    const challengeInvalid = media.length === 0 && response === null;
+    const { response, modalVisible } = this.state;
+
+    // const challengeStarted = challengeSubmission !== null;
+    // const challengeSubmitted = completed;
+    // const challengeInvalid = media.length === 0 && response === null;
 
     return (
       <ModalBody
-        onClose={() => {
-          onClose();
-          // if (
-          //   (response !== null && !challengeSubmission) ||
-          //   (challengeSubmission && challengeSubmission.response !== response)
-          // )
-          if (!completed) {
-            onUpdate({ response, media, completed });
-          }
-        }}
+        onClose={onClose}
         title={title}
         footer={
-          <Footer
-            isSmartphone={isSmartphone}
-            challengeStarted={challengeStarted}
-            challengeSubmitted={challengeSubmitted}
-            challengeInvalid={challengeInvalid}
-            focusTextArea={focusTextArea}
-            onChallengeStart={() => {
-              // clearTimeout(this.textAreaTimeoutId);
-              onUpdate({ media, response, completed: false });
-            }}
-            onChallengeSubmit={() => {
-              // clearTimeout(this.textAreaTimeoutId);
-              onUpdate({ media, response, completed: true });
-              this.setState({
-                completed: true,
-                focusTextArea: false,
-                submitted: true
-              });
-            }}
-            onDisableKeyboard={() => {
-              this.setState({ focusTextArea: false });
-            }}
-          />
+          <button
+            type="button"
+            className="btn"
+            onClick={() => onSubmit({
+              media, response, completed: true
+            })}
+          >
+          Submit
+          </button>
         }
       >
-        <ScrollView ref={scroller => (this._scroller = scroller)}>
-          <div
-            className="flex flex-col flex-grow"
-            ref={cont => (this.cont = cont)}
+        <div
+          className="flex flex-col flex-grow"
+        >
+          <div style={{ minHeight: 200 }} className="mb-5">
+            <h2>Description</h2>
+            <p className="flex-no-shrink w-full text-lg">
+              {description}
+            </p>
+          </div>
+
+          <div>
+            <h2>Response</h2>
+            <textarea
+              className="form-control w-full"
+              rows="4"
+              placeholder="write your response"
+              value={response}
+              onChange={(e) => {
+                const text = e.target.value;
+                this.setState({
+                  response: text !== '' ? text : null,
+                  completed: false
+                });
+              }}
+            />
+          </div>
+
+          <button
+            type="button"
+            className="btn w-full"
+            onClick={() => this.setState({ modalVisible: true })}
           >
-            <div
-              className="flex-initial"
-              style={{ width: '100%', flex: '0 0 150px' }}
-            >
-              <p
-                style={{
-                  width: '100%',
-                  maxHeight: '100%',
-                  overflow: 'scroll',
-                  flexShrink: 0,
-                  flexGrow: 0
-                }}
-              >
-                {description}
-              </p>
-            </div>
-
-            <ScrollElement name="textArea">
-              <div
-                className="border-grey"
-                style={{ width: '100%', flex: '0 0 150px' }}
-              >
-                <h5>Response</h5>
-                <textarea
-                  style={{ width: '100%' }}
-                  disabled={challengeSubmitted}
-                  rows="4"
-                  placeholder="write your response"
-                  value={response}
-                  onFocus={() => this.setState({ focusTextArea: true })}
-                  onBlur={() => this.setState({ focusTextArea: false })}
-                  onChange={(e) => {
-                    const text = e.target.value;
-                    this.setState({
-                      response: text !== '' ? text : null,
-                      completed: false
-                    });
-                  }}
-                />
-              </div>
-            </ScrollElement>
-
-            <ScrollElement name="mediaUpload">
+            Add Media
+          </button>
+          <BlackModal
+            visible={modalVisible}
+          >
+            <ModalBody onClose={() => this.setState({ modalVisible: false })}>
               <MediaUpload
                 className="flex-grow"
-                disabled={completed}
-                btnText="Upload Media"
-                uploadPath={id => `challengeSubmissionFiles/${id}`}
                 media={media}
-                stylesheet={stylesheet}
-                buttonStyle={{ width: 30 }}
+                onAdd={addToStorage}
+                onRemove={removeFromStorage}
+                btnText="Upload Media"
                 onChange={(newMedia) => {
-                  this.setState({ media: newMedia, completed: false });
-                  onUpdate({ media: newMedia, response, completed: false });
+                  onSubmit({ media: newMedia, response, completed: false });
                 }}
               />
-            </ScrollElement>
-            <div className="flexCol mb-3" style={{ justifyContent: 'flex-end' }}>
-              <ScrollElement name="info">
-                <SubmitInfo
-                  challengeSubmitted={challengeSubmitted}
-                  challengeInvalid={challengeInvalid}
-                />
-              </ScrollElement>
-            </div>
-          </div>
-        </ScrollView>
+            </ModalBody>
+          </BlackModal>
+
+        </div>
       </ModalBody>
     );
   }
 }
+
+const authCondition = authUser => authUser !== null;
+
+const MediaChallenge = compose(
+  withAuthorization(authCondition),
+  withRouter
+)(PureMediaChallenge);
+
+export default MediaChallenge;

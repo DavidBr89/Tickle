@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import fetchJsonp from 'fetch-jsonp';
 
-import PlusSquare from 'react-feather/dist/icons/plus';
+import PlusSquare from 'react-feather/dist/icons/plus-square';
 import Trash2 from 'react-feather/dist/icons/trash-2';
 import Youtube from 'react-feather/dist/icons/youtube';
 import AlignLeft from 'react-feather/dist/icons/align-left';
@@ -69,7 +69,7 @@ const navIcons = [
           fontweight: 'bold'
         }}
       >
-        Upload
+        upload
       </div>
     )
   },
@@ -81,13 +81,14 @@ const navIcons = [
 
 const userContentUploadPath = id => `media/${id}`;
 
-const UploadUserContent = ({
-  onChange, addToStorage, removeFromStorage, className, ...props
-}) => (
+const UploadUserContent = ({ onChange, className, ...props }) => (
   <MediaUpload
     className="flex flex-col flex-grow"
-    onAdd={addToStorage}
-    onRemove={removeFromStorage}
+    style={{ width: '100%', height: '60%' }}
+    {...props}
+    nodeWrapper={({ url, name, loading }) => (
+      <div style={{ fontSize: 'large' }}>{!loading ? name : 'loading'}</div>
+    )}
     onChange={(media) => {
       onChange(
         media.map(m => ({
@@ -101,15 +102,6 @@ const UploadUserContent = ({
     }}
   />
 );
-
-UploadUserContent.propTypes = {
-  onChange: PropTypes.func.isRequired,
-  addToStorage: PropTypes.func.isRequired,
-  removeFromStorage: PropTypes.func.isRequired,
-  className: PropTypes.string
-};
-
-UploadUserContent.defaultProps = { className: '' };
 
 const giphy = giphyReq({ https: true });
 
@@ -233,19 +225,22 @@ const Iframe = ({
   title, url, onClick, edit, style
 }) => (
   <div
-    className="relative"
-    style={{ ...style }}
+    style={{
+      position: 'relative',
+      ...style,
+      ...fullDim
+      // border: '10px tomato solid'
+    }}
   >
-    <div className="absolute w-full h-full">
+    <div style={{ position: 'absolute', ...fullDim }}>
       <iframe
-        className="absolute"
         title={title}
         type="text/html"
         width="100%"
         height="100%"
         src={url}
         frameBorder="0"
-        style={{ zIndex: -1 }}
+        style={{ zIndex: '-1', position: 'absolute' }}
       />
     </div>
   </div>
@@ -271,7 +266,11 @@ const Article = ({
   url, title, descr, onClick
 }) => (
   <div className="relative overflow-hidden w-full h-full" onClick={onClick}>
-    <h2><NewTabLink href={url}>{title}</NewTabLink></h2>
+    <h2>
+      {' '}
+      <NewTabLink href={url}>{title}</NewTabLink>
+      {' '}
+    </h2>
     <small>{url}</small>
     <div>{descr}</div>
   </div>
@@ -513,17 +512,15 @@ class UrlMedia extends Component {
 
 class MediaSearch extends Component {
   static propTypes = {
-    onChange: PropTypes.func, selectedMedia: PropTypes.arrayOf(PropTypes.object)
+    onChange: PropTypes.func
   };
 
-  static defaultProps = { onChange: () => null, selectedMedia: [] };
+  static defaultProps = { onChange: () => null, media: [] };
 
-  state = { selected: WIKIPEDIA };
+  state = { selected: 'wikipedia', mySelectedMedia: [] };
 
   activeTab = (sel) => {
-    const {
-      selectedMedia, addToStorage, removeFromStorage, onChange
-    } = this.props;
+    const { selectedMedia, onChange } = this.props;
 
     const changeMedia = src => (newMedia) => {
       const sortByDate = arr => arr.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -534,16 +531,15 @@ class MediaSearch extends Component {
     const selArticles = selectedMedia.filter(m => m.source === WIKIPEDIA);
     const selVideos = selectedMedia.filter(m => m.source === YOUTUBE);
     const selGIFs = selectedMedia.filter(m => m.source === GIPHY);
+    // const selPhotos = selectedMedia.filter(m => m.source === FLICKR);
     const selURLs = selectedMedia.filter(m => m.source === URL);
     const selUserContent = selectedMedia.filter(m => m.source === USER_CONTENT);
-    // const selPhotos = selectedMedia.filter(m => m.source === FLICKR);
 
 
     switch (sel) {
       case OVERVIEW:
         return (
           <MediaOverview
-            removeFromStorage={removeFromStorage}
             className="flex-grow flex flex-col"
             data={selectedMedia}
             edit
@@ -623,10 +619,9 @@ class MediaSearch extends Component {
       case USER_CONTENT:
         return (
           <UploadUserContent
-            addToStorage={addToStorage}
-            removeFromStorage={removeFromStorage}
             className="flex flex-col flex-grow"
             media={selUserContent}
+            uploadPath={userContentUploadPath}
             onChange={changeMedia(USER_CONTENT)}
             preSelected={selVideos}
             source={USER_CONTENT}
@@ -639,13 +634,14 @@ class MediaSearch extends Component {
   };
 
   render() {
+    const { selectedMedia, stylesheet, onChange } = this.props;
     const { selected } = this.state;
 
     const btnClass = sel => (sel === selected ? 'btn btn-black' : 'btn');
 
     const navBtn = ({ key, node }) => (
       <button
-        className={`${btnClass(key)} flex-grow m-1`}
+        className={`${btnClass(key)} m-1`}
         type="button"
         onClick={() => this.setState({ selected: key })}
         id={key}
@@ -656,8 +652,8 @@ class MediaSearch extends Component {
 
     return (
       <div className="flex-grow flex flex-col">
-        <div className="mb-3 flex-no-shrink flex" role="tablist">
-          {navIcons.map(navBtn)}
+        <div className="mb-3" role="tablist" style={{ flexShrink: 0 }}>
+          <div style={{ display: 'flex' }}>{navIcons.map(navBtn)}</div>
         </div>
         {this.activeTab(selected)}
       </div>
@@ -678,7 +674,7 @@ function MediaBtn({ selected, onClick }) {
         {selected ? (
           <Trash2 fill="whitesmoke" size={40} />
         ) : (
-          <PlusSquare className="border-4 border-black" fill="whitesmoke" size={40} />
+          <PlusSquare fill="whitesmoke" size={40} />
         )}
       </span>
     </div>
@@ -867,7 +863,7 @@ class MediaOverview extends Component {
     edit: false
   };
 
-  state = { ...this.props };
+  state = { data: this.props.data };
 
   componentDidUpdate(_, { data: oldData }) {
     const { data } = this.state;
@@ -878,10 +874,8 @@ class MediaOverview extends Component {
   }
 
   removeItem = (m) => {
-    const { removeFromStorage } = this.props;
     if (m.source === USER_CONTENT) {
-      removeFromStorage(m.id)
-        .then(() => console.log('removedMediaItem Success', m.id), );
+      db.removeFromStorage(userContentUploadPath(m.id)).then(() => console.log('removedMediaItem Success', m.id), );
     }
     this.setState(oldState => ({
       data: oldState.data.filter(d => d.id !== m.id)

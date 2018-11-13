@@ -63,6 +63,7 @@
     "redux-thunk": "^2.2.0",
     "scroll-into-view": "^1.9.3",
     "tailwindcss": "^0.6.6",
+    "uuid": "^3.3.2",
     "viewport-mercator-project": "^5.0.0"
   },
   "devDependencies": {

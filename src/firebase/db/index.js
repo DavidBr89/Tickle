@@ -58,8 +58,9 @@ export const readCopyUsers = () => {
 
 // const haaike = 'PpNOHOQLtXatZzcaAYVCMQQP5XT2';
 
-const removeFromStorage = (path) => {
-  const imgRef = storageRef.child(path);
+const removeFromFirebaseStorage = ({ path, id }) => {
+  const imgRef = storageRef.child(`${path}/${id}`);
+  console.log('PATH TO DELETE', `${path}/${id}`);
   return imgRef.delete().catch((error) => {
     console.log('error', error);
     throw new Error(`error in deleting file${path} ${error}`);
@@ -176,21 +177,26 @@ const makeCardFuncs = ({
   };
 };
 
+
 const makeCommentFuncs = ({ TICKLE_ENV_REF }) => {
+  const getBasicUser = uid => firestore.collection('users')
+    .doc(uid)
+    .get()
+    .then(doc => new Promise(resolve => resolve(doc.data())));
+
   const readComments = cardId => TICKLE_ENV_REF.collection('cards')
     .doc(cardId)
     .collection('comments')
     .get()
     .then((querySnapshot) => {
-      const comments = [];
+      const commentPromises = [];
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        comments.push({ ...data, date: data.timestamp.toDate() });
+        const { uid } = data;
+        commentPromises.push(getBasicUser(uid).then(usr => ({ ...usr, ...data, date: data.timestamp.toDate() })));
       });
-      return new Promise(
-        resolve => resolve(comments),
-        error => console.log('error in readComments', error),
-      );
+
+      return Promise.all(commentPromises);
     });
 
   const addComment = ({ uid, cardId, text }) => TICKLE_ENV_REF.collection('cards')
@@ -329,7 +335,7 @@ const makeChallengFuncs = ({ TICKLE_ENV_REF }) => {
     .get()
     .then(doc => new Promise(resolve => resolve(doc.data() || null)));
 
-  const addChallengeSubmission = ({ cardId, playerId, challengeData }) => TICKLE_ENV_REF.collection('cards')
+  const addChallengeSubmission = ({ cardId, playerId, ...challengeData }) => TICKLE_ENV_REF.collection('cards')
     .doc(cardId)
     .collection('challengeSubmissions')
     .doc(playerId)
@@ -377,11 +383,18 @@ export default function DB(ENV_STR) {
 
   const addFileToEnv = ({ file, path, id }) => addFileToFirebaseStorage({ file, path: `${ENV_STR}/${path}`, id });
 
+
+  const removeFileFromEnv = ({ path, id }) => {
+    console.log('REMOVE FROM ENV, path', path, 'id', id);
+    return removeFromFirebaseStorage({ path: `${ENV_STR}/${path}`, id });
+  };
+
   return {
     ...challengeFuncs,
     ...cardFuncs,
     ...userFuncs,
     ...commentFuncs,
-    addFileToEnv
+    addFileToEnv,
+    removeFileFromEnv
   };
 }
