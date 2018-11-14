@@ -8,9 +8,10 @@ export function selectCardID(options) {
   return { type: SELECT_CARD_ID, options };
 }
 
-export const EXTEND_CARD_ID = 'EXTEND_CARD_ID_ACC';
-export function extendCard(options) {
-  return { type: EXTEND_CARD_ID, options };
+export const EXTEND_TAB = 'EXTEND_TAB';
+
+export function extendTab() {
+  return { type: EXTEND_TAB };
 }
 
 export const EXTEND_USER_INFO = 'EXTEND_USER_INFO';

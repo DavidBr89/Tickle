@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { ChevronsUp, ChevronsDown, X, ArrowRight } from 'react-feather';
+import {
+  ChevronsUp, ChevronsDown, X, ArrowRight
+} from 'react-feather';
 
 import Tree from 'Components/DataView/Tree';
 
+import { PreviewTags } from 'Components/utils/Tag';
 import RelatedTags from './RelatedTags';
 
-import { PreviewTags } from 'Components/utils/Tag';
 
 const RELATED_TAGS = 'Related Tags';
 const HIERARCHY_CARDS = 'Hierarchy';
@@ -101,14 +103,12 @@ class TabMenu extends Component {
   state = { extended: false, selectedTab: RELATED_TAGS };
 
   flexStyle = () => {
-    const { selectedCard } = this.props;
     const { extended } = this.state;
-    const selected = selectedCard !== null;
 
     if (extended) {
       return '1 0 98%';
     }
-    return selected ? '0 1 30%' : '0 1 10%';
+    return '0 1 10%';
   };
 
   render() {
@@ -119,10 +119,10 @@ class TabMenu extends Component {
       selectedCard,
       onHeaderClick,
       selectedTags,
-      relatedTags
+      relatedTags, extended, onToggle
     } = this.props;
 
-    const { extended, selectedTab } = this.state;
+    const { selectedTab } = this.state;
 
     const selectedTagLabels = selectedTags.map(d => d.tag);
     const relatedTagLabels = relatedTags.map(d => d.tag);
@@ -168,19 +168,8 @@ class TabMenu extends Component {
     };
     return (
       <div
-        className={`${className} `}
+        className={className}
         style={{
-          // position: 'absolute',
-          // width: '100%',
-          width: '100%',
-          // TODO
-          flex: this.flexStyle(),
-          // height: '100%', // extended ? '100%' : '0%',
-          zIndex: 1000000,
-          transition: 'flex 400ms, top 400ms, translate 400ms',
-          // transform: extended ? 'translateY(0%)' : 'translateY(-100%)',
-          // position: 'absolute',
-          // top: extended ? '0%' : '100%',
           ...style
           // display: cardSelected ? 'block' : 'none'
         }}
@@ -201,7 +190,7 @@ class TabMenu extends Component {
             )}
             <button
               className="btn flex align-center"
-              onClick={() => this.setState({ extended: !extended })}
+              onClick={onToggle}
             >
               {extended ? <ChevronsDown /> : <ChevronsUp />}
             </button>

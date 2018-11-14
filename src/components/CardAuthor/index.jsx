@@ -87,7 +87,7 @@ const mapDispatchToProps = dispatch => bindActionCreators(
     ...dataViewActions,
     ...routeActions,
     ...mapActions,
-    screenResize,
+    screenResize
   },
   dispatch,
 );

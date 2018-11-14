@@ -25,9 +25,7 @@ import distanceLoc from 'Components/utils/distanceLoc';
 import { screenResize } from 'Reducers/Screen/actions';
 import * as cardActions from 'Reducers/Cards/actions';
 
-// import * as asyncActions from 'Reducers/Cards/async_actions';
 import * as dataViewActions from 'Reducers/DataView/actions';
-// import * as dataViewAsyncActions from 'Reducers/DataView/async_actions';
 
 import withAuthorization from 'Src/components/withAuthorization';
 import withAuthentication from 'Src/components/withAuthentication';
@@ -60,28 +58,18 @@ const mapStateToProps = (state) => {
     // challengeStateFilter
   } = state.DataView;
 
-  console.log('filterSet', filterSet);
+  const { mapViewport } = state.MapView;
 
-  // TODO: own dim reducer
-  const {
-    width, height, userLocation, mapViewport
-  } = state.MapView;
-
-  // const { authEnv } = state.DataView;
   const {
     authUser: { uid }
   } = state.Session;
 
-  // console.log('mercator', FlatMercatorViewport);
   const mercator = new WebMercatorViewport({ ...mapViewport });
 
-
-  // TODO: make more specific
   return {
     ...state.MapView,
     ...state.DataView,
     uid,
-    // selectedCardId,
     filterSet,
     collectibleCards,
     cardPanelVisible,

@@ -5,10 +5,11 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { compose } from 'recompose';
 
-import { range } from 'd3';
-import { uniq, intersection } from 'lodash';
+// import { range } from 'd3';
+// import intersection from 'lodash/intersection';
+import uniq from 'lodash/uniq';
 
-import CardGrid from './AnimatedGrid';
+import cardRoutes from 'Src/Routes/cardRoutes';
 
 import * as diaryActions from 'Reducers/Diary/actions';
 
@@ -23,8 +24,10 @@ import {
 } from 'Constants/cardFields';
 
 import withAuthorization from 'Components/withAuthorization';
+import withAuthentication from 'Components/withAuthentication';
+import DiaryPage from './DiaryPage';
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   // const { cardSets } = state.Account;
   const { tagColorScale, tagVocabulary, collectibleCards } = state.Cards;
   const { selectedCardType } = state.Diary;
@@ -34,10 +37,7 @@ const mapStateToProps = state => {
   //
   //
   const cards = collectibleCards
-    .map(d =>
-      // const seen = isCardSeen(d);
-      ({ ...d, seen: true })
-    )
+    .map(d => ({ ...d, seen: true }))
     .filter(challengeTypeMap[selectedCardType]);
 
   const numSeenCards = cards.filter(c => c.seen).length;
@@ -54,17 +54,15 @@ const mapStateToProps = state => {
   );
 
   return {
-    authUser: {
-      ...state.Session.authUser
-    },
+    ...state.Session,
     tagVocabulary,
     selectedCardType,
     numSeenCards,
     numCollectibleCards,
     cards,
     userTags,
+    ...state.Cards,
     ...state.Screen,
-    tagColorScale,
     ...state.Diary
   };
 };
@@ -74,46 +72,29 @@ exampleAction: authUser => {
     dispatch(setAuthUser(authUser));
   }
 */
-const mapDispatchToProps = dispatch =>
-  bindActionCreators({ ...diaryActions, ...dataViewActions }, dispatch);
+const mapDispatchToProps = dispatch => bindActionCreators({ ...diaryActions, ...dataViewActions }, dispatch);
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
-  const { match, history } = ownProps;
-  const { cards, tagVocabulary } = stateProps;
+  const { match, history, location } = ownProps;
+  const { path } = match;
+  const { collectibleCards: cards, tagVocabulary } = stateProps;
 
-  const { routeSelectCard, routeExtendCard } = dispatchProps;
+  const {
+    query: { selectedCardId, extended, flipped },
+    routing: { routeSelectCard, routeExtendCard }
+  } = cardRoutes({ history, location });
   // console.log('match', match, history, id);
 
-  const { path } = match;
-  const {
-    selectedCardId = null,
-    showOption = null
-    // flipped = null
-  } = match.params;
-  const extended = showOption === 'extended';
-
-  const selectCard = id => {
-    routeSelectCard({ path, history, id });
-  };
-
-  const extendCard = id => {
-    routeExtendCard({ path, history, id, extended: !extended });
-  };
-
   const selectedCard = cards.find(c => c.id === selectedCardId) || null;
-  const selectedTags =
-    selectedCard !== null
-      ? selectedCard.tags.map(t => tagVocabulary.find(d => d.tag === t))
-      : [];
+  const selectedTags = selectedCard !== null
+    ? selectedCard.tags.map(t => tagVocabulary.find(d => d.tag === t))
+    : [];
 
   const relatedTags = selectedTags
     .map(t => tagVocabulary.find(d => d.tags.includes(t.tag)))
     .filter(t => !selectedTags.map(d => d.tag).includes(t.tag));
-  console.log('relatedTags', relatedTags);
-  // .map(d => d.tag);
 
-  const includesSelectedCard =
-    cards.filter(d => d.id !== null && d.id === selectedCardId).length === 1;
+  const includesSelectedCard = cards.filter(d => d.id !== null && d.id === selectedCardId).length === 1;
 
   return {
     ...stateProps,
@@ -122,8 +103,6 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     selectedCardId: selectedCardId || null,
     selectedTags,
     relatedTags,
-    selectCard,
-    extendCard,
     selectedCard: includesSelectedCard ? selectedCard : null,
     cardExtended: includesSelectedCard && extended,
     cards: cards.sort((a, b) => {
@@ -139,9 +118,10 @@ const authCondition = authUser => authUser !== null;
 export default compose(
   withRouter,
   withAuthorization(authCondition),
+  withAuthentication,
   connect(
     mapStateToProps,
     mapDispatchToProps,
     mergeProps
   )
-)(CardGrid);
+)(DiaryPage);
