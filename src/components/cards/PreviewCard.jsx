@@ -86,20 +86,18 @@ class PreviewCard extends Component {
       return placeholderImg;
     })();
     const contStyle = {
-      padding: '5px',
       boxShadow: '0.2rem 0.2rem grey',
       ...style
     };
 
     return (
       <div
-        className={`${className} overflow-hidden bg-white flex-col-wrapper border-2 border-black`}
+        className={`${className} p-1 overflow-hidden bg-white flex flex-col border-2 border-black`}
         style={contStyle}
         onClick={onClick}
       >
         <div
-          className="flex-col-wrapper flex-grow relative"
-          style={{ background: '#ffd70080' }}
+          className="flex-col-wrapper flex-grow relative bg-yellow-dark"
         >
           {img !== null && (
             <img
@@ -114,7 +112,9 @@ class PreviewCard extends Component {
           )}
 
           <div className="flex-grow flex-col-wrapper">
-            <h1 className=" m-1 flex-no-shrink pl-1 pr-1 bg-white text-xl break-words">{title}</h1>
+            <div className="flex flex-grow flex-no-shrink">
+              <h1 className="flex-grow m-1  pl-1 pr-1 bg-white text-xl truncate-text" style={{ height: '1.25rem' }}>{title || 'No title'}</h1>
+            </div>
             <div className="p-2 flex-1 flex-col-wrapper justify-center">
               <img className="w-full h-full" src={IcAk} style={{ maxHeight: 120 }} />
             </div>

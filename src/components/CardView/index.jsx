@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
 
 import WebMercatorViewport from 'viewport-mercator-project';
 
@@ -10,6 +11,8 @@ import { withRouter } from 'react-router-dom';
 
 import TopicMapVis from 'Components/DataView/TopicMap/TopicMapVis';
 import TagVis from 'Components/DataView/ForceOverlay/TreeMapCluster';
+
+import * as mapActions from 'Reducers/Map/actions';
 
 import UserMap from 'Components/DataView/Map/UserMap';
 
@@ -22,9 +25,9 @@ import distanceLoc from 'Components/utils/distanceLoc';
 import { screenResize } from 'Reducers/Screen/actions';
 import * as cardActions from 'Reducers/Cards/actions';
 
-import * as asyncActions from 'Reducers/Cards/async_actions';
+// import * as asyncActions from 'Reducers/Cards/async_actions';
 import * as dataViewActions from 'Reducers/DataView/actions';
-import * as dataViewAsyncActions from 'Reducers/DataView/async_actions';
+// import * as dataViewAsyncActions from 'Reducers/DataView/async_actions';
 
 import withAuthorization from 'Src/components/withAuthorization';
 import withAuthentication from 'Src/components/withAuthentication';
@@ -95,9 +98,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = dispatch => bindActionCreators(
   {
     ...cardActions,
-    ...asyncActions,
+    ...mapActions,
+    // ...asyncActions,
     ...dataViewActions,
-    ...dataViewAsyncActions,
+    // ...dataViewAsyncActions,
     resizeCardWindow,
     userMove,
     screenResize,
@@ -109,7 +113,6 @@ const mapDispatchToProps = dispatch => bindActionCreators(
 // });
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  console.log('CARDVIEW mergeProps', state, dispatcherProps, ownProps);
   const {
     uid,
     collectibleCards,
@@ -121,28 +124,20 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     height
   } = state;
 
-  const { dataView, history, location } = ownProps;
+  const { history, location, match } = ownProps;
+  const { params } = match;
+  const { userEnv } = params;
+
+  const { changeMapViewport } = dispatcherProps;
 
   const {
     query: { selectedCardId, extended, flipped },
     routing: { routeSelectCard, routeExtendCard }
   } = cardRoutes({ history, location });
 
-
   const extCardId = extended ? selectedCardId : null;
 
   const extendedCard = extCardId !== null ? collectibleCards.find(c => c.id === extCardId) : null;
-
-  // const selectedCardLocked = showOption === 'locked';
-
-  // console.log('match', match);
-
-  // const selectedCardId = selectedCardIds;
-  const {
-    selectCard,
-    seeCard,
-    fetchCollectibleCards
-  } = dispatcherProps;
 
   const isInView = (loc) => {
     const coords = [loc.longitude, loc.latitude];
@@ -154,19 +149,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     if (selectedCardId === d.id) {
       return routeExtendCard();
     }
-    return routeSelectCard(d.id);
+    routeSelectCard(d.id);
+    changeMapViewport({ ...d.loc });
   };
-
-  // console.log('fetchCollectibleCards', fetchCollectibleCards);
-  // const fetchCards = () => {
-  //   fetchCollectibleCards({userEnv});
-  // };
-
-  const preSelectCardId = () => selectCard(null);
-
-  // TODO: hack
-  // const isInDistance = loc =>
-  //   distanceLoc(userLocation, loc) < accessibleRadius / 2 + 1;
 
   const filteredCards = collectibleCards
     .filter(d => filterByTag(d, filterSet))
@@ -179,9 +164,6 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     })
     .filter(d => d.accessible);
 
-  console.log('mergeProps filteredCards', filteredCards);
-  // .filter(applyFilter(challengeStateFilter));
-
   const cardSets = setify(filteredCards);
   const selectedCard = filteredCards.find(d => d.id === selectedCardId) || null;
 
@@ -192,20 +174,27 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     ...dispatcherProps,
     previewCardAction,
     routeSelectCard,
-    // fetchCards,
-    preSelectCardId,
-    dataView,
     cards: filteredCards,
     cardSets,
     selectedTags,
     selectedCardId,
-    // extCardId,
-    // selectedCardLocked,
     extendedCard,
     selectedCard,
+    userEnv,
     ...ownProps
   };
 };
+
+
+function updCardLoc({ x, y }, mapViewport) {
+  const vp = new PerspectiveMercatorViewport(mapViewport);
+
+  const [longitude, latitude] = vp.unproject([
+    x, // || mapViewport.width / 2,
+    y // || mapViewport.height / 2
+  ]);
+  return { latitude, longitude };
+}
 
 function PureMapViewPage({ ...props }) {
   return (

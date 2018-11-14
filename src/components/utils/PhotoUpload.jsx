@@ -65,21 +65,10 @@ export default class PhotoUpload extends Component {
     } = this.props;
 
     return (
-      <div style={{ ...style }}>
+      <div className={className} style={{ ...style }}>
         <div
-          className="mb-3"
-          style={{
-            // TODO: outsource
-            height: '80%',
-            width: '100%',
-            // overflow: 'hidden',
-            // minHeight: 80,
-            overflow: 'hidden',
-            border: `dashed 3px ${uiColor}`,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
+          className="flex-grow w-full h-full overflow-hiden flex justify-center items-center border-dashed border-black border-2"
+          style={style}
         >
           {imgUrl ? (
             <div
@@ -97,14 +86,14 @@ export default class PhotoUpload extends Component {
               />
             </div>
           ) : (
-            <h1
-              className="pl-2 pr-2 text-muted"
+            <div
+              className="text-2xl font-bold pl-2 pr-2 text-muted"
               style={{
                 margin: '20%'
               }}
             >
               {'No Image'}
-            </h1>
+            </div>
           )}
         </div>
         <label
@@ -121,19 +110,12 @@ export default class PhotoUpload extends Component {
           {imgName ? `Edit: ${imgName}` : title}
         </label>
         <input
+          className="mt-3 form-control truncate-text"
           id="file-upload"
-          className="mt-3"
-          style={{
-            border: `${uiColor} 1px solid`,
-            width: '100%',
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis'
-          }}
           type="file"
           accept="image/*"
           capture="environment"
-          onChange={e => {
+          onChange={(e) => {
             const files = [...e.target.files];
             const imgName = e.target.files[0].name;
 
@@ -153,7 +135,7 @@ export default class PhotoUpload extends Component {
                 // maxHeight: 800,
                 resize: true
               })
-              .then(data => {
+              .then((data) => {
                 const img1 = data[0];
                 const base64str = img1.data;
                 const imgExt = img1.ext;

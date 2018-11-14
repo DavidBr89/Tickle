@@ -12,20 +12,17 @@ import Swipe from 'react-easy-swipe';
 
 const isPosInt = n => Number.isInteger(n) && n >= 0;
 
-const TouchableCard = ({touch, onClick, className, ...d}) =>
-  touch && !d.selected ? (
-    <Swipe
-      className={className}
-      onSwipeStart={onClick}
-      style={{width: '100%', height: '100%'}}
-    >
-      <PreviewCard {...d} />
-    </Swipe>
-  ) : (
-    <DelayClick delay={500} onClick={onClick}>
-      <PreviewCard {...d} />
-    </DelayClick>
-  );
+const TouchableCard = ({
+  touch, onClick, className, ...d
+}) => (touch && !d.selected ? (
+  <Swipe onSwipeStart={onClick}>
+    <div className="pl-2 pr-2"><PreviewCard {...d} className="h-full" /></div>
+  </Swipe>
+) : (
+  <DelayClick delay={500} onClick={onClick}>
+    <div className="pl-2 pr-2"><PreviewCard {...d} clas="h-full" /></div>
+  </DelayClick>
+));
 
 function CardStackWrapper({
   className,
@@ -97,7 +94,7 @@ CardStackWrapper.defaultProps = {
   slotSize: 0,
   onClick: d => d,
   unit: 'px',
-  touch: false,
+  touch: false
 };
 
 CardStackWrapper.propTypes = {
@@ -109,7 +106,31 @@ CardStackWrapper.propTypes = {
   slotSize: PropTypes.number,
   onClick: PropTypes.func,
   unit: PropTypes.string,
-  touch: PropTypes.bool,
+  touch: PropTypes.bool
 };
 
-export default CardStackWrapper;
+const CardStackContainer = ({ concealCardStack, ...props }) => {
+  const {
+    height, width, bottom
+  } = props;
+
+  const cardHeight = height / 4;
+  return <div className="overflow-hidden">
+    <div
+      className="mt-24 flex justify-center w-full z-40 pt-2"
+      style={{
+        transition: 'margin 0.5s',
+        pointerEvents: 'none',
+        height: cardHeight,
+        marginTop: bottom ? height - cardHeight / 3 : null
+        // overflow: bottom ? 'hidden' : null
+        // width,
+        // opacity: cardPanelVisible ? 1 : 0
+      }}
+    >
+      <CardStackWrapper {...props} />
+    </div>
+  </div>;
+};
+
+export default CardStackContainer;

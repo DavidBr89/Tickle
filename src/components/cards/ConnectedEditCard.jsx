@@ -20,7 +20,7 @@ import * as asyncCardActions from 'Reducers/Cards/async_actions';
 import * as routeActions from 'Reducers/DataView/async_actions';
 
 import cardRoutes from 'Src/Routes/cardRoutes';
-import makeBackCardFuncs from './backCardDbFuncs';
+import makeBackCardFuncs from './backCardDbMixins';
 import EditCardFront from './CardFront/EditCardFront';
 
 import CardBack from './CardBack';

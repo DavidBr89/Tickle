@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import WebMercatorViewport from 'viewport-mercator-project';
 
 import MapAuthor from 'Components/DataView/Map/MapAuthor';
 
@@ -16,11 +17,7 @@ import { withRouter } from 'react-router-dom';
 
 import { intersection } from 'lodash';
 
-import {
-  resizeCardWindow,
-  userMove,
-  changeMapViewport
-} from 'Reducers/Map/actions';
+import * as mapActions from 'Reducers/Map/actions';
 
 import setify from 'Utils/setify'; // eslint-disable-line
 import { screenResize } from 'Reducers/Screen/actions';
@@ -47,17 +44,17 @@ const mapStateToProps = (state) => {
   // console.log('selectedCardid', selectedCardId);
 
   // TODO: own dim reducer
-  const { width, height, userLocation } = state.MapView;
+  const { mapViewport, userLocation } = state.MapView;
 
-  // const { authEnv } = state.DataView;
   const {
     authUser: { uid, admin }
   } = state.Session;
 
+
   const templateCard = {
     loc: userLocation,
     uid,
-    id: 'temp',
+    id: TEMP_ID,
     ...tmpCard
   };
 
@@ -67,6 +64,7 @@ const mapStateToProps = (state) => {
   );
 
   const cards = [templateCard, ...filteredCards];
+
 
   return {
     ...state.MapView,
@@ -88,10 +86,8 @@ const mapDispatchToProps = dispatch => bindActionCreators(
     ...asyncActions,
     ...dataViewActions,
     ...routeActions,
-    resizeCardWindow,
+    ...mapActions,
     screenResize,
-    changeMapViewport,
-    userMove
   },
   dispatch,
 );
@@ -100,12 +96,18 @@ const mapDispatchToProps = dispatch => bindActionCreators(
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
   const {
-    admin, templateCard, createdCards, cards, filterSet
+    cards, filterSet, mapViewport, templateCard
   } = state;
 
+  const { changeMapViewport } = dispatcherProps;
+
+  const mercator = new WebMercatorViewport({ ...mapViewport });
+
   const {
-    dataView, history, location, children
+    dataView, history, location, match, children
   } = ownProps;
+
+  const { params: { userEnv } } = match;
 
   const {
     query: { selectedCardId, extended },
@@ -122,8 +124,14 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const previewCardAction = (d) => {
     selectedCardId === d.id ? routeExtendCard() : routeSelectCard(d.id);
+    changeMapViewport({ ...d.loc });
   };
-  const selectTemplate = () => routeSelectCard(TEMP_ID);
+
+  const selectTemplate = () => {
+    routeSelectCard(TEMP_ID);
+    changeMapViewport({ ...templateCard.loc });
+  };
+
   const templateSelected = selectedCardId === TEMP_ID;
 
   return {
@@ -138,23 +146,39 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     selectedCardId,
     extCardId,
     templateSelected,
-    children
+    children,
+    userEnv,
+    mercator
   };
 };
 
 const authCondition = authUser => authUser !== null;
 
-function PrivateMapCardAuthorPage({ ...props }) {
+function PureMapCardAuthorPage({ ...props }) {
+  const {
+    asyncUpdateCard, mercator, updateCardTemplate, userEnv
+  } = props;
+
+
+  const cardDrop = (cardData) => {
+    const { x, y } = cardData;
+    const [longitude, latitude] = mercator.unproject([x, y]);
+
+    const updatedCard = { ...cardData, loc: { longitude, latitude } };
+    if (cardData.id === TEMP_ID) updateCardTemplate(updatedCard);
+    else asyncUpdateCard({ cardData: updatedCard, userEnv });
+  };
+
   return (
     <CardAuthorPage {...props}>
-      <MapAuthor {...props} className="absolute" />
+      <MapAuthor {...props} className="absolute" onCardDrop={cardDrop} />
     </CardAuthorPage>
   );
 }
 
-PrivateMapCardAuthorPage.defaultProps = {};
+PureMapCardAuthorPage.defaultProps = {};
 
-PrivateMapCardAuthorPage.propTypes = {};
+PureMapCardAuthorPage.propTypes = {};
 
 function PrivateTopicMapAuthorPage({ ...props }) {
   return (
@@ -176,7 +200,7 @@ const composeScaffold = comp => compose(
   ),
 )(comp);
 
-export const MapCardAuthorPage = composeScaffold(PrivateMapCardAuthorPage);
+export const MapCardAuthorPage = composeScaffold(PureMapCardAuthorPage);
 
 export const TopicMapAuthorPage = composeScaffold(PrivateTopicMapAuthorPage);
 

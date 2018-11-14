@@ -33,7 +33,9 @@ export default class TabNav extends React.Component {
   }
 
   render() {
-    const { className, keys, children, btnStyle, style, ui } = this.props;
+    const {
+      className, keys, children, btnStyle, style, ui
+    } = this.props;
     const { selected } = this.state;
 
     const updState = sel => () => this.setState({ selected: sel });
@@ -41,40 +43,23 @@ export default class TabNav extends React.Component {
     return (
       <div className={className} style={style}>
         <div
-          className="mb-3 nav"
-          style={{
-            display: 'flex',
-            // justifyContent: 'center',
-            flexWrap: 'no-wrap'
-          }}
+          className="flex-no-shrink mb-3 nav flex flex-no-wrap"
           role="tablist"
         >
           {keys.map(key => (
-            <div className="pr-1">
-              <button
-                style={{ width: '100%' }}
-                className={`mr-1 ${key === selected ? 'btn btn-black' : 'btn'}`}
-                type="button"
-                onClick={updState(key)}
-                id={key}
-              >
-                <div
-                  style={{
-                    // TODO: does not work
-                    textOverflow: 'ellipsis'
-                  }}
-                >
-                  {key}
-                </div>
-              </button>
-            </div>
+            <button
+              type="button"
+              className={`w-full mr-1 flex-grow ${key === selected ? 'btn btn-black' : 'btn'}`}
+              onClick={updState(key)}
+              id={key}
+            >
+              {key}
+            </button>
           ))}
           {ui}
         </div>
-        <div className="flex flex-col">
-          <div role="tabpanel" style={{flex: '1 1 100%'}}>
-            {children(selected)}
-          </div>
+        <div className="flex-grow flex flex-col">
+          {children(selected)}
         </div>
       </div>
     );

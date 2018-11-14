@@ -11,7 +11,7 @@ import {
   ADD_CARD_FILTER,
   REMOVE_CARD_FILTER,
   FILTER_CARDS,
-  TOGGLE_CARD_PANEL,
+  CONCEAL_CARD_STACK,
   FILTER_BY_CHALLENGE_STATE,
   FLIP_CARD
   // ADD_CARD_FILTER,
@@ -22,7 +22,7 @@ import {
 const INITIAL_STATE = {
   // dataView: 'topic',
   // authEnv: false,
-  cardPanelVisible: true,
+  cardStackBottom: false,
   // selectedCardId: null,
   extCard: null,
   filterSet: [],
@@ -85,8 +85,8 @@ export default function dataViewReducer(state = INITIAL_STATE, action) {
       return { ...state, cardFlipped };
     }
 
-    case TOGGLE_CARD_PANEL: {
-      return { ...state, cardPanelVisible: !state.cardPanelVisible };
+    case CONCEAL_CARD_STACK: {
+      return { ...state, cardStackBottom: !state.cardStackBottom };
     }
 
     case FILTER_BY_CHALLENGE_STATE: {

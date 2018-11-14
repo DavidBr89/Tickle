@@ -1,6 +1,7 @@
 import React, { Component, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
+import IcAk from 'Styles/alphabet_icons/ic_ak.svg';
 
 import { Edit } from 'react-feather';
 
@@ -62,7 +63,6 @@ export const PreviewTags = ({
       {tagData.map(t => (
         <div className="tag-label text-xl mr-1 mb-1">
           {t}
-          {' '}
         </div>
       ))}
     </div>
@@ -95,15 +95,17 @@ const ImgOverlay = ({
       ...style
     }}
   >
-    <img
-      src={src || placeholderImgSrc}
-      alt="Card img"
-      style={{
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover'
-      }}
-    />
+    { src
+      ? <img
+        src={src}
+        alt="Card img"
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover'
+        }}
+      /> : <div className="w-full h-full bg-yellow-dark p-8"><img className="w-full h-full" src={IcAk} /></div>
+    }
     <div
       style={{
         position: 'absolute',
@@ -296,26 +298,22 @@ class CardFront extends Component {
     // console.log('mediaIcons', mediaIcons);
     return (
       <div
-        style={{
-          height: '100%',
-          width: '100%',
-          ...style
-        }}
-        className={`flex flex-col ${className}`}
+        style={{ ...style }}
+        className={`flex flex-col w-full h-full ${className}`}
       >
         <ImgOverlay
-          onClick={!edit ? onImgClick : null}
+          onClick={onImgClick}
           src={img ? img.url : null}
           style={{
             flex: '0 1 50%',
-            cursor: !edit && 'pointer'
+            cursor: 'pointer'
           }}
         >
           <div className="absolute z-10 w-full h-full flex items-end">
             {edit && (
               <EditIcon
                 className="m-1 p-1 text-white"
-                onClick={edit ? onImgClick : null}
+                onClick={onImgClick}
               />
             )}
           </div>

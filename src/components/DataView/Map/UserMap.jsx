@@ -70,15 +70,6 @@ class UserMap extends Component {
 
   state = { ...this.props };
 
-  componentDidMount() {
-    console.log('mapgl', this.mapgl);
-    const map = this.mapgl.getMap();
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { nodes, selectedCardId, maxZoom } = this.props;
-  }
-
   render() {
     const {
       colorScale,
@@ -86,7 +77,6 @@ class UserMap extends Component {
       disabled,
       children,
       maxZoom,
-      viewport,
       userLocation,
       preview,
       width,
@@ -97,17 +87,15 @@ class UserMap extends Component {
       routeSelectCard,
       selectedCardId,
       className,
-      style
+      style, mercator, changeMapViewport
     } = this.props;
 
-    const { latitude, longitude, zoom } = viewport;
-
-    const vp = new PerspectiveMercatorViewport({ ...viewport, width, height });
+    const { latitude, longitude, zoom } = mercator;
 
 
-    const locNodes = geoProject({ viewport: vp, data: cards });
+    const locNodes = geoProject({ viewport: mercator, data: cards });
 
-    const userPos = vp.project([userLocation.longitude, userLocation.latitude]);
+    const userPos = mercator.project([userLocation.longitude, userLocation.latitude]);
 
     const accessibleRadius = geometricRadius(latitude, 50, zoom);
 
@@ -121,10 +109,7 @@ class UserMap extends Component {
           width={width}
           height={height}
           onViewportChange={(newViewport) => {
-            // if (!isCardDragging) {
-            this.props.changeMapViewport({ ...newViewport });
-            if (selectedCardId !== null) routeSelectCard(null);
-            // }
+            changeMapViewport({ ...newViewport });
           }}
           dragPan={!isCardDragging}
           dragRotate={false}
@@ -208,7 +193,7 @@ class UserMap extends Component {
             style={{ position: 'absolute', bottom: 0, right: 0 }}
           >
             <button
-              className="btn"
+              className="p-3 m-2 rounded-full btn "
               onClick={() => this.props.changeMapViewport({
                 width,
                 height,
@@ -216,15 +201,6 @@ class UserMap extends Component {
                 ...userLocation
               })
               }
-              className="p-3 m-2"
-              style={{
-                border: null,
-                background: 'lightgrey',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
             >
               <MapPin />
             </button>

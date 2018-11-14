@@ -23,17 +23,7 @@ import DragElement from 'Components/DataView/DragAndDrop/DragElement';
 
 import Map from 'Components/DataView/ForceOverlay/Map';
 
-function updCardLoc({ x, y }, mapViewport) {
-  const vp = new PerspectiveMercatorViewport(mapViewport);
-
-  const [longitude, latitude] = vp.unproject([
-    x, // || mapViewport.width / 2,
-    y // || mapViewport.height / 2
-  ]);
-  return { latitude, longitude };
-}
-
-const CardAuthorOverlay = DragDropContextProvider((props) => {
+const MapAuthor = DragDropContextProvider((props) => {
   const {
     onCardDrop,
     isCardDragging,
@@ -70,31 +60,6 @@ const CardAuthorOverlay = DragDropContextProvider((props) => {
     />
   ));
 
-  // const selectComp = () => {
-  //   switch (dataView) {
-  //     case GEO:
-  //       return (
-  //         <Map
-  //           width={width}
-  //           height={height}
-  //           preview={d => routeSelectCard(d.id)}
-  //           nodes={cards}
-  //           routeSelectCard={routeSelectCard}
-  //         >
-  //           {dragger}
-  //         </Map>
-  //       );
-  //     case FLOORPLAN:
-  //       return (
-  //         <TopicMap {...props} width={width} height={height} data={cards} zoom>
-  //           {dragger}
-  //         </TopicMap>
-  //       );
-  //     default:
-  //       return null;
-  //   }
-  // };
-
   return (
     <DropTargetCont
       dropHandler={onCardDrop}
@@ -115,51 +80,4 @@ const CardAuthorOverlay = DragDropContextProvider((props) => {
   );
 });
 
-function mapStateToProps(state) {
-  return {
-    ...state.MapView,
-    ...state.Cards,
-    ...state.DataView,
-    ...state.Screen,
-    userLocation: state.MapView.userLocation,
-    authUser: state.Session.authUser
-  };
-}
-
-const mapDispatchToProps = dispatch => bindActionCreators(
-  { updateCardTemplate, asyncUpdateCard }, dispatch);
-
-const mergeProps = (state, dispatcherProps, ownProps) => {
-  const {
-    mapViewport, width, height, authUser
-  } = state;
-  const { dataView, selectedCardId } = ownProps;
-  const { asyncUpdateCard, updateCardTemplate } = dispatcherProps;
-
-  const viewport = { ...mapViewport, width, height };
-
-  const onCardDrop = (cardData) => {
-    console.log('card drop data', cardData);
-    const { x, y } = cardData;
-    const loc = updCardLoc({ x, y }, viewport);
-    const updatedCard = { ...cardData, loc };
-    // TODO: fix user env
-    if (cardData.id === 'temp') updateCardTemplate(updatedCard);
-    else asyncUpdateCard({ cardData: updatedCard, userEnv: 'staging' });
-  };
-
-  return {
-    ...state,
-    ...dispatcherProps,
-    onCardDrop,
-    ...ownProps
-  };
-};
-
-const ConnectedCardAuthorOverlay = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-  mergeProps
-)(CardAuthorOverlay);
-
-export default ConnectedCardAuthorOverlay;
+export default MapAuthor;

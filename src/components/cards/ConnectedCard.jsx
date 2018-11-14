@@ -21,11 +21,11 @@ import { ModalBody } from 'Utils/Modal';
 import { PreviewTags } from 'Utils/Tag';
 // import { BigButton } from './layout';
 
-import { MediaList } from 'Utils/MediaUpload';
+// import { MediaList } from 'Utils/MediaUpload';
 import { DB } from 'Firebase';
 
 import cardRoutes from 'Src/Routes/cardRoutes';
-import makeBackCardFuncs from './backCardDbFuncs';
+import makeBackCardFuncs from './backCardDbMixins';
 import CardBack from './CardBack';
 import ReadCardFront from './CardFront/ReadCardFront';
 import CardFrame from './CardFrame';

@@ -8,7 +8,7 @@ import DefaultLayout from 'Components/DefaultLayout';
 import ConnectedCard from 'Cards/ConnectedCard';
 import { BlackModal, ConnectedResponsiveModal } from 'Utils/Modal';
 import CardTagSearch from '../CardTagSearch';
-import CardStack from '../CardStack';
+import CardStackContainer from '../CardStack';
 
 // import { StyledButton } from 'Utils/StyledComps';
 
@@ -40,7 +40,6 @@ class CardViewPage extends Component {
     width: PropTypes.number,
     height: PropTypes.number,
     previewCardAction: PropTypes.func,
-    selectCard: PropTypes.func,
     filterCards: PropTypes.func,
     addCardFilter: PropTypes.func,
     setDataView: PropTypes.func,
@@ -58,7 +57,6 @@ class CardViewPage extends Component {
     width: 500,
     height: 500,
     previewCardAction: d => d,
-    selectCard: d => d,
     filterCards: d => d,
     addCardFilter: d => d,
     setDataView: d => d,
@@ -95,32 +93,24 @@ class CardViewPage extends Component {
       // width,
       height,
       previewCardAction,
-      selectCard,
       filterCards,
       addCardFilter,
       tagVocabulary,
-      // setDataView,
-      // filterSet = [],
       tagColorScale,
       isSmartphone,
       cardPanelVisible,
       toggleCardPanel,
       filterByChallengeState,
       isLoadingCards,
-      seeCard,
       extendedCard,
       selectedCard,
       width,
       children,
-      extCard
+      concealCardStack, cardStackBottom, filterSet
     } = this.props;
 
-    console.log('this props', this.props);
-    const filterSet = [];
-    // const slotSize = width / 3;
     // const cardStackWidth = width;
     const slotSize = Math.min(width / 3.5, 200);
-    console.log('Filterset', filterSet);
     // const cardStackWidth = width;
 
     return (
@@ -128,7 +118,8 @@ class CardViewPage extends Component {
         className="w-full h-full relative overflow-hidden flex-col-wrapper"
         menu={
           <div className="flex-grow flex justify-end items-center">
-            <div className="hidden">minimize</div>
+
+            <button className="btn" onClick={() => concealCardStack()}>Hide</button>
             <CardTagSearch
               allTags={tagVocabulary}
               key={filterSet.join(',')}
@@ -140,27 +131,21 @@ class CardViewPage extends Component {
           </div>
         }
       >
-        <div
-          className="mt-24 flex justify-center"
-          style={{
-            transition: 'opacity 0.5s',
-            pointerEvents: 'none',
-            height: height / 5,
-            opacity: cardPanelVisible ? 1 : 0
-          }}
-        >
-          <CardStack
-            cards={cards}
-            touch={isSmartphone}
-            selectedCardId={selectedCardId}
-            duration={600}
-            width={width}
-            height={height / 4}
-            onClick={previewCardAction}
-            tagColorScale={tagColorScale}
-            slotSize={slotSize}
-          />
-        </div>
+        <CardStackContainer
+          onConceal={concealCardStack}
+          bottom={cardStackBottom}
+          width={width}
+          height={height}
+          cards={cards}
+          touch={isSmartphone}
+          selectedCardId={selectedCardId}
+          duration={600}
+          onClick={previewCardAction}
+          tagColorScale={tagColorScale}
+          slotSize={slotSize}
+        />
+
+
         <LoadingScreen style={{ marginTop: 25 }} visible={isLoadingCards} />
 
         <BlackModal

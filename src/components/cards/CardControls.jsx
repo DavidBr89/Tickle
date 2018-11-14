@@ -1,18 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { X, RotateCcw } from 'react-feather';
 import CloseCorner from './CloseCorner';
 import FlipCorner from './FlipCorner';
 
 const CardControls = ({
-  onFlip,
-  onClose,
-  children,
-  style,
-  className,
-  size = 40,
-  color = 'grey'
+  onFlip, onClose, children, style, className, size = 40
 }) => (
   <div
     className={className}

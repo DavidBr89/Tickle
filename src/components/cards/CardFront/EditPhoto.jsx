@@ -17,8 +17,6 @@ class AddUrl extends Component {
 
   render() {
     const {
-      uiColor = 'grey',
-      // stylesheet,
       onChange,
       style = {},
       className = ''
@@ -27,89 +25,50 @@ class AddUrl extends Component {
     const { imgUrl } = this.state;
 
     return (
-          <div
-            className={className}
-            style={{ width: '100%', height: '100%', ...style }}
-          >
+      <div
+        className={`${className} flex flex-col flex-grow`}
+        style={{ ...style }}
+      >
+        <div
+          className="flex-grow flex flex-col justify-center items-center"
+        >
+          {imgUrl ? (
+            <img
+              src={imgUrl}
+              width="100%"
+              style={{ objectFit: 'cover' }}
+              alt={imgUrl}
+            />
+          ) : (
             <div
-              style={{
-                overflow: 'hidden',
-                height: '100%'
+              className="pl-2 pr-2 flex flex-col flex-grow border-dashed border-2 border-black w-full items-center justify-center"
+            >
+              <div className="text-2xl font-bold">No Image</div>
+            </div>
+          )}
+          <div className="mt-3 mb-2 flex items-center w-full">
+            <input
+              className="form-control flex-grow mr-1 "
+              value={imgUrl}
+              placeholder="Add Image Url"
+              type="url"
+              onChange={e => this.setState({ imgUrl: e.target.value })}
+            />
+            <button
+              type="button"
+              className="flex-no-shrink btn"
+              onClick={() => {
+                onChange({
+                  url: imgUrl,
+                  thumbnail: imgUrl
+                });
               }}
             >
-              <div
-                style={{
-                  // TODO: outsource
-                  height: '100%',
-                  width: '100%',
-                  // minHeight: 80,
-                  border: `dashed 3px ${uiColor}`,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
-              >
-                {imgUrl ? (
-                  <div
-                    style={{
-                      overflow: 'hidden'
-                      // max-height: 300px;
-                      // height: this.contHeight
-                    }}
-                  >
-                    <img
-                      src={imgUrl}
-                      width="100%"
-                      style={{
-                        maxHeight: 300,
-                        width: 'auto'
-                      }}
-                      alt={imgUrl}
-                    />
-                  </div>
-                ) : (
-                  <h1
-                    className="pl-2 pr-2"
-                    style={{
-                      background: uiColor,
-                      color: 'black',
-                      margin: '20%'
-                    }}
-                  >
-                    {'No Image'}
-                  </h1>
-                )}
-              </div>
-              <div className="mt-3 mb-2" style={{ display: 'flex' }}>
-                <div className="pr-1" style={{ width: '70%' }}>
-                  <input
-                    className="mr-1"
-                    value={imgUrl}
-                    placeholder="Add Image Url"
-                    style={{
-                      border: `${uiColor} 1px solid`,
-                      width: '100%',
-                      height: '100%'
-                    }}
-                    type="url"
-                    onChange={e => this.setState({ imgUrl: e.target.value })}
-                  />
-                </div>
-                <button
-                  className="btn"
-                  style={{ width: '30%' }}
-                  onClick={() => {
-                    onChange({
-                      url: imgUrl,
-                      thumbnail: imgUrl
-                    });
-                  }}
-                >
                   Add Image
-                </button>
-              </div>
-            </div>
+            </button>
           </div>
+        </div>
+      </div>
     );
   }
 }
@@ -121,14 +80,10 @@ class EditPhoto extends Component {
     stylesheet: PropTypes.object
   };
 
-  constructor(props) {
-    super(props);
-  }
-
-  renderSelected = key => {
+  renderSelected = (key) => {
     switch (key) {
       case 'Upload Image': {
-        return <PhotoUpload {...this.props} />;
+        return <PhotoUpload className="flex-grow flex flex-col " {...this.props} />;
       }
       case 'Url':
         return <AddUrl {...this.props} />;
@@ -138,16 +93,15 @@ class EditPhoto extends Component {
   render() {
     const { uiColor, stylesheet } = this.props;
     return (
-      <div>
-        <TabNav
-          uiColor={uiColor}
-          stylesheet={stylesheet}
-          preSelected="Url"
-          keys={['Upload Image', 'Url']}
-        >
-          {selected => this.renderSelected(selected)}
-        </TabNav>
-      </div>
+      <TabNav
+        className="flex flex-col flex-grow"
+        uiColor={uiColor}
+        stylesheet={stylesheet}
+        preSelected="Url"
+        keys={['Upload Image', 'Url']}
+      >
+        {selected => this.renderSelected(selected)}
+      </TabNav>
     );
   }
 }

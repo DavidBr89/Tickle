@@ -69,10 +69,7 @@ class CardMarker extends Component {
           style={{ padding: 2 }}
         >
           <div
-            className="flex-grow flex-col-wrapper relative justify-center"
-            style={{
-              background: 'rgba(255, 215, 0, 0.5)'
-            }}
+            className="flex-grow flex-col-wrapper relative justify-center bg-yellow-dark"
           >
             <img src={IcAk} className="p-1" />
           </div>

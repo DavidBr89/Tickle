@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import DefaultLayout from 'Components/DefaultLayout';
-import { Modal, BareModal, ModalBody } from 'Utils/Modal';
+import { BlackModal} from 'Utils/Modal';
 
 import EditCard from 'Components/cards/ConnectedEditCard';
 
 import { DropDown } from 'Utils/TagInput';
-import CardStack from '../CardStack';
+import CardStackContainer from '../CardStack';
 
 // import CardDragAuthorOverlay from './CardDragAuthorOverlay';
 
@@ -134,7 +134,7 @@ class CardAuthorPage extends Component {
       tagVocabularyCreated,
       extCardId,
       children,
-      selectTemplate, templateSelected
+      selectTemplate, templateSelected, cardStackBottom
     } = this.props;
 
     const slotSize = 100 / 3.5;
@@ -164,35 +164,25 @@ class CardAuthorPage extends Component {
           </div>
         }
       >
-        <BareModal visible={extCardId !== null}>
-          {selectedCard !== null && <EditCard {...selectedCard} />
-          }
-        </BareModal>
-        <div
-          className="mt-24 flex justify-center"
+        <BlackModal visible={extCardId !== null}>
+          {selectedCard !== null && <EditCard {...selectedCard} /> }
+        </BlackModal>
+        <CardStackContainer
+          bottom={cardStackBottom}
+          cards={cards}
+          selectedCardId={selectedCardId}
+          touch={isSmartphone}
+          duration={600}
+          width={cardStackWidth}
+          height={height}
+          unit="%"
+          onClick={previewCardAction}
+          tagColorScale={tagColorScale}
+          slotSize={slotSize}
           style={{
-            transition: 'opacity 0.5s',
-            pointerEvents: 'none',
-            height: height / 5
+            zIndex: 1000
           }}
-        >
-          <CardStack
-            cards={cards}
-            selectedCardId={selectedCardId}
-            touch={isSmartphone}
-            duration={600}
-            width={cardStackWidth}
-            height={100}
-            cardHeight={height / 4}
-            unit="%"
-            onClick={previewCardAction}
-            tagColorScale={tagColorScale}
-            slotSize={slotSize}
-            style={{
-              zIndex: 1000
-            }}
-          />
-        </div>
+        />
         {children}
       </DefaultLayout>
     );

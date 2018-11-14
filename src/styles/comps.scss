@@ -104,6 +104,12 @@
   box-shadow: grey 0.2rem 0.2rem;
 }
 
+.truncate-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 // .list-item.active {
 //   @apply .bg-grey-dark;
 // }

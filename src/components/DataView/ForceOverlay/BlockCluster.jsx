@@ -13,10 +13,12 @@ import * as d3 from 'd3';
 // import chroma from 'chroma-js';
 // import polylabel from '@mapbox/polylabel';
 
+import {
+  intersection, union, uniqBy, uniq, flatten
+} from 'lodash';
 import { getBoundingBox, bounds, setify } from '../utils';
 import { groupPoints } from './utils';
 
-import { intersection, union, uniqBy, uniq, flatten } from 'lodash';
 import TopicAnnotationOverlay from './TopicAnnotationOverlay';
 import dobbyscan from './cluster';
 import TagCloud from './TagCloud';
@@ -28,7 +30,9 @@ function distance(a, b) {
   return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
 }
 
-function makeTreemap({ data, width, height, padX, padY }) {
+function makeTreemap({
+  data, width, height, padX, padY
+}) {
   const ratio = 2;
   const sorted = data.sort((a, b) => b.values.length - a.count);
   const treemap = d3
@@ -36,11 +40,11 @@ function makeTreemap({ data, width, height, padX, padY }) {
     .size([width / ratio, height])
     .paddingInner(0)
     .round(true)
-    .tile(SpiralTile);
+    .tile(d3.treemapResquarify);
 
   const size = d3
     .scaleLinear()
-    .domain(d3.extent(data, d => d.count))
+    .domain(d3.extent(data, d => 1))
     .range([10, 25]);
 
   const first = { name: 'root', children: sorted };
@@ -48,7 +52,7 @@ function makeTreemap({ data, width, height, padX, padY }) {
 
   treemap(root);
   if (!root.children) return [];
-  root.children.forEach(d => {
+  root.children.forEach((d) => {
     d.left = padX / 2 + Math.round(d.x0 * ratio);
     d.top = padY / 2 + Math.round(d.y0);
 
@@ -136,8 +140,7 @@ function mapStateToProps(state) {
   return { filterSet: state.Cards.filterSet };
 }
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators({ addCardFilter, removeCardFilter }, dispatch);
+const mapDispatchToProps = dispatch => bindActionCreators({ addCardFilter, removeCardFilter }, dispatch);
 
 export default connect(
   mapStateToProps,

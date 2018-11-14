@@ -18,10 +18,10 @@ export function extendSelectedCard(options) {
   return { type: EXTEND_SELECTED_CARD, options };
 }
 
-export const FLIP_CARD = 'FLIP_CARD';
-export function flipCard(options) {
-  return { type: FLIP_CARD, options };
-}
+// export const FLIP_CARD = 'FLIP_CARD';
+// export function flipCard(options) {
+//   return { type: FLIP_CARD, options };
+// }
 // export const FILTER = 'FILTER';
 // export function filter(options) {
 //   return { type: FILTER, options };
@@ -41,9 +41,9 @@ export function filterCards(options) {
   return { type: FILTER_CARDS, options };
 }
 
-export const TOGGLE_CARD_PANEL = 'TOGGLE_CARD_PANEL';
-export function toggleCardPanel(options) {
-  return { type: TOGGLE_CARD_PANEL, options };
+export const CONCEAL_CARD_STACK = 'CONCEAL_CARD_STACK';
+export function concealCardStack(options) {
+  return { type: CONCEAL_CARD_STACK, options };
 }
 
 export const FILTER_BY_CHALLENGE_STATE = 'FILTER_BY_CHALLLENGE_STATE';

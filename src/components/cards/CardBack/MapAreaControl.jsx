@@ -2,13 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import MapGL from 'react-map-gl';
 
-import { scaleOrdinal } from 'd3';
-
 // TODO remove
 import DimWrapper from 'Utils/DimensionsWrapper';
-import { geoProject } from 'Lib/geo';
-import MapAreaRadius from '../../utils/map-layers/MapAreaRadius';
-import CardMarker from '../CardMarker';
+// import { geoProject } from 'Lib/geo';
+import CardMarker from 'Components/cards/CardMarker';
+// import MapAreaRadius from '../../utils/map-layers/MapAreaRadius';
 
 
 class MapAreaControl extends Component {
