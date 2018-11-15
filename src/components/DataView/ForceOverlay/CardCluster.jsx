@@ -22,40 +22,21 @@ function CardCluster({
     <div
       onClick={onClick}
       key={id}
-      className="cluster"
+      className="cluster flex absolute items-center justify-center "
       style={{
-        position: 'absolute',
         transition: `left ${transition}ms, top ${transition}ms, width ${transition}ms, height ${transition}ms`,
         width: size,
         height: size,
-        left: Math.round(x),
-        top: Math.round(y),
-        transform: `translate(-50%,-50%)`,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        boxShadow: '3px 3px #24292e',
-        border: '#24292e solid 1px',
-        borderRadius: '100%'
+        left: x,
+        top: y,
+        transform: 'translate(-50%,-50%)'
+        // boxShadow: '3px 3px #24292e'
+        // borderRadius: '100%'
       }}
     >
       <div
-        style={{
-          zIndex: -1,
-          background: 'whitesmoke',
-          opacity: 0.8,
-          width: '100%',
-          height: '100%',
-          position: 'absolute',
-          borderRadius: '100%'
-        }}
-      />
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          padding: '10.65%'
-        }}
+        className="w-full h-full"
+        style={{ padding: '10.65%' }}
       >
         <div
           style={{
@@ -68,8 +49,8 @@ function CardCluster({
             flexWrap: 'wrap'
           }}
         >
-          <div className="mr-1">{data.values.length}</div>
           <CardMarker style={{ width: 30, height: 30 }} />
+          <div className="ml-1">{data.values.length}</div>
         </div>
       </div>
     </div>

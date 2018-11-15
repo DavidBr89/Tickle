@@ -163,22 +163,7 @@ class ReadCardFront extends Component {
   };
 
   render() {
-    const {
-      tags,
-      img,
-      description,
-      media,
-      title,
-      uiColor,
-      onFlip,
-      // background,
-      challengeSubmission,
-      tagColorScale,
-      style,
-      smallScreen,
-      onHeaderClick,
-      onClose
-    } = this.props;
+    const { onFlip, onClose } = this.props;
 
     const { dialogKey, challengeSubmitted } = this.state;
     const modalVisible = dialogKey !== null;
@@ -196,13 +181,12 @@ class ReadCardFront extends Component {
           {...this.props}
           onClose={onClose}
           onFlip={onFlip}
-          onImgClick={() => this.setState({ dialogKey: 'Img' })
-          }
-          onDescriptionClick={() => this.setState({ dialogKey: 'Description' })
-          }
+          onImgClick={() => this.setState({ dialogKey: 'Img' })}
+          onDescriptionClick={() => this.setState({ dialogKey: 'Description' })}
           onMediaClick={() => this.setState({ dialogKey: 'Media' })}
           bottomControls={
-            <button className="btn btn-black"
+            <button
+              className="btn btn-black"
               onClick={() => this.setState({ dialogKey: 'Challenge' })}
             >
               {this.btnText()}

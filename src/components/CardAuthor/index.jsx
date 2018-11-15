@@ -31,8 +31,10 @@ import cardRoutes from 'Src/Routes/cardRoutes';
 
 import withAuthorization from 'Src/components/withAuthorization';
 import withAuthentication from 'Src/components/withAuthentication';
+import { shiftCenterMap } from 'Src/lib/geo';
 import UserEnvironmentSettings from './UserEnvironmentSettings';
 import CardAuthorPage from './CardAuthorPage';
+
 
 // import mapViewReducer from './reducer';
 
@@ -122,14 +124,16 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
 
+  const reCenterMap = d => changeMapViewport(shiftCenterMap({ ...d.loc, mercator }));
+
   const previewCardAction = (d) => {
     selectedCardId === d.id ? routeExtendCard() : routeSelectCard(d.id);
-    changeMapViewport({ ...d.loc });
+    reCenterMap(d);
   };
 
   const selectTemplate = () => {
     routeSelectCard(TEMP_ID);
-    changeMapViewport({ ...templateCard.loc });
+    reCenterMap(templateCard);
   };
 
   const templateSelected = selectedCardId === TEMP_ID;

@@ -10,7 +10,7 @@ import { Modal, ModalBody } from 'Components/utils/Modal';
 import { TagDropDown } from 'Components/utils/TagInput';
 import { MediaSearch } from '../MediaSearch';
 
-import CardFront from './CardFront';
+import CardFrontTemplate from './CardFrontTemplate';
 
 import EditPhoto from './EditPhoto';
 
@@ -34,7 +34,6 @@ class NumberInput extends Component {
     if (value !== prevState.value) {
       if (this.isPosInt()) {
         this.setState({ error: null });
-
       } else {
         this.setState({ error: 'Input is not a positive Integer' });
       }
@@ -108,20 +107,16 @@ class TextAreaModal extends Component {
         {...this.props}
         onClose={() => onUpdate(text)}
         footer={
-          <button className="btn" onClick={() => onUpdate(text)}>
+          <button type="button" className="btn" onClick={() => onUpdate(text)}>
             Update
           </button>
         }
       >
         <textarea
-          className="form-control"
-          onChange={e => this.setState({
-            text: e.target.value || null
-          })
-          }
+          className="form-control w-full"
+          onChange={e => this.setState({ text: e.target.value || null })}
           rows={5}
-          style={{ width: '100%' }}
-          placeholder={'<Please insert your description>'}
+          placeholder="Please insert your description"
         >
           {text}
         </textarea>
@@ -201,6 +196,129 @@ class TitleModalBody extends Component {
 //   }
 // }
 
+function modalWriteContent() {
+  const { data, dialog } = this.state;
+  const { challenge } = data;
+  const { tagVocabulary, addToStorage, removeFromStorage } = this.props;
+
+  const {
+    title, tags, img, description, media, points
+  } = data;
+
+  const closeBtn = (
+    <button className="btn" onClick={this.onCloseModal}>
+        Close
+    </button>
+  );
+
+  const modalVisible = dialog !== null;
+  const dialogTitle = dialog !== null ? dialog.title : null;
+  const modalProps = { visible: modalVisible, title: dialogTitle };
+
+  switch (dialogTitle) {
+    case 'Title':
+      return (
+        <TitleModalBody
+          {...modalProps}
+          text={title}
+          onUpdate={newTitle => this.updateFieldAndCloseModal({ title: newTitle })
+          }
+        />
+      );
+    case 'Tags':
+      return (
+        <ModalBody
+          onClose={this.onCloseModal}
+          {...modalProps}
+          footer={closeBtn}
+        >
+          <TagDropDown
+            style={{ width: '100%' }}
+            onChange={newTags => this.updateField({ tags: [...newTags] })}
+            editable
+            data={tags || []}
+            vocabulary={tagVocabulary}
+          />
+        </ModalBody>
+      );
+    case 'Photo':
+      return (
+        <ModalBody
+          {...modalProps}
+          onClose={this.onCloseModal}
+          footer={closeBtn}
+        >
+          <EditPhoto
+            uiColor="grey"
+            imgUrl={img ? img.url : null}
+            imgName={img && img.name}
+            onChange={(imgObj) => {
+              console.log('imgObj', imgObj);
+              this.updateField({ img: imgObj, dialog: null });
+            }}
+          />
+        </ModalBody>
+      );
+    case 'Description':
+      return (
+        <TextAreaModal
+          {...modalProps}
+          text={description}
+          onUpdate={(newDescr) => {
+            this.updateFieldAndCloseModal({
+              description: newDescr
+            });
+          }}
+        />
+      );
+    case 'Media':
+      return (
+        <ModalBody
+          footer={closeBtn}
+          {...modalProps}
+          onClose={this.onCloseModal}
+        >
+          <MediaSearch
+            addToStorage={addToStorage}
+            removeFromStorage={removeFromStorage}
+            selectedMedia={media}
+            onChange={(mediaItems) => {
+              this.updateField({ media: mediaItems });
+            }}
+          />
+        </ModalBody>
+      );
+    case 'Challenge':
+      return (
+        <ChallengeAuthorModalBody
+          {...modalProps}
+          onClose={this.onCloseModal}
+          key={challenge ? challenge.id : 'newChallenge'}
+          challenge={challenge}
+          onChange={(ch) => {
+            this.updateField({ challenge: ch });
+          }}
+        />
+      );
+
+    case 'Points':
+      return (
+        <NumberInput
+          {...modalProps}
+          onClose={this.onCloseModal}
+          value={points}
+          onUpdate={(number) => {
+            this.updateFieldAndCloseModal({
+              points: number
+            });
+          }}
+        />
+      );
+    default:
+      return null;
+  }
+}
+
 class EditCardFront extends PureComponent {
   static propTypes = {
     // ...ReadCardFront.propTypes,
@@ -222,7 +340,6 @@ class EditCardFront extends PureComponent {
     data: {
       ...extractCardFields({ ...this.props })
     },
-    added: !this.props.template,
     dialog: null
   };
 
@@ -263,162 +380,26 @@ class EditCardFront extends PureComponent {
     }));
   }
 
-  modalWriteContent() {
-    const { data, dialog } = this.state;
-    const { challenge } = data;
-    const { tagVocabulary, addToStorage, removeFromStorage} = this.props;
-
-    const {
-      title, tags, img, description, media, points
-    } = data;
-    const closeBtn = (
-      <button className="btn" onClick={this.onCloseModal}>
-        Close
-      </button>
-    );
-
-    const modalVisible = dialog !== null;
-    const dialogTitle = dialog !== null ? dialog.title : null;
-    const modalProps = { visible: modalVisible, title: dialogTitle };
-
-    switch (dialogTitle) {
-      case 'Title':
-        return (
-          <TitleModalBody
-            {...modalProps}
-            text={title}
-            onUpdate={newTitle => this.updateFieldAndCloseModal({ title: newTitle })
-            }
-          />
-        );
-      case 'Tags':
-        return (
-          <ModalBody
-            onClose={this.onCloseModal}
-            {...modalProps}
-            footer={closeBtn}
-          >
-            <TagDropDown
-              style={{ width: '100%' }}
-              onChange={newTags => this.updateField({ tags: [...newTags] })}
-              editable
-              data={tags || []}
-              vocabulary={tagVocabulary}
-            />
-          </ModalBody>
-        );
-      case 'Photo':
-        return (
-          <ModalBody
-            {...modalProps}
-            onClose={this.onCloseModal}
-            footer={closeBtn}
-          >
-            <EditPhoto
-              uiColor="grey"
-              imgUrl={img ? img.url : null}
-              imgName={img && img.name}
-              onChange={(imgObj) => {
-                console.log('imgObj', imgObj);
-                this.updateField({ img: imgObj, dialog: null });
-              }}
-            />
-          </ModalBody>
-        );
-      case 'Description':
-        return (
-          <TextAreaModal
-            {...modalProps}
-            text={description}
-            onUpdate={(newDescr) => {
-              this.updateFieldAndCloseModal({
-                description: newDescr
-              });
-            }}
-          />
-        );
-      case 'Media':
-        return (
-          <ModalBody
-            footer={closeBtn}
-            {...modalProps}
-            onClose={this.onCloseModal}
-          >
-            <MediaSearch
-              addToStorage={addToStorage}
-              removeFromStorage={removeFromStorage}
-              selectedMedia={media}
-              onChange={(mediaItems) => {
-                this.updateField({ media: mediaItems });
-              }}
-            />
-          </ModalBody>
-        );
-      case 'Challenge':
-        return (
-          <ChallengeAuthorModalBody
-            {...modalProps}
-            onClose={this.onCloseModal}
-            key={challenge ? challenge.id : 'newChallenge'}
-            challenge={challenge}
-            onChange={(ch) => {
-              this.updateField({ challenge: ch });
-            }}
-          />
-        );
-
-      case 'Points':
-        return (
-          <NumberInput
-            {...modalProps}
-            onClose={this.onCloseModal}
-            value={points}
-            onUpdate={(number) => {
-              this.updateFieldAndCloseModal({
-                points: number
-              });
-            }}
-          />
-        );
-      default:
-        return null;
-    }
-  }
 
   render() {
     const {
-      onClose,
-      onFlip,
-      style,
-      background,
-      uiColor,
-      tagColorScale,
-      onSubmit,
-      template,
-      smallScreen,
-      onCreate
+      onClose, onFlip, style, background, uiColor, tagColorScale,
+      onSubmit, template, smallScreen, onCreate
     } = this.props;
+
     const { data, dialog } = this.state;
     console.log('state data', data);
     const modalVisible = dialog !== null;
     const {
-      id,
-      title,
-      tags,
-      img,
-      description,
-      media,
-      children,
-      challenge,
-      points
+      id, title, tags, img, description, media, children, challenge, points
     } = data;
 
     return (
       <React.Fragment>
         <Modal className="z-50" visible={modalVisible}>
-          {this.modalWriteContent()}
+          {modalWriteContent.bind(this)()}
         </Modal>
-        <CardFront
+        <CardFrontTemplate
           {...this.props}
           onClose={onClose}
           onFlip={onFlip}
@@ -437,7 +418,6 @@ class EditCardFront extends PureComponent {
             });
           }}
           onDescriptionClick={() => {
-            console.log('click description');
             this.setState({
               dialog: { title: 'Description', data: description }
             });

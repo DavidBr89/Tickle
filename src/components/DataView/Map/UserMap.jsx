@@ -12,9 +12,7 @@ import CardMarker from 'Components/cards/CardMarker';
 
 // import { UserOverlay } from '../../utils/map-layers/DivOverlay';
 
-import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
-
-import { changeMapViewport, userMove } from 'Reducers/Map/actions';
+import * as mapActions from 'Reducers/Map/actions';
 import ArrayPipe from 'Components/utils/ArrayPipe';
 import Cluster from '../ForceOverlay/Cluster';
 import CardCluster from '../ForceOverlay/CardCluster';
@@ -72,22 +70,8 @@ class UserMap extends Component {
 
   render() {
     const {
-      colorScale,
-      cards,
-      disabled,
-      children,
-      maxZoom,
-      userLocation,
-      preview,
-      width,
-      height,
-      isCardDragging,
-      showUser,
-      userMove,
-      routeSelectCard,
-      selectedCardId,
-      className,
-      style, mercator, changeMapViewport
+      cards, children, userLocation, preview, width, height,
+      isCardDragging, userMove, className, style, mercator, changeMapViewport
     } = this.props;
 
     const { latitude, longitude, zoom } = mercator;
@@ -124,7 +108,6 @@ class UserMap extends Component {
             nodes={locNodes}
             width={width}
             height={height}
-            colorScale={colorScale}
           >
             {clusters => (
               <ArrayPipe array={clusters}>
@@ -228,11 +211,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators(
-  {
-    changeMapViewport,
-    userMove
-  },
-  dispatch
+  mapActions, dispatch
 );
 
 const mergeProps = (state, dispatcherProps, ownProps) => ({

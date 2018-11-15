@@ -31,6 +31,7 @@ import withAuthorization from 'Src/components/withAuthorization';
 import withAuthentication from 'Src/components/withAuthentication';
 import cardRoutes from 'Src/Routes/cardRoutes';
 
+import { shiftCenterMap } from 'Src/lib/geo';
 import CardViewPage from './CardViewPage';
 import SelectUserEnv from './SelectUserEnv';
 
@@ -138,13 +139,13 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
       return routeExtendCard();
     }
     routeSelectCard(d.id);
-    changeMapViewport({ ...d.loc });
+    changeMapViewport(shiftCenterMap({ ...d.loc, mercator }));
   };
 
   const filteredCards = collectibleCards
     .filter(d => filterByTag(d, filterSet))
     .map((c) => {
-      const visible = isInView(c.loc);
+      // const visible = isInView(c.loc);
       const accessible = true; // visible;
       // (visible && isInDistance(c.loc)) || (isCardSeen(c) && visible);
 

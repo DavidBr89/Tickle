@@ -105,7 +105,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   } = dispatcherProps;
 
   const createCard = ({ tags: tmpTags, title: tmpTitle, ...cardData }) => {
-    const tags = tmpTags && tmpTags.length > 0 ? tmpTags : ['general'];
+    const tags = tmpTags && tmpTags.length > 0 ? tmpTags : ['No Tags'];
     const title = tmpTitle !== null ? tmpTitle : 'Card without title';
     console.log('CARD tmpTitle', tmpTitle);
 

@@ -1,225 +1,14 @@
 import React, { Component, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
-import IcAk from 'Styles/alphabet_icons/ic_ak.svg';
-
-import { Edit } from 'react-feather';
-
-import { mediaScale } from 'Constants/mediaTypes';
 
 import CardControls from 'Components/cards/CardControls';
 import placeholderImgSrc from '../placeholder.png';
 
-const createIcon = type => React.createElement(type, {
-  style: { color: 'white' }
-});
+import {
+  ImgOverlay, TextField, TagField, MediaField, TitleField
+} from './mixinsCardFront';
 
-// const iconClasses =
-//   'border border-white p-1 m-1 flex-col-wrapper items-center text-white';
-
-const IconCont = ({
-  className, styles, onClick, children
-}) => (
-  <div className="ml-1 flex items-center cursor-pointer" onClick={onClick}>
-    <div className={`flex-col-wrapper justify-center ${className}`}>
-      {children}
-    </div>
-  </div>
-);
-
-IconCont.defaultProps = {
-  className: 'text-white'
-};
-
-const MediaIcons = ({ media }) => (
-  <div className="ml-1 flex items-center">
-    {media.map(m => (
-      <IconCont className="p-1 m-1 border-white border-2">
-        {createIcon(mediaScale(m.type))}
-      </IconCont>
-    ))}
-  </div>
-);
-
-export const PreviewTags = ({
-  values,
-  style,
-  placeholder,
-  small,
-  colorScale,
-  onClick,
-  className
-}) => {
-  const tagData = values && values.length > 0 ? values : ['No Tags'];
-  return (
-    <div
-      onClick={onClick}
-      className={`flex ${className} overflow-hidden`}
-      style={{
-        flexWrap: 'wrap',
-        ...style
-      }}
-    >
-      {tagData.map(t => (
-        <div className="tag-label text-xl mr-1 mb-1">
-          {t}
-        </div>
-      ))}
-    </div>
-  );
-};
-
-PreviewTags.propTypes = {
-  values: PropTypes.oneOfType([PropTypes.array, null]),
-  style: PropTypes.object,
-  placeholder: PropTypes.string
-};
-
-PreviewTags.defaultProps = {
-  values: null,
-  style: {}
-};
-
-const ImgOverlay = ({
-  src, className, style, children, footer, onClick
-}) => (
-  <div
-    onClick={onClick}
-    className={className}
-    style={{
-      position: 'relative',
-      marginLeft: 'auto',
-      marginRight: 'auto',
-      width: '100%',
-      overflow: 'hidden',
-      ...style
-    }}
-  >
-    { src
-      ? <img
-        src={src}
-        alt="Card img"
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover'
-        }}
-      /> : <div className="w-full h-full bg-yellow-dark p-8"><img className="w-full h-full" src={IcAk} /></div>
-    }
-    <div
-      style={{
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-        // zIndex: 200,
-        left: 0,
-        top: 0
-      }}
-    >
-      {children}
-    </div>
-  </div>
-);
-
-const EditIcon = ({
-  edit, className, style, onClick
-}) => (
-  <IconCont
-    className={`text-black ${className}`}
-    onClick={onClick}
-    style={style}
-  >
-    <Edit size={30} />
-  </IconCont>
-);
-
-const Title = ({
-  onClick, edit, children, className
-}) => (
-  <div className={`flex items-center ${className}`} onClick={onClick}>
-    <div className="flex flex-grow justify-between">
-      <h1 className="text-muted">{children}</h1>
-      {edit && <EditIcon />}
-    </div>
-  </div>
-);
-
-const DescriptionField = ({
-  text,
-  onEdit,
-  onClick,
-  placeholder,
-  className,
-  style,
-  edit
-}) => (
-  <div
-    className={`${className}`}
-    style={{ ...style, cursor: 'pointer' }}
-    onClick={onClick || onEdit}
-  >
-    <div className="flex">
-      <div className="flex-grow text-xl">
-        {text || <p style={{ fontStyle: 'italic' }}>{placeholder}</p>}
-      </div>
-      {edit && <EditIcon />}
-    </div>
-  </div>
-);
-
-DescriptionField.propTypes = {
-  text: PropTypes.oneOf([PropTypes.string, null]),
-  // TODO: how to
-  onEdit: PropTypes.func,
-  onClick: PropTypes.func,
-  placeholder: PropTypes.string,
-  style: PropTypes.object,
-  edit: PropTypes.bool
-};
-
-DescriptionField.defaultProps = {
-  text: null,
-  onEdit: null,
-  onClick: null,
-  placeholder:
-    'Add a description for your card to give hints how to succeed the Challenge',
-  style: {},
-  edit: false
-};
-
-/*
-
-            <div
-              className="m-1"
-              onClick={edit ? onPointsClick : null}
-              style={{
-                zIndex: edit && 400,
-                background: 'white'
-              }}
-            >
-              <div
-                className="pl-1 pr-1"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center'
-                }}
-              >
-                <div style={{ fontSize: 'xx-large' }}>{points}P</div>
-                {edit && (
-                  <div
-                    className="ml-1"
-                    style={{
-                      // display: 'flex',
-                      // alignItems: 'center',
-                      height: '50%'
-                    }}
-                  >
-                    <EditIcon edit={edit} />
-                  </div>
-                )}
-              </div>
-            </div>
-            */
 
 class CardFront extends Component {
   static propTypes = {
@@ -309,47 +98,33 @@ class CardFront extends Component {
             cursor: 'pointer'
           }}
         >
-          <div className="absolute z-10 w-full h-full flex items-end">
-            {edit && (
-              <EditIcon
-                className="m-1 p-1 text-white"
-                onClick={onImgClick}
-              />
-            )}
-          </div>
-
-          <div className="z-0 absolute w-full h-full flex justify-end items-end">
-            <MediaIcons media={media} />
-          </div>
-        </ImgOverlay>
-        <div className="flex flex-col mt-3 mr-3 ml-3 mb-1">
-          <Title edit={edit} className="m-1" onClick={onTitleClick}>
-            {title || 'No Title'}
-          </Title>
-
-          <div className="flex justify-between m-1" onClick={onTagsClick}>
-            <PreviewTags values={tags} className="" />
-            {edit && <EditIcon edit={edit} className="ml-1" />}
-          </div>
-          <DescriptionField
-            text={description}
-            className="m-1"
-            placeholder="No Description"
-            style={{ flex: '0 1 auto' }}
-            edit={edit}
-            onEdit={onDescriptionClick}
-          />
-
-          {edit && (
-            <DescriptionField
-              className="m-1"
-              text={null}
-              placeholder="Add Media"
-              style={{ flex: '0 1 auto' }}
-              edit={edit}
-              onEdit={onMediaClick}
+          <div
+            className="absolute z-10 w-full h-full flex justify-end items-end"
+          >
+            <MediaField
+              className="m-1 flex justify-between items-center"
+              values={media}
+              onClick={onMediaClick}
             />
-          )}
+          </div>
+
+        </ImgOverlay>
+
+        <div className="flex flex-col mt-3 mr-3 ml-3 mb-1">
+          <TitleField hidden={title !== null} className="m-1" onClick={onTitleClick}>
+            {title}
+          </TitleField>
+
+          <TagField hidden={tags.length === 0} values={tags} onClick={onTagsClick} />
+
+          <TextField
+            className="m-1"
+            hidden={description === null}
+            style={{ flex: '0 1 auto' }}
+            onClick={onDescriptionClick}
+          >
+            {description}
+          </TextField>
         </div>
 
         <CardControls onFlip={onFlip} onClose={onClose}>
