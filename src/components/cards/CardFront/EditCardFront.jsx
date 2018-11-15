@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import { isEqual } from 'lodash';
 
 import ChallengeAuthorModalBody from 'Src/components/ChallengeAuthor';
-import { extractCardFields } from 'Constants/cardFields';
 
 import { Modal, ModalBody } from 'Components/utils/Modal';
 import { TagDropDown } from 'Components/utils/TagInput';
+import { extractCardFields } from 'Constants/cardFields';
 import { MediaSearch } from '../MediaSearch';
 
 import CardFrontTemplate from './CardFrontTemplate';
@@ -352,8 +352,9 @@ class EditCardFront extends PureComponent {
       !isEqual(prevData, data)
       || !isEqual(prevData.challenge, data.challenge)
       || !isEqual(prevData.media, data.media)
+      || !isEqual(prevData.description, data.description)
     ) {
-      onUpdate({ ...data });
+      onUpdate(extractCardFields({ ...data }));
     }
   }
 
@@ -401,6 +402,12 @@ class EditCardFront extends PureComponent {
         </Modal>
         <CardFrontTemplate
           {...this.props}
+          onResetField={(attr) => {
+            console.log('resetField', attr);
+            this.updateField({ [attr]: (attr === 'tags' || attr === 'media') ? [] : null });
+          }
+          }
+
           onClose={onClose}
           onFlip={onFlip}
           onTagsClick={() => {

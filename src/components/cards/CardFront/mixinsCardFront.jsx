@@ -28,8 +28,6 @@ IconCont.defaultProps = {
 };
 
 const MediaIcons = ({ values }) => (
-
-
   <div className="flex items-center">
     {values.map(m => (
       <IconCont className="p-1 m-1 border-black border-2">
@@ -88,12 +86,11 @@ PreviewTags.defaultProps = {
 export const TagField = ({
   values, edit, onClick, placeholder
 }) => {
-  if ((values.length === 0) && !edit) return null;
+  if ((values === null)) return null;
 
   return (
     <div className="flex m-1 items-center" onClick={onClick}>
       { values.length === 0 ? <div className="text-xl italic mr-1">{placeholder}</div> : <PreviewTags values={values} className="mr-1" /> }
-
     </div>);
 };
 
@@ -168,7 +165,8 @@ export const TitleField = ({
 
 TitleField.defaultProps = { placeholder: 'Add a Title' };
 
-export const TextField = ({ onClick, placeholder, className, style, edit, children
+export const TextField = ({
+  onClick, placeholder, className, style, edit, children
 }) => {
   if (children === null) return null;
   return (

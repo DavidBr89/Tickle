@@ -50,6 +50,13 @@ export const challengeTypeMap = (() => {
   return obj;
 })();
 
+
+export const TITLE= 'title';
+export const TAGS = 'tags';
+export const DESCRIPTION = 'description';
+export const MEDIA ='media';
+export const TIMESTAMP = 'timestamp';
+
 // TODO: where is challenge submission?
 export const extractCardFields = ({
   id,
@@ -58,16 +65,31 @@ export const extractCardFields = ({
   floorY = 0.5,
   img = null,
   loc = {latitude: 50.85146, longitude: 4.315483},
-  tags = [],
-  media = null,
+
   title = null,
-  challenge = null,
+  tags = [],
+  description = null,
+  media = [],
   timestamp = null,
-  description = '',
+
+  challenge = null,
   points = 0,
   // allChallengeSubmissions = null,
   challengeSubmission = null
-}) => ({
+}) => {
+
+  if (!Array.isArray(tags)) {
+    throw new Error('tags is not an array');
+    return;
+  }
+
+  if (!Array.isArray(media)) {
+    throw new Error('media is not an array');
+    return;
+  }
+  //TODO: more
+
+  return ({
   id,
   uid,
   floorX: floorX || 0.5,
@@ -83,4 +105,4 @@ export const extractCardFields = ({
   points,
   // allChallengeSubmissions,
   challengeSubmission
-});
+}) };

@@ -11,6 +11,8 @@ import {
   ImgOverlay, TextField, TagField, MediaField, TitleField, EditIcon
 } from './mixinsCardFront';
 
+import {TITLE, TAGS, DESCRIPTION, MEDIA, TIMESTAMP} from 'Constants/cardFields';
+
 
 const ToggleBtn = ({
   on, children, onClick, style, className
@@ -47,20 +49,33 @@ class SelectCardField extends Component {
     fields: []
   };
 
+  state = {
+    visiblity:
+      this.props.fields.reduce((acc, d) => { acc[d.id] = true; return acc; }, {})
+  }
+
+  // deriveStateFromProps() {
+  //
+  // }
+
   render() {
     const {
-      fields, className, onSelect, onDeselect, values
+      fields, className, onSelect, onDeselect
     } = this.props;
 
-    const visiblity = fields.reduce((acc, d) => { acc[d.id] = values[d.id] !== null; return acc; }, {});
+    const { visiblity } = this.state;
 
     const toggle = attr => () => {
       const visible = !visiblity[attr];
-      if (visible) { onDeselect(attr); }
+      this.setState({ visiblity: { ...visiblity, [attr]: visible } });
+      if (!visible) {
+        onDeselect(attr);
+      }
     };
 
-    const sortedFields = sortBy(fields, d => !visiblity[d.id]);
+    // const btnDim = { minHeight: 70, width: 70 };
 
+    const sortedFields = sortBy(fields, d => !visiblity[d.id]);
     return (
       <div className={`${className} flex`}>
         <div className="flex-grow flex relative">
@@ -138,13 +153,13 @@ class CardFront extends Component {
       tags, img, description, media, title, style, smallScreen, onClose,
       onImgClick, onDescriptionClick, onMediaClick, onTitleClick,
       onChallengeClick, onFlip, onTagsClick, edit, template, points,
-      onPointsClick, bottomControls, className
+      onPointsClick, bottomControls, className, onResetField
     } = this.props;
 
     // console.log('mediaIcons', mediaIcons);
     const fieldNodes = [
       {
-        id: 'title',
+        id: TITLE,
         node: <div className="">
           <h2>Title</h2>
           <TextField className="m-1" onClick={onTitleClick}>
@@ -152,14 +167,14 @@ class CardFront extends Component {
           </TextField>
               </div>
       }, {
-        id: 'tags',
+        id: TAGS,
         node: <div className="">
           <h2>Tags</h2>
           <TagField values={tags} edit onClick={onTagsClick} />
         </div>
 
       }, {
-        id: 'descr',
+        id: DESCRIPTION,
         node: <div className="">
           <h2>Description</h2>
           <TextField
@@ -173,7 +188,7 @@ class CardFront extends Component {
           </TextField>
               </div>
       }, {
-        id: 'media',
+        id: MEDIA,
         node:
   <div className="">
     <h2>Media</h2>
@@ -186,7 +201,7 @@ class CardFront extends Component {
     />
   </div>
       }, {
-        id: 'date',
+        id: TIMESTAMP,
         node: <div className="">
           <h2>Date</h2>
           <TextField
@@ -228,10 +243,8 @@ class CardFront extends Component {
         </ImgOverlay>
 
         <SelectCardField
-          onDeselect={attr => this.setState({ [attr]: null })}
-          onSelect={obj => this.setState({ ...obj })}
+          onDeselect={onResetField}
           className="flex-grow flex flex-col mt-3 mr-3 ml-3 mb-1"
-          values={this.state}
           fields={fieldNodes}
         />
 

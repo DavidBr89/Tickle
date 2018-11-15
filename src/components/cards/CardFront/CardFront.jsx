@@ -115,7 +115,7 @@ class CardFront extends Component {
             {title}
           </TitleField>
 
-          <TagField hidden={tags.length === 0} values={tags} onClick={onTagsClick} />
+          <TagField hidden={tags === null} values={tags} onClick={onTagsClick} />
 
           <TextField
             className="m-1"
