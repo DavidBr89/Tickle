@@ -6,6 +6,7 @@ import Maximize from 'react-feather/dist/icons/maximize';
 
 import CardControls from 'Components/cards/CardControls';
 import Comments from './Comments';
+import RelatedTags from './RelatedTags';
 import BackAuthor from './BackAuthor';
 import { MapAreaControl } from './MapAreaControl';
 
@@ -83,14 +84,7 @@ class CardBack extends Component {
   static defaultProps = {
     linkedCards: [],
     loc: { latitude: 0, longitude: 0 },
-    author: {
-      uid: null,
-      username: 'defaulUser',
-      email: 'default@gmail.com',
-      usrImgUrl: null
-    },
     cardSets: [],
-    uiColor: 'grey',
     edit: false,
     onFlip: d => d,
     mapRadius: 100,
@@ -109,7 +103,7 @@ class CardBack extends Component {
   render() {
     const {
       loc, edit, setMapRadius, mapRadius, onFlip, onDelete,
-      tagColorScale, id: cardId, uid, style, onClose, className,
+      id: cardId, uid, style, onClose, className, tags, tagVocabulary,
       authorDataPromise, commentPromises, addComment, authUser, controls
     } = this.props;
 
@@ -118,11 +112,15 @@ class CardBack extends Component {
     const isExtended = field => extended === field && extended !== null;
 
     const displayStyle = (field) => {
-      const fieldExtended = isExtended(field);
+      // const fieldExtended = isExtended(field);
+      const flexStyle = () => {
+        if (extended === null) return '0 10 25%';
+        return extended === field ? '1 0 75%' : '0 10 0%';
+      };
       return {
-        transition: 'all 200ms',
-        flex: fieldExtended ? '1 0 70%' : '0 10 33%',
-        overflow: fieldExtended ? 'scroll' : 'hidden'
+        transition: 'all 0.2s',
+        flex: flexStyle()
+        // overflow: fieldExtended ? 'scroll' : 'hidden'
       };
     };
 
@@ -141,6 +139,14 @@ class CardBack extends Component {
                 dataPromise={authorDataPromise}
               />
             </BackField>
+            <BackField
+              className="mb-2"
+              style={displayStyle('tags')}
+              onClick={() => this.selectField('tags')}
+            >
+              <RelatedTags tags={tags} tagVocabulary={tagVocabulary}></RelatedTags>
+            </BackField>
+
             <BackField
               className="relative mb-2"
               onClick={() => this.selectField('map')}

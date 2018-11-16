@@ -14,20 +14,15 @@ import setify from 'Utils/setify';
 import CardMarker from '../CardMarker';
 
 const AuthorDetails = ({
-  onClose,
-  style,
-  // skills,
-  activity,
-  className,
-  collectedCards,
-  createdCards,
+  onClose, style, // skills,
+  activity, className, collectedCards, createdCards,
   ...authorPreviewProps
 }) => {
   const skills = setify([...collectedCards, ...createdCards]);
 
   return (
     <div
-      className={`${className} flex-col-wrapper`}
+      className={`${className} flex flex-col`}
       style={{ ...style }}
     >
       <div className="flex-no-shrink mb-3">
@@ -39,7 +34,7 @@ const AuthorDetails = ({
         </div>
       </div>
       <h2 className="mb-1">Top Cards</h2>
-      <div className="flex flex-wrap relative" style={{ flex: '1 0 100px' }}>
+      <div className="flex flex-wrap relative" style={{}}>
         {createdCards.slice(0, 4).map(d => (
           <PreviewCard
             {...d}
@@ -68,7 +63,7 @@ const AuthorPreview = ({
       style={{ objectFit: 'cover' }}
     />
     <div className="absolute m-3">
-      <h1 className="text-white tag-label">{username}</h1>
+      <h2 className="text-white tag-label">{username}</h2>
     </div>
   </div>
 );
@@ -82,14 +77,15 @@ const BackAuthor = ({
   basicUserInfo,
   ...props
 }) => (
-  <div className="flex flex-grow flex-col justify-center" style={style}>
+  <div className="flex flex-grow flex-col justify-center overflow-y-auto" style={style}>
     <AuthorPreview
       {...basicUserInfo}
-      className="flex flex-col flex-grow relative flex-no-shrink"
+      className="flex flex-col relative flex-no-shrink"
+      style={{ flexGrow: 10 }}
     />
     {extended && (
       <AuthorDetails
-        className="flex-grow flex-col-wrapper relative p-1"
+        className="flex-grow flex flex-col relative p-1"
         {...detailedUserInfo}
       />
     )}

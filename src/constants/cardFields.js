@@ -2,26 +2,22 @@ const isDefined = a => a !== null && a !== undefined;
 
 export const TEMP_ID = 'temp';
 
-export const isChallengeSucceeded = c =>
-  isDefined(c.challengeSubmission) &&
-  c.challengeSubmission.feedback &&
-  c.challengeSubmission.feedback.accomplished;
+export const isChallengeSucceeded = c => isDefined(c.challengeSubmission)
+  && c.challengeSubmission.feedback
+  && c.challengeSubmission.feedback.accomplished;
 
-export const isChallengeSubmitted = c =>
-  isDefined(c.challengeSubmission) &&
-  c.challengeSubmission.completed &&
-  !c.challengeSubmission.feedback;
+export const isChallengeSubmitted = c => isDefined(c.challengeSubmission)
+  && c.challengeSubmission.completed
+  && !c.challengeSubmission.feedback;
 
-export const isChallengeStarted = c =>
-  isDefined(c.challengeSubmission) && !c.challengeSubmission.completed;
+export const isChallengeStarted = c => isDefined(c.challengeSubmission) && !c.challengeSubmission.completed;
 
 // TODO: update later
 export const CARD_SEEN = 'CARD_SEEN';
-export const isCardSeen = c =>
-  isChallengeStarted(c) ||
-  isChallengeSubmitted(c) ||
-  isChallengeSucceeded(c) ||
-  c.seen === true;
+export const isCardSeen = c => isChallengeStarted(c)
+  || isChallengeSubmitted(c)
+  || isChallengeSucceeded(c)
+  || c.seen === true;
 
 export const isChallengeOpen = c => !isDefined(c.challengeSubmission);
 
@@ -51,11 +47,13 @@ export const challengeTypeMap = (() => {
 })();
 
 
-export const TITLE= 'title';
+export const TITLE = 'title';
 export const TAGS = 'tags';
 export const DESCRIPTION = 'description';
-export const MEDIA ='media';
-export const TIMESTAMP = 'timestamp';
+export const MEDIA = 'media';
+export const TIMERANGE = 'timerange';
+export const CHALLENGE = 'challenge';
+// export const TIMESTAMP = 'timestamp';
 
 // TODO: where is challenge submission?
 export const extractCardFields = ({
@@ -64,7 +62,8 @@ export const extractCardFields = ({
   floorX = 0.5,
   floorY = 0.5,
   img = null,
-  loc = {latitude: 50.85146, longitude: 4.315483},
+  loc = { latitude: 50.85146, longitude: 4.315483 },
+  timerange = null, // { start: null, end: null },
 
   title = null,
   tags = [],
@@ -77,32 +76,31 @@ export const extractCardFields = ({
   // allChallengeSubmissions = null,
   challengeSubmission = null
 }) => {
-
   if (!Array.isArray(tags)) {
     throw new Error('tags is not an array');
-    return;
   }
 
   if (!Array.isArray(media)) {
     throw new Error('media is not an array');
-    return;
   }
-  //TODO: more
+  // TODO: more
 
   return ({
-  id,
-  uid,
-  floorX: floorX || 0.5,
-  floorY: floorY || 0.5,
-  img, // {url, thumbnail, title}
-  loc,
-  timestamp,
-  tags,
-  media,
-  title,
-  challenge,
-  description,
-  points,
-  // allChallengeSubmissions,
-  challengeSubmission
-}) };
+    id,
+    uid,
+    floorX: floorX || 0.5,
+    floorY: floorY || 0.5,
+    img, // {url, thumbnail, title}
+    loc,
+    timestamp,
+    timerange,
+    tags,
+    media,
+    title,
+    challenge,
+    description,
+    points,
+    // allChallengeSubmissions,
+    challengeSubmission
+  });
+};

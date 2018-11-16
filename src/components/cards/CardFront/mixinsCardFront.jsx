@@ -48,24 +48,16 @@ export const MediaField = ({
 
 
 const PreviewTags = ({
-  values,
-  style,
-  placeholder,
-  small,
-  colorScale,
-  onClick,
+  values, style, placeholder, small, colorScale, onClick,
   className
 }) => (
   <div
     onClick={onClick}
-    className={`flex ${className} overflow-hidden`}
-    style={{
-      flexWrap: 'wrap',
-      ...style
-    }}
+    className={`flex ${className} items-center flex-wrap`}
+    style={{ ...style }}
   >
     {values.map(t => (
-      <div className="tag-label text-xl mr-1 mb-1">
+      <div className="tag-label text-xl mr-1 mt-1 mb-1">
         {t}
       </div>
     ))}
@@ -89,8 +81,8 @@ export const TagField = ({
   if ((values === null)) return null;
 
   return (
-    <div className="flex m-1 items-center" onClick={onClick}>
-      { values.length === 0 ? <div className="text-xl italic mr-1">{placeholder}</div> : <PreviewTags values={values} className="mr-1" /> }
+    <div className="flex items-center" onClick={onClick}>
+      { values.length === 0 ? <div className="text-xl italic">{placeholder}</div> : <PreviewTags values={values} /> }
     </div>);
 };
 

@@ -66,20 +66,21 @@ class CommentsWrapper extends Component {
 
 const CommentList = ({
   data, author, onAdd, extended
-}) => {
-  const { uid } = author;
-  return (
-    <div
-      className="m-2 flex-col-wrapper flex-grow flex-shrink"
-    >
-      {data.length === 0 && (<h1>No Comments</h1>)}
-      <div className="mb-auto overflow-auto">
-        {data.map(({ ...c }) => (<OneComment {...c} />))}
-      </div>
-      {extended && (<AddComment onClick={onAdd} />)}
+}) => (
+  <div
+    className="m-2 flex flex-col flex-grow flex-shrink"
+  >
+    <div className="flex mb-2">
+      <h2 className="tag-label">Comments</h2>
     </div>
-  );
-};
+
+    {data.length === 0 && (<div className="tex-lg">No Comments</div>)}
+    <div className="mb-auto overflow-y-auto">
+      {data.map(({ ...c }) => (<OneComment {...c} />))}
+    </div>
+    {extended && (<AddComment onClick={onAdd} />)}
+  </div>
+);
 
 CommentList.defaultProps = {
   data: [],
@@ -129,7 +130,7 @@ class OneComment extends Component {
           {formatTime(date)}
         </div>
       </div>
-        </div>
+            </div>
     );
   }
 }

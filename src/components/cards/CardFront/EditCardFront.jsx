@@ -8,11 +8,13 @@ import ChallengeAuthorModalBody from 'Src/components/ChallengeAuthor';
 import { Modal, ModalBody } from 'Components/utils/Modal';
 import { TagDropDown } from 'Components/utils/TagInput';
 import { extractCardFields } from 'Constants/cardFields';
+import { MEDIA, TAGS } from 'Constants/cardFields';
 import { MediaSearch } from '../MediaSearch';
 
 import CardFrontTemplate from './CardFrontTemplate';
 
 import EditPhoto from './EditPhoto';
+
 
 class NumberInput extends Component {
   static propTypes = {
@@ -403,8 +405,7 @@ class EditCardFront extends PureComponent {
         <CardFrontTemplate
           {...this.props}
           onResetField={(attr) => {
-            console.log('resetField', attr);
-            this.updateField({ [attr]: (attr === 'tags' || attr === 'media') ? [] : null });
+            this.updateField({ [attr]: (attr === TAGS || attr === MEDIA) ? [] : null });
           }
           }
 

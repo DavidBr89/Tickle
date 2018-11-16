@@ -3,11 +3,11 @@
 }
 
 .thick-border {
-  @apply .border-4 .border-black;
+  @apply .border-2 .border-black;
 }
 
 .form-control {
-  @apply .thick-border .text-lg .py-2 .px-3 .text-grey-darkest;
+  @apply .thick-border .bg-white .text-lg .py-2 .px-3 .text-grey-darkest;
 }
 
 .form-group {
@@ -19,19 +19,33 @@
 }
 
 .btn {
-  @apply .flex .flex-col .items-center .justify-center .text-lg .font-bold .p-2 .border-4 .border-grey-darkest .cursor-pointer .border-black .bg-white;
+  @apply .flex .flex-col .items-center .justify-center .text-lg .font-bold .p-2 .border-2 .border-grey-darkest .cursor-pointer .border-black .bg-white;
 }
 
 .btn-black {
   @apply .bg-black .text-white .text-xl;
 }
 
-.btn-disabled {
+.header-black {
+  @apply .py-2 .px-2 .bg-black .font-bold .text-white;
+}
+
+
+.btn:hover {
+  @apply .bg-grey-dark .text-white;
+}
+
+.disabled {
   opacity: 0.5;
 }
 
-.btn-big {
-  @apply .p-3;
+.btn-disabled {
+  @apply .disabled;
+}
+
+.btn-disabled:hover {
+  @apply .bg-white .text-black;
+
 }
 
 .btn-lg {
@@ -76,9 +90,6 @@
   @apply .font-bold .py-2 .px-2 .border-2 .bg-grey-light;
 }
 
-.btn:hover {
-  @apply .bg-grey-dark .text-white;
-}
 
 .btn-black {
   @apply .bg-black .text-white;
@@ -105,6 +116,7 @@
 }
 
 .truncate-text {
+  min-width: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

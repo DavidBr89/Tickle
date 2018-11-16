@@ -33,7 +33,7 @@ import NearbyPlaces from '../places.json';
 
 
 export function fetchCollectibleCards({ uid, userEnv }) {
-  return function(dispatch, getState) {
+  return function(dispatch) {
     const db = new DB(userEnv);
     dispatch(loadingCards(true));
     // TODO: change later with obj params
@@ -53,7 +53,7 @@ export function fetchAllCardsWithSubmissions({ userEnv }) {
     dispatch(loadingCards(true));
     return db.readCards().then((data) => {
       dispatch(loadingCards(false));
-      dispatch(receiveCreatedCards(data));
+      dispatch(receiveCreatedCards(data.map(extractCardFields)));
     });
   };
 }
@@ -66,7 +66,7 @@ export function fetchCreatedCards({ userEnv, uid }) {
     return db.readCards({ authorId: uid, playerId: null }).then(
       (data) => {
         dispatch(loadingCards(false));
-        dispatch(receiveCreatedCards(data));
+        dispatch(receiveCreatedCards(data.map(extractCardFields)));
       },
       err => console.log('fetch createdCards', err),
     );

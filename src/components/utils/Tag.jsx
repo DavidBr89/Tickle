@@ -229,7 +229,7 @@ export const PreviewTags = ({
   style,
   placeholder,
   small,
-  colorScale, onClick
+  onClick
 }) => (
   <div
     onClick={onClick}
@@ -246,7 +246,7 @@ export const PreviewTags = ({
   >
     {data !== null
       && data.length > 0
-      && data.map(t => <Tag title={t} color={tagColor} small={small} />)}
+      && data.map(t => <Tag title={t} small={small} />)}
   </div>
 );
 
@@ -262,6 +262,5 @@ PreviewTags.defaultProps = {
   data: null,
   style: {},
   placeholder: 'Please add a tag',
-  small: false,
-  colorScale: () => tagColor
+  small: false
 };

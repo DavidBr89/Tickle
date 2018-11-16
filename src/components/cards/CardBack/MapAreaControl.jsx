@@ -65,6 +65,7 @@ class MapAreaControl extends Component {
         <DimWrapper delay={100}>
           {(width, height) => (<div className="relative">
 
+            <div className="absolute p-2 z-50"><h2 className="tag-label">Location</h2></div>
             <MapGL {...mapViewport(width, height)} />
             <CardMarker
               className="absolute"

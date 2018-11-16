@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { difference, intersection, uniq } from 'lodash';
 
-const TagSelection = ({ data, style, onRemove }) => (
-  <div style={style}>
+const TagSelection = ({
+  data, style, onRemove, className
+}) => (
+  <div style={style} className={className}>
     {data.map(key => (
       <button
         className="mr-1 relative text-sm tag-label"
@@ -51,20 +53,8 @@ export class EditTagInput extends Component {
 
   render() {
     const {
-      onClick,
-      onAdd,
-      onRemove,
-      onTagInputChange,
-      data,
-      style,
-      inputTag,
-      onSelect,
-      vocabulary,
-      placeholder,
-      height,
-      editable,
-      onBlur,
-      className
+      onClick, onAdd, onRemove, onTagInputChange, data, style, inputTag,
+      onSelect, vocabulary, placeholder, height, editable, onBlur, className
     } = this.props;
 
     const tagMatches = vocabulary
@@ -72,37 +62,42 @@ export class EditTagInput extends Component {
       .filter(
         d => inputTag === null
           || d.key.toLowerCase().includes(inputTag.toLowerCase()),
-      );
+      ).map(d => d.key);
 
+    const isDisabled = key => !tagMatches.includes(key);
     return (
       <div className={`${className} flex flex-col flex-grow`}>
         <div
-          className="border p-1 mb-1 overflow-scroll"
-          style={{ flex: '0 0 100px', overflow: 'scroll' }}
+          className="w-full overflow-y-auto"
         >
-          {data.length === 0 && (
-            <div className="alert-warning p-2 mb-1">
-              <strong>Please add a tag!</strong>
-            </div>
-          )}
-          <TagSelection
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap'
-            }}
-            data={data}
-            onRemove={onRemove}
-          />
+          <div className="mt-3 flex flex-wrap w-full">
+            {vocabulary.map(d => (
+              <div className="mr-2 mb-2">
+                <button
+                  type="button"
+                  className={`bare-btn ${isDisabled(d.key) && 'btn-disabled'}`}
+                  disabled={isDisabled(d.key)}
+                  onClick={() => onAdd(d.key)}
+                >
+                  {d.key}
+                  {' '}
+(
+                  {d.values.length}
+)
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
         <form
-          className="flex mb-1"
+          className="flex mb-2"
           onSubmit={(event) => {
             event.preventDefault();
             onAdd(inputTag);
           }}
         >
           <input
-            className="text-lg flex-grow"
+            className="form-control text-lg flex-grow"
             ref={input => (this.input = input)}
             onBlur={onBlur}
             onSelect={onSelect}
@@ -111,16 +106,26 @@ export class EditTagInput extends Component {
             value={inputTag}
             onChange={event => onTagInputChange(event.target.value)}
           />
-          <button type="button" className="btn" onClick={() => onAdd(inputTag)}>
+          <button type="button" className="flex-grow ml-1 btn" onClick={() => onAdd(inputTag)}>
             Add
           </button>
         </form>
-        <SearchResults
-          className="flex-grow"
-          visible
-          data={tagMatches}
-          onAdd={onAdd}
-        />
+
+        <div
+          className="border p-1 overflow-y-auto"
+          style={{ flex: '0 0 100px' }}
+        >
+          {data.length === 0 && (
+            <div className="alert-warning p-2 mb-1 font-bold text-xl">
+              No Tags added!
+            </div>
+          )}
+          <TagSelection
+            className="flex flex-wrap"
+            data={data}
+            onRemove={onRemove}
+          />
+        </div>
       </div>
     );
   }
@@ -212,11 +217,7 @@ export const ReadTagInput = class ReadTagInput extends Component {
             />
           </form>
           {slicedData.length > 0 && <TagSelection
-            style={{
-              display: 'flex',
-              alignItems: 'center'
-              // flexWrap: 'no-wrap'
-            }}
+            className="flex items-center"
             data={slicedData}
             onRemove={onRemove}
           />
@@ -235,24 +236,14 @@ export const ReadTagInput = class ReadTagInput extends Component {
 };
 
 const SearchResults = ({
-  data,
-  text,
-  onAdd,
-  visible,
-  height,
-  className,
-  style
+  data, text, onAdd, visible, height, className, style
 }) => (
   <div
-    className={`border ${className}`}
+    className={`${className} w-full bg-white overflow-y-auto z-50`}
     style={{
       display: !visible && 'none',
-      width: '100%',
       maxHeight: height,
-      background: 'white',
-      // position: 'absolute',
-      overflow: 'scroll',
-      zIndex: 20000,
+      // zIndex: 20000,
       ...style
     }}
   >
@@ -268,6 +259,7 @@ const SearchResults = ({
         {data.map(d => (
           <div className="m-2">
             <button
+              type="button"
               style={
                 {
                   // TODO: later bar charts
