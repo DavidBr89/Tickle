@@ -144,7 +144,7 @@ class CardBack extends Component {
               style={displayStyle('tags')}
               onClick={() => this.selectField('tags')}
             >
-              <RelatedTags tags={tags} tagVocabulary={tagVocabulary}></RelatedTags>
+              <RelatedTags tags={tags} tagVocabulary={tagVocabulary} {...this.props}></RelatedTags>
             </BackField>
 
             <BackField

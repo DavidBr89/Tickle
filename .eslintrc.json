@@ -4,7 +4,8 @@
   },
   "plugins": [
     "react",
-    "import"
+    "import",
+    "prettier"
   ],
   "parser": "babel-eslint",
   "parserOptions": {
@@ -14,6 +15,7 @@
       "jsx": true
     }
   },
+  "extends": [ "prettier", "prettier/flowtype", "prettier/react" ],
   "rules": {
     "prettier/prettier": "error",
     "indent": ["error", 2, {
@@ -26,7 +28,6 @@
       "jsxBracketSameLine": true,
       "useTabs": false
     }],
-    "comma-dangle": ["error", "never"],
     "no-plusplus": 0,
     "func-names": 0,
     "arrow-body-style": ["error", "as-needed"],
@@ -50,5 +51,11 @@
     "react/jsx-wrap-multilines": 0,
     "jsx-a11y/no-static-element-interactions": 0
   },
-  "extends": ["airbnb"]
+  "settings": {
+    "import/resolver": {
+      "webpack": {
+        "config": "./webpack.config.js"
+      }
+    }
+  }
 }

@@ -1,71 +1,72 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-import Check from 'react-feather/dist/icons/check';
+// import Check from 'react-feather/dist/icons/check';
 import X from 'react-feather/dist/icons/x';
 
 import CardControls from 'Components/cards/CardControls';
 import sortBy from 'lodash/sortBy';
 import {
-  TITLE, TAGS, DESCRIPTION, MEDIA, TIMESTAMP, CHALLENGE
+  TITLE,
+  TAGS,
+  DESCRIPTION,
+  MEDIA,
+  TIMERANGE,
+  CHALLENGE,
 } from 'Constants/cardFields';
-import cxx from './CardFrontTemplate.scss';
-//
-import {
-  ImgOverlay, TagField, MediaField, TitleField, EditIcon
-} from './mixinsCardFront';
 
+import {ImgOverlay, MediaField, EditIcon} from './mixinsCardFront';
 
-const Tags = ({
-  values, style, onClick, className
-}) => (
+const Tags = ({values, style, onClick, className}) => (
   <div
     onClick={onClick}
     className={`flex ${className} items-center flex-no-wrap overflow-x-hidden`}
-    style={{ ...style }}
-  >
+    style={{...style}}>
     {values.map(t => (
-      <div className="tag-label text-lg mr-1 ">
-        {t}
-      </div>
+      <div className="tag-label text-lg mr-1 ">{t}</div>
     ))}
   </div>
 );
 
-
 export const PlaceholderFrame = ({
-  onClick, empty, placeholder, className, style, edit, children
+  onClick,
+  empty,
+  placeholder,
+  className,
+  style,
+  edit,
+  children,
 }) => (
   <div
-    className={`${className} cursor-pointer`}
-    onClick={onClick}
-  >
+    className={`${className} cursor-pointer items-center flex`}
+    style={{width: '90%'}}
+    onClick={onClick}>
     {empty ? <div className="italic text-2xl">{placeholder}</div> : children}
+    <div className="ml-auto">
+      <EditIcon className="p-2" />
+    </div>
   </div>
 );
 
-const EditFrame = ({ children, onClick }) => <div onClick={onClick} className="flex items-center">
-  {children}
-</div>;
+const EditFrame = ({children, onClick}) => (
+  <div onClick={onClick} className="flex items-center">
+    {children}
+  </div>
+);
 
-const RemoveBtn = ({
-  on, children, onClick, style, className
-}) => (
+const RemoveBtn = ({on, children, onClick, style, className}) => (
   <div className={className} style={style}>
     <button
       type="button"
       onClick={onClick}
-      className={
-        `font-bold w-full capitalize flex flex-col
-        justify-center items-center mr-1 mr-1  ${on ? 'bg-grey-light' : 'bg-white'}`
-      }
-      style={{ ...style, cursor: 'pointer' }}
-    >
+      className={`font-bold w-full capitalize flex flex-col justify-center items-center mr-1 mr-1  ${
+        on ? 'bg-grey-light' : 'bg-white'
+      }`}
+      style={{...style, cursor: 'pointer'}}>
       <X />
     </button>
   </div>
 );
-
 
 class SelectCardField extends Component {
   static propTypes = {
@@ -74,40 +75,40 @@ class SelectCardField extends Component {
     tagNode: PropTypes.oneOf([PropTypes.node, null]),
     descrNode: PropTypes.oneOf([PropTypes.node, null]),
     mediaNode: PropTypes.oneOf([PropTypes.node, null]),
-    dateNode: PropTypes.oneOf([PropTypes.node, null])
+    dateNode: PropTypes.oneOf([PropTypes.node, null]),
   };
 
   static defaultProps = {
     className: '',
-    fields: []
+    fields: [],
   };
 
   state = {
-    visiblity:
-      this.props.fields.reduce((acc, d) => { acc[d.id] = true; return acc; }, {})
-  }
+    visiblity: this.props.fields.reduce((acc, d) => {
+      acc[d.id] = true;
+      return acc;
+    }, {}),
+  };
 
   // deriveStateFromProps() {
   //
   // }
 
   render() {
-    const {
-      fields, className, onSelect, onDeselect
-    } = this.props;
+    const {fields, className, onSelect, onDeselect} = this.props;
 
-    const { visiblity } = this.state;
+    const {visiblity} = this.state;
 
     const remove = attr => () => {
-      this.setState({ visiblity: { ...visiblity, [attr]: false } });
+      this.setState({visiblity: {...visiblity, [attr]: false}});
       onDeselect(attr);
     };
 
-    const addAttr = (e) => {
+    const addAttr = e => {
       e.preventDefault();
       const attr = this.select.value;
       // const visible = !visiblity[attr];
-      this.setState({ visiblity: { ...visiblity, [attr]: true } });
+      this.setState({visiblity: {...visiblity, [attr]: true}});
       // if (!visible) {
       //   onDeselect(attr);
       // }
@@ -119,46 +120,48 @@ class SelectCardField extends Component {
     const disabled = notSelectedFields.length === 0;
     return (
       <div className={`${className}`}>
-        <form onSubmit={addAttr} disabled={disabled} className={`flex mb-2 ${disabled && 'disabled'}`}>
+        <form
+          onSubmit={addAttr}
+          disabled={disabled}
+          className={`flex mb-2 ${disabled && 'disabled'}`}>
           <select
-            ref={sel => this.select = sel}
-            className="form-control flex-grow text-xl mr-1"
-          >
-            {
-              notSelectedFields.map(d => <option className="text-xl" value={d.id}>
+            ref={sel => (this.select = sel)}
+            className="form-control flex-grow text-xl mr-1">
+            {notSelectedFields.map(d => (
+              <option className="text-xl" value={d.id}>
                 {d.label}
-              </option>)
-            }
+              </option>
+            ))}
           </select>
-          <button className={`btn btn-lg ${disabled && 'btn-disabled'}`} type="submit">Add Field</button>
-          {' '}
-
+          <button
+            className={`btn btn-lg ${disabled && 'btn-disabled'}`}
+            type="submit">
+            Add Field
+          </button>{' '}
         </form>
-        <ul className="list-reset flex-grow relative h-full overflow-y-auto">
-          {
-            selectedCardFields.map((d, i) => <li
+        <ul className="list-reset flex-grow relative  overflow-y-auto">
+          {selectedCardFields.map((d, i) => (
+            <li
               key={d.id}
-              className="w-full absolute flex items-center "
+              className="w-full absolute flex items-center"
               style={{
-                opacity: visiblity[d.id] ? 1 : 0.5, transform: `translateY(${100 * i}%)`, transition: 'transform 0.2s ease-in-out'
-              }}
-            >
-              <RemoveBtn
-                onClick={remove(d.id)}
-              >
-                {d.label}
-              </RemoveBtn>
-              <div className="flex-shrink p-4 " style={{ minWidth: 0 /* important */ }}>{d.node}</div>
-
-              <div className="ml-auto"><EditIcon className="p-2" /></div>
-                                             </li>)
-          }
+                opacity: visiblity[d.id] ? 1 : 0.5,
+                transform: `translateY(${110 * i}%)`,
+                transition: 'transform 0.2s ease-in-out',
+                minWidth: 0 /* important */,
+              }}>
+              <div
+                className="flex-grow flex items-center justify-between border p-2 ml-1 mr-1" style={{minWidth: 0}}>
+                <RemoveBtn onClick={remove(d.id)}>{d.label}</RemoveBtn>
+                {d.node}
+              </div>
+            </li>
+          ))}
         </ul>
       </div>
     );
   }
 }
-
 
 export default class CardFrontTemplate extends Component {
   static propTypes = {
@@ -177,7 +180,7 @@ export default class CardFrontTemplate extends Component {
     challenge: PropTypes.object,
     bookmarkable: PropTypes.boolean,
     onPointsClick: PropTypes.func,
-    bottomControls: PropTypes.node
+    bottomControls: PropTypes.node,
   };
 
   static defaultProps = {
@@ -198,15 +201,35 @@ export default class CardFrontTemplate extends Component {
     bookmarkable: false,
     onRemoveChallengeSubmission: d => d,
     onPointsClick: d => d,
-    bottomControls: <React.Fragment />
+    bottomControls: <React.Fragment />,
   };
 
   render() {
     const {
-      tags, img, description, media, title, timerange, style, smallScreen, onClose,
-      onImgClick, onDescriptionClick, onMediaClick, onTitleClick,
-      onChallengeClick, onFlip, onTagsClick, template, points,
-      onPointsClick, bottomControls, className, onResetField, onTimeRangeClick = d => d, challenge
+      tags,
+      img,
+      description,
+      media,
+      title,
+      timerange,
+      style,
+      smallScreen,
+      onClose,
+      onImgClick,
+      onDescriptionClick,
+      onMediaClick,
+      onTitleClick,
+      onChallengeClick,
+      onFlip,
+      onTagsClick,
+      template,
+      points,
+      onPointsClick,
+      bottomControls,
+      className,
+      onResetField,
+      onTimeRangeClick = d => d,
+      challenge,
     } = this.props;
 
     // console.log('mediaIcons', mediaIcons);
@@ -214,92 +237,100 @@ export default class CardFrontTemplate extends Component {
       {
         id: TITLE,
         label: 'Title',
-        node: <PlaceholderFrame
-          onClick={onTitleClick}
-          className=""
-          empty={title === null}
-          placeholder="Title"
-        >
-          <h1 className="truncate-text">{title}</h1>
-              </PlaceholderFrame>
-      }, {
+        node: (
+          <PlaceholderFrame
+            onClick={onTitleClick}
+            className=""
+            empty={title === null}
+            placeholder="Title">
+            <h1 className="truncate-text">{title}</h1>
+          </PlaceholderFrame>
+        ),
+      },
+      {
         id: TAGS,
         label: 'Tags',
-        node: <PlaceholderFrame
-          onClick={onTagsClick}
-          className=""
-          empty={tags.length === 0}
-          placeholder="Tags"
-        >
-          <Tags values={tags} />
-              </PlaceholderFrame>
-
-      }, {
+        node: (
+          <PlaceholderFrame
+            onClick={onTagsClick}
+            className=""
+            empty={tags.length === 0}
+            placeholder="Tags">
+            <Tags values={tags} />
+          </PlaceholderFrame>
+        ),
+      },
+      {
         id: DESCRIPTION,
         label: 'Text',
-        node:
-  <PlaceholderFrame
-    onClick={onDescriptionClick}
-    empty={description === null}
-    placeholder="Description"
-  >
-    <div className="truncate-text text-xl">{description}</div>
-  </PlaceholderFrame>
-      }, {
+        node: (
+          <PlaceholderFrame
+            onClick={onDescriptionClick}
+            empty={description === null}
+            placeholder="Description">
+            <div className="capitalize truncate-text text-xl">
+              {description}
+            </div>
+          </PlaceholderFrame>
+        ),
+      },
+      {
         id: MEDIA,
         label: 'Media',
-        node:
-  <PlaceholderFrame
-    empty={media.length === 0}
-    placeholder="Media"
-    onClick={onMediaClick}
-  >
-    <MediaField values={media} />
-  </PlaceholderFrame>
-      }, {
-        id: TIMESTAMP,
+        node: (
+          <PlaceholderFrame
+            empty={media.length === 0}
+            placeholder="Media"
+            onClick={onMediaClick}>
+            <MediaField values={media} />
+          </PlaceholderFrame>
+        ),
+      },
+      {
+        id: TIMERANGE,
         label: 'Date',
-        node:
-  <PlaceholderFrame
-    onClick={onTimeRangeClick}
-    placeholder="Date"
-    empty={timerange === null}
-  />
-      }, {
+        node: (
+          <PlaceholderFrame
+            onClick={onTimeRangeClick}
+            placeholder="Date"
+            empty={timerange === null}
+          />
+        ),
+      },
+      {
         id: CHALLENGE,
         label: 'Chall.',
-        node:
-  <PlaceholderFrame
-    onClick={onTimeRangeClick}
-    placeholder="Challenge"
-    empty={challenge === null}
-  />
-      }
+        node: (
+          <PlaceholderFrame
+            onClick={onChallengeClick}
+            placeholder="Challenge"
+            empty={challenge === null}>
+            <div className="capitalize truncate-text text-xl">
+              {challenge && challenge.title}
+            </div>
+          </PlaceholderFrame>
+        ),
+      },
     ];
     return (
       <div
-        style={{ ...style }}
-        className={`flex flex-col w-full h-full ${className}`}
-      >
+        style={{...style}}
+        className={`flex flex-col w-full h-full ${className}`}>
         <ImgOverlay
           onClick={onImgClick}
           src={img ? img.url : null}
           style={{
             flex: '0 1 50%',
-            cursor: 'pointer'
-          }}
-        >
+            cursor: 'pointer',
+          }}>
           <div className="absolute z-10 w-full h-full flex items-end">
             <EditIcon className="m-1 p-1 " onClick={onImgClick} />
           </div>
 
-          <div
-            className="absolute z-10 w-full h-full flex justify-end items-end"
-          >
+          <div className="absolute z-10 w-full h-full flex justify-end items-end">
             <MediaField
               className="m-1 flex justify-between items-center"
               values={media}
-              onClick={onMediaClick}
             />
           </div>
         </ImgOverlay>
@@ -309,7 +340,6 @@ export default class CardFrontTemplate extends Component {
           className="flex-grow flex flex-col mt-3 mr-3 ml-3 mb-1"
           fields={fieldNodes}
         />
-
 
         <CardControls onFlip={onFlip} onClose={onClose}>
           <div className="flex ml-auto mr-auto">{bottomControls}</div>

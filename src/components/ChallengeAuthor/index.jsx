@@ -1,11 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as Icon from 'react-feather';
 
-import { UIthemeContext, modalBorder, createShadowStyle } from 'Cards/styles'; // eslint-disable-line
+import {ModalBody} from 'Utils/Modal';
 import TextChallengeAuthor from './TextChallengeAuthor';
-
-import { Modal, ModalBody } from 'Utils/Modal';
 
 // import LearningObject from './LearningObject';
 
@@ -105,7 +102,7 @@ class ChallengeAuthor extends React.Component {
     uiColor: PropTypes.string,
     onChange: PropTypes.func,
     reset: PropTypes.bool,
-    defaultChallenge: PropTypes.oneOf([PropTypes.object, null])
+    defaultChallenge: PropTypes.oneOf([PropTypes.object, null]),
   };
 
   static defaultProps = {
@@ -115,7 +112,7 @@ class ChallengeAuthor extends React.Component {
     onChange: d => d,
     reset: false,
     defaultChallenge: null,
-    challengeTypes: ['Photo Upload', 'Learning Object', 'Mini Game']
+    challengeTypes: ['Photo Upload', 'Learning Object', 'Mini Game'],
   };
 
   // static getDerivedStateFromProps(nextProps) {
@@ -132,14 +129,14 @@ class ChallengeAuthor extends React.Component {
   //   super(props);
   //
   state = {
-    selectedKey: 'PhotoUpload'
+    selectedKey: 'PhotoUpload',
   };
   // }
 
-  //TODO: remove
+  // TODO: remove
   challengeMap = {
     PhotoUpload: <PhotoChallengeAuthor {...this.props} />,
-    MiniGame: <PhotoChallengeAuthor {...this.props} />
+    MiniGame: <PhotoChallengeAuthor {...this.props} />,
   };
 
   // shouldComponentUpdate(nextProps, nextState) {
@@ -153,31 +150,33 @@ class ChallengeAuthor extends React.Component {
   // }
 
   render() {
-    const { className, uiColor, style } = this.props;
-    const { selectedKey } = this.state;
+    const {className, style} = this.props;
+    const {selectedKey} = this.state;
     const challengeKeys = Object.keys(this.challengeMap);
 
     return (
       <div
         className={className}
-        style={{ width: '100%', height: '100%', minHeight: 300, ...style }}
-      >
-        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+        style={{
+          width: '100%',
+          height: '100%',
+          minHeight: 300,
+          ...style,
+        }}>
+        <div style={{display: 'flex', flexWrap: 'wrap'}}>
           <div
             className="p-2"
             style={{
               // width: selected === t.name ? '100%' : '20vh',
               width: '100%',
               // height: '100%',
-              maxHeight: 600
+              maxHeight: 600,
               // minHeight: 400
-            }}
-          >
+            }}>
             {challengeKeys.map(key => (
               <div
                 className="w-100 p-2"
-                style={{ display: selectedKey !== key && 'none' }}
-              >
+                style={{display: selectedKey !== key && 'none'}}>
                 {this.challengeMap.PhotoUpload}
               </div>
             ))}
@@ -188,13 +187,12 @@ class ChallengeAuthor extends React.Component {
   }
 }
 
-const FooterBtn = ({ onClick, children, disabled, className, style = {} }) => (
+const FooterBtn = ({onClick, children, disabled, className, style = {}}) => (
   <button
     className={`${'btn '}${className}`}
-    style={{ ...style, lineHeight: 0 }}
+    style={{...style, lineHeight: 0}}
     onClick={onClick}
-    disabled={disabled}
-  >
+    disabled={disabled}>
     {children}
   </button>
 );
@@ -205,24 +203,25 @@ class ChallengeAuthorModalBody extends React.Component {
     className: PropTypes.string,
     onChange: PropTypes.func,
     uiColor: PropTypes.string,
-    onClose: PropTypes.func
+    onClose: PropTypes.func,
   };
+
   static defaultProps = {
     children: <div />,
     className: '',
     onChange: d => d,
     onClose: d => d,
-    uiColor: 'black'
+    uiColor: 'black',
   };
 
   state = {
-    challenge: { id: null, img: { url: null }, ...this.props.challenge },
-    added: this.props.challenge !== null
+    challenge: {id: null, img: {url: null}, ...this.props.challenge},
+    added: this.props.challenge !== null,
   };
 
   render() {
-    const { uiColor, onClose, title, onChange } = this.props;
-    const { challenge, added } = this.state;
+    const {uiColor, onClose, title, onChange} = this.props;
+    const {challenge, added} = this.state;
     const btnClass = `btn ${challenge === null && 'disabled'}`;
 
     const btnDisabled = challenge.description === null;
@@ -231,33 +230,30 @@ class ChallengeAuthorModalBody extends React.Component {
 
     return (
       <ModalBody
-        uiColor={uiColor}
         onClose={onClose}
         title={title}
         footer={
           <button
             className="btn"
             disabled={btnDisabled}
-            style={{ lineHeight: 0 }}
+            style={{lineHeight: 0}}
             onClick={() => {
               if (added) onChange(null);
               else {
                 onChange(challenge);
               }
-            }}
-          >
+            }}>
             <div className="m-3">
               <strong>{added ? 'Remove' : 'Add'}</strong>
             </div>
           </button>
-        }
-      >
+        }>
         <TextChallengeAuthor
           {...challenge}
           onChange={ch => {
             this.setState({
-              challenge: { ...ch },
-              added: false
+              challenge: {...ch},
+              added: false,
             });
           }}
         />

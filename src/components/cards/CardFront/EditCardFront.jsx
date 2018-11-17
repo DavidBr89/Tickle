@@ -7,29 +7,26 @@ import ChallengeAuthorModalBody from 'Src/components/ChallengeAuthor';
 
 import { Modal, ModalBody } from 'Components/utils/Modal';
 import { TagDropDown } from 'Components/utils/TagInput';
-import { extractCardFields } from 'Constants/cardFields';
-import { MEDIA, TAGS } from 'Constants/cardFields';
+import { MEDIA, TAGS, extractCardFields } from 'Constants/cardFields';
 import { MediaSearch } from '../MediaSearch';
 
 import CardFrontTemplate from './CardFrontTemplate';
 
 import EditPhoto from './EditPhoto';
 
-
 class NumberInput extends Component {
   static propTypes = {
     className: PropTypes.string,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
   };
 
   static defaultProps = {
     className: '',
-    onChange: d => d
+    onChange: d => d,
   };
 
   state = { value: 0, error: null, ...this.state };
 
-  isPosInt = () => /^\+?(0|[1-9]\d*)$/.test(this.state.value);
 
   componentDidUpdate(prevProps, prevState) {
     const { value } = this.state;
@@ -41,6 +38,8 @@ class NumberInput extends Component {
       }
     }
   }
+
+  isPosInt = () => /^\+?(0|[1-9]\d*)$/.test(this.state.value);
 
   render() {
     const { onUpdate, onClose } = this.props;
@@ -89,13 +88,13 @@ const defaultProps = {
   creator: 'Jan',
   radius: 500,
   media: [],
-  comments: []
+  comments: [],
 };
 
 class TextAreaModal extends Component {
   static propTypes = {
     children: PropTypes.node,
-    className: PropTypes.string
+    className: PropTypes.string,
   };
 
   state = { ...this.props };
@@ -131,7 +130,7 @@ class TitleModalBody extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
-    onUpdate: PropTypes.func
+    onUpdate: PropTypes.func,
   };
 
   state = { ...this.props };
@@ -153,7 +152,7 @@ class TitleModalBody extends Component {
         <input
           className="form-control w-full"
           onChange={e => this.setState({
-            text: e.target.value || null
+            text: e.target.value || null,
           })
           }
           value={text}
@@ -204,12 +203,12 @@ function modalWriteContent() {
   const { tagVocabulary, addToStorage, removeFromStorage } = this.props;
 
   const {
-    title, tags, img, description, media, points
+    title, tags, img, description, media, points,
   } = data;
 
   const closeBtn = (
     <button className="btn" onClick={this.onCloseModal}>
-        Close
+      Close
     </button>
   );
 
@@ -268,7 +267,7 @@ function modalWriteContent() {
           text={description}
           onUpdate={(newDescr) => {
             this.updateFieldAndCloseModal({
-              description: newDescr
+              description: newDescr,
             });
           }}
         />
@@ -311,7 +310,7 @@ function modalWriteContent() {
           value={points}
           onUpdate={(number) => {
             this.updateFieldAndCloseModal({
-              points: number
+              points: number,
             });
           }}
         />
@@ -326,7 +325,7 @@ class EditCardFront extends PureComponent {
     // ...ReadCardFront.propTypes,
     template: PropTypes.bool,
     onAttrUpdate: PropTypes.func,
-    onSubmit: PropTypes.func
+    onSubmit: PropTypes.func,
     // allChallenges: PropTypes.array
   };
 
@@ -335,14 +334,14 @@ class EditCardFront extends PureComponent {
     onAttrUpdate: d => d,
     onSubmit: d => d,
     allChallenges: [],
-    template: false
+    template: false,
   };
 
   state = {
     data: {
-      ...extractCardFields({ ...this.props })
+      ...extractCardFields({ ...this.props }),
     },
-    dialog: null
+    dialog: null,
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -379,22 +378,37 @@ class EditCardFront extends PureComponent {
   updateFieldAndCloseModal(field) {
     this.setState(oldState => ({
       data: { ...oldState.data, ...field },
-      dialog: null
+      dialog: null,
     }));
   }
 
-
   render() {
     const {
-      onClose, onFlip, style, background, uiColor, tagColorScale,
-      onSubmit, template, smallScreen, onCreate
+      onClose,
+      onFlip,
+      style,
+      background,
+      uiColor,
+      tagColorScale,
+      onSubmit,
+      template,
+      smallScreen,
+      onCreate,
     } = this.props;
 
     const { data, dialog } = this.state;
     console.log('state data', data);
     const modalVisible = dialog !== null;
     const {
-      id, title, tags, img, description, media, children, challenge, points
+      id,
+      title,
+      tags,
+      img,
+      description,
+      media,
+      children,
+      challenge,
+      points,
     } = data;
 
     return (
@@ -405,59 +419,53 @@ class EditCardFront extends PureComponent {
         <CardFrontTemplate
           {...this.props}
           onResetField={(attr) => {
-            this.updateField({ [attr]: (attr === TAGS || attr === MEDIA) ? [] : null });
-          }
-          }
-
+            this.updateField({
+              [attr]: attr === TAGS || attr === MEDIA ? [] : null,
+            });
+          }}
           onClose={onClose}
           onFlip={onFlip}
           onTagsClick={() => {
             this.setState({
-              dialog: { title: 'Tags', data: tags }
+              dialog: { title: 'Tags', data: tags },
             });
           }}
           onTitleClick={() => this.setState({
-            dialog: { title: 'Title', data: title }
+            dialog: { title: 'Title', data: title },
           })
           }
           onImgClick={() => {
             this.setState({
-              dialog: { title: 'Photo', data: tags }
+              dialog: { title: 'Photo', data: tags },
             });
           }}
           onDescriptionClick={() => {
             this.setState({
-              dialog: { title: 'Description', data: description }
+              dialog: { title: 'Description', data: description },
             });
           }}
           onMediaClick={() => this.setState({
-            dialog: { title: 'Media', data: media }
+            dialog: { title: 'Media', data: media },
           })
           }
+          onChallengeClick={
+            () => this.setState({
+              dialog: { title: 'Challenge', data: challenge },
+            })
+          }
           bottomControls={
-            <React.Fragment>
+            template && (
               <button
-                className="btn btn-black"
-                onClick={() => this.setState({
-                  dialog: { title: 'Challenge', data: challenge }
-                })
-                }
+                type="button"
+                className="btn btn-black ml-2"
+                onClick={() => onCreate(data)}
               >
-                {challenge === null ? 'Add Challenge' : 'Edit Challenge'}
-              </button>
-              {template && (
-                <button
-                  type="button"
-                  className="btn btn-black ml-2"
-                  onClick={() => onCreate(data)}
-                >
                   Create
-                </button>
-              )}
-            </React.Fragment>
+              </button>
+            )
           }
           onPointsClick={() => this.setState({
-            dialog: { title: 'Points', data: points }
+            dialog: { title: 'Points', data: points },
           })
           }
           edit
