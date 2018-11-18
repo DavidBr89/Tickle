@@ -5,14 +5,14 @@
 // import booleanWithin from '@turf/boolean-within';
 import {
   // WebMercatorViewport,
-  PerspectiveMercatorViewport
+  PerspectiveMercatorViewport,
 } from 'viewport-mercator-project';
 
-import { scaleLinear, extent, geoMercator } from 'd3';
+import {scaleLinear, extent, geoMercator} from 'd3';
 // import { getBoundingBox } from './utils';
-import { intersection } from 'lodash';
+import {intersection} from 'lodash';
 
-import { db } from 'Firebase';
+import {db} from 'Firebase';
 
 // import setBBox from './fitbounds';
 // import mapboxgl from 'mapbox-gl';
@@ -30,12 +30,12 @@ import {
   CHANGE_VIEWPORT,
   // RECEIVE_AUTHORED_CARDS,
   // CREATE_CARD,
-  CHANGE_MAP_VIEWPORT
+  CHANGE_MAP_VIEWPORT,
 } from './actions';
 
 import {
   // RETRIEVE_DIRECTION,
-  LOAD_DIRECTION
+  LOAD_DIRECTION,
   // GET_TOPIC_MAP
 } from './async_actions';
 
@@ -52,16 +52,16 @@ import {
 
 const defaultLocation = {
   latitude: 50.85146,
-  longitude: 4.315483
+  longitude: 4.315483,
 };
 // const cardTemplateId = 'temp';
 const INITIAL_STATE = {
-  mapViewport: {
+  mapSettings: {
     zoom: 15,
-    ...defaultLocation
+    ...defaultLocation,
   },
   accessibleRadius: 80,
-  userLocation: defaultLocation
+  userLocation: defaultLocation,
 };
 function reducer(state = INITIAL_STATE, action) {
   // console.log('action', action);
@@ -69,10 +69,10 @@ function reducer(state = INITIAL_STATE, action) {
 
   switch (action.type) {
     case CHANGE_MAP_VIEWPORT: {
-      const mapViewport = action.options;
+      const mapSettings = action.options;
       return {
         ...state,
-        mapViewport: { ...state.mapViewport, ...mapViewport }
+        mapSettings: {...state.mapSettings, ...mapSettings},
       };
     }
 
@@ -86,7 +86,7 @@ function reducer(state = INITIAL_STATE, action) {
       const userLocation = action.options;
       return {
         ...state,
-        userLocation
+        userLocation,
         // userLocation
       };
     }

@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-import {createShadowStyle, UIthemeContext} from 'Cards/styles';
 
 import idGenerate from 'Src/idGenerator';
 
@@ -59,6 +58,7 @@ class TextChallengeAuthor extends Component {
           <h2>Title</h2>
           <input
             className="form-control w-full"
+            placeholder="Title"
             defaultValue={title}
             onChange={e => this.setState({title: e.target.value})}
           />
@@ -67,9 +67,10 @@ class TextChallengeAuthor extends Component {
           <h2>Description</h2>
           <textarea
             className="form-control w-full"
+            placeholder="Description"
             onChange={e => this.setState({description: e.target.value})}
             defaultValue={description}
-            placeholder={placeholder}
+            placeholder="Description"
             style={{minHeight: 200}}
           />
         </section>

@@ -93,7 +93,7 @@ class PreviewCard extends Component {
     return (
       <div
         className={`${className} p-1 overflow-hidden bg-white flex flex-col border-2 border-black`}
-        style={contStyle}
+        style={{...style}}
         onClick={onClick}
       >
         <div

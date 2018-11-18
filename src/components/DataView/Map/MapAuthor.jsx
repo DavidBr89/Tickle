@@ -1,8 +1,8 @@
-import React, { Fragment, Component } from 'react';
+import React, {Fragment, Component} from 'react';
 import PropTypes from 'prop-types';
 
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 
 import CardMarker from 'Components/cards/CardMarker';
 
@@ -10,20 +10,17 @@ import DropTargetCont from 'Components/DataView/DragAndDrop/DragTargetCont';
 
 import DragDropContextProvider from 'Components/DataView/DragAndDrop/DragContextProvider';
 
-import {
-  PerspectiveMercatorViewport
-} from 'viewport-mercator-project';
+import {PerspectiveMercatorViewport} from 'viewport-mercator-project';
 
+import {updateCardTemplate} from 'Reducers/Cards/actions';
 
-import { updateCardTemplate } from 'Reducers/Cards/actions';
-
-import { asyncUpdateCard } from 'Reducers/Cards/async_actions';
+import {asyncUpdateCard} from 'Reducers/Cards/async_actions';
 
 import DragElement from 'Components/DataView/DragAndDrop/DragElement';
 
-import Map from 'Components/DataView/ForceOverlay/Map';
+import Map from 'Components/utils/Map';
 
-const MapAuthor = DragDropContextProvider((props) => {
+const MapAuthor = DragDropContextProvider(props => {
   const {
     onCardDrop,
     isCardDragging,
@@ -35,47 +32,55 @@ const MapAuthor = DragDropContextProvider((props) => {
     onSubmitChallenge,
     className,
     previewCardAction,
-    routeSelectCard
+    routeSelectCard,
+    mapViewport,
+    userLocation,
   } = props;
 
-  const dragger = d => (selectedCardId === d.id ? (
-    <DragElement {...d} className="drag">
+  const {latitude, longitude, zoom} = mapViewport;
+
+  const vp = new PerspectiveMercatorViewport({...mapViewport, width, height});
+
+  const userPos = vp.project([userLocation.longitude, userLocation.latitude]);
+  const locNodes = cards.reduce((acc, n) => {
+    const [x, y] = vp.project([n.loc.longitude, n.loc.latitude]);
+    if (x > 0 && x < width && y > 0 && y < height) {
+      return [{...n, x, y}, ...acc];
+    }
+    return acc;
+  }, []);
+
+  const dragger = d => {
+    return selectedCardId === d.id ? (
+      <DragElement {...d} className="drag">
+        <CardMarker
+          style={{
+            transform: 'scale(1.4)',
+            // transition: 'transform 500ms'
+          }}
+        />
+      </DragElement>
+    ) : (
       <CardMarker
+        className="drag"
+        {...d}
         style={{
-          transform: 'scale(1.4)'
-          // transition: 'transform 500ms'
+          position: 'absolute',
+          transform: 'translate(-50%,-50%)',
+          left: d.x,
+          top: d.y,
         }}
       />
-    </DragElement>
-  ) : (
-    <CardMarker
-      className="drag"
-      {...d}
-      style={{
-        position: 'absolute',
-        transform: 'translate(-50%,-50%)',
-        left: d.x,
-        top: d.y
-      }}
-    />
-  ));
+    );
+  };
 
   return (
     <DropTargetCont
       dropHandler={onCardDrop}
       dragged={isCardDragging}
       style={style}
-      className={className}
-    >
-      <Map
-        width={width}
-        height={height}
-        preview={d => routeSelectCard(d.id)}
-        nodes={cards}
-        routeSelectCard={routeSelectCard}
-      >
-        {dragger}
-      </Map>
+      className={className}>
+      <Map {...props}>{locNodes.map(dragger)}</Map>
     </DropTargetCont>
   );
 });

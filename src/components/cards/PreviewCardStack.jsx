@@ -1,28 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import PreviewCard from 'Components/cards/PreviewCard';
 
-const PreviewCardStack = ({ values, name, style }) => (
-  <div style={style} className="flex flex-col">
-    <div className="flex-grow flex flex-col p-1">
+const PreviewCardStack = ({values, id, className, onClick, style}) => (
+  <div style={style} className={'cursor-pointer flex flex-col ' + className} onClick={onClick}>
+    <div className="flex-grow flex flex-col ">
       <div className="flex-grow relative mt-2 mr-3 mb-3">
         <div
-          className="border border-black bg-white h-full w-full absolute"
-          style={{ transform: 'translate3d(10px,10px,-200px)' }}
+          className="border-2 border-black bg-white h-full w-full absolute"
+          style={{transform: 'translate3d(10px,10px,-200px)'}}
         />
         <div
-          className="border border-black bg-white h-full w-full absolute"
-          style={{ transform: 'translate3d(5px,5px,-100px)' }}
+          className="border-2 border-black bg-white h-full w-full absolute"
+          style={{transform: 'translate3d(5px,5px,-100px)'}}
         />
         <div
-          className="flex flex-col justify-center border border-black bg-white h-full w-full absolute p-2"
-          style={{ transform: 'translate3d(0,0,-150px)' }}
-        >
-          <h4 style={{ wordBreak: 'break-all' }}>{name}</h4>
-          <div className="flex-grow flex justify-center items-center">
-            <div className="rounded-full h-10 w-10 flex items-center justify-center bg-grey-light">
-              {values.length}
-            </div>
-          </div>
+          className="flex flex-col justify-center border-2 border-black bg-white h-full w-full absolute "
+          style={{transform: 'translate3d(0,0,-150px)'}}>
+          <PreviewCard title={id} />
         </div>
       </div>
     </div>
@@ -31,7 +26,7 @@ const PreviewCardStack = ({ values, name, style }) => (
 
 PreviewCardStack.defaultProps = {
   cards: [],
-  style: {}
+  style: {},
 };
 
 PreviewCardStack.propTypes = {};

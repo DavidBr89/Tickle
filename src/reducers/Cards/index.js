@@ -1,7 +1,8 @@
 // import updCardDataDim from './updateDataDimension';
 import setify from 'Components/utils/setify';
 
-import { union, uniq } from 'lodash';
+import uniq from 'lodash/uniq';
+import uniqBy from 'lodash/uniqBy';
 
 import {
   RECEIVE_PLACES,
@@ -25,7 +26,7 @@ import {
   DRAG_CARD,
   LOADING_CARDS,
   TOGGLE_TSNE_VIEW,
-  SUBMIT_CHALLENGE
+  SUBMIT_CHALLENGE,
   // ADD_CARD_FILTER,
   // REMOVE_CARD_FILTER,
   // FILTER_CARDS
@@ -50,7 +51,7 @@ const cardTemplateId = 'temp';
 const defaultLocation = {
   latitude: 50.85146,
   longitude: 4.315483,
-  radius: 500
+  radius: 500,
 };
 
 const defaultCardTemplate = {
@@ -62,7 +63,7 @@ const defaultCardTemplate = {
   tags: [],
   challenge: null,
   floorX: 0.5,
-  floorY: 0.5
+  floorY: 0.5,
 };
 
 const INITIAL_STATE = {
@@ -89,32 +90,32 @@ function reducer(state = INITIAL_STATE, action) {
       const isLoadingCards = action.options;
       return {
         ...state,
-        isLoadingCards
+        isLoadingCards,
       };
     }
 
     case SEE_CARD: {
-      const { collectibleCards } = state;
+      const {collectibleCards} = state;
       const id = action.options;
 
-      const updatedCollectibleCards = collectibleCards.map((d) => {
-        if (d.id === id) return { ...d, seen: true };
+      const updatedCollectibleCards = collectibleCards.map(d => {
+        if (d.id === id) return {...d, seen: true};
         return d;
       });
 
-      return { ...state, collectibleCards: updatedCollectibleCards };
+      return {...state, collectibleCards: updatedCollectibleCards};
     }
 
     case RECEIVE_CREATED_CARDS: {
+      const {collectibleCards} = state;
       const cards = action.options;
 
-      // const tagVocabulary = uniq(
-      //   cards.reduce((acc, c) => [...acc, ...c.tags], [])
-      // );
+      const createdCards = cards.map(c => ({...c, edit: true}));
 
-      const createdCards = cards.map(c => ({ ...c, edit: true }));
-
-      const tagVocabularyCreated = setify(createdCards);
+      const tagVocabulary = setify(
+        uniqBy([...createdCards, ...collectibleCards]),
+        'id',
+      );
 
       // const cardSets = setify(cards);
       // const tagColorScale = makeTagColorScale(cardSets);
@@ -122,7 +123,7 @@ function reducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         createdCards,
-        tagVocabularyCreated
+        tagVocabulary,
         // loadingCards: false
         // tagVocabulary
         // tagColorScale
@@ -132,18 +133,22 @@ function reducer(state = INITIAL_STATE, action) {
     }
 
     case RECEIVE_COLLECTIBLE_CARDS: {
-      const cards = action.options;
-      const tagVocabulary = setify(cards);
+      const collectibleCards = action.options;
+      const {createdCards} = state;
+
+      const tagVocabulary = setify(
+        uniqBy([...collectibleCards, ...createdCards], 'id'),
+      );
       // const tagVocabulary = uniq(
       //   cards.reduce((acc, c) => [...acc, ...c.tags], [])
       // );
       return {
         ...state,
-        collectibleCards: cards,
+        collectibleCards,
         // nestedTagVocabulary,
         // submittedCards,
         // startedCards,
-        tagVocabulary
+        tagVocabulary,
         // loadingCards: false
         // tagColorScale
         // defaultCards: cards
@@ -159,21 +164,26 @@ function reducer(state = INITIAL_STATE, action) {
       // const newCards = [...createdCards, newCard];
 
       return {
-        ...state
+        ...state,
         // createdCards: newCards,
         // selectedCardId: newCard.id
       };
     }
     case CREATE_CARD: {
-      const { createdCards, collectibleCards } = state;
+      const {createdCards, collectibleCards} = state;
 
       const newCard = action.options;
+
+      const tagVocabulary = setify(
+        uniqBy([...collectibleCards, ...createdCards, newCard], 'id'),
+      );
 
       return {
         ...state,
         createdCards: [newCard, ...createdCards],
         collectibleCards: [newCard, ...collectibleCards],
-        tmpCard: defaultCardTemplate
+        tmpCard: defaultCardTemplate,
+        tagVocabulary,
       };
     }
 
@@ -182,10 +192,10 @@ function reducer(state = INITIAL_STATE, action) {
     }
 
     case UPDATE_CARD: {
-      const { createdCards, collectibleCards } = state;
+      const {createdCards, collectibleCards} = state;
       const updatedCard = action.options;
 
-      const doUpdateCard = (c) => {
+      const doUpdateCard = c => {
         if (c.id === updatedCard.id) {
           return updatedCard;
         }
@@ -200,18 +210,18 @@ function reducer(state = INITIAL_STATE, action) {
         // TODO: remove
         // tmpCards: updatedCards,
         createdCards: updatedCreatedCards,
-        collectibleCards: updatedCollectibleCards
+        collectibleCards: updatedCollectibleCards,
       };
     }
 
     case SUBMIT_CHALLENGE: {
-      const { collectibleCards } = state;
+      const {collectibleCards} = state;
 
       const challengeSubmission = action.options;
 
-      const updatedCards = collectibleCards.map((c) => {
+      const updatedCards = collectibleCards.map(c => {
         if (c.id === challengeSubmission.cardId) {
-          return { ...c, challengeSubmission };
+          return {...c, challengeSubmission};
         }
         return c;
       });
@@ -220,25 +230,25 @@ function reducer(state = INITIAL_STATE, action) {
         ...state,
         // TODO: remove
         // tmpCards: updatedCards,
-        collectibleCards: updatedCards
+        collectibleCards: updatedCards,
       };
     }
 
     case TOGGLE_CARD_CHALLENGE: {
-      const { cardChallengeOpen } = action.options;
+      const {cardChallengeOpen} = action.options;
       return {
         ...state,
-        cardChallengeOpen
+        cardChallengeOpen,
       };
     }
 
     case UPDATE_CARD_TEMPLATE: {
       const card = action.options;
       console.log('TEMPLATE CARD', card);
-      return { ...state, tmpCard: { ...card, template: true } };
+      return {...state, tmpCard: {...card, template: true}};
     }
     case DELETE_CARD: {
-      const { createdCards } = state;
+      const {createdCards} = state;
       const cid = action.options;
 
       const oldCardIndex = createdCards.findIndex(c => c.id === cid);
@@ -248,7 +258,7 @@ function reducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         createdCards: newCreatedCards,
-        extCardId: null
+        extCardId: null,
         // selectedCardId: 'temp'
       };
     }
@@ -260,24 +270,24 @@ function reducer(state = INITIAL_STATE, action) {
     }
 
     case RECEIVE_PLACES: {
-      const { results: places } = action.options;
+      const {results: places} = action.options;
       // console.log('places', places);
       const placeCards = places.map(
         ({
           id,
           geometry: {
-            location: { lat: latitude, lng: longitude }
+            location: {lat: latitude, lng: longitude},
           },
           types: tags,
-          name: title
+          name: title,
         }) => ({
           id,
-          loc: { latitude, longitude },
+          loc: {latitude, longitude},
           tags,
           title,
-          challenge: { type: null },
-          media: []
-        })
+          challenge: {type: null},
+          media: [],
+        }),
       );
       // console.log('cardPlaces', placeCards);
       // const newCards = [...state.cards, ...placeCards];
@@ -285,7 +295,7 @@ function reducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         accessibleCards: placeCards,
-        defaultCards: placeCards
+        defaultCards: placeCards,
       };
     }
 
@@ -337,7 +347,7 @@ function reducer(state = INITIAL_STATE, action) {
       const isCardDragging = action.options;
       return {
         ...state,
-        isCardDragging
+        isCardDragging,
       };
     }
 
@@ -366,14 +376,15 @@ function reducer(state = INITIAL_STATE, action) {
     //   return { ...state, cards: newCards, defaultCards: newCards };
     // }
     case TOGGLE_TSNE_VIEW: {
-      return { ...state, tsneView: !state.tsneView };
+      return {...state, tsneView: !state.tsneView};
     }
+
+    default:
+      return state;
     // default: {
     //   console.log('action', action);
     // }
   }
-
-  return state;
 }
 
 export default reducer;

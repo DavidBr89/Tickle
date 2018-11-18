@@ -3,7 +3,7 @@ import thunkMiddleware from 'redux-thunk';
 
 import {Provider} from 'react-redux';
 
-import {hot} from 'react-hot-loader';
+import {hot, setConfig} from 'react-hot-loader';
 // import withAuthentication from './components/withAuthentication';oo
 // import AuthUserContext from './components/AuthUserContext';
 
@@ -16,6 +16,7 @@ import {screenResize} from 'Reducers/Screen/actions';
 
 import {userMove, changeMapViewport} from 'Reducers/Map/actions';
 
+setConfig({ pureSFC: true });
 // db.readCopyUsers();
 
 // TODO check whether it's only created once

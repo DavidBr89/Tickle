@@ -1,14 +1,18 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import MapGL, { HTMLOverlay } from 'react-map-gl';
+import MapGL, {FlyToInterpolator} from 'react-map-gl';
 
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import WebMercatorViewport from 'viewport-mercator-project';
+
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import MapPin from 'react-feather/dist/icons/map-pin';
 
-import { geoProject } from 'Lib/geo';
+import {geoProject} from 'Lib/geo';
 
 import CardMarker from 'Components/cards/CardMarker';
+
+import Map from 'Components/utils/Map';
 
 // import { UserOverlay } from '../../utils/map-layers/DivOverlay';
 
@@ -17,7 +21,6 @@ import ArrayPipe from 'Components/utils/ArrayPipe';
 import Cluster from '../ForceOverlay/Cluster';
 import CardCluster from '../ForceOverlay/CardCluster';
 // import ForceCollide from '../ForceOverlay/MiniForceCollide';
-
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -28,12 +31,12 @@ const mapStyleUrl = 'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l';
 
 const defaultLocation = {
   latitude: 50.85146,
-  longitude: 4.315483
+  longitude: 4.315483,
 };
 
 const shadowStyle = {
   boxShadow: '3px 3px black',
-  border: '1px solid #000'
+  border: '1px solid #000',
   // border: '1px solid black'
 };
 
@@ -53,67 +56,62 @@ class UserMap extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
-    disabled: PropTypes.boolean
+    disabled: PropTypes.boolean,
   };
 
   static defaultProps = {
     disabled: false,
     maxZoom: 16,
     viewport: {
-      ...defaultLocation, width: 100, height: 100, zoom: 10
+      ...defaultLocation,
+      width: 100,
+      height: 100,
+      zoom: 10,
     },
     cards: [],
-    showUser: false
+    showUser: false,
   };
-
-  state = { ...this.props };
 
   render() {
     const {
-      cards, children, userLocation, preview, width, height,
-      isCardDragging, userMove, className, style, mercator, changeMapViewport
+      cards,
+      children,
+      userLocation,
+      preview,
+      width,
+      height,
+      isCardDragging,
+      userMove,
+      className,
+      style,
+      mapViewport,
+      changeMapViewport,
     } = this.props;
 
-    const { latitude, longitude, zoom } = mercator;
+    const {latitude, longitude, zoom} = mapViewport;
 
+    const mercator = new WebMercatorViewport(mapViewport);
+    const locNodes = geoProject({viewport: mercator, data: cards});
 
-    const locNodes = geoProject({ viewport: mercator, data: cards });
-
-    const userPos = mercator.project([userLocation.longitude, userLocation.latitude]);
+    const userPos = mercator.project([
+      userLocation.longitude,
+      userLocation.latitude,
+    ]);
 
     const accessibleRadius = geometricRadius(latitude, 50, zoom);
 
+    console.log('mercator', {...mercator});
     return (
       <div className={className} style={style}>
-        <MapGL
-          ref={m => (this.mapgl = m)}
-          onClick={({ lngLat }) => {
-            userMove({ longitude: lngLat[0], latitude: lngLat[1] });
-          }}
-          width={width}
-          height={height}
-          onViewportChange={(newViewport) => {
-            changeMapViewport({ ...newViewport });
-          }}
-          dragPan={!isCardDragging}
-          dragRotate={false}
-          doubleClickZoom={false}
-          latitude={latitude}
-          longitude={longitude}
-          zoom={zoom}
-        >
+        <Map {...this.props}>
           <Cluster
-            radius={() => 40
-            }
+            radius={() => 40}
             nodes={locNodes}
             width={width}
-            height={height}
-          >
+            height={height}>
             {clusters => (
               <ArrayPipe array={clusters}>
-                {({
-                  id, x, y, data: d
-                }) => (
+                {({id, x, y, data: d}) => (
                   <CardCluster
                     id={id}
                     coords={[x, y]}
@@ -122,8 +120,7 @@ class UserMap extends Component {
                     data={d}
                     onClick={() => {
                       preview(d.values[0]);
-                    }}
-                  >
+                    }}>
                     {c => <CardMarker {...c} />}
                   </CardCluster>
                 )}
@@ -135,15 +132,14 @@ class UserMap extends Component {
             style={{
               position: 'absolute',
               left: userPos[0],
-              top: userPos[1]
+              top: userPos[1],
               // zIndex: 2000
-            }}
-          >
+            }}>
             <img
               src={userIcon}
               width={50}
               height={50}
-              style={{ transform: 'translate(-50%,-50%)' }}
+              style={{transform: 'translate(-50%,-50%)'}}
             />
           </div>
 
@@ -151,10 +147,9 @@ class UserMap extends Component {
             style={{
               position: 'absolute',
               left: userPos[0],
-              top: userPos[1]
+              top: userPos[1],
               // zIndex: 2000
-            }}
-          >
+            }}>
             <div
               style={{
                 position: 'absolute',
@@ -165,7 +160,7 @@ class UserMap extends Component {
                 borderRadius: '50%',
                 transition: 'width 0.5s, height 0.5s, left 0.5s, top 0.5s',
                 width: accessibleRadius * 2,
-                height: accessibleRadius * 2
+                height: accessibleRadius * 2,
                 // background: 'green',
                 // opacity: 0.3
               }}
@@ -173,22 +168,21 @@ class UserMap extends Component {
           </div>
           <div
             className="z-20 absolute"
-            style={{ position: 'absolute', bottom: 0, right: 0 }}
-          >
+            style={{position: 'absolute', bottom: 0, right: 0}}>
             <button
               className="p-3 m-2 rounded-full btn "
-              onClick={() => this.props.changeMapViewport({
-                width,
-                height,
-                zoom,
-                ...userLocation
-              })
-              }
-            >
+              onClick={() =>
+                this.props.changeMapViewport({
+                  width,
+                  height,
+                  zoom,
+                  ...userLocation,
+                })
+              }>
               <MapPin />
             </button>
           </div>
-        </MapGL>
+        </Map>
       </div>
     );
   }
@@ -196,32 +190,28 @@ class UserMap extends Component {
 
 // TODO: change this later
 const mapStateToProps = ({
-  MapView: {
-    mapViewport, userLocation, width, height, accessibleRadius
-  },
-  DataView: { selectedCardId },
-  Cards: { isCardDragging },
-  Screen
+  MapView: {mapViewport, userLocation, width, height, accessibleRadius},
+  DataView: {selectedCardId},
+  Cards: {isCardDragging},
+  Screen,
 }) => ({
-  viewport: { ...mapViewport, ...Screen },
+  viewport: {...mapViewport, ...Screen},
   userLocation,
   accessibleRadius,
   selectedCardId,
-  isCardDragging
+  isCardDragging,
 });
 
-const mapDispatchToProps = dispatch => bindActionCreators(
-  mapActions, dispatch
-);
+const mapDispatchToProps = dispatch => bindActionCreators(mapActions, dispatch);
 
 const mergeProps = (state, dispatcherProps, ownProps) => ({
   ...state,
   ...dispatcherProps,
-  ...ownProps
+  ...ownProps,
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-  mergeProps
+  mergeProps,
 )(UserMap);

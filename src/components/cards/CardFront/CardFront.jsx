@@ -5,7 +5,7 @@ import CardControls from 'Components/cards/CardControls';
 import {mediaScale} from 'Constants/mediaTypes';
 import placeholderImgSrc from '../placeholder.png';
 
-import {ImgOverlay, TextField, TitleField, MediaField} from './mixinsCardFront';
+import {ImgOverlay, TextField, MediaField} from './mixinsCardFront';
 
 const TagField = ({values, className, style, onClick}) => {
   if (values.length === 0) return null;
@@ -26,6 +26,26 @@ TagField.defaultProps = {
   className: '',
   style: {},
   onClick: d => d,
+};
+
+
+export const TitleField = ({
+  onClick,
+  edit,
+  children,
+  className,
+  placeholder,
+  hidden,
+}) => {
+  if (hidden) return null;
+  const titleCont = children || <span className="italic">{placeholder}</span>;
+  return (
+    <div
+      className={`flex items-center items-center ${className}`}
+      onClick={onClick}>
+      <h1 className="text-muted mr-1">{titleCont}</h1>
+    </div>
+  );
 };
 
 const createIcon = type =>
@@ -130,7 +150,7 @@ class CardFront extends Component {
 
         <div className="flex flex-col mt-3 mr-3 ml-3 mb-1">
           <TitleField
-            hidden={title !== null}
+            hidden={title === null}
             className="m-1"
             onClick={onTitleClick}>
             {title}
