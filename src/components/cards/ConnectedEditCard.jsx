@@ -1,19 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 // import chroma from 'chroma-js';
-import { compose } from 'recompose';
+import {compose} from 'recompose';
 
 import Trash2 from 'react-feather/dist/icons/trash-2';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 
-import { withRouter } from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 
-import { DB } from 'Firebase';
+import {DB} from 'Firebase';
 
-import { updateCardTemplate, dragCard } from 'Reducers/Cards/actions';
+import {updateCardTemplate, dragCard} from 'Reducers/Cards/actions';
 
-import { changeMapViewport } from 'Reducers/Map/actions';
+import {changeMapViewport} from 'Reducers/Map/actions';
 
 import * as asyncCardActions from 'Reducers/Cards/async_actions';
 
@@ -34,105 +34,105 @@ function mapStateToProps(state) {
     ...state.DataView,
     ...state.Screen,
     userLocation: state.MapView.userLocation,
-    ...state.Session
+    ...state.Session,
   };
 }
 
-
-const DeleteButton = ({ style, className, onClick }) => (
+const DeleteButton = ({style, className, onClick}) => (
   <button
     className={`pl-10 pr-10 btn btn-black bg-danger ${className}`}
     type="button"
     style={{
       alignItems: 'center',
-      ...style
+      ...style,
     }}
-    onClick={onClick}
-  >
-    <div><Trash2 size={30} /></div>
+    onClick={onClick}>
+    <div>
+      <Trash2 size={30} />
+    </div>
   </button>
 );
 
 DeleteButton.propTypes = {
   style: PropTypes.object,
   onClick: PropTypes.func,
-  className: PropTypes.string
+  className: PropTypes.string,
 };
 
 DeleteButton.defaultProps = {
   style: {},
   onClick: d => d,
-  className: ''
+  className: '',
 };
 
-
-const mapDispatchToProps = dispatch => bindActionCreators(
-  {
-    // dragCard,
-    updateCardTemplate,
-    ...routeActions,
-    dragCard,
-    ...asyncCardActions,
-    changeMapViewport,
-    ...routeActions
-  },
-  dispatch,
-);
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      // dragCard,
+      updateCardTemplate,
+      ...routeActions,
+      dragCard,
+      ...asyncCardActions,
+      changeMapViewport,
+      ...routeActions,
+    },
+    dispatch,
+  );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const {
-    mapViewport, width, height, authUser, tagVocabulary
-  } = state;
-  const { uid: authorId } = authUser;
+  const {mapViewport, width, height, authUser, tagVocabulary} = state;
+  const {uid: authorId} = authUser;
 
-  const {
-    match, location, history, id: cardId
-  } = ownProps;
+  const {match, location, history, id: cardId} = ownProps;
 
   // TODO: BUILD IN check
-  const { userEnv } = match.params;
+  const {userEnv} = match.params;
 
   const {
-    query: { selectedCardId, extended, flipped },
-    routing: { routeFlipCard, routeExtendCard }
-  } = cardRoutes({ history, location });
+    query: {selectedCardId, extended, flipped},
+    routing: {routeFlipCard, routeExtendCard},
+  } = cardRoutes({history, location});
 
   const {
     updateCardTemplate,
     asyncCreateCard,
     asyncUpdateCard,
-    asyncRemoveCard
+    asyncRemoveCard,
   } = dispatcherProps;
 
-  const createCard = ({ tags: tmpTags, title: tmpTitle, ...cardData }) => {
-    const tags = tmpTags && tmpTags.length > 0 ? tmpTags : ['No Tags'];
-    const title = tmpTitle !== null ? tmpTitle : 'Card without title';
-    console.log('CARD tmpTitle', tmpTitle);
+  const createCard = ({tags, title, ...cardData}) => {
 
-    asyncCreateCard({ cardData: { ...cardData, title, tags }, userEnv });
+    asyncCreateCard({cardData: {...cardData, title, tags}, userEnv});
   };
-  const updateCard = (cardData) => {
-    asyncUpdateCard({ cardData, userEnv });
+  const updateCard = cardData => {
+    asyncUpdateCard({cardData, userEnv});
   };
 
-  const removeCard = () => asyncRemoveCard({ cardId, userEnv });
+  const removeCard = () => asyncRemoveCard({cardId, userEnv});
 
-  const onCardUpdate = cardData => (cardData.id === 'temp'
-    ? updateCardTemplate(cardData)
-    : updateCard(cardData));
+  const onCardUpdate = cardData =>
+    cardData.id === 'temp'
+      ? updateCardTemplate(cardData)
+      : updateCard(cardData);
 
   const db = DB(userEnv);
 
   const filePath = `cards/${authorId}/${cardId}`;
-  const removeFromStorage = fileId => db.removeFileFromEnv({
-    path: filePath, id: fileId
-  });
-  const addToStorage = ({ file, id }) => db.addFileToEnv({ file, path: filePath, id });
+  const removeFromStorage = fileId =>
+    db.removeFileFromEnv({
+      path: filePath,
+      id: fileId,
+    });
+  const addToStorage = ({file, id}) =>
+    db.addFileToEnv({file, path: filePath, id});
   // const fetchComments = cardId ? () => db.readComments(cardId) : null;
   // const addComment = text => db.addComment({ uid: authorId, cardId, text });
 
   const backCardFuncs = makeBackCardFuncs({
-    userEnv, cardId, playerId: authorId, authorId
+    userEnv,
+    cardId,
+    playerId: authorId,
+    authorId,
   });
 
   const onClose = routeExtendCard;
@@ -152,7 +152,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     addToStorage,
     removeFromStorage,
     ...backCardFuncs,
-    ...ownProps
+    ...ownProps,
   };
 };
 
@@ -168,7 +168,8 @@ const EditCard = ({
   onCreate,
   template,
   onFlip,
-  fetchAuthorData, id,
+  fetchAuthorData,
+  id,
   ...props
 }) => (
   <CardFrame
@@ -181,12 +182,12 @@ const EditCard = ({
         template={template}
         onClose={onClose}
         onFlip={onFlip}
-        onCreate={(d) => {
-          createCard({ ...d, x, y });
+        onCreate={d => {
+          createCard({...d, x, y});
           onClose();
         }}
-        onUpdate={(d) => {
-          onCardUpdate({ ...d, x, y });
+        onUpdate={d => {
+          onCardUpdate({...d, x, y});
         }}
       />
     }
@@ -198,11 +199,16 @@ const EditCard = ({
         fetchAuthorData={fetchAuthorData}
         onFlip={onFlip}
         edit
-        controls={!template ? (<DeleteButton onClick={() => {
-          onClose();
-          removeCard(props.id);
-        }}
-        />) : null}
+        controls={
+          !template ? (
+            <DeleteButton
+              onClick={() => {
+                onClose();
+                removeCard(props.id);
+              }}
+            />
+          ) : null
+        }
       />
     }
   />

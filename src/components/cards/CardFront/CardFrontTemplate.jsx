@@ -1,6 +1,11 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
+import {
+  extractCardFields,
+  initCard,
+  isFieldInitialized,
+} from 'Constants/cardFields';
 // import Check from 'react-feather/dist/icons/check';
 import X from 'react-feather/dist/icons/x';
 
@@ -68,6 +73,30 @@ const RemoveBtn = ({on, children, onClick, style, className}) => (
   </div>
 );
 
+const FieldList = ({values, visiblity, onRemove}) =>
+  values.length > 0 && (
+    <ul className="list-reset flex-grow relative  overflow-y-auto">
+      {values.map((d, i) => (
+        <li
+          key={d.id}
+          className="w-full absolute flex items-center"
+          style={{
+            opacity: visiblity[d.id] ? 1 : 0.5,
+            transform: `translateY(${110 * i}%)`,
+            transition: 'transform 0.2s ease-in-out',
+            minWidth: 0 /* important */,
+          }}>
+          <div
+            className="flex-grow flex items-center justify-between border p-2 ml-1 mr-1"
+            style={{minWidth: 0}}>
+            <RemoveBtn onClick={onRemove(d.id)}>{d.label}</RemoveBtn>
+            {d.node}
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+
 class SelectCardField extends Component {
   static propTypes = {
     className: PropTypes.string,
@@ -83,12 +112,7 @@ class SelectCardField extends Component {
     fields: [],
   };
 
-  state = {
-    visiblity: this.props.fields.reduce((acc, d) => {
-      acc[d.id] = true;
-      return acc;
-    }, {}),
-  };
+  state = {visiblity: this.props.visiblity};
 
   // deriveStateFromProps() {
   //
@@ -118,6 +142,7 @@ class SelectCardField extends Component {
     const notSelectedFields = fields.filter(d => !visiblity[d.id]);
     const selectedCardFields = fields.filter(d => visiblity[d.id]);
     const disabled = notSelectedFields.length === 0;
+    const allHidden = selectedCardFields.length === 0;
     return (
       <div className={`${className}`}>
         <form
@@ -139,25 +164,17 @@ class SelectCardField extends Component {
             Add Field
           </button>{' '}
         </form>
-        <ul className="list-reset flex-grow relative  overflow-y-auto">
-          {selectedCardFields.map((d, i) => (
-            <li
-              key={d.id}
-              className="w-full absolute flex items-center"
-              style={{
-                opacity: visiblity[d.id] ? 1 : 0.5,
-                transform: `translateY(${110 * i}%)`,
-                transition: 'transform 0.2s ease-in-out',
-                minWidth: 0 /* important */,
-              }}>
-              <div
-                className="flex-grow flex items-center justify-between border p-2 ml-1 mr-1" style={{minWidth: 0}}>
-                <RemoveBtn onClick={remove(d.id)}>{d.label}</RemoveBtn>
-                {d.node}
-              </div>
-            </li>
-          ))}
-        </ul>
+
+        {allHidden && (
+          <div className="flex-grow text-2xl flex flex-col justify-center items-center">
+            No Field added
+          </div>
+        )}
+        <FieldList
+          values={selectedCardFields}
+          visiblity={visiblity}
+          onRemove={remove}
+        />
       </div>
     );
   }
@@ -293,13 +310,13 @@ export default class CardFrontTemplate extends Component {
           <PlaceholderFrame
             onClick={onTimeRangeClick}
             placeholder="Date"
-            empty={timerange === null}
+            empty={true}
           />
         ),
       },
       {
         id: CHALLENGE,
-        label: 'Chall.',
+        label: 'Challenge',
         node: (
           <PlaceholderFrame
             onClick={onChallengeClick}
@@ -312,6 +329,11 @@ export default class CardFrontTemplate extends Component {
         ),
       },
     ];
+    const fieldVisibility = fieldNodes.reduce((acc, d) => {
+      acc[d.id] = isFieldInitialized({card: this.props, attr: d.id});
+      return acc;
+    });
+
     return (
       <div
         style={{...style}}
@@ -337,6 +359,7 @@ export default class CardFrontTemplate extends Component {
 
         <SelectCardField
           onDeselect={onResetField}
+          visiblity={fieldVisibility}
           className="flex-grow flex flex-col mt-3 mr-3 ml-3 mb-1"
           fields={fieldNodes}
         />

@@ -4,6 +4,7 @@ import setify from 'Components/utils/setify';
 import uniq from 'lodash/uniq';
 import uniqBy from 'lodash/uniqBy';
 
+import {initCard} from 'Constants/cardFields';
 import {
   RECEIVE_PLACES,
   UPDATE_CARD,
@@ -54,17 +55,7 @@ const defaultLocation = {
   radius: 500,
 };
 
-const defaultCardTemplate = {
-  id: cardTemplateId,
-  template: true,
-  // loc: defaultLocation,
-  points: 0,
-  edit: true,
-  tags: [],
-  challenge: null,
-  floorX: 0.5,
-  floorY: 0.5,
-};
+const defaultCardTemplate = initCard;
 
 const INITIAL_STATE = {
   cardTemplateId,

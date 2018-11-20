@@ -85,6 +85,7 @@ class UserMap extends Component {
       className,
       style,
       mapViewport,
+      selectedCardId,
       changeMapViewport,
     } = this.props;
 
