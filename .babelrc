@@ -6,12 +6,14 @@
         "useBuiltIns": "entry"
       }
     ],
-    "@babel/preset-react"
+    "@babel/preset-react",
+    "@babel/typescript"
   ],
   "plugins": [
     ["@babel/plugin-proposal-decorators", { legacy: true }],
     "@babel/plugin-syntax-dynamic-import",
     "@babel/plugin-proposal-class-properties",
+		"@babel/proposal-object-rest-spread",
     "@babel/plugin-proposal-export-namespace-from",
     "@babel/plugin-proposal-throw-expressions"
   ]

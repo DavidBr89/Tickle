@@ -7,7 +7,7 @@
     "import",
     "prettier"
   ],
-  "parser": "babel-eslint",
+  "parser": "typescript-eslint-parser",
   "parserOptions": {
     "ecmaVersion": 8,
     "sourceType": "module",
@@ -15,7 +15,7 @@
       "jsx": true
     }
   },
-  "extends": [ "prettier", "prettier/flowtype", "prettier/react" ],
+  "extends": [ "prettier", "prettier/react" ],
   "rules": {
     "prettier/prettier": "error",
     "indent": ["error", 2, {

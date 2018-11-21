@@ -8,7 +8,7 @@ export const userFields = ({
   email,
   photoURL,
   admin = false,
-  userEnvs = []
+  userEnvs = [],
 }) => ({
   interests,
   uid,
@@ -17,7 +17,7 @@ export const userFields = ({
   email,
   photoURL,
   admin,
-  userEnvs
+  userEnvs,
 });
 
 export const compareUserFields = (
@@ -27,7 +27,7 @@ export const compareUserFields = (
     name: nameA,
     username: usernameA,
     email: emailA,
-    photoURL: photoURLA
+    photoURL: photoURLA,
   },
   {
     interests: interestsB,
@@ -35,7 +35,7 @@ export const compareUserFields = (
     uid: uidB,
     username: usernameB,
     email: emailB,
-    photoURL: photoURLB
+    photoURL: photoURLB,
   },
 ) => {
   if (!isEqual(interestsA, interestsB)) {
