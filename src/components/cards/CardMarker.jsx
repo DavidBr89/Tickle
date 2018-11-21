@@ -1,10 +1,9 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
 import IcAk from 'Styles/alphabet_icons/ic_ak.svg';
 
-import { shadowStyle, colorScale } from './styles';
-
+import {shadowStyle, colorScale} from './styles';
 
 class CardMarker extends Component {
   static propTypes = {
@@ -27,10 +26,10 @@ class CardMarker extends Component {
     height: null,
     center: true,
     background: 'black',
-    shadow: true
+    shadow: true,
   };
 
-  state = { hovered: false };
+  state = {hovered: false};
   // shouldComponentUpdate() {
   //   return false;
   // }
@@ -48,29 +47,25 @@ class CardMarker extends Component {
       shadow,
       // tags,
       className,
-      selected
+      selected,
     } = this.props;
 
-    const { hovered } = this.state;
+    const {hovered} = this.state;
     return (
       <div
         className={`cardmarker bg-white ${className}`}
-        style={{
+      style={{
           width: 25,
           height: 30,
-          ...style
+          ...style,
         }}
-        onMouseOver={() => this.setState({ hovered: true })}
-        onMouseOut={() => this.setState({ hovered: false })}
-        onClick={onClick}
-      >
+        onMouseOver={() => this.setState({hovered: true})}
+        onMouseOut={() => this.setState({hovered: false})}
+        onClick={onClick}>
         <div
           className="w-full h-full border-2 border-black flex-col-wrapper"
-          style={{ padding: 2 }}
-        >
-          <div
-            className="flex-grow flex-col-wrapper relative justify-center bg-yellow-dark"
-          >
+          style={{padding: 2}}>
+          <div className="flex-grow flex-col-wrapper relative justify-center bg-yellow-dark">
             <img src={IcAk} className="p-1" />
           </div>
         </div>

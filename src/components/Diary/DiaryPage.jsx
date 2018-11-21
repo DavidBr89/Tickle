@@ -1,48 +1,40 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { wrapGrid } from 'animate-css-grid';
+import {wrapGrid} from 'animate-css-grid';
 
 import PreviewCard from 'Components/cards/PreviewCard';
 import ConnectedCard from 'Components/cards/ConnectedCard';
 
-import { BlackModal } from 'Utils/Modal';
+import {BlackModal} from 'Utils/Modal';
 import DefaultLayout from 'Components/DefaultLayout';
 
 import {
   CHALLENGE_STARTED,
   CHALLENGE_SUBMITTED,
   CHALLENGE_SUCCEEDED,
-  NO_CARD_FILTER
+  NO_CARD_FILTER,
   // challengeTypeMap
 } from 'Constants/cardFields';
 import TabMenu from './TabMenu';
-
 
 // import './layout.scss';
 
 class Cell extends Component {
   static propTypes = {
     onClick: PropTypes.func,
-    selected: PropTypes.bool
+    selected: PropTypes.bool,
   };
 
   static defaultProps = {
     onClick: () => null,
-    selected: true
+    selected: true,
   };
 
-  state = { hovered: false };
+  state = {hovered: false};
 
   render() {
-    const {
-      onClick,
-      style,
-      selected,
-      expanded,
-      seen,
-      ...restProps
-    } = this.props;
-    const { hovered } = this.state;
+    const {onClick, style, selected, expanded, seen, ...restProps} = this.props;
+    const {hovered} = this.state;
 
     return (
       <div
@@ -54,17 +46,15 @@ class Cell extends Component {
           height: '100%',
           transition: 'opacity 500ms',
           // background: selected && 'black',
-          ...style
+          ...style,
         }}
-        onClick={onClick}
-      >
+        onClick={onClick}>
         <div
           style={{
             // IMPORTANT FOR ANIMATION
             width: '100%',
-            height: '100%'
-          }}
-        >
+            height: '100%',
+          }}>
           <PreviewCard
             {...this.props}
             accessible={seen}
@@ -79,10 +69,10 @@ class Cell extends Component {
 
 const INITIAL_GRID_STATE = {
   colNum: 10,
-  rowNum: 10
+  rowNum: 10,
 };
 
-const cardTypeText = (cardType) => {
+const cardTypeText = cardType => {
   switch (cardType) {
     case CHALLENGE_STARTED:
       return 'started';
@@ -123,7 +113,9 @@ export default class MyDiary extends Component {
       selectedCardType,
       numCollectibleCards,
       numSeenCards,
-      tagVocabulary, tabExtended, extendTab
+      tagVocabulary,
+      tabExtended,
+      extendTab,
     } = this.props;
 
     const gridStyle = {
@@ -131,66 +123,62 @@ export default class MyDiary extends Component {
       display: 'grid',
       // gridAutoFlow: 'column dense',
       gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
-      gridAutoRows: 150
+      gridAutoRows: 150,
     };
 
     const cardSelected = selectedCardId !== null;
     const flexShrink = ' 0 1000 0%';
 
-    const flexTrans = { transition: 'flex 0.5s' };
+    const flexTrans = {
+      transition: 'flex 0.5s',
+      // flex: tabExtended ? '1000 0 0%' : '0 1000 0%',
+    };
     return (
       <DefaultLayout
         menu={
           <div className="flex-grow flex justify-end items-center">
-            <select className="form-control bg-white" onChange={e => selectCardType(e.target.value)}>
+            <select
+              className="form-control bg-white"
+              onChange={e => selectCardType(e.target.value)}>
               <option
                 selected={selectedCardType === NO_CARD_FILTER}
-                value={NO_CARD_FILTER}
-              >
-                  All Cards
+                value={NO_CARD_FILTER}>
+                All Cards
               </option>
               <option
                 selected={selectedCardType === CHALLENGE_STARTED}
-                value={CHALLENGE_STARTED}
-              >
-                  Started Cards
+                value={CHALLENGE_STARTED}>
+                Started Cards
               </option>
               <option
                 selected={selectedCardType === CHALLENGE_SUBMITTED}
-                value={CHALLENGE_SUBMITTED}
-              >
-                  Submitted Cards
+                value={CHALLENGE_SUBMITTED}>
+                Submitted Cards
               </option>
               <option
                 selected={selectedCardType === CHALLENGE_SUCCEEDED}
-                value={CHALLENGE_SUCCEEDED}
-              >
-                  Collected Cards
+                value={CHALLENGE_SUCCEEDED}>
+                Collected Cards
               </option>
             </select>
           </div>
-        }
-      >
+        }>
         <BlackModal
           visible={cardExtended}
           uiColor="grey"
           background="transparent"
-          style={{ margin: 'auto' }}
-        >
-          { selectedCardId && <ConnectedCard {...selectedCard} /> }
+          style={{margin: 'auto'}}>
+          {selectedCardId && <ConnectedCard {...selectedCard} />}
         </BlackModal>
 
-        <div
-          className="relative h-full w-full flex flex-col"
-        >
-
-          <div className={`absolute h-full w-full flex flex-col justify-end ${tabExtended ? 'z-50' : 'z-0'}`}>
+        <div className="relative h-full w-full">
+          <div
+            className={`absolute h-full w-full flex flex-col justify-end z-50`}>
             <TabMenu
-              className={`bg-grey-lighter ${tabExtended ? 'flex-grow' : 'flex-shrink'} `}
-              style={{
-                ...flexTrans
-              }}
-
+              className={`p-2 flex flex-col overflow-y-auto bg-grey-lighter ${
+                tabExtended ? 'flex-grow' : 'flex-shrink'
+              } `}
+              style={{...flexTrans}}
               extended={tabExtended}
               onToggle={extendTab}
               onHeaderClick={() => selectCard(null)}
@@ -202,16 +190,13 @@ export default class MyDiary extends Component {
           </div>
           <div className="content-margin">
             <div>
-              Your
-              {' '}
-              {cardTypeText(selectedCardType)}
-              {' '}
-              {numSeenCards}
-              /
+              Your {cardTypeText(selectedCardType)} {numSeenCards}/
               {`${numCollectibleCards} `}
               cards
             </div>
-            <div className=" overflow-y-auto $" style={{ flex: tabExtended ? flexShrink : '1 1 0%', ...flexTrans }}>
+            <div
+              className="overflow-y-auto"
+              style={{flex: tabExtended ? flexShrink : '1 1 0%', ...flexTrans}}>
               <div style={gridStyle} ref={el => (this.grid = el)}>
                 {cards.map(d => (
                   <Cell
@@ -220,9 +205,9 @@ export default class MyDiary extends Component {
                     style={{
                       transformOrigin: null,
                       transform:
-            selectedCardId === d.id ? 'scale(1.1)' : 'scale(1)',
+                        selectedCardId === d.id ? 'scale(1.1)' : 'scale(1)',
                       zIndex: selectedCardId === d.id ? 2 : 0,
-                      transition: 'transform 500ms'
+                      transition: 'transform 500ms',
                     }}
                     onClick={() => console.log('click click')}
                     expanded={cardSelected}

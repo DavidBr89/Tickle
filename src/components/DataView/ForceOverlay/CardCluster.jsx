@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
 import CardMarker from 'Components/cards/CardMarker';
@@ -12,7 +12,7 @@ function CardCluster({
   transition,
   id,
   onClick,
-  children
+  children,
   // ...props
 }) {
   // TODO: fix
@@ -24,20 +24,13 @@ function CardCluster({
       key={id}
       className="cluster flex absolute items-center justify-center "
       style={{
-        transition: `left ${transition}ms, top ${transition}ms, width ${transition}ms, height ${transition}ms`,
         width: size,
         height: size,
         left: x,
         top: y,
-        transform: 'translate(-50%,-50%)'
-        // boxShadow: '3px 3px #24292e'
-        // borderRadius: '100%'
-      }}
-    >
-      <div
-        className="w-full h-full"
-        style={{ padding: '10.65%' }}
-      >
+        transform: 'translate(-50%,-50%)',
+      }}>
+      <div className="w-full h-full" style={{padding: '10.65%'}}>
         <div
           style={{
             width: '100%',
@@ -46,10 +39,9 @@ function CardCluster({
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            flexWrap: 'wrap'
-          }}
-        >
-          <CardMarker style={{ width: 30, height: 30 }} />
+            flexWrap: 'wrap',
+          }}>
+          <CardMarker style={{width: 30, height: 30}} />
           <div className="ml-1">{data.values.length}</div>
         </div>
       </div>
@@ -57,7 +49,7 @@ function CardCluster({
   );
 }
 
-CardCluster.propTypes = { transition: PropTypes.array };
-CardCluster.defaultProps = { transition: 500 };
+CardCluster.propTypes = {transition: PropTypes.array};
+CardCluster.defaultProps = {transition: 500};
 
 export default CardCluster;

@@ -28,7 +28,6 @@ class RelatedTags extends Component {
 
     return (
       <div
-        style={{ position: 'absolute' }}
         className={`${className} flex flex-col items-center justify-center w-full `}
       >
         <div className="p-2 w-full h-full" style={gridStyle}>

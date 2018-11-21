@@ -3,7 +3,10 @@ import PropTypes from 'prop-types';
 import PreviewCard from 'Components/cards/PreviewCard';
 
 const PreviewCardStack = ({values, id, className, onClick, style}) => (
-  <div style={style} className={'cursor-pointer flex flex-col ' + className} onClick={onClick}>
+  <div
+    style={style}
+    className={`cursor-pointer flex flex-col ${className}`}
+    onClick={onClick}>
     <div className="flex-grow flex flex-col ">
       <div className="flex-grow relative mt-2 mr-3 mb-3">
         <div
