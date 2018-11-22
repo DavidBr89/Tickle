@@ -148,7 +148,7 @@ const Routes = () => (
       />
       <Route
         exact
-        path={ACCOUNT.path}
+        path={`/:userEnv/${ACCOUNT.path}`}
         component={() => (
           <DefaultLayout>
             <Account />

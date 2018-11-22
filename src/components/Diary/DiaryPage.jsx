@@ -7,6 +7,7 @@ import ConnectedCard from 'Components/cards/ConnectedCard';
 
 import {BlackModal} from 'Utils/Modal';
 import DefaultLayout from 'Components/DefaultLayout';
+import BookWidget from 'Components/BookWidgets';
 
 import {
   CHALLENGE_STARTED,
@@ -216,6 +217,7 @@ export default class MyDiary extends Component {
               </div>
             </div>
           </div>
+          <BookWidget />
         </div>
       </DefaultLayout>
     );

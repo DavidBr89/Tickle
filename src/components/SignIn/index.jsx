@@ -16,7 +16,6 @@ import { ModalBody } from 'Components/utils/Modal';
 
 import { GEO_VIEW, SIGN_IN } from 'Constants/routeSpec';
 
-import { fetchCollectibleCards } from 'Reducers/Cards/async_actions';
 
 import DefaultLayout from 'Components/DefaultLayout';
 import { PasswordForgetLink } from '../Password';
@@ -32,7 +31,7 @@ function onSubmit(event) {
   const { onAuthenticate } = this.props;
 }
 
-const SignInPage = ({ signIn, fetchCollectibleCards, ...props }) => {
+const SignInPage = ({ signIn, ...props }) => {
   const { match, history } = props;
   const {
     params: { userEnv }
@@ -60,8 +59,6 @@ const SignInPage = ({ signIn, fetchCollectibleCards, ...props }) => {
             onError
           }).then(() => {
             history.push(`/${userEnv}/${GEO_VIEW.path}`);
-            // fetchCollectibleCards(uid);
-            // console.log('yeah', uid);
           })
           }
         />
@@ -270,7 +267,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => bindActionCreators(
   {
     signIn,
-    fetchCollectibleCards
   },
   dispatch,
 );
