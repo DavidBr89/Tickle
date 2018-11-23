@@ -1,25 +1,25 @@
-.tree,
-.tree ul {
-  margin:0 0 0 1em; /* indentation */
-  padding:0;
-  list-style:none;
-  color:black;
-  position:relative;
-}
+// .tree,
+// .tree ul {
+//   margin:0 0 0 1em; /* indentation */
+//   padding:0;
+//   list-style:none;
+//   color:black;
+//   position:relative;
+// }
 
-.tree ul {margin-left:3.0em} /* (indentation/2) */
+// .tree ul {margin-left:3.0em} /* (indentation/2) */
 
-.tree:before,
-.tree ul:before {
-  content:"";
-  display:block;
-  width:0;
-  position:absolute;
-  top:0;
-  bottom:0;
-  left:0;
-  border-left:2px solid;
-}
+// .tree:before,
+// .tree ul:before {
+//   content:"";
+//   display:block;
+//   width:0;
+//   position:absolute;
+//   top:0;
+//   bottom:0;
+//   left:0;
+//   border-left:2px solid;
+// }
 
 // .tree li {
 //   margin:0;
@@ -31,25 +31,25 @@
 //   position:relative;
 // }
 //
-.tree li:before {
-  content:"";
-  display:block;
-  width:30px; /* same with indentation */
-  height:0;
-  border-top:2px solid;
-  margin-top:-1px; /* border top width */
-  position:absolute;
-  top:1em; /* (line-height/2) */
-  left:0;
-}
-
-.tree li:last-child:before {
-  display:block;
-  background:whitesmoke; /* same with body background */
-  height:auto;
-  top:1em; /* (line-height/2) */
-  bottom:0;
-}
+// .tree li:before {
+//   content:"";
+//   display:block;
+//   width:30px; /* same with indentation */
+//   height:0;
+//   border-top:2px solid;
+//   margin-top:-1px; /* border top width */
+//   position:absolute;
+//   top:1em; /* (line-height/2) */
+//   left:0;
+// }
+//
+// .tree li:last-child:before {
+//   display:block;
+//   background:whitesmoke; /* same with body background */
+//   height:auto;
+//   top:1em; /* (line-height/2) */
+//   bottom:0;
+// }
 
 // .tree ul {
 //     list-style: none;

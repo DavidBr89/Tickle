@@ -6,7 +6,7 @@ import PreviewCardStack from 'Components/cards/PreviewCardStack';
 
 function CardTree({...props}) {
   const node = ({id}) => (
-    <div className="">
+    <div className="p-1">
       <div className="text-2xl font-bold">{id}</div>
       <PreviewCardStack id={id} style={{width: 100, height: 120}} />
     </div>

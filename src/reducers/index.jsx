@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux';
+import {combineReducers} from 'redux';
 
 import MapView from './Map';
 import Cards from './Cards';
@@ -9,6 +9,7 @@ import Screen from './Screen';
 import Admin from './Admin';
 import Account from './Account';
 import Diary from './Diary';
+import TagTree from './TagTree';
 // import Login from './components/Login/reducer';
 
 // TODO: write my own combineReducer
@@ -20,7 +21,9 @@ export default combineReducers({
   DataView,
   Admin,
   Screen,
-  Account, Diary
+  Account,
+  Diary,
+  TagTree,
 });
 // export default MapView;
 // export default CardCreator;

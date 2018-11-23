@@ -6,7 +6,7 @@ import {
 import UserMap from 'Components/DataView/Map/UserMap';
 import {
   MYCARDS, GEO_VIEW, TAG_VIEW, TOPIC_VIEW, AUTHOR, ACCOUNT, GEO_AUTHOR,
-  TAG_AUTHOR, TOPIC_AUTHOR, SIGN_UP, SIGN_IN, HOME, ADMIN, ADMIN_SIGN_UP,
+  TAG_AUTHOR, TREE_AUTHOR, SIGN_UP, SIGN_IN, HOME, ADMIN, ADMIN_SIGN_UP,
   LANDING, DATAVIEW
 } from 'Constants/routeSpec';
 
@@ -18,6 +18,9 @@ import Admin from './components/Admin';
 import Account from './components/Account';
 import Diary from './components/Diary';
 import TagView from './components/DataView/ForceOverlay/TreeMapCluster';
+
+import CardTreeEditorPage from './components/CardTreeEditor';
+
 
 import {
   MapCardAuthorPage,
@@ -85,8 +88,8 @@ const Routes = () => (
         render={MapCardAuthorPage}
       />
       <Route
-        path={`/:userEnv/${TOPIC_AUTHOR.path}`}
-        component={TopicMapAuthorPage}
+        path={`/:userEnv/${TREE_AUTHOR.path}`}
+        component={CardTreeEditorPage}
       />
 
       <Route

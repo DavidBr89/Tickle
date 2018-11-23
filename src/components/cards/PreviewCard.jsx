@@ -1,18 +1,17 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 // import styles from './PreviewCard.css';
-import { PreviewTags } from 'Utils/Tag';
+import {PreviewTags} from 'Utils/Tag';
 import IcAk from 'Styles/alphabet_icons/ic_ak.svg';
 import placeholderImg from './placeholder.png';
 
-
-const PlaceholderField = ({ text, style, fullHeight }) => (
+const PlaceholderField = ({text, style, fullHeight}) => (
   <div className="mb-1 flex-grow flex-col-wrapper justify-center items-center h-full">
     <div
       style={{
         color: 'grey',
         fontWeight: 'bold',
-        ...style
+        ...style,
       }}
     />
     <i
@@ -23,7 +22,7 @@ const PlaceholderField = ({ text, style, fullHeight }) => (
         // width: '10%',
         marginLeft: '2px',
         color: 'grey',
-        pointerevents: 'cursor'
+        pointerevents: 'cursor',
       }}
     />
   </div>
@@ -32,11 +31,11 @@ const PlaceholderField = ({ text, style, fullHeight }) => (
 PlaceholderField.propTypes = {
   text: PropTypes.string.isRequired,
   style: PropTypes.object,
-  fullHeight: PropTypes.bool
+  fullHeight: PropTypes.bool,
 };
 PlaceholderField.defaultProps = {
   style: {},
-  fullHeight: false
+  fullHeight: false,
 };
 
 class PreviewCard extends Component {
@@ -49,7 +48,7 @@ class PreviewCard extends Component {
     onClick: PropTypes.func.isRequired,
     style: PropTypes.object,
     edit: PropTypes.bool,
-    type: PropTypes.string
+    type: PropTypes.string,
   };
 
   static defaultProps = {
@@ -59,11 +58,11 @@ class PreviewCard extends Component {
     style: {},
     selected: false,
     // TODO: include only type
-    challenge: { type: null },
+    challenge: {type: null},
     edit: false,
     type: null,
     showImg: true,
-    accessible: true
+    accessible: true,
   };
 
   render() {
@@ -78,7 +77,7 @@ class PreviewCard extends Component {
       type,
       showImg,
       accessible,
-      className
+      className,
     } = this.props;
     const selImg = (() => {
       if (img && img.thumbnail) return img.thumbnail;
@@ -87,24 +86,21 @@ class PreviewCard extends Component {
     })();
     const contStyle = {
       boxShadow: '0.2rem 0.2rem grey',
-      ...style
+      ...style,
     };
 
     return (
       <div
         className={`${className} p-1 overflow-hidden bg-white flex flex-col border-2 border-black`}
         style={{...style}}
-        onClick={onClick}
-      >
-        <div
-          className="flex-col-wrapper flex-grow relative bg-yellow-dark"
-        >
+        onClick={onClick}>
+        <div className="flex-col-wrapper flex-grow relative bg-yellow-dark">
           {img !== null && (
             <img
               className="absolute z-0 w-full h-full"
               style={{
                 display: 'block',
-                objectFit: 'cover'
+                objectFit: 'cover',
               }}
               src={selImg}
               alt="Card cap"
@@ -113,10 +109,18 @@ class PreviewCard extends Component {
 
           <div className="flex-grow flex-col-wrapper">
             <div className="flex flex-grow flex-no-shrink">
-              <h1 className="flex-grow m-1  pl-1 pr-1 bg-white text-xl truncate-text" style={{ height: '1.25rem' }}>{title || 'No title'}</h1>
+              <h1
+                className="flex-grow m-1  pl-1 pr-1 bg-white text-xl truncate-text"
+                style={{minHeight: '1.25rem'}}>
+                {title || 'No title'}
+              </h1>
             </div>
             <div className="p-2 flex-1 flex-col-wrapper justify-center">
-              <img className="w-full h-full" src={IcAk} style={{ maxHeight: 120 }} />
+              <img
+                className="w-full h-full"
+                src={IcAk}
+                style={{maxHeight: 120}}
+              />
             </div>
           </div>
         </div>

@@ -22,7 +22,7 @@
   },
   "author": "DinoJay",
   "license": "MIT",
-  "homepage": "https://github.com/alicoding/react-webpack-babel#readme",
+  "homepage": "",
   "dependencies": {
     "@firebase/app": "^0.3.4",
     "@firebase/auth": "^0.7.8",

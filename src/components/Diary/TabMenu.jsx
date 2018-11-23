@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import {ChevronsUp, ChevronsDown, X, ArrowRight} from 'react-feather';
 
-import CardTree from 'Components/CardTree';
+import CardTree from 'Components/CardTreeView';
 
 import {PreviewTags} from 'Components/utils/Tag';
 import RelatedTags from './RelatedTags';
@@ -32,8 +32,14 @@ const treeData = {
         {id: 'Daughter of A', children: []},
       ],
     },
-    {id: 'Daughter of A', children: []},
-    {id: 'Son of A', children: []},
+    {
+      id: 'Daughter of A',
+      children: [{id: 'lisa', children: []}, {id: 'gisela', children: []}],
+    },
+    {
+      id: 'Son of A',
+      children: [{id: 'jan', children: []}, {id: 'nils', children: []}],
+    },
     {id: 'Daughter of A', children: []},
     {
       id: 'Level 2: B',
@@ -136,7 +142,7 @@ class TabMenu extends Component {
             <RelatedTags selectedCard={selectedCard} nestedTags={relatedTags} />
           );
         case HIERARCHY_CARDS:
-          return <CardTree className="overflow-y-auto" {...treeData} />;
+          return <CardTree className="m-2 overflow-y-auto" {...treeData} />;
         default:
           return null;
       }
