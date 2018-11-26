@@ -39,8 +39,8 @@ const liStyle = linkOffset => ({
   // padding: '0 2.5em',
   // lineHeight: `${linkOffset}em` /* default list item's `line-height` */,
   fontWeight: 'bold',
-  //height: 80px;
-  //width: 80px;
+  // height: 80px;
+  // width: 80px;
   position: 'relative',
 });
 
@@ -68,7 +68,8 @@ const ulStyle = indent => ({
   marginLeft: `${indent / 2}em`,
 });
 
-function Branch({id, children, last, node, indent, linkOffset}) {
+function Branch({...props}) {
+  const {id, children, last, nodeCont, indent, linkOffset, data} = props;
   return (
     <li
       style={{
@@ -76,16 +77,16 @@ function Branch({id, children, last, node, indent, linkOffset}) {
         borderLeft: !last && '2px solid black',
       }}>
       {last && <div style={lastStyle(linkOffset)} />}
-      <div style={{margin: `0 ${indent}em`}}>
+      <div style={{marginLeft: `${indent}em`}}>
         <div style={liBeforeStyle(indent, linkOffset)} />
 
-        {node({id})}
+        {nodeCont({...data, ...props})}
         <ul style={ulStyle(indent)}>
           {children.map((c, i) => (
             <Branch
               {...c}
               key={c.id}
-              node={node}
+              nodeCont={nodeCont}
               linkOffset={linkOffset}
               last={children.length - 1 === i}
             />
@@ -100,17 +101,17 @@ Branch.defaultProps = {
   id: null,
   children: [],
   last: false,
-  node: ({id}) => <div>{id}</div>,
+  nodeCont: ({id}) => <div>{id}</div>,
   indent: 5.5,
   linkOffset: 2,
 };
 
-export default function TreeViewWrapper({className, style, ...props}) {
+export default function TreeViewWrapper({className, style, root, ...props}) {
   const {indent} = props;
   return (
-    <div className={className}>
-      <ul style={{ ...ulStyle(indent), marginLeft: null }}>
-        <Branch {...props} last />
+    <div className={className} style={{transition: 'all 1s'}}>
+      <ul style={{...ulStyle(indent), marginLeft: null}}>
+        <Branch {...props} {...root} last />
       </ul>
     </div>
   );

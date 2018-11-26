@@ -9,58 +9,10 @@ import {saveState, loadState} from './localStorage';
 import {DB} from 'Firebase';
 import throttle from 'lodash/throttle';
 
+localStorage.clear();
 // const defaultCards = [...dummyCards];
 const mapZoom = 9;
 const [width, height] = [100, 100];
-
-const defaultLocation = {
-  latitude: 50.85146,
-  longitude: 4.315483,
-  radius: 500
-};
-
-const defaultState = {
-  width,
-  height,
-  mapZoom,
-  centerLocation: defaultLocation,
-  defaultZoom: mapZoom,
-  user: {
-    name: 'jan',
-    email: 'jmaushag@gmail.com',
-    // img: gravatar('jmaushag@gmail.com'),
-    userLocation: defaultLocation
-  },
-  Login: {
-    height,
-    width,
-    centerLocation: defaultLocation,
-    mapZoom,
-    challenges: []
-  }
-  // MapView: {
-  //   mapViewport: {},
-  //   // TODO: calc value
-  //   latCenterOffset: 0.0018,
-  //   latBottom: 0.003,
-  //   defaultZoom: mapZoom,
-  //   zoom: mapZoom,
-  //   direction: null,
-  //   ...defaultLocation,
-  //   userLocation: defaultLocation,
-  //   height: 100,
-  //   width: 100
-  // },
-  // Session: {
-  //   authUser: { uid: null }
-  // } // DataView: {
-  //   dataView: 'topic',
-  //   tsneView: false,
-  //   gridView: true,
-  //   authEnv: true,
-  //   searchString: null
-  // }
-};
 
 const composeEnhancers =
   typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -103,7 +55,7 @@ store.subscribe(
       Session: {
         ...store.getState().Session,
         // authUser: store.getState().Session.authUser
-      }
+      },
     });
   }),
   1000,

@@ -16,7 +16,7 @@
       "jsx": true
     }
   },
-  "extends": [ "prettier", "prettier/react" ],
+  "extends": [ "airbnb", "prettier", "prettier/react"],
   "rules": {
     "prettier/prettier": "error",
     "indent": ["error", 2, {
