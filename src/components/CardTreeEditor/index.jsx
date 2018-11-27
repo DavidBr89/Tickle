@@ -7,14 +7,21 @@ import * as actions from 'Reducers/Session/actions';
 
 import {stratify} from 'd3';
 import uuidv1 from 'uuid/v1';
+
+import {compose} from 'recompose';
+import {withRouter} from 'react-router-dom';
+
+import withAuthorization from 'Components/withAuthorization';
+import withAuthentication from 'Components/withAuthentication';
 import CardTreeEditorPage from './CardTreeEditorPage';
 
 const mapStateToProps = state => {
   const {tagTreeData} = state.Session;
   const tmpRoot = {id: uuidv1(), title: 'New Topic', date: new Date()};
   const tmpTreeData = tagTreeData.length > 0 ? tagTreeData : [tmpRoot];
+  const {tagVocabulary} = state.Cards;
 
-  return {...state.Session, treeData: tmpTreeData};
+  return {...state.Session, treeData: tmpTreeData, tagVocabulary};
 };
 
 /*
@@ -56,8 +63,13 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-  mergeProps,
+export default compose(
+  withRouter,
+  withAuthentication,
+  withAuthorization(),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+    mergeProps,
+  ),
 )(CardTreeEditorPage);

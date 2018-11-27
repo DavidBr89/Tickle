@@ -177,7 +177,6 @@ class CardAuthorPage extends Component {
           height={height}
           unit="%"
           onClick={previewCardAction}
-          tagColorScale={tagColorScale}
           slotSize={slotSize}
           style={{
             zIndex: 1000

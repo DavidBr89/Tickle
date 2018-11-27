@@ -10,30 +10,39 @@ import PreviewCardStack from 'Components/cards/PreviewCardStack';
 
 import DefaultLayout from 'Components/DefaultLayout';
 
-const isLeaf = d => d.children.length === 0 && d.depth !== 0;
+import {EditOneTag} from 'Utils/TagInput';
 
-const TreeNode = ({...props}) => {
-  const {id, title, onAdd, onRemove, onTitleChange, children} = props;
+const isLeafNode = d => d.children.length === 0 && d.depth !== 0;
 
-  console.log('ID', id);
-  const btnSize = 17;
+const TreeNode = ({btnSize = 17, ...props}) => {
+  const {
+    id,
+    title,
+    onAdd,
+    onRemove,
+    onTitleChange,
+    children,
+    tagVocabulary,
+  } = props;
 
+  const isLeaf = isLeafNode(props);
+  console.log('data', props.depth, isLeaf);
   return (
-    <div className="p-1">
-      <input
+    <div className="p-1 w-64">
+      <EditOneTag
         className="form-control text-2xl font-bold"
         defaultValue={title}
-        onChange={e => onTitleChange(e.target.value)}
+        vocabulary={tagVocabulary}
+        onChange={t => onTitleChange({...props, tite: t.tagId})}
       />
 
-      <div className="flex">
+      <div className="flex justify-center">
         <div className="flex flex-col justify-center items-center">
           <button
             type="button"
-            disabled={!isLeaf(props)}
-            className={`btn rounded-full border p-2 ml-2 bg-red-light ${!isLeaf(
-              props,
-            ) && 'disabled'}`}
+            disabled={!isLeaf}
+            className={`btn rounded-full border p-2 ml-2 bg-red-light
+              ${!isLeaf && 'disabled'}`}
             onClick={() => onRemove(props)}>
             <Minus size={btnSize} />
           </button>
@@ -46,7 +55,7 @@ const TreeNode = ({...props}) => {
         <div className="flex flex-col justify-center items-center">
           <button
             type="button"
-            className="btn rounded-full border p-2 ml-2 bg-blue-light"
+            className="btn rounded-full border p-2 ml-1 bg-blue-light"
             onClick={() => onAdd({id: uuidv1(), parent: id, date: new Date()})}>
             <Plus size={btnSize} />
           </button>
@@ -60,32 +69,52 @@ TreeNode.defaultProps = {
   title: 'New Topic',
 };
 
-function CardTree({onAdd, onRemove, onTitleChange, ...props}) {
-  return (
-    <TreeView
-      {...props}
-      className="flex-grow overflow-x-auto overflow-y-auto"
-      nodeCont={nodeProps => (
-        <TreeNode
-          {...nodeProps}
-          onAdd={onAdd}
-          onRemove={onRemove}
-          onTitleChange={onTitleChange}
-        />
-      )}
-    />
-  );
-}
+// function CardTree({onAdd, onRemove, onTitleChange, ...props}) {
+//   return (
+//     <TreeView
+//       {...props}
+//       className="flex-grow overflow-x-auto overflow-y-auto"
+//       indent={2}
+//       nodeCont={nodeProps => (
+//         <TreeNode
+//           {...nodeProps}
+//           onAdd={onAdd}
+//           onRemove={onRemove}
+//           onTitleChange={onTitleChange}
+//         />
+//       )}
+//     />
+//   );
+// }
+//
+// CardTree.defaultProps = {};
+//
+// CardTree.propTypes = {};
 
-CardTree.defaultProps = {};
-
-CardTree.propTypes = {};
-
-export default function CardTreeEditorPage({...props}) {
+export default function CardTreeEditorPage({
+  onAdd,
+  onRemove,
+  onTitleChange,
+  ...props
+}) {
   return (
     <DefaultLayout>
       <section className="content-margin  flex flex-col flex-grow ">
-        <CardTree linkOffset={3} {...props} />
+        <TreeView
+          {...props}
+          linkOffset={3}
+          indent={8}
+          className="flex-grow overflow-x-auto overflow-y-auto"
+          nodeCont={nodeProps => (
+            <TreeNode
+              {...props}
+              {...nodeProps}
+              onAdd={onAdd}
+              onRemove={onRemove}
+              onTitleChange={onTitleChange}
+            />
+          )}
+        />
       </section>
     </DefaultLayout>
   );

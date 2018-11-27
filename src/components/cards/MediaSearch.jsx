@@ -330,7 +330,7 @@ const CellWrapper = ({
   btn, className, focusColor, style, ...props
 }) => (
   <div
-    className="flex relative p-3 mb-3 border-2 border-black w-full h-full"
+    className="flex relative p-3 mb-3 border border-2 w-full h-full"
     style={{ ...style, cursor: 'pointer' }}
   >
     <CellDetail {...props} />

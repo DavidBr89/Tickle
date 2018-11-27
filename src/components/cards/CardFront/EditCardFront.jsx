@@ -6,7 +6,7 @@ import {isEqual} from 'lodash';
 import ChallengeAuthorModalBody from 'Src/components/ChallengeAuthor';
 
 import {Modal, ModalBody} from 'Components/utils/Modal';
-import {TagDropDown} from 'Components/utils/TagInput';
+import {ExtendedEditTags} from 'Components/utils/TagInput';
 import {MEDIA, TAGS, extractCardFields, initCard} from 'Constants/cardFields';
 import {MediaSearch} from '../MediaSearch';
 
@@ -226,7 +226,7 @@ function modalWriteContent() {
           onClose={this.onCloseModal}
           {...modalProps}
           footer={closeBtn}>
-          <TagDropDown
+          <ExtendedEditTags
             style={{width: '100%'}}
             onChange={newTags => this.updateField({tags: [...newTags]})}
             editable

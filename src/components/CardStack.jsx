@@ -121,7 +121,7 @@ const CardStackContainer = ({ concealCardStack, ...props }) => {
       style={{
         transition: 'margin 0.5s',
         pointerEvents: 'none',
-        height: cardHeight,
+        // height: cardHeight,
         marginTop: bottom ? height - cardHeight / 3 : null
         // overflow: bottom ? 'hidden' : null
         // width,

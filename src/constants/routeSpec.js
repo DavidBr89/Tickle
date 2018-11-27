@@ -74,7 +74,7 @@ export const TAG_AUTHOR = {name: 'Topic', path: TAG_AUTHOR_PATH};
 export const AUTHOR = {
   name: 'Author Cards Settings',
   path: AUTHOR_PATH,
-  subRoutes: [GEO_AUTHOR, TREE_AUTHOR],
+  subRoutes: [GEO_AUTHOR],
 };
 
 export const ACCOUNT = {name: 'Account', path: ACCOUNT_PATH, subRoutes: []};

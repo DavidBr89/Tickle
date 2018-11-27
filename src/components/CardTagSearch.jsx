@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TagDropDown } from 'Utils/TagInput';
+import {SelectTags} from 'Utils/TagInput';
 
 function CardTagSearch({
   allTags,
@@ -12,10 +12,8 @@ function CardTagSearch({
   ...props
 }) {
   return (
-    <div
-      className="flex justify-end relative m-2 z-20"
-    >
-      <TagDropDown
+    <div className="flex justify-end relative m-2 z-20">
+      <SelectTags
         className="mr-1"
         key={data.join(',')}
         onChange={onChange}
