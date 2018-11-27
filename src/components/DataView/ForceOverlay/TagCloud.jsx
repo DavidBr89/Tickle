@@ -1,15 +1,14 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
+
+import {wrapGrid} from 'animate-css-grid';
 
 import * as d3 from 'd3';
 
 import icAk from 'Styles/alphabet_icons/ic_ak.svg';
 
-
-function calcTreeMap({
-  data, width, height, padX, padY
-}) {
+function calcTreeMap({data, width, height, padX, padY}) {
   const ratio = 2;
   const sorted = data.sort((a, b) => b.values.length - a.count);
   const treemap = d3
@@ -25,12 +24,12 @@ function calcTreeMap({
     .domain(d3.extent(data, d => d.count))
     .range([20, 25]);
 
-  const first = { name: 'root', children: sorted };
+  const first = {name: 'root', children: sorted};
   const root = d3.hierarchy(first).sum(d => size(d.count));
 
   treemap(root);
   if (!root.children) return [];
-  root.children.forEach((d) => {
+  root.children.forEach(d => {
     d.left = padX / 2 + Math.round(d.x0 * ratio);
     d.top = padY / 2 + Math.round(d.y0);
 
@@ -52,7 +51,7 @@ class Tag extends React.Component {
     highlighted: PropTypes.bool.isRequired,
     top: PropTypes.number.isRequired,
     padding: PropTypes.number.isRequired,
-    transition: PropTypes.number
+    transition: PropTypes.number,
   };
 
   static defaultProps = {
@@ -65,7 +64,7 @@ class Tag extends React.Component {
     fill: 'white',
     padding: 2,
     clickHandler: () => null,
-    transition: 750
+    transition: 750,
   };
 
   // componentDidMount() {
@@ -75,40 +74,48 @@ class Tag extends React.Component {
 
   render() {
     const {
-      left, top, width, height, color, data, onMouseEnter, onMouseLeave,
-      padding, highlighted, count, addCardFilter, removeCardFilter,
-      filterSet, selected, onClick, key, children, transition, small
-    } = this.props;
-
-    const st = {
       left,
       top,
       width,
       height,
-      position: 'absolute',
-      transition: `left ${transition}ms, top ${transition}ms, width ${transition}ms, height ${transition}ms`
+      color,
+      data,
+      onMouseEnter,
+      onMouseLeave,
+      padding,
+      highlighted,
+      count,
+      addCardFilter,
+      removeCardFilter,
+      filterSet,
+      selected,
+      onClick,
+      key,
+      children,
+      transition,
+      small,
+    } = this.props;
+
+    const st = {
+      // width,
+      // height,
+      transition: `left ${transition}ms, top ${transition}ms, width ${transition}ms, height ${transition}ms`,
     };
 
     return (
       <div
-        className={`flex flex-col border-8 border-black p-4 ${selected
-          && 'bg-grey-light'}`}
+        className={`flex flex-col border-8 border-black p-4 ${selected &&
+          'bg-grey-light'}`}
         style={st}
-        onClick={() => onClick(children)}
-      >
+        onClick={() => onClick(children)}>
         <div className="relative flex flex-col flex-grow">
-          <h1 className="absolute">
-            {children}
-          </h1>
-          <div
-            className="flex-grow flex flex-col items-center justify-center"
-          >
-            <div
-              className="p-4 flex items-center justify-center"
-            >
-              <div className=" border-4 border-black "><img className="m-2" src={icAk} /></div>
+          <h1 className="absolute">{children}</h1>
+          <div className="flex-grow flex flex-col items-center justify-center">
+            <div className="p-4 flex items-center justify-center">
+              <div className=" border-4 border-black ">
+                <img className="m-2" src={icAk} />
+              </div>
               <div className="text-2xl font-bold ml-2">{count}</div>
-
             </div>
           </div>
         </div>
@@ -117,74 +124,68 @@ class Tag extends React.Component {
   }
 }
 
-class TagCloud extends React.Component {
-  static propTypes = {
-    docWidth: PropTypes.array.isRequired,
-    docHeight: PropTypes.array.isRequired,
-    width: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired,
-    padX: PropTypes.number.isRequired,
-    padY: PropTypes.number.isRequired
-  };
-
-  render() {
-    const {
-      colorScale,
-      data,
-      selectedTags,
-      width,
-      height,
-      tagFilter,
-      filterSet
-    } = this.props;
-
-    console.log('treemap props', this.props);
-    const trData = calcTreeMap({
-      data,
-      width,
-      height,
-      // TODO
-      padX: 10,
-      padY: 10
+const TagGrid = props => {
+  const gridDom = React.createRef();
+  useEffect(() => {
+    const fg = wrapGrid(gridDom.current, {
+      easing: 'easein',
+      stagger: 0,
+      duration: 800,
     });
+  }, []);
 
-    const treemap = trData.map((d, i) => (
-      <Tag
-        {...d}
-        {...d.data}
-        key={d.data.key}
-        filterSet={filterSet}
-        onClick={tag => tagFilter({ tag, filterSet })}
-        highlighted={selectedTags.includes(d.data.key)}
-        selected={filterSet.includes(d.data.key)}
-      >
-        {d.data.key}
-      </Tag>
-    ));
+  const {data, selectedTags, tagFilter, filterSet} = props;
 
-    return <div style={{ position: 'relative' }}>{treemap}</div>;
-  }
-}
+  const cells = data.map((d, i) => (
+    <Tag
+      {...d}
+      key={d.key}
+      filterSet={filterSet}
+      onClick={tag => tagFilter({tag, filterSet})}
+      highlighted={selectedTags.includes(d.key)}
+      selected={filterSet.includes(d.key)}>
+      {d.key}
+    </Tag>
+  ));
 
-TagCloud.defaultProps = {
+  return (
+    <div
+      ref={gridDom}
+      className="flex-shrink p-4 overflow-y-auto"
+      style={{
+        // maxHeight: 300,
+        display: 'grid',
+        // justifyItems: 'center',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(20rem, 1fr))',
+        gridTemplateRows: 'minmax(14rem, 1fr)',
+        gridAutoRows: '1fr',
+        gridGap: 16,
+        gridAutoFlow: 'dense',
+      }}>
+      {cells}
+    </div>
+  );
+};
+
+TagGrid.defaultProps = {
   width: 800,
   height: 400,
   padX: 0,
   padY: 0,
   clickHandler: () => null,
   color: () => 'red',
-  getCoords: d => d
+  getCoords: d => d,
 };
 
-const mapStateToProps = state => ({ ...state.Screen });
+const mapStateToProps = state => ({...state.Screen});
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...stateProps,
-  ...ownProps
+  ...ownProps,
 });
 
 export default connect(
   mapStateToProps,
   null,
   mergeProps,
-)(TagCloud);
+)(TagGrid);

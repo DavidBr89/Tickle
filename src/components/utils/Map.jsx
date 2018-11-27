@@ -29,6 +29,7 @@ function Map({
     userLocation.latitude,
   ]);
 
+      // mapStyle="mapbox://styles/moerwijk/cjke1d9rnjr4c2spp49b9ib1b"
   return (
     <MapGL
       onClick={({lngLat}) => {

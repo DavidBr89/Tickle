@@ -1,9 +1,9 @@
 const webpack = require('webpack');
 const path = require('path');
-const loaders = require('./webpack.loaders');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const loaders = require('./webpack.loaders');
 
 const apiTokens = require('./api_keys.json');
 const alias = require('./alias');
@@ -14,19 +14,19 @@ module.exports = {
     // TODO
     // TODO
     // 'babel-polyfill',
-    './src/index.jsx' // your app's entry point
+    './src/index.jsx', // your app's entry point
   ],
   mode: 'production',
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'main.js'
+    filename: 'main.js',
   },
   resolve: {
     extensions: ['.js', '.jsx'],
-    alias
+    alias,
   },
   module: {
-    rules: loaders
+    rules: loaders,
   },
   optimization: {
     minimizer: [
@@ -36,21 +36,21 @@ module.exports = {
         uglifyOptions: {
           compress: false,
           ecma: 6,
-          mangle: { safari10: true }
+          mangle: {safari10: true},
         },
-        sourceMap: false
-      })
-    ]
+        sourceMap: false,
+      }),
+    ],
   },
   plugins: [
     new CleanWebpackPlugin(['dist/*.*']),
 
     new HtmlWebpackPlugin({
-      template: './src/template.html'
+      template: './src/template.html',
     }),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('production')
+      'process.env.NODE_ENV': JSON.stringify('production'),
     }),
-    new webpack.EnvironmentPlugin(apiTokens)
-  ]
+    new webpack.EnvironmentPlugin(apiTokens),
+  ],
 };
