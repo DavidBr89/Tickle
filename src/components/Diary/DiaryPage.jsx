@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {wrapGrid} from 'animate-css-grid';
+// import {wrapGrid} from 'animate-css-grid';
 
 import PreviewCard from 'Components/cards/PreviewCard';
 import ConnectedCard from 'Components/cards/ConnectedCard';
@@ -15,7 +15,7 @@ import {
   CHALLENGE_SUCCEEDED,
   NO_CARD_FILTER,
   // challengeTypeMap
-} from 'Constants/cardFields';
+} from 'Constants/cardFields.ts';
 import TabMenu from './TabMenu';
 
 // import './layout.scss';

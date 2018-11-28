@@ -1,6 +1,6 @@
 import firebase from '@firebase/app';
 
-import { extractCardFields } from 'Constants/cardFields';
+import { extractCardFields } from 'Constants/cardFields.ts';
 
 import { firestore, Timestamp, storageRef } from '../firebase';
 

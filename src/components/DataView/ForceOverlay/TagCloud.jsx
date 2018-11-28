@@ -151,7 +151,7 @@ const TagGrid = props => {
   return (
     <div
       ref={gridDom}
-      className="flex-shrink p-4 overflow-y-auto"
+      className="flex-grow p-4 overflow-y-auto"
       style={{
         // maxHeight: 300,
         display: 'grid',

@@ -63,7 +63,7 @@ export const TAG_VIEW = {name: 'Tag View', path: TAG_VIEW_PATH};
 export const DATAVIEW = {
   name: 'Card View Settings',
   path: DATAVIEW_PATH,
-  subRoutes: [GEO_VIEW, TOPIC_VIEW, TAG_VIEW],
+  subRoutes: [GEO_VIEW, TAG_VIEW],
 };
 
 export const GEO_AUTHOR = {name: 'Geo', path: GEO_AUTHOR_PATH};

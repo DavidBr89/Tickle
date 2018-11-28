@@ -12,7 +12,7 @@ import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
 
 import TopicMapVis from 'Components/DataView/TopicMap/TopicMapVis';
-import TagVis from 'Components/DataView/ForceOverlay/TreeMapCluster';
+import TagGrid from 'Components/TagGrid';
 
 import * as mapActions from 'Reducers/Map/actions';
 
@@ -34,6 +34,7 @@ import withAuthentication from 'Src/components/withAuthentication';
 import cardRoutes from 'Src/Routes/cardRoutes';
 
 import {shiftCenterMap} from 'Src/lib/geo';
+import {tagFilter} from 'Reducers/DataView/async_actions';
 import CardViewPage from './CardViewPage';
 import SelectUserEnv from './SelectUserEnv';
 
@@ -52,7 +53,6 @@ const filterByTag = (doc, filterSet) =>
 
 // Container
 const mapStateToProps = state => {
-  console.log('new Action', 'yeah');
   const {collectibleCards} = state.Cards;
 
   const {width, height} = state.Screen;
@@ -92,6 +92,7 @@ const mapDispatchToProps = dispatch =>
       ...mapActions,
       // ...asyncActions,
       ...dataViewActions,
+      tagFilter,
       // ...dataViewAsyncActions,
       resizeCardWindow,
       userMove,
@@ -228,10 +229,17 @@ PureMapViewPage.defaultProps = {};
 
 PureMapViewPage.propTypes = {};
 
-function PureTagViewPage({...props}) {
+function PureTagViewPage({cardSets, ...props}) {
   return (
-    <CardViewPage {...props}>
-      <TagVis {...props} />
+    <CardViewPage {...props} cardSets={cardSets}>
+      <div className="mt-8 mb-3 flex flex-grow justify-center overflow-y-auto">
+        <TagGrid
+          className="flex-grow"
+          {...props}
+          data={cardSets}
+          style={{maxWidth: 800}}
+        />
+      </div>
     </CardViewPage>
   );
 }

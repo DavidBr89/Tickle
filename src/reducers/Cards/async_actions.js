@@ -2,7 +2,7 @@
 
 import fetch from 'cross-fetch';
 
-import { extractCardFields } from 'Constants/cardFields';
+import { extractCardFields } from 'Constants/cardFields.ts';
 
 import { createDbEnv, DB } from 'Firebase';
 import idGenerate from 'Src/idGenerator';

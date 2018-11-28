@@ -2,7 +2,7 @@ import { union, difference, uniq } from 'lodash';
 
 import { TEMPLATE_ID } from 'Constants/cardTemplate';
 
-import { CHALLENGE_NOT_SUBMITTED } from 'Constants/cardFields';
+import { CHALLENGE_NOT_SUBMITTED } from 'Constants/cardFields.ts';
 import {
   SET_DATA_VIEW,
   TOGGLE_AUTH_ENV,

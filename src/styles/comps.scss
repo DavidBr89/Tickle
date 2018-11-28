@@ -7,8 +7,9 @@
 }
 
 .form-control {
-  @apply .border .border-2 .bg-white .text-lg .py-2 .px-3 .text-grey-darkest;
+  @apply .border .border-4 .bg-white .text-lg .py-2 .px-3 .text-grey-darkest;
 }
+
 
 .form-group {
   @apply .flex .flex-col .mb-4

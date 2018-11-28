@@ -5,39 +5,6 @@ import {PreviewTags} from 'Utils/Tag';
 import IcAk from 'Styles/alphabet_icons/ic_ak.svg';
 import placeholderImg from './placeholder.png';
 
-const PlaceholderField = ({text, style, fullHeight}) => (
-  <div className="mb-1 flex-grow flex-col-wrapper justify-center items-center h-full">
-    <div
-      style={{
-        color: 'grey',
-        fontWeight: 'bold',
-        ...style,
-      }}
-    />
-    <i
-      className="fa fa-1x fa-plus"
-      aria-hidden="true"
-      style={{
-        textalign: 'center',
-        // width: '10%',
-        marginLeft: '2px',
-        color: 'grey',
-        pointerevents: 'cursor',
-      }}
-    />
-  </div>
-);
-
-PlaceholderField.propTypes = {
-  text: PropTypes.string.isRequired,
-  style: PropTypes.object,
-  fullHeight: PropTypes.bool,
-};
-PlaceholderField.defaultProps = {
-  style: {},
-  fullHeight: false,
-};
-
 class PreviewCard extends Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
@@ -108,7 +75,7 @@ class PreviewCard extends Component {
           )}
 
           <div className="flex-grow flex-col-wrapper">
-            <div className="flex flex-grow flex-no-shrink">
+            <div className="flex flex-no-shrink">
               <h1
                 className="flex-grow m-1  pl-1 pr-1 bg-white text-xl truncate-text"
                 style={{minHeight: '1.25rem'}}>

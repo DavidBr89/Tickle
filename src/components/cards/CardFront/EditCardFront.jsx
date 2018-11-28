@@ -7,7 +7,13 @@ import ChallengeAuthorModalBody from 'Src/components/ChallengeAuthor';
 
 import {Modal, ModalBody} from 'Components/utils/Modal';
 import {ExtendedEditTags} from 'Components/utils/TagInput';
-import {MEDIA, TAGS, extractCardFields, initCard} from 'Constants/cardFields';
+
+import {
+  MEDIA,
+  TAGS,
+  extractCardFields,
+  initCard,
+} from 'Constants/cardFields.ts';
 import {MediaSearch} from '../MediaSearch';
 
 import CardFrontTemplate from './CardFrontTemplate';

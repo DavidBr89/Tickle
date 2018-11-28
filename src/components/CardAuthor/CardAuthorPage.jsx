@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
 import DefaultLayout from 'Components/DefaultLayout';
-import { BlackModal} from 'Utils/Modal';
+import {BlackModal} from 'Utils/Modal';
 
 import EditCard from 'Components/cards/ConnectedEditCard';
 
-import { DropDown } from 'Utils/TagInput';
+import {DropDown} from 'Utils/TagInput';
 import CardStackContainer from '../CardStack';
 
 // import CardDragAuthorOverlay from './CardDragAuthorOverlay';
@@ -49,7 +49,6 @@ import CardTagSearch from '../CardTagSearch';
 
 // const TimoutGrid = ReactTimeout(CardStack);
 
-
 class CardAuthorPage extends Component {
   static propTypes = {
     cards: PropTypes.array,
@@ -68,7 +67,7 @@ class CardAuthorPage extends Component {
     toggleAuthEnv: PropTypes.func,
     tagColorScale: PropTypes.func,
     screenResize: PropTypes.func,
-    fetchCards: PropTypes.func
+    fetchCards: PropTypes.func,
   };
 
   static defaultProps = {
@@ -89,7 +88,7 @@ class CardAuthorPage extends Component {
     tagColorScale: () => 'green',
     screenResize: d => d,
     fetchCards: d => d,
-    preSelectCardId: d => d
+    preSelectCardId: d => d,
   };
 
   componentDidMount() {
@@ -98,7 +97,7 @@ class CardAuthorPage extends Component {
       fetchCards,
       preSelectCardId,
       userMove,
-      changeMapViewport
+      changeMapViewport,
     } = this.props;
 
     console.log('DID MOUNT');
@@ -134,11 +133,13 @@ class CardAuthorPage extends Component {
       tagVocabularyCreated,
       extCardId,
       children,
-      selectTemplate, templateSelected, cardStackBottom
+      selectTemplate,
+      templateSelected,
+      cardStackBottom,
+      width,
     } = this.props;
 
     const slotSize = 100 / 3.5;
-    const cardStackWidth = 100;
     // slotSize / cards.length < slotSize ? 100 : slotSize * cards.length;
 
     return (
@@ -149,8 +150,7 @@ class CardAuthorPage extends Component {
             <button
               type="button"
               className={`btn btn-lg ${templateSelected && 'btn-black'}`}
-              onClick={selectTemplate}
-            >
+              onClick={selectTemplate}>
               New Card
             </button>
             <CardTagSearch
@@ -162,10 +162,9 @@ class CardAuthorPage extends Component {
               height={height / 2 - 50}
             />
           </div>
-        }
-      >
+        }>
         <BlackModal visible={extCardId !== null}>
-          {selectedCard !== null && <EditCard {...selectedCard} /> }
+          {selectedCard !== null && <EditCard {...selectedCard} />}
         </BlackModal>
         <CardStackContainer
           bottom={cardStackBottom}
@@ -173,13 +172,13 @@ class CardAuthorPage extends Component {
           selectedCardId={selectedCardId}
           touch={isSmartphone}
           duration={600}
-          width={cardStackWidth}
+          width={width}
           height={height}
           unit="%"
           onClick={previewCardAction}
           slotSize={slotSize}
           style={{
-            zIndex: 1000
+            zIndex: 1000,
           }}
         />
         {children}

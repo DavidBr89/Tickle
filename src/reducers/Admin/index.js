@@ -23,7 +23,7 @@ import {
   CHALLENGE_STARTED,
   CHALLENGE_SUCCEEDED,
   CHALLENGE_SUBMITTED, CARD_CREATED
-} from 'Constants/cardFields';
+} from 'Constants/cardFields.ts';
 
 const INITIAL_STATE = {
   users: [],

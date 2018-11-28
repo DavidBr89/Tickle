@@ -4,7 +4,7 @@ import setify from 'Components/utils/setify';
 import uniq from 'lodash/uniq';
 import uniqBy from 'lodash/uniqBy';
 
-import {initCard} from 'Constants/cardFields';
+import {initCard} from 'Constants/cardFields.ts';
 import {
   RECEIVE_PLACES,
   UPDATE_CARD,

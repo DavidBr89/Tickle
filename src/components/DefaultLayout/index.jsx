@@ -1,32 +1,28 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-import { bindActionCreators } from 'redux';
+import {bindActionCreators} from 'redux';
 
-import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
+import {Link} from 'react-router-dom';
+import {connect} from 'react-redux';
 
 import MenuIcon from 'react-feather/dist/icons/menu';
-// import { Link } from 'react-router-dom';
 
-// import SignOutButton from '../SignOut';
-
-import { screenResize } from 'Reducers/Screen/actions';
+import {screenResize} from 'Reducers/Screen/actions';
 import IcAk from 'Styles/alphabet_icons/ic_ak.svg';
 import RouteNavigation from '../Navigation';
-
 
 class NavBar extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
-    ui: PropTypes.node
+    ui: PropTypes.node,
   };
 
   static defaultProps = {
     children: <div>no content</div>,
     className: '',
-    ui: <React.Fragment />
+    ui: <React.Fragment />,
   };
 
   // state = {
@@ -34,20 +30,16 @@ class NavBar extends Component {
   // jhhhjj};
 
   render() {
-    const {
-      style, open, children, onToggle, ui
-    } = this.props;
+    const {style, open, children, onToggle, ui, className} = this.props;
     return (
-      <div className="z-50 w-full" style={{ ...style }}>
+      <div className={`z-50 w-full ${className}`} style={{...style}}>
         <nav
           className="navbar flex items-center relative m-2 "
-          style={{ minHeight: 48 }}
-        >
+          style={{minHeight: 48}}>
           <button
             className="border-4 border-black cursor-pointer p-2 absolute z-50 flex-col-wrapper items-center bg-white"
             onClick={onToggle}
-            type="button"
-          >
+            type="button">
             <img src={IcAk} className="m-1" />
           </button>
           {ui}
@@ -59,17 +51,15 @@ class NavBar extends Component {
             width: '30%',
             background: 'white',
             opacity: open ? 'show' : null,
-            display: open ? 'block' : 'none'
-          }}
-        >
+            display: open ? 'block' : 'none',
+          }}>
           <div
             className="p-3"
             style={{
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'center'
-            }}
-          >
+              justifyContent: 'center',
+            }}>
             {children}
           </div>
         </div>
@@ -81,7 +71,7 @@ class NavBar extends Component {
 class DefaultLayout extends Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
-    activePath: PropTypes.string
+    activePath: PropTypes.string,
   };
 
   constructor(props) {
@@ -90,53 +80,52 @@ class DefaultLayout extends Component {
     this.handleClick = this.handleClick.bind(this);
   }
 
-  state = { open: false };
+  state = {open: false};
 
   handleClick = () => {
     this.setState(prevState => ({
-      open: !prevState.open
+      open: !prevState.open,
     }));
   };
 
   componentDidMount() {
-    const { screenResize } = this.props;
+    const {screenResize} = this.props;
     const android = /(android)/i.test(navigator.userAgent);
-    const iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+    const iOS =
+      !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
 
     screenResize({
       width: this.cont.offsetWidth,
       height: this.cont.offsetHeight,
       android,
-      iOS
+      iOS,
     });
   }
 
   render() {
-    const {
-      children, activePath, userEnv, menu
-    } = this.props;
-    const { open } = this.state;
+    const {children, activePath, userEnv, menu, className, style} = this.props;
+    const {open} = this.state;
 
     // style={{ height: isAndroid ? '100vh' : '100vh' }}
     return (
-      <div id="content-container" ref={c => (this.cont = c)}>
-        <div style={{ display: 'flex' }}>
+      <div
+        id="content-container"
+        ref={c => (this.cont = c)}
+        style={style}
+        className={className}>
+        <div style={{display: 'flex'}}>
           <NavBar
             ui={menu}
             open={open}
-            style={{ position: 'absolute' }}
-            onToggle={this.handleClick}
-          >
-            <div className="text-xl font-bold uppercase mb-2">
-              {userEnv}
-            </div>
+            style={{position: 'absolute'}}
+            onToggle={this.handleClick}>
+            <div className="text-xl font-bold uppercase mb-2">{userEnv}</div>
             <RouteNavigation>
-              {({ name }) => (
+              {({name}) => (
                 <div
                   onClick={() => {
-                    this.setState({ open: false });
-                  }}
-                >
+                    this.setState({open: false});
+                  }}>
                   {name}
                 </div>
               )}
@@ -151,20 +140,21 @@ class DefaultLayout extends Component {
 
 const mapStateToProps = state => ({
   ...state.Screen,
-  userEnv: state.Session.selectedUserEnvId
+  userEnv: state.Session.selectedUserEnvId,
 });
 
-const mapDispatchToProps = dispatch => bindActionCreators(
-  {
-    screenResize
-  },
-  dispatch,
-);
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      screenResize,
+    },
+    dispatch,
+  );
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...stateProps,
   ...dispatchProps,
-  ...ownProps
+  ...ownProps,
 });
 
 export default connect(

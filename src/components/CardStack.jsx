@@ -14,16 +14,12 @@ const isPosInt = n => Number.isInteger(n) && n >= 0;
 
 const TouchableCard = ({touch, onClick, className, ...d}) =>
   touch && !d.selected ? (
-    <Swipe onSwipeStart={onClick}>
-      <div className="pl-2 pr-2">
-        <PreviewCard {...d} className="h-full" />
-      </div>
+    <Swipe onSwipeStart={onClick} className={className}>
+      <PreviewCard {...d} />
     </Swipe>
   ) : (
     <DelayClick delay={500} onClick={onClick}>
-      <div className="pl-2 pr-2">
-        <PreviewCard {...d} clas="h-full" />
-      </div>
+      <PreviewCard {...d} className={className} />
     </DelayClick>
   );
 
@@ -38,54 +34,53 @@ function CardStackWrapper({
   onClick,
   unit,
   touch,
+  style,
+  cardWidth,
+  cardHeight,
   ...props
 }) {
   const cardIndex = cards.findIndex(c => c.id === selectedCardId);
 
   // const cardStackWidth = width;
-  const cardWidth = Math.min(width / 3.5, 200);
-  const cardHeight = Math.min(height, 250);
 
   return (
-    <Dimensions
-      className={`${className} z-10`}
-      placeholder={<PreviewCard className="p-4" />}>
-      {(w, h) => (
-        <Stack
-          data={cards}
-          duration={400}
-          centered={isPosInt(cardIndex)}
-          selectedIndex={cardIndex}
-          width={w}
-          height={h}
-          slotSize={Math.min(w / 3.5, 200)}
-          {...props}>
-          {d => (
-            <TouchableCard
-              {...d}
-              touch={touch}
-              onClick={() => {
-                // e.stopPropagation();
-                onClick(d);
-              }}
-              key={d.id}
-              edit={d.template}
-              selected={selectedCardId === d.id}
-              style={{
-                pointerEvents: 'all',
-                transition: 'transform 500ms',
-                // TODO: change later
-                height: '100%',
-                // opacity: d.accessible ? 1 : 0.7,
-                transform: selectedCardId === d.id && 'scale(1.2)',
-                zIndex: selectedCardId === d.id && 2000,
-                // opacity: d.template && 0.8
-              }}
-            />
-          )}
-        </Stack>
+    <Stack
+      style={style}
+      className={className}
+      data={cards}
+      duration={400}
+      centered={isPosInt(cardIndex)}
+      selectedIndex={cardIndex}
+      width={width}
+      slotSize={cardWidth}
+      {...props}>
+      {d => (
+        <div className="p-2 w-full h-full">
+          <TouchableCard
+            className="w-full h-full"
+            {...d}
+            touch={touch}
+            onClick={() => {
+              // e.stopPropagation();
+              onClick(d);
+            }}
+            key={d.id}
+            edit={d.template}
+            selected={selectedCardId === d.id}
+            style={{
+              pointerEvents: 'all',
+              transition: 'transform 500ms',
+              // TODO: change later
+              height: '100%',
+              // opacity: d.accessible ? 1 : 0.7,
+              transform: selectedCardId === d.id && 'scale(1.2)',
+              zIndex: selectedCardId === d.id && 2000,
+              // opacity: d.template && 0.8
+            }}
+          />
+        </div>
       )}
-    </Dimensions>
+    </Stack>
   );
 }
 
@@ -113,22 +108,30 @@ CardStackWrapper.propTypes = {
   touch: PropTypes.bool,
 };
 
-const CardStackContainer = ({concealCardStack, ...props}) => {
+const CardStackContainer = ({
+  concealCardStack,
+  cardMinHeight = 200,
+  cardMinWidth = 180,
+  ...props
+}) => {
   const {height, width, bottom} = props;
 
-  const cardHeight = height / 4;
+  const cardHeight = Math.min(height / 4, cardMinHeight);
+  const cardWidth = Math.min(width / 3, cardMinWidth);
+
   return (
-    <div className="overflow-hidden">
-      <div
-        className="mt-24 flex justify-center w-full z-40 pt-2"
-        style={{
-          transition: 'margin 0.5s',
-          pointerEvents: 'none',
-          marginTop: bottom ? height - cardHeight / 3 : null,
-        }}>
-        <CardStackWrapper {...props} />
-      </div>
-    </div>
+    <CardStackWrapper
+      {...props}
+      cardWidth={cardWidth}
+      cardHeight={cardHeight}
+      className="mt-24 flex justify-center pl-4 pr-4  z-40 pt-2"
+      style={{
+        flex: `0 0 ${cardHeight}px`,
+        transition: 'margin 0.5s',
+        pointerEvents: 'none',
+        marginTop: bottom ? height - cardHeight / 3 : null,
+      }}
+    />
   );
 };
 
