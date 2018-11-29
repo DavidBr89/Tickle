@@ -149,7 +149,8 @@ class CardAuthorPage extends Component {
           <div className="flex-grow flex justify-end items-center">
             <button
               type="button"
-              className={`btn btn-lg ${templateSelected && 'btn-black'}`}
+              className={`btn btn-white border-2 border-black btn-lg ${templateSelected &&
+                'btn-black'}`}
               onClick={selectTemplate}>
               New Card
             </button>

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import PropTypes from 'prop-types';
 
 import {
@@ -87,7 +87,7 @@ const FieldList = ({values, visiblity, onRemove}) =>
             minWidth: 0 /* important */,
           }}>
           <div
-            className="flex-grow flex items-center justify-between border p-2 ml-1 mr-1"
+            className="flex-grow flex items-center justify-between border-2 p-2 ml-1 mr-1"
             style={{minWidth: 0}}>
             <RemoveBtn onClick={onRemove(d.id)}>{d.label}</RemoveBtn>
             {d.node}
@@ -96,6 +96,50 @@ const FieldList = ({values, visiblity, onRemove}) =>
       ))}
     </ul>
   );
+
+const MySelect = ({
+  className,
+  selectedClassName,
+  optionClassName,
+  style,
+  onChange,
+  values = [],
+  children,
+  selectedId,
+}) => {
+  const [visible, setVisible] = useState(false);
+  const selected = values.find(v => v.id === selectedId) || null;
+
+  return (
+    <div className={`${className} relative z-10`}>
+      <div
+        className={`h-full ${selectedClassName}`}
+        tabIndex="-1"
+        onClick={() => setVisible(!visible)}
+        onBlur={() => setVisible(false)}>
+        {selected && selected.label}
+      </div>
+      <div className={`absolute ${!visible && 'hidden'} cursor-pointer`}>
+        <ul className="list-reset p-2">
+          {values.map(x => (
+            <li
+              className={optionClassName}
+              onMouseDown={e => e.preventDefault()}
+              onClick={() => {
+                setVisible(false);
+                onChange(x);
+              }}>
+              {x.label}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+};
+
+const selectNextFieldId = visiblity =>
+  Object.keys(visiblity).find(k => !visiblity[k]) || null;
 
 class SelectCardField extends Component {
   static propTypes = {
@@ -112,8 +156,17 @@ class SelectCardField extends Component {
     fields: [],
   };
 
-  state = {visiblity: this.props.visiblity};
+  constructor(props) {
+    super(props);
+    const {visiblity} = this.props;
 
+    const selectedAttrId = selectNextFieldId(visiblity);
+
+    this.state = {
+      visiblity,
+      selectedAttrId,
+    };
+  }
   // deriveStateFromProps() {
   //
   // }
@@ -121,45 +174,54 @@ class SelectCardField extends Component {
   render() {
     const {fields, className, onSelect, onDeselect} = this.props;
 
-    const {visiblity} = this.state;
-
-    const remove = attr => () => {
-      this.setState({visiblity: {...visiblity, [attr]: false}});
-      onDeselect(attr);
-    };
-
-    const addAttr = e => {
-      e.preventDefault();
-      const attr = this.select.value;
-      // const visible = !visiblity[attr];
-      this.setState({visiblity: {...visiblity, [attr]: true}});
-      // if (!visible) {
-      //   onDeselect(attr);
-      // }
-    };
-    // const btnDim = { minHeight: 70, width: 70 };
+    const {visiblity, selectedAttrId} = this.state;
 
     const notSelectedFields = fields.filter(d => !visiblity[d.id]);
     const selectedCardFields = fields.filter(d => visiblity[d.id]);
     const disabled = notSelectedFields.length === 0;
     const allHidden = selectedCardFields.length === 0;
+
+    const remove = attr => () => {
+      const newVisibility = {...visiblity, [attr]: false};
+      const newSelected = fields.find(d => !newVisibility[d.id]);
+      this.setState({
+        visiblity: newVisibility,
+        selectedAttrId: selectNextFieldId(newVisibility),
+      });
+      onDeselect(attr);
+    };
+
+    const addAttr = e => {
+      e.preventDefault();
+      const {selectedAttrId} = this.state;
+      const newVisibility = {...visiblity, [selectedAttrId]: true};
+      this.setState({
+        visiblity: newVisibility,
+        selectedAttrId: selectNextFieldId(newVisibility),
+      });
+    };
+
+    // const btnDim = { minHeight: 70, width: 70 };
+
     return (
       <div className={`${className}`}>
         <form
           onSubmit={addAttr}
           disabled={disabled}
           className={`flex mb-2 ${disabled && 'disabled'}`}>
-          <select
-            ref={sel => (this.select = sel)}
-            className="form-control flex-grow text-xl mr-1">
-            {notSelectedFields.map(d => (
-              <option className="text-xl" value={d.id}>
-                {d.label}
-              </option>
-            ))}
-          </select>
+          <MySelect
+            selectedId={selectedAttrId}
+            className="bg-white flex-grow mr-1 text-xl"
+            selectedClassName="border-2 p-2 italic text-grey-dark text-xl flex items-center"
+            optionClassName="p-2"
+            values={notSelectedFields}
+            onChange={v => {
+              console.log('change', v);
+              this.setState({selectedAttrId: v.id});
+            }}
+          />
           <button
-            className={`btn btn-lg ${disabled && 'btn-disabled'}`}
+            className={`btn btn-lg border-2 ${disabled && 'btn-disabled'}`}
             type="submit">
             Add Field
           </button>{' '}
@@ -310,7 +372,7 @@ export default class CardFrontTemplate extends Component {
           <PlaceholderFrame
             onClick={onTimeRangeClick}
             placeholder="Date"
-            empty={true}
+            empty
           />
         ),
       },
@@ -330,9 +392,10 @@ export default class CardFrontTemplate extends Component {
       },
     ];
     const fieldVisibility = fieldNodes.reduce((acc, d) => {
+      console.log('d.id', d.id);
       acc[d.id] = isFieldInitialized({card: this.props, attr: d.id});
       return acc;
-    });
+    }, {});
 
     return (
       <div
@@ -342,7 +405,7 @@ export default class CardFrontTemplate extends Component {
           onClick={onImgClick}
           src={img ? img.url : null}
           style={{
-            flex: '0 1 50%',
+            flex: '0 0 50%',
             cursor: 'pointer',
           }}>
           <div className="absolute z-10 w-full h-full flex items-end">

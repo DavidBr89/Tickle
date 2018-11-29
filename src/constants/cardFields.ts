@@ -17,15 +17,25 @@ export const isChallengeStarted = c =>
 
 // TODO: update later
 export const CARD_SEEN = 'CARD_SEEN';
-export const isCardSeen = c =>
+export const isCardSeen = (
+  c = {
+    challengeSubmission: {
+      feedback: {accomplished: false},
+      completed: false,
+    },
+    seen: false,
+  },
+) =>
   isChallengeStarted(c) ||
   isChallengeSubmitted(c) ||
   isChallengeSucceeded(c) ||
   c.seen === true;
 
-export const isChallengeOpen = c => !isDefined(c.challengeSubmission);
+export const isChallengeOpen = ({challengeSubmission}) =>
+  !isDefined(challengeSubmission);
 
-export const hasCardCreated = (c, uid) => c.uid === uid;
+export const hasCardCreated = (c = {uid: '2332'}, uidTmp = '12345') =>
+  c.uid === uidTmp;
 
 export const NO_CHALLENGE_FILTER = 'NO_CHALLENGE_FILTER';
 export const NO_CARD_FILTER = 'NO_CARD_FILTER';
@@ -39,14 +49,15 @@ export const CHALLENGE_SUCCEEDED = 'CHALLENGE_SUCCEEDED';
 export const CARD_CREATED = 'CARD_CREATED';
 
 export const challengeTypeMap = (() => {
-  const obj = {};
-  obj[CHALLENGE_STARTED] = isChallengeStarted;
-  obj[CHALLENGE_SUBMITTED] = isChallengeSubmitted;
-  obj[CHALLENGE_SUCCEEDED] = isChallengeSucceeded;
-  obj[CHALLENGE_OPEN] = isChallengeOpen;
-  obj[NO_CARD_FILTER] = () => true;
-  obj[CARD_CREATED] = hasCardCreated;
-  obj[CARD_SEEN] = isCardSeen;
+  const obj = {
+    [CHALLENGE_STARTED]: isChallengeStarted,
+    [CHALLENGE_SUBMITTED]: isChallengeSubmitted,
+    [CHALLENGE_SUCCEEDED]: isChallengeSucceeded,
+    [CHALLENGE_OPEN]: isChallengeOpen,
+    [NO_CARD_FILTER]: () => true,
+    [CARD_CREATED]: hasCardCreated,
+    [CARD_SEEN]: isCardSeen,
+  };
   return obj;
 })();
 
@@ -77,25 +88,23 @@ export const initCard = {
 };
 
 // TODO: where is challenge submission?
-export const extractCardFields = ({...args}) => {
-  const {
-    floorX = initCard.floorX,
-    floorY = initCard.floorY,
-    img = initCard.img,
-    loc = initCard.loc,
-    timerange = initCard.timerange, // { start: null, end: null },
-    title = initCard.title,
-    tags = initCard.tags,
-    description = initCard.description,
-    media = initCard.media,
-    timestamp = initCard.timestamp,
-    challenge = initCard.challenge,
-    points = initCard.points,
-    challengeSubmission = initCard.challengeSubmission,
-    id,
-    uid,
-  } = args;
-
+export const extractCardFields = ({
+  id = 'string',
+  uid = 'string',
+  floorX = 0.5,
+  floorY = 0.5,
+  img = null,
+  loc = {latitude: 50.85146, longitude: 4.315483},
+  timerange = null, // { start: null, end: null },
+  title = null,
+  tags = [],
+  description = null,
+  media = [],
+  timestamp = null,
+  challenge = null,
+  points = 0,
+  challengeSubmission = null,
+}) => {
   if (!Array.isArray(tags)) {
     throw new Error('tags is not an array');
   }
@@ -129,4 +138,15 @@ export const isFieldInitialized = ({card, attr}) => {
   const field = extractCardFields(card)[attr];
   if (Array.isArray(field)) return field.length !== 0;
   return field !== null;
+};
+
+export const getNumInitFields = card => {
+  const isInit = attr => isFieldInitialized({card, attr});
+
+  return [
+    isInit('title'),
+    isInit('tags'),
+    isInit('media'),
+    isInit('description'),
+  ].filter(d => d).length;
 };

@@ -156,8 +156,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
       ...mapViewport,
       // ...d.loc,
       ...shiftCenterMap({...d.loc, mercator}),
-      transitionDuration: 2000,
+      transitionDuration: 1000,
       transitionInterpolator: new FlyToInterpolator(),
+      transitionEasing: d3.easePoly,
       // zoom: 11,
     });
   };

@@ -20,12 +20,20 @@
 }
 
 .btn {
-  @apply .flex .flex-col .items-center .justify-center .text-lg .font-bold .p-2 .border-2  .cursor-pointer ;
+  @apply .flex .flex-col .items-center .justify-center .text-lg .font-bold .p-2 .cursor-pointer ;
 }
 
 .btn-black {
   @apply .bg-black .text-white .text-xl;
 }
+
+.btn-white {
+  @apply .bg-white .text-xl;
+}
+
+// .btn-border-black {
+//   @apply .border-2 .border-black
+// }
 
 .header-black {
   @apply .py-2 .px-2 .bg-black .font-bold .text-white;

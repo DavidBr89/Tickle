@@ -46,18 +46,13 @@ const SignInPage = ({signIn, ...props}) => {
 
   return (
     <DefaultLayout
-      className="flex flex-col"
+      className="flex flex-col relative"
       style={{
         backgroundImage: `url("${backgroundUrl}")`,
         backgroundRepeat: 'no-repeat',
         backgroundSize:
           'cover' /* Resize the background image to cover the entire container */,
-      }}
-      menu={
-        <div className="flex-grow flex justify-center items-center">
-          <h1>Sign-In {` ${userEnv}`} </h1>
-        </div>
-      }>
+      }}>
       <div className="flex-grow flex flex-col justify-end items-center mb-32 ">
         <div className="w-3/4">
           <SignInFormWrapper
@@ -83,6 +78,9 @@ const SignInPage = ({signIn, ...props}) => {
             </div>
           )}
         </div>
+      </div>
+      <div className="absolute" style={{bottom: 0, right: 0}}>
+        <div className="m-2 italic">{userEnv}</div>
       </div>
     </DefaultLayout>
   );
@@ -145,7 +143,8 @@ class SignInFormWrapper extends Component {
   }
 }
 
-    const btnClass = 'uppercase bg-white text-2xl p-2 font-bold border-4 border-black'
+const btnClass =
+  'uppercase bg-white text-2xl p-2 font-bold border-4 border-black';
 
 const SignInForm = ({
   email,

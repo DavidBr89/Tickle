@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import CardControls from 'Components/cards/CardControls';
 import {mediaScale} from 'Constants/mediaTypes';
+import {getNumInitFields} from 'Constants/cardFields';
 import placeholderImgSrc from '../placeholder.png';
 
 import {ImgOverlay, TextField, MediaField} from './mixinsCardFront';
@@ -28,7 +29,6 @@ TagField.defaultProps = {
   onClick: d => d,
 };
 
-
 export const TitleField = ({
   onClick,
   edit,
@@ -40,18 +40,16 @@ export const TitleField = ({
   if (hidden) return null;
   const titleCont = children || <span className="italic">{placeholder}</span>;
   return (
-    <div
-      className={`flex items-center items-center ${className}`}
-      onClick={onClick}>
+    <div className={`flex ${className}`} onClick={onClick}>
       <h1 className="text-muted mr-1">{titleCont}</h1>
     </div>
   );
 };
 
-const createIcon = type =>
-  React.createElement(type, {
-    style: {color: 'black'},
-  });
+// const createIcon = type =>
+//   React.createElement(type, {
+//     style: {color: 'black'},
+//   });
 
 class CardFront extends Component {
   static propTypes = {
@@ -97,16 +95,14 @@ class CardFront extends Component {
 
   render() {
     const {
+      title,
       tags,
       img,
+      points,
       description,
       media,
-      title,
-      uiColor,
       // background,
       challengeSubmission,
-      stylesheet,
-      tagColorScale,
       style,
       smallScreen,
 
@@ -119,15 +115,15 @@ class CardFront extends Component {
       onFlip,
       onTagsClick,
       onCreate,
-      edit,
       template,
-      points,
       onPointsClick,
       bottomControls,
       className,
     } = this.props;
 
-    // console.log('mediaIcons', mediaIcons);
+    // console.log('media', media, title);
+    // const numInitFields = getNumInitFields(this.props);
+
     return (
       <div
         style={{...style}}
@@ -136,7 +132,9 @@ class CardFront extends Component {
           onClick={onImgClick}
           src={img ? img.url : null}
           style={{
-            flex: '0 1 50%',
+            // maxHeight: '35%',
+            flex: '0 1 70%',
+            // flex: `0 1 ${100 - numInitFields * 10}%`,
             cursor: 'pointer',
           }}>
           <div className="absolute z-10 w-full h-full flex justify-end items-end">
@@ -148,18 +146,22 @@ class CardFront extends Component {
           </div>
         </ImgOverlay>
 
-        <div className="flex flex-col mt-3 mr-3 ml-3 mb-1">
+        <div className="flex-grow flex flex-col mt-3 mr-3 ml-3 mb-1">
           <TitleField
             hidden={title === null}
-            className="m-1"
+            className="flex-no-shrink mb-2"
             onClick={onTitleClick}>
             {title}
           </TitleField>
 
-          <TagField values={tags} onClick={onTagsClick} />
+          <TagField
+            values={tags}
+            onClick={onTagsClick}
+            className="flex-no-shrink mb-2"
+          />
 
           <TextField
-            className="m-1"
+            className="flex-no-shrink"
             hidden={description === null}
             style={{flex: '0 1 auto'}}
             onClick={onDescriptionClick}>

@@ -117,7 +117,9 @@ class CardViewPage extends Component {
         className="w-full h-full relative overflow-hidden flex-col-wrapper"
         menu={
           <div className="flex-grow flex justify-end items-center">
-            <button className="btn" onClick={() => concealCardStack()}>
+            <button
+              className="btn btn-white border-2 border-black"
+              onClick={() => concealCardStack()}>
               Hide
             </button>
             <CardTagSearch
@@ -140,10 +142,8 @@ class CardViewPage extends Component {
           selectedCardId={selectedCardId}
           duration={600}
           onClick={previewCardAction}
-          tagColorScale={tagColorScale}
           slotSize={slotSize}
         />
-
 
         <BlackModal
           visible={extendedCard !== null}

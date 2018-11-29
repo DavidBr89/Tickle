@@ -20,6 +20,25 @@ import TabMenu from './TabMenu';
 
 // import './layout.scss';
 
+/*
+          <div
+            className={`absolute h-full w-full flex flex-col justify-end z-50`}>
+            <TabMenu
+              className={`p-2 flex flex-col overflow-y-auto bg-grey-lighter ${
+                tabExtended ? 'flex-grow' : 'flex-shrink'
+              } `}
+              style={{...flexTrans}}
+              extended={tabExtended}
+              onToggle={extendTab}
+              onHeaderClick={() => selectCard(null)}
+              selectedTags={selectedTags}
+              relatedTags={relatedTags}
+              selectedCard={selectedCard}
+              nestedTags={tagVocabulary}
+            />
+          </div>
+      */
+
 class Cell extends Component {
   static propTypes = {
     onClick: PropTypes.func,
@@ -122,9 +141,11 @@ export default class MyDiary extends Component {
     const gridStyle = {
       // height: '100%',
       display: 'grid',
+      gridGap: 16,
       // gridAutoFlow: 'column dense',
       gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
-      gridAutoRows: 150,
+      gridAutoRows: `minmax(1rem, 1fr)`,
+      gridTemplateRows: `minmax(1rem, 1fr)`,
     };
 
     const cardSelected = selectedCardId !== null;
@@ -173,22 +194,6 @@ export default class MyDiary extends Component {
         </BlackModal>
 
         <div className="relative h-full w-full">
-          <div
-            className={`absolute h-full w-full flex flex-col justify-end z-50`}>
-            <TabMenu
-              className={`p-2 flex flex-col overflow-y-auto bg-grey-lighter ${
-                tabExtended ? 'flex-grow' : 'flex-shrink'
-              } `}
-              style={{...flexTrans}}
-              extended={tabExtended}
-              onToggle={extendTab}
-              onHeaderClick={() => selectCard(null)}
-              selectedTags={selectedTags}
-              relatedTags={relatedTags}
-              selectedCard={selectedCard}
-              nestedTags={tagVocabulary}
-            />
-          </div>
           <div className="content-margin">
             <div>
               Your {cardTypeText(selectedCardType)} {numSeenCards}/
@@ -200,18 +205,10 @@ export default class MyDiary extends Component {
               style={{flex: tabExtended ? flexShrink : '1 1 0%', ...flexTrans}}>
               <div style={gridStyle} ref={el => (this.grid = el)}>
                 {cards.map(d => (
-                  <Cell
+                  <PreviewCard
                     key={d.id}
                     {...d}
-                    style={{
-                      transformOrigin: null,
-                      transform:
-                        selectedCardId === d.id ? 'scale(1.1)' : 'scale(1)',
-                      zIndex: selectedCardId === d.id ? 2 : 0,
-                      transition: 'transform 500ms',
-                    }}
                     onClick={() => console.log('click click')}
-                    expanded={cardSelected}
                   />
                 ))}
               </div>
