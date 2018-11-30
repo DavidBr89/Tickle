@@ -1,37 +1,43 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { Link, withRouter } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
+import {Link, withRouter} from 'react-router-dom';
+import {bindActionCreators} from 'redux';
 
-import { compose } from 'recompose';
-import { connect } from 'react-redux';
+import {compose} from 'recompose';
+import {connect} from 'react-redux';
 
 import * as routes from 'Constants/routeSpec';
 
 import PhotoUpload from 'Utils/PhotoUpload';
-import { TagInput } from 'Utils/Tag';
+import {TagInput} from 'Utils/Tag';
 
-import { signUp } from 'Reducers/Session/async_actions';
+import {signUp} from 'Reducers/Session/async_actions';
 
 import DefaultLayout from 'Components/DefaultLayout';
+import backgroundUrl from './signup_background.png';
 
-const SignUpPage = ({ match, ...props }) => {
-  const { params } = match;
-  const { admin, userEnv } = params;
+const SignUpPage = ({match, ...props}) => {
+  const {params} = match;
+  const {admin, userEnv} = params;
   const isAdmin = admin === 'admin';
 
   console.log('admin', admin, 'params');
   return (
     <DefaultLayout
+      style={{
+        backgroundImage: `url("${backgroundUrl}")`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize:
+          'cover' /* Resize the background image to cover the entire container */,
+      }}
       menu={
         <div className="flex-grow flex justify-center items-center">
           <h1>
-SignUp
+            SignUp
             {admin ? ' Admin' : null}
           </h1>
         </div>
-      }
-    >
+      }>
       <div className="content-margin overflow-scroll flex-col-wrapper">
         <SignUpForm {...props} userEnv={userEnv} admin={isAdmin} />
       </div>
@@ -40,11 +46,11 @@ SignUp
 };
 
 SignUpPage.propTypes = {
-  admin: PropTypes.bool
+  admin: PropTypes.bool,
 };
 
 SignUpPage.defaultProps = {
-  admin: false
+  admin: false,
 };
 
 const INITIAL_STATE = {
@@ -56,42 +62,45 @@ const INITIAL_STATE = {
   error: null,
   img: null,
   interests: [],
-  loading: false
+  loading: false,
 };
 
 const byPropKey = (propertyName, value) => () => ({
   [propertyName]: value,
-  error: null
+  error: null,
 });
 
 class SignUpForm extends Component {
   state = INITIAL_STATE;
 
-  onSubmit = (event) => {
-    const {
-      username, email, fullname, passwordOne, img, interests
-    } = this.state;
-    const {
-      history, admin, signUp, userEnv
-    } = this.props;
+  onSubmit = event => {
+    const {username, email, fullname, passwordOne, img, interests} = this.state;
+    const {history, admin, signUp, userEnv} = this.props;
 
     const user = {
-      username, email, fullname, admin, interests
+      username,
+      email,
+      fullname,
+      admin,
+      interests,
     };
 
-    this.setState({ loading: true });
+    this.setState({loading: true});
 
     signUp({
-      user, img, userEnv, password: passwordOne
+      user,
+      img,
+      userEnv,
+      password: passwordOne,
     })
       .then(() => {
-        this.setState(() => ({ ...INITIAL_STATE }));
+        this.setState(() => ({...INITIAL_STATE}));
         console.log('routes geo view', routes.GEO_VIEW.path);
         history.push(`/${userEnv}/${routes.GEO_VIEW.path}`);
       })
-      .catch((error) => {
+      .catch(error => {
         console.log('error', error);
-        this.setState({ error, loading: false });
+        this.setState({error, loading: false});
       });
 
     event.preventDefault();
@@ -113,57 +122,53 @@ class SignUpForm extends Component {
       error,
       img,
       loading,
-      fullname
+      fullname,
     } = this.state;
 
-    const isInvalid = passwordOne !== passwordTwo
-      || passwordOne === ''
-      || email === ''
-      || username === '';
+    const isInvalid =
+      passwordOne !== passwordTwo ||
+      passwordOne === '' ||
+      email === '' ||
+      username === '';
     // img === null;
-
+    const formGroup = 'flex flex-wrap mb-3';
     return (
       <div className="w-full">
         <form onSubmit={this.onSubmit}>
           <div className="form-group">
-            <label className="label">User Photo:</label>
             <PhotoUpload
               imgUrl={img !== null ? img.url : null}
-              onChange={(img) => {
+              onChange={img => {
                 this.setState(byPropKey('img', img));
               }}
             />
           </div>
-          <div className="form-group">
-            <label className="label">Full name:</label>
+          <div className={formGroup}>
             <input
-              className="form-control"
+              className="flex-grow form-control mr-2 mb-3"
               value={fullname || ''}
-              onChange={event => this.setState(byPropKey('fullname', event.target.value))
+              onChange={event =>
+                this.setState(byPropKey('fullname', event.target.value))
               }
               type="text"
               placeholder="Full Name"
             />
-          </div>
-          <div className="form-group">
-            <label className="label">Username :</label>
             <input
-              className="form-control"
+              className="form-control flex-grow mb-3"
               value={username}
-              onChange={event => this.setState(byPropKey('username', event.target.value))
+              onChange={event =>
+                this.setState(byPropKey('username', event.target.value))
               }
               type="text"
               placeholder="Username"
             />
           </div>
           <div className="form-group">
-            <label className="label" htmlFor="pwd">
-              Email:
-            </label>
             <input
               value={email}
               className="form-control"
-              onChange={event => this.setState(byPropKey('email', event.target.value))
+              onChange={event =>
+                this.setState(byPropKey('email', event.target.value))
               }
               type="text"
               placeholder="Email Address"
@@ -171,17 +176,17 @@ class SignUpForm extends Component {
           </div>
 
           <div className="form-group">
-            <label className="label" htmlFor="pwd">
-              Interests:
-            </label>
-            <TagInput onChange={tags => this.setState({ interests: tags })} />
+            <TagInput
+              placeholder="Interests"
+              onChange={tags => this.setState({interests: tags})}
+            />
           </div>
-          <div className="form-group ">
-            <label className="label">Password:</label>
+          <div className={formGroup}>
             <input
-              className="form-control mb-1"
+              className="form-control mr-3"
               value={passwordOne}
-              onChange={event => this.setState(byPropKey('passwordOne', event.target.value))
+              onChange={event =>
+                this.setState(byPropKey('passwordOne', event.target.value))
               }
               type="password"
               placeholder="Password"
@@ -189,7 +194,8 @@ class SignUpForm extends Component {
             <input
               className="form-control"
               value={passwordTwo}
-              onChange={event => this.setState(byPropKey('passwordTwo', event.target.value))
+              onChange={event =>
+                this.setState(byPropKey('passwordTwo', event.target.value))
               }
               type="password"
               placeholder="Confirm Password"
@@ -200,22 +206,20 @@ class SignUpForm extends Component {
             style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between'
-            }}
-          >
+              justifyContent: 'space-between',
+            }}>
             <button
               className="btn bg-white w-full"
               disabled={isInvalid}
-              type="submit"
-            >
+              type="submit">
               Sign Up
             </button>
             {error && (
               <div className="ml-2 alert alert-danger">{error.message}</div>
             )}
-            {!error
-              && loading && (
-              <div clasName="ml-2" style={{ fontSize: 'large' }}>
+            {!error &&
+              loading && (
+              <div clasName="ml-2" style={{fontSize: 'large'}}>
                   Loading...
               </div>
             )}
@@ -226,32 +230,31 @@ class SignUpForm extends Component {
   }
 }
 
-const SignUpLink = ({ userEnv }) => (
+const SignUpLink = ({userEnv}) => (
   <div>
     <p className="text-lg mb-1">
-      Do not have an account?
-      {' '}
+      Do not have an account?{' '}
       <Link to={`/${userEnv}/${routes.SIGN_UP.path}`}>Sign Up</Link>
     </p>
     <p className="text-lg">
-      Or register as Administrator?
-      {' '}
+      Or register as Administrator?{' '}
       <Link to={`/${userEnv}/${routes.SIGN_UP.path}/admin`}>Sign Up</Link>
     </p>
   </div>
 );
 
-const mapDispatchToProps = dispatch => bindActionCreators(
-  {
-    signUp
-  },
-  dispatch,
-);
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      signUp,
+    },
+    dispatch,
+  );
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...stateProps,
   ...dispatchProps,
-  ...ownProps
+  ...ownProps,
 });
 
 export default compose(
@@ -263,4 +266,4 @@ export default compose(
   ),
 )(SignUpPage);
 
-export { SignUpForm, SignUpLink };
+export {SignUpForm, SignUpLink};

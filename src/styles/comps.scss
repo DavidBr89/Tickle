@@ -7,7 +7,8 @@
 }
 
 .form-control {
-  @apply .border .border-4 .bg-white .text-lg .py-2 .px-3 .text-grey-darkest;
+  @apply .border .border-black .border-2 .bg-white .text-lg .py-2 .px-3 .text-grey-darkest;
+box-shadow: 4px 4px black;
 }
 
 

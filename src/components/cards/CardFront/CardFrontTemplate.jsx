@@ -22,16 +22,19 @@ import {
 
 import {ImgOverlay, MediaField, EditIcon} from './mixinsCardFront';
 
-const Tags = ({values, style, onClick, className}) => (
-  <div
-    onClick={onClick}
-    className={`flex ${className} items-center flex-no-wrap overflow-x-hidden`}
-    style={{...style}}>
-    {values.map(t => (
-      <div className="tag-label text-lg mr-1 ">{t}</div>
-    ))}
-  </div>
-);
+const TagField = ({tags, style, onClick, className}) => {
+  if (!tags) return null;
+  return (
+    <div
+      onClick={onClick}
+      className={`flex ${className} items-center flex-no-wrap overflow-x-hidden`}
+      style={{...style}}>
+      {tags.map(t => (
+        <div className="tag-label text-lg mr-1 ">{t}</div>
+      ))}
+    </div>
+  );
+};
 
 export const PlaceholderFrame = ({
   onClick,
@@ -113,17 +116,17 @@ const MySelect = ({
   return (
     <div className={`${className} relative z-10`}>
       <div
-        className={`h-full ${selectedClassName}`}
+        className={`h-full cursor-pointer ${selectedClassName}`}
         tabIndex="-1"
         onClick={() => setVisible(!visible)}
         onBlur={() => setVisible(false)}>
         {selected && selected.label}
       </div>
-      <div className={`absolute ${!visible && 'hidden'} cursor-pointer`}>
-        <ul className="list-reset p-2">
+      <div className={`absolute ${!visible && 'hidden'} w-full `}>
+        <ul className="mt-2 list-reset p-2 z-10 bg-white ">
           {values.map(x => (
             <li
-              className={optionClassName}
+              className={`${optionClassName} cursor-pointer`}
               onMouseDown={e => e.preventDefault()}
               onClick={() => {
                 setVisible(false);
@@ -183,7 +186,6 @@ class SelectCardField extends Component {
 
     const remove = attr => () => {
       const newVisibility = {...visiblity, [attr]: false};
-      const newSelected = fields.find(d => !newVisibility[d.id]);
       this.setState({
         visiblity: newVisibility,
         selectedAttrId: selectNextFieldId(newVisibility),
@@ -216,7 +218,6 @@ class SelectCardField extends Component {
             optionClassName="p-2"
             values={notSelectedFields}
             onChange={v => {
-              console.log('change', v);
               this.setState({selectedAttrId: v.id});
             }}
           />
@@ -224,7 +225,7 @@ class SelectCardField extends Component {
             className={`btn btn-lg border-2 ${disabled && 'btn-disabled'}`}
             type="submit">
             Add Field
-          </button>{' '}
+          </button>
         </form>
 
         {allHidden && (
@@ -242,6 +243,7 @@ class SelectCardField extends Component {
   }
 }
 
+const getValue = a => (a ? a.value : null);
 export default class CardFrontTemplate extends Component {
   static propTypes = {
     children: PropTypes.node,
@@ -320,9 +322,9 @@ export default class CardFrontTemplate extends Component {
           <PlaceholderFrame
             onClick={onTitleClick}
             className=""
-            empty={title === null}
+            empty={title.value === null}
             placeholder="Title">
-            <h1 className="truncate-text">{title}</h1>
+            <h1 className="truncate-text">{title.value}</h1>
           </PlaceholderFrame>
         ),
       },
@@ -333,9 +335,9 @@ export default class CardFrontTemplate extends Component {
           <PlaceholderFrame
             onClick={onTagsClick}
             className=""
-            empty={tags.length === 0}
+            empty={tags.value === null}
             placeholder="Tags">
-            <Tags values={tags} />
+            <TagField tags={tags.value} />
           </PlaceholderFrame>
         ),
       },
@@ -345,10 +347,10 @@ export default class CardFrontTemplate extends Component {
         node: (
           <PlaceholderFrame
             onClick={onDescriptionClick}
-            empty={description === null}
+            empty={description.value === null}
             placeholder="Description">
             <div className="capitalize truncate-text text-xl">
-              {description}
+              {getValue(description)}
             </div>
           </PlaceholderFrame>
         ),
@@ -358,10 +360,10 @@ export default class CardFrontTemplate extends Component {
         label: 'Media',
         node: (
           <PlaceholderFrame
-            empty={media.length === 0}
+            empty={media.value === null}
             placeholder="Media"
             onClick={onMediaClick}>
-            <MediaField values={media} />
+            <MediaField media={media} />
           </PlaceholderFrame>
         ),
       },
@@ -378,24 +380,26 @@ export default class CardFrontTemplate extends Component {
       },
       {
         id: CHALLENGE,
-        label: 'Challenge',
+        label: 'Activity',
         node: (
           <PlaceholderFrame
             onClick={onChallengeClick}
-            placeholder="Challenge"
-            empty={challenge === null}>
+            placeholder="Activity"
+            empty={challenge.value === null}>
             <div className="capitalize truncate-text text-xl">
-              {challenge && challenge.title}
+              {challenge.value && challenge.value.title}
             </div>
           </PlaceholderFrame>
         ),
       },
     ];
-    const fieldVisibility = fieldNodes.reduce((acc, d) => {
-      console.log('d.id', d.id);
-      acc[d.id] = isFieldInitialized({card: this.props, attr: d.id});
-      return acc;
-    }, {});
+    const fieldVisibility = fieldNodes.reduce(
+      (acc, d) => ({
+        ...acc,
+        [d.id]: isFieldInitialized({card: this.props, attr: d.id}),
+      }),
+      {},
+    );
 
     return (
       <div
@@ -403,7 +407,7 @@ export default class CardFrontTemplate extends Component {
         className={`flex flex-col w-full h-full ${className}`}>
         <ImgOverlay
           onClick={onImgClick}
-          src={img ? img.url : null}
+          src={img.value ? img.value.url : null}
           style={{
             flex: '0 0 50%',
             cursor: 'pointer',
@@ -415,7 +419,7 @@ export default class CardFrontTemplate extends Component {
           <div className="absolute z-10 w-full h-full flex justify-end items-end">
             <MediaField
               className="m-1 flex justify-between items-center"
-              values={media}
+              media={media}
             />
           </div>
         </ImgOverlay>

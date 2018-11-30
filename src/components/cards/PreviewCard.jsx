@@ -46,51 +46,57 @@ class PreviewCard extends Component {
       accessible,
       className,
     } = this.props;
-    const selImg = (() => {
-      if (img && img.thumbnail) return img.thumbnail;
-      if (img && img.url) return img.url;
-      return placeholderImg;
-    })();
-    const contStyle = {
-      boxShadow: '0.2rem 0.2rem grey',
-      ...style,
-    };
 
     return (
       <div
-        className={`${className} p-1 overflow-hidden bg-white flex flex-col border-2 border-black`}
+        className={`${className} relative p-1 overflow-hidden bg-white flex flex-col border-2 border-black`}
         style={{...style}}
         onClick={onClick}>
-        <div className="flex-col-wrapper flex-grow relative bg-yellow-dark">
-          {img !== null && (
-            <img
-              className="absolute z-0 w-full h-full"
-              style={{
-                display: 'block',
-                objectFit: 'cover',
-              }}
-              src={selImg}
-              alt="Card cap"
-            />
-          )}
-
-          <div className="flex-grow flex-col-wrapper">
+        {img !== null && (
+          <div className="flex-grow relative">
             <div className="flex flex-no-shrink">
               <h1
-                className="flex-grow m-1  pl-1 pr-1 bg-white text-xl truncate-text"
+                className="flex-grow m-1  pl-1 pr-1 text-xl truncate-text"
                 style={{minHeight: '1.25rem'}}>
                 {title || 'No title'}
               </h1>
             </div>
-            <div className="p-2 flex-1 flex-col-wrapper justify-center">
-              <img
-                className="w-full h-full"
-                src={IcAk}
-                style={{maxHeight: 120}}
-              />
-            </div>
+
+            <img
+              className="z-0 absolute w-full h-full"
+              style={{
+                left: 0, top:-0,
+                display: 'block',
+                  objectFit: 'cover',
+              }}
+              src={img.thumbnail || img.url}
+              alt="Card cap"
+            />
+
           </div>
-        </div>
+        )}
+        {img === null && (
+          <div className="flex flex-col flex-grow bg-yellow-dark">
+            <div className="flex flex-no-shrink">
+              <h1
+                className="flex-grow m-1  pl-1 pr-1 text-xl truncate-text"
+                style={{minHeight: '1.25rem'}}>
+                {title || 'No title'}
+              </h1>
+            </div>
+            {img === null && (
+              <div className="flex flex-col flex-grow ">
+                <div className="p-2 flex-1 flex flex-col justify-center">
+                  <img
+                    className="flex-grow"
+                    src={IcAk}
+                    style={{maxHeight: 120}}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     );
   }

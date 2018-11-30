@@ -1,32 +1,35 @@
 import React from 'react';
 // import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 
-import { compose } from 'recompose';
-import { withRouter } from 'react-router-dom';
+import {compose} from 'recompose';
+import {withRouter} from 'react-router-dom';
 
-import { firebase } from 'Firebase';
+import {firebase} from 'Firebase';
 
 import * as cardActions from 'Reducers/Cards/async_actions';
 
 import * as sessionAsyncActions from 'Reducers/Session/async_actions';
 import * as sessionActions from 'Reducers/Session/actions';
-import { bindActionCreators } from 'redux';
+import {bindActionCreators} from 'redux';
 
-const withAuthentication = (Component) => {
+const withAuthentication = Component => {
   class WithAuthentication extends React.Component {
     componentDidMount() {
       const {
-        clearAuthUser, fetchCollectibleCards, fetchCreatedCards, match
+        clearAuthUser,
+        fetchCollectibleCards,
+        fetchCreatedCards,
+        match,
       } = this.props;
 
-      const { userEnv } = match.params;
+      const {userEnv} = match.params;
 
-      firebase.auth.onAuthStateChanged((authUser) => {
+      firebase.auth.onAuthStateChanged(authUser => {
         if (authUser !== null) {
-          const { uid } = authUser;
-          fetchCollectibleCards({ userEnv, uid });
-          fetchCreatedCards({ userEnv, uid });
+          const {uid} = authUser;
+          fetchCollectibleCards({userEnv, uid});
+          fetchCreatedCards({userEnv, uid});
         } else {
           clearAuthUser();
         }
@@ -39,21 +42,24 @@ const withAuthentication = (Component) => {
   }
 
   const mapStateToProps = state => ({
-    authUser: state.Session.authUser
+    authUser: state.Session.authUser,
   });
 
   const mergeProps = (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
     ...dispatchProps,
-    ...ownProps
+    ...ownProps,
   });
 
   const mapDispatchToProps = dispatch => ({
-    ...bindActionCreators({
-      ...sessionAsyncActions,
-      ...sessionActions,
-      ...cardActions
-    }, dispatch)
+    ...bindActionCreators(
+      {
+        ...sessionAsyncActions,
+        ...sessionActions,
+        ...cardActions,
+      },
+      dispatch,
+    ),
   });
 
   return compose(

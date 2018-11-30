@@ -9,7 +9,7 @@ import {saveState, loadState} from './localStorage';
 import {DB} from 'Firebase';
 import throttle from 'lodash/throttle';
 
-localStorage.clear();
+// localStorage.clear();
 // const defaultCards = [...dummyCards];
 const mapZoom = 9;
 const [width, height] = [100, 100];

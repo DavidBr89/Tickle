@@ -58,7 +58,8 @@ function CardStackWrapper({
         <div className="p-2 w-full h-full">
           <TouchableCard
             className="w-full h-full"
-            {...d}
+            title={d.title.value}
+            img={d.img.value}
             touch={touch}
             onClick={() => {
               // e.stopPropagation();

@@ -99,14 +99,6 @@ class CardAuthorPage extends Component {
       userMove,
       changeMapViewport,
     } = this.props;
-
-    console.log('DID MOUNT');
-    fetchCards();
-    // screenResize({
-    //   width: this.cont.offsetWidth,
-    //   height: this.cont.offsetHeight
-    // });
-    // preSelectCardId();
   }
 
   componentWillUnmount() {}
@@ -139,6 +131,7 @@ class CardAuthorPage extends Component {
       width,
     } = this.props;
 
+    console.log('cards', cards);
     const slotSize = 100 / 3.5;
     // slotSize / cards.length < slotSize ? 100 : slotSize * cards.length;
 

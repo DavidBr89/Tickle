@@ -26,17 +26,21 @@ IconCont.defaultProps = {
   className: 'text-white',
 };
 
-export const MediaField = ({values, onClick, edit, className}) => (
-  <div className={className}>
-    <div className="flex justify-end items-end">
-      {values.map(m => (
-        <IconCont className="p-1 m-1 border-black border-2">
-          {createIcon(mediaScale(m.type))}
-        </IconCont>
-      ))}
+export const MediaField = ({media, onClick, edit, className}) => {
+  const {value} = media;
+  if (!value) return null;
+  return (
+    <div className={className}>
+      <div className="flex justify-end items-end">
+        {value.map(m => (
+          <IconCont className="p-1 m-1 border-black border-2">
+            {createIcon(mediaScale(m.type))}
+          </IconCont>
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 const MediaIcons = ({values}) => (
   <div className="flex items-center">
     {values.map(m => (
@@ -177,18 +181,16 @@ export const TextField = ({
   className,
   style,
   edit,
-  children,
+  value,
 }) => {
-  if (children === null) return null;
+  if (value === null) return null;
   return (
     <div
       className={`${className}`}
       style={{...style, cursor: 'pointer'}}
       onClick={onClick}>
       <div className="flex items-center text-xl">
-        <div className="mr-1">
-          {children || <span style={{fontStyle: 'italic'}}>{placeholder}</span>}
-        </div>
+        <div className="mr-1">{value}</div>
       </div>
     </div>
   );

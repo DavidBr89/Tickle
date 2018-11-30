@@ -9,7 +9,7 @@ import placeholderImgSrc from '../placeholder.png';
 import {ImgOverlay, TextField, MediaField} from './mixinsCardFront';
 
 const TagField = ({values, className, style, onClick}) => {
-  if (values.length === 0) return null;
+  if (!values) return null;
   return (
     <div
       onClick={onClick}
@@ -29,19 +29,11 @@ TagField.defaultProps = {
   onClick: d => d,
 };
 
-export const TitleField = ({
-  onClick,
-  edit,
-  children,
-  className,
-  placeholder,
-  hidden,
-}) => {
-  if (hidden) return null;
-  const titleCont = children || <span className="italic">{placeholder}</span>;
+export const TitleField = ({onClick, edit, children, className, value}) => {
+  if (!value) return null;
   return (
     <div className={`flex ${className}`} onClick={onClick}>
-      <h1 className="text-muted mr-1">{titleCont}</h1>
+      <h1 className="text-muted mr-1">{value}</h1>
     </div>
   );
 };
@@ -133,14 +125,14 @@ class CardFront extends Component {
           src={img ? img.url : null}
           style={{
             // maxHeight: '35%',
-            flex: '0 1 70%',
+            flex: '0 1 60%',
             // flex: `0 1 ${100 - numInitFields * 10}%`,
             cursor: 'pointer',
           }}>
           <div className="absolute z-10 w-full h-full flex justify-end items-end">
             <MediaField
               className="m-1 flex justify-between items-center"
-              values={media}
+              media={media}
               onClick={onMediaClick}
             />
           </div>
@@ -148,25 +140,23 @@ class CardFront extends Component {
 
         <div className="flex-grow flex flex-col mt-3 mr-3 ml-3 mb-1">
           <TitleField
-            hidden={title === null}
             className="flex-no-shrink mb-2"
-            onClick={onTitleClick}>
-            {title}
-          </TitleField>
+            onClick={onTitleClick}
+            value={title && title.value}
+          />
 
           <TagField
-            values={tags}
+            values={tags && tags.value}
             onClick={onTagsClick}
             className="flex-no-shrink mb-2"
           />
 
           <TextField
             className="flex-no-shrink"
-            hidden={description === null}
+            value={description && description.value}
             style={{flex: '0 1 auto'}}
-            onClick={onDescriptionClick}>
-            {description}
-          </TextField>
+            onClick={onDescriptionClick}
+          />
         </div>
 
         <CardControls onFlip={onFlip} onClose={onClose}>

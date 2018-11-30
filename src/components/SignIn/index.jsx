@@ -19,6 +19,8 @@ import DefaultLayout from 'Components/DefaultLayout';
 import {PasswordForgetLink} from '../Password';
 import {SignUpLink} from '../SignUp';
 
+import backgroundUrl from './signin_background.png';
+
 const byPropKey = (propertyName, value) => () => ({
   [propertyName]: value,
 });
@@ -29,8 +31,8 @@ function onSubmit(event) {
   const {onAuthenticate} = this.props;
 }
 
-const backgroundUrl =
-  'https://images.unsplash.com/photo-1522602398-e378288fe36d?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=75ef40ce9a4927d016af73bb4aa7ac55&auto=format&fit=crop&w=3350&q=80';
+// const backgroundUrl =
+//   'https://images.unsplash.com/photo-1522602398-e378288fe36d?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=75ef40ce9a4927d016af73bb4aa7ac55&auto=format&fit=crop&w=3350&q=80';
 
 const inputClass =
   'border-4 bg-white text-2xl py-2 px-3 text-grey-darkest border-black';

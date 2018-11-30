@@ -254,8 +254,8 @@ const authCondition = authUser => authUser !== null;
 const composeScaffold = comp =>
   compose(
     withRouter,
-    withAuthentication,
     withAuthorization(authCondition),
+    withAuthentication,
     connect(
       mapStateToProps,
       mapDispatchToProps,

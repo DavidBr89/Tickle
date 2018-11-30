@@ -214,15 +214,23 @@ class ChallengeAuthorModalBody extends React.Component {
     uiColor: 'black',
   };
 
-  state = {
-    challenge: {id: null, img: {url: null}, ...this.props.challenge},
-    added: this.props.challenge !== null,
-  };
+  constructor(props) {
+    super(props);
+
+    const {
+      challenge: {value: challengeVal},
+    } = props;
+
+    this.state = {
+      challenge: {id: null, img: {url: null}, ...challengeVal},
+      added: challengeVal !== null,
+    };
+  }
 
   render() {
-    const {uiColor, onClose, title, onChange} = this.props;
+    const {onClose, title, onChange} = this.props;
     const {challenge, added} = this.state;
-    const btnClass = `btn ${challenge === null && 'disabled'}`;
+    // const btnClass = `btn ${challenge === null && 'disabled'}`;
 
     const btnDisabled = challenge.description === null;
     // TODO

@@ -4,10 +4,10 @@ import {uniq, flatten} from 'lodash';
 export default function setify(data, defaultTag = 'general') {
   const spreadData = flatten(
     data.map(({tags, ...rest}) => {
-      if (tags === null)
+      if (tags.value === null)
         return [{...rest, tag: defaultTag, tags: [defaultTag]}];
 
-      return tags.map(t => ({...rest, tagId: t, tags}));
+      return tags.value.map(t => ({...rest, tagId: t, tags}));
     }),
   );
 

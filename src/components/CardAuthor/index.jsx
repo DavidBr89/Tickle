@@ -33,6 +33,7 @@ import cardRoutes from 'Src/Routes/cardRoutes';
 import withAuthorization from 'Src/components/withAuthorization';
 import withAuthentication from 'Src/components/withAuthentication';
 import {shiftCenterMap} from 'Src/lib/geo';
+// import {initCard} from 'Constants/cardFields';
 import UserEnvironmentSettings from './UserEnvironmentSettings';
 import CardAuthorPage from './CardAuthorPage';
 

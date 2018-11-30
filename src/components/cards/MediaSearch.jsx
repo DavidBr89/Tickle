@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import fetchJsonp from 'fetch-jsonp';
 
@@ -15,19 +15,17 @@ import ScrollList from 'Components/utils/ScrollList';
 // import fetchJsonp from 'fetch-jsonp';
 
 // import { DDG } from 'node-ddg-api';
-import { db } from 'Firebase';
-import { mediaScale } from 'Constants/mediaTypes';
+import {db} from 'Firebase';
+import {mediaScale} from 'Constants/mediaTypes';
 
 import MediaUpload from 'Utils/MediaUpload';
 // import DimWrapper from 'Utils/DimensionsWrapper';
 
 // import { createShadowStyle } from './styles';
 
-import { NewTabLink } from 'Components/utils/StyledComps';
+import {NewTabLink} from 'Components/utils/StyledComps';
 
-import {
-  GIF, TEXT, VIDEO, IMG, URL
-} from 'Constants/mediaTypes';
+import {GIF, TEXT, VIDEO, IMG, URL} from 'Constants/mediaTypes';
 
 const WIKIPEDIA = 'wikipedia';
 const GIPHY = 'giphy';
@@ -40,11 +38,11 @@ const OVERVIEW = 'Overview';
 const navIcons = [
   {
     key: WIKIPEDIA,
-    node: <AlignLeft size={30} />
+    node: <AlignLeft size={30} />,
   },
   {
     key: YOUTUBE,
-    node: <Youtube size={30} />
+    node: <Youtube size={30} />,
   },
   {
     key: GIPHY,
@@ -53,12 +51,11 @@ const navIcons = [
         style={{
           paddingLeft: '13px',
           paddingRight: '13px',
-          fontWeight: 'bold'
-        }}
-      >
+          fontWeight: 'bold',
+        }}>
         GIF
       </small>
-    )
+    ),
   },
 
   {
@@ -66,36 +63,39 @@ const navIcons = [
     node: (
       <div
         style={{
-          fontweight: 'bold'
-        }}
-      >
+          fontweight: 'bold',
+        }}>
         Upload
       </div>
-    )
+    ),
   },
   {
     key: OVERVIEW,
-    node: <span style={{ fontWeight: 'bold', fontSize: 'large' }}>Overview</span>
-  }
+    node: <span style={{fontWeight: 'bold', fontSize: 'large'}}>Overview</span>,
+  },
 ];
 
 const userContentUploadPath = id => `media/${id}`;
 
 const UploadUserContent = ({
-  onChange, addToStorage, removeFromStorage, className, ...props
+  onChange,
+  addToStorage,
+  removeFromStorage,
+  className,
+  ...props
 }) => (
   <MediaUpload
     className="flex flex-col flex-grow"
     onAdd={addToStorage}
     onRemove={removeFromStorage}
-    onChange={(media) => {
+    onChange={media => {
       onChange(
         media.map(m => ({
           ...m,
           title: m.name,
           thumbnail: m.url,
           source: USER_CONTENT,
-          date: new Date()
+          date: new Date(),
         })),
       );
     }}
@@ -106,31 +106,30 @@ UploadUserContent.propTypes = {
   onChange: PropTypes.func.isRequired,
   addToStorage: PropTypes.func.isRequired,
   removeFromStorage: PropTypes.func.isRequired,
-  className: PropTypes.string
+  className: PropTypes.string,
 };
 
-UploadUserContent.defaultProps = { className: '' };
+UploadUserContent.defaultProps = {className: ''};
 
-const giphy = giphyReq({ https: true });
+const giphy = giphyReq({https: true});
 
-const fullDim = { width: '100%', height: '100%' };
+const fullDim = {width: '100%', height: '100%'};
 
 const truncateStyle = {
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
-  width: '100%'
+  width: '100%',
 };
 
 const flickrUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${
   process.env.FlickrAccessToken
 }`;
 
-const youtubeUrl = ({
-  part, q, type, maxResults, order
-}) => `https://www.googleapis.com/youtube/v3/search?part=${part}&q=${q}&type=${type}&maxResult=${maxResults}&order=${order}&key=${
-  process.env.youtube
-}`;
+const youtubeUrl = ({part, q, type, maxResults, order}) =>
+  `https://www.googleapis.com/youtube/v3/search?part=${part}&q=${q}&type=${type}&maxResult=${maxResults}&order=${order}&key=${
+    process.env.youtube
+  }`;
 
 // const searchFlickr = (q = 'dragon') =>
 // new Promise(resolve => {
@@ -168,74 +167,80 @@ const youtubeUrl = ({
 // });
 
 // TODO: add to params
-const wikiUrl = q => `https://en.wikipedia.org/w/api.php?action=query&format=json&generator=prefixsearch&gpssearch=${q}&gpslimit=20&prop=info|pageimages|pageterms|extracts&piprop=thumbnail&pithumbsize=200&pilimit=10&exlimit=max&exintro&inprop=url&explaintext`;
+const wikiUrl = q =>
+  `https://en.wikipedia.org/w/api.php?action=query&format=json&generator=prefixsearch&gpssearch=${q}&gpslimit=20&prop=info|pageimages|pageterms|extracts&piprop=thumbnail&pithumbsize=200&pilimit=10&exlimit=max&exintro&inprop=url&explaintext`;
 
-const searchWikipedia = q => fetchJsonp(wikiUrl(q), {})
-  .then(res => res.json())
-  .then(({ query: { pages } }) => {
-    const values = Object.values(pages);
-    const results = values.map(d => ({
-      title: d.title,
-      descr: d.extract,
-      thumbnail: d.thumbnail ? d.thumbnail.source : null, // d.thumbnail.source,
-      url: d.fullurl,
-      id: d.fullurl,
-      source: WIKIPEDIA,
-      type: TEXT
-    }));
+const searchWikipedia = q =>
+  fetchJsonp(wikiUrl(q), {})
+    .then(res => res.json())
+    .then(({query: {pages}}) => {
+      const values = Object.values(pages);
+      const results = values.map(d => ({
+        title: d.title,
+        descr: d.extract,
+        thumbnail: d.thumbnail ? d.thumbnail.source : null, // d.thumbnail.source,
+        url: d.fullurl,
+        id: d.fullurl,
+        source: WIKIPEDIA,
+        type: TEXT,
+      }));
 
-    return new Promise(resolve => resolve(results));
-  });
+      return new Promise(resolve => resolve(results));
+    });
 
-const searchYoutube = (q = '') => new Promise(resolve => fetch(
-  youtubeUrl({
-    part: 'snippet',
-    q,
-    type: 'video',
-    maxResults: 20,
-    order: 'viewCount'
-    // publishedAfter: '2015-01-01T00:00:00Z'
-  }),
-)
-  .then(res => res.json())
-  .then(({ items }) => {
-    console.log('items', items);
-    const res = items.map(d => ({
-      // url2: `http://www.youtube.com/embed/${d.id.videoId}`,
-      url: `https://www.youtube.com/watch?v=${d.id.videoId}`,
-      id: d.id.videoId,
-      title: d.snippet.title,
-      descr: d.snippet.description,
-      thumbnail: d.snippet.thumbnails.default.url,
-      source: YOUTUBE,
-      type: VIDEO
-    }));
-    resolve(res);
-  }), );
+const searchYoutube = (q = '') =>
+  new Promise(resolve =>
+    fetch(
+      youtubeUrl({
+        part: 'snippet',
+        q,
+        type: 'video',
+        maxResults: 20,
+        order: 'viewCount',
+        // publishedAfter: '2015-01-01T00:00:00Z'
+      }),
+    )
+      .then(res => res.json())
+      .then(({items}) => {
+        console.log('items', items);
+        const res = items.map(d => ({
+          // url2: `http://www.youtube.com/embed/${d.id.videoId}`,
+          url: `https://www.youtube.com/watch?v=${d.id.videoId}`,
+          id: d.id.videoId,
+          title: d.snippet.title,
+          descr: d.snippet.description,
+          thumbnail: d.snippet.thumbnails.default.url,
+          source: YOUTUBE,
+          type: VIDEO,
+        }));
+        resolve(res);
+      }),
+  );
 
-const searchGiphy = (q = 'pokemon') => new Promise(resolve => giphy.search(q, (_, { data }) => resolve(
-  data.map(d => ({
-    url: d.embed_url,
-    id: d.embed_url,
-    title: d.title,
-    descr: '',
-    thumbnail: d.images.downsized_still.url,
-    gifurl: d.url,
-    source: GIPHY,
-    type: IMG
-  })),
-), ), );
+const searchGiphy = (q = 'pokemon') =>
+  new Promise(resolve =>
+    giphy.search(q, (_, {data}) =>
+      resolve(
+        data.map(d => ({
+          url: d.embed_url,
+          id: d.embed_url,
+          title: d.title,
+          descr: '',
+          thumbnail: d.images.downsized_still.url,
+          gifurl: d.url,
+          source: GIPHY,
+          type: IMG,
+        })),
+      ),
+    ),
+  );
 
-const pinterestUrl = 'https://api.pinterest.com/v3/users/jessicamalba/?access_token=2222904fa9e29280188a94b9f940eea54fdc2344f4c666f7aa86a3187d47858d';
+const pinterestUrl =
+  'https://api.pinterest.com/v3/users/jessicamalba/?access_token=2222904fa9e29280188a94b9f940eea54fdc2344f4c666f7aa86a3187d47858d';
 
 //
-const Iframe = ({
-  title, url, onClick, edit, style
-}) => (
-  <div
-    className="relative"
-    style={{ ...style }}
-  >
+const Iframe = ({title, url, onClick, edit, style}) => (
+  <div className="relative" style={{...style}}>
     <div className="absolute w-full h-full">
       <iframe
         className="absolute"
@@ -245,7 +250,7 @@ const Iframe = ({
         height="100%"
         src={url}
         frameBorder="0"
-        style={{ zIndex: -1 }}
+        style={{zIndex: -1}}
       />
     </div>
   </div>
@@ -256,7 +261,7 @@ Iframe.propTypes = {
   url: PropTypes.string,
   onClick: PropTypes.func,
   edit: PropTypes.bool,
-  style: PropTypes.object
+  style: PropTypes.object,
 };
 
 Iframe.defaultProps = {
@@ -264,14 +269,14 @@ Iframe.defaultProps = {
   url: '',
   onClick: d => d,
   style: {},
-  edit: false
+  edit: false,
 };
 
-const Article = ({
-  url, title, descr, onClick
-}) => (
+const Article = ({url, title, descr, onClick}) => (
   <div className="relative overflow-hidden w-full h-full" onClick={onClick}>
-    <h2><NewTabLink href={url}>{title}</NewTabLink></h2>
+    <h2>
+      <NewTabLink href={url}>{title}</NewTabLink>
+    </h2>
     <small>{url}</small>
     <div>{descr}</div>
   </div>
@@ -281,21 +286,19 @@ Article.propTypes = {
   title: PropTypes.string,
   url: PropTypes.string,
   descr: PropTypes.string,
-  onClick: PropTypes.func
+  onClick: PropTypes.func,
 };
 
 Article.defaultProps = {
   title: '',
   url: '',
   descr: '',
-  onClick: d => d
+  onClick: d => d,
 };
 
-const CellDetail = ({
-  thumbnail, title, descr, url, onClick
-}) => (
+const CellDetail = ({thumbnail, title, descr, url, onClick}) => (
   <div className="overflow-hidden w-full" onClick={onClick}>
-    <div style={{ display: 'flex', alignItems: 'center' }}>
+    <div style={{display: 'flex', alignItems: 'center'}}>
       <h2 className="truncate-text mb-2">
         <NewTabLink href={url}>{title}</NewTabLink>
       </h2>
@@ -305,7 +308,7 @@ const CellDetail = ({
         className="overflow-hidden w-full h-full"
         onClick={onClick}
         src={thumbnail}
-        style={{ objectFit: 'cover' }}
+        style={{objectFit: 'cover'}}
       />
     ) : (
       <p>{descr}</p>
@@ -317,25 +320,20 @@ CellDetail.propTypes = {
   className: PropTypes.string,
   children: PropTypes.any,
   uiColor: PropTypes.string,
-  focusColor: PropTypes.string
+  focusColor: PropTypes.string,
 };
 
 CellDetail.defaultProps = {
   className: '',
   children: null,
   uiColor: 'grey',
-  focusColor: 'black'
+  focusColor: 'black',
 };
-const CellWrapper = ({
-  btn, className, focusColor, style, ...props
-}) => (
+const CellWrapper = ({btn, className, focusColor, style, ...props}) => (
   <div
     className="flex relative p-3 mb-3 border border-2 w-full h-full"
-    style={{ ...style, cursor: 'pointer' }}
-  >
-    <CellDetail {...props} />
-    {' '}
-    <div className="ml-3">{btn}</div>
+    style={{...style, cursor: 'pointer'}}>
+    <CellDetail {...props} /> <div className="ml-3">{btn}</div>
   </div>
 );
 
@@ -345,7 +343,7 @@ CellWrapper.propTypes = {
   style: PropTypes.object,
   selected: PropTypes.bool,
   uiColor: PropTypes.string,
-  focusColor: PropTypes.string
+  focusColor: PropTypes.string,
 };
 
 CellWrapper.defaultProps = {
@@ -359,7 +357,7 @@ CellWrapper.defaultProps = {
   style: {},
   className: '',
   uiColor: 'grey',
-  focusColor: 'black'
+  focusColor: 'black',
 };
 
 // const CardThemeHoc = ({ children, ...props }) => (
@@ -372,31 +370,30 @@ class UrlMedia extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
   };
 
   state = {
     url: null,
     descr: null,
     title: null,
-    data: [...this.props.preSelected]
+    data: [...this.props.preSelected],
   };
 
-
   componentDidUpdate(prevProps, prevState) {
-    const { onChange } = this.props;
-    const { data: oldData } = prevState;
-    const { data } = this.state;
+    const {onChange} = this.props;
+    const {data: oldData} = prevState;
+    const {data} = this.state;
 
     if (oldData.length !== data.length) {
       onChange(data);
     }
   }
 
-  onSubmit = (event) => {
+  onSubmit = event => {
     event.preventDefault();
 
-    const { url, title, descr } = this.state;
+    const {url, title, descr} = this.state;
     const urlItem = {
       id: url,
       url,
@@ -404,28 +401,26 @@ class UrlMedia extends Component {
       descr,
       source: URL,
       type: TEXT,
-      date: new Date()
+      date: new Date(),
     };
 
     // TODO: check later
-    this.setState(({ data: oldData }) => ({
+    this.setState(({data: oldData}) => ({
       data: uniqBy([urlItem, ...oldData], 'id'),
       title: '',
       url: '',
-      descr: ''
+      descr: '',
     }));
   };
 
-  removeItem = (id) => {
-    this.setState(({ data: oldData }) => ({
-      data: oldData.filter(d => d.id !== id)
+  removeItem = id => {
+    this.setState(({data: oldData}) => ({
+      data: oldData.filter(d => d.id !== id),
     }));
   };
 
   render() {
-    const {
-      url, title, descr, data
-    } = this.state;
+    const {url, title, descr, data} = this.state;
 
     return (
       <div className="w-full h-full">
@@ -437,8 +432,8 @@ class UrlMedia extends Component {
                 className="form-control"
                 placeholder="Title"
                 value={title}
-                onChange={(event) => {
-                  this.setState({ title: event.target.value });
+                onChange={event => {
+                  this.setState({title: event.target.value});
                 }}
               />
             </div>
@@ -448,7 +443,7 @@ class UrlMedia extends Component {
                 className="form-control"
                 placeholder="Description"
                 value={descr}
-                onChange={event => this.setState({ descr: event.target.value })}
+                onChange={event => this.setState({descr: event.target.value})}
               />
             </div>
             <div className="form-group">
@@ -457,7 +452,7 @@ class UrlMedia extends Component {
                 placeholder="Url"
                 className="form-control"
                 value={url}
-                onChange={event => this.setState({ url: event.target.value })}
+                onChange={event => this.setState({url: event.target.value})}
               />
             </div>
             <button type="submit" className="btn">
@@ -466,7 +461,7 @@ class UrlMedia extends Component {
           </form>
         </div>
         {data.length > 0 ? (
-          <div style={{ width: '100%', height: '100%' }}>
+          <div style={{width: '100%', height: '100%'}}>
             <ScrollList data={data} maxHeight="90%">
               {(d, isSelected) => (
                 <div
@@ -475,22 +470,19 @@ class UrlMedia extends Component {
                   style={{
                     height: 150,
                     // width: '100%',
-                    cursor: 'pointer'
-                  }}
-                >
+                    cursor: 'pointer',
+                  }}>
                   <div
                     style={{
                       display: 'flex',
-                      justifyContent: 'space-between'
-                    }}
-                  >
+                      justifyContent: 'space-between',
+                    }}>
                     <h3
                       style={{
                         overflow: 'hidden',
                         whiteSpace: 'no-wrap',
-                        textOverflow: 'ellipsis'
-                      }}
-                    >
+                        textOverflow: 'ellipsis',
+                      }}>
                       {d.title}
                     </h3>
                     <MediaBtn selected onClick={() => this.removeItem(d.id)} />
@@ -513,20 +505,21 @@ class UrlMedia extends Component {
 
 class MediaSearch extends Component {
   static propTypes = {
-    onChange: PropTypes.func, selectedMedia: PropTypes.arrayOf(PropTypes.object)
+    onChange: PropTypes.func,
+    selectedMedia: PropTypes.arrayOf(PropTypes.object),
   };
 
-  static defaultProps = { onChange: () => null, selectedMedia: [] };
+  static defaultProps = {onChange: () => null, selectedMedia: []};
 
-  state = { selected: WIKIPEDIA };
+  state = {selected: WIKIPEDIA};
 
-  activeTab = (sel) => {
-    const {
-      selectedMedia, addToStorage, removeFromStorage, onChange
-    } = this.props;
+  activeTab = sel => {
+    const {media, addToStorage, removeFromStorage, onChange} = this.props;
 
-    const changeMedia = src => (newMedia) => {
-      const sortByDate = arr => arr.sort((a, b) => new Date(b.date) - new Date(a.date));
+    const selectedMedia = media.value || [];
+    const changeMedia = src => newMedia => {
+      const sortByDate = arr =>
+        arr.sort((a, b) => new Date(b.date) - new Date(a.date));
       const splitMedia = selectedMedia.filter(m => m.source !== src);
       return onChange(sortByDate([...splitMedia, ...newMedia]));
     };
@@ -537,7 +530,6 @@ class MediaSearch extends Component {
     const selURLs = selectedMedia.filter(m => m.source === URL);
     const selUserContent = selectedMedia.filter(m => m.source === USER_CONTENT);
     // const selPhotos = selectedMedia.filter(m => m.source === FLICKR);
-
 
     switch (sel) {
       case OVERVIEW:
@@ -639,17 +631,16 @@ class MediaSearch extends Component {
   };
 
   render() {
-    const { selected } = this.state;
+    const {selected} = this.state;
 
     const btnClass = sel => (sel === selected ? 'btn btn-black' : 'btn');
 
-    const navBtn = ({ key, node }) => (
+    const navBtn = ({key, node}) => (
       <button
         className={`${btnClass(key)} flex-grow m-1`}
         type="button"
-        onClick={() => this.setState({ selected: key })}
-        id={key}
-      >
+        onClick={() => this.setState({selected: key})}
+        id={key}>
         {node}
       </button>
     );
@@ -665,20 +656,23 @@ class MediaSearch extends Component {
   }
 }
 
-function MediaBtn({ selected, onClick }) {
+function MediaBtn({selected, onClick}) {
   return (
     <div
       className="bg-light-grey"
       style={{
-        color: selected ? 'tomato' : 'black'
+        color: selected ? 'tomato' : 'black',
       }}
-      onClick={onClick}
-    >
+      onClick={onClick}>
       <span>
         {selected ? (
           <Trash2 fill="whitesmoke" size={40} />
         ) : (
-          <PlusSquare className="border-4 border-black" fill="whitesmoke" size={40} />
+          <PlusSquare
+            className="border-4 border-black"
+            fill="whitesmoke"
+            size={40}
+          />
         )}
       </span>
     </div>
@@ -694,7 +688,7 @@ class MetaSearch extends Component {
     defaultQuery: PropTypes.string,
     source: PropTypes.string,
     type: PropTypes.string,
-    style: PropTypes.object
+    style: PropTypes.object,
   };
 
   static defaultProps = {
@@ -704,7 +698,7 @@ class MetaSearch extends Component {
     onAdd: d => d,
     selected: null,
     preSelected: [],
-    style: {}
+    style: {},
   };
 
   constructor(props) {
@@ -717,22 +711,22 @@ class MetaSearch extends Component {
 
   state = {
     data: [], // this.props.search === null ? this.props.defaultData : []
-    selectedIds: this.props.preSelected.map(d => d.id)
+    selectedIds: this.props.preSelected.map(d => d.id),
   };
 
   componentDidMount() {
-    const { searchFn, defaultQuery } = this.props;
-    searchFn(defaultQuery).then(data => this.mounted && this.setState({ data }));
+    const {searchFn, defaultQuery} = this.props;
+    searchFn(defaultQuery).then(data => this.mounted && this.setState({data}));
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { onChange } = this.props;
-    const { data, selectedIds } = this.state;
+    const {onChange} = this.props;
+    const {data, selectedIds} = this.state;
 
     if (selectedIds.length !== prevState.selectedIds.length) {
       const newData = data
         .filter(d => selectedIds.includes(d.id))
-        .map(d => ({ ...d, date: new Date() }));
+        .map(d => ({...d, date: new Date()}));
       onChange(newData);
     }
 
@@ -745,10 +739,10 @@ class MetaSearch extends Component {
   //   this.mounted = false;
   // }
 
-  onSearch = (searchStr) => {
-    const { searchFn, source, type } = this.props;
-    searchFn(searchStr).then((items) => {
-      this.setState({ data: items.map(d => ({ ...d, source, type })) });
+  onSearch = searchStr => {
+    const {searchFn, source, type} = this.props;
+    searchFn(searchStr).then(items => {
+      this.setState({data: items.map(d => ({...d, source, type}))});
     });
     // else {
     //   this.setState({
@@ -758,21 +752,21 @@ class MetaSearch extends Component {
     // }
   };
 
-  addItem = (id) => {
+  addItem = id => {
     this.setState(oldState => ({
-      selectedIds: [...oldState.selectedIds, id]
+      selectedIds: [...oldState.selectedIds, id],
     }));
   };
 
-  removeItem = (id) => {
+  removeItem = id => {
     this.setState(oldState => ({
-      selectedIds: oldState.selectedIds.filter(d => d !== id)
+      selectedIds: oldState.selectedIds.filter(d => d !== id),
     }));
   };
 
   render() {
-    const { data, selectedIds } = this.state;
-    const { defaultQuery, style } = this.props;
+    const {data, selectedIds} = this.state;
+    const {defaultQuery, style} = this.props;
     // let GoogleAuth;
     // const SCOPE = 'https://www.googleapis.com/auth/youtube.force-ssl';
     // Load the API's client and auth2 modules.
@@ -782,7 +776,7 @@ class MetaSearch extends Component {
     // TODO: fix view height
     return (
       <div className="flex flex-col" role="tabpanel">
-        <div style={{ width: '100%' }}>
+        <div style={{width: '100%'}}>
           <input
             type="text"
             className="form-control mb-3 w-full"
@@ -797,7 +791,7 @@ class MetaSearch extends Component {
               selected={isSelected}
               style={{
                 height: '40vh',
-                maxHeight: 300
+                maxHeight: 300,
                 // marginLeft: '5%',
                 // paddingRight: '10%'
               }}
@@ -805,7 +799,7 @@ class MetaSearch extends Component {
               btn={
                 <MediaBtn
                   selected={selectedIds.includes(d.id)}
-                  onClick={(e) => {
+                  onClick={e => {
                     e.stopPropagation();
                     // if (isSelected) {
                     selectedIds.includes(d.id)
@@ -837,18 +831,15 @@ class MediaPreview extends Component {
 
   static defaultProps = {
     data: [],
-    edit: false
+    edit: false,
   };
 
   render() {
-    const { data } = this.props;
+    const {data} = this.props;
 
     return (
-      <div style={{ width: '100%' }}>
-        {data.length === 0 && <h3>
-          {'No media added to this Card!'}
-          {' '}
-        </h3>}
+      <div style={{width: '100%'}}>
+        {data.length === 0 && <h3>{'No media added to this Card!'} </h3>}
         <ScrollList data={data}>
           {(d, selected) => (
             <CellWrapper {...d} selected={selected === d.url} />
@@ -864,33 +855,34 @@ class MediaOverview extends Component {
 
   static defaultProps = {
     data: [],
-    edit: false
+    edit: false,
   };
 
-  state = { ...this.props };
+  state = {...this.props};
 
-  componentDidUpdate(_, { data: oldData }) {
-    const { data } = this.state;
-    const { onChange } = this.props;
+  componentDidUpdate(_, {data: oldData}) {
+    const {data} = this.state;
+    const {onChange} = this.props;
     if (oldData.length !== data.length) {
       onChange(data);
     }
   }
 
-  removeItem = (m) => {
-    const { removeFromStorage } = this.props;
+  removeItem = m => {
+    const {removeFromStorage} = this.props;
     if (m.source === USER_CONTENT) {
-      removeFromStorage(m.id)
-        .then(() => console.log('removedMediaItem Success', m.id), );
+      removeFromStorage(m.id).then(() =>
+        console.log('removedMediaItem Success', m.id),
+      );
     }
     this.setState(oldState => ({
-      data: oldState.data.filter(d => d.id !== m.id)
+      data: oldState.data.filter(d => d.id !== m.id),
     }));
   };
 
   render() {
-    const { data } = this.state;
-    const { edit, className } = this.props;
+    const {data} = this.state;
+    const {edit, className} = this.props;
 
     // TODO: fix view height
 
@@ -899,14 +891,10 @@ class MediaOverview extends Component {
         className={className}
         style={{
           justifyContent: data.length === 0 ? 'center' : null,
-          alignItems: 'center'
-        }}
-      >
+          alignItems: 'center',
+        }}>
         {data.length === 0 && (
-          <h3 className="text-muted">
-            {'No media added to this Card!'}
-            {' '}
-          </h3>
+          <h3 className="text-muted">{'No media added to this Card!'} </h3>
         )}
         <ScrollList data={data} maxHeight="100%">
           {(d, selected) => (
@@ -916,7 +904,7 @@ class MediaOverview extends Component {
               btn={
                 edit && <MediaBtn selected onClick={() => this.removeItem(d)} />
               }
-              style={{ height: 300 }}
+              style={{height: 300}}
             />
           )}
         </ScrollList>
@@ -925,4 +913,4 @@ class MediaOverview extends Component {
   }
 }
 
-export { MediaSearch, MediaOverview, MediaPreview };
+export {MediaSearch, MediaOverview, MediaPreview};

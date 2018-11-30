@@ -42,7 +42,7 @@ function Map({
           transitionInterpolator: null,
         });
       }}
-      mapStyle="mapbox://styles/jmaushag/cjp2wizvd00ke2rnpdat5rutg"
+      mapStyle={process.env.MapboxStyle}
       dragPan={!isCardDragging}
       dragRotate={false}
       doubleClickZoom={false}

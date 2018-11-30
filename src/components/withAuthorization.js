@@ -1,46 +1,51 @@
 import React from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { compose } from 'recompose';
-import { withRouter } from 'react-router-dom';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import {compose} from 'recompose';
+import {withRouter} from 'react-router-dom';
 
-import { SIGN_IN } from 'Constants/routeSpec';
+import {SIGN_IN} from 'Constants/routeSpec';
 
 import * as asyncActions from 'Reducers/Session/async_actions';
-import { firebase } from '../firebase';
+import {firebase} from '../firebase';
 
-const withAuthorization = (condition = authUser => !!authUser) => (Component) => {
+const withAuthorization = (condition = authUser => !!authUser) => Component => {
   class WithAuthorization extends React.Component {
     state = {};
 
     componentDidMount() {
-      const { match, history } = this.props;
-      const { params } = match;
-      const { userEnv } = params;
-      firebase.auth.onAuthStateChanged((authUser) => {
-        if (!condition(authUser)) history.push(`/${userEnv}/signin`);
-      });
+      const {match, history} = this.props;
+      const {params} = match;
+      const {userEnv} = params;
+      const {authUser} = this.props;
+
+      if (!condition(authUser)) history.push(`/${userEnv}/signin`);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+      const {authUser, userEnv} = this.props;
+      if (!condition(authUser)) history.push(`/${userEnv}/signin`);
     }
 
     render() {
-      const { authUser } = this.props;
+      const {authUser} = this.props;
       return authUser ? <Component {...this.props} /> : null;
     }
   }
 
   const mapStateToProps = state => ({
     authUser: state.Session.authUser,
-    userEnv: state.Session.userEnvSelectedId
+    userEnv: state.Session.userEnvSelectedId,
   });
 
   const mapDispatchToProps = dispatch => ({
-    ...bindActionCreators(asyncActions, dispatch)
+    ...bindActionCreators(asyncActions, dispatch),
   });
 
   const mergeProps = (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
     ...dispatchProps,
-    ...ownProps
+    ...ownProps,
     // onSetAuthUser
   });
 

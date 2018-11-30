@@ -63,7 +63,7 @@ const INITIAL_STATE = {
   createdCards: [],
   tagVocabulary: [],
   // TODO: update
-  tmpCard: defaultCardTemplate,
+  tmpCard: {...initCard},
   challenges: [],
   cardChallengeOpen: false,
   selectedTags: [],

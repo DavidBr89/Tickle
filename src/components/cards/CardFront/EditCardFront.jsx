@@ -138,14 +138,17 @@ class TitleModalBody extends Component {
 
   render() {
     const {onUpdate} = this.props;
-    const {text} = this.state;
+    const {key, value} = this.state;
 
     return (
       <ModalBody
         {...this.props}
-        onClose={() => onUpdate(text)}
+        onClose={() => onUpdate(this.state)}
         footer={
-          <button type="button" className="btn" onClick={() => onUpdate(text)}>
+          <button
+            type="button"
+            className="btn"
+            onClick={() => onUpdate(this.state)}>
             Update
           </button>
         }>
@@ -153,10 +156,10 @@ class TitleModalBody extends Component {
           className="form-control w-full"
           onChange={e =>
             this.setState({
-              text: e.target.value || null,
+              value: e.target.value || null,
             })
           }
-          value={text}
+          value={value}
         />
       </ModalBody>
     );
@@ -198,7 +201,7 @@ class TitleModalBody extends Component {
 //   }
 // }
 
-function modalWriteContent() {
+function writeModalContent() {
   const {data, dialog} = this.state;
   const {challenge} = data;
   const {tagVocabulary, addToStorage, removeFromStorage} = this.props;
@@ -206,7 +209,7 @@ function modalWriteContent() {
   const {title, tags, img, description, media, points} = data;
 
   const closeBtn = (
-    <button className="btn" onClick={this.onCloseModal}>
+    <button type="button" className="btn" onClick={this.onCloseModal}>
       Close
     </button>
   );
@@ -220,9 +223,9 @@ function modalWriteContent() {
       return (
         <TitleModalBody
           {...modalProps}
-          text={title}
+          {...title}
           onUpdate={newTitle =>
-            this.updateFieldAndCloseModal({title: newTitle})
+            this.updateFieldAndCloseModal('title', newTitle)
           }
         />
       );
@@ -234,9 +237,13 @@ function modalWriteContent() {
           footer={closeBtn}>
           <ExtendedEditTags
             style={{width: '100%'}}
-            onChange={newTags => this.updateField({tags: [...newTags]})}
+            onChange={newTags =>
+              this.updateField('tags', {
+                value: newTags.length > 0 ? newTags : null,
+              })
+            }
             editable
-            data={tags || []}
+            data={tags.value || []}
             vocabulary={tagVocabulary}
           />
         </ModalBody>
@@ -248,12 +255,10 @@ function modalWriteContent() {
           onClose={this.onCloseModal}
           footer={closeBtn}>
           <EditPhoto
-            uiColor="grey"
-            imgUrl={img ? img.url : null}
-            imgName={img && img.name}
+            imgUrl={img.value ? img.value.url : null}
+            imgName={img.value && img.value.name}
             onChange={imgObj => {
-              console.log('imgObj', imgObj);
-              this.updateField({img: imgObj, dialog: null});
+              this.updateField('img', {value: imgObj});
             }}
           />
         </ModalBody>
@@ -262,11 +267,9 @@ function modalWriteContent() {
       return (
         <TextAreaModal
           {...modalProps}
-          text={description}
+          text={description.value}
           onUpdate={newDescr => {
-            this.updateFieldAndCloseModal({
-              description: newDescr,
-            });
+            this.updateFieldAndCloseModal('description', {value: newDescr});
           }}
         />
       );
@@ -279,9 +282,9 @@ function modalWriteContent() {
           <MediaSearch
             addToStorage={addToStorage}
             removeFromStorage={removeFromStorage}
-            selectedMedia={media}
+            media={media}
             onChange={mediaItems => {
-              this.updateField({media: mediaItems});
+              this.updateField('media', {value: mediaItems});
             }}
           />
         </ModalBody>
@@ -294,7 +297,7 @@ function modalWriteContent() {
           key={challenge ? challenge.id : 'newChallenge'}
           challenge={challenge}
           onChange={ch => {
-            this.updateField({challenge: ch});
+            this.updateField('challenge', {value: ch});
           }}
         />
       );
@@ -306,9 +309,7 @@ function modalWriteContent() {
           onClose={this.onCloseModal}
           value={points}
           onUpdate={number => {
-            this.updateFieldAndCloseModal({
-              points: number,
-            });
+            this.updateFieldAndCloseModal('points', {value: number});
           }}
         />
       );
@@ -368,15 +369,22 @@ class EditCardFront extends PureComponent {
     this.setState({dialog: null});
   };
 
-  updateField(field) {
-    this.setState(oldState => ({data: {...oldState.data, ...field}}));
+  updateField(field, val) {
+    const {[field]: oldVal, data} = this.state;
+    console.log('field', field, 'val', val);
+    this.setState({data: {...data, [field]: {...oldVal, ...val}}});
   }
 
-  updateFieldAndCloseModal(field) {
-    this.setState(oldState => ({
-      data: {...oldState.data, ...field},
+  updateFieldAndCloseModal(field, val) {
+    const {[field]: oldVal, data} = this.state;
+    console.log('field', field, 'val', val);
+    this.setState({
+      data: {
+        ...data,
+        [field]: {...oldVal, ...val},
+      },
       dialog: null,
-    }));
+    });
   }
 
   render() {
@@ -394,7 +402,6 @@ class EditCardFront extends PureComponent {
     } = this.props;
 
     const {data, dialog} = this.state;
-    console.log('state data', data);
     const modalVisible = dialog !== null;
     const {
       id,
@@ -411,17 +418,16 @@ class EditCardFront extends PureComponent {
     return (
       <React.Fragment>
         <Modal className="z-50" visible={modalVisible}>
-          {modalWriteContent.bind(this)()}
+          {writeModalContent.bind(this)()}
         </Modal>
         <CardFrontTemplate
           {...this.props}
           onResetField={attr => {
-            this.updateField({
-              [attr]: initCard[attr],
-            });
+            this.updateField(attr, initCard[attr]);
           }}
           onClose={onClose}
           onFlip={onFlip}
+          onFieldLabelChange={(attr, val) => this.updateField(attr, val)}
           onTagsClick={() => {
             this.setState({
               dialog: {title: 'Tags', data: tags},
@@ -453,7 +459,7 @@ class EditCardFront extends PureComponent {
             })
           }
           bottomControls={
-            template && (
+            true && (
               <button
                 type="button"
                 className="btn btn-black ml-2"

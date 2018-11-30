@@ -69,56 +69,74 @@ export const TIMERANGE = 'timerange';
 export const CHALLENGE = 'challenge';
 // export const TIMESTAMP = 'timestamp';
 
+const defaultVal = () => ({key: null, value: null});
 export const initCard = {
   // id,
   // uid,
   floorX: 0.5,
   floorY: 0.5,
-  img: null,
+  img: defaultVal(),
   loc: {latitude: 50.85146, longitude: 4.315483},
-  timerange: null, // { start: null, end: null },
-  title: null,
-  tags: [],
-  description: null,
-  media: [],
-  timestamp: null,
-  challenge: null,
+  timerange: defaultVal(), // { start: null, end: null },
+  title: defaultVal(),
+  tags: defaultVal(),
+  description: defaultVal(),
+  media: defaultVal(),
+  timestamp: defaultVal(),
+  challenge: defaultVal(),
   points: 0,
   challengeSubmission: null,
 };
+
+const extractValues = ({
+  timerange, // { start: null, end: null },
+  title,
+  tags,
+  description,
+  media,
+  // timestamp,
+  challenge,
+  points,
+  challengeSubmission,
+}) => ({
+  timerange: timerange.value,
+  title: title.value,
+  tags: tags.value,
+  description: description.value,
+  media: media.value,
+  challenge: challenge.value,
+  points: points.value,
+  challengeSubmission: challengeSubmission.value,
+});
 
 // TODO: where is challenge submission?
 export const extractCardFields = ({
   id = 'string',
   uid = 'string',
-  floorX = 0.5,
-  floorY = 0.5,
-  img = null,
   loc = {latitude: 50.85146, longitude: 4.315483},
-  timerange = null, // { start: null, end: null },
-  title = null,
-  tags = [],
-  description = null,
-  media = [],
-  timestamp = null,
-  challenge = null,
-  points = 0,
+  img = defaultVal(),
+  timerange = defaultVal(), // { start: null, end: null },
+  title = defaultVal(),
+  tags = defaultVal(),
+  description = defaultVal(),
+  media = defaultVal(),
+  timestamp = defaultVal(),
+  challenge = defaultVal(),
+  points = defaultVal(),
   challengeSubmission = null,
-}) => {
-  if (!Array.isArray(tags)) {
-    throw new Error('tags is not an array');
-  }
-
-  if (!Array.isArray(media)) {
-    throw new Error('media is not an array');
-  }
+}) =>
+  // if (!Array.isArray(tags)) {
+  //   throw new Error('tags is not an array');
+  // }
+  //
+  // if (!Array.isArray(media)) {
+  //   throw new Error('media is not an array');
+  // }
   // TODO: more
 
-  return {
+  ({
     id,
     uid,
-    floorX: floorX || 0.5,
-    floorY: floorY || 0.5,
     img, // {url, thumbnail, title}
     loc,
     timestamp,
@@ -131,13 +149,12 @@ export const extractCardFields = ({
     points,
     // allChallengeSubmissions,
     challengeSubmission,
-  };
-};
+  });
 
 export const isFieldInitialized = ({card, attr}) => {
   const field = extractCardFields(card)[attr];
-  if (Array.isArray(field)) return field.length !== 0;
-  return field !== null;
+  console.log('attr', attr, field);
+  return field.value !== null;
 };
 
 export const getNumInitFields = card => {
