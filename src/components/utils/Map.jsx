@@ -29,7 +29,7 @@ function Map({
     userLocation.latitude,
   ]);
 
-      // mapStyle="mapbox://styles/moerwijk/cjke1d9rnjr4c2spp49b9ib1b"
+  // mapStyle="mapbox://styles/moerwijk/cjke1d9rnjr4c2spp49b9ib1b"
   return (
     <MapGL
       onClick={({lngLat}) => {
@@ -42,6 +42,7 @@ function Map({
           transitionInterpolator: null,
         });
       }}
+      mapStyle="mapbox://styles/jmaushag/cjp2wizvd00ke2rnpdat5rutg"
       dragPan={!isCardDragging}
       dragRotate={false}
       doubleClickZoom={false}
