@@ -14,7 +14,9 @@ function FlipCorner({ className, width, height, ...props }) {
       xmlSpace="preserve"
     >
       <g id="Layer_1">
-        <polygon points="56.8,6 0.1,56.7 56.8,56.7 	" />
+        <polygon points="56.8,6 0.1,56.7 56.8,56.7 	" fill={
+"#404040"
+        }/>
         <path
           style={{ fill: 'white' }}
           className="st0"

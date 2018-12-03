@@ -35,15 +35,16 @@ import cardRoutes from 'Src/Routes/cardRoutes';
 
 import {shiftCenterMap} from 'Src/lib/geo';
 import {tagFilter} from 'Reducers/DataView/async_actions';
+import {fallbackTagValues} from 'Constants/cardFields';
 import CardViewPage from './CardViewPage';
 import SelectUserEnv from './SelectUserEnv';
 
 // import mapViewReducer from './reducer';
 
 const lowercase = s => s.toLowerCase();
-const filterByTag = (doc, filterSet) =>
+const filterByTag = (tags, filterSet) =>
   filterSet.length === 0 ||
-  intersection(doc.tags.map(lowercase), filterSet.map(lowercase)).length ===
+  intersection(tags.map(lowercase), filterSet.map(lowercase)).length ===
     filterSet.length;
 
 // const applyFilter = challengeState => d => {
@@ -164,7 +165,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   };
 
   const filteredCards = collectibleCards
-    .filter(d => filterByTag(d, filterSet))
+    .filter(d => filterByTag(fallbackTagValues(d.tags), filterSet))
     .map(c => {
       // const visible = isInView(c.loc);
       const accessible = true; // visible;
@@ -177,7 +178,19 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const cardSets = setify(filteredCards);
   const selectedCard = filteredCards.find(d => d.id === selectedCardId) || null;
 
-  const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
+  const selectedTags =
+    selectedCard !== null
+      ? fallbackTagValues(selectedCard.tags)
+      : filterSet;
+
+  console.log(
+    'selectedCard',
+    selectedCard,
+    'selectedTags',
+    selectedTags,
+    'filterSet',
+    filterSet,
+  );
 
   return {
     ...state,

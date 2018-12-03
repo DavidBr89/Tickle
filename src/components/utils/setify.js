@@ -1,13 +1,13 @@
 import {nest} from 'd3';
 import {uniq, flatten} from 'lodash';
 
-export default function setify(data, defaultTag = 'general') {
-  const spreadData = flatten(
-    data.map(({tags, ...rest}) => {
-      if (tags.value === null)
-        return [{...rest, tag: defaultTag, tags: [defaultTag]}];
+import {fallbackTagValues} from 'Constants/cardFields';
 
-      return tags.value.map(t => ({...rest, tagId: t, tags}));
+export default function setify(data, acc = d => fallbackTagValues(d.tags)) {
+  const spreadData = flatten(
+    data.map(d => {
+      const tags = acc(d);
+      return tags.map(t => ({...d, tagId: t, tags}));
     }),
   );
 

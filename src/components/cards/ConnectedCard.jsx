@@ -1,14 +1,12 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { compose } from 'recompose';
+import {compose} from 'recompose';
 
+import {withRouter} from 'react-router-dom';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 
-import { withRouter } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-
-
-import { asyncSubmitChallenge } from 'Reducers/Cards/async_actions';
+import {asyncSubmitChallenge} from 'Reducers/Cards/async_actions';
 
 import * as dataViewActions from 'Reducers/DataView/actions';
 import * as routeActions from 'Reducers/DataView/async_actions';
@@ -16,13 +14,13 @@ import MediaChallenge from 'Components/Challenges/MediaChallenge';
 
 import StarRating from 'Components/utils/StarRating';
 
-import { ModalBody } from 'Utils/Modal';
+import {ModalBody} from 'Utils/Modal';
 
-import { PreviewTags } from 'Utils/Tag';
+import {PreviewTags} from 'Utils/Tag';
 // import { BigButton } from './layout';
 
 // import { MediaList } from 'Utils/MediaUpload';
-import { DB } from 'Firebase';
+import {DB} from 'Firebase';
 
 import cardRoutes from 'Src/Routes/cardRoutes';
 import makeBackCardFuncs from './backCardDbMixins';
@@ -32,7 +30,7 @@ import CardFrame from './CardFrame';
 
 // TODO: outsource
 // const ChallengeResult = ({
-//   onClose,
+//   closeHandler,
 //   media,
 //   tags,
 //   response,
@@ -41,10 +39,10 @@ import CardFrame from './CardFrame';
 //   text
 // }) => (
 //   <ModalBody
-//     onClose={onClose}
+//     closeHandler={closeHandler}
 //     title={title}
 //     style={{ background: 'whitesmoke' }}
-//     footer={<button onClick={onClose}> Close </button>}
+//     footer={<button onClick={closeHandler}> Close </button>}
 //   >
 //     <div>
 //       <h4>Tags</h4>
@@ -77,7 +75,8 @@ import CardFrame from './CardFrame';
 
 const CardViewable = ({
   flipped,
-  removeFromStorage, addToStorage,
+  removeFromStorage,
+  addToStorage,
   onSubmitChallenge,
   userEnvSelectedId,
   uid,
@@ -129,54 +128,68 @@ const CardViewable = ({
 
 const mapStateToProps = state => ({
   ...state.Screen,
-  ...state.Session
+  ...state.Session,
 });
 
-const mapDispatchToProps = dispatch => bindActionCreators(
-  {
-    // dragCard,
-    ...dataViewActions,
-    asyncSubmitChallenge,
-    ...routeActions
-  },
-  dispatch,
-);
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      // dragCard,
+      ...dataViewActions,
+      asyncSubmitChallenge,
+      ...routeActions,
+    },
+    dispatch,
+  );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
   const {
-    location, match, history, id: cardId, uid: authorId
+    location,
+    match,
+    history,
+    id: cardId,
+    uid: authorId,
+    onClose,
   } = ownProps;
-  const { authUser } = state;
-  const { uid: playerId } = authUser;
-  const { asyncSubmitChallenge } = dispatcherProps;
-  // TODO replace by regex
 
-  const { userEnv } = match.params;
+  const {authUser} = state;
+  const {uid: playerId} = authUser;
+  const {asyncSubmitChallenge} = dispatcherProps;
+
+  console.log('ownProps', ownProps);
+
+  const {userEnv} = match.params;
 
   const {
-    query: { selectedCardId, extended, flipped },
-    routing: { routeFlipCard, routeExtendCard }
-  } = cardRoutes({ history, location });
+    query: {selectedCardId, extended, flipped},
+    routing: {routeFlipCard, routeExtendCard},
+  } = cardRoutes({history, location});
 
   // console.log('render');
 
-  const onClose = () => {
+  const closeHandler = () => {
     routeExtendCard();
   };
 
-  const onSubmitChallenge = (challData) => {
+  const onSubmitChallenge = challData => {
     asyncSubmitChallenge({
-      ...challData, playerId, cardId, userEnv
+      ...challData,
+      playerId,
+      cardId,
+      userEnv,
     });
   };
 
   const db = DB(userEnv);
 
   const filePath = `challengeSubmissions/${cardId}/${playerId}`;
-  const removeFromStorage = fileId => db.removeFileFromEnv({
-    path: filePath, id: fileId
-  });
-  const addToStorage = ({ file, id }) => db.addFileToEnv({ file, path: filePath, id });
+  const removeFromStorage = fileId =>
+    db.removeFileFromEnv({
+      path: filePath,
+      id: fileId,
+    });
+  const addToStorage = ({file, id}) =>
+    db.addFileToEnv({file, path: filePath, id});
 
   const onFlip = routeFlipCard;
 
@@ -185,7 +198,10 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   // const addComment = text => db.addComment({ uid: playerId, cardId, text });
 
   const backCardFuncs = makeBackCardFuncs({
-    userEnv, cardId, playerId, authorId
+    userEnv,
+    cardId,
+    playerId,
+    authorId,
   });
 
   return {
@@ -196,9 +212,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     ...backCardFuncs,
     addToStorage,
     removeFromStorage,
-    onClose,
+    onClose: onClose || closeHandler,
     onFlip,
-    flipped
+    flipped,
   };
 };
 

@@ -70,21 +70,24 @@ export const CHALLENGE = 'challenge';
 // export const TIMESTAMP = 'timestamp';
 
 const defaultVal = () => ({key: null, value: null});
+
+const DEFAULT_TAG = 'general';
+export const fallbackTagValues = tags =>
+  tags.value !== null ? tags.value : [DEFAULT_TAG];
+
 export const initCard = {
   // id,
   // uid,
-  floorX: 0.5,
-  floorY: 0.5,
-  img: defaultVal(),
+  img: {key: null, value: null},
   loc: {latitude: 50.85146, longitude: 4.315483},
-  timerange: defaultVal(), // { start: null, end: null },
-  title: defaultVal(),
-  tags: defaultVal(),
-  description: defaultVal(),
-  media: defaultVal(),
-  timestamp: defaultVal(),
-  challenge: defaultVal(),
-  points: 0,
+  timerange: {key: null, value: null}, // { start: null, end: null },
+  title: {key: null, value: null},
+  tags: {key: null, value: null},
+  description: {key: null, value: null},
+  media: {key: null, value: null},
+  timestamp: {key: null, value: null},
+  challenge: {key: null, value: null},
+  points: {key: null, value: null},
   challengeSubmission: null,
 };
 

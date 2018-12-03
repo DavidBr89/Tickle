@@ -1,17 +1,28 @@
 import React from 'react';
-import {
-  Route, HashRouter, Redirect, Switch
-} from 'react-router-dom';
+import {Route, HashRouter, Redirect, Switch} from 'react-router-dom';
 
 import UserMap from 'Components/DataView/Map/UserMap';
 import {
-  MYCARDS, GEO_VIEW, TAG_VIEW, TOPIC_VIEW, AUTHOR, ACCOUNT, GEO_AUTHOR,
-  TAG_AUTHOR, TREE_AUTHOR, SIGN_UP, SIGN_IN, HOME, ADMIN, ADMIN_SIGN_UP,
-  LANDING, DATAVIEW
+  MYCARDS,
+  GEO_VIEW,
+  TAG_VIEW,
+  TOPIC_VIEW,
+  AUTHOR,
+  ACCOUNT,
+  GEO_AUTHOR,
+  TAG_AUTHOR,
+  TREE_AUTHOR,
+  SIGN_UP,
+  SIGN_IN,
+  HOME,
+  ADMIN,
+  ADMIN_SIGN_UP,
+  LANDING,
+  DATAVIEW,
 } from 'Constants/routeSpec';
 
 import SignUp from './components/SignUp';
-import SignIn, { SignInRedirect } from './components/SignIn';
+import SignIn, {SignInRedirect} from './components/SignIn';
 import LandingPage from './components/LandingPage';
 import Home from './components/Home';
 import Admin from './components/Admin';
@@ -21,15 +32,17 @@ import TagView from './components/DataView/ForceOverlay/TreeMapCluster';
 
 import CardTreeEditorPage from './components/CardTreeEditor';
 
-
 import {
   MapCardAuthorPage,
   TopicMapAuthorPage,
-  UserEnvironmentSettings
+  UserEnvironmentSettings,
 } from './components/CardAuthor';
 
 import {
-  MapViewPage, TopicMapViewPage, SelectUserEnv, TagViewPage
+  MapViewPage,
+  TopicMapViewPage,
+  SelectUserEnv,
+  TagViewPage,
 } from './components/CardView';
 
 // import MapAuthor from './components/DataView/Map/MapAuthor';
@@ -38,7 +51,6 @@ import DefaultLayout from './components/DefaultLayout';
 
 // import withAuthentication from './components/withAuthentication';
 // import AuthUserContext from './components/AuthUserContext';
-
 
 const NoMatch = () => (
   <DefaultLayout>
@@ -62,8 +74,8 @@ const Routes = () => (
         exact
         render={({
           match: {
-            params: { userEnv }
-          }
+            params: {userEnv},
+          },
         }) => <Redirect to={`/${userEnv}/${SIGN_IN.path}`} />}
       />
       <Route
@@ -72,7 +84,7 @@ const Routes = () => (
         render={() => <Redirect to={`/staging/${SIGN_IN.path}`} />}
       />
 
-      <Route path={`/:userEnv/${MYCARDS.path}/`} render={props => <Diary />} />
+      <Route path={`/:userEnv/${MYCARDS.path}/`} component={Diary} />
       <Route
         path={`/:userEnv/${AUTHOR.path}`}
         exact
@@ -83,10 +95,7 @@ const Routes = () => (
         )}
       />
 
-      <Route
-        path={`/:userEnv/${GEO_AUTHOR.path}`}
-        render={MapCardAuthorPage}
-      />
+      <Route path={`/:userEnv/${GEO_AUTHOR.path}`} render={MapCardAuthorPage} />
       <Route
         path={`/:userEnv/${TREE_AUTHOR.path}`}
         component={CardTreeEditorPage}

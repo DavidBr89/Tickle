@@ -56,12 +56,6 @@ export const PlaceholderFrame = ({
   </div>
 );
 
-const EditFrame = ({children, onClick}) => (
-  <div onClick={onClick} className="flex items-center">
-    {children}
-  </div>
-);
-
 const RemoveBtn = ({on, children, onClick, style, className}) => (
   <div className={className} style={style}>
     <button
@@ -213,8 +207,8 @@ class SelectCardField extends Component {
           className={`flex mb-2 ${disabled && 'disabled'}`}>
           <MySelect
             selectedId={selectedAttrId}
-            className="bg-white flex-grow mr-1 text-xl"
-            selectedClassName="border-2 p-2 italic text-grey-dark text-xl flex items-center"
+            className="bg-white flex-grow mr-2 text-xl"
+            selectedClassName="border-2 border-black shadow p-2 italic text-grey-dark text-xl flex items-center"
             optionClassName="p-2"
             values={notSelectedFields}
             onChange={v => {

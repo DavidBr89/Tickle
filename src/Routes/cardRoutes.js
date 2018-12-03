@@ -4,12 +4,12 @@ import queryString from 'query-string';
 export default function cardRoutes({
   path,
   location: {pathname, search},
-  history
+  history,
 }) {
   const {
     selectedCardId = null,
     extended = null,
-    flipped = null
+    flipped = null,
   } = queryString.parse(search);
 
   const cardParam = id => (id !== null ? `selectedCardId=${id}` : '');
@@ -22,11 +22,16 @@ export default function cardRoutes({
 
   const routeExtendCard = () => {
     const newExt = extended === null;
-    console.log('extended', extended, newExt);
     const newExtendedParam = extParam(newExt);
-    console.log('newExtendedParam', newExtendedParam);
 
     history.push(`${pathname}?${cardParam(selectedCardId)}${newExtendedParam}`); //
+  };
+
+  const routeSelectExtendCard = (cardId = null) => {
+    const newExt = extended === null;
+    const newExtendedParam = extParam(newExt);
+
+    history.push(`${pathname}?${cardParam(cardId)}${newExtendedParam}`); //
   };
 
   // const routeLockedCard = id => {
@@ -36,9 +41,6 @@ export default function cardRoutes({
 
   const routeFlipCard = () => {
     const newFlipped = !flipped;
-    console.log('routing flipCard');
-    console.log('search', search, 'pathname', pathname);
-    console.log('flipped', flipped, 'newFlipped', newFlipped);
     const newFlippedParam = newFlipped ? `&flipped=${true}` : '';
 
     history.push(
@@ -57,7 +59,8 @@ export default function cardRoutes({
     routing: {
       routeSelectCard,
       routeExtendCard,
-      routeFlipCard
-    }
+      routeFlipCard,
+      routeSelectExtendCard,
+    },
   };
 }

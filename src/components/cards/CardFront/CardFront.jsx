@@ -125,7 +125,7 @@ class CardFront extends Component {
           src={img ? img.url : null}
           style={{
             // maxHeight: '35%',
-            flex: '0 1 60%',
+            flex: '0 1 50%',
             // flex: `0 1 ${100 - numInitFields * 10}%`,
             cursor: 'pointer',
           }}>
@@ -160,7 +160,7 @@ class CardFront extends Component {
         </div>
 
         <CardControls onFlip={onFlip} onClose={onClose}>
-          <div className="flex ml-auto mr-auto">{bottomControls}</div>
+          <div className="flex ml-auto mr-auto mb-2">{bottomControls}</div>
         </CardControls>
       </div>
     );

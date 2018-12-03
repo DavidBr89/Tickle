@@ -1,5 +1,6 @@
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import PropTypes from 'prop-types';
+import menuIconSrc from 'Src/styles/menu_icons/menuIconStolen.svg';
 // import {wrapGrid} from 'animate-css-grid';
 
 import PreviewCard from 'Components/cards/PreviewCard';
@@ -39,54 +40,6 @@ import TabMenu from './TabMenu';
           </div>
       */
 
-class Cell extends Component {
-  static propTypes = {
-    onClick: PropTypes.func,
-    selected: PropTypes.bool,
-  };
-
-  static defaultProps = {
-    onClick: () => null,
-    selected: true,
-  };
-
-  state = {hovered: false};
-
-  render() {
-    const {onClick, style, selected, expanded, seen, ...restProps} = this.props;
-    const {hovered} = this.state;
-
-    return (
-      <div
-        style={{
-          padding: '5%',
-          cursor: 'pointer',
-          zIndex: hovered && 2000,
-          width: '100%',
-          height: '100%',
-          transition: 'opacity 500ms',
-          // background: selected && 'black',
-          ...style,
-        }}
-        onClick={onClick}>
-        <div
-          style={{
-            // IMPORTANT FOR ANIMATION
-            width: '100%',
-            height: '100%',
-          }}>
-          <PreviewCard
-            {...this.props}
-            accessible={seen}
-            key={this.props.id}
-            onClick={null}
-          />
-        </div>
-      </div>
-    );
-  }
-}
-
 const INITIAL_GRID_STATE = {
   colNum: 10,
   rowNum: 10,
@@ -103,6 +56,75 @@ const cardTypeText = cardType => {
     case NO_CARD_FILTER:
       return 'discovered';
   }
+};
+
+const CardMenu = ({
+  className,
+  selectedClassName,
+  optionClassName,
+  style,
+  onChange,
+  values = [],
+  children,
+  selectedId,
+  tags,
+}) => {
+  const [visible, setVisible] = useState(false);
+  const selected = values.find(v => v.id === selectedId) || null;
+
+  return (
+    <div className={`${className} z-10 relative`}>
+      <div
+        className="flex-grow flex justify-end cursor-pointer"
+        tabIndex="-1"
+        onClick={() => setVisible(!visible)}
+        onBlur={() => setVisible(false)}>
+        <div
+          className="flex justify-center mr-2"
+          tabIndex="-1"
+          style={{width: 30, height: 30}}>
+          <img src={menuIconSrc} />
+        </div>
+      </div>
+      <div
+        className="mt-2 absolute w-full"
+        style={{
+          right: visible ? 0 : '-100vw',
+          maxWidth: 250,
+          transition: 'right 200ms',
+        }}>
+        <div className="ml-2 p-2 border-2 border-black shadow bg-white">
+          <section className="border-b-2 border-black">
+            <ul className="text-2xl">
+              <li selected={selected === NO_CARD_FILTER} value={NO_CARD_FILTER}>
+                All Cards
+              </li>
+              <li
+                selected={selected === CHALLENGE_STARTED}
+                value={CHALLENGE_STARTED}>
+                Started Cards
+              </li>
+              <li
+                selected={selected === CHALLENGE_SUBMITTED}
+                value={CHALLENGE_SUBMITTED}>
+                Submitted Cards
+              </li>
+              <li
+                selected={selected === CHALLENGE_SUCCEEDED}
+                value={CHALLENGE_SUCCEEDED}>
+                Collected Cards
+              </li>
+            </ul>
+          </section>
+          <section>
+            {tags.map(d => (
+              <div className="tag-label">{d.key}</div>
+            ))}
+          </section>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default class MyDiary extends Component {
@@ -134,18 +156,20 @@ export default class MyDiary extends Component {
       numCollectibleCards,
       numSeenCards,
       tagVocabulary,
-      tabExtended,
-      extendTab,
+      closeCard,
     } = this.props;
+
+    const h = 10;
+    // const w = 4;
 
     const gridStyle = {
       // height: '100%',
       display: 'grid',
       gridGap: 16,
       // gridAutoFlow: 'column dense',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
-      gridAutoRows: `minmax(1rem, 1fr)`,
-      gridTemplateRows: `minmax(1rem, 1fr)`,
+      gridTemplateColumns: 'repeat(auto-fit, minmax(5rem, 2fr))',
+      gridAutoRows: `minmax(${h}rem, 2fr)`,
+      gridTemplateRows: `minmax(${h}rem, 2fr)`,
     };
 
     const cardSelected = selectedCardId !== null;
@@ -153,66 +177,48 @@ export default class MyDiary extends Component {
 
     const flexTrans = {
       transition: 'flex 0.5s',
-      // flex: tabExtended ? '1000 0 0%' : '0 1000 0%',
     };
+
     return (
       <DefaultLayout
         menu={
-          <div className="flex-grow flex justify-end items-center">
-            <select
-              className="form-control bg-white"
-              onChange={e => selectCardType(e.target.value)}>
-              <option
-                selected={selectedCardType === NO_CARD_FILTER}
-                value={NO_CARD_FILTER}>
-                All Cards
-              </option>
-              <option
-                selected={selectedCardType === CHALLENGE_STARTED}
-                value={CHALLENGE_STARTED}>
-                Started Cards
-              </option>
-              <option
-                selected={selectedCardType === CHALLENGE_SUBMITTED}
-                value={CHALLENGE_SUBMITTED}>
-                Submitted Cards
-              </option>
-              <option
-                selected={selectedCardType === CHALLENGE_SUCCEEDED}
-                value={CHALLENGE_SUCCEEDED}>
-                Collected Cards
-              </option>
-            </select>
-          </div>
+          <CardMenu
+            className="flex-grow"
+            selected={selectedCardType}
+            tags={tagVocabulary}
+          />
         }>
         <BlackModal
-          visible={cardExtended}
-          uiColor="grey"
+          visible={cardExtended !== null}
           background="transparent"
           style={{margin: 'auto'}}>
-          {selectedCardId && <ConnectedCard {...selectedCard} />}
+          {selectedCardId && (
+            <ConnectedCard {...selectedCard} onClose={closeCard} />
+          )}
         </BlackModal>
 
-        <div className="relative h-full w-full">
-          <div className="content-margin">
-            <div>
+        <div className="flex flex-col flex-grow">
+          <div className="flex flex-col flex-grow content-margin">
+            <section className="text-xl mb-2">
               Your {cardTypeText(selectedCardType)} {numSeenCards}/
               {`${numCollectibleCards} `}
               cards
-            </div>
-            <div
-              className="overflow-y-auto"
-              style={{flex: tabExtended ? flexShrink : '1 1 0%', ...flexTrans}}>
-              <div style={gridStyle} ref={el => (this.grid = el)}>
+            </section>
+            <section className="overflow-y-auto">
+              <div
+                className="flex-grow "
+                style={gridStyle}
+                ref={el => (this.grid = el)}>
                 {cards.map(d => (
                   <PreviewCard
+                    onClick={() => selectCard(d.id)}
+                    title={d.title.value}
+                    img={d.img.value}
                     key={d.id}
-                    {...d}
-                    onClick={() => console.log('click click')}
                   />
                 ))}
               </div>
-            </div>
+            </section>
           </div>
         </div>
       </DefaultLayout>

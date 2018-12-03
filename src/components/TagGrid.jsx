@@ -102,6 +102,7 @@ const TagGrid = props => {
 
   const {data, selectedTags, tagFilter, filterSet, className, style} = props;
 
+  console.log('selectedTags', selectedTags);
   const cells = data.map((d, i) => (
     <Tag
       {...d}

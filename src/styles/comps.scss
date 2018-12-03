@@ -7,8 +7,7 @@
 }
 
 .form-control {
-  @apply .border .border-black .border-2 .bg-white .text-lg .py-2 .px-3 .text-grey-darkest;
-box-shadow: 4px 4px black;
+  @apply .border .shadow .border-black .border-2 .bg-white .text-lg .py-2 .px-3 .text-grey-darkest;
 }
 
 
@@ -21,12 +20,14 @@ box-shadow: 4px 4px black;
 }
 
 .btn {
-  @apply .flex .flex-col .items-center .justify-center .text-lg .font-bold .p-2 .cursor-pointer ;
+  @apply .shadow .flex .flex-col .items-center .justify-center .text-lg .font-bold .p-2 .cursor-pointer .border-2 .border-black;
+
+  transition: border 0.2s ease-in-out;
 }
 
-.btn-black {
-  @apply .bg-black .text-white .text-xl;
-}
+// .btn-black {
+//   @apply .bg-grey-dark .text-white .text-xl;
+// }
 
 .btn-white {
   @apply .bg-white .text-xl;
@@ -66,11 +67,18 @@ box-shadow: 4px 4px black;
   @apply .font-bold .py-2 .px-4 .border-2 .border-black;
 }
 
+.link {
+  @apply  .link .no-underline;
+  transition: border 0.2s ease-in-out;
+  border-bottom: 2px solid transparent;
+}
+
+.link:hover {
+  border-color: config('colors.black');
+}
+
 .nav-link {
-  @apply .py-2 .px-4 .border-2 .text-xl;
-  a {
-    @apply .no-underline;
-  }
+  color: #6a566b;
 }
 
 .nav-link.selected {
@@ -85,16 +93,22 @@ box-shadow: 4px 4px black;
   @apply .sub-link .bg-grey-light;
 }
 
+.shadow {
+  box-shadow: config('colors.black') 0.2rem 0.2rem;
+}
+
+
+
 // .sub-link:hover {
 //   @apply .bg-grey-dark .text-white;
 // }
 
-.nav-link:hover, .sub-link:hover {
-  @apply .bg-grey-dark;
-  a {
-    @apply .text-white;
-  }
-}
+// .nav-link:hover, .sub-link:hover {
+//   @apply .bg-grey-dark;
+//   a {
+//     @apply .text-white;
+//   }
+// }
 
 .tag-btn {
   @apply .font-bold .py-2 .px-2 .border-2 .bg-grey-light;
@@ -102,7 +116,7 @@ box-shadow: 4px 4px black;
 
 
 .btn-black {
-  @apply .bg-black .text-white;
+  @apply .bg-grey-dark .text-white;
 }
 
 .btn-black:hover {
@@ -110,7 +124,7 @@ box-shadow: 4px 4px black;
 }
 
 .list-item {
-  @apply .mb-3 .p-2 .text-xl .items-center .border-black .border-4 .flex .justify-between .cursor-pointer
+  @apply .mb-3 .p-2 .text-xl .cursor-pointer
 }
 
 .list-item.active {
@@ -118,12 +132,8 @@ box-shadow: 4px 4px black;
 }
 
 .alert {
-  @apply .bg-red-lightest .border-4 .border-red-light .text-red-dark .px-4 .py-3
 }
 
-.shadow {
-  box-shadow: grey 0.2rem 0.2rem;
-}
 
 .truncate-text {
   min-width: 0;

@@ -32,26 +32,26 @@ class NavBar extends Component {
   render() {
     const {style, open, children, onToggle, ui, className} = this.props;
     return (
-      <div className={`z-50 w-full ${className}`} style={{...style}}>
-        <nav
+      <div className={`relative z-50 w-full ${className}`} style={{...style}}>
+        <div
           className="navbar flex items-center relative m-2 "
           style={{minHeight: 48}}>
           <button
-            className="border-4 border-black cursor-pointer p-2 absolute z-50 flex-col-wrapper items-center bg-white"
+            className="border-4 border-black cursor-pointer p-2 z-50 flex-col-wrapper items-center bg-white"
             onClick={onToggle}
             type="button">
             <img src={IcAk} className="m-1" />
           </button>
           {ui}
-        </nav>
+        </div>
         <div
-          className="shadow"
+          className="ml-2 bg-white shadow border-2 border-black"
           style={{
-            position: 'relative',
-            width: '30%',
-            background: 'white',
-            opacity: open ? 'show' : null,
-            display: open ? 'block' : 'none',
+            position: 'absolute',
+            width: '80vw',
+            maxWidth: 250,
+            transition: 'transform 200ms',
+            transform: `translateX( ${open ? 0 : -153}% )`,
           }}>
           <div
             className="p-3"

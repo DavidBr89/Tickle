@@ -101,7 +101,6 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   } = dispatcherProps;
 
   const createCard = ({tags, title, ...cardData}) => {
-
     asyncCreateCard({cardData: {...cardData, title, tags}, userEnv});
   };
   const updateCard = cardData => {
@@ -178,8 +177,8 @@ const EditCard = ({
     front={
       <EditCardFront
         {...props}
-        id={id}
         template={template}
+        id={id}
         onClose={onClose}
         onFlip={onFlip}
         onCreate={d => {

@@ -34,6 +34,7 @@ import withAuthorization from 'Src/components/withAuthorization';
 import withAuthentication from 'Src/components/withAuthentication';
 import {shiftCenterMap} from 'Src/lib/geo';
 // import {initCard} from 'Constants/cardFields';
+import {fallbackTagValues} from 'Constants/cardFields';
 import UserEnvironmentSettings from './UserEnvironmentSettings';
 import CardAuthorPage from './CardAuthorPage';
 
@@ -57,6 +58,7 @@ const mapStateToProps = state => {
     loc: userLocation,
     uid,
     id: TEMP_ID,
+    template: true,
     ...tmpCard,
   };
 
@@ -120,7 +122,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const selectedCard = cards.find(d => d.id === selectedCardId) || null;
 
-  const selectedTags = selectedCard !== null ? selectedCard.tags : filterSet;
+  const selectedTags =
+    selectedCard !== null ? fallbackTagValues(selectedCard.tags) : filterSet;
 
   const mercator = new WebMercatorViewport(mapViewport);
   const reCenterMap = d =>

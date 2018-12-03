@@ -41,8 +41,6 @@ class ReadCardFront extends Component {
     img: null,
     xpPoints: null,
     description: null,
-    // loc: { latitude: 50.828797, longitude: 4.352191 },
-    creator: 'Jan',
     radius: 500,
     media: [],
     comments: [],

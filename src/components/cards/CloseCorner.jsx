@@ -14,7 +14,7 @@ function CloseCorner({ className, width, height, ...props }) {
       xmlSpace="preserve"
     >
       <g id="Layer_1">
-        <polygon points="0,6 56.8,56.7 0,56.7 	" style={{ fill: 'black' }} />
+        <polygon points="0,6 56.8,56.7 0,56.7 	" style={{fill:"#404040"}} />
         <polygon
           style={{ fill: 'white' }}
           points="25.8,34.3 22.4,31 14.9,38.5 7.4,31 4.1,34.3 11.6,41.8 4.1,49.3 7.4,52.7 14.9,45.2 22.4,52.7

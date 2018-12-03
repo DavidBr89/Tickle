@@ -134,7 +134,7 @@ class TitleModalBody extends Component {
     onUpdate: PropTypes.func,
   };
 
-  state = {...this.props};
+  state = {value: null, key: null, ...this.props};
 
   render() {
     const {onUpdate} = this.props;
@@ -143,17 +143,17 @@ class TitleModalBody extends Component {
     return (
       <ModalBody
         {...this.props}
-        onClose={() => onUpdate(this.state)}
+        onClose={() => onUpdate({key, value})}
         footer={
           <button
             type="button"
             className="btn"
-            onClick={() => onUpdate(this.state)}>
+            onClick={() => onUpdate({key, value})}>
             Update
           </button>
         }>
         <input
-          className="form-control w-full"
+          className="form-control w-full text-xl"
           onChange={e =>
             this.setState({
               value: e.target.value || null,
@@ -459,10 +459,10 @@ class EditCardFront extends PureComponent {
             })
           }
           bottomControls={
-            true && (
+            template && (
               <button
                 type="button"
-                className="btn btn-black ml-2"
+                className=" btn text-xl m-2"
                 onClick={() => onCreate(data)}>
                 Create
               </button>

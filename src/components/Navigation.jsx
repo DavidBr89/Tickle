@@ -1,23 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 
-import { Link, withRouter } from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 
-import { compose } from 'recompose';
+import {compose} from 'recompose';
 
 import {
   DATAVIEW,
   authRoutes,
   makeUserEnvRoutes,
   adminRoutes,
-  nonAuthRoutes
+  nonAuthRoutes,
 } from 'Constants/routeSpec';
 import SignOutButton from './SignOut';
 // import * as routes from 'Constants/routeSpec';
 
 import AuthUserContext from './AuthUserContext';
-
 
 // import { setDataView } from 'Reducers/DataView/actions';
 
@@ -34,10 +33,13 @@ import AuthUserContext from './AuthUserContext';
 // );
 
 const includePath = (pathA, pathB) => {
-  const [splA, splB] = [pathA.split('/'), pathB.split('/')].map(p => p.filter(s => s !== '#' && s !== ''), );
-  console.log('curPath', pathA, 'path', pathB);
+  const [splA, splB] = [pathA.split('/'), pathB.split('/')].map(p =>
+    p.filter(s => s !== '#' && s !== ''),
+  );
   return splA[0] === splB[0];
 };
+
+const listItemClass = 'mb-1 p-2 text-xl cursor-pointer';
 
 const ListItem = ({
   name,
@@ -46,21 +48,26 @@ const ListItem = ({
   curPath,
   active,
   children,
-  subRoutes = []
+  subRoutes = [],
 }) => (
-  <li className="list-item mb-1">
+  <li className={listItemClass}>
     <div
-      className={`${subRoutes.length > 0 && 'list-item'} ${includePath(
+      className={`${subRoutes.length > 0 && listItemClass} ${includePath(
         curPath,
         path,
-      ) && 'active'}`}
-    >
-      <Link to={path}>{children}</Link>
+      ) && 'active'}`}>
+      <Link className="link" to={path}>
+        {children}
+      </Link>
     </div>
     <ul className="ml-5 list-reset">
       {subRoutes.map(d => (
-        <li className={`list-item ${curPath === d.path && 'active'} `}>
-          <Link to={d.path}>{d.name}</Link>
+        <li
+          className={`${listItemClass} border-black border-2 ${curPath ===
+            d.path && 'active'} `}>
+          <Link to={d.path} className="link">
+            {d.name}
+          </Link>
         </li>
       ))}
     </ul>
@@ -75,7 +82,7 @@ const NavigationHelper = ({
   routes,
   signOut,
   children,
-  userEnv
+  userEnv,
 }) => (
   <ul className="list-reset">
     {routes.map(r => (
@@ -92,15 +99,17 @@ const NavigationHelper = ({
 );
 
 NavigationHelper.propTypes = {
-  signOut: PropTypes.boolean
+  signOut: PropTypes.boolean,
 };
 
 NavigationHelper.defaultProps = {
-  signOut: false
+  signOut: false,
 };
 
-const RouteNavigation = ({ authUser, match, ...props }) => {
-  const { params: { userEnv: selectedUserEnvId } } = match;
+const RouteNavigation = ({authUser, match, ...props}) => {
+  const {
+    params: {userEnv: selectedUserEnvId},
+  } = match;
   if (authUser) {
     if (authUser.admin) {
       const adminAuthRoutes = makeUserEnvRoutes(selectedUserEnvId, adminRoutes);
@@ -114,10 +123,10 @@ const RouteNavigation = ({ authUser, match, ...props }) => {
 };
 
 const mapStateToProps = state => ({
-  ...state.Session
+  ...state.Session,
 });
 
 export default compose(
   withRouter,
-  connect(mapStateToProps)
+  connect(mapStateToProps),
 )(RouteNavigation);

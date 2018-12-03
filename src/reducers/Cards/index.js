@@ -104,9 +104,8 @@ function reducer(state = INITIAL_STATE, action) {
       const createdCards = cards.map(c => ({...c, edit: true}));
 
       const tagVocabulary = setify(
-        uniqBy([...createdCards, ...collectibleCards]),
-        'id',
-      );
+        uniqBy([...createdCards, ...collectibleCards], 'id'),
+        );
 
       // const cardSets = setify(cards);
       // const tagColorScale = makeTagColorScale(cardSets);
