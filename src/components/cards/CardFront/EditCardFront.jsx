@@ -153,7 +153,7 @@ class TitleModalBody extends Component {
           </button>
         }>
         <input
-          className="form-control w-full text-xl"
+          className="capitalize form-control text-2xl w-full text-xl"
           onChange={e =>
             this.setState({
               value: e.target.value || null,

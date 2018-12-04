@@ -248,7 +248,7 @@ function PureTagViewPage({cardSets, ...props}) {
     <CardViewPage {...props} cardSets={cardSets}>
       <div className="mt-8 mb-3 flex flex-grow justify-center overflow-y-auto">
         <TagGrid
-          className="flex-grow"
+          className="p-2 flex-grow"
           {...props}
           data={cardSets}
           style={{maxWidth: 800}}

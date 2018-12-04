@@ -33,11 +33,6 @@ class Tag extends React.Component {
     transition: 750,
   };
 
-  // componentDidMount() {
-  //   const node = ReactDom.findDOMNode(this.node);
-  //   const { width, height, padding, count } = this.props;
-  // }
-
   render() {
     const {
       left,
@@ -70,19 +65,17 @@ class Tag extends React.Component {
 
     return (
       <div
-        className={`flex flex-col border-8 border-black p-4 ${selected &&
+        className={`shadow flex flex-col border-4 border-black p-4 ${selected &&
           'bg-grey-light'}`}
         style={st}
         onClick={() => onClick(children)}>
-        <div className="relative flex flex-col flex-grow">
+        <div className="relative items-center justify-between flex flex-wrap flex-grow">
           <h1 className="">{children}</h1>
-          <div className="flex-grow flex flex-col items-center justify-center">
-            <div className="p-4 flex items-center justify-center">
-              <div className=" border-4 border-black ">
-                <img className="m-2" src={icAk} />
-              </div>
-              <div className="text-2xl font-bold ml-2">{count}</div>
+          <div className="flex items-center" style={{height: 50}}>
+            <div className=" border-4 border-black ">
+              <img className="m-2" src={icAk} />
             </div>
+            <div className="text-2xl font-bold ml-2">{count}</div>
           </div>
         </div>
       </div>
@@ -102,7 +95,6 @@ const TagGrid = props => {
 
   const {data, selectedTags, tagFilter, filterSet, className, style} = props;
 
-  console.log('selectedTags', selectedTags);
   const cells = data.map((d, i) => (
     <Tag
       {...d}
@@ -117,7 +109,7 @@ const TagGrid = props => {
 
   // const boxWidth = 300;
   // const boxHeight = 200;
-  const templateRows = `minmax(1rem, 200px)`;
+  const templateRows = `minmax(1rem, 100px)`;
   return (
     <div
       ref={gridDom}

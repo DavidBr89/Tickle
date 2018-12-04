@@ -20,7 +20,7 @@ const PreviewCardStack = ({values, id, className, onClick, style}) => (
         <div
           className="flex flex-col justify-center border-2 border-black bg-white h-full w-full absolute "
           style={{transform: 'translate3d(0,0,-150px)'}}>
-          <PreviewCard title={id} />
+          <PreviewCard title={id} className="flex-grow"/>
         </div>
       </div>
     </div>

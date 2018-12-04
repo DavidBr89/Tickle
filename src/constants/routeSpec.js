@@ -61,7 +61,7 @@ export const TOPIC_VIEW = {name: 'Topic Map', path: TOPICMAP_VIEW_PATH};
 export const TAG_VIEW = {name: 'Tag View', path: TAG_VIEW_PATH};
 
 export const DATAVIEW = {
-  name: 'Card View Settings',
+  name: 'View Cards',
   path: DATAVIEW_PATH,
   subRoutes: [GEO_VIEW, TAG_VIEW],
 };
@@ -72,7 +72,7 @@ export const TREE_AUTHOR = {name: 'Tree Author', path: TREE_AUTHOR_PATH};
 export const TAG_AUTHOR = {name: 'Topic', path: TAG_AUTHOR_PATH};
 
 export const AUTHOR = {
-  name: 'Author Cards Settings',
+  name: 'Create Cards',
   path: AUTHOR_PATH,
   subRoutes: [GEO_AUTHOR],
 };

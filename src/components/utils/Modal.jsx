@@ -3,16 +3,29 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import chroma from 'chroma-js';
 
-import {connect} from 'react-redux';
-// import { connect } from 'react-redux';
-// import chroma from 'chroma-js';
 import X from 'react-feather/dist/icons/x';
 
 // import { CardThemeConsumer } from 'Src/styles/CardThemeContext';
 
 // const ddg = new DDG('tickle');
 
-export const BlackModal = ({visible, ...props}) =>
+import {connect} from 'react-redux';
+
+const reduxConnect = comp => {
+  const mapStateToProps = state => ({mobile: state.Screen.isSmartphone});
+
+  const mergeProps = (stateProps, dispatchProps, ownProps) => ({
+    ...stateProps,
+    ...ownProps,
+  });
+
+  return connect(
+    mapStateToProps,
+    mergeProps,
+  )(comp);
+};
+
+export const BlackModal = reduxConnect(({visible, mobile, ...props}) =>
   ReactDOM.createPortal(
     <div
       className="fixed w-screen h-screen"
@@ -27,14 +40,14 @@ export const BlackModal = ({visible, ...props}) =>
         opacity: visible ? 1 : 0,
         transition: 'opacity 0.1s',
       }}>
-      <InlineModal visible={visible} {...props} />
+      <InlineModal visible={visible} mobile={mobile} {...props} />
     </div>,
     BODY,
-  );
+  ),
+);
 
 const BODY = document.querySelector('body');
 
-const isSmartphone = false;
 export const InlineModal = ({
   visible,
   title,
@@ -42,6 +55,7 @@ export const InlineModal = ({
   onClose,
   style,
   className,
+  mobile,
   // background,
 }) => (
   <div
@@ -61,9 +75,7 @@ export const InlineModal = ({
       style={{
         maxWidth: 500,
         maxHeight: 800,
-        margin: 'auto',
-        margin: `${!isSmartphone ? '2.5rem' : ''} auto`,
-        // margin: '2.5rem',
+        margin: `${!mobile ? '2.5rem' : ''} auto`,
         ...style,
       }}>
       {children}
@@ -75,8 +87,9 @@ InlineModal.defaultProps = {
   className: '',
 };
 
-export const BareModal = props =>
-  ReactDOM.createPortal(<InlineModal {...props} />, BODY);
+export const BareModal = reduxConnect(props =>
+  ReactDOM.createPortal(<InlineModal {...props} />, BODY),
+);
 
 export const Modal = BareModal;
 

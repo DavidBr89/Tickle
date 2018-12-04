@@ -18,8 +18,15 @@ const gridStyle = {
   gridAutoRows: 160,
 };
 
-const CardsModal = ({visible, tagId, children, onClose, onSelectCard}) => (
-  <BlackModal visible={visible}>
+const CardsModal = ({
+  visible,
+  title,
+  tagId,
+  children,
+  onClose,
+  onSelectCard,
+}) => (
+  <BlackModal visible={visible} title={title}>
     <ModalBody onClose={onClose} title={tagId}>
       <div className="bg-white flex-grow" style={gridStyle}>
         {children}
@@ -49,8 +56,6 @@ const RelatedTags = withRouter(
           {tagVocabulary.map(d => (
             <PreviewCardStack
               id={d.tagId}
-              {...d}
-              className=""
               onClick={() => {
                 console.log('d.tagId', d.tagId);
                 setSelectedTagId(d.tagId);
@@ -59,14 +64,14 @@ const RelatedTags = withRouter(
           ))}
         </div>
         <CardsModal
-          key={'cardsModal'}
+          key="cardsModal"
+          title="Related Cards"
           onClose={() => setSelectedTagId(null)}
           visible={modalVisible}>
           {tagObj &&
             tagObj.values.map(d => (
               <PreviewCard
-                title={d.tagId}
-                {...d}
+                title={d.title.value}
                 onClick={() => {
                   setSelectedTagId(null);
                   routeSelectCard(d.id);

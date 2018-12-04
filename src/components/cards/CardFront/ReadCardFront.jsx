@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import MediaChallenge from 'Components/Challenges/MediaChallenge';
 import {TagInput, PreviewTags} from 'Utils/Tag';
-import {Modal, ModalBody} from 'Utils/Modal';
+import {BareModal, ModalBody} from 'Utils/Modal';
 
 import {MediaOverview} from 'Components/cards/MediaSearch';
 
@@ -53,9 +53,10 @@ class ReadCardFront extends Component {
 
   state = {
     dialogKey: null,
+    modalVisible: false,
   };
 
-  closeModal = () => this.setState({dialogKey: null});
+  closeModal = () => this.setState({modalVisible: false});
 
   btnText = () => {
     const {challengeSubmission} = this.props;
@@ -140,28 +141,29 @@ class ReadCardFront extends Component {
   render() {
     const {onFlip, onClose} = this.props;
 
-    const {dialogKey, challengeSubmitted} = this.state;
-    const modalVisible = dialogKey !== null;
+    const {dialogKey, challengeSubmitted, modalVisible} = this.state;
+    const setDialogKey = key =>
+      this.setState({dialogKey: key, modalVisible: true});
     return (
       <React.Fragment>
-        <Modal
+        <BareModal
           visible={modalVisible}
           title={dialogKey}
-          onClose={() => this.setState({dialogKey: null})}>
+          onClose={() => this.setState({modalVisible: false})}>
           {this.modalReadContent(dialogKey)}
-        </Modal>
+        </BareModal>
 
         <CardFront
           {...this.props}
           onClose={onClose}
           onFlip={onFlip}
-          onImgClick={() => this.setState({dialogKey: 'Img'})}
-          onDescriptionClick={() => this.setState({dialogKey: 'Description'})}
-          onMediaClick={() => this.setState({dialogKey: 'Media'})}
+          onImgClick={() => setDialogKey('Img')}
+          onDescriptionClick={() => setDialogKey('Description')}
+          onMediaClick={() => setDialogKey('Media')}
           bottomControls={
             <button
               className="btn btn-black"
-              onClick={() => this.setState({dialogKey: 'Challenge'})}>
+              onClick={() => setDialogKey('Challenge')}>
               {this.btnText()}
             </button>
           }

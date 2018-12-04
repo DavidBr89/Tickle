@@ -182,7 +182,7 @@ class AddComment extends Component {
     return (
       <div className="mt-5">
         <input
-          className="form-control mb-1 w-full"
+          className="mb-2 form-control mb-1 w-full"
           placeholder="Write a comment"
           type="text"
           onChange={e => this.setState({ text: e.target.value })}

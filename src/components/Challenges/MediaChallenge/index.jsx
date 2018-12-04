@@ -1,19 +1,19 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-import { withRouter } from 'react-router-dom';
-import { compose } from 'recompose';
+import {withRouter} from 'react-router-dom';
+import {compose} from 'recompose';
 
 import * as Icon from 'react-feather';
 import withAuthorization from 'Components/withAuthorization';
 
 import MediaUpload from 'Utils/MediaUpload';
 
-import { ScrollView, ScrollElement } from 'Utils/ScrollView';
+import {ScrollView, ScrollElement} from 'Utils/ScrollView';
 
 import ChevronsDown from 'react-feather/dist/icons/chevron-down';
 
-import { BlackModal, ModalBody } from 'Utils/Modal';
+import {BlackModal, ModalBody} from 'Utils/Modal';
 
 // import DelayClick from 'Components/utils/DelayClick';
 
@@ -64,7 +64,6 @@ import { BlackModal, ModalBody } from 'Utils/Modal';
 //   }
 // }
 
-
 class PureMediaChallenge extends Component {
   static propTypes = {
     className: PropTypes.string,
@@ -73,7 +72,7 @@ class PureMediaChallenge extends Component {
     stylesheet: PropTypes.object,
     challengeSubmission: PropTypes.oneOf([PropTypes.object, null]),
     bookmarkable: PropTypes.boolean,
-    isSmartphone: PropTypes.boolean
+    isSmartphone: PropTypes.boolean,
   };
 
   static defaultProps = {
@@ -81,26 +80,33 @@ class PureMediaChallenge extends Component {
     description: 'placeholder challenge',
     challengeSubmission: null,
     media: [],
-    response: null
+    response: null,
   };
 
   state = {
     media: [],
     response: null,
     completed: false,
-    ...this.props
+    mediaModalVisible: false,
+    ...this.props,
   };
 
   textAreaTimeoutId = null;
 
-
   render() {
     const {
-      description, addChallengeSubmission, onClose, styles, title, onSubmit,
-      addToStorage, removeFromStorage, media
+      description,
+      addChallengeSubmission,
+      onClose,
+      styles,
+      title,
+      onSubmit,
+      addToStorage,
+      removeFromStorage,
+      media,
     } = this.props;
 
-    const { response, modalVisible } = this.state;
+    const {response, mediaModalVisible} = this.state;
 
     // const challengeStarted = challengeSubmission !== null;
     // const challengeSubmitted = completed;
@@ -109,70 +115,65 @@ class PureMediaChallenge extends Component {
     return (
       <ModalBody
         onClose={onClose}
-        title={title}
+        title="Challenge"
         footer={
           <button
             type="button"
             className="btn"
-            onClick={() => onSubmit({
-              media, response, completed: true
-            })}
-          >
-          Submit
+            onClick={() => {
+              onSubmit({
+                media,
+                response,
+                completed: true,
+              });
+              onClose();
+            }}>
+            Submit
           </button>
-        }
-      >
-        <div
-          className="flex flex-col flex-grow"
-        >
-          <div style={{ minHeight: 200 }} className="mb-5">
-            <h2>Description</h2>
-            <p className="flex-no-shrink w-full text-lg">
-              {description}
-            </p>
+        }>
+        <div className="flex flex-col flex-grow">
+          <div style={{maxHeight: 200}} className="mb-5">
+            <h2 className="mb-2">Description</h2>
+            <p className="flex-no-shrink w-full text-lg">{description}</p>
           </div>
 
-          <div>
-            <h2>Response</h2>
+          <div className="mb-3">
+            <h2 className="mb-2">Response</h2>
             <textarea
               className="form-control w-full"
               rows="4"
-              placeholder="write your response"
+              placeholder="Write your response"
               value={response}
-              onChange={(e) => {
+              onChange={e => {
                 const text = e.target.value;
                 this.setState({
                   response: text !== '' ? text : null,
-                  completed: false
+                  completed: false,
                 });
               }}
             />
           </div>
-
           <button
             type="button"
             className="btn w-full"
-            onClick={() => this.setState({ modalVisible: true })}
-          >
+            onClick={() => this.setState({mediaModalVisible: true})}>
             Add Media
           </button>
-          <BlackModal
-            visible={modalVisible}
-          >
-            <ModalBody onClose={() => this.setState({ modalVisible: false })}>
+          <BlackModal visible={mediaModalVisible}>
+            <ModalBody
+              onClose={() => this.setState({mediaModalVisible: false})}>
               <MediaUpload
                 className="flex-grow"
                 media={media}
                 onAdd={addToStorage}
                 onRemove={removeFromStorage}
                 btnText="Upload Media"
-                onChange={(newMedia) => {
-                  onSubmit({ media: newMedia, response, completed: false });
+                onChange={newMedia => {
+                  onSubmit({media: newMedia, response, completed: false});
                 }}
               />
             </ModalBody>
           </BlackModal>
-
         </div>
       </ModalBody>
     );
@@ -183,7 +184,7 @@ const authCondition = authUser => authUser !== null;
 
 const MediaChallenge = compose(
   withAuthorization(authCondition),
-  withRouter
+  withRouter,
 )(PureMediaChallenge);
 
 export default MediaChallenge;

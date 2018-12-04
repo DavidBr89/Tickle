@@ -94,7 +94,7 @@ const FieldList = ({values, visiblity, onRemove}) =>
     </ul>
   );
 
-const MySelect = ({
+const SelectField = ({
   className,
   selectedClassName,
   optionClassName,
@@ -205,10 +205,11 @@ class SelectCardField extends Component {
           onSubmit={addAttr}
           disabled={disabled}
           className={`flex mb-2 ${disabled && 'disabled'}`}>
-          <MySelect
+          <SelectField
             selectedId={selectedAttrId}
-            className="bg-white flex-grow mr-2 text-xl"
-            selectedClassName="border-2 border-black shadow p-2 italic text-grey-dark text-xl flex items-center"
+            className="bg-white flex-grow mr-4 text-xl"
+            selectedClassName="border-2 border-black shadow p-2
+            italic text-grey-dark text-xl flex items-center"
             optionClassName="p-2"
             values={notSelectedFields}
             onChange={v => {
@@ -318,7 +319,9 @@ export default class CardFrontTemplate extends Component {
             className=""
             empty={title.value === null}
             placeholder="Title">
-            <h1 className="truncate-text">{title.value}</h1>
+            <div className="capitalize text-2xl truncate-text">
+              {title.value}
+            </div>
           </PlaceholderFrame>
         ),
       },

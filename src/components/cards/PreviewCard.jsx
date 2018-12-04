@@ -49,7 +49,7 @@ class PreviewCard extends Component {
 
     return (
       <div
-        className={`${className} relative p-1 overflow-hidden bg-white flex flex-col border-2 border-black`}
+        className={`${className} cursor-pointer relative p-1 overflow-hidden bg-white flex flex-col border-2 border-black`}
         style={{...style}}
         onClick={onClick}>
         {img !== null && (

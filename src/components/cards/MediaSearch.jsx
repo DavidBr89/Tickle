@@ -35,6 +35,8 @@ const USER_CONTENT = 'user-content';
 
 const OVERVIEW = 'Overview';
 
+const formClass = 'form-control text-lg';
+
 const navIcons = [
   {
     key: WIKIPEDIA,
@@ -429,7 +431,7 @@ class UrlMedia extends Component {
             <div className="form-group">
               <input
                 type="text"
-                className="form-control"
+                className={formClass}
                 placeholder="Title"
                 value={title}
                 onChange={event => {
@@ -440,7 +442,7 @@ class UrlMedia extends Component {
             <div className="form-group">
               <input
                 type="text"
-                className="form-control"
+                className={formClass}
                 placeholder="Description"
                 value={descr}
                 onChange={event => this.setState({descr: event.target.value})}
@@ -450,7 +452,7 @@ class UrlMedia extends Component {
               <input
                 type="url"
                 placeholder="Url"
-                className="form-control"
+                className={formClass}
                 value={url}
                 onChange={event => this.setState({url: event.target.value})}
               />
@@ -779,7 +781,7 @@ class MetaSearch extends Component {
         <div style={{width: '100%'}}>
           <input
             type="text"
-            className="form-control mb-3 w-full"
+            className={`${formClass} mb-3 w-full`}
             placeholder={`Search...for instance ${defaultQuery}`}
             onChange={evt => this.onSearch(evt.target.value)}
           />

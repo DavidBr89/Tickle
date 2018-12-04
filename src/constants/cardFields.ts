@@ -2,18 +2,15 @@ const isDefined = a => a !== null && a !== undefined;
 
 export const TEMP_ID = 'temp';
 
-export const isChallengeSucceeded = c =>
+export const isActivitySucceeded = c =>
   isDefined(c.challengeSubmission) &&
   c.challengeSubmission.feedback &&
   c.challengeSubmission.feedback.accomplished;
 
-export const isChallengeSubmitted = c =>
+export const isActivityStarted = c =>
   isDefined(c.challengeSubmission) &&
   c.challengeSubmission.completed &&
   !c.challengeSubmission.feedback;
-
-export const isChallengeStarted = c =>
-  isDefined(c.challengeSubmission) && !c.challengeSubmission.completed;
 
 // TODO: update later
 export const CARD_SEEN = 'CARD_SEEN';
@@ -26,9 +23,9 @@ export const isCardSeen = (
     seen: false,
   },
 ) =>
-  isChallengeStarted(c) ||
-  isChallengeSubmitted(c) ||
-  isChallengeSucceeded(c) ||
+  isActivityStarted(c) ||
+  isActivityStarted(c) ||
+  isActivitySucceeded(c) ||
   c.seen === true;
 
 export const isChallengeOpen = ({challengeSubmission}) =>
@@ -38,7 +35,6 @@ export const hasCardCreated = (c = {uid: '2332'}, uidTmp = '12345') =>
   c.uid === uidTmp;
 
 export const NO_CHALLENGE_FILTER = 'NO_CHALLENGE_FILTER';
-export const NO_CARD_FILTER = 'NO_CARD_FILTER';
 export const CHALLENGE_STARTED = 'CHALLENGE_STARTED';
 export const CHALLENGE_OPEN = 'CHALLENGE_OPEN';
 
@@ -48,13 +44,13 @@ export const CHALLENGE_NOT_SUBMITTED = 'CHALLENGE_NOT_SUBMITTED';
 export const CHALLENGE_SUCCEEDED = 'CHALLENGE_SUCCEEDED';
 export const CARD_CREATED = 'CARD_CREATED';
 
-export const challengeTypeMap = (() => {
+export const activityTypeMap = (() => {
   const obj = {
-    [CHALLENGE_STARTED]: isChallengeStarted,
-    [CHALLENGE_SUBMITTED]: isChallengeSubmitted,
-    [CHALLENGE_SUCCEEDED]: isChallengeSucceeded,
+    [CHALLENGE_STARTED]: isActivityStarted,
+    [CHALLENGE_SUBMITTED]: isActivityStarted,
+    [CHALLENGE_SUCCEEDED]: isActivitySucceeded,
     [CHALLENGE_OPEN]: isChallengeOpen,
-    [NO_CARD_FILTER]: () => true,
+    [NO_CHALLENGE_FILTER]: () => true,
     [CARD_CREATED]: hasCardCreated,
     [CARD_SEEN]: isCardSeen,
   };
@@ -66,7 +62,7 @@ export const TAGS = 'tags';
 export const DESCRIPTION = 'description';
 export const MEDIA = 'media';
 export const TIMERANGE = 'timerange';
-export const CHALLENGE = 'challenge';
+export const ACTIVTY = 'challenge';
 // export const TIMESTAMP = 'timestamp';
 
 const defaultVal = () => ({key: null, value: null});

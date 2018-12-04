@@ -39,7 +39,7 @@ const mapStateToProps = state => {
   //
   const cards = collectibleCards
     .map(d => ({...d, seen: true}))
-    .filter(challengeTypeMap[selectedCardType]);
+    // .filter(challengeTypeMap[selectedCardType]);
 
   const numSeenCards = cards.filter(c => c.seen).length;
   const numCollectibleCards = collectibleCards.length;
