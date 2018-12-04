@@ -1,22 +1,23 @@
 import firebase from '@firebase/app';
 
-import { extractCardFields } from 'Constants/cardFields.ts';
+import {extractCardFields} from 'Constants/cardFields.ts';
 
-import { firestore, Timestamp, storageRef } from '../firebase';
-
+import {firestore, Timestamp, storageRef} from '../firebase';
 
 const CARD_ENVS = 'card-environments';
 
 const isDefined = a => a !== null && a !== undefined;
 
-const pruneFields = (fields) => {
-  const isNotFileOrFunc = val => !(val instanceof File) && !(val instanceof Function);
+const pruneFields = fields => {
+  const isNotFileOrFunc = val =>
+    !(val instanceof File) && !(val instanceof Function);
 
-  const pruneObject = obj => Object.keys(obj).reduce((acc, attr) => {
-    const val = obj[attr];
-    if (isNotFileOrFunc(val)) acc[attr] = val;
-    return acc;
-  }, {});
+  const pruneObject = obj =>
+    Object.keys(obj).reduce((acc, attr) => {
+      const val = obj[attr];
+      if (isNotFileOrFunc(val)) acc[attr] = val;
+      return acc;
+    }, {});
 
   return Object.keys(fields).reduce((acc, attr) => {
     const val = fields[attr];
@@ -40,40 +41,42 @@ export const readCopyUsers = () => {
   firestore
     .collection('staging_vds_geo_cards')
     .get()
-    .then((querySnapshot) => {
+    .then(querySnapshot => {
       const data = [];
-      querySnapshot.forEach((doc) => {
+      querySnapshot.forEach(doc => {
         const d = doc.data();
         data.push(d);
       });
 
-      data.forEach(d => firestore
-        .collection(CARD_ENVS)
-        .doc('staging')
-        .collection('cards')
-        .doc(d.id)
-        .set(d), );
+      data.forEach(d =>
+        firestore
+          .collection(CARD_ENVS)
+          .doc('staging')
+          .collection('cards')
+          .doc(d.id)
+          .set(d),
+      );
     });
 };
 
 // const haaike = 'PpNOHOQLtXatZzcaAYVCMQQP5XT2';
 
-const removeFromFirebaseStorage = ({ path, id }) => {
+const removeFromFirebaseStorage = ({path, id}) => {
   const imgRef = storageRef.child(`${path}/${id}`);
   console.log('PATH TO DELETE', `${path}/${id}`);
-  return imgRef.delete().catch((error) => {
+  return imgRef.delete().catch(error => {
     console.log('error', error);
     throw new Error(`error in deleting file${path} ${error}`);
   });
 };
 
-const addFileToFirebaseStorage = ({ file, path, id }) => {
-  const metadata = { contentType: file.type };
+const addFileToFirebaseStorage = ({file, path, id}) => {
+  const metadata = {contentType: file.type};
   const imgRef = storageRef.child(`${path}/${id}`);
   return imgRef
     .put(file, metadata)
     .then(() => new Promise(resolve => resolve(imgRef.getDownloadURL())))
-    .catch((err) => {
+    .catch(err => {
       console.log('err', err);
       throw new Error(`error in uploading img for ${file.name}`);
       // Handle any error that occurred in any of the previous
@@ -84,50 +87,51 @@ const addFileToFirebaseStorage = ({ file, path, id }) => {
 const makeCardFuncs = ({
   TICKLE_ENV_REF,
   ENV_STR,
-  getOneChallengeSubmission,
-  getAllChallengeSubmissions
+  getOneActivitySub,
+  getAllActivitySubs,
 }) => {
-  const doDeleteCard = cid => TICKLE_ENV_REF.collection('cards')
-    .doc(cid)
-    .delete();
+  const doDeleteCard = cid =>
+    TICKLE_ENV_REF.collection('cards')
+      .doc(cid)
+      .delete();
 
   // TODO: error handling
-  const uploadImgFields = (card) => {
+  const uploadImgFields = card => {
     if (card.img === null) return new Promise(resolve => resolve(null));
 
-    const { file = null, ...restImgFields } = card.img;
+    const {file = null, ...restImgFields} = card.img;
 
     return file
       ? addFileToFirebaseStorage({
         file,
         path: `${ENV_STR}/cards/images`,
-        id: card.id
-      }).then((url) => {
+        id: card.id,
+      }).then(url => {
         const img = {
           ...restImgFields,
-          url
+          url,
         };
         return new Promise(resolve => resolve(img));
       })
-      : new Promise(resolve => resolve({ ...restImgFields }));
+      : new Promise(resolve => resolve({...restImgFields}));
   };
 
-  const doCreateCard = card => uploadImgFields(card).then((img) => {
-    if (card.id === 'temp') {
-      throw Error('error: temp card to create');
-    } else {
-      const timestamp = null; // firestore.FieldValue.serverTimestamp();
-      const newCard = extractCardFields({ ...card, img, timestamp });
-      console.log('newCard UPD', newCard);
+  const doCreateCard = card =>
+    uploadImgFields(card).then(img => {
+      if (card.id === 'temp') {
+        throw Error('error: temp card to create');
+      } else {
+        const timestamp = null; // firestore.FieldValue.serverTimestamp();
+        const newCard = extractCardFields({...card, img, timestamp});
 
-      return TICKLE_ENV_REF.collection('cards')
-        .doc(newCard.id)
-        .set(newCard);
-    }
-  });
+        return TICKLE_ENV_REF.collection('cards')
+          .doc(newCard.id)
+          .set(newCard);
+      }
+    });
 
-  const readCards = ({ authorId = null, playerId = null }) => {
-    const thumbnailPromise = (d) => {
+  const readCards = ({authorId = null, playerId = null}) => {
+    const thumbnailPromise = d => {
       if (!d.img) return new Promise(resolve => resolve(d));
 
       const thumbNailRef = storageRef.child(
@@ -135,24 +139,24 @@ const makeCardFuncs = ({
       );
 
       return thumbNailRef.getDownloadURL().then(
-        url => ({ ...d, img: { ...d.img, thumbnail: url } }),
-        (err) => {
-          const img = { ...d.img, thumbnail: null };
+        url => ({...d, img: {...d.img, thumbnail: url}}),
+        err => {
+          const img = {...d.img, thumbnail: null};
           console.log('No thumbnail error', err);
-          return { ...d, img };
+          return {...d, img};
         },
       );
     };
 
-    const challengePromise = (c) => {
+    const activityPromise = c => {
       if (playerId) {
-        return getOneChallengeSubmission({ cardId: c.id, playerId }).then(
-          challengeSubmission => ({ ...c, challengeSubmission }),
+        return getOneActivitySub({cardId: c.id, playerId}).then(
+          activitySubmission => ({...c, activitySubmission}),
         );
       }
-      return getAllChallengeSubmissions(c.id).then(allChallengeSubmissions => ({
+      return getAllActivitySubs(c.id).then(allChallengeSubmissions => ({
         ...c,
-        allChallengeSubmissions
+        allChallengeSubmissions,
       }));
     };
 
@@ -162,142 +166,173 @@ const makeCardFuncs = ({
 
     return refCards
       .get()
-      .then((querySnapshot) => {
+      .then(querySnapshot => {
         const tmpData = [];
-        querySnapshot.forEach((doc) => {
+        querySnapshot.forEach(doc => {
           tmpData.push(doc.data());
         });
         return tmpData;
       })
-      .then(data => Promise.all(data.map(e => thumbnailPromise(e).then(challengePromise))));
+      .then(data =>
+        Promise.all(data.map(e => thumbnailPromise(e).then(activityPromise))),
+      );
   };
 
   return {
-    doCreateCard, doUpdateCard: doCreateCard, doDeleteCard, readCards
+    doCreateCard,
+    doUpdateCard: doCreateCard,
+    doDeleteCard,
+    readCards,
   };
 };
 
+const makeCommentFuncs = ({TICKLE_ENV_REF}) => {
+  const getBasicUser = uid =>
+    firestore
+      .collection('users')
+      .doc(uid)
+      .get()
+      .then(doc => new Promise(resolve => resolve(doc.data())));
 
-const makeCommentFuncs = ({ TICKLE_ENV_REF }) => {
-  const getBasicUser = uid => firestore.collection('users')
-    .doc(uid)
-    .get()
-    .then(doc => new Promise(resolve => resolve(doc.data())));
+  const readComments = cardId =>
+    TICKLE_ENV_REF.collection('cards')
+      .doc(cardId)
+      .collection('comments')
+      .get()
+      .then(querySnapshot => {
+        const commentPromises = [];
+        querySnapshot.forEach(doc => {
+          const data = doc.data();
+          const {uid} = data;
+          commentPromises.push(
+            getBasicUser(uid).then(usr => ({
+              ...usr,
+              ...data,
+              date: data.timestamp.toDate(),
+            })),
+          );
+        });
 
-  const readComments = cardId => TICKLE_ENV_REF.collection('cards')
-    .doc(cardId)
-    .collection('comments')
-    .get()
-    .then((querySnapshot) => {
-      const commentPromises = [];
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        const { uid } = data;
-        commentPromises.push(getBasicUser(uid).then(usr => ({ ...usr, ...data, date: data.timestamp.toDate() })));
+        return Promise.all(commentPromises);
       });
 
-      return Promise.all(commentPromises);
-    });
+  const addComment = ({uid, cardId, text}) =>
+    TICKLE_ENV_REF.collection('cards')
+      .doc(cardId)
+      .collection('comments')
+      // TODO: change later will break in future firebase release
+      // TODO: change later
+      .add({uid, text, timestamp: Timestamp.fromDate(new Date())});
 
-  const addComment = ({ uid, cardId, text }) => TICKLE_ENV_REF.collection('cards')
-    .doc(cardId)
-    .collection('comments')
-  // TODO: change later will break in future firebase release
-  // TODO: change later
-    .add({ uid, text, timestamp: Timestamp.fromDate(new Date()) });
-
-  return { readComments, addComment };
+  return {readComments, addComment};
 };
 
-const makeUserFuncs = ({ ENV_STR, readCards }) => {
-  const onceGetUsers = () => firestore.collection('users')
-    .get()
-    .then((querySnapshot) => {
-      const data = [];
-      querySnapshot.forEach(doc => data.push(doc.data()));
+const makeUserFuncs = ({ENV_STR, readCards}) => {
+  const onceGetUsers = () =>
+    firestore
+      .collection('users')
+      .get()
+      .then(querySnapshot => {
+        const data = [];
+        querySnapshot.forEach(doc => data.push(doc.data()));
 
-      const dataPromises = data.map((d) => {
-        const thumbNailRef = storageRef.child(
-          `/images/usr/${thumbFileName(d.uid)}`,
-        );
+        const dataPromises = data.map(d => {
+          const thumbNailRef = storageRef.child(
+            `/images/usr/${thumbFileName(d.uid)}`,
+          );
           // return d;
-        return thumbNailRef.getDownloadURL().then(
-          url => ({ ...d, thumbnail: url }),
-          (err) => {
-            // TODO: check later
-            const img = { ...d, thumbnail: null };
-            return { ...d, ...img };
-          },
+          return thumbNailRef.getDownloadURL().then(
+            url => ({...d, thumbnail: url}),
+            err => {
+              // TODO: check later
+              const img = {...d, thumbnail: null};
+              return {...d, ...img};
+            },
+          );
+        });
+
+        return Promise.all(dataPromises).catch(error =>
+          console.log('error in reading users', error),
         );
       });
 
-      return Promise.all(dataPromises)
-        .catch(error => console.log('error in reading users', error));
-    });
+  const getUser = uid =>
+    firestore
+      .collection('users')
+      .doc(uid)
+      .get()
+      .then(doc => new Promise(resolve => resolve(doc.data())))
+      .then(usr => {
+        console.log('USR RESULT', usr);
+        if (!usr) {
+          return Promise.reject({
+            code: 'User has no access to this environment',
+            message: 'User has no access to this environment',
+          });
+        }
 
-
-  const getUser = uid => firestore.collection('users')
-    .doc(uid)
-    .get()
-    .then(doc => new Promise(resolve => resolve(doc.data())))
-    .then((usr) => {
-      console.log('USR RESULT', usr);
-      if (!usr) {
-        return Promise.reject({
-          code: 'User has no access to this environment',
-          message: 'User has no access to this environment'
-        });
-      }
-
-      return getUserEnvs(uid).then(userEnvs => ({ ...usr, userEnvs }));
-    });
+        return getUserEnvs(uid).then(userEnvs => ({...usr, userEnvs}));
+      });
   // .catch(err => console.log('err  getUser', err));
 
-  const getDetailedUserInfo = uid => getUser(uid)
-    .then(usr => readCards({ authorId: uid }).then(createdCards => ({
-      ...usr,
-      createdCards,
-      collectedCards: []
-    })))
-    .catch(err => console.log('err i getUser', err));
+  const getDetailedUserInfo = uid =>
+    getUser(uid)
+      .then(usr =>
+        readCards({authorId: uid}).then(createdCards => ({
+          ...usr,
+          createdCards,
+          collectedCards: [],
+        })),
+      )
+      .catch(err => console.log('err i getUser', err));
 
-  const getUserEnvs = uid => firestore.collection('users')
-    .doc(uid)
-    .collection('userEnvs')
-    .get()
-    .then((querySnapshot) => {
-      const data = [];
-      querySnapshot.forEach(doc => data.push(doc.data()));
+  const getUserEnvs = uid =>
+    firestore
+      .collection('users')
+      .doc(uid)
+      .collection('userEnvs')
+      .get()
+      .then(querySnapshot => {
+        const data = [];
+        querySnapshot.forEach(doc => data.push(doc.data()));
 
-      return new Promise(
-        resolve => resolve(data),
-        error => console.log('error in getUser, doc not existing', error),
+        return new Promise(
+          resolve => resolve(data),
+          error => console.log('error in getUser, doc not existing', error),
+        );
+      })
+      .catch(err => console.log('err  getUser'));
+
+  const addUserEnv = ({uid, env}) =>
+    firestore
+      .collection('users')
+      .doc(uid)
+      .collection('userEnvs')
+      .doc(env.id)
+      .set(env)
+      .then(() => env)
+      .catch(err => console.log('addUserEnv err', err));
+
+  const removeUserEnv = ({uid, envId}) =>
+    firestore
+      .collection('users')
+      .doc(uid)
+      .collection('userEnvs')
+      .doc(envId)
+      .delete()
+      .catch(err => console.log('addUserEnv err', err));
+
+  const doCreateUser = userProfile =>
+    firestore
+      .collection('users')
+      .doc(userProfile.uid)
+      .set(userProfile)
+      .then(() =>
+        addUserEnv({uid: userProfile.uid, env: {id: ENV_STR}}).then(env => ({
+          ...userProfile,
+          userEnvs: [env],
+        })),
       );
-    })
-    .catch(err => console.log('err  getUser'));
-
-  const addUserEnv = ({ uid, env }) => firestore.collection('users')
-    .doc(uid)
-    .collection('userEnvs')
-    .doc(env.id)
-    .set(env)
-    .then(() => env)
-    .catch(err => console.log('addUserEnv err', err));
-
-  const removeUserEnv = ({ uid, envId }) => firestore.collection('users')
-    .doc(uid)
-    .collection('userEnvs')
-    .doc(envId)
-    .delete()
-    .catch(err => console.log('addUserEnv err', err));
-
-  const doCreateUser = userProfile => firestore.collection('users')
-    .doc(userProfile.uid)
-    .set(userProfile)
-    .then(() => addUserEnv({ uid: userProfile.uid, env: { id: ENV_STR } })
-      .then(env => ({
-        ...userProfile, userEnvs: [env]
-      })));
   // TODO: catch and remove user when registration fails
 
   return {
@@ -307,86 +342,92 @@ const makeUserFuncs = ({ ENV_STR, readCards }) => {
     doUpdateUser: doCreateUser,
     onceGetUsers,
     addUserEnv,
-    removeUserEnv
+    removeUserEnv,
   };
 };
 
-const makeChallengFuncs = ({ TICKLE_ENV_REF }) => {
-  const getAllChallengeSubmissions = (cid) => {
+const makeChallengFuncs = ({TICKLE_ENV_REF}) => {
+  const getAllActivitySubs = cid => {
     const chSub = TICKLE_ENV_REF.collection('cards')
       .doc(cid)
-      .collection('challengeSubmissions');
+      .collection('activitySubmissions');
 
-    const challengeSubmissions = [];
-    return chSub.get().then((snapshot) => {
-      snapshot.forEach((item) => {
+    const activitySubmissions = [];
+    return chSub.get().then(snapshot => {
+      snapshot.forEach(item => {
         const d = item.data(); // will have 'todo_item.title' and 'todo_item.completed'
         // console.log('challengeSub', item);
-        challengeSubmissions.push({ ...d, cardId: cid, playerId: item.id });
+        activitySubmissions.push({...d, cardId: cid, playerId: item.id});
       });
-      return new Promise(resolve => resolve(challengeSubmissions));
+      return new Promise(resolve => resolve(activitySubmissions));
     });
   };
 
-  const getOneChallengeSubmission = ({ cardId, playerId }) => TICKLE_ENV_REF.collection('cards')
-    .doc(cardId)
-    .collection('challengeSubmissions')
-    .doc(playerId)
-    .get()
-    .then(doc => new Promise(resolve => resolve(doc.data() || null)));
+  const getOneActivitySub = ({cardId, playerId}) =>
+    TICKLE_ENV_REF.collection('cards')
+      .doc(cardId)
+      .collection('activitySubmissions')
+      .doc(playerId)
+      .get()
+      .then(doc => new Promise(resolve => resolve(doc.data() || null)));
 
-  const addChallengeSubmission = ({ cardId, playerId, ...challengeData }) => TICKLE_ENV_REF.collection('cards')
-    .doc(cardId)
-    .collection('challengeSubmissions')
-    .doc(playerId)
-    .set({
-      ...challengeData, date: new Date(), playerId, cardId
-    })
-    .catch((err) => {
-      throw new Error(
-        `error adding challengesubmission for ${playerId} ${err}`,
-      );
-      // Handle any error that occurred in any of the previous
-      // promises in the chain.
-    });
+  const addChallengeSubmission = ({cardId, playerId, ...challengeData}) =>
+    TICKLE_ENV_REF.collection('cards')
+      .doc(cardId)
+      .collection('activitySubmissions')
+      .doc(playerId)
+      .set({
+        ...challengeData,
+        date: new Date(),
+        playerId,
+        cardId,
+      })
+      .catch(err => {
+        throw new Error(
+          `error adding challengesubmission for ${playerId} ${err}`,
+        );
+        // Handle any error that occurred in any of the previous
+        // promises in the chain.
+      });
 
-  const removeChallengeSubmission = ({ cardId, playerId }) => TICKLE_ENV_REF.collection('cards')
-    .doc(cardId)
-    .collection('challengeSubmissions')
-    .doc(playerId)
-    .delete()
-    .catch((err) => {
-      throw new Error(
-        `error adding challengesubmission for ${playerId} ${cardId} ${err}`,
-      );
-    });
+  const removeChallengeSubmission = ({cardId, playerId}) =>
+    TICKLE_ENV_REF.collection('cards')
+      .doc(cardId)
+      .collection('activitySubmissions')
+      .doc(playerId)
+      .delete()
+      .catch(err => {
+        throw new Error(
+          `error adding challengesubmission for ${playerId} ${cardId} ${err}`,
+        );
+      });
 
   return {
-    getAllChallengeSubmissions,
-    getOneChallengeSubmission,
+    getAllActivitySubs,
+    getOneActivitySub,
     addChallengeSubmission,
-    removeChallengeSubmission
+    removeChallengeSubmission,
   };
 };
 
 export default function DB(ENV_STR) {
   const TICKLE_ENV_REF = firestore.collection(CARD_ENVS).doc(ENV_STR);
 
-  const challengeFuncs = makeChallengFuncs({ TICKLE_ENV_REF });
+  const challengeFuncs = makeChallengFuncs({TICKLE_ENV_REF});
   const cardFuncs = makeCardFuncs({
     TICKLE_ENV_REF,
     ENV_STR,
-    ...challengeFuncs
+    ...challengeFuncs,
   });
-  const userFuncs = makeUserFuncs({ TICKLE_ENV_REF, ENV_STR, ...cardFuncs });
-  const commentFuncs = makeCommentFuncs({ TICKLE_ENV_REF });
+  const userFuncs = makeUserFuncs({TICKLE_ENV_REF, ENV_STR, ...cardFuncs});
+  const commentFuncs = makeCommentFuncs({TICKLE_ENV_REF});
 
-  const addFileToEnv = ({ file, path, id }) => addFileToFirebaseStorage({ file, path: `${ENV_STR}/${path}`, id });
+  const addFileToEnv = ({file, path, id}) =>
+    addFileToFirebaseStorage({file, path: `${ENV_STR}/${path}`, id});
 
-
-  const removeFileFromEnv = ({ path, id }) => {
+  const removeFileFromEnv = ({path, id}) => {
     console.log('REMOVE FROM ENV, path', path, 'id', id);
-    return removeFromFirebaseStorage({ path: `${ENV_STR}/${path}`, id });
+    return removeFromFirebaseStorage({path: `${ENV_STR}/${path}`, id});
   };
 
   return {
@@ -395,6 +436,6 @@ export default function DB(ENV_STR) {
     ...userFuncs,
     ...commentFuncs,
     addFileToEnv,
-    removeFileFromEnv
+    removeFileFromEnv,
   };
 }

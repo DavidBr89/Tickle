@@ -35,7 +35,7 @@ class ReadCardFront extends Component {
   static defaultProps = {
     title: null,
     challenge: null,
-    challengeSubmission: null,
+    activitySubmission: null,
     // date: '28/04/2012 10:00',
     tags: null,
     img: null,
@@ -59,15 +59,15 @@ class ReadCardFront extends Component {
   closeModal = () => this.setState({modalVisible: false});
 
   btnText = () => {
-    const {challengeSubmission} = this.props;
+    const {activitySubmission} = this.props;
     const challengeSubmitted =
-      challengeSubmission !== null && challengeSubmission.completed;
+      activitySubmission !== null && activitySubmission.completed;
     const challengeStarted =
-      challengeSubmission !== null && !challengeSubmission.completed;
+      activitySubmission !== null && !activitySubmission.completed;
 
     // TODO: fix later
     const challengeCompleted =
-      challengeSubmission !== null && challengeSubmission.feedback;
+      activitySubmission !== null && activitySubmission.feedback;
 
     if (challengeCompleted) return 'See Results';
 
@@ -88,7 +88,7 @@ class ReadCardFront extends Component {
       description,
       media,
       img,
-      challengeSubmission,
+      activitySubmission,
       challengeComp,
     } = this.props;
 
@@ -131,7 +131,7 @@ class ReadCardFront extends Component {
       case 'Challenge':
         return React.cloneElement(challengeComp, {
           onClose: this.closeModal,
-          challengeSubmission,
+          activitySubmission,
         });
       default:
         return <div>error</div>;

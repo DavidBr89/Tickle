@@ -82,7 +82,7 @@ const CardViewable = ({
   uid,
   onFlip,
   onClose,
-  challengeSubmission,
+  activitySubmission,
   id,
   ...props
 }) => (
@@ -95,7 +95,7 @@ const CardViewable = ({
         onClose={onClose}
         challengeComp={
           <MediaChallenge
-            {...challengeSubmission}
+            {...activitySubmission}
             key={id}
             removeFromStorage={removeFromStorage}
             addToStorage={addToStorage}
@@ -118,11 +118,11 @@ const CardViewable = ({
   />
 );
 
-// props.challengeSubmission && props.challengeSubmission.feedback ? (
+// props.activitySubmission && props.activitySubmission.feedback ? (
 //   <ChallengeResult
 //     tags={props.tags}
-//     {...props.challengeSubmission}
-//     {...props.challengeSubmission.feedback}
+//     {...props.activitySubmission}
+//     {...props.activitySubmission.feedback}
 //   />
 // ) : (
 
@@ -155,8 +155,6 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const {authUser} = state;
   const {uid: playerId} = authUser;
   const {asyncSubmitChallenge} = dispatcherProps;
-
-  console.log('ownProps', ownProps);
 
   const {userEnv} = match.params;
 

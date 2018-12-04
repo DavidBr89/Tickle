@@ -67,8 +67,6 @@ const mapStateToProps = state => {
   //   d => d.uid === haaike
   // );
 
-  console.log('cardsWithSubmission', cardsWithSubmission);
-
   const createdCards = cards.filter(c => c.uid === selectedUserId);
 
   const cardSets = {

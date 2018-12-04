@@ -3,20 +3,20 @@ const isDefined = a => a !== null && a !== undefined;
 export const TEMP_ID = 'temp';
 
 export const isActivitySucceeded = c =>
-  isDefined(c.challengeSubmission) &&
-  c.challengeSubmission.feedback &&
-  c.challengeSubmission.feedback.accomplished;
+  isDefined(c.activitySubmission) &&
+  c.activitySubmission.feedback &&
+  c.activitySubmission.feedback.accomplished;
 
 export const isActivityStarted = c =>
-  isDefined(c.challengeSubmission) &&
-  c.challengeSubmission.completed &&
-  !c.challengeSubmission.feedback;
+  isDefined(c.activitySubmission) &&
+  c.activitySubmission.completed &&
+  !c.activitySubmission.feedback;
 
 // TODO: update later
 export const CARD_SEEN = 'CARD_SEEN';
 export const isCardSeen = (
   c = {
-    challengeSubmission: {
+    activitySubmission: {
       feedback: {accomplished: false},
       completed: false,
     },
@@ -28,8 +28,8 @@ export const isCardSeen = (
   isActivitySucceeded(c) ||
   c.seen === true;
 
-export const isChallengeOpen = ({challengeSubmission}) =>
-  !isDefined(challengeSubmission);
+export const isChallengeOpen = ({activitySubmission}) =>
+  !isDefined(activitySubmission);
 
 export const hasCardCreated = (c = {uid: '2332'}, uidTmp = '12345') =>
   c.uid === uidTmp;
@@ -84,7 +84,7 @@ export const initCard = {
   timestamp: {key: null, value: null},
   challenge: {key: null, value: null},
   points: {key: null, value: null},
-  challengeSubmission: null,
+  activitySubmission: null,
 };
 
 const extractValues = ({
@@ -96,7 +96,7 @@ const extractValues = ({
   // timestamp,
   challenge,
   points,
-  challengeSubmission,
+  activitySubmission,
 }) => ({
   timerange: timerange.value,
   title: title.value,
@@ -105,7 +105,7 @@ const extractValues = ({
   media: media.value,
   challenge: challenge.value,
   points: points.value,
-  challengeSubmission: challengeSubmission.value,
+  activitySubmission: activitySubmission.value,
 });
 
 // TODO: where is challenge submission?
@@ -122,7 +122,7 @@ export const extractCardFields = ({
   timestamp = defaultVal(),
   challenge = defaultVal(),
   points = defaultVal(),
-  challengeSubmission = null,
+  activitySubmission = null,
 }) =>
   // if (!Array.isArray(tags)) {
   //   throw new Error('tags is not an array');
@@ -147,7 +147,7 @@ export const extractCardFields = ({
     description,
     points,
     // allChallengeSubmissions,
-    challengeSubmission,
+    activitySubmission,
   });
 
 export const isFieldInitialized = ({card, attr}) => {
