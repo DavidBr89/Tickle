@@ -1,9 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-
-import idGenerate from 'Src/idGenerator';
-
 import uuidv1 from 'uuid/v1';
 
 class TextChallengeAuthor extends Component {
@@ -52,10 +49,10 @@ class TextChallengeAuthor extends Component {
 
     return (
       <div
-        className={`${className} w-full h-full`}
-        style={{width: '100%', height: '100%', ...styles}}>
-        <section className="mb-2">
-          <h2>Title</h2>
+        className={`${className} flex flex-col flex-grow w-full h-full`}
+        style={{...styles}}>
+        <section className="mb-4">
+          <h2 className="mb-1">Title</h2>
           <input
             className="form-control w-full"
             placeholder="Title"
@@ -64,7 +61,7 @@ class TextChallengeAuthor extends Component {
           />
         </section>
         <section>
-          <h2>Description</h2>
+          <h2 className="mb-1">Description</h2>
           <textarea
             className="form-control w-full"
             placeholder="Description"

@@ -18,7 +18,6 @@ import * as mapActions from 'Reducers/Map/actions';
 
 import UserMap from 'Components/DataView/Map/UserMap';
 
-import {intersection} from 'lodash';
 import {resizeCardWindow, userMove, changeViewport} from 'Reducers/Map/actions';
 
 import setify from 'Utils/setify';
@@ -36,23 +35,10 @@ import cardRoutes from 'Src/Routes/cardRoutes';
 import {shiftCenterMap} from 'Src/lib/geo';
 import {tagFilter} from 'Reducers/DataView/async_actions';
 import {fallbackTagValues} from 'Constants/cardFields';
+import isSubset from 'Src/lib/isSubset';
 import CardViewPage from './CardViewPage';
 import SelectUserEnv from './SelectUserEnv';
 
-// import mapViewReducer from './reducer';
-
-const lowercase = s => s.toLowerCase();
-const filterByTag = (tags, filterSet) =>
-  filterSet.length === 0 ||
-  intersection(tags.map(lowercase), filterSet.map(lowercase)).length ===
-    filterSet.length;
-
-// const applyFilter = challengeState => d => {
-//   if (challengeState === CHALLENGE_SUBMITTED) return isChallengeSubmitted(d);
-//   return !isChallengeSubmitted(d);
-// };
-
-// Container
 const mapStateToProps = state => {
   const {collectibleCards} = state.Cards;
 
@@ -129,7 +115,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const {params} = match;
   const {userEnv} = params;
 
-  const {changeMapViewport} = dispatcherProps;
+  const {changeMapViewport, tagFilter} = dispatcherProps;
 
   const {
     query: {selectedCardId, extended, flipped},
@@ -165,32 +151,22 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   };
 
   const filteredCards = collectibleCards
-    .filter(d => filterByTag(fallbackTagValues(d.tags), filterSet))
+    .filter(d => isSubset(fallbackTagValues(d.tags), filterSet))
     .map(c => {
-      // const visible = isInView(c.loc);
       const accessible = true; // visible;
-      // (visible && isInDistance(c.loc)) || (isCardSeen(c) && visible);
 
       return {...c, accessible};
     })
     .filter(d => d.accessible);
 
   const cardSets = setify(filteredCards);
+
   const selectedCard = filteredCards.find(d => d.id === selectedCardId) || null;
 
   const selectedTags =
-    selectedCard !== null
-      ? fallbackTagValues(selectedCard.tags)
-      : filterSet;
+    selectedCard !== null ? fallbackTagValues(selectedCard.tags) : filterSet;
 
-  console.log(
-    'selectedCard',
-    selectedCard,
-    'selectedTags',
-    selectedTags,
-    'filterSet',
-    filterSet,
-  );
+  const filterByTag = tag => tagFilter({filterSet, tag});
 
   return {
     ...state,
@@ -205,19 +181,10 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     selectedCard,
     userEnv,
     mapViewport,
+    filterByTag,
     ...ownProps,
   };
 };
-
-function updCardLoc({x, y}, mapViewport) {
-  const vp = new PerspectiveMercatorViewport(mapViewport);
-
-  const [longitude, latitude] = vp.unproject([
-    x, // || mapViewport.width / 2,
-    y, // || mapViewport.height / 2
-  ]);
-  return {latitude, longitude};
-}
 
 function PureMapViewPage({...props}) {
   return (

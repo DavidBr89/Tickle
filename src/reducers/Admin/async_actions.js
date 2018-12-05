@@ -4,8 +4,8 @@ import { uniqBy, flatten } from 'lodash';
 import {
   receiveUsers,
   getCards,
-  submitChallengeReview,
-  submitChallengeReviewSuccess
+  submitActivityReview,
+  submitActivityReviewSuccess
 } from './actions';
 
 import NearbyPlaces from '../places.json';
@@ -55,11 +55,11 @@ export function asyncSubmitChallengeReview(challengeSubmission) {
   const { cardId, playerId, ...challengeData } = challengeSubmission;
   console.log('challengeSubmission', { cardId, playerId, ...challengeData });
   return function(dispatch) {
-    dispatch(submitChallengeReview(challengeSubmission));
+    dispatch(submitActivityReview(challengeSubmission));
     console.log('submit challenge review', { cardId, playerId, challengeData });
     return db
       .addChallengeSubmission({ cardId, playerId, challengeData })
-      .then(() => dispatch(submitChallengeReviewSuccess()));
+      .then(() => dispatch(submitActivityReviewSuccess()));
     // .catch(err => {
     //   throw new Error(`error saving challenge submission ${err}`);
     // });

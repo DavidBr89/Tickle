@@ -117,12 +117,12 @@ class CardAuthorPage extends Component {
       dataView,
       filterSet,
       toggleAuthEnv,
-      tagColorScale,
+      filterByTag,
       cardSets,
       selectedTags,
       selectedCard,
       isSmartphone,
-      tagVocabularyCreated,
+      tagVocabulary,
       extCardId,
       children,
       selectTemplate,
@@ -139,21 +139,18 @@ class CardAuthorPage extends Component {
       <DefaultLayout
         className="relative overflow-hidden w-full h-full flex-col"
         menu={
-          <div className="flex-grow flex justify-end items-center">
+          <div className="flex-grow flex justify-between items-center">
             <button
               type="button"
-              className={`btn btn-white border-2 border-black btn-lg ${templateSelected &&
+              className={`btn btn-white ml-3 ${templateSelected &&
                 'btn-black'}`}
               onClick={selectTemplate}>
               New Card
             </button>
             <CardTagSearch
-              allTags={tagVocabularyCreated}
-              key={filterSet.join(',')}
-              onChange={filterCards}
-              onClick={addCardFilter}
-              data={filterSet}
-              height={height / 2 - 50}
+              tags={tagVocabulary}
+              filterSet={filterSet}
+              onClick={filterByTag}
             />
           </div>
         }>

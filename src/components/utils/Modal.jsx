@@ -118,7 +118,7 @@ export const ModalBody = ({
     <div
       className="flex justify-between items-center p-4 flex-no-shrink"
       style={{...style}}>
-      <h1 className="modal-title">{title}</h1>
+      <h1 className="modal-title capitalize">{title}</h1>
       <button className="btn" onClick={onClose}>
         <X />
       </button>

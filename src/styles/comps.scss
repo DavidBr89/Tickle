@@ -15,9 +15,19 @@
   @apply .flex .flex-col .mb-4
 }
 
-.tag-label {
-  @apply .py-2 .px-2 .bg-black .font-bold .text-white .flex .items-center .justify-center .uppercase;
+
+.tag-label-helper {
+  @apply .py-2 .px-2 .font-bold .text-white .flex .items-center .justify-center .uppercase;
 }
+
+.tag-label {
+  @apply .tag-label-helper .bg-black;
+}
+
+.tag-label-grey {
+  @apply .tag-label-helper .bg-grey;
+}
+
 
 .btn {
   @apply .shadow .flex .flex-col .items-center .justify-center .text-lg .font-bold .p-2 .cursor-pointer .border-2 .border-black;
@@ -68,7 +78,7 @@
 }
 
 .link {
-  @apply  .link .no-underline;
+  @apply  .link .no-underline .font-bold;
   transition: border 0.2s ease-in-out;
   border-bottom: 2px solid transparent;
 }

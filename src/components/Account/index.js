@@ -11,10 +11,6 @@ import {submitUserInfoToDB} from 'Reducers/Session/async_actions';
 import {uniq} from 'lodash';
 
 import {
-  // asyncUpdateCard,
-  // asyncCreateCard,
-  // asyncRemoveCard,
-  asyncSubmitChallenge,
   fetchCollectibleCards,
 } from 'Reducers/Cards/async_actions';
 

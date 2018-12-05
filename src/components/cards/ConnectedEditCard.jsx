@@ -83,7 +83,13 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const {mapViewport, width, height, authUser, tagVocabulary} = state;
   const {uid: authorId} = authUser;
 
-  const {match, location, history, id: cardId} = ownProps;
+  const {
+    match,
+    location,
+    history,
+    id: cardId,
+    tags: {value: tagValues},
+  } = ownProps;
 
   // TODO: BUILD IN check
   const {userEnv} = match.params;
@@ -117,6 +123,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const db = DB(userEnv);
 
   const filePath = `cards/${authorId}/${cardId}`;
+
   const removeFromStorage = fileId =>
     db.removeFileFromEnv({
       path: filePath,
@@ -126,6 +133,11 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     db.addFileToEnv({file, path: filePath, id});
   // const fetchComments = cardId ? () => db.readComments(cardId) : null;
   // const addComment = text => db.addComment({ uid: authorId, cardId, text });
+
+  const relatedCardsByTag =
+    tagValues !== null
+      ? tagVocabulary.filter(d => tagValues.includes(d.tagId))
+      : [];
 
   const backCardFuncs = makeBackCardFuncs({
     userEnv,
@@ -152,6 +164,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     removeFromStorage,
     ...backCardFuncs,
     ...ownProps,
+    relatedCardsByTag,
   };
 };
 
@@ -163,6 +176,7 @@ const EditCard = ({
   y,
   onClose,
   flipped,
+  // TODO: rename
   onChallengeClick,
   onCreate,
   template,

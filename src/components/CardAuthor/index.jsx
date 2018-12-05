@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {LinearInterpolator, FlyToInterpolator} from 'react-map-gl';
+import {FlyToInterpolator} from 'react-map-gl';
 
 import WebMercatorViewport from 'viewport-mercator-project';
 
@@ -16,19 +16,18 @@ import {bindActionCreators} from 'redux';
 import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
 
-import {intersection} from 'lodash';
-
 import * as mapActions from 'Reducers/Map/actions';
 
 import setify from 'Utils/setify'; // eslint-disable-line
 import {screenResize} from 'Reducers/Screen/actions';
 import * as cardActions from 'Reducers/Cards/actions';
 import * as asyncActions from 'Reducers/Cards/async_actions';
-import * as dataViewActions from 'Reducers/DataView/actions';
+import * as dataViewActions from 'Reducers/DataView/async_actions';
 // TODO: refactor these actions
 import * as routeActions from 'Reducers/DataView/async_actions';
 
 import cardRoutes from 'Src/Routes/cardRoutes';
+import isSubset from 'Src/lib/isSubset';
 
 import withAuthorization from 'Src/components/withAuthorization';
 import withAuthentication from 'Src/components/withAuthentication';
@@ -63,9 +62,7 @@ const mapStateToProps = state => {
   };
 
   const filteredCards = createdCards.filter(
-    d =>
-      filterSet.length === 0 ||
-      intersection(d.tags, filterSet).length === filterSet.length,
+    d => filterSet.length === 0 || isSubset(d.tags.value || [], filterSet),
   );
 
   const cards = [templateCard, ...filteredCards];
@@ -90,6 +87,7 @@ const mapDispatchToProps = dispatch =>
       ...cardActions,
       ...asyncActions,
       ...dataViewActions,
+
       ...routeActions,
       ...mapActions,
       screenResize,
@@ -102,7 +100,7 @@ const mapDispatchToProps = dispatch =>
 const mergeProps = (state, dispatcherProps, ownProps) => {
   const {cards, filterSet, mapSettings, templateCard, width, height} = state;
 
-  const {changeMapViewport} = dispatcherProps;
+  const {changeMapViewport, tagFilter} = dispatcherProps;
   const mapViewport = {...mapSettings, width, height};
 
   const {dataView, history, location, match, children} = ownProps;
@@ -146,6 +144,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const templateSelected = selectedCardId === TEMP_ID;
 
+  const filterByTag = tag => tagFilter({filterSet, tag});
+
   return {
     ...state,
     ...dispatcherProps,
@@ -161,6 +161,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     children,
     userEnv,
     mapViewport,
+    filterByTag,
   };
 };
 

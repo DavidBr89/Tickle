@@ -18,7 +18,7 @@ const constructPath = ({
   type,
   selectedCardId = null,
   extended = null,
-  flipped = null
+  flipped = null,
 }) => {
   const basePath = `/${userEnv}/${dataview}/${type}`;
   if (selectedCardId) {
@@ -42,45 +42,10 @@ const getBasePath = url => {
 };
 
 export function tagFilter({filterSet, tag}) {
+  console.log('filterSet', filterSet, 'tag', tag);
   return function(dispatch) {
     dispatch(selectCard(null));
     if (filterSet.includes(tag)) dispatch(removeCardFilter(tag));
     else dispatch(addCardFilter(tag));
   };
 }
-
-export const routeSelectCard = ({
-  match: {url},
-  history,
-  selectedCardId
-}) => dispatch => {
-  console.log('url', url);
-  const {params} = matchPath(url, {path});
-
-  history.push(constructPath({...params, selectedCardId})); //
-  // dispatch(selectCard(id));
-};
-
-export const routeExtendCard = ({
-  match: {url},
-  history,
-  extended
-}) => dispatch => {
-  const {params} = matchPath(url, {path});
-
-  history.push(
-    constructPath({...params, extended: extended ? 'extended' : null}),
-  );
-  // dispatch(extendSelectedCard(id));
-};
-
-export const routeLockedCard = ({path, history, id}) => dispatch => {
-  history.push(`${path}/${id}/locked`);
-  // dispatch(extendSelectedCard(id));
-};
-
-export const routeFlipCard = ({match: {url}, history}) => dispatch => {
-  const {params} = matchPath(url, {path});
-  history.push(constructPath({...params, flipped: !params.flipped}));
-  // dispatch(flipCard(!flipped));
-};

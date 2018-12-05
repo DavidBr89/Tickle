@@ -23,8 +23,8 @@ import {
   addComment,
   addCommentSuccess,
   addCommentError,
-  submitChallenge,
-  submitChallengeSuccess,
+  submitActivity,
+  submitActivitySuccess,
 } from './actions';
 
 import {selectCard, extendSelectedCard} from '../DataView/actions';
@@ -52,7 +52,7 @@ export function fetchAllCardsWithSubmissions({userEnv}) {
     dispatch(loadingCards(true));
     return db.readCards().then(data => {
       dispatch(loadingCards(false));
-      dispatch(receiveCreatedCards(data));
+      dispatch(receiveCreatedCards(data.map(extractCardFields)));
     });
   };
 }
@@ -65,7 +65,7 @@ export function fetchCreatedCards({userEnv, uid}) {
     return db.readCards({authorId: uid, playerId: null}).then(
       data => {
         dispatch(loadingCards(false));
-        dispatch(receiveCreatedCards(data));
+        dispatch(receiveCreatedCards(data.map(extractCardFields)));
       },
       err => console.log('fetch createdCards', err),
     );
@@ -134,14 +134,14 @@ export function asyncAddComment(
   };
 }
 
-export function asyncSubmitChallenge({userEnv, ...activitySubmission}) {
+export function asyncSubmitActivity({userEnv, ...activitySubmission}) {
   return function(dispatch) {
     const db = DB(userEnv);
 
-    dispatch(submitChallenge(activitySubmission));
+    dispatch(submitActivity(activitySubmission));
     return db
-      .addChallengeSubmission(activitySubmission)
-      .then(() => dispatch(submitChallengeSuccess()))
+      .addActivitySubmission(activitySubmission)
+      .then(() => dispatch(submitActivitySuccess()))
       .catch(err => {
         throw new Error('error saving challenge submission');
       });
@@ -153,9 +153,9 @@ export function removeChallengeSubmission({challengeSubmission, userEnv}) {
 
   return function(dispatch, getState) {
     const db = DB(userEnv); // createDbEnv(getState());
-    // dispatch(submitChallenge(challengeSubmission));
-    return db.removeChallengeSubmission({cardId, playerId});
-    //   .then(() => dispatch(submitChallengeSuccess()))
+    // dispatch(submitActivity(challengeSubmission));
+    return db.removeActivitySubmission({cardId, playerId});
+    //   .then(() => dispatch(submitActivitySuccess()))
     //   .catch(err => {
     //     throw new Error('error saving challenge submission');
     //   });

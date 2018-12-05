@@ -30,25 +30,12 @@ import DiaryPage from './DiaryPage';
 
 const mapStateToProps = state => {
   // const { cardSets } = state.Account;
-  const {tagColorScale, tagVocabulary, collectibleCards} = state.Cards;
-  const {selectedCardType} = state.Diary;
-  // console.log('cards');
-  //
-  // const tagColorScale = makeTagColorScale(cardSets);
-  //
-  //
+  const {tagVocabulary, collectibleCards} = state.Cards;
   const cards = collectibleCards
     .map(d => ({...d, seen: true}))
-    // .filter(challengeTypeMap[selectedCardType]);
 
   const numSeenCards = cards.filter(c => c.seen).length;
   const numCollectibleCards = collectibleCards.length;
-
-  //   .sort((a, b) => {
-  //   if (isSelectedCardType(a)) return -1;
-  //   if (isSelectedCardType(b)) return 1;
-  //   return 0;
-  // });
 
   const userTags = uniq(
     collectibleCards.reduce(
@@ -60,7 +47,6 @@ const mapStateToProps = state => {
   return {
     ...state.Session,
     tagVocabulary,
-    selectedCardType,
     numSeenCards,
     numCollectibleCards,
     cards,

@@ -130,17 +130,18 @@ export function addCommentError(options) {
 }
 
 export const SUBMIT_CHALLENGE = 'SUBMIT_CHALLENGE';
-export function submitChallenge(options) {
+export function submitActivity(options) {
   return { type: SUBMIT_CHALLENGE, options };
 }
 
 export const SUBMIT_CHALLENGE_SUCCESS = 'SUBMIT_CHALLENGE_SUCCESS';
-export function submitChallengeSuccess(options) {
+export function submitActivitySuccess
+(options) {
   return { type: SUBMIT_CHALLENGE_SUCCESS, options };
 }
 
 export const SUBMIT_CHALLENGE_FEEDBACK = 'SUBMIT_CHALLENGE_FEEDBACK';
-export function submitChallengeFeedback(options) {
+export function submitActivityFeedback(options) {
   return { type: SUBMIT_CHALLENGE_FEEDBACK, options };
 }
 

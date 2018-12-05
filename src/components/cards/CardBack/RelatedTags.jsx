@@ -35,54 +35,60 @@ const CardsModal = ({
   </BlackModal>
 );
 
-const RelatedTags = withRouter(
-  ({history, location, collectibleCards, tags, tagVocabulary = []}) => {
-    const [selectedTagId, setSelectedTagId] = useState(null);
+const RelatedTags = ({
+  history,
+  location,
+  collectibleCards,
+  tags,
+  tagVocabulary = [],
+}) => {
+  const [selectedTagId, setSelectedTagId] = useState(null);
 
-    console.log('selectedTagId', selectedTagId);
-    const {
-      routing: {routeSelectCard, routeExtendCard},
-    } = cardRoutes({history, location});
+  const {
+    routing: {routeSelectCard, routeExtendCard},
+  } = cardRoutes({history, location});
 
-    const modalVisible = selectedTagId !== null;
-    const tagObj = tagVocabulary.find(d => d.tagId === selectedTagId) || null;
+  const modalVisible = selectedTagId !== null;
+  const tagObj = tagVocabulary.find(d => d.tagId === selectedTagId) || null;
 
-    return (
-      <div className="m-2 flex-grow flex flex-col">
-        <div className="flex flex-no-shrink mb-2">
-          <h2 className="tag-label">Related Cards</h2>
-        </div>
-        <div className="flex-grow" style={gridStyle}>
-          {tagVocabulary.map(d => (
+  console.log('tags', tags);
+
+  return (
+    <div className="m-2 flex-grow flex flex-col">
+      <div className="flex flex-no-shrink mb-2">
+        <h2 className="tag-label">Related Cards</h2>
+      </div>
+      <div className="flex-grow" style={gridStyle}>
+        {tags &&
+          tags.map(d => (
             <PreviewCardStack
               id={d.tagId}
               onClick={() => {
-                console.log('d.tagId', d.tagId);
                 setSelectedTagId(d.tagId);
               }}
             />
           ))}
-        </div>
-        <CardsModal
-          key="cardsModal"
-          title="Related Cards"
-          onClose={() => setSelectedTagId(null)}
-          visible={modalVisible}>
-          {tagObj &&
-            tagObj.values.map(d => (
-              <PreviewCard
-                title={d.title.value}
-                onClick={() => {
-                  setSelectedTagId(null);
-                  routeSelectCard(d.id);
-                  // onSelectCard(d.id);
-                }}
-              />
-            ))}
-        </CardsModal>
       </div>
-    );
-  },
-);
+      <CardsModal
+        key="cardsModal"
+        title="Related Cards"
+        onClose={() => setSelectedTagId(null)}
+        visible={modalVisible}>
+        {tagObj &&
+          tagObj.values.map(d => (
+            <PreviewCard
+              title={d.title.value}
+              onClick={() => {
+                setSelectedTagId(null);
+                routeSelectCard(d.id);
+                // onSelectCard(d.id);
+              }}
+            />
+          ))}
+      </CardsModal>
+    </div>
+  );
+};
 
+const RelatedTagsWithRouter = withRouter(RelatedTags);
 export default RelatedTags;

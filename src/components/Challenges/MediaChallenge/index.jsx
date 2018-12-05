@@ -64,21 +64,23 @@ import {BlackModal, ModalBody} from 'Utils/Modal';
 //   }
 // }
 
-class PureMediaChallenge extends Component {
+class MediaChallenge extends Component {
   static propTypes = {
     className: PropTypes.string,
     description: PropTypes.string,
     styles: PropTypes.object,
-    stylesheet: PropTypes.object,
-    challengeSubmission: PropTypes.oneOf([PropTypes.object, null]),
+    submission: PropTypes.oneOf([PropTypes.object, null]),
     bookmarkable: PropTypes.boolean,
     isSmartphone: PropTypes.boolean,
   };
 
   static defaultProps = {
     className: '',
-    description: 'placeholder challenge',
-    challengeSubmission: null,
+    activity: {
+      description: 'placeholder challenge',
+      title: null,
+    },
+    activitySubmission: null,
     media: [],
     response: null,
   };
@@ -88,18 +90,16 @@ class PureMediaChallenge extends Component {
     response: null,
     completed: false,
     mediaModalVisible: false,
-    ...this.props,
+    ...this.props.submission,
   };
 
   textAreaTimeoutId = null;
 
   render() {
     const {
-      description,
-      addChallengeSubmission,
       onClose,
       styles,
-      title,
+      activity: {title, description},
       onSubmit,
       addToStorage,
       removeFromStorage,
@@ -108,14 +108,14 @@ class PureMediaChallenge extends Component {
 
     const {response, mediaModalVisible} = this.state;
 
-    // const challengeStarted = challengeSubmission !== null;
+    // const challengeStarted = activitySubmission !== null;
     // const challengeSubmitted = completed;
     // const challengeInvalid = media.length === 0 && response === null;
 
     return (
       <ModalBody
         onClose={onClose}
-        title="Challenge"
+        title={title || 'Challenge'}
         footer={
           <button
             type="button"
@@ -182,9 +182,7 @@ class PureMediaChallenge extends Component {
 
 const authCondition = authUser => authUser !== null;
 
-const MediaChallenge = compose(
+export default compose(
   withAuthorization(authCondition),
   withRouter,
-)(PureMediaChallenge);
-
-export default MediaChallenge;
+)(MediaChallenge);

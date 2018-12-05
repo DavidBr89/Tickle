@@ -34,23 +34,23 @@ export const isChallengeOpen = ({activitySubmission}) =>
 export const hasCardCreated = (c = {uid: '2332'}, uidTmp = '12345') =>
   c.uid === uidTmp;
 
-export const NO_CHALLENGE_FILTER = 'NO_CHALLENGE_FILTER';
+export const NO_ACTIVITY_FILTER = 'NO_ACTIVITY_FILTER';
 export const CHALLENGE_STARTED = 'CHALLENGE_STARTED';
-export const CHALLENGE_OPEN = 'CHALLENGE_OPEN';
+export const ACTIVITY_OPEN = 'ACTIVITY_OPEN';
 
-export const CHALLENGE_NOT_STARTED = 'CHALLENGE_NOT_STARTED';
-export const CHALLENGE_SUBMITTED = 'CHALLENGE_SUBMITTED';
+export const ACTIVITY_NOT_STARTED = 'ACTIVITY_NOT_STARTED';
+export const ACTIVITY_SUBMITTED = 'ACTIVITY_SUBMITTED';
 export const CHALLENGE_NOT_SUBMITTED = 'CHALLENGE_NOT_SUBMITTED';
-export const CHALLENGE_SUCCEEDED = 'CHALLENGE_SUCCEEDED';
+export const ACTIVITY_SUCCEEDED = 'ACTIVITY_SUCCEEDED';
 export const CARD_CREATED = 'CARD_CREATED';
 
-export const activityTypeMap = (() => {
+export const activityFilterMap = (() => {
   const obj = {
     [CHALLENGE_STARTED]: isActivityStarted,
-    [CHALLENGE_SUBMITTED]: isActivityStarted,
-    [CHALLENGE_SUCCEEDED]: isActivitySucceeded,
-    [CHALLENGE_OPEN]: isChallengeOpen,
-    [NO_CHALLENGE_FILTER]: () => true,
+    [ACTIVITY_SUBMITTED]: isActivityStarted,
+    [ACTIVITY_SUCCEEDED]: isActivitySucceeded,
+    [ACTIVITY_OPEN]: isChallengeOpen,
+    [NO_ACTIVITY_FILTER]: () => true,
     [CARD_CREATED]: hasCardCreated,
     [CARD_SEEN]: isCardSeen,
   };
@@ -62,7 +62,7 @@ export const TAGS = 'tags';
 export const DESCRIPTION = 'description';
 export const MEDIA = 'media';
 export const TIMERANGE = 'timerange';
-export const ACTIVTY = 'challenge';
+export const ACTIVITY = 'activity';
 // export const TIMESTAMP = 'timestamp';
 
 const defaultVal = () => ({key: null, value: null});
@@ -82,7 +82,7 @@ export const initCard = {
   description: {key: null, value: null},
   media: {key: null, value: null},
   timestamp: {key: null, value: null},
-  challenge: {key: null, value: null},
+  activity: {key: null, value: null},
   points: {key: null, value: null},
   activitySubmission: null,
 };
@@ -94,7 +94,7 @@ const extractValues = ({
   description,
   media,
   // timestamp,
-  challenge,
+  activity,
   points,
   activitySubmission,
 }) => ({
@@ -103,12 +103,12 @@ const extractValues = ({
   tags: tags.value,
   description: description.value,
   media: media.value,
-  challenge: challenge.value,
+  activity: activity.value,
   points: points.value,
   activitySubmission: activitySubmission.value,
 });
 
-// TODO: where is challenge submission?
+// TODO: where is activity submission?
 export const extractCardFields = ({
   id = 'string',
   uid = 'string',
@@ -120,7 +120,7 @@ export const extractCardFields = ({
   description = defaultVal(),
   media = defaultVal(),
   timestamp = defaultVal(),
-  challenge = defaultVal(),
+  activity = defaultVal(),
   points = defaultVal(),
   activitySubmission = null,
 }) =>
@@ -143,7 +143,7 @@ export const extractCardFields = ({
     tags,
     media,
     title,
-    challenge,
+    activity,
     description,
     points,
     // allChallengeSubmissions,

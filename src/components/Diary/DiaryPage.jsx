@@ -10,13 +10,16 @@ import {BlackModal} from 'Utils/Modal';
 import DefaultLayout from 'Components/DefaultLayout';
 // import BookWidget from 'Components/BookWidgets';
 
+import SlideMenu from 'Components/utils/SlideMenu';
+
 import {
-  CHALLENGE_STARTED,
-  CHALLENGE_SUBMITTED,
-  CHALLENGE_SUCCEEDED,
-  NO_CARD_FILTER,
-  // challengeTypeMap
+  ACTIVITY_STARTED,
+  ACTIVITY_SUBMITTED,
+  ACTIVITY_SUCCEEDED,
+  NO_ACTIVITY_FILTER,
+  activityFilterMap,
 } from 'Constants/cardFields';
+import isSubset from 'Src/lib/isSubset';
 // import TabMenu from './TabMenu';
 
 // import './layout.scss';
@@ -47,56 +50,15 @@ const INITIAL_GRID_STATE = {
 
 const cardTypeText = cardType => {
   switch (cardType) {
-    case CHALLENGE_STARTED:
+    case ACTIVITY_STARTED:
       return 'started';
-    case CHALLENGE_SUBMITTED:
+    case ACTIVITY_SUBMITTED:
       return 'submitted';
-    case CHALLENGE_SUCCEEDED:
+    case ACTIVITY_SUCCEEDED:
       return 'collected';
-    case NO_CARD_FILTER:
+    case NO_ACTIVITY_FILTER:
       return 'discovered';
   }
-};
-
-const CardMenu = ({
-  className,
-  selectedClassName,
-  optionClassName,
-  style,
-  onChange,
-  values = [],
-  children,
-  selectedId,
-  onSelectCardType,
-  tags,
-}) => {
-  const [visible, setVisible] = useState(false);
-
-  return (
-    <div className={`${className} z-10 relative`}>
-      <div className="flex-grow flex justify-end cursor-pointer">
-        <div
-          tabIndex="-1"
-          onBlur={() => setTimeout(() => setVisible(false), 100)}
-          onClick={() => setVisible(!visible)}
-          className="flex justify-center mr-2"
-          style={{width: 30, height: 30}}>
-          <img src={menuIconSrc} alt="nav" />
-        </div>
-      </div>
-      <div
-        className="mt-2 absolute w-full"
-        style={{
-          right: visible ? 0 : '-100vw',
-          maxWidth: 250,
-          transition: 'right 200ms',
-        }}>
-        <div className="ml-2 p-2 border-2 border-black shadow bg-white">
-          {children}
-        </div>
-      </div>
-    </div>
-  );
 };
 
 const MyDiary = props => {
@@ -116,9 +78,27 @@ const MyDiary = props => {
     closeCard,
   } = props;
 
-  const [cardType, setCardType] = useState(NO_CARD_FILTER);
+  const [cardType, setCardType] = useState(NO_ACTIVITY_FILTER);
+  const onSetCardType = type => () => setCardType(type);
 
   const [selectedTags, setSelectedTags] = useState([]);
+  const filterByTag = key => {
+    setSelectedTags(prevTags => {
+      return prevTags.includes(key)
+        ? prevTags.filter(d => d !== key)
+        : [...prevTags, key];
+    });
+  };
+
+  const filterFn = activityFilterMap[cardType];
+  const filteredCards = cards.filter(filterFn).filter(d => {
+    console.log('d', d);
+    const tags = d.tags.value !== null ? d.tags.value : [];
+    console.log('tags', tags, 'selectedTags', selectedTags);
+    const s = isSubset(tags, selectedTags);
+    console.log('subset', s);
+    return s;
+  });
 
   const h = 10;
   // const w = 4;
@@ -138,31 +118,36 @@ const MyDiary = props => {
   return (
     <DefaultLayout
       menu={
-        <CardMenu className="flex-grow">
+        <SlideMenu className="flex-grow">
           <section className="border-b-2 border-black">
             <ul className="reset-list text-2xl pb-2">
-              <li className="">All Cards</li>
-              <li className="">Started Cards</li>
-              <li className="">Submitted Cards</li>
-              <li className="">Collected Cards</li>
+              <li className="" onClick={onSetCardType(NO_ACTIVITY_FILTER)}>
+                All Cards
+              </li>
+              <li className="" onClick={onSetCardType(ACTIVITY_STARTED)}>
+                Started Cards
+              </li>
+              <li className="" onClick={onSetCardType(ACTIVITY_SUBMITTED)}>
+                Submitted Cards
+              </li>
+              <li className="" onClick={onSetCardType(ACTIVITY_SUCCEEDED)}>
+                Collected Cards
+              </li>
             </ul>
           </section>
           <div className="mt-3 flex flex-wrap">
             {tags.map(d => (
               <div
                 className="cursor-pointer tag-label m-1"
-                onClick={() => {
-                  console.log('click');
-                  setSelectedTags(prevTags => [...prevTags, d.key]);
-                }}>
+                onClick={() => filterByTag(d.key)}>
                 {d.key}
               </div>
             ))}
           </div>
-        </CardMenu>
+        </SlideMenu>
       }>
       <BlackModal visible={cardExtended !== null}>
-        {selectedCardId && (
+        {selectedCard && (
           <ConnectedCard {...selectedCard} onClose={closeCard} />
         )}
       </BlackModal>
@@ -177,7 +162,7 @@ const MyDiary = props => {
             </section>
             <section className="">
               <div className="flex-grow " style={gridStyle}>
-                {cards.map(d => (
+                {filteredCards.map(d => (
                   <PreviewCard
                     onClick={() => selectCard(d.id)}
                     title={d.title.value}

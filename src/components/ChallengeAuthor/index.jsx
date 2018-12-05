@@ -3,189 +3,98 @@ import PropTypes from 'prop-types';
 
 import {ModalBody} from 'Utils/Modal';
 import TextChallengeAuthor from './TextChallengeAuthor';
-
-// import LearningObject from './LearningObject';
-
-// class Nav extends React.Component {
+//
+// class ChallengeAuthor extends React.Component {
 //   static propTypes = {
-//     children: PropTypes.oneOf([PropTypes.func, PropTypes.node]),
+//     style: PropTypes.object,
 //     className: PropTypes.string,
-//     data: PropTypes.array,
-//     preSelected: PropTypes.string,
+//     uiColor: PropTypes.string,
 //     onChange: PropTypes.func,
-//     uiColor: PropTypes.string
+//     reset: PropTypes.bool,
+//     defaultChallenge: PropTypes.oneOf([PropTypes.object, null]),
 //   };
 //
 //   static defaultProps = {
+//     style: {},
 //     className: '',
-//     data: ['1', '2', '3'],
 //     uiColor: 'black',
-//     children: d => d,
-//     preSelected: 'PhotoUpload',
-//     onChange: d => d
+//     onChange: d => d,
+//     reset: false,
+//     defaultChallenge: null,
+//     challengeTypes: ['Photo Upload', 'Learning Object', 'Mini Game'],
 //   };
 //
-//   state = { selected: this.props.preSelected };
+//   // static getDerivedStateFromProps(nextProps) {
+//   //   return {
+//   //     challengeMap: {
+//   //       PhotoUpload: <PhotoChallengeAuthor {...nextProps} />,
+//   //       LearningObject: <TestComp {...nextProps} />,
+//   //       MiniGame: <PhotoChallengeAuthor {...nextProps} />
+//   //     }
+//   //   };
+//   // }
 //
-//   componentDidUpdate(prevProps, prevState) {
-//     const { selected } = this.state;
-//     if (selected !== prevState.selected) {
-//       this.props.onChange(selected);
-//     }
-//   }
+//   // constructor(props) {
+//   //   super(props);
+//   //
+//   state = {
+//     selectedKey: 'PhotoUpload',
+//   };
+//   // }
+//
+//   // TODO: remove
+//   challengeMap = {
+//     PhotoUpload: <PhotoChallengeAuthor {...this.props} />,
+//     MiniGame: <PhotoChallengeAuthor {...this.props} />,
+//   };
 //
 //   // shouldComponentUpdate(nextProps, nextState) {
-//   //   return true;
+//   //   return (
+//   //     this.state.selectedKey !== nextState.selectedKey || nextProps.uiColor
+//   //   );
+//   // }
+//
+//   // componentWillReceiveProps(nextProps) {
+//   //   this.setState({ challengeTypes });
 //   // }
 //
 //   render() {
-//     const { data, children, uiColor } = this.props;
-//     const { selected } = this.state;
-//
-//     const btnStyle = (sel, color) => ({
-//       background: sel ? color : null,
-//       display: 'inline-flex',
-//       color: sel ? 'white' : null,
-//       width: '30%',
-//       overflow: 'hidden'
-//       // textOverflow: 'ellipsis'
-//     });
-//
-//     const updState = sel => () => this.setState({ selected: sel });
+//     const {className, style} = this.props;
+//     const {selectedKey} = this.state;
+//     const challengeKeys = Object.keys(this.challengeMap);
 //
 //     return (
-//       <div style={{ width: '100%' }}>
-//         <div
-//           className="mb-3 nav"
-//           style={{
-//             display: 'flex',
-//             justifyContent: 'space-between',
-//             flexWrap: 'no-wrap'
-//           }}
-//           role="tablist"
-//         >
-//           {data.map(key => (
-//             <button
-//               className="btn"
-//               type="button"
-//               onClick={updState(key)}
-//               style={btnStyle(selected, uiColor)}
-//               id={key}
-//             >
+//       <div
+//         className={className}
+//         style={{
+//           width: '100%',
+//           height: '100%',
+//           minHeight: 300,
+//           ...style,
+//         }}>
+//         <div style={{display: 'flex', flexWrap: 'wrap'}}>
+//           <div
+//             className="p-2"
+//             style={{
+//               // width: selected === t.name ? '100%' : '20vh',
+//               width: '100%',
+//               // height: '100%',
+//               maxHeight: 600,
+//               // minHeight: 400
+//             }}>
+//             {challengeKeys.map(key => (
 //               <div
-//                 style={{
-//                   // TODO: does not work
-//                   textOverflow: 'ellipsis'
-//                 }}
-//               >
-//                 {key}
+//                 className="w-100 p-2"
+//                 style={{display: selectedKey !== key && 'none'}}>
+//                 {this.challengeMap.PhotoUpload}
 //               </div>
-//             </button>
-//           ))}
-//         </div>
-//         <div className="tab-content">
-//           <div className="w-100 h-100" role="tabpanel">
-//             {children instanceof Function
-//               ? children(data.find(key => key === selected))
-//               : children}
+//             ))}
 //           </div>
 //         </div>
 //       </div>
 //     );
 //   }
 // }
-//
-class ChallengeAuthor extends React.Component {
-  static propTypes = {
-    style: PropTypes.object,
-    className: PropTypes.string,
-    uiColor: PropTypes.string,
-    onChange: PropTypes.func,
-    reset: PropTypes.bool,
-    defaultChallenge: PropTypes.oneOf([PropTypes.object, null]),
-  };
-
-  static defaultProps = {
-    style: {},
-    className: '',
-    uiColor: 'black',
-    onChange: d => d,
-    reset: false,
-    defaultChallenge: null,
-    challengeTypes: ['Photo Upload', 'Learning Object', 'Mini Game'],
-  };
-
-  // static getDerivedStateFromProps(nextProps) {
-  //   return {
-  //     challengeMap: {
-  //       PhotoUpload: <PhotoChallengeAuthor {...nextProps} />,
-  //       LearningObject: <TestComp {...nextProps} />,
-  //       MiniGame: <PhotoChallengeAuthor {...nextProps} />
-  //     }
-  //   };
-  // }
-
-  // constructor(props) {
-  //   super(props);
-  //
-  state = {
-    selectedKey: 'PhotoUpload',
-  };
-  // }
-
-  // TODO: remove
-  challengeMap = {
-    PhotoUpload: <PhotoChallengeAuthor {...this.props} />,
-    MiniGame: <PhotoChallengeAuthor {...this.props} />,
-  };
-
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   return (
-  //     this.state.selectedKey !== nextState.selectedKey || nextProps.uiColor
-  //   );
-  // }
-
-  // componentWillReceiveProps(nextProps) {
-  //   this.setState({ challengeTypes });
-  // }
-
-  render() {
-    const {className, style} = this.props;
-    const {selectedKey} = this.state;
-    const challengeKeys = Object.keys(this.challengeMap);
-
-    return (
-      <div
-        className={className}
-        style={{
-          width: '100%',
-          height: '100%',
-          minHeight: 300,
-          ...style,
-        }}>
-        <div style={{display: 'flex', flexWrap: 'wrap'}}>
-          <div
-            className="p-2"
-            style={{
-              // width: selected === t.name ? '100%' : '20vh',
-              width: '100%',
-              // height: '100%',
-              maxHeight: 600,
-              // minHeight: 400
-            }}>
-            {challengeKeys.map(key => (
-              <div
-                className="w-100 p-2"
-                style={{display: selectedKey !== key && 'none'}}>
-                {this.challengeMap.PhotoUpload}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-}
 
 const FooterBtn = ({onClick, children, disabled, className, style = {}}) => (
   <button
@@ -197,7 +106,7 @@ const FooterBtn = ({onClick, children, disabled, className, style = {}}) => (
   </button>
 );
 
-class ChallengeAuthorModalBody extends React.Component {
+class ChallengeAuthor extends React.Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
@@ -218,23 +127,24 @@ class ChallengeAuthorModalBody extends React.Component {
     super(props);
 
     const {
-      challenge: {value: challengeVal},
+      activity: {value: activityVal},
     } = props;
 
     this.state = {
-      challenge: {id: null, img: {url: null}, ...challengeVal},
-      added: challengeVal !== null,
+      activity: {id: null, img: {url: null}, ...activityVal},
+      added: activityVal !== null,
     };
   }
 
   render() {
-    const {onClose, title, onChange} = this.props;
-    const {challenge, added} = this.state;
-    // const btnClass = `btn ${challenge === null && 'disabled'}`;
+    const {onClose, onChange} = this.props;
+    const {activity, added} = this.state;
+    const {title} = activity;
+    // const btnClass = `btn ${activity === null && 'disabled'}`;
 
-    const btnDisabled = challenge.description === null;
+    const btnDisabled = activity.description === null;
     // TODO
-    // challenge.img.url === null;
+    // activity.img.url === null;
 
     return (
       <ModalBody
@@ -248,7 +158,7 @@ class ChallengeAuthorModalBody extends React.Component {
             onClick={() => {
               if (added) onChange(null);
               else {
-                onChange(challenge);
+                onChange(activity);
               }
             }}>
             <div className="m-3">
@@ -257,10 +167,10 @@ class ChallengeAuthorModalBody extends React.Component {
           </button>
         }>
         <TextChallengeAuthor
-          {...challenge}
+          {...activity}
           onChange={ch => {
             this.setState({
-              challenge: {...ch},
+              activity: {...ch},
               added: false,
             });
           }}
@@ -270,4 +180,4 @@ class ChallengeAuthorModalBody extends React.Component {
   }
 }
 
-export default ChallengeAuthorModalBody;
+export default ChallengeAuthor;

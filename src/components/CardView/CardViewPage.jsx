@@ -106,6 +106,7 @@ class CardViewPage extends Component {
       concealCardStack,
       cardStackBottom,
       filterSet,
+      filterByTag
     } = this.props;
 
     // const cardStackWidth = width;
@@ -123,12 +124,9 @@ class CardViewPage extends Component {
               Hide
             </button>
             <CardTagSearch
-              allTags={tagVocabulary}
-              key={filterSet.join(',')}
-              onChange={filterCards}
-              onClick={addCardFilter}
-              data={filterSet}
-              height={height / 2 - 50}
+              tags={tagVocabulary}
+              filterSet={filterSet}
+              onClick={filterByTag}
             />
           </div>
         }>

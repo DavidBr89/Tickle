@@ -6,13 +6,12 @@ import {withRouter} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
-import {Card} from './index';
-
-import {asyncSubmitChallenge} from 'Reducers/Cards/async_actions';
+import {asyncSubmitActivity} from 'Reducers/Cards/async_actions';
 
 import * as dataViewActions from 'Reducers/DataView/actions';
 import * as routeActions from 'Reducers/DataView/async_actions';
 import MediaChallenge from 'Components/Challenges/MediaChallenge';
+import {Card} from './index';
 import ReadCardFront from './CardFront/ReadCardFront';
 
 // import { BigButton } from './layout';
@@ -22,7 +21,7 @@ const CardViewable = ({
   smallScreen,
   closeCard,
   tagColorScale,
-  onSubmitChallenge,
+  onSubmitActivity,
   isSmartphone,
   flipped,
   android,
@@ -45,17 +44,15 @@ const CardViewable = ({
     {...props}
     challengeComp={
       <MediaChallenge
-        {...props.challenge}
-        bookmarkable
-        removable
+        {...props.activity}
         title="Challenge"
         isSmartphone={isSmartphone}
         key={props.id}
         challengeSubmission={props.challengeSubmission}
         onUpdate={newChallengeSub => {
-          onSubmitChallenge({
+          onSubmitActivity({
             cardId: props.id,
-            ...newChallengeSub
+            ...newChallengeSub,
           });
         }}
       />
@@ -65,7 +62,7 @@ const CardViewable = ({
 
 const mapStateToProps = state => ({
   ...state.Screen,
-  ...state.Session
+  ...state.Session,
 });
 
 const mapDispatchToProps = dispatch =>
@@ -73,8 +70,8 @@ const mapDispatchToProps = dispatch =>
     {
       // dragCard,
       ...dataViewActions,
-      asyncSubmitChallenge,
-      ...routeActions
+      asyncSubmitActivity,
+      ...routeActions,
     },
     dispatch,
   );
@@ -85,19 +82,15 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const {uid} = authUser;
   const {path} = match;
   const {flipped} = match.params;
-  const {
-    routeExtendCard,
-    routeFlipCard,
-    asyncSubmitChallenge
-  } = dispatcherProps;
+  const {routeExtendCard, routeFlipCard, asyncSubmitActivity} = dispatcherProps;
   // TODO replace by regex
 
   const closeCard = () => {
     routeExtendCard({path, history, id, extended: false});
   };
 
-  const onSubmitChallenge = challengeSubmission => {
-    asyncSubmitChallenge({playerId: uid, ...challengeSubmission});
+  const onSubmitActivity = challengeSubmission => {
+    asyncSubmitActivity({playerId: uid, ...challengeSubmission});
   };
 
   const flipHandler = () => {
@@ -108,11 +101,11 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     ...state,
     ...dispatcherProps,
     ...ownProps,
-    onSubmitChallenge,
+    onSubmitActivity,
     closeCard,
     flipHandler,
     // TODO refactor
-    frontView: !flipped
+    frontView: !flipped,
   };
 };
 

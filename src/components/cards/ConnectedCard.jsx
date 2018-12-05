@@ -6,7 +6,7 @@ import {withRouter} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
-import {asyncSubmitChallenge} from 'Reducers/Cards/async_actions';
+import {asyncSubmitActivity} from 'Reducers/Cards/async_actions';
 
 import * as dataViewActions from 'Reducers/DataView/actions';
 import * as routeActions from 'Reducers/DataView/async_actions';
@@ -28,62 +28,18 @@ import CardBack from './CardBack';
 import ReadCardFront from './CardFront/ReadCardFront';
 import CardFrame from './CardFrame';
 
-// TODO: outsource
-// const ChallengeResult = ({
-//   closeHandler,
-//   media,
-//   tags,
-//   response,
-//   title,
-//   rating,
-//   text
-// }) => (
-//   <ModalBody
-//     closeHandler={closeHandler}
-//     title={title}
-//     style={{ background: 'whitesmoke' }}
-//     footer={<button onClick={closeHandler}> Close </button>}
-//   >
-//     <div>
-//       <h4>Tags</h4>
-//       <PreviewTags data={tags} />
-//     </div>
-//     <div className="flex-full flexCol" style={{ background: 'smokewhite' }}>
-//       <div>
-//         <h4>User Response</h4>
-//         <p>{response}</p>
-//       </div>
-//       <div>
-//         <h4>Submitted Media</h4>
-//         <MediaList
-//           data={media}
-//           className="mb-3"
-//           disabled
-//         />
-//       </div>
-//       <div>
-//         <h4>Feedback</h4>
-//         <p style={{ width: '100%' }}>{text}</p>
-//       </div>
-//       <div>
-//         <h4>Rating</h4>
-//         <StarRating disabled num={5} highlighted={rating} />
-//       </div>
-//     </div>
-//   </ModalBody>
-// );
-
 const CardViewable = ({
   flipped,
   removeFromStorage,
   addToStorage,
-  onSubmitChallenge,
+  onSubmitActivity,
   userEnvSelectedId,
   uid,
   onFlip,
   onClose,
   activitySubmission,
   id,
+  activity,
   ...props
 }) => (
   <CardFrame
@@ -95,11 +51,12 @@ const CardViewable = ({
         onClose={onClose}
         challengeComp={
           <MediaChallenge
-            {...activitySubmission}
+            activity={activity.value}
+            submission={activitySubmission}
             key={id}
             removeFromStorage={removeFromStorage}
             addToStorage={addToStorage}
-            onSubmit={onSubmitChallenge}
+            onSubmit={onSubmitActivity}
           />
         }
       />
@@ -129,6 +86,7 @@ const CardViewable = ({
 const mapStateToProps = state => ({
   ...state.Screen,
   ...state.Session,
+  ...state.Cards,
 });
 
 const mapDispatchToProps = dispatch =>
@@ -136,7 +94,7 @@ const mapDispatchToProps = dispatch =>
     {
       // dragCard,
       ...dataViewActions,
-      asyncSubmitChallenge,
+      asyncSubmitActivity,
       ...routeActions,
     },
     dispatch,
@@ -149,12 +107,15 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     history,
     id: cardId,
     uid: authorId,
+    tags: {value: tagValues},
     onClose,
   } = ownProps;
 
+  const {tagVocabulary} = state;
+
   const {authUser} = state;
   const {uid: playerId} = authUser;
-  const {asyncSubmitChallenge} = dispatcherProps;
+  const {asyncSubmitActivity} = dispatcherProps;
 
   const {userEnv} = match.params;
 
@@ -169,8 +130,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     routeExtendCard();
   };
 
-  const onSubmitChallenge = challData => {
-    asyncSubmitChallenge({
+  const onSubmitActivity = challData => {
+    asyncSubmitActivity({
       ...challData,
       playerId,
       cardId,
@@ -180,7 +141,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const db = DB(userEnv);
 
-  const filePath = `challengeSubmissions/${cardId}/${playerId}`;
+  const filePath = `activitySubmissions/${cardId}/${playerId}`;
   const removeFromStorage = fileId =>
     db.removeFileFromEnv({
       path: filePath,
@@ -191,9 +152,10 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const onFlip = routeFlipCard;
 
-  // const authorDataPromise = db.getDetailedUserInfo(authorId);
-  // const fetchComments = cardId ? () => db.readComments(cardId) : null;
-  // const addComment = text => db.addComment({ uid: playerId, cardId, text });
+  const relatedCardsByTag =
+    tagValues !== null
+      ? tagVocabulary.filter(d => tagValues.includes(d.tagId))
+      : [];
 
   const backCardFuncs = makeBackCardFuncs({
     userEnv,
@@ -206,13 +168,14 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     ...state,
     ...dispatcherProps,
     ...ownProps,
-    onSubmitChallenge,
+    onSubmitActivity,
     ...backCardFuncs,
     addToStorage,
     removeFromStorage,
     onClose: onClose || closeHandler,
     onFlip,
     flipped,
+    relatedCardsByTag,
   };
 };
 

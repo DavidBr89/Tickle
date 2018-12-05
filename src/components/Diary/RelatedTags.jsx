@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
 import PreviewCard from 'Components/cards/PreviewCard';
@@ -8,28 +8,24 @@ import PreviewCardStack from 'Components/cards/PreviewCardStack';
 class RelatedTags extends Component {
   static propTypes = {
     children: PropTypes.node,
-    nestedTags: PropTypes.array
+    nestedTags: PropTypes.array,
   };
 
   render() {
-    const { nestedTags, selectedCard, className } = this.props;
+    const {nestedTags, selectedCard, className} = this.props;
 
     const gridStyle = {
-      // height: '100%',
       display: 'grid',
-      // gridAutoFlow: 'column dense',
       gridTemplateColumns: `repeat(auto-fill, 100px)`,
       gridGap: '1rem',
-      gridAutoRows: '140px'
-      // gridTemplateRows: `repeat(${Math.ceil(
-      //   cards.length / tmpColNum
-      // )}, ${tmpRowHeight}px)`
+      gridAutoRows: '140px',
     };
 
+    console.log('RelatedTags xxx yoyoyoyo');
     return (
       <div
-        className={`${className} flex flex-col items-center justify-center w-full `}
-      >
+        className={`${className} flex flex-col items-center
+          justify-center w-full `}>
         <div className="p-2 w-full h-full" style={gridStyle}>
           <PreviewCard
             {...selectedCard}
@@ -37,10 +33,12 @@ class RelatedTags extends Component {
             style={{
               // position: 'absolute',
               gridColumn: 'span 2',
-              gridRow: 'span 2'
+              gridRow: 'span 2',
             }}
           />
-          {nestedTags.map(n => <PreviewCardStack {...n} name={n.tag} />)}
+          {nestedTags.map(n => (
+            <PreviewCardStack {...n} name={n.tag} />
+          ))}
         </div>
       </div>
     );

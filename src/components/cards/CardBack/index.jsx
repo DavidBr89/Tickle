@@ -10,8 +10,6 @@ import RelatedTags from './RelatedTags';
 import BackAuthor from './BackAuthor';
 import {MapAreaControl} from './MapAreaControl';
 
-//
-
 const BackField = ({
   onClick,
   onControlClick,
@@ -112,6 +110,7 @@ class CardBack extends Component {
       addComment,
       authUser,
       controls,
+      relatedCardsByTag,
     } = this.props;
 
     const {extended} = this.state;
@@ -150,9 +149,9 @@ class CardBack extends Component {
               style={displayStyle('tags')}
               onClick={() => this.selectField('tags')}>
               <RelatedTags
-                tags={tags}
-                tagVocabulary={tagVocabulary}
                 {...this.props}
+                tags={relatedCardsByTag}
+                tagVocabulary={tagVocabulary}
               />
             </BackField>
 

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import {isEqual} from 'lodash';
 
-import ChallengeAuthorModalBody from 'Src/components/ChallengeAuthor';
+import ChallengeAuthor from 'Src/components/ChallengeAuthor';
 
 import {Modal, ModalBody} from 'Components/utils/Modal';
 import {ExtendedEditTags} from 'Components/utils/TagInput';
@@ -81,7 +81,7 @@ class NumberInput extends Component {
 
 const defaultProps = {
   title: null,
-  challenge: null,
+  activity: null,
   // date: '28/04/2012 10:00',
   tags: null,
   img: null,
@@ -203,7 +203,7 @@ class TitleModalBody extends Component {
 
 function writeModalContent() {
   const {data, dialog} = this.state;
-  const {challenge} = data;
+  const {activity} = data;
   const {tagVocabulary, addToStorage, removeFromStorage} = this.props;
 
   const {title, tags, img, description, media, points} = data;
@@ -289,15 +289,16 @@ function writeModalContent() {
           />
         </ModalBody>
       );
-    case 'Challenge':
+    case 'activity':
       return (
-        <ChallengeAuthorModalBody
+        <ChallengeAuthor
           {...modalProps}
+          title={activity.value.title}
           onClose={this.onCloseModal}
-          key={challenge ? challenge.id : 'newChallenge'}
-          challenge={challenge}
+          key={activity ? activity.id : 'newChallenge'}
+          activity={activity}
           onChange={ch => {
-            this.updateField('challenge', {value: ch});
+            this.updateField('activity', {value: ch});
           }}
         />
       );
@@ -349,7 +350,7 @@ class EditCardFront extends PureComponent {
     // TODO: check the other attrs
     if (
       !isEqual(prevData, data) ||
-      !isEqual(prevData.challenge, data.challenge) ||
+      !isEqual(prevData.activity, data.activity) ||
       !isEqual(prevData.media, data.media) ||
       !isEqual(prevData.description, data.description)
     ) {
@@ -411,7 +412,7 @@ class EditCardFront extends PureComponent {
       description,
       media,
       children,
-      challenge,
+      activity,
       points,
     } = data;
 
@@ -455,7 +456,7 @@ class EditCardFront extends PureComponent {
           }
           onChallengeClick={() =>
             this.setState({
-              dialog: {title: 'Challenge', data: challenge},
+              dialog: {title: 'activity', data: activity},
             })
           }
           bottomControls={

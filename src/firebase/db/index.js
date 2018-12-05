@@ -371,7 +371,7 @@ const makeChallengFuncs = ({TICKLE_ENV_REF}) => {
       .get()
       .then(doc => new Promise(resolve => resolve(doc.data() || null)));
 
-  const addChallengeSubmission = ({cardId, playerId, ...challengeData}) =>
+  const addActivitySubmission = ({cardId, playerId, ...challengeData}) =>
     TICKLE_ENV_REF.collection('cards')
       .doc(cardId)
       .collection('activitySubmissions')
@@ -405,7 +405,7 @@ const makeChallengFuncs = ({TICKLE_ENV_REF}) => {
   return {
     getAllActivitySubs,
     getOneActivitySub,
-    addChallengeSubmission,
+    addActivitySubmission,
     removeChallengeSubmission,
   };
 };

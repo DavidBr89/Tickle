@@ -17,7 +17,7 @@ import {
   DESCRIPTION,
   MEDIA,
   TIMERANGE,
-  CHALLENGE,
+  ACTIVITY,
 } from 'Constants/cardFields';
 
 import {ImgOverlay, MediaField, EditIcon} from './mixinsCardFront';
@@ -253,7 +253,7 @@ export default class CardFrontTemplate extends Component {
     style: PropTypes.object,
     background: PropTypes.string,
     tagColorScale: PropTypes.func,
-    challenge: PropTypes.object,
+    activity: PropTypes.object,
     bookmarkable: PropTypes.boolean,
     onPointsClick: PropTypes.func,
     bottomControls: PropTypes.node,
@@ -261,7 +261,7 @@ export default class CardFrontTemplate extends Component {
 
   static defaultProps = {
     title: null,
-    challenge: null,
+    activity: null,
     challengeSubmission: null,
     // date: '28/04/2012 10:00',
     tags: null,
@@ -305,7 +305,7 @@ export default class CardFrontTemplate extends Component {
       className,
       onResetField,
       onTimeRangeClick = d => d,
-      challenge,
+      activity,
     } = this.props;
 
     // console.log('mediaIcons', mediaIcons);
@@ -376,20 +376,21 @@ export default class CardFrontTemplate extends Component {
         ),
       },
       {
-        id: CHALLENGE,
+        id: ACTIVITY,
         label: 'Activity',
         node: (
           <PlaceholderFrame
             onClick={onChallengeClick}
             placeholder="Activity"
-            empty={challenge.value === null}>
+            empty={activity.value === null}>
             <div className="capitalize truncate-text text-xl">
-              {challenge.value && challenge.value.title}
+              {activity.value && activity.value.title}
             </div>
           </PlaceholderFrame>
         ),
       },
     ];
+    console.log('fieldNodes', fieldNodes);
     const fieldVisibility = fieldNodes.reduce(
       (acc, d) => ({
         ...acc,

@@ -17,7 +17,7 @@ import {
 
 import {
   fetchUsers,
-  asyncSubmitChallengeReview,
+  asyncSubmitActivityReview,
   fetchAllCardsWithSubmissions
 } from 'Reducers/Admin/async_actions';
 
@@ -130,7 +130,7 @@ const mapDispatchToProps = dispatch =>
       ...adminActions,
       fetchUsers,
       fetchAllCardsWithSubmissions,
-      submitChallengeReview: asyncSubmitChallengeReview
+      submitActivityReview: asyncSubmitActivityReview
     },
     dispatch,
   );

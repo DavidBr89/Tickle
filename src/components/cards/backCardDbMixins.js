@@ -5,6 +5,7 @@ export default ({
 }) => {
   const db = DB(userEnv);
 
+  console.log('cardId', cardId);
   const commentPromises = db.readComments(cardId);
   const addComment = text => db.addComment({ uid: playerId, cardId, text });
 
