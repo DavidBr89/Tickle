@@ -9,14 +9,14 @@ class BookWidget extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    document.widgetLaunchForm.submit();
+    // document.widgetLaunchForm.submit();
   }
 
   render() {
     return (
       <div>
         <form
-          action="https://www.bookwidgets.com/play/3FWHEC"
+          action="https://www.bookwidgets.com/play/AF2NPK?teacher_id=6632197966528512"
           method="POST"
           encType="application/x-www-form-urlencoded"
           target="widgetFrame"
@@ -27,12 +27,12 @@ class BookWidget extends Component {
             value="basic-lti-launch-request"
           />
           <input type="hidden" name="lti_version" value="LTI-1p0" />
-          <input type="hidden" name="user_id" value="6632197966528512" />
+          <input type="hidden" name="user_id" value="90239032jkofwi203-9" />
           <input type="hidden" name="roles" value="Student" />
           <input
             type="hidden"
             name="lis_person_contact_email_primary"
-            value="john@doe.com"
+            value="jmaushag@gmail.com"
           />
           <input type="hidden" name="lis_person_name_given" value="John" />
           <input type="hidden" name="lis_person_name_family" value="Doe" />
@@ -62,11 +62,7 @@ class BookWidget extends Component {
             value="https://my-lms-instance.com"
           />
           <input type="hidden" name="context_id" value="2" />
-          <input
-            type="hidden"
-            name="context_title"
-            value="Geography 101"
-          />{' '}
+          <input type="hidden" name="context_title" value="Geography 101" />
           <input type="hidden" name="context_label" value="geography-101" />
           <input
             type="hidden"
@@ -89,21 +85,26 @@ class BookWidget extends Component {
             name="oauth_signature_method"
             value="HMAC-SHA1"
           />
-          <input type="hidden" name="oauth_timestamp" value="1348093590" />
+          <input type="hidden" name="oauth_timestamp" value="1544104931" />
           <input
             type="hidden"
             name="oauth_nonce"
-            value="93ac608e18a7d41dec8f7219e1bf6a17"
+            value="Mjk4OGVjNjAyMWJiYTU1MDNiMmViZjI2YWJjMWRmMjk2Njk2ZTc2OA=="
           />
           <input type="hidden" name="oauth_version" value="1.0" />
           <input
             type="hidden"
             name="oauth_signature"
-            value="QWgJfKpJNDrpncgO9oXxJb8vHiE="
+            value=" YjBiYmFmNzA5YmUyZTFkNzM3NDIyOGQ3OTgzNWYzMTVmOTdmNTQyYg=="
           />
           <input type="submit" value="Press to launch widget" />
         </form>
-        <iframe width="1024" height="768" name="widgetFrame" />
+        <iframe
+          src="https://www.bookwidgets.com/play/AF2NPK?teacher_id=6632197966528512"
+          width="1024"
+          height="768"
+          name="widgetFrame"
+        />
       </div>
     );
   }

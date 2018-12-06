@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react';
+import React, {Component, useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import menuIconSrc from 'Src/styles/menu_icons/menuIconStolen.svg';
 // import {wrapGrid} from 'animate-css-grid';
@@ -19,29 +19,15 @@ import {
   NO_ACTIVITY_FILTER,
   activityFilterMap,
 } from 'Constants/cardFields';
+
 import isSubset from 'Src/lib/isSubset';
-// import TabMenu from './TabMenu';
 
-// import './layout.scss';
-
-/*
-          <div
-            className={`absolute h-full w-full flex flex-col justify-end z-50`}>
-            <TabMenu
-              className={`p-2 flex flex-col overflow-y-auto bg-grey-lighter ${
-                tabExtended ? 'flex-grow' : 'flex-shrink'
-              } `}
-              style={{...flexTrans}}
-              extended={tabExtended}
-              onToggle={extendTab}
-              onHeaderClick={() => selectCard(null)}
-              selectedTags={selectedTags}
-              relatedTags={relatedTags}
-              selectedCard={selectedCard}
-              nestedTags={tagVocabulary}
-            />
-          </div>
-      */
+const activityFilters = [
+  {type: ACTIVITY_STARTED, label: 'Activity Started'},
+  {type: ACTIVITY_SUBMITTED, label: 'Activity Submitted'},
+  {type: ACTIVITY_SUCCEEDED, label: 'Activity Succeeded'},
+  {type: NO_ACTIVITY_FILTER, label: 'All'},
+];
 
 const INITIAL_GRID_STATE = {
   colNum: 10,
@@ -59,6 +45,41 @@ const cardTypeText = cardType => {
     case NO_ACTIVITY_FILTER:
       return 'discovered';
   }
+};
+
+const ModalWrapper = ({card, onClose}) => {
+  const [selectedCard, setCard] = useState(null);
+  const [hidden, setHidden] = useState(true);
+  const {id} = card || {id: null};
+
+  const delay = 400;
+
+  console.log('card id', id, 'selectedCard', selectedCard);
+  useEffect(
+    () => {
+      if (id === null) {
+        setTimeout(() => setCard(card), delay);
+        setHidden(true);
+      }
+      if (selectedCard === null && id !== null) {
+        setCard(card);
+        setHidden(false);
+      } else if (id !== null && selectedCard !== null) {
+        setHidden(true);
+        setTimeout(() => {
+          setCard(card);
+          setHidden(false);
+        }, delay);
+      }
+    },
+    [id],
+  );
+
+  return (
+    <BlackModal visible={!hidden}>
+      {selectedCard && <ConnectedCard {...selectedCard} onClose={onClose} />}
+    </BlackModal>
+  );
 };
 
 const MyDiary = props => {
@@ -83,20 +104,19 @@ const MyDiary = props => {
 
   const [selectedTags, setSelectedTags] = useState([]);
   const filterByTag = key => {
-    setSelectedTags(prevTags => {
-      return prevTags.includes(key)
-        ? prevTags.filter(d => d !== key)
-        : [...prevTags, key];
-    });
+    setSelectedTags(
+      prevTags =>
+        prevTags.includes(key)
+          ? prevTags.filter(d => d !== key)
+          : [...prevTags, key],
+    );
   };
 
   const filterFn = activityFilterMap[cardType];
+
   const filteredCards = cards.filter(filterFn).filter(d => {
-    console.log('d', d);
     const tags = d.tags.value !== null ? d.tags.value : [];
-    console.log('tags', tags, 'selectedTags', selectedTags);
     const s = isSubset(tags, selectedTags);
-    console.log('subset', s);
     return s;
   });
 
@@ -104,6 +124,8 @@ const MyDiary = props => {
   // const w = 4;
 
   const gridStyle = {
+    justifyContent: 'center',
+    // alignItems: 'center',
     // height: '100%',
     display: 'grid',
     gridGap: 16,
@@ -115,30 +137,42 @@ const MyDiary = props => {
 
   const tags = tagVocabulary.slice(0, 10);
 
+  const cardGrid =
+    filteredCards.length > 0 ? (
+      <div className="flex-grow w-full" style={gridStyle}>
+        {filteredCards.map(d => (
+          <PreviewCard
+            onClick={() => selectCard(d.id)}
+            title={d.title.value}
+            img={d.img.value}
+            key={d.id}
+          />
+        ))}
+      </div>
+    ) : null;
+
   return (
     <DefaultLayout
       menu={
         <SlideMenu className="flex-grow">
-          <section className="border-b-2 border-black">
-            <ul className="reset-list text-2xl pb-2">
-              <li className="" onClick={onSetCardType(NO_ACTIVITY_FILTER)}>
-                All Cards
-              </li>
-              <li className="" onClick={onSetCardType(ACTIVITY_STARTED)}>
-                Started Cards
-              </li>
-              <li className="" onClick={onSetCardType(ACTIVITY_SUBMITTED)}>
-                Submitted Cards
-              </li>
-              <li className="" onClick={onSetCardType(ACTIVITY_SUCCEEDED)}>
-                Collected Cards
-              </li>
+          <section className="pl-2 border-b-2 border-black">
+            <ul className="list-reset text-2xl pb-2">
+              {activityFilters.map(({label, type}) => (
+                <li
+                  className={`cursor-pointer ${type === cardType &&
+                    'underline'}`}
+                  onClick={onSetCardType(type)}>
+                  {label}
+                </li>
+              ))}
             </ul>
           </section>
           <div className="mt-3 flex flex-wrap">
             {tags.map(d => (
               <div
-                className="cursor-pointer tag-label m-1"
+                className={`cursor-pointer tag-label ${
+                  selectedTags.includes(d.key) ? 'bg-black' : 'bg-grey'
+                } m-1`}
                 onClick={() => filterByTag(d.key)}>
                 {d.key}
               </div>
@@ -146,31 +180,22 @@ const MyDiary = props => {
           </div>
         </SlideMenu>
       }>
-      <BlackModal visible={cardExtended !== null}>
-        {selectedCard && (
-          <ConnectedCard {...selectedCard} onClose={closeCard} />
-        )}
-      </BlackModal>
-
+      <ModalWrapper card={selectedCard} onClose={closeCard} />
       <div className="flex flex-col flex-grow">
         <div className="flex flex-col flex-grow content-margin ">
-          <div className="overflow-y-auto">
+          <div className="flex flex-col flex-grow overflow-y-auto">
             <section className="text-2xl mb-2">
               Your {cardTypeText(cardType)} {numSeenCards}/
               {`${numCollectibleCards} `}
               cards
             </section>
-            <section className="">
-              <div className="flex-grow " style={gridStyle}>
-                {filteredCards.map(d => (
-                  <PreviewCard
-                    onClick={() => selectCard(d.id)}
-                    title={d.title.value}
-                    img={d.img.value}
-                    key={d.id}
-                  />
-                ))}
-              </div>
+            <section
+              className="flex-grow flex flex-col
+              justify-center items-center ">
+              {filteredCards.length === 0 && (
+                <div className="text-4xl">No Cards</div>
+              )}
+              {cardGrid}
             </section>
           </div>
         </div>

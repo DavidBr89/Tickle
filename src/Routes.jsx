@@ -1,6 +1,8 @@
 import React from 'react';
 import {Route, HashRouter, Redirect, Switch} from 'react-router-dom';
 
+import BookWidget from 'Components/BookWidgets';
+
 import UserMap from 'Components/DataView/Map/UserMap';
 import {
   MYCARDS,
@@ -146,6 +148,16 @@ const Routes = () => (
         component={() => (
           <DefaultLayout>
             <Home />
+          </DefaultLayout>
+        )}
+      />
+
+      <Route
+        exact
+        path="/:userEnv/bookwidget"
+        component={() => (
+          <DefaultLayout>
+            <div className="content-margin"><BookWidget /></div>
           </DefaultLayout>
         )}
       />

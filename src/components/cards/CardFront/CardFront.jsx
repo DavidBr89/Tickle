@@ -16,7 +16,7 @@ const TagField = ({values, className, style, onClick}) => {
       className={`flex ${className} items-center flex-wrap`}
       style={{...style}}>
       {values.map(t => (
-        <div className="tag-label text-xl mr-1 mt-1 mb-1">{t}</div>
+        <div className="tag-label bg-black text-xl mr-1 mt-1 mb-1">{t}</div>
       ))}
     </div>
   );

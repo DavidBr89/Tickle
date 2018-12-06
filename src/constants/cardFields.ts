@@ -35,7 +35,7 @@ export const hasCardCreated = (c = {uid: '2332'}, uidTmp = '12345') =>
   c.uid === uidTmp;
 
 export const NO_ACTIVITY_FILTER = 'NO_ACTIVITY_FILTER';
-export const CHALLENGE_STARTED = 'CHALLENGE_STARTED';
+export const ACTIVITY_STARTED = 'ACTIVITY_STARTED';
 export const ACTIVITY_OPEN = 'ACTIVITY_OPEN';
 
 export const ACTIVITY_NOT_STARTED = 'ACTIVITY_NOT_STARTED';
@@ -46,7 +46,7 @@ export const CARD_CREATED = 'CARD_CREATED';
 
 export const activityFilterMap = (() => {
   const obj = {
-    [CHALLENGE_STARTED]: isActivityStarted,
+    [ACTIVITY_STARTED]: isActivityStarted,
     [ACTIVITY_SUBMITTED]: isActivityStarted,
     [ACTIVITY_SUCCEEDED]: isActivitySucceeded,
     [ACTIVITY_OPEN]: isChallengeOpen,

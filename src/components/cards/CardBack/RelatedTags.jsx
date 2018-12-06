@@ -51,23 +51,21 @@ const RelatedTags = ({
   const modalVisible = selectedTagId !== null;
   const tagObj = tagVocabulary.find(d => d.tagId === selectedTagId) || null;
 
-  console.log('tags', tags);
-
   return (
     <div className="m-2 flex-grow flex flex-col">
       <div className="flex flex-no-shrink mb-2">
-        <h2 className="tag-label">Related Cards</h2>
+        <h2 className="tag-label bg-black">Related Cards</h2>
       </div>
       <div className="flex-grow" style={gridStyle}>
-        {tags &&
-          tags.map(d => (
-            <PreviewCardStack
-              id={d.tagId}
-              onClick={() => {
-                setSelectedTagId(d.tagId);
-              }}
-            />
-          ))}
+        {tags.length === 0 && <div className="text-2xl w-full">No Cards</div>}
+        {tags.map(d => (
+          <PreviewCardStack
+            id={d.tagId}
+            onClick={() => {
+              setSelectedTagId(d.tagId);
+            }}
+          />
+        ))}
       </div>
       <CardsModal
         key="cardsModal"

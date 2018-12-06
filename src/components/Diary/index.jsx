@@ -29,10 +29,8 @@ import withAuthentication from 'Components/withAuthentication';
 import DiaryPage from './DiaryPage';
 
 const mapStateToProps = state => {
-  // const { cardSets } = state.Account;
   const {tagVocabulary, collectibleCards} = state.Cards;
-  const cards = collectibleCards
-    .map(d => ({...d, seen: true}))
+  const cards = collectibleCards.map(d => ({...d, seen: true}));
 
   const numSeenCards = cards.filter(c => c.seen).length;
   const numCollectibleCards = collectibleCards.length;
@@ -74,7 +72,6 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     query: {selectedCardId, extended, flipped},
     routing: {routeSelectCard, routeExtendCard, routeSelectExtendCard},
   } = cardRoutes({history, location});
-  console.log('match', extended);
 
   const selectedCard = cards.find(c => c.id === selectedCardId) || null;
   const selectedTags = [];
@@ -83,15 +80,12 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     .map(t => tagVocabulary.find(d => d.tags.includes(t.tag)))
     .filter(t => !selectedTags.map(d => d.tag).includes(t.tag));
 
-  const includesSelectedCard =
-    cards.filter(d => d.id !== null && d.id === selectedCardId).length === 1;
-
   const selectCard = id => {
-    routeSelectExtendCard(id);
+    routeSelectCard(id);
   };
 
   const closeCard = () => {
-    routeExtendCard();
+    routeSelectCard(null);
   };
 
   return {
@@ -102,7 +96,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     selectedTags,
     relatedTags,
     selectedCard,
-    cardExtended: extended,
+    cardExtended: selectedCardId !== null,
     selectCard,
     closeCard,
     cards: cards.sort((a, b) => {

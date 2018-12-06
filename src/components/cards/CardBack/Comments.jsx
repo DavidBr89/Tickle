@@ -71,7 +71,7 @@ const CommentList = ({
     className="m-2 flex flex-col flex-grow flex-shrink"
   >
     <div className="flex mb-2">
-      <h2 className="tag-label">Comments</h2>
+      <h2 className="tag-label bg-black">Comments</h2>
     </div>
 
     {data.length === 0 && (<div className="tex-lg">No Comments</div>)}

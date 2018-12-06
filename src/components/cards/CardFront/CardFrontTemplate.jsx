@@ -30,7 +30,7 @@ const TagField = ({tags, style, onClick, className}) => {
       className={`flex ${className} items-center flex-no-wrap overflow-x-hidden`}
       style={{...style}}>
       {tags.map(t => (
-        <div className="tag-label text-lg mr-1 ">{t}</div>
+        <div className="tag-label bg-black text-lg mr-1 ">{t}</div>
       ))}
     </div>
   );
@@ -117,10 +117,11 @@ const SelectField = ({
         {selected && selected.label}
       </div>
       <div className={`absolute ${!visible && 'hidden'} w-full `}>
-        <ul className="mt-2 list-reset p-2 z-10 bg-white ">
+        <ul className="mt-2 list-reset p-2 z-10 bg-white border border-black shadow">
           {values.map(x => (
             <li
-              className={`${optionClassName} cursor-pointer`}
+              className={`${optionClassName} ${x.id === selectedId &&
+                'bg-grey'} cursor-pointer`}
               onMouseDown={e => e.preventDefault()}
               onClick={() => {
                 setVisible(false);
@@ -209,7 +210,7 @@ class SelectCardField extends Component {
             selectedId={selectedAttrId}
             className="bg-white flex-grow mr-4 text-xl"
             selectedClassName="border-2 border-black shadow p-2
-            italic text-grey-dark text-xl flex items-center"
+            italic text-xl flex items-center"
             optionClassName="p-2"
             values={notSelectedFields}
             onChange={v => {

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import MapGL from 'react-map-gl';
 
@@ -7,7 +7,6 @@ import DimWrapper from 'Utils/DimensionsWrapper';
 // import { geoProject } from 'Lib/geo';
 import CardMarker from 'Components/cards/CardMarker';
 // import MapAreaRadius from '../../utils/map-layers/MapAreaRadius';
-
 
 class MapAreaControl extends Component {
   static propTypes = {
@@ -20,7 +19,7 @@ class MapAreaControl extends Component {
     onChange: PropTypes.func,
     edit: PropTypes.bool,
     markerHeight: PropTypes.number,
-    markerWidth: PropTypes.number
+    markerWidth: PropTypes.number,
   };
 
   static defaultProps = {
@@ -34,8 +33,8 @@ class MapAreaControl extends Component {
     markerWidth: 30,
     loc: {
       latitude: 0,
-      longitude: 0
-    }
+      longitude: 0,
+    },
   };
 
   render() {
@@ -48,14 +47,14 @@ class MapAreaControl extends Component {
       edit,
       markerWidth,
       markerHeight,
-      loc
+      loc,
     } = this.props;
 
     const mapViewport = (width, height) => ({
       width,
       height,
       ...loc,
-      zoom: 14
+      zoom: 14,
     });
 
     // const [locNode] = geoProject({});
@@ -63,19 +62,23 @@ class MapAreaControl extends Component {
     return (
       <div className="absolute w-full h-full">
         <DimWrapper delay={100}>
-          {(width, height) => (<div className="relative">
-
-            <div className="absolute p-2 z-50"><h2 className="tag-label">Location</h2></div>
-            <MapGL {...mapViewport(width, height)} />
-            <CardMarker
-              className="absolute"
-              style={{
-                left: width / 2, top: height / 2, width: 35, height: 45
-              }}
-            />
-
-                               </div>)
-          }
+          {(width, height) => (
+            <div className="relative">
+              <div className="absolute p-2 z-50">
+                <h2 className="tag-label bg-black">Location</h2>
+              </div>
+              <MapGL {...mapViewport(width, height)} />
+              <CardMarker
+                className="absolute"
+                style={{
+                  left: width / 2,
+                  top: height / 2,
+                  width: 35,
+                  height: 45,
+                }}
+              />
+            </div>
+          )}
         </DimWrapper>
       </div>
     );
@@ -100,4 +103,4 @@ class MapAreaControl extends Component {
               </DivOverlay>
               */
 
-export { MapAreaControl };
+export {MapAreaControl};

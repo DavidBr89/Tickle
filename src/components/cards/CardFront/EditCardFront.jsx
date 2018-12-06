@@ -293,8 +293,8 @@ function writeModalContent() {
       return (
         <ChallengeAuthor
           {...modalProps}
-          title={activity.value.title}
           onClose={this.onCloseModal}
+          title="Activity"
           key={activity ? activity.id : 'newChallenge'}
           activity={activity}
           onChange={ch => {

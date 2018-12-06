@@ -1,7 +1,23 @@
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import PropTypes from 'prop-types';
 
 import uuidv1 from 'uuid/v1';
+
+import Rating, {StarRating} from 'Components/utils/Rating';
+
+const DifficultyRating = ({onChange, highlighted, ...props}) => (
+  <Rating {...props} numHighlighted={highlighted} num={6}>
+    {(on, i) => (
+      <div
+        onClick={() => {
+          onChange(i);
+        }}
+        className={`m-1 ${on ? 'bg-black' : 'bg-grey'}`}
+        style={{width: 30, height: 30}}
+      />
+    )}
+  </Rating>
+);
 
 class TextChallengeAuthor extends Component {
   static propTypes = {
@@ -21,16 +37,17 @@ class TextChallengeAuthor extends Component {
     title: null,
   };
 
-  state = {description: '', id: new uuidv1(), ...this.props};
+  state = {description: '', difficulty: 1, id: uuidv1(), ...this.props};
 
   componentDidUpdate(prevProps, prevState) {
-    const {description, title, id} = this.state;
+    const {description, difficulty, title, id} = this.state;
     const {onChange} = this.props;
     if (description !== prevState.description || title !== prevState.title) {
       onChange({
         id,
         type: 'text',
         description,
+        difficulty,
         title,
       });
     }
@@ -42,10 +59,11 @@ class TextChallengeAuthor extends Component {
       placeholder,
       styles,
       onChange,
-      uiColor,
       description,
       title,
     } = this.props;
+
+    const {difficulty} = this.state;
 
     return (
       <div
@@ -60,15 +78,22 @@ class TextChallengeAuthor extends Component {
             onChange={e => this.setState({title: e.target.value})}
           />
         </section>
-        <section>
+        <section className="mb-4">
           <h2 className="mb-1">Description</h2>
           <textarea
             className="form-control w-full"
             placeholder="Description"
             onChange={e => this.setState({description: e.target.value})}
             defaultValue={description}
-            placeholder="Description"
             style={{minHeight: 200}}
+          />
+        </section>
+        <section>
+          <h2>Difficulty</h2>
+          <DifficultyRating
+            highlighted={difficulty}
+            onChange={df => this.setState({difficulty: df})}
+            disabled={false}
           />
         </section>
       </div>

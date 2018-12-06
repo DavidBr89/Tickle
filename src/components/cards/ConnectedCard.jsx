@@ -12,7 +12,7 @@ import * as dataViewActions from 'Reducers/DataView/actions';
 import * as routeActions from 'Reducers/DataView/async_actions';
 import MediaChallenge from 'Components/Challenges/MediaChallenge';
 
-import StarRating from 'Components/utils/StarRating';
+// import StarRating from 'Components/utils/StarRating';
 
 import {ModalBody} from 'Utils/Modal';
 
@@ -51,7 +51,13 @@ const CardViewable = ({
         onClose={onClose}
         challengeComp={
           <MediaChallenge
-            activity={activity.value}
+            activity={
+              activity.value || {
+                //TODO: remove later
+                description: 'placeholder',
+                title: 'placeholder title',
+              }
+            }
             submission={activitySubmission}
             key={id}
             removeFromStorage={removeFromStorage}

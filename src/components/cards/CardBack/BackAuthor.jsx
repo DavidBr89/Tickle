@@ -28,7 +28,9 @@ const AuthorDetails = ({
         <h2 className="mb-1">Top Interests</h2>
         <div className="flex w-full flex-wrap">
           {skills.map(d => (
-            <div className="text-xl capitalize bg-black tag-label m-1">
+            <div
+              className="text-xl capitalize bg-black tag-label
+              bg-black m-1">
               {d.key}
             </div>
           ))}
@@ -61,7 +63,7 @@ const AuthorPreview = ({className, photoURL, style, username, name, email}) => (
       style={{objectFit: 'cover'}}
     />
     <div className="absolute m-3">
-      <h2 className="text-white tag-label">{username}</h2>
+      <h2 className="tag-label bg-black">{username}</h2>
     </div>
   </div>
 );

@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-import { ModalBody } from 'Utils/Modal';
+import {ModalBody} from 'Utils/Modal';
 
-import { MediaList } from 'Utils/MediaUpload';
+import {MediaList} from 'Utils/MediaUpload';
 
-import { TagInput, PreviewTags } from 'Utils/Tag';
+import {TagInput, PreviewTags} from 'Utils/Tag';
 
-import StarRating from 'Components/utils/StarRating';
+import {StarRating} from 'Components/utils/Rating';
 
 class ReviewMediaChallenge extends Component {
   static propTypes = {
@@ -16,7 +16,7 @@ class ReviewMediaChallenge extends Component {
     styles: PropTypes.object,
     stylesheet: PropTypes.object,
     challengeSubmission: PropTypes.oneOf([PropTypes.object, null]),
-    bookmarkable: PropTypes.boolean
+    bookmarkable: PropTypes.boolean,
   };
 
   static defaultProps = {
@@ -24,14 +24,14 @@ class ReviewMediaChallenge extends Component {
     challengeSubmission: null,
     feedback: null,
     styles: {},
-    stylesheet: {}
+    stylesheet: {},
   };
 
   state = {
     rating: this.props.feedback ? this.props.feedback.rating : 0,
     text: this.props.feedback ? this.props.feedback.text : '',
     ...this.props,
-    feedbackSent: this.props.feedback !== null
+    feedbackSent: this.props.feedback !== null,
   };
 
   render() {
@@ -45,34 +45,32 @@ class ReviewMediaChallenge extends Component {
       onSubmit,
       tags,
       media,
-      response
+      response,
     } = this.props;
 
-    const { feedbackSent, text, rating } = this.state;
+    const {feedbackSent, text, rating} = this.state;
 
     return (
       <ModalBody
         onClose={onClose}
         title={title}
-        style={{ background: 'whitesmoke' }}
+        style={{background: 'whitesmoke'}}
         footer={
-          <div style={{ display: 'flex' }}>
+          <div style={{display: 'flex'}}>
             <button
               disabled={feedbackSent}
               onClick={() => {
                 // TODO: maybe change later
-                onSubmit({ text, rating, accomplished: true });
-                this.setState({ feedbackSent: true });
-              }}
-            >
-              <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                onSubmit({text, rating, accomplished: true});
+                this.setState({feedbackSent: true});
+              }}>
+              <div style={{display: 'inline-flex', alignItems: 'center'}}>
                 {feedbackSent ? 'Feeback is sent!' : 'Send Feedback'}
               </div>
             </button>
           </div>
-        }
-      >
-        <div className="flex-full flexCol" style={{ background: 'smokewhite' }}>
+        }>
+        <div className="flex-full flexCol" style={{background: 'smokewhite'}}>
           <div>
             <h4>Description</h4>
             <p>{description}</p>
@@ -83,14 +81,13 @@ class ReviewMediaChallenge extends Component {
           </div>
           <div>
             <h4>Response</h4>
-            <p style={{ width: '100%' }}>{response}</p>
+            <p style={{width: '100%'}}>{response}</p>
           </div>
           <div>
             <h4>Submitted Media</h4>
             <MediaList
               data={media}
               className="mb-3"
-              stylesheet={stylesheet}
               disabled
             />
           </div>
@@ -99,10 +96,9 @@ class ReviewMediaChallenge extends Component {
             <textarea
               disabled={feedbackSent}
               placeholder="give Feedback for the challenge"
-              onChange={e => this.setState({ text: e.target.value })}
+              onChange={e => this.setState({text: e.target.value})}
               rows="4"
-              style={{ width: '100%' }}
-            >
+              style={{width: '100%'}}>
               {text}
             </textarea>
           </div>
@@ -112,7 +108,7 @@ class ReviewMediaChallenge extends Component {
               disabled={feedbackSent}
               num={5}
               highlighted={rating}
-              onClick={n => this.setState({ rating: n })}
+              onClick={n => this.setState({rating: n})}
             />
           </div>
         </div>

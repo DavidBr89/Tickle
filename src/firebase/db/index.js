@@ -132,7 +132,7 @@ const makeCardFuncs = ({
 
   const readCards = ({authorId = null, playerId = null}) => {
     const thumbnailPromise = d => {
-      if (!d.img) return new Promise(resolve => resolve(d));
+      if (!d.img.value) return new Promise(resolve => resolve(d));
 
       const thumbNailRef = storageRef.child(
         `${ENV_STR}/images/cards/${thumbFileName(d.id)}`,

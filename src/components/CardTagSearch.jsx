@@ -19,7 +19,7 @@ function CardTagFilter({
           {tags.map(d => (
             <div
               className={`cursor-pointer tag-label m-1
-                ${filterSet.includes(d.key) ? 'tag-label' : 'tag-label-grey'}`}
+                ${filterSet.includes(d.key) ? 'bg-black' : 'bg-grey'}`}
               onClick={() => {
                 onClick(d.key);
               }}>
