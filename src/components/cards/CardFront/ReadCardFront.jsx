@@ -92,10 +92,10 @@ class ReadCardFront extends Component {
       challengeComp,
     } = this.props;
 
-    const FooterBtn = () => (
+    const CloseBtn = () => (
       <button
-        className="btn-black"
-        onClick={() => this.setState({dialogKey: null})}>
+        className="btn"
+        onClick={() => this.setState({modalVisible: false})}>
         Close
       </button>
     );
@@ -110,21 +110,27 @@ class ReadCardFront extends Component {
           <ModalBody
             onClose={this.closeModal}
             title="Description"
-            footer={<FooterBtn />}>
+            footer={<CloseBtn />}>
             <p style={{width: '100%'}}>{description}</p>
           </ModalBody>
         );
       case 'Img': {
-        const photo = img ? [{thumbnail: img.url, ...img, type: IMG}] : [];
-
-        const mediaWithPhoto = img ? [...photo, ...media] : media;
+        // TODO
+        // const {value: imgValue} = img;
+        // const photo = imgValue
+        //   ? [{thumbnail: imgValue.url, ...imgValue, type: IMG}]
+        //   : [];
+        //
+        // const mediaWithPhoto = img ? [...photo, ...media.value] : media;
+        //
+        // console.log('media', media);
 
         return (
           <ModalBody
             onClose={this.closeModal}
             title="Media"
-            footer={<FooterBtn />}>
-            <MediaOverview edit={false} data={mediaWithPhoto} />
+            footer={<CloseBtn />}>
+            <MediaOverview edit={false} data={media.value || []} />
           </ModalBody>
         );
       }
@@ -141,11 +147,13 @@ class ReadCardFront extends Component {
   render() {
     const {onFlip, onClose} = this.props;
 
-    const {dialogKey, challengeSubmitted, modalVisible} = this.state;
+    const {dialogKey, modalVisible} = this.state;
+
     const setDialogKey = key =>
       this.setState({dialogKey: key, modalVisible: true});
+
     return (
-      <React.Fragment>
+      <>
         <BareModal
           visible={modalVisible}
           title={dialogKey}
@@ -168,7 +176,7 @@ class ReadCardFront extends Component {
             </button>
           }
         />
-      </React.Fragment>
+      </>
     );
   }
 }

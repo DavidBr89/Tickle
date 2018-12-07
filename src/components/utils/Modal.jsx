@@ -38,7 +38,7 @@ export const BlackModal = reduxConnect(({visible, mobile, ...props}) =>
           .alpha(0.3)
           .css(),
         opacity: visible ? 1 : 0,
-        transition: 'opacity 0.1s',
+        transition: 'opacity 0.3s',
       }}>
       <InlineModal visible={visible} mobile={mobile} {...props} />
     </div>,

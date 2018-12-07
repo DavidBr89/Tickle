@@ -9,7 +9,6 @@ import userIcon from './user.svg';
 
 function Map({
   userLocation,
-  preview,
   width,
   height,
   isCardDragging,
@@ -19,6 +18,7 @@ function Map({
   mapViewport,
   changeMapViewport,
   children,
+  forwardedRef,
 }) {
   const {latitude, longitude, zoom} = mapViewport;
 
@@ -32,6 +32,7 @@ function Map({
   // mapStyle="mapbox://styles/moerwijk/cjke1d9rnjr4c2spp49b9ib1b"
   return (
     <MapGL
+      ref={forwardedRef}
       onClick={({lngLat}) => {
         userMove({longitude: lngLat[0], latitude: lngLat[1]});
       }}
@@ -69,7 +70,18 @@ function Map({
   );
 }
 
-Map.defaultProps = {};
+Map.defaultProps = {
+  userLocation: {latitude: 0, longitude: 0},
+  width: 0,
+  height: 0,
+  isCardDragging: false,
+  userMove: d => d,
+  className: '',
+  style: {},
+  mapViewport: {width: 0, height: 0, longitude: 0, latitude: 0, zoom: 0},
+  changeMapViewport: d => d,
+  children: null,
+};
 
 Map.propTypes = {};
 

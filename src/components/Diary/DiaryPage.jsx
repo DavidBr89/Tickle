@@ -1,6 +1,9 @@
 import React, {Component, useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
+import {wrapGrid} from 'animate-css-grid';
+
 import menuIconSrc from 'Src/styles/menu_icons/menuIconStolen.svg';
+
 // import {wrapGrid} from 'animate-css-grid';
 
 import PreviewCard from 'Components/cards/PreviewCard';
@@ -54,17 +57,20 @@ const ModalWrapper = ({card, onClose}) => {
 
   const delay = 400;
 
-  console.log('card id', id, 'selectedCard', selectedCard);
+  // console.log('card id', id, 'selectedCard', selectedCard);
   useEffect(
     () => {
+      // close card directly
       if (id === null) {
         setTimeout(() => setCard(card), delay);
         setHidden(true);
       }
+      // open card directly when there was no card before
       if (selectedCard === null && id !== null) {
         setCard(card);
         setHidden(false);
       } else if (id !== null && selectedCard !== null) {
+        // delay the opening of new card
         setHidden(true);
         setTimeout(() => {
           setCard(card);
@@ -100,9 +106,20 @@ const MyDiary = props => {
   } = props;
 
   const [cardType, setCardType] = useState(NO_ACTIVITY_FILTER);
-  const onSetCardType = type => () => setCardType(type);
 
   const [selectedTags, setSelectedTags] = useState([]);
+
+  const onSetCardType = type => () => setCardType(type);
+
+  const gridDom = React.createRef();
+  useEffect(() => {
+    wrapGrid(gridDom.current, {
+      easing: 'backInOut',
+      stagger: 0,
+      duration: 400,
+    });
+  }, []);
+
   const filterByTag = key => {
     setSelectedTags(
       prevTags =>
@@ -125,8 +142,6 @@ const MyDiary = props => {
 
   const gridStyle = {
     justifyContent: 'center',
-    // alignItems: 'center',
-    // height: '100%',
     display: 'grid',
     gridGap: 16,
     // gridAutoFlow: 'column dense',
@@ -137,19 +152,27 @@ const MyDiary = props => {
 
   const tags = tagVocabulary.slice(0, 10);
 
-  const cardGrid =
-    filteredCards.length > 0 ? (
-      <div className="flex-grow w-full" style={gridStyle}>
-        {filteredCards.map(d => (
+  const cardGrid = (
+    <div ref={gridDom} className="flex-grow w-full" style={gridStyle}>
+      {filteredCards.map(d => (
+        <div>
           <PreviewCard
+            style={{
+              transform: `scale(${d.id === selectedCardId ? 1.15 : 1})`,
+              transformOrigin: d.id === selectedCardId && null,
+              pointerEvents: selectedCardId !== null && 'none',
+              transition: 'transform 300ms',
+            }}
+            className="h-full"
             onClick={() => selectCard(d.id)}
             title={d.title.value}
             img={d.img.value}
             key={d.id}
           />
-        ))}
-      </div>
-    ) : null;
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <DefaultLayout
@@ -181,10 +204,11 @@ const MyDiary = props => {
         </SlideMenu>
       }>
       <ModalWrapper card={selectedCard} onClose={closeCard} />
+
       <div className="flex flex-col flex-grow">
         <div className="flex flex-col flex-grow content-margin ">
-          <div className="flex flex-col flex-grow overflow-y-auto">
-            <section className="text-2xl mb-2">
+          <div className="flex flex-col flex-grow ">
+            <section className="flex-no-shrink text-2xl mb-2">
               Your {cardTypeText(cardType)} {numSeenCards}/
               {`${numCollectibleCards} `}
               cards

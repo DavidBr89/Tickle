@@ -56,6 +56,12 @@ const RelatedTags = ({
       <div className="flex flex-no-shrink mb-2">
         <h2 className="tag-label bg-black">Related Cards</h2>
       </div>
+      <div className="flex flex-no-shrink">
+        {tags.map(t => (
+          <div className="tag-label bg-black m-1">{t.tagId}</div>
+        ))}
+      </div>
+
       <div className="flex-grow" style={gridStyle}>
         {tags.length === 0 && <div className="text-2xl w-full">No Cards</div>}
         {tags.map(d => (

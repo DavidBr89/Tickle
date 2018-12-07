@@ -8,7 +8,7 @@ import CardControls from 'Components/cards/CardControls';
 import Comments from './Comments';
 import RelatedTags from './RelatedTags';
 import BackAuthor from './BackAuthor';
-import {MapAreaControl} from './MapAreaControl';
+import MapAreaControl from './MapAreaControl';
 
 const BackField = ({
   onClick,

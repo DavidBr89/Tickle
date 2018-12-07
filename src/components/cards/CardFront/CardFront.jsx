@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import CardControls from 'Components/cards/CardControls';
 import {mediaScale} from 'Constants/mediaTypes';
 import {getNumInitFields} from 'Constants/cardFields';
-import placeholderImgSrc from '../placeholder.png';
 
 import {ImgOverlay, TextField, MediaField} from './mixinsCardFront';
 

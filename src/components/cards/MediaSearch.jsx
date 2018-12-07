@@ -661,7 +661,7 @@ class MediaSearch extends Component {
 function MediaBtn({selected, onClick}) {
   return (
     <div
-      className="bg-light-grey"
+      className="btn bg-light-grey"
       style={{
         color: selected ? 'tomato' : 'black',
       }}
@@ -896,7 +896,9 @@ class MediaOverview extends Component {
           alignItems: 'center',
         }}>
         {data.length === 0 && (
-          <h3 className="text-muted">{'No media added to this Card!'} </h3>
+          <h3 className="text-muted">
+            {'No media added to this Card!'}
+          </h3>
         )}
         <ScrollList data={data} maxHeight="100%">
           {(d, selected) => (
