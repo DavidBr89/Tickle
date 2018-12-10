@@ -11,12 +11,12 @@ import {bindActionCreators} from 'redux';
 import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
 
-import TopicMapVis from 'Components/DataView/TopicMap/TopicMapVis';
+// import TopicMapVis from 'Components/DataView/TopicMap/TopicMapVis';
 import TagGrid from 'Components/TagGrid';
 
 import * as mapActions from 'Reducers/Map/actions';
 
-import UserMap from 'Components/DataView/Map/UserMap';
+import UserMap from 'Components/UserMap';
 
 import {resizeCardWindow, userMove, changeViewport} from 'Reducers/Map/actions';
 
@@ -201,7 +201,6 @@ PureMapViewPage.propTypes = {};
 function PureTopicMapViewPage({...props}) {
   return (
     <CardViewPage {...props}>
-      <TopicMapVis className="absolute" {...props} />
     </CardViewPage>
   );
 }

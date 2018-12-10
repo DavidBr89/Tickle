@@ -7,7 +7,7 @@ import WebMercatorViewport from 'viewport-mercator-project';
 
 import MapAuthor from 'Components/DataView/Map/MapAuthor';
 
-import TopicMapAuthor from 'Components/DataView/TopicMap/DragTopicMap';
+// import TopicMapAuthor from 'Components/DataView/TopicMap/DragTopicMap';
 import {TEMP_ID} from 'Constants/cardFields';
 
 // import React from 'react';
@@ -196,7 +196,6 @@ PureMapCardAuthorPage.propTypes = {};
 function PrivateTopicMapAuthorPage({...props}) {
   return (
     <CardAuthorPage {...props}>
-      <TopicMapAuthor {...props} />
     </CardAuthorPage>
   );
 }

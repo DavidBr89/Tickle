@@ -3,7 +3,6 @@ import {Route, HashRouter, Redirect, Switch} from 'react-router-dom';
 
 import BookWidget from 'Components/BookWidgets';
 
-import UserMap from 'Components/DataView/Map/UserMap';
 import {
   MYCARDS,
   GEO_VIEW,

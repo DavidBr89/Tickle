@@ -1,35 +1,34 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import MapGL, { HTMLOverlay } from 'react-map-gl';
+import MapGL, {HTMLOverlay} from 'react-map-gl';
 
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 
 // import { UserOverlay } from '../../utils/map-layers/DivOverlay';
 
-import { PerspectiveMercatorViewport } from 'viewport-mercator-project';
+import {PerspectiveMercatorViewport} from 'viewport-mercator-project';
 
-import { CardMarker } from 'Cards';
+import {CardMarker} from 'Cards';
 
-import Cluster from './Cluster';
-import ForceCollide from './MiniForceCollide';
+// import ForceCollide from './MiniForceCollide';
 
-import { changeMapViewport, userMove } from 'Reducers/Map/actions';
+import {changeMapViewport, userMove} from 'Reducers/Map/actions';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-import userIcon from './user.svg';
+import userIcon from './UserMap/user.svg';
 
-const mapStyleUrl = 'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l';
+// const mapStyleUrl = 'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l';
 
 const defaultLocation = {
   latitude: 50.85146,
-  longitude: 4.315483
+  longitude: 4.315483,
 };
 
 const shadowStyle = {
   boxShadow: '3px 3px black',
-  border: '1px solid #000'
+  border: '1px solid #000',
   // border: '1px solid black'
 };
 
@@ -40,7 +39,7 @@ const PreviewMarker = ({
   template,
   color,
   size = 25,
-  offset = 100
+  offset = 100,
 }) => (
   <CardMarker
     color={color}
@@ -51,7 +50,7 @@ const PreviewMarker = ({
       ...getShadowStyle(selected),
       position: 'absolute',
       width: size,
-      height: size // '13vw',
+      height: size, // '13vw',
     }}
   />
 );
@@ -62,7 +61,7 @@ function ClusterPlaceholder({
   tags,
   centroid: [cx, cy],
   size,
-  transition
+  transition,
   // ...props
 }) {
   return (
@@ -83,10 +82,9 @@ function ClusterPlaceholder({
         alignItems: 'center',
         boxShadow: '3px 3px #24292e',
         border: '#24292e solid 1px',
-        borderRadius: '100%'
+        borderRadius: '100%',
         // overflow: 'hidden'
-      }}
-    >
+      }}>
       <div
         style={{
           zIndex: -1,
@@ -95,17 +93,16 @@ function ClusterPlaceholder({
           width: '100%',
           height: '100%',
           position: 'absolute',
-          borderRadius: '100%'
+          borderRadius: '100%',
         }}
       />
       <div
         style={{
           width: '100%',
           height: '100%',
-          padding: '10.65%'
+          padding: '10.65%',
           // padding: '14.65%'
-        }}
-      >
+        }}>
         <div
           style={{
             width: '100%',
@@ -113,27 +110,24 @@ function ClusterPlaceholder({
             overflowY: 'hidden',
             display: 'flex',
             justifyContent: 'center',
-            flexWrap: 'wrap'
-          }}
-        >
+            flexWrap: 'wrap',
+          }}>
           {tags.map(t => (
             <div
               className="mb-1 mr-1"
               style={{
                 fontSize: 14,
                 background: colorScale(t),
-                maxWidth: '100%'
-              }}
-            >
+                maxWidth: '100%',
+              }}>
               <div
                 style={{
                   // width: '150%',
                   maxWidth: '100%',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
-                  textOverflow: 'ellipsis'
-                }}
-              >
+                  textOverflow: 'ellipsis',
+                }}>
                 {t}
               </div>
             </div>
@@ -143,30 +137,29 @@ function ClusterPlaceholder({
     </div>
   );
 }
-ClusterPlaceholder.propTypes = { transition: PropTypes.array };
-ClusterPlaceholder.defaultProps = { transition: 500 };
+ClusterPlaceholder.propTypes = {transition: PropTypes.array};
+ClusterPlaceholder.defaultProps = {transition: 500};
 
 class Map extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
-    disabled: PropTypes.boolean
+    disabled: PropTypes.boolean,
   };
 
   static defaultProps = {
     disabled: false,
     maxZoom: 16,
-    viewport: { ...defaultLocation, width: 100, height: 100, zoom: 10 },
+    viewport: {...defaultLocation, width: 100, height: 100, zoom: 10},
     nodes: [],
-    showUser: false
+    showUser: false,
   };
 
-  state = { ...this.props };
+  state = {...this.props};
 
   componentDidMount() {
     // console.log('mapgl', this.mapgl);
     // const map = this.mapgl.getMap();
-
     // map.on('load', () => {
     //   map.addLayer({
     //     id: 'route',
@@ -252,18 +245,18 @@ class Map extends Component {
   // }
 
   componentDidUpdate(prevProps, prevState) {
-    const { nodes, selectedCardId, maxZoom } = this.props;
+    const {nodes, selectedCardId, maxZoom} = this.props;
     if (
       selectedCardId !== null &&
       prevProps.selectedCardId !== selectedCardId
     ) {
       const selectedNode = nodes.find(n => selectedCardId === n.id);
       const {
-        loc: { longitude, latitude }
+        loc: {longitude, latitude},
       } = selectedNode;
 
-      const vp = { ...this.state, longitude, latitude, zoom: maxZoom };
-      this.props.changeMapViewport({ ...vp });
+      const vp = {...this.state, longitude, latitude, zoom: maxZoom};
+      this.props.changeMapViewport({...vp});
     }
   }
 
@@ -281,18 +274,18 @@ class Map extends Component {
       height,
       isCardDragging,
       showUser,
-      userMove
+      userMove,
     } = this.props;
 
-    const { latitude, longitude, zoom } = viewport;
+    const {latitude, longitude, zoom} = viewport;
 
-    const vp = new PerspectiveMercatorViewport({ ...viewport, width, height });
+    const vp = new PerspectiveMercatorViewport({...viewport, width, height});
 
     const userPos = vp.project([userLocation.longitude, userLocation.latitude]);
     const locNodes = nodes.reduce((acc, n) => {
       const [x, y] = vp.project([n.loc.longitude, n.loc.latitude]);
       if (x > 0 && x < width && y > 0 && y < height) {
-        return [{ ...n, x, y }, ...acc];
+        return [{...n, x, y}, ...acc];
       }
       return acc;
     }, []);
@@ -303,7 +296,7 @@ class Map extends Component {
         height={height}
         onViewportChange={newViewport => {
           if (!isCardDragging) {
-            this.props.changeMapViewport({ ...newViewport });
+            this.props.changeMapViewport({...newViewport});
           }
         }}
         dragPan={!isCardDragging}
@@ -311,31 +304,28 @@ class Map extends Component {
         doubleClickZoom={false}
         latitude={latitude}
         longitude={longitude}
-        zoom={zoom}
-      >
+        zoom={zoom}>
         <div
           style={{
-            position: 'absolute'
+            position: 'absolute',
             // left: userPos[0],
             // top: userPos[1]
             // zIndex: 5000
-          }}
-        >
+          }}>
           {locNodes.map(children)}
 
           <div
             style={{
               position: 'absolute',
               left: userPos[0],
-              top: userPos[1]
+              top: userPos[1],
               // zIndex: 2000
-            }}
-          >
+            }}>
             <img
               src={userIcon}
               width={50}
               height={50}
-              style={{ transform: 'translate(-50%,-50%)' }}
+              style={{transform: 'translate(-50%,-50%)'}}
             />
           </div>
         </div>
@@ -346,27 +336,27 @@ class Map extends Component {
 
 // TODO: change this later
 const mapStateToProps = ({
-  MapView: { mapViewport, userLocation, width, height },
-  DataView: { selectedCardId },
-  Cards: { isCardDragging },
-  Screen
+  MapView: {mapViewport, userLocation, width, height},
+  DataView: {selectedCardId},
+  Cards: {isCardDragging},
+  Screen,
 }) => ({
-  viewport: { ...mapViewport, ...Screen },
+  viewport: {...mapViewport, ...Screen},
   userLocation,
   selectedCardId,
-  isCardDragging
+  isCardDragging,
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       changeMapViewport,
-      userMove
+      userMove,
     },
-    dispatch
+    dispatch,
   );
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(Map);

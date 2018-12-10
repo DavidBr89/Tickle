@@ -78,11 +78,10 @@ const MapAreaControl = props => {
     loc,
     width,
     height,
+    userLocation,
   } = props;
 
-  const [vp, setVp] = useState({...loc, zoom: 14});
-
-  const startLoc = [4.3951525, 50.8209233];
+  const startLoc = [userLocation.longitude, userLocation.latitude];
   const endLoc = [loc.longitude, loc.latitude];
 
   const conf = {
@@ -101,6 +100,7 @@ const MapAreaControl = props => {
   };
 
   const mapDOMRef = React.createRef();
+
   useEffect(() => {
     const map = mapDOMRef.current.getMap();
 
@@ -109,7 +109,6 @@ const MapAreaControl = props => {
       .send()
       .then(response => {
         const {body} = response;
-        console.log('body', body.routes[0]);
         const {
           routes: [
             {
@@ -119,35 +118,21 @@ const MapAreaControl = props => {
         } = body;
 
         const newMap = map;
-        const zoom = newMap.getZoom();
 
         newMap.addLayer(addLine(coordinates));
-        console.log('newMap bounds', newMap.getBounds());
-        const center = newMap.getCenter().toArray();
-
-        setVp({
-          zoom,
-          longitude: center[0],
-          latitude: center[1],
-        });
       });
   }, []);
 
-  const mapViewport = {
+  const boundVp = fitBounds({
     width,
     height,
-    ...vp,
-  };
-  console.log('yeah', width, height);
-  const boundVp = fitBounds({width, height, bounds: [startLoc, endLoc]});
+    bounds: [startLoc, endLoc],
+    padding: 20,
+  });
 
-  console.log('boundVp', boundVp);
   const mercator = new WebMercatorViewport({...boundVp, width, height});
 
   const cardPos = mercator.project(endLoc);
-
-  // console.log('vp', mercator.fitBounds([startLoc, endLoc], {padding: 5}));
-  console.log('fitBounds', fitBounds);
 
   return (
     <div className="relative">
@@ -158,11 +143,12 @@ const MapAreaControl = props => {
         forwardedRef={mapDOMRef}
         width={width}
         height={height}
-        mapViewport={mapViewport}
+        mapViewport={boundVp}
       />
       <CardMarker
         className="absolute"
         style={{
+          transform: 'translate(-50%,-50%)',
           left: cardPos[0],
           top: cardPos[1],
           width: 35,
@@ -174,6 +160,7 @@ const MapAreaControl = props => {
 };
 
 MapAreaControl.defaultProps = {width: 300, height: 300};
+
 const MapWrapper = props => (
   <div className="absolute w-full h-full">
     <DimWrapper delay={100}>

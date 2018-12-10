@@ -17,14 +17,14 @@ import MediaChallenge from 'Components/Challenges/MediaChallenge';
 import {ModalBody} from 'Utils/Modal';
 
 import {PreviewTags} from 'Utils/Tag';
-// import { BigButton } from './layout';
 
-// import { MediaList } from 'Utils/MediaUpload';
 import {DB} from 'Firebase';
 
 import cardRoutes from 'Src/Routes/cardRoutes';
 import makeBackCardFuncs from './backCardDbMixins';
+
 import CardBack from './CardBack';
+
 import ReadCardFront from './CardFront/ReadCardFront';
 import CardFrame from './CardFrame';
 
@@ -53,7 +53,7 @@ const CardViewable = ({
           <MediaChallenge
             activity={
               activity.value || {
-                //TODO: remove later
+                // TODO: remove later
                 description: 'placeholder',
                 title: 'placeholder title',
               }
@@ -89,11 +89,14 @@ const CardViewable = ({
 //   />
 // ) : (
 
-const mapStateToProps = state => ({
-  ...state.Screen,
-  ...state.Session,
-  ...state.Cards,
-});
+const mapStateToProps = state => {
+  console.log('state', state);
+  const {userLocation} = state.MapView;
+  const {authUser} = state.Session;
+  const {tagVocabulary} = state.Cards;
+
+  return {userLocation, authUser, tagVocabulary};
+};
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
@@ -117,7 +120,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     onClose,
   } = ownProps;
 
-  const {tagVocabulary} = state;
+  const {tagVocabulary, userLocation} = state;
 
   const {authUser} = state;
   const {uid: playerId} = authUser;
