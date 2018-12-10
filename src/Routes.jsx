@@ -24,12 +24,10 @@ import {
 
 import SignUp from './components/SignUp';
 import SignIn, {SignInRedirect} from './components/SignIn';
-import LandingPage from './components/LandingPage';
 import Home from './components/Home';
 import Admin from './components/Admin';
 import Account from './components/Account';
 import Diary from './components/Diary';
-import TagView from './components/DataView/ForceOverlay/TreeMapCluster';
 
 import CardTreeEditorPage from './components/CardTreeEditor';
 
@@ -156,7 +154,9 @@ const Routes = () => (
         path="/:userEnv/bookwidget"
         component={() => (
           <DefaultLayout>
-            <div className="content-margin"><BookWidget /></div>
+            <div className="content-margin">
+              <BookWidget />
+            </div>
           </DefaultLayout>
         )}
       />

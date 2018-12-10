@@ -9,9 +9,11 @@ import DimWrapper from 'Utils/DimensionsWrapper';
 // import { geoProject } from 'Lib/geo';
 import CardMarker from 'Components/cards/CardMarker';
 
+import userIcon from 'Components/utils/user.svg';
+
 // import MapboxDirections from '@mapbox/mapbox-gl-directions';
 
-import * as MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
+// import * as MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
 
 import mbxDirections from '@mapbox/mapbox-sdk/services/directions';
 
@@ -61,8 +63,8 @@ const addLine = coords => ({
     'line-cap': 'round',
   },
   paint: {
-    'line-color': 'red',
-    'line-width': 8,
+    'line-color': 'tomato',
+    'line-width': 6,
   },
 });
 
@@ -123,16 +125,23 @@ const MapAreaControl = props => {
       });
   }, []);
 
-  const boundVp = fitBounds({
-    width,
-    height,
-    bounds: [startLoc, endLoc],
-    padding: 20,
-  });
+  console.log('width', width, 'height', height);
+  const boundVp =
+    startLoc[0] !== endLoc[0] && startLoc[1] !== endLoc[1]
+      ? fitBounds({
+        // it crashes otherwise
+        width: Math.max(100, width),
+        height: Math.max(100, height),
+        bounds: [startLoc, endLoc],
+        padding: 30,
+        offset: [0, 40],
+      })
+      : {...userLocation, zoom: 14};
 
   const mercator = new WebMercatorViewport({...boundVp, width, height});
 
   const cardPos = mercator.project(endLoc);
+  const userPos = mercator.project(startLoc);
 
   return (
     <div className="relative">
@@ -145,6 +154,18 @@ const MapAreaControl = props => {
         height={height}
         mapViewport={boundVp}
       />
+      <img
+        src={userIcon}
+        width={50}
+        height={50}
+        className="absolute"
+        style={{
+          transform: 'translate(-50%,-50%)',
+          left: userPos[0],
+          top: userPos[1],
+        }}
+      />
+
       <CardMarker
         className="absolute"
         style={{
@@ -167,30 +188,12 @@ const MapWrapper = props => (
       {(width, height) => (
         <MapAreaControl
           {...props}
-          width={width || 300}
-          height={height || 300}
+          width={Math.max(width, 200)}
+          height={Math.max(height, 200)}
         />
       )}
     </DimWrapper>
   </div>
 );
-
-/*
-              <DivOverlay {...mapViewport(width, height)} data={[{ loc }]}>
-                {(_, [left, top]) => (
-                  <div
-                    styl, useStatee={{
-                      position: 'absolute',
-                      left: left - markerWidth / 2,
-                      top: top - markerHeight / 2,
-                      width: markerWidth,
-                      height: markerHeight
-                    }}
-                  >
-                    <CardMarker />
-                  </div>
-                )}
-              </DivOverlay>
-              */
 
 export default MapWrapper;

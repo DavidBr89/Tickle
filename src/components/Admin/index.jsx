@@ -36,10 +36,6 @@ const mapStateToProps = state => {
     cards,
     users
   } = state.Admin;
-  // const {
-  //   authUser: { uid }
-  // } = state.Session;
-  // console.log('selectedUserId', cards, selectedUserId);
 
   const selectedUser =
     selectedUserId !== null ? users.find(u => u.uid === selectedUserId) : null;
@@ -141,6 +137,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const {flipped} = stateProps;
   const {flip} = dispatchProps;
 
+  // console.log('this.props', sta);
   return {
     ...stateProps,
     ...dispatchProps,

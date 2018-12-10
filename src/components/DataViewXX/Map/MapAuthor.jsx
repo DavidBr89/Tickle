@@ -6,17 +6,15 @@ import {bindActionCreators} from 'redux';
 
 import CardMarker from 'Components/cards/CardMarker';
 
-import DropTargetCont from 'Components/DataView/DragAndDrop/DragTargetCont';
-
-import DragDropContextProvider from 'Components/DataView/DragAndDrop/DragContextProvider';
+import DropTargetCont from 'Components/DragAndDrop/DragTargetCont';
+import DragDropContextProvider from 'Components/DragAndDrop/DragContextProvider';
+import DragElement from 'Components/DragAndDrop/DragElement';
 
 import {PerspectiveMercatorViewport} from 'viewport-mercator-project';
 
 import {updateCardTemplate} from 'Reducers/Cards/actions';
 
 import {asyncUpdateCard} from 'Reducers/Cards/async_actions';
-
-import DragElement from 'Components/DataView/DragAndDrop/DragElement';
 
 import Map from 'Components/utils/Map';
 
@@ -50,8 +48,8 @@ const MapAuthor = DragDropContextProvider(props => {
     return acc;
   }, []);
 
-  const dragger = d => {
-    return selectedCardId === d.id ? (
+  const dragger = d =>
+    selectedCardId === d.id ? (
       <DragElement {...d} className="drag">
         <CardMarker
           style={{
@@ -72,7 +70,6 @@ const MapAuthor = DragDropContextProvider(props => {
         }}
       />
     );
-  };
 
   return (
     <DropTargetCont

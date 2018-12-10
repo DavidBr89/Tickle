@@ -5,7 +5,7 @@ import {FlyToInterpolator} from 'react-map-gl';
 
 import WebMercatorViewport from 'viewport-mercator-project';
 
-import MapAuthor from 'Components/DataView/Map/MapAuthor';
+import MapAuthor from 'Components/MapAuthor';
 
 // import TopicMapAuthor from 'Components/DataView/TopicMap/DragTopicMap';
 import {TEMP_ID} from 'Constants/cardFields';
@@ -194,10 +194,7 @@ PureMapCardAuthorPage.defaultProps = {};
 PureMapCardAuthorPage.propTypes = {};
 
 function PrivateTopicMapAuthorPage({...props}) {
-  return (
-    <CardAuthorPage {...props}>
-    </CardAuthorPage>
-  );
+  return <CardAuthorPage {...props} />;
 }
 
 const composeScaffold = comp =>

@@ -93,7 +93,7 @@ export const signIn = ({
   // });
 };
 
-export function removeUserEnv(env) {
+export function removeUserFromEnv(env) {
   // Thunk middleware knows how to handle functions.
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
@@ -106,7 +106,7 @@ export function removeUserEnv(env) {
     const updatedUserEnv = {userEnvs: userEnvs.filter(u => u.id !== env.id)};
 
     return db
-      .removeUserEnv({uid, envId: env.id})
+      .removeUserFromEnv({uid})
       .then(usrInfo => {
         console.log('retrieve USR INFO', usrInfo);
         dispatch(setAuthUserInfo(updatedUserEnv));
@@ -115,7 +115,7 @@ export function removeUserEnv(env) {
   };
 }
 
-export function addUserEnv({envId, newEnv}) {
+export function registerUserToEnv({envId, newEnv}) {
   // Thunk middleware knows how to handle functions.
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
@@ -132,7 +132,7 @@ export function addUserEnv({envId, newEnv}) {
     const db = DB(envId);
 
     return db
-      .addUserEnv({uid, env: newEnv})
+      .registerUserToEnv({uid, env: newEnv})
       .then(usrInfo => {
         dispatch(setAuthUserInfo(updatedUser));
       })
@@ -140,7 +140,7 @@ export function addUserEnv({envId, newEnv}) {
   };
 }
 
-///TODO: CHECK DAVID
+// /TODO: CHECK DAVID
 export function updateAuthUserInfo({userEnv, ...userProfile}) {
   return function(dispatch) {
     const db = DB(userEnv);
@@ -167,7 +167,7 @@ export function selectUserEnv(env) {
     dispatch(setUserEnv(env));
 
     // return db
-    //   .addUserEnv({uid, env})
+    //   .registerUserToEnv({uid, env})
     //   .then(usrInfo => {
     //     console.log('retrieve USR INFO', usrInfo);
     //     dispatch(setAuthUserInfo({userEnvs: newUserEnvs}));

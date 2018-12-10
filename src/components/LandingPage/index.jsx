@@ -4,26 +4,24 @@ import {Link, withRouter} from 'react-router-dom';
 
 import {SIGN_UP, SIGN_IN, ADMIN_SIGN_UP} from 'Constants/routeSpec';
 
-import AuthUserContext from '../AuthUserContext';
-
 // import { css } from 'aphrodite';
 // import SignOutButton from '../SignOut';
 
 // import { GlobalThemeConsumer, stylesheet } from 'Src/styles/GlobalThemeContext';
 
-import MiniForce from 'Components/DataView/ForceOverlay/MiniForceCollide';
+// import MiniForce from 'Components/DataView/ForceOverlay/MiniForceCollide';
 import CardMarker from 'Components/utils/PreviewMarker';
 
 import DefaultLayout from 'Components/DefaultLayout';
 
 import {connect} from 'react-redux';
+import AuthUserContext from '../AuthUserContext';
 
 const LandingPage = ({onClick, width}) => (
   <DefaultLayout>
     <div
       className="flex-grow flex flex-col items-center justify-center"
-      style={{}}
-    >
+      style={{}}>
       <div style={{position: 'relative'}}>
         <h1 style={{fontWeight: 'bold', fontSize: 100, zIndex: 2000}}>
           TICKLE

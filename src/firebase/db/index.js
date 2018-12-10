@@ -131,8 +131,10 @@ const makeCardFuncs = ({
     });
 
   const readCards = ({authorId = null, playerId = null}) => {
+
+    //TODO
     const thumbnailPromise = d => {
-      if (!d.img.value) return new Promise(resolve => resolve(d));
+      if (d.img && !d.img.value) return new Promise(resolve => resolve(d));
 
       const thumbNailRef = storageRef.child(
         `${ENV_STR}/images/cards/${thumbFileName(d.id)}`,
@@ -227,8 +229,8 @@ const makeCommentFuncs = ({TICKLE_ENV_REF}) => {
   return {readComments, addComment};
 };
 
-const makeUserFuncs = ({ENV_STR, readCards}) => {
-  const onceGetUsers = () =>
+const makeUserFuncs = ({TICKLE_ENV_REF, readCards}) => {
+  const readUsers = () =>
     firestore
       .collection('users')
       .get()
@@ -286,6 +288,7 @@ const makeUserFuncs = ({ENV_STR, readCards}) => {
       )
       .catch(err => console.log('err i getUser', err));
 
+  // TODO
   const getUserEnvs = uid =>
     firestore
       .collection('users')
@@ -303,24 +306,18 @@ const makeUserFuncs = ({ENV_STR, readCards}) => {
       })
       .catch(err => console.log('err  getUser'));
 
-  const addUserEnv = ({uid, env}) =>
-    firestore
-      .collection('users')
+  const registerUserEnv = ({uid}) =>
+    TICKLE_ENV_REF.collection('users')
       .doc(uid)
-      .collection('userEnvs')
-      .doc(env.id)
-      .set(env)
-      .then(() => env)
-      .catch(err => console.log('addUserEnv err', err));
+      .set(uid)
+      .then(() => uid)
+      .catch(err => console.log('registerUserEnv err', err));
 
-  const removeUserEnv = ({uid, envId}) =>
-    firestore
-      .collection('users')
+  const removeUserEnv = ({uid}) =>
+    TICKLE_ENV_REF.collection('users')
       .doc(uid)
-      .collection('userEnvs')
-      .doc(envId)
       .delete()
-      .catch(err => console.log('addUserEnv err', err));
+      .catch(err => console.log('registerUserEnv err', err));
 
   const doCreateUser = userProfile =>
     firestore
@@ -328,7 +325,7 @@ const makeUserFuncs = ({ENV_STR, readCards}) => {
       .doc(userProfile.uid)
       .set(userProfile)
       .then(() =>
-        addUserEnv({uid: userProfile.uid, env: {id: ENV_STR}}).then(env => ({
+        registerUserEnv({uid: userProfile.uid}).then(env => ({
           ...userProfile,
           userEnvs: [env],
         })),
@@ -340,8 +337,8 @@ const makeUserFuncs = ({ENV_STR, readCards}) => {
     getUser,
     doCreateUser,
     doUpdateUser: doCreateUser,
-    onceGetUsers,
-    addUserEnv,
+    readUsers,
+    registerUserEnv,
     removeUserEnv,
   };
 };
