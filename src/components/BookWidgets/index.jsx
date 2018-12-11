@@ -8,8 +8,8 @@ class BookWidget extends Component {
     className: PropTypes.string,
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    // document.widgetLaunchForm.submit();
+  componentDidMount(prevProps, prevState) {
+    document.widgetLaunchForm.submit();
   }
 
   render() {
@@ -85,17 +85,17 @@ class BookWidget extends Component {
             name="oauth_signature_method"
             value="HMAC-SHA1"
           />
-          <input type="hidden" name="oauth_timestamp" value="1544104931" />
+          <input type="hidden" name="oauth_timestamp" value="1544536154" />
           <input
             type="hidden"
             name="oauth_nonce"
-            value="Mjk4OGVjNjAyMWJiYTU1MDNiMmViZjI2YWJjMWRmMjk2Njk2ZTc2OA=="
+            value="kljasdkljjklsadjkdsajkljkldsopjwelkjdsnklbjkpjo'awpk\;nk"
           />
           <input type="hidden" name="oauth_version" value="1.0" />
           <input
             type="hidden"
             name="oauth_signature"
-            value=" YjBiYmFmNzA5YmUyZTFkNzM3NDIyOGQ3OTgzNWYzMTVmOTdmNTQyYg=="
+            value="NmI3ZWVlZjFhNTJiY2RjNDM1ZjcwNjY4YTJmNzM4ZTEzNmRjOGZjOQ=="
           />
           <input type="submit" value="Press to launch widget" />
         </form>

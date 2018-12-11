@@ -34,7 +34,6 @@ import withAuthentication from 'Src/components/withAuthentication';
 import {shiftCenterMap} from 'Src/lib/geo';
 // import {initCard} from 'Constants/cardFields';
 import {fallbackTagValues} from 'Constants/cardFields';
-import UserEnvironmentSettings from './UserEnvironmentSettings';
 import CardAuthorPage from './CardAuthorPage';
 
 // import mapViewReducer from './reducer';
@@ -214,5 +213,3 @@ export const MapCardAuthorPage = composeScaffold(PureMapCardAuthorPage);
 export const TopicMapAuthorPage = composeScaffold(PrivateTopicMapAuthorPage);
 
 export default CardAuthorPage;
-
-export {UserEnvironmentSettings};

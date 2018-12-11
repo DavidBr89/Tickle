@@ -23,7 +23,11 @@ const withAuthorization = (condition = authUser => !!authUser) => Component => {
     }
 
     componentDidUpdate(prevProps, prevState) {
-      const {authUser, userEnv} = this.props;
+      const {authUser, history, match} = this.props;
+
+      const {params} = match;
+      const {userEnv} = params;
+
       if (!condition(authUser)) history.push(`/${userEnv}/signin`);
     }
 

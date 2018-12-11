@@ -8,7 +8,6 @@ const SlideMenu = ({
   optionClassName,
   style,
   onChange,
-  values = [],
   children,
   selectedId,
   onSelectCardType,
