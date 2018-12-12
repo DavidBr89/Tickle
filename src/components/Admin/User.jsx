@@ -6,7 +6,6 @@ export default function User(props) {
     <div className={ `${className} flex` }>
       <img src={photoURL} style={{minWidth: 300, height: 200, flex: 0.5}} />
       <div className="ml-3">
-        <h2>{username}</h2>
         <div>{fullname}</div>
         <div>{email}</div>
         <div className="flex align-top">

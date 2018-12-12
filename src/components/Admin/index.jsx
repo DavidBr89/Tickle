@@ -18,8 +18,8 @@ import AdminPage from './AdminPage';
 
 const mapStateToProps = state => ({
   ...state.Session,
-  ...state.Admin,
   ...state.Cards,
+  ...state.Admin,
   // userEnvs: state.Session.authUser ? state.Session.authUser.userEnvs : [],
 });
 
@@ -35,28 +35,38 @@ const mapDispatchToProps = dispatch =>
   );
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
-  const {selectedUserId} = stateProps;
+  const {selectedUserId, users, envUserIds, cards,userEnvs} = stateProps;
 
-  const {addUserEnv, selectUserEnv, removeUserEnv, fetchUsers} = dispatchProps;
+  const {
+    createNewUserEnv,
+    selectUserEnv,
+    removeUserEnv,
+    fetchUsers,
+    registerUserToEnv,
+  } = dispatchProps;
 
   const {match, history} = ownProps;
 
   const {
-    params: {userEnv},
+    params: {userEnv: userEnvId},
   } = match;
 
   const routeUserEnv = env => history.push(`/${env}/${ADMIN.path}`);
 
+  console.log('envUserIds', envUserIds);
   return {
     ...stateProps,
+    cards,
     ...dispatchProps,
     ...ownProps,
     routeUserEnv,
     selectedUserId,
-    userEnv,
-    getUsers: () => fetchUsers(userEnv),
-    selectedUserEnvId: userEnv,
-    addUserEnv: newEnv => addUserEnv({envId: userEnv, newEnv}),
+    // nonEnvUsers,
+    userEnvs,
+    userEnvId,
+    getUsers: () => fetchUsers(userEnvId),
+    selectedUserEnvId: userEnvId,
+    registerUserToEnv: uid => registerUserToEnv({userEnvId, uid}),
   };
 };
 

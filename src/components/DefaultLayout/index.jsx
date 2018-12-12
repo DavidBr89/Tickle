@@ -37,7 +37,7 @@ class NavBar extends Component {
           className="navbar flex items-center relative m-2 "
           style={{minHeight: 48}}>
           <button
-            className="border-4 border-black cursor-pointer p-2 z-50 flex-col-wrapper items-center bg-white"
+            className="border-4 shadow border-black cursor-pointer p-2 z-50 flex-col-wrapper items-center bg-white"
             onClick={onToggle}
             type="button">
             <img src={IcAk} className="m-1" />
