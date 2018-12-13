@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import uuidv1 from 'uuid/v1';
 import {CloseIcon} from 'Src/styles/menu_icons';
 import PreviewCard from 'Components/cards/PreviewCard';
-import SelectField from 'Components/utils/SelectField';
+import {SelectInput} from 'Components/utils/SelectField';
 import {Link, withRouter} from 'react-router-dom';
 import User from './User';
 
@@ -18,15 +18,21 @@ const UserEnvPanel = ({
   routeUserEnv,
   removeUserEnv,
   title,
-  selectedUserEnvId,
+  userEnvId,
 }) => {
   const [open, setOpen] = useState(false);
   const [envName, setEnvName] = useState('');
 
+  const selectedUserEnv = userEnvs.find(d => d.id === userEnvId) || {};
+  const {
+    name: userEnvName = null,
+    id: selectedUserEnvId = null,
+  } = selectedUserEnv;
+
   return (
     <details className={className} open={open}>
       <summary className={summaryClassName} onClick={() => setOpen(!open)}>
-        {title}
+        {`Select User environment ${userEnvName}`}
       </summary>
       <div className="p-2">
         <h3>Create new User Env</h3>
@@ -77,33 +83,7 @@ const UserEnvPanel = ({
   );
 };
 
-function UserPanel({
-  className,
-  selectedUserId,
-  onSelectUser,
-  registerUserToEnv,
-  users,
-  envUserIds,
-  userEnvId,
-}) {
-  const [open, setOpen] = useState(false);
-
-  const [curUserId, setCurUserId] = useState(false);
-
-  const user = users.find(u => u.uid === selectedUserId) || {};
-  const {username} = user;
-  const aciveClass = uid => uid === selectedUserId && 'bg-grey';
-
-  const envUsers = users.filter(u => envUserIds.includes(u.uid));
-
-  const nonEnvUsers = users.filter(u => !envUserIds.includes(u.uid));
-
-  return (
-    <details className={className} open={open}>
-      <summary className={summaryClassName} onClick={() => setOpen(!open)}>
-        Users - {username || 'No User selected'}
-      </summary>
-
+/*
       <form
         className="flex mt-2 mb-3"
         onSubmit={e => {
@@ -127,18 +107,79 @@ function UserPanel({
           Add
         </button>
       </form>
+  */
 
+function UserPanel({
+  className,
+  selectedUserId,
+  onSelectUser,
+  registerUserToEnv,
+  users,
+  envUserIds,
+  userEnvId,
+}) {
+  const [open, setOpen] = useState(false);
+
+  const [curUserId, setCurUserId] = useState(false);
+
+  const user = users.find(u => u.uid === selectedUserId) || {};
+  const {username} = user;
+
+  const envUsers = users.filter(u => envUserIds.includes(u.uid));
+
+  const nonEnvUsers = users.filter(u => !envUserIds.includes(u.uid));
+
+  const aciveClass = uid => uid === selectedUserId && 'bg-grey';
+  const liClass = uid => `cursor-pointer p-2 text-lg ${aciveClass(uid)}`;
+
+  return (
+    <details className={className} open={open}>
+      <summary className={summaryClassName} onClick={() => setOpen(!open)}>
+        Users - {username || 'No User selected'}
+      </summary>
+
+      <form
+        className="flex mt-2 mb-3"
+        onSubmit={e => {
+          e.preventDefault();
+        }}>
+        <SelectInput
+          placeholder="Select User"
+          key={userEnvId}
+          className="border p-1"
+          inputClassName=""
+          style={{flex: 0.75}}
+          idAcc={d => d.email}
+          values={nonEnvUsers}
+          onChange={u => setCurUserId(u.uid)}
+        />
+        <button
+          className="ml-1 btn border"
+          type="submit"
+          style={{flex: 0.25}}
+          onClick={() => registerUserToEnv(curUserId)}>
+          Add
+        </button>
+      </form>
       <User {...user} />
-      <div className="mt-3 overflow-y-auto">
-        <ul className="border" style={{height: 200}}>
-          {envUsers.map(u => (
-            <li
-              className={`cursor-pointer p-2 text-lg ${aciveClass(u.uid)}`}
-              onClick={() => onSelectUser(u.uid)}>
-              {u.email}
-            </li>
-          ))}
-        </ul>
+
+      <div className="border overflow-y-auto">
+        <div
+          className={`${liClass(null)} mt-3 `}
+          onClick={() => onSelectUser(null)}>
+          All Users
+        </div>
+        <div>
+          <ul style={{height: 200}}>
+            {envUsers.map(u => (
+              <li
+                className={liClass(u.uid)}
+                onClick={() => onSelectUser(u.uid)}>
+                {u.email}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </details>
   );
@@ -149,12 +190,23 @@ function SelectCards(props) {
 
   const [open, setOpen] = useState(false);
 
+  const h = 10;
+  const gridStyle = {
+    justifyContent: 'center',
+    display: 'grid',
+    gridGap: 16,
+    // gridAutoFlow: 'column dense',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(10vh, 125px))',
+    gridAutoRows: `minmax(${h}rem, 2fr)`,
+    gridTemplateRows: `minmax(${h}rem, 2fr)`,
+  };
+
   return (
     <details className={className} open={open}>
       <summary className={summaryClassName} onClick={() => setOpen(!open)}>
         Cards
       </summary>
-      <div className="flex flex-wrap">
+      <div className="flex flex-wrap" style={{...gridStyle}}>
         {cards.map(c => (
           <PreviewCard title={c.title.value} />
         ))}
@@ -170,7 +222,7 @@ export default function UserEnvironmentSettings(props) {
 
     removeUserEnv,
     selectUserEnv,
-    // userEnvs,
+    userEnvs,
     selectedUserEnvId,
     routeUserEnv,
     getUsers,
@@ -196,10 +248,13 @@ export default function UserEnvironmentSettings(props) {
   }, []);
 
   console.log('userEnvId', userEnvId);
-  useEffect(() => {
-    fetchCards({userEnvId, authorId: selectedUserId, playerId: null});
-    fetchUserIdsFromEnv(userEnvId);
-  }, userEnvId);
+  useEffect(
+    () => {
+      fetchCards({userEnvId, authorId: selectedUserId, playerId: null});
+      fetchUserIdsFromEnv(userEnvId);
+    },
+    [userEnvId],
+  );
 
   useEffect(
     () => {
@@ -211,11 +266,7 @@ export default function UserEnvironmentSettings(props) {
   return (
     <div className="content-margin overflow-y-auto">
       <h1 className="mb-3">User Environments</h1>
-      <UserEnvPanel
-        title={`Select User environment ${userEnvId}`}
-        className={detailsClassName}
-        {...props}
-      />
+      <UserEnvPanel className={detailsClassName} {...props} />
       <UserPanel
         userEnvId={userEnvId}
         users={users}

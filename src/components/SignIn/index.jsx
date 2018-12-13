@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import {bindActionCreators} from 'redux';
 import {withRouter, Redirect} from 'react-router-dom';
@@ -38,6 +38,7 @@ const inputClass =
   'border-4 bg-white text-2xl py-2 px-3 text-grey-darkest border-black';
 
 const SignInPage = ({signIn, ...props}) => {
+  const [error, setError] = useState(null);
   const {match, history} = props;
   const {
     params: {userEnv},
@@ -55,11 +56,22 @@ const SignInPage = ({signIn, ...props}) => {
         backgroundSize:
           'cover' /* Resize the background image to cover the entire container */,
       }}>
+      <div
+        className="z-50 w-full absolute flex justify-center"
+        style={{
+          transform: `translateY(${error ? '0' : '-200%'})`,
+          transition: 'transform 100ms',
+        }}>
+        <div className="max-w-md bg-white m-2 p-4 border-2 border-black shadow text-2xl">
+          {error}
+        </div>
+      </div>
       <div className="flex-grow flex flex-col justify-end items-center mb-32 ">
         <div className="w-3/4">
-          <SignInFormWrapper
+          <StatefulSignInForm
             {...props}
             disabled={!userEnv}
+            onError={err => setError(err)}
             onSubmit={({email, password, onError}) =>
               signIn({
                 userEnvId: userEnv,
@@ -71,7 +83,7 @@ const SignInPage = ({signIn, ...props}) => {
               })
             }
           />
-          <div>
+          <div className="bg-white border-2 border-black p-2">
             <SignUpLink userEnv={userEnv} />
           </div>
           {!userEnv && (
@@ -94,7 +106,7 @@ const INITIAL_STATE = {
   error: null,
 };
 
-class SignInFormWrapper extends Component {
+class StatefulSignInForm extends React.Component {
   static propTypes = {
     onAuthenticate: PropTypes.func,
   };
@@ -107,8 +119,8 @@ class SignInFormWrapper extends Component {
   state = {...INITIAL_STATE};
 
   render() {
-    const {onSubmit, disabled} = this.props;
-    const {email, password, error} = this.state;
+    const {onSubmit, onError, disabled} = this.props;
+    const {email, password} = this.state;
 
     const isInvalid = password === '' || email === '';
     // console.log('routerProps', this.props);
@@ -125,9 +137,7 @@ class SignInFormWrapper extends Component {
             //   // this.setState({error: err});
             // }
           }).catch(err => {
-            console.log('caught err', err.message);
-
-            this.setState({error: err.message});
+            onError(err.message);
           })
         }
         email={email}
@@ -139,7 +149,6 @@ class SignInFormWrapper extends Component {
           this.setState(byPropKey('password', event.target.value))
         }
         isInvalid={isInvalid}
-        error={error}
       />
     );
   }
@@ -181,7 +190,6 @@ const SignInForm = ({
         onChange={onPasswordChange}
         type="password"
         placeholder="Password"
-        className="form-control"
         className={inputClass}
       />
     </div>
@@ -192,11 +200,6 @@ const SignInForm = ({
       type="submit">
       Sign In
     </button>
-    {error !== null && (
-      <div className="alert mt-3" role="alert">
-        <span className="block sm:inline">{error}</span>
-      </div>
-    )}
   </form>
 );
 

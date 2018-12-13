@@ -98,7 +98,7 @@ export default class PhotoUpload extends Component {
         </div>
         <label
           htmlFor="file-upload"
-          className="btn mt-2"
+          className="btn btn-shadow mt-2"
           style={{
             width: '100%',
             display: null,

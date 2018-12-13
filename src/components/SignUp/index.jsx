@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {Link, withRouter} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
+import uniq from 'lodash/uniq';
 
 import {compose} from 'recompose';
 import {connect} from 'react-redux';
@@ -9,9 +10,9 @@ import {connect} from 'react-redux';
 import * as routes from 'Constants/routeSpec';
 
 import PhotoUpload from 'Utils/PhotoUpload';
-import {TagInput} from 'Utils/Tag';
 
 import {signUp} from 'Reducers/Session/async_actions';
+import {SelectTag} from 'Components/utils/SelectField';
 
 import DefaultLayout from 'Components/DefaultLayout';
 import backgroundUrl from './signup_background.png';
@@ -31,7 +32,7 @@ const SignUpPage = ({match, ...props}) => {
           'cover' /* Resize the background image to cover the entire container */,
       }}
       menu={
-        <div className="flex-grow flex justify-center items-center">
+        <div className="absolute w-full flex justify-center">
           <h1>
             SignUp
             {admin ? ' Admin' : null}
@@ -74,6 +75,7 @@ class SignUpForm extends Component {
   state = INITIAL_STATE;
 
   onSubmit = event => {
+    event.preventDefault();
     const {username, email, fullname, passwordOne, img, interests} = this.state;
     const {history, admin, signUp, userEnv} = this.props;
 
@@ -95,7 +97,6 @@ class SignUpForm extends Component {
     })
       .then(() => {
         this.setState(() => ({...INITIAL_STATE}));
-        console.log('routes geo view', routes.GEO_VIEW.path);
         history.push(`/${userEnv}/${routes.GEO_VIEW.path}`);
       })
       .catch(error => {
@@ -123,6 +124,7 @@ class SignUpForm extends Component {
       img,
       loading,
       fullname,
+      interests,
     } = this.state;
 
     const isInvalid =
@@ -145,7 +147,7 @@ class SignUpForm extends Component {
           </div>
           <div className={formGroup}>
             <input
-              className="flex-grow form-control mr-2 mb-3"
+              className="flex-grow form-control mr-1 mb-3"
               value={fullname || ''}
               onChange={event =>
                 this.setState(byPropKey('fullname', event.target.value))
@@ -176,14 +178,29 @@ class SignUpForm extends Component {
           </div>
 
           <div className="form-group">
-            <TagInput
-              placeholder="Interests"
-              onChange={tags => this.setState({interests: tags})}
+            <SelectTag
+              placeholder="Select Interests"
+              className="border p-1"
+              inputClassName=""
+              style={{flex: 0.75}}
+              idAcc={d => d.id}
+              onChange={tag =>
+                this.setState({interests: uniq([...interests, tag])})
+              }
+              values={[{id: 'sports'}, {id: 'yeah'}, {id: 'doooh'}]}
             />
+            <div className="flex mt-2">
+              {interests.length === 0 && (
+                <div className="tag-label bg-grey mb-1 mt-1">No Interests</div>
+              )}
+              {interests.map(d => (
+                <div className="tag-label mr-1 mt-1 mb-1 bg-black">{d}</div>
+              ))}
+            </div>
           </div>
           <div className={formGroup}>
             <input
-              className="form-control mr-3"
+              className="form-control flex-grow mr-1 mb-2"
               value={passwordOne}
               onChange={event =>
                 this.setState(byPropKey('passwordOne', event.target.value))
@@ -192,7 +209,7 @@ class SignUpForm extends Component {
               placeholder="Password"
             />
             <input
-              className="form-control"
+              className="form-control flex-grow mb-2"
               value={passwordTwo}
               onChange={event =>
                 this.setState(byPropKey('passwordTwo', event.target.value))
@@ -209,7 +226,7 @@ class SignUpForm extends Component {
               justifyContent: 'space-between',
             }}>
             <button
-              className="btn bg-white w-full"
+              className="btn btn-shadow bg-white w-full"
               disabled={isInvalid}
               type="submit">
               Sign Up
