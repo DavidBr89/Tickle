@@ -123,22 +123,22 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     selectedCard !== null ? fallbackTagValues(selectedCard.tags) : filterSet;
 
   const mercator = new WebMercatorViewport(mapViewport);
-  const reCenterMap = d =>
+  const reCenterMap = lngLat =>
     changeMapViewport({
       ...mapViewport,
-      ...shiftCenterMap({...d.loc, mercator}),
+      ...shiftCenterMap({...lngLat, mercator}),
       transitionDuration: 2000,
       transitionInterpolator: new FlyToInterpolator(),
     });
 
   const previewCardAction = d => {
     selectedCardId === d.id ? routeExtendCard() : routeSelectCard(d.id);
-    reCenterMap(d);
+    reCenterMap(d.loc);
   };
 
   const selectTemplate = () => {
     routeSelectCard(TEMP_ID);
-    reCenterMap(templateCard);
+    reCenterMap(templateCard.loc);
   };
 
   const templateSelected = selectedCardId === TEMP_ID;
@@ -151,6 +151,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     previewCardAction,
     selectTemplate,
     cardSets,
+    reCenterMap,
     selectedCard,
     selectedTags,
     dataView,
@@ -167,12 +168,22 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 const authCondition = authUser => authUser !== null;
 
 function PureMapCardAuthorPage({...props}) {
-  const {asyncUpdateCard, mapViewport, updateCardTemplate, userEnv} = props;
+  const {
+    asyncUpdateCard,
+    reCenterMap,
+    mapViewport,
+    updateCardTemplate,
+    userEnv,
+  } = props;
 
   const mercator = new WebMercatorViewport(mapViewport);
 
+  const centerTemplatePos = loc => {
+    reCenterMap(loc);
+    updateCardTemplate({ loc });
+  };
+
   const cardDrop = cardData => {
-    console.log('cardDrop', cardData);
     const {x, y} = cardData;
     const [longitude, latitude] = mercator.unproject([x, y]);
 
@@ -182,7 +193,7 @@ function PureMapCardAuthorPage({...props}) {
   };
 
   return (
-    <CardAuthorPage {...props}>
+    <CardAuthorPage {...props} centerTemplatePos={centerTemplatePos}>
       <MapAuthor {...props} className="absolute" onCardDrop={cardDrop} />
     </CardAuthorPage>
   );

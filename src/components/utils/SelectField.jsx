@@ -11,25 +11,26 @@ const SelectField = ({
   values = [],
   ChildComp,
   selectedComp,
-  idAcc,
+  accId,
   placeholder,
 }) => {
   const [visible, setVisible] = useState(false);
   const [selectedId, setSelected] = useState(null);
 
-  const selected = values.find(v => idAcc(v) === selectedId) || null;
+  const selected = values; // values.find(v => accId(v) === selectedId) || null;
 
+  console.log('visible', visible, 'values', values);
   return (
     <div className={`${className} relative z-10`} style={style}>
       <div
-        className={`h-full cursor-pointer ${selectedClassName}`}
+        className={`h-full flex flex-grow cursor-pointer ${selectedClassName}`}
         tabIndex="-1"
-        onClick={() => setVisible(!visible)}
+        onFocus={() => setVisible(true)}
         onBlur={() => setVisible(false)}>
         {React.cloneElement(selectedComp, {...selected})}
       </div>
       <div
-        className="absolute w-full "
+        className="absolute w-full"
         style={{
           opacity: visible && values.length > 0 ? 1 : 0,
           transition: 'opacity 200ms',
@@ -38,15 +39,15 @@ const SelectField = ({
         <ul className="mt-2 list-reset p-2 z-10 bg-white border border-black shadow">
           {values.map(x => (
             <li
-              className={`${optionClassName} ${idAcc(x) === selectedId &&
+              className={`${optionClassName} ${accId(x) === selectedId &&
                 'bg-grey'} cursor-pointer`}
               onMouseDown={e => e.preventDefault()}
               onClick={() => {
-                setSelected(idAcc(x));
+                setSelected(accId(x));
                 setTimeout(() => setVisible(false), 50);
                 onChange(x);
               }}>
-              <ChildComp {...x} key={idAcc(x)} />
+              <ChildComp {...x} key={accId(x)} />
             </li>
           ))}
         </ul>
@@ -60,7 +61,7 @@ SelectField.defaultProps = {
   selectedComp: () => <div>selectedComp</div>,
   placeholder: 'No selection',
   selectedId: null,
-  idAcc: d => d.id,
+  accId: d => d.id,
   onChange: d => d,
 };
 
@@ -77,28 +78,41 @@ const InputComp = ({className, placeholder, forwardRef, value, onChange}) => (
 export const SelectInput = ({
   inputClassName,
   placeholder,
-  onChange,
+  onInputChange,
+  onIdChange,
+  ChildComp,
   ...props
 }) => {
-  const {values, idAcc} = props;
+  const {values, accId, accInputVal} = props;
   const [inputVal, setInputVal] = useState('');
-  const filteredValues = values.filter(d => idAcc(d).includes(inputVal));
+  const [id, setId] = useState(null);
 
-  // TODO: solve focus issue
   const inputRef = React.createRef();
+
   useEffect(
     () => {
-      onChange(inputVal);
+      onInputChange(inputVal);
     },
     [inputVal],
+  );
+
+  useEffect(
+    () => {
+      if(id !==  null) onIdChange(id);
+    },
+    [id],
   );
 
   return (
     <SelectField
       {...props}
-      onChange={u => setInputVal(idAcc(u))}
-      values={filteredValues}
-      ChildComp={d => <li>{idAcc(d)}</li>}
+      onChange={u => {
+        setInputVal(accInputVal(u));
+        setId(accId(u));
+        inputRef.current.blur();
+      }}
+      values={values}
+      ChildComp={d => <ChildComp {...d} />}
       selectedComp={
         <InputComp
           className={inputClassName}
@@ -113,25 +127,55 @@ export const SelectInput = ({
 };
 
 SelectInput.defaultProps = {
-  onChange: d => d,
+  onInputChange: d => d,
+  onIdChange: d => d,
+  ChildComp: () => <></>,
+  accId: d => d.id,
+  accInputVal: d => d.id,
+  values: [],
 };
 
-export const SelectTag = ({values, onChange}) => {
+const FilterInput = ({...props}) => {
+  const {values, accId, onChange} = props;
+  const [inputVal, setInputVal] = useState('');
+  const filteredValues = values.filter(d => accId(d).includes(inputVal));
+
+  console.log('inputVal', inputVal);
+
+  return (
+    <SelectInput
+      {...props}
+      values={filteredValues}
+      onChange={u => {
+        setInputVal(u);
+        onChange(u);
+      }}
+    />
+  );
+};
+
+export const SelectTag = ({
+  values,
+  className,
+  accId,
+  inputClassName,
+  onChange,
+}) => {
   const [inputVal, setInputVal] = useState(null);
   const [key, resetKey] = useState(uuidv1());
   return (
     <div key={key} className="flex">
-      <SelectInput
+      <FilterInput
         placeholder="Select Interests"
-        className="form-control border-2 shadow border-black p-1"
-        inputClassName=""
-        style={{flex: 0.75}}
-        idAcc={d => d.id}
+        className={className}
+        inputClassName={inputClassName}
+        ChildComp={d => <div>{accId(d)}</div>}
+        accId={accId}
         values={values}
         onChange={val => setInputVal(val)}
       />
       <button
-        className="ml-auto bg-white btn btn-shadow"
+        className="ml-2 bg-white btn btn-shadow"
         onClick={() => {
           onChange(inputVal);
           resetKey(uuidv1());
@@ -142,6 +186,10 @@ export const SelectTag = ({values, onChange}) => {
   );
 };
 
-SelectTag.defaultProps = {onChange: d => d};
+SelectTag.defaultProps = {
+  onChange: d => d,
+  accId: d => d.id,
+  accInputVal: d => d.id,
+};
 
 export default SelectField;

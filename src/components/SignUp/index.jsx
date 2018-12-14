@@ -39,8 +39,13 @@ const SignUpPage = ({match, ...props}) => {
           </h1>
         </div>
       }>
-      <div className="content-margin overflow-scroll flex-col-wrapper">
-        <SignUpForm {...props} userEnv={userEnv} admin={isAdmin} />
+      <div className="content-margin overflow-scroll flex flex-col flex-grow">
+        <SignUpForm
+          className="flex-grow"
+          {...props}
+          userEnv={userEnv}
+          admin={isAdmin}
+        />
       </div>
     </DefaultLayout>
   );
@@ -107,14 +112,8 @@ class SignUpForm extends Component {
     event.preventDefault();
   };
 
-  // componentDidUpdate(prevProps, prevState) {
-  //   const { img } = this.state;
-  //   if (img !== null) {
-  //     console.log('addImgToStorage', img);
-  //   }
-  // }
-
   render() {
+    const {className} = this.props;
     const {
       username,
       email,
@@ -133,116 +132,116 @@ class SignUpForm extends Component {
       email === '' ||
       username === '';
     // img === null;
-    const formGroup = 'flex flex-wrap mb-3';
+    const formGroup = 'flex flex-wrap mb-3 flex-no-shrink';
     return (
-      <div className="w-full">
-        <form onSubmit={this.onSubmit}>
-          <div className="form-group">
-            <PhotoUpload
-              imgUrl={img !== null ? img.url : null}
-              onChange={img => {
-                this.setState(byPropKey('img', img));
-              }}
-            />
-          </div>
-          <div className={formGroup}>
-            <input
-              className="flex-grow form-control mr-1 mb-3"
-              value={fullname || ''}
-              onChange={event =>
-                this.setState(byPropKey('fullname', event.target.value))
-              }
-              type="text"
-              placeholder="Full Name"
-            />
-            <input
-              className="form-control flex-grow mb-3"
-              value={username}
-              onChange={event =>
-                this.setState(byPropKey('username', event.target.value))
-              }
-              type="text"
-              placeholder="Username"
-            />
-          </div>
-          <div className="form-group">
-            <input
-              value={email}
-              className="form-control"
-              onChange={event =>
-                this.setState(byPropKey('email', event.target.value))
-              }
-              type="text"
-              placeholder="Email Address"
-            />
-          </div>
+      <form className={`${className} flex flex-col`} onSubmit={this.onSubmit}>
+        <div
+          className="form-group flex flex-col"
+          style={{flex: 0.5, minHeight: 300}}>
+          <PhotoUpload
+            className="flex-grow flex flex-col"
+            imgUrl={img !== null ? img.url : null}
+            onChange={img => {
+              this.setState(byPropKey('img', img));
+            }}
+          />
+        </div>
+        <div className={formGroup}>
+          <input
+            className="flex-grow form-control mr-1 mb-3"
+            value={fullname || ''}
+            onChange={event =>
+              this.setState(byPropKey('fullname', event.target.value))
+            }
+            type="text"
+            placeholder="Full Name"
+          />
+          <input
+            className="form-control flex-grow mb-3"
+            value={username}
+            onChange={event =>
+              this.setState(byPropKey('username', event.target.value))
+            }
+            type="text"
+            placeholder="Username"
+          />
+        </div>
+        <div className={formGroup}>
+          <input
+            value={email}
+            className="form-control flex-grow"
+            onChange={event =>
+              this.setState(byPropKey('email', event.target.value))
+            }
+            type="text"
+            placeholder="Email Address"
+          />
+        </div>
 
-          <div className="form-group">
-            <SelectTag
-              placeholder="Select Interests"
-              className="border p-1"
-              inputClassName=""
-              style={{flex: 0.75}}
-              idAcc={d => d.id}
-              onChange={tag =>
-                this.setState({interests: uniq([...interests, tag])})
-              }
-              values={[{id: 'sports'}, {id: 'yeah'}, {id: 'doooh'}]}
-            />
-            <div className="flex mt-2">
-              {interests.length === 0 && (
-                <div className="tag-label bg-grey mb-1 mt-1">No Interests</div>
-              )}
-              {interests.map(d => (
-                <div className="tag-label mr-1 mt-1 mb-1 bg-black">{d}</div>
-              ))}
+        <div className={`${formGroup} flex-col`}>
+          <SelectTag
+            placeholder="Select Interests"
+            inputClassName="flex-grow p-2 border-2 border-black"
+            className="flex-grow"
+            idAcc={d => d.id}
+            onChange={tag =>
+              this.setState({interests: uniq([...interests, tag])})
+            }
+            values={[{id: 'sports'}, {id: 'yeah'}, {id: 'doooh'}]}
+          />
+          <div className="flex mt-2">
+            {interests.length === 0 && (
+              <div className="tag-label bg-grey mb-1 mt-1">No Interests</div>
+            )}
+            {interests.map(d => (
+              <div className="tag-label mr-1 mt-1 mb-1 bg-black">{d}</div>
+            ))}
+          </div>
+        </div>
+        <div className={formGroup}>
+          <input
+            className="form-control flex-grow mr-1 mb-2"
+            value={passwordOne}
+            onChange={event =>
+              this.setState(byPropKey('passwordOne', event.target.value))
+            }
+            type="password"
+            placeholder="Password"
+          />
+          <input
+            className="form-control flex-grow mb-2"
+            value={passwordTwo}
+            onChange={event =>
+              this.setState(byPropKey('passwordTwo', event.target.value))
+            }
+            type="password"
+            placeholder="Confirm Password"
+          />
+        </div>
+        <div
+          className="flex-no-shrink mt-2 mb-3"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <button
+            className="btn btn-shadow bg-white w-full"
+            disabled={isInvalid}
+            type="submit">
+            Sign Up
+          </button>
+        </div>
+        {error && (
+          <div className="ml-2 alert alert-danger">{error.message}</div>
+        )}
+        {!error &&
+          loading && (
+          <div clasName="ml-2" style={{fontSize: 'large'}}>
+              Loading...
             </div>
-          </div>
-          <div className={formGroup}>
-            <input
-              className="form-control flex-grow mr-1 mb-2"
-              value={passwordOne}
-              onChange={event =>
-                this.setState(byPropKey('passwordOne', event.target.value))
-              }
-              type="password"
-              placeholder="Password"
-            />
-            <input
-              className="form-control flex-grow mb-2"
-              value={passwordTwo}
-              onChange={event =>
-                this.setState(byPropKey('passwordTwo', event.target.value))
-              }
-              type="password"
-              placeholder="Confirm Password"
-            />
-          </div>
-          <div
-            className="mb-3"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <button
-              className="btn btn-shadow bg-white w-full"
-              disabled={isInvalid}
-              type="submit">
-              Sign Up
-            </button>
-            {error && (
-              <div className="ml-2 alert alert-danger">{error.message}</div>
-            )}
-            {!error &&
-              loading && (
-              <div clasName="ml-2" style={{fontSize: 'large'}}>
-                  Loading...
-              </div>
-            )}
-          </div>
-        </form>
-      </div>
+        )}
+      </form>
     );
   }
 }
@@ -260,13 +259,7 @@ const SignUpLink = ({userEnv}) => (
   </div>
 );
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      signUp,
-    },
-    dispatch,
-  );
+const mapDispatchToProps = dispatch => bindActionCreators({signUp}, dispatch);
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...stateProps,
