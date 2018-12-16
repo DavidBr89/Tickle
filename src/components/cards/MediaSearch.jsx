@@ -46,19 +46,19 @@ const navIcons = [
     key: YOUTUBE,
     node: <Youtube size={30} />,
   },
-  {
-    key: GIPHY,
-    node: (
-      <small
-        style={{
-          paddingLeft: '13px',
-          paddingRight: '13px',
-          fontWeight: 'bold',
-        }}>
-        GIF
-      </small>
-    ),
-  },
+  // {
+  //   key: GIPHY,
+  //   node: (
+  //     <small
+  //       style={{
+  //         paddingLeft: '13px',
+  //         paddingRight: '13px',
+  //         fontWeight: 'bold',
+  //       }}>
+  //       GIF
+  //     </small>
+  //   ),
+  // },
 
   {
     key: USER_CONTENT,
@@ -113,7 +113,7 @@ UploadUserContent.propTypes = {
 
 UploadUserContent.defaultProps = {className: ''};
 
-const giphy = giphyReq({https: true});
+// const giphy = giphyReq({https: true});
 
 const fullDim = {width: '100%', height: '100%'};
 
@@ -219,23 +219,23 @@ const searchYoutube = (q = '') =>
       }),
   );
 
-const searchGiphy = (q = 'pokemon') =>
-  new Promise(resolve =>
-    giphy.search(q, (_, {data}) =>
-      resolve(
-        data.map(d => ({
-          url: d.embed_url,
-          id: d.embed_url,
-          title: d.title,
-          descr: '',
-          thumbnail: d.images.downsized_still.url,
-          gifurl: d.url,
-          source: GIPHY,
-          type: IMG,
-        })),
-      ),
-    ),
-  );
+// const searchGiphy = (q = 'pokemon') =>
+//   new Promise(resolve =>
+//     giphy.search(q, (_, {data}) =>
+//       resolve(
+//         data.map(d => ({
+//           url: d.embed_url,
+//           id: d.embed_url,
+//           title: d.title,
+//           descr: '',
+//           thumbnail: d.images.downsized_still.url,
+//           gifurl: d.url,
+//           source: GIPHY,
+//           type: IMG,
+//         })),
+//       ),
+//     ),
+//   );
 
 const pinterestUrl =
   'https://api.pinterest.com/v3/users/jessicamalba/?access_token=2222904fa9e29280188a94b9f940eea54fdc2344f4c666f7aa86a3187d47858d';
@@ -528,7 +528,7 @@ class MediaSearch extends Component {
 
     const selArticles = selectedMedia.filter(m => m.source === WIKIPEDIA);
     const selVideos = selectedMedia.filter(m => m.source === YOUTUBE);
-    const selGIFs = selectedMedia.filter(m => m.source === GIPHY);
+    // const selGIFs = selectedMedia.filter(m => m.source === GIPHY);
     const selURLs = selectedMedia.filter(m => m.source === URL);
     const selUserContent = selectedMedia.filter(m => m.source === USER_CONTENT);
     // const selPhotos = selectedMedia.filter(m => m.source === FLICKR);
@@ -568,18 +568,18 @@ class MediaSearch extends Component {
             key="youtube"
           />
         );
-      case GIPHY:
-        return (
-          <MetaSearch
-            className="flex-grow flex flex-col"
-            preSelected={selGIFs}
-            onChange={changeMedia(GIPHY)}
-            searchFn={searchGiphy}
-            source={GIPHY}
-            type={VIDEO}
-            key="giphy"
-          />
-        );
+      // case GIPHY:
+      //   return (
+      //     <MetaSearch
+      //       className="flex-grow flex flex-col"
+      //       preSelected={selGIFs}
+      //       onChange={changeMedia(GIPHY)}
+      //       searchFn={searchGiphy}
+      //       source={GIPHY}
+      //       type={VIDEO}
+      //       key="giphy"
+      //     />
+      //   );
       // case FLICKR:
       //   return (
       //     <MetaSearch
@@ -896,9 +896,7 @@ class MediaOverview extends Component {
           alignItems: 'center',
         }}>
         {data.length === 0 && (
-          <h3 className="text-muted">
-            {'No media added to this Card!'}
-          </h3>
+          <h3 className="text-muted">No media added to this Card!</h3>
         )}
         <ScrollList data={data} maxHeight="100%">
           {(d, selected) => (
