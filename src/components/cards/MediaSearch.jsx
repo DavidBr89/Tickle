@@ -10,7 +10,7 @@ import AlignLeft from 'react-feather/dist/icons/align-left';
 import uniqBy from 'lodash/uniqBy';
 
 // import MyGrid from 'mygrid/dist';
-import giphyReq from 'giphy-api';
+// import giphyReq from 'giphy-api';
 import ScrollList from 'Components/utils/ScrollList';
 // import fetchJsonp from 'fetch-jsonp';
 
@@ -28,7 +28,7 @@ import {NewTabLink} from 'Components/utils/StyledComps';
 import {GIF, TEXT, VIDEO, IMG, URL} from 'Constants/mediaTypes';
 
 const WIKIPEDIA = 'wikipedia';
-const GIPHY = 'giphy';
+// const GIPHY = 'giphy';
 const YOUTUBE = 'youtube';
 const FLICKR = 'flickr';
 const USER_CONTENT = 'user-content';
