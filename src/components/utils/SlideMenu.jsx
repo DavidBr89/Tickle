@@ -12,15 +12,20 @@ const SlideMenu = ({
   selectedId,
   onSelectCardType,
   tags,
+  visible: defaultVisible,
 }) => {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(defaultVisible);
 
   return (
     <div
       tabIndex="-1"
       className={`${className} z-10 relative`}
-      onBlur={() => setTimeout(() => setVisible(false), 100)}
-      style={{outline: 'none'}}>
+      style={{outline: 'none'}}
+      onBlur={e => {
+        e.stopPropagation();
+        e.preventDefault();
+        setTimeout(() => setVisible(false), 100);
+      }}>
       <div className="flex-grow flex justify-end cursor-pointer">
         <div
           onClick={() => setVisible(!visible)}

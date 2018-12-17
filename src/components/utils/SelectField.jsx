@@ -21,7 +21,7 @@ const SelectField = ({
 
   console.log('visible', visible, 'values', values);
   return (
-    <div className={`${className} relative z-10`} style={style}>
+    <div className={`${className} relative `} style={style}>
       <div
         className={`h-full flex flex-grow cursor-pointer ${selectedClassName}`}
         tabIndex="-1"
@@ -30,17 +30,20 @@ const SelectField = ({
         {React.cloneElement(selectedComp, {...selected})}
       </div>
       <div
-        className="absolute w-full"
+        className="absolute w-full z-10"
         style={{
-          opacity: visible && values.length > 0 ? 1 : 0,
+          // left: 0,
+          // top: 0,
+          // opacity: visible && values.length > 0 ? 1 : 0,
           transition: 'opacity 200ms',
           pointerEvents: !visible && 'none',
+          display: !visible && 'none',
         }}>
-        <ul className="mt-2 list-reset p-2 z-10 bg-white border border-black shadow">
+        <ul className="mt-2 list-reset p-2 bg-white border border-black shadow">
           {values.map(x => (
             <li
               className={`${optionClassName} ${accId(x) === selectedId &&
-                'bg-grey'} cursor-pointer`}
+                'bg-grey'} cursor-pointer `}
               onMouseDown={e => e.preventDefault()}
               onClick={() => {
                 setSelected(accId(x));
@@ -81,6 +84,7 @@ export const SelectInput = ({
   onInputChange,
   onIdChange,
   ChildComp,
+  selectedClassName,
   ...props
 }) => {
   const {values, accId, accInputVal} = props;
@@ -98,7 +102,7 @@ export const SelectInput = ({
 
   useEffect(
     () => {
-      if(id !==  null) onIdChange(id);
+      if (id !== null) onIdChange(id);
     },
     [id],
   );
@@ -113,6 +117,7 @@ export const SelectInput = ({
       }}
       values={values}
       ChildComp={d => <ChildComp {...d} />}
+      selectedClassName={selectedClassName}
       selectedComp={
         <InputComp
           className={inputClassName}
@@ -159,16 +164,21 @@ export const SelectTag = ({
   className,
   accId,
   inputClassName,
+  placeholder,
+  btnContent,
   onChange,
+  selectedClassName,
+  style,
 }) => {
   const [inputVal, setInputVal] = useState(null);
   const [key, resetKey] = useState(uuidv1());
   return (
-    <div key={key} className="flex">
+    <div key={key} className={`flex ${className}`} style={style}>
       <FilterInput
-        placeholder="Select Interests"
-        className={className}
+        className="flex-grow"
+        placeholder={placeholder}
         inputClassName={inputClassName}
+        selectedClassName={selectedClassName}
         ChildComp={d => <div>{accId(d)}</div>}
         accId={accId}
         values={values}
@@ -180,7 +190,7 @@ export const SelectTag = ({
           onChange(inputVal);
           resetKey(uuidv1());
         }}>
-        Add Tag
+        {btnContent}
       </button>
     </div>
   );
@@ -190,6 +200,8 @@ SelectTag.defaultProps = {
   onChange: d => d,
   accId: d => d.id,
   accInputVal: d => d.id,
+  placeholder: 'Enter',
+  btnContent: 'Add',
 };
 
 export default SelectField;

@@ -6,6 +6,13 @@ import {CloseIcon} from 'Src/styles/menu_icons';
 import PreviewCard from 'Components/cards/PreviewCard';
 import {SelectInput} from 'Components/utils/SelectField';
 import {Link, withRouter} from 'react-router-dom';
+import uniq from 'lodash/uniq';
+import UserIcon from 'react-feather/dist/icons/user';
+
+import {BlackModal, ModalBody} from 'Components/utils/Modal';
+
+import {SelectTag} from 'Components/utils/SelectField';
+
 import User from './User';
 
 const detailsClassName = 'shadow text-2xl p-2 mb-5 border-2 border-black';
@@ -20,7 +27,7 @@ const UserEnvPanel = ({
   title,
   userEnvId,
 }) => {
-  const [open, setOpen] = useState(false);
+  const [panelOpen, setPanelOpen] = useState(false);
   const [envName, setEnvName] = useState('');
 
   const selectedUserEnv = userEnvs.find(d => d.id === userEnvId) || {};
@@ -30,8 +37,10 @@ const UserEnvPanel = ({
   } = selectedUserEnv;
 
   return (
-    <details className={className} open={open}>
-      <summary className={summaryClassName} onClick={() => setOpen(!open)}>
+    <details className={className} panelOpen={panelOpen}>
+      <summary
+        className={summaryClassName}
+        onClick={() => setPanelOpen(!panelOpen)}>
         {`Select User environment ${userEnvName}`}
       </summary>
       <div className="p-2">
@@ -109,6 +118,64 @@ const UserEnvPanel = ({
       </form>
   */
 
+const RegisterUserForm = ({onSubmit, ...props}) => {
+  const [fullName, setFullName] = useState('');
+  const [aims, setAims] = useState([]);
+  const [deficits, setDeficits] = useState([]);
+
+  return (
+    <form
+      className="flex-grow flex flex-col"
+      onSubmit={e => e.preventDefault()}>
+      <div className="flex-grow flex flex-col" style={{flexGrow: 0.6}}>
+        <UserIcon className="flex-grow w-auto h-auto" />
+      </div>
+      <div className="flex flex-none mb-3">
+        <input
+          value={fullName}
+          className="form-control flex-grow mr-2"
+          onChange={event => setFullName(event.target.value)}
+          type="text"
+          placeholder="First and last name"
+        />
+        <input
+          value={fullName}
+          className="form-control flex-grow "
+          onChange={event => setFullName(event.target.value)}
+          type="text"
+          placeholder="First and last name"
+        />
+      </div>
+      <div className="mb-3">
+        <SelectTag
+          placeholder="Enter Learning Aims"
+          inputClassName="flex-grow p-2 border-2 border-black"
+          idAcc={d => d.id}
+          onChange={newAim => setAims({interests: uniq([...aims, newAim])})}
+          values={[{id: 'sports'}, {id: 'yeah'}, {id: 'doooh'}]}
+        />
+      </div>
+      <SelectTag
+        btnContent="Add"
+        placeholder="Enter Learning deficits"
+        inputClassName="z-0 flex-grow p-2 border-2 border-black"
+        className=""
+        idAcc={d => d.id}
+        onChange={newDeficit =>
+          setAims({deficits: uniq([...deficits, newDeficit])})
+        }
+        values={[{id: 'sports'}, {id: 'yeah'}, {id: 'doooh'}]}
+      />
+      <button
+        type="submit"
+        className="mt-auto mt-3 btn btn-black"
+        onClick={() => onSubmit({})}>
+        Create{' '}
+      </button>
+    </form>
+  );
+};
+
 function UserPanel({
   className,
   selectedUserId,
@@ -117,8 +184,11 @@ function UserPanel({
   users,
   envUserIds,
   userEnvId,
+  PreviewCard,
+  preRegisterUser,
 }) {
-  const [open, setOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [panelOpen, setPanelOpen] = useState(false);
 
   const [curUserId, setCurUserId] = useState(false);
 
@@ -133,42 +203,35 @@ function UserPanel({
   const liClass = uid => `cursor-pointer p-2 text-lg ${aciveClass(uid)}`;
 
   return (
-    <details className={className} open={open}>
-      <summary className={summaryClassName} onClick={() => setOpen(!open)}>
+    <details className={className} panelOpen={panelOpen}>
+      <summary
+        className={summaryClassName}
+        onClick={() => setPanelOpen(!panelOpen)}>
         Users - {username || 'No User selected'}
       </summary>
 
-      <form
-        className="flex mt-2 mb-3"
-        onSubmit={e => {
-          e.preventDefault();
-        }}>
-        <SelectInput
-          placeholder="Select User"
-          key={userEnvId}
-          className="border p-1"
-          inputClassName=""
-          style={{flex: 0.75}}
-          idAcc={d => d.email}
-          values={nonEnvUsers}
-          onChange={u => setCurUserId(u.uid)}
-        />
-        <button
-          className="ml-1 btn border"
-          type="submit"
-          style={{flex: 0.25}}
-          onClick={() => registerUserToEnv(curUserId)}>
-          Add
-        </button>
-      </form>
+      <BlackModal visible={modalOpen}>
+        <ModalBody title="New User" onClose={() => setModalOpen(false)}>
+          <RegisterUserForm onSubmit={preRegisterUser} />
+        </ModalBody>
+      </BlackModal>
+
       <User {...user} />
 
       <div className="border overflow-y-auto">
-        <div
-          className={`${liClass(null)} mt-3 `}
-          onClick={() => onSelectUser(null)}>
-          All Users
+        <div className="flex mt-2 mb-2">
+          <div
+            className={`${liClass(null)} italic`}
+            onClick={() => onSelectUser(null)}>
+            All Users
+          </div>
+          <button
+            onClick={() => setModalOpen(true)}
+            className="ml-1 btn border">
+            Add User
+          </button>
         </div>
+
         <div>
           <ul style={{height: 200}}>
             {envUsers.map(u => (
@@ -188,7 +251,7 @@ function UserPanel({
 function SelectCards(props) {
   const {className, cards} = props;
 
-  const [open, setOpen] = useState(false);
+  const [panelOpen, setPanelOpen] = useState(false);
 
   const h = 10;
   const gridStyle = {
@@ -196,14 +259,16 @@ function SelectCards(props) {
     display: 'grid',
     gridGap: 16,
     // gridAutoFlow: 'column dense',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(10vh, 125px))',
-    gridAutoRows: `minmax(${h}rem, 2fr)`,
-    gridTemplateRows: `minmax(${h}rem, 2fr)`,
+    gridTemplateColumns: 'repeat(auto-fit, 10rem)',
+    gridAutoRows: `minmax(${h}rem, 1fr)`,
+    gridTemplateRows: `minmax(${h}rem, 1fr)`,
   };
 
   return (
-    <details className={className} open={open}>
-      <summary className={summaryClassName} onClick={() => setOpen(!open)}>
+    <details className={className} panelOpen={panelOpen}>
+      <summary
+        className={summaryClassName}
+        onClick={() => setPanelOpen(!panelOpen)}>
         Cards
       </summary>
       <div className="flex flex-wrap" style={{...gridStyle}}>
@@ -268,6 +333,7 @@ export default function UserEnvironmentSettings(props) {
       <h1 className="mb-3">User Environments</h1>
       <UserEnvPanel className={detailsClassName} {...props} />
       <UserPanel
+        {...props}
         userEnvId={userEnvId}
         users={users}
         envUserIds={envUserIds}

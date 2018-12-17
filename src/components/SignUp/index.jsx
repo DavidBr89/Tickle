@@ -28,8 +28,7 @@ const SignUpPage = ({match, ...props}) => {
       style={{
         backgroundImage: `url("${backgroundUrl}")`,
         backgroundRepeat: 'no-repeat',
-        backgroundSize:
-          'cover' /* Resize the background image to cover the entire container */,
+        backgroundSize: 'cover'
       }}
       menu={
         <div className="absolute w-full flex justify-center">

@@ -12,9 +12,11 @@ function CardTagFilter({
   height,
   ...props
 }) {
+  const [setFilteredTags, filteredTags] = useState(tags);
   return (
     <div className="flex justify-end relative m-2 z-20">
       <SlideMenu className="flex-grow">
+        <h3>Tags</h3>
         <div className="mt-3 flex flex-wrap">
           {tags.map(d => (
             <div
