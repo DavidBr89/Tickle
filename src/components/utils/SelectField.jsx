@@ -145,13 +145,11 @@ const FilterInput = ({...props}) => {
   const [inputVal, setInputVal] = useState('');
   const filteredValues = values.filter(d => accId(d).includes(inputVal));
 
-  console.log('inputVal', inputVal);
-
   return (
     <SelectInput
       {...props}
       values={filteredValues}
-      onChange={u => {
+      onInputChange={u => {
         setInputVal(u);
         onChange(u);
       }}
@@ -187,6 +185,7 @@ export const SelectTag = ({
       <button
         className="ml-2 bg-white btn btn-shadow"
         onClick={() => {
+          // console.log('SelectTag INPUT', inputVal);
           onChange(inputVal);
           resetKey(uuidv1());
         }}>

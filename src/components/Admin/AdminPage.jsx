@@ -118,11 +118,24 @@ const UserEnvPanel = ({
       </form>
   */
 
+const TagSet = ({values, placeholder}) => (
+  <div className="flex mt-1">
+    {values.length === 0 && (
+      <div className="tag-label bg-grey mr-1 mb-1">{placeholder}</div>
+    )}
+    {values.map(a => (
+      <div className="tag-label bg-black mr-1 mb-1">{a}</div>
+    ))}
+  </div>
+);
+
 const RegisterUserForm = ({onSubmit, ...props}) => {
   const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
   const [aims, setAims] = useState([]);
   const [deficits, setDeficits] = useState([]);
 
+  console.log('aims', aims);
   return (
     <form
       className="flex-grow flex flex-col"
@@ -132,11 +145,11 @@ const RegisterUserForm = ({onSubmit, ...props}) => {
       </div>
       <div className="flex flex-none mb-3">
         <input
-          value={fullName}
+          value={email}
           className="form-control flex-grow mr-2"
-          onChange={event => setFullName(event.target.value)}
-          type="text"
-          placeholder="First and last name"
+          onChange={event => setEmail(event.target.value)}
+          type="email"
+          placeholder="email"
         />
         <input
           value={fullName}
@@ -151,25 +164,29 @@ const RegisterUserForm = ({onSubmit, ...props}) => {
           placeholder="Enter Learning Aims"
           inputClassName="flex-grow p-2 border-2 border-black"
           idAcc={d => d.id}
-          onChange={newAim => setAims({interests: uniq([...aims, newAim])})}
+          onChange={newAim => {
+            setAims(uniq([...aims, newAim]));
+          }}
           values={[{id: 'sports'}, {id: 'yeah'}, {id: 'doooh'}]}
         />
+        <TagSet values={aims} placeholder="No aim" />
       </div>
-      <SelectTag
-        btnContent="Add"
-        placeholder="Enter Learning deficits"
-        inputClassName="z-0 flex-grow p-2 border-2 border-black"
-        className=""
-        idAcc={d => d.id}
-        onChange={newDeficit =>
-          setAims({deficits: uniq([...deficits, newDeficit])})
-        }
-        values={[{id: 'sports'}, {id: 'yeah'}, {id: 'doooh'}]}
-      />
+      <div>
+        <SelectTag
+          btnContent="Add"
+          placeholder="Enter Learning deficits"
+          inputClassName="z-0 flex-grow p-2 border-2 border-black"
+          className=""
+          idAcc={d => d.id}
+          onChange={newDeficit => setDeficits(uniq([...deficits, newDeficit]))}
+          values={[{id: 'sports'}, {id: 'yeah'}, {id: 'doooh'}]}
+        />
+        <TagSet values={deficits} placeholder="No deficits" />
+      </div>
       <button
         type="submit"
         className="mt-auto mt-3 btn btn-black"
-        onClick={() => onSubmit({})}>
+        onClick={() => onSubmit({aims, deficits, fullName, email})}>
         Create{' '}
       </button>
     </form>
@@ -180,10 +197,9 @@ function UserPanel({
   className,
   selectedUserId,
   onSelectUser,
-  registerUserToEnv,
+  // registerUserToEnv,
   users,
   envUserIds,
-  userEnvId,
   PreviewCard,
   preRegisterUser,
 }) {
@@ -334,7 +350,6 @@ export default function UserEnvironmentSettings(props) {
       <UserEnvPanel className={detailsClassName} {...props} />
       <UserPanel
         {...props}
-        userEnvId={userEnvId}
         users={users}
         envUserIds={envUserIds}
         className={detailsClassName}
