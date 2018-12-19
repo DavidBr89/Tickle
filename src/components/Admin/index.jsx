@@ -13,6 +13,8 @@ import * as adminActions from 'Reducers/Admin/actions';
 import withAuthorization from 'Src/components/withAuthorization';
 import withAuthentication from 'Src/components/withAuthentication';
 
+import uuidv1 from 'uuid/v1';
+
 import {ADMIN} from 'Constants/routeSpec';
 import AdminPage from './AdminPage';
 
@@ -35,7 +37,7 @@ const mapDispatchToProps = dispatch =>
   );
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
-  const {selectedUserId, users, envUserIds, cards,userEnvs} = stateProps;
+  const {selectedUserId, users, envUserIds, cards, userEnvs} = stateProps;
 
   const {
     createNewUserEnv,
@@ -43,6 +45,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     removeUserEnv,
     fetchUsers,
     registerUserToEnv,
+    preRegisterUser,
   } = dispatchProps;
 
   const {match, history} = ownProps;
@@ -53,7 +56,6 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 
   const routeUserEnv = env => history.push(`/${env}/${ADMIN.path}`);
 
-  console.log('envUserIds', envUserIds);
   return {
     ...stateProps,
     cards,
@@ -66,6 +68,9 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     userEnvId,
     getUsers: () => fetchUsers(userEnvId),
     selectedUserEnvId: userEnvId,
+    preRegisterUser: usr => {
+      preRegisterUser({...usr, uid: uuidv1(), userEnvId});
+    },
     registerUserToEnv: uid => registerUserToEnv({userEnvId, uid}),
   };
 };

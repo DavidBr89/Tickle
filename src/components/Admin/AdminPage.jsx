@@ -129,13 +129,13 @@ const TagSet = ({values, placeholder}) => (
   </div>
 );
 
-const RegisterUserForm = ({onSubmit, ...props}) => {
+const RegisterUserForm = ({onSubmit, error, ...props}) => {
   const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(null);
   const [aims, setAims] = useState([]);
   const [deficits, setDeficits] = useState([]);
 
-  console.log('aims', aims);
+  const disabled = email === null;
   return (
     <form
       className="flex-grow flex flex-col"
@@ -183,12 +183,16 @@ const RegisterUserForm = ({onSubmit, ...props}) => {
         />
         <TagSet values={deficits} placeholder="No deficits" />
       </div>
-      <button
-        type="submit"
-        className="mt-auto mt-3 btn btn-black"
-        onClick={() => onSubmit({aims, deficits, fullName, email})}>
-        Create{' '}
-      </button>
+      <div className="mt-auto">
+        {error && <div className="alert mb-2">{error.msg}</div>}
+        <button
+          disabled={disabled}
+          type="submit"
+          className={`w-full mt-3 btn btn-black ${disabled && 'disabled'}`}
+          onClick={() => onSubmit({aims, deficits, fullName, email})}>
+          Create{' '}
+        </button>
+      </div>
     </form>
   );
 };
@@ -197,6 +201,7 @@ function UserPanel({
   className,
   selectedUserId,
   onSelectUser,
+  userRegErr,
   // registerUserToEnv,
   users,
   envUserIds,
@@ -228,7 +233,7 @@ function UserPanel({
 
       <BlackModal visible={modalOpen}>
         <ModalBody title="New User" onClose={() => setModalOpen(false)}>
-          <RegisterUserForm onSubmit={preRegisterUser} />
+          <RegisterUserForm onSubmit={preRegisterUser} error={userRegErr} />
         </ModalBody>
       </BlackModal>
 
@@ -247,7 +252,6 @@ function UserPanel({
             Add User
           </button>
         </div>
-
         <div>
           <ul style={{height: 200}}>
             {envUsers.map(u => (
@@ -298,9 +302,7 @@ function SelectCards(props) {
 export default function UserEnvironmentSettings(props) {
   const {
     authUser,
-
     addUserEnv,
-
     removeUserEnv,
     selectUserEnv,
     userEnvs,
