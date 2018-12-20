@@ -129,7 +129,7 @@ const TagSet = ({values, placeholder}) => (
   </div>
 );
 
-const RegisterUserForm = ({onSubmit, error, ...props}) => {
+const RegisterUserForm = ({onSubmit, error, ...usr}) => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState(null);
   const [aims, setAims] = useState([]);
@@ -189,7 +189,7 @@ const RegisterUserForm = ({onSubmit, error, ...props}) => {
           disabled={disabled}
           type="submit"
           className={`w-full mt-3 btn btn-black ${disabled && 'disabled'}`}
-          onClick={() => onSubmit({aims, deficits, fullName, email})}>
+          onClick={() => onSubmit({...usr, aims, deficits, fullName, email})}>
           Create{' '}
         </button>
       </div>
@@ -204,7 +204,7 @@ function UserPanel({
   userRegErr,
   // registerUserToEnv,
   users,
-  envUserIds,
+  userEnvId,
   PreviewCard,
   preRegisterUser,
 }) {
@@ -216,13 +216,14 @@ function UserPanel({
   const user = users.find(u => u.uid === selectedUserId) || {};
   const {username} = user;
 
-  const envUsers = users.filter(u => envUserIds.includes(u.uid));
+  const envUsers = users.filter(u => u.userEnvIds.includes(userEnvId));
 
-  const nonEnvUsers = users.filter(u => !envUserIds.includes(u.uid));
+  const baseLiClass = 'cursor-pointer p-2 text-lg';
+  const liClass = u =>
+    `${baseLiClass} ${u.uid === selectedUserId && 'bg-grey'} ${u.tmp &&
+      'bg-green'}`;
 
-  const aciveClass = uid => uid === selectedUserId && 'bg-grey';
-  const liClass = uid => `cursor-pointer p-2 text-lg ${aciveClass(uid)}`;
-
+  console.log('envUsers', envUsers);
   return (
     <details className={className} panelOpen={panelOpen}>
       <summary
@@ -233,7 +234,11 @@ function UserPanel({
 
       <BlackModal visible={modalOpen}>
         <ModalBody title="New User" onClose={() => setModalOpen(false)}>
-          <RegisterUserForm onSubmit={preRegisterUser} error={userRegErr} />
+          <RegisterUserForm
+            {...user}
+            onSubmit={preRegisterUser}
+            error={userRegErr}
+          />
         </ModalBody>
       </BlackModal>
 
@@ -242,7 +247,7 @@ function UserPanel({
       <div className="border overflow-y-auto">
         <div className="flex mt-2 mb-2">
           <div
-            className={`${liClass(null)} italic`}
+            className={`${baseLiClass} italic`}
             onClick={() => onSelectUser(null)}>
             All Users
           </div>
@@ -255,9 +260,7 @@ function UserPanel({
         <div>
           <ul style={{height: 200}}>
             {envUsers.map(u => (
-              <li
-                className={liClass(u.uid)}
-                onClick={() => onSelectUser(u.uid)}>
+              <li className={liClass(u)} onClick={() => onSelectUser(u.uid)}>
                 {u.email}
               </li>
             ))}
@@ -334,7 +337,7 @@ export default function UserEnvironmentSettings(props) {
   useEffect(
     () => {
       fetchCards({userEnvId, authorId: selectedUserId, playerId: null});
-      fetchUserIdsFromEnv(userEnvId);
+      // fetchUserIdsFromEnv(userEnvId);
     },
     [userEnvId],
   );

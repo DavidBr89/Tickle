@@ -68,8 +68,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     userEnvId,
     getUsers: () => fetchUsers(userEnvId),
     selectedUserEnvId: userEnvId,
-    preRegisterUser: usr => {
-      preRegisterUser({...usr, uid: uuidv1(), userEnvId});
+    preRegisterUser: (usr) => {
+      preRegisterUser({ ...usr, userEnvIds: [userEnvId], });
     },
     registerUserToEnv: uid => registerUserToEnv({userEnvId, uid}),
   };
