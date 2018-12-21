@@ -1,22 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { bindActionCreators } from 'redux';
+import {bindActionCreators} from 'redux';
 import CardMarker from 'Components/cards/CardMarker';
 
-import DragSource from './DragSourceCont';
+import {connect} from 'react-redux';
 
-import { connect } from 'react-redux';
+import {dragCard} from 'Reducers/Cards/actions';
+import {dragSourceMap} from './DragSourceCont';
 
-import { dragCard } from 'Reducers/Cards/actions';
+// TODO hack
 
-const DragElement = ({ dragCard, x, y, children, className, ...d }) => {
+const DragElement = ({dragId, dragCard, x, y, children, className, ...d}) => {
   const posStyle = {
     position: 'absolute',
     left: x,
     top: y,
-    transform: 'translate(-50%, -50%)'
+    transform: 'translate(-50%, -50%)',
   };
+
+  const DragSource = dragSourceMap[dragId];
+  console.log('DragSource', DragSource);
+
   const elem = (
     <div
       onMouseDown={() => dragCard(true)}
@@ -31,9 +36,8 @@ const DragElement = ({ dragCard, x, y, children, className, ...d }) => {
         justifyContent: 'center',
         alignItems: 'center',
         // borderRadius: '10%',
-        border: 'black dashed 2px'
-      }}
-    >
+        border: 'black dashed 2px',
+      }}>
       {children}
     </div>
   );
@@ -41,13 +45,13 @@ const DragElement = ({ dragCard, x, y, children, className, ...d }) => {
   return (
     <div style={posStyle} className={className}>
       <DragSource
+        key={dragId}
         dragHandler={dragCard}
         data={d}
         x={x}
         y={y}
         width={80}
-        height={80}
-      >
+        height={80}>
         {elem}
       </DragSource>
     </div>
@@ -66,14 +70,14 @@ function mapStateToProps(state) {
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      dragCard
+      dragCard,
     },
-    dispatch
+    dispatch,
   );
 
 const mergeProps = (_, dispatcherProps, ownProps) => ({
   ...dispatcherProps,
-  ...ownProps
+  ...ownProps,
 });
 
 DragElement.defaultProps = {};
@@ -83,7 +87,7 @@ DragElement.propTypes = {};
 const ConnectedDragElement = connect(
   mapStateToProps,
   mapDispatchToProps,
-  mergeProps
+  mergeProps,
 )(DragElement);
 
 // export default ConnectedDragElement;

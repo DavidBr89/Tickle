@@ -2,6 +2,10 @@ import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import MapGL from 'Components/utils/Map';
 
+import MapAuthor from 'Components/MapAuthor';
+
+import {V2_DRAG} from 'Components/DragAndDrop/';
+
 import {WebMercatorViewport, fitBounds} from 'viewport-mercator-project';
 
 // TODO remove
@@ -196,4 +200,54 @@ const MapWrapper = props => (
   </div>
 );
 
-export default MapWrapper;
+const MapAuthorStateFul = props => {
+  const {loc, id, onCardDrop, ...restProps} = props;
+  const [mapViewport, setMapViewport] = useState({
+    zoom: 14,
+    ...loc,
+  });
+
+  console.log('props.img', props.img, 'cardDrop', onCardDrop);
+
+  return (
+    <MapAuthor
+      {...props}
+      dragId={V2_DRAG}
+      mapViewport={mapViewport}
+      selectedCardId={id}
+      onCardDrop={d => console.log('small carddrop', d)}
+      cards={[props]}
+      changeMapViewport={setMapViewport}
+    />
+  );
+};
+
+// const MapAuthorWrapper = props => (
+//   <div className="absolute w-full h-full">
+//     <DimWrapper delay={100}>
+//       {(width, height) => (
+//         <MapAuthorStateFul
+//           {...props}
+//           width={Math.max(width, 200)}
+//           height={Math.max(height, 200)}
+//         />
+//       )}
+//     </DimWrapper>
+//   </div>
+// );
+
+const MapViewWrapper = props => (
+  <div className="absolute w-full h-full">
+    <DimWrapper delay={100}>
+      {(width, height) => (
+        <MapAreaControl
+          {...props}
+          width={Math.max(width, 200)}
+          height={Math.max(height, 200)}
+        />
+      )}
+    </DimWrapper>
+  </div>
+);
+
+export default MapViewWrapper;

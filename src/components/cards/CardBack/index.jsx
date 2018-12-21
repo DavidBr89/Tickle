@@ -154,7 +154,6 @@ class CardBack extends Component {
                 tagVocabulary={tagVocabulary}
               />
             </BackField>
-
             <BackField
               className="relative mb-2"
               onClick={() => this.selectField('map')}

@@ -1,8 +1,13 @@
-import React, { Fragment, PureComponent } from 'react';
+import memoize from 'lodash/memoize';
+import React, {Fragment, PureComponent} from 'react';
 import PropTypes from 'prop-types';
-import { DropTarget } from 'react-dnd';
+import {DropTarget} from 'react-dnd';
+
+import {V1_DRAG, V2_DRAG} from './index';
 
 // import DragLayer from 'react-dnd/lib/DragLayer';
+//
+//
 
 const boxTarget = {
   drop(props, monitor, component) {
@@ -13,7 +18,7 @@ const boxTarget = {
 
     console.log('ITEM DATA', item);
     component.drop(item.data, left, top);
-  }
+  },
   // },
   // canDrop(props, monitor, component) {
   //   console.log('canDrop', component, monitor);
@@ -21,16 +26,7 @@ const boxTarget = {
   // }
 };
 
-@DropTarget('DragSource', boxTarget, (connect, monitor) => ({
-  connectDropTarget: connect.dropTarget(),
-  isOver: monitor.isOver(),
-  clientOffset: monitor.getClientOffset(),
-  sourceClientOffset: monitor.getSourceClientOffset(),
-  diffFromInitialOffset: monitor.getDifferenceFromInitialOffset(),
-  isDropped: monitor.didDrop(),
-  canDrop: monitor.canDrop()
-}))
-export default class DropTargetCont extends PureComponent {
+class DropTargetCont extends PureComponent {
   static propTypes = {
     connectDropTarget: PropTypes.func.isRequired,
     // isOver: PropTypes.bool.isRequired,
@@ -39,48 +35,64 @@ export default class DropTargetCont extends PureComponent {
     children: PropTypes.element.isRequired,
     // dropped: PropTypes.bool.isRequired,
     dropHandler: PropTypes.func,
-    style: PropTypes.object
+    style: PropTypes.object,
   };
 
   static defaultProps = {
     dropHandler: d => d,
-    style: {}
+    style: {},
   };
 
   state = {
     top: 100,
     left: 100,
     data: null,
-    dropped: false
+    dropped: false,
   };
 
   componentDidUpdate(prevProps) {
-    const { dropHandler, isDropped, canDrop } = this.props;
-    const { left, top, data } = this.state;
+    const {dropHandler, isDropped, canDrop} = this.props;
+    const {left, top, data} = this.state;
 
-    console.log('canDrop', data);
     if (!prevProps.isDropped && isDropped) {
+      console.log('canDrop', data);
       dropHandler({
         ...data,
         x: left,
-        y: top
+        y: top,
       });
     }
   }
 
   drop(data, left, top) {
-    this.setState({ data, left, top });
+    this.setState({data, left, top});
   }
 
   // }
 
   render() {
-    const { connectDropTarget, style, className, children } = this.props;
+    const {connectDropTarget, style, className, children} = this.props;
 
     return connectDropTarget(
       <div style={style} className={className}>
         {children}
-      </div>
+      </div>,
     );
   }
 }
+
+const dropTarget = srcId =>
+  DropTarget(srcId, boxTarget, (connect, monitor) => ({
+    connectDropTarget: connect.dropTarget(),
+    isOver: monitor.isOver(),
+    clientOffset: monitor.getClientOffset(),
+    sourceClientOffset: monitor.getSourceClientOffset(),
+    diffFromInitialOffset: monitor.getDifferenceFromInitialOffset(),
+    isDropped: monitor.didDrop(),
+    canDrop: monitor.canDrop(),
+  }))(DropTargetCont);
+
+export const dropTargetMap = {
+  [V1_DRAG]: dropTarget(V1_DRAG),
+  [V2_DRAG]: dropTarget(V2_DRAG),
+};

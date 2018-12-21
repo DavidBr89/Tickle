@@ -13,6 +13,7 @@ import {BlackModal, ModalBody} from 'Components/utils/Modal';
 
 import {SelectTag} from 'Components/utils/SelectField';
 
+import ConnectedCard from 'Cards/ConnectedCard';
 import User from './User';
 
 const detailsClassName = 'shadow text-2xl p-2 mb-5 border-2 border-black';
@@ -273,6 +274,8 @@ function UserPanel({
 
 function SelectCards(props) {
   const {className, cards} = props;
+  const [cardId, setCardId] = useState(null);
+  const selectedCard = cards.find(c => c.id === cardId) || {};
 
   const [panelOpen, setPanelOpen] = useState(false);
 
@@ -296,9 +299,12 @@ function SelectCards(props) {
       </summary>
       <div className="flex flex-wrap" style={{...gridStyle}}>
         {cards.map(c => (
-          <PreviewCard title={c.title.value} />
+          <PreviewCard title={c.title.value} onClick={() => setCardId(c.id)} />
         ))}
       </div>
+      <BlackModal visible={cardId !== null}>
+        {cardId !== null && <ConnectedCard {...selectedCard} />}
+      </BlackModal>
     </details>
   );
 }
@@ -325,8 +331,6 @@ export default function UserEnvironmentSettings(props) {
     registerUserToEnv,
     cards,
   } = props;
-
-  const {uid} = authUser;
 
   useEffect(() => {
     fetchAllUserEnvs();

@@ -9,6 +9,7 @@ import MapAuthor from 'Components/MapAuthor';
 
 // import TopicMapAuthor from 'Components/DataView/TopicMap/DragTopicMap';
 import {TEMP_ID} from 'Constants/cardFields';
+import {V1_DRAG} from 'Components/DragAndDrop';
 
 // import React from 'react';
 import {connect} from 'react-redux';
@@ -180,10 +181,11 @@ function PureMapCardAuthorPage({...props}) {
 
   const centerTemplatePos = loc => {
     reCenterMap(loc);
-    updateCardTemplate({ loc });
+    updateCardTemplate({loc});
   };
 
   const cardDrop = cardData => {
+    console.log('original drop');
     const {x, y} = cardData;
     const [longitude, latitude] = mercator.unproject([x, y]);
 
@@ -194,7 +196,12 @@ function PureMapCardAuthorPage({...props}) {
 
   return (
     <CardAuthorPage {...props} centerTemplatePos={centerTemplatePos}>
-      <MapAuthor {...props} className="absolute" onCardDrop={cardDrop} />
+      <MapAuthor
+        {...props}
+        dragId={V1_DRAG}
+        className="absolute"
+        onCardDrop={cardDrop}
+      />
     </CardAuthorPage>
   );
 }
