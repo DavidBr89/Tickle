@@ -2,9 +2,16 @@
 
 TICKLE playground for our Project
 
+
+## For Marcus?
+* placeholder image user
+* center icons on dropbox
+* adapt map styling
+
+
 ## What is left to do?
   * Localisation (different languages)
-  * Card template Editor
+  * Card template Editor (in progress)
   * Learning Analytics (User profile and recommendation) and Web Analytics (Google Analytics)
   * Porting to PWA (Progressive Web App)
   * Unit testing
@@ -22,9 +29,9 @@ TICKLE playground for our Project
 
 ### Todo bugfixes
 * fix drag and drop on mobile and bugs with map events (and the corresponding component)
-* untangle flip container from cardfront
-* find better abstraction for readcardfront and cardfront (with or without modal)
-* fix ID issue in (Card)Stack
+* ~untangle flip container from cardfront~
+* ~find better abstraction for readcardfront and cardfront (with or without modal)~
+* ~fix ID issue in (Card)Stack~
 * See issues
 
 
@@ -40,13 +47,13 @@ git clone https://github.com/DinoJay/TickleClient
 * Then install the dependencies:
 
 ```
-npm install
+yarn install
 ```
 
 * Run development server:
 
 ```
-npm start
+yarn start
 ```
 
 Open the web browser to `localhost:3000`
@@ -54,7 +61,7 @@ Open the web browser to `localhost:3000`
 ### To build the production package
 
 ```
-npm run build
+yarn run build
 ```
 
 
@@ -65,7 +72,7 @@ To use it, you need to install additional dependencies though:
 To do the actual linting, run:
 
 ```
-npm run lint
+yarn run lint
 ```
 
 ### Notes on importing css styles
