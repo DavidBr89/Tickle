@@ -1,6 +1,14 @@
 import uniqBy from 'lodash/uniqBy';
 
 import {createDbEnv, DB, auth} from 'Firebase';
+import {
+  addFileToStorageBase,
+  getUser,
+  readTmpUser,
+  addUserToEnvSet,
+  removeTmpUser,
+  doCreateUser,
+} from 'Firebase/db';
 
 import {userFields} from 'Constants/userFields';
 import {
@@ -17,8 +25,7 @@ export function fetchUserInfo({uid, userEnv}) {
   // thus making it able to dispatch actions itself.
   return function(dispatch) {
     const db = new DB(userEnv);
-    return db
-      .getUser(uid)
+    return getUser(uid)
       .then(usrInfo => {
         dispatch(setAuthUserInfo(userFields({uid, ...usrInfo})));
       })
@@ -33,18 +40,29 @@ export function signUp({user, password, img, userEnv}) {
     const db = DB(userEnv);
 
     const createUser = profile =>
-      db.doCreateUser(profile).then(authUser => {
-        dispatch(setAuthUserInfo({...authUser}));
-        dispatch(setUserEnv(userEnv));
-      });
+      readTmpUser(profile.email)
+        .then(presetInfo =>
+          doCreateUser({...presetInfo, ...profile}).then(authUser => {
+            const {userEnvSet} = presetInfo;
+            // TODO: ADD USER ENVS
+            // addUserToEnvSet({uid: profile.uid, userEnvSet}).then(env => ({
+            //   ...presetInfo,
+            //   userEnvs: [env],
+            // }));
+            dispatch(setAuthUserInfo({...authUser}));
+            dispatch(setUserEnv(userEnv));
+          }),
+        )
+        .then(() => removeTmpUser());
 
     return auth.doCreateUserWithEmailAndPassword(email, password).then(res => {
       const {uid} = res.user;
-      // setAuthUser({authUser: user});
 
       if (img !== null) {
-        return db
-          .addFileToEnv({file: img.file, path: `usr/${uid}`})
+        return addFileToStorageBase({
+          file: img.file,
+          path: `/images/usr/${uid}`,
+        })
           .then(imgUrl => {
             const userAndImg = {...user, uid, photoURL: imgUrl};
             createUser(userAndImg);
@@ -64,46 +82,40 @@ export const signIn = ({
   userEnvId,
   onSuccess = d => d,
   onError = d => d,
-}) => (dispatch, getState) => {
-  const db = DB(userEnvId);
-
-  return auth.doSignInWithEmailAndPassword(email, password).then(resp => {
+}) => (dispatch, getState) =>
+  auth.doSignInWithEmailAndPassword(email, password).then(resp => {
     const {user} = resp;
     const {uid} = user;
 
-    return db.getUser(uid).then(usrInfo => {
-      dispatch(
-        setAuthUserInfo(userFields({uid, ...usrInfo, envId: userEnvId})),
+    return getUser(uid)
+      .then(usrInfo => {
+        dispatch(setAuthUserInfo(userFields({...usrInfo, envId: userEnvId})));
+
+        // TODO: validation
+        // TODO: error
+        dispatch(setUserEnv(userEnvId));
+        return usrInfo;
+      })
+      .catch(err =>
+        Promise.reject({
+          code: 'User has not been found!',
+          message: 'User has not been found!',
+        }),
       );
-
-      // TODO: validation
-      // TODO: error
-      dispatch(setUserEnv(userEnvId));
-      return usrInfo;
-    });
-    // .catch(err => {
-    //   console.log('login Err', err);
-    //
-    //   onError(err.message);
-    // });
   });
-  // .catch(error => {
-  //   console.log('response failure', error);
-  //   return onError(error.message);
-  // });
-};
+// .catch(error => {
+//   console.log('response failure', error);
+//   return onError(error.message);
+// });
 
-export function removeUserFromEnv(env) {
-  // Thunk middleware knows how to handle functions.
-  // It passes the dispatch method as an argument to the function,
-  // thus making it able to dispatch actions itself.
+export function removeUserFromEnv({uid, envId}) {
+  const db = DB(envId);
   return function(dispatch, getState) {
     // console.log('CALL WITH uid', uid);
-    const db = createDbEnv(getState());
     const {authUser} = getState().Session;
     const {userEnvs, uid} = authUser;
 
-    const updatedUserEnv = {userEnvs: userEnvs.filter(u => u.id !== env.id)};
+    const updatedUserEnv = {userEnvs: userEnvs.filter(u => u.id !== envId)};
 
     return db
       .removeUserFromEnv({uid})

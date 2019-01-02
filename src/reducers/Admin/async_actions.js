@@ -2,12 +2,36 @@ import fetch from 'cross-fetch';
 import {uniqBy, flatten} from 'lodash';
 
 import {DB, firebase} from 'Firebase';
+import {auth} from 'Firebase';
+import uuidv1 from 'uuid/v1';
+
+
+import {
+  readAllUserEnvs,
+  createUserEnv,
+  addUserToEnv,
+  readUserIdsFromEnv,
+  readAllUsers,
+  readAllTmpUsers,
+  createTmpUser,
+  getOneUserByEmail,
+  getOneUserFromEnv,
+  getUserEnvs,
+} from 'Firebase/db';
+
 import idGenerate from 'Src/idGenerator';
 import {
   receiveUsers,
+  receiveAllUserEnvs,
   getCards,
   submitActivityReview,
   submitActivityReviewSuccess,
+  receiveCards,
+  selectUsersByEnv,
+  insertUserIntoEnv,
+  addUserEnv,
+  addUser,
+  userRegistrationError,
 } from './actions';
 
 import NearbyPlaces from '../places.json';
@@ -32,13 +56,102 @@ import NearbyPlaces from '../places.json';
 // export function screenResize(options) {
 //   return { type: SCREEN_RESIZE, options };
 // }
-export function fetchUsers(userEnv) {
-  const db = DB(userEnv);
+export function fetchAllUserEnvs() {
   return function(dispatch) {
-    return db.readUsers().then(users => {
+    return readAllUserEnvs().then(userEnvs => {
+      dispatch(receiveAllUserEnvs(userEnvs));
+    });
+  };
+}
+
+export function createNewUserEnv(env) {
+  // const db = DB();
+  return function(dispatch) {
+    return createUserEnv(env).then(() => {
+      dispatch(addUserEnv(env));
+    });
+  };
+}
+
+export function registerUserToEnv({userEnvId, uid}) {
+  return function(dispatch) {
+    return addUserToEnv({uid, userEnvId}).then(users => {
+      dispatch(insertUserIntoEnv(uid));
+    });
+  };
+}
+
+// export function fetchUserIdsFromEnv(userEnv) {
+//   return function(dispatch) {
+//     const usersWithEnvIdsPromise = readAllUsers().then(users =>
+//       users.map(u =>
+//         getUserEnvs(u.uid).then(userEnvs => ({
+//           ...u,
+//           userEnvIds: userEnvs.map(e => e.id),
+//         })),
+//       ),
+//     );
+//     return Promise.all([usersWithEnvIdsPromise, readAllTmpUsers()]).then(
+//       ([userWithEnvIds, tmpUsers]) => [...userWithEnvIds, ...tmpUsers],
+//     );
+//     // return readUserIdsFromEnv(userEnv).then(users => {
+//     //   readAllTmpUsers().then(users => {
+//     //     const tmpUsers = users.filter(u => u.userEnvId === userEnv);
+//     //     dispatch(selectUsersByEnv([...users.map(u => u.uid), ...tmpUsers]));
+//     //   });
+//     // });
+//   };
+// }
+
+export function fetchUsers() {
+  return function(dispatch) {
+    const usersWithEnvIdsPromise = readAllUsers().then(users =>
+      Promise.all(
+        users.map(u =>
+          getUserEnvs(u.uid).then(userEnvs => ({
+            ...u,
+            userEnvIds: userEnvs.map(e => e.id),
+          })),
+        ),
+      ),
+    );
+
+    const promises = [usersWithEnvIdsPromise, readAllTmpUsers()];
+    Promise.all(promises).then(([users, tmpUsers]) => {
+      dispatch(receiveUsers([...users, ...tmpUsers]));
+    });
+  };
+}
+
+export function preRegisterUser(usrInfo) {
+  const usr ={ ...usrInfo, uid: uuidv1(), tmp: true}
+  return function(dispatch) {
+    getOneUserByEmail(usr.email).then(d => {
+      if (d === null) {
+        // TODO add uid
+        createTmpUser(usr).then(() => {
+          dispatch(addUser({...usr}));
+        });
+      } else {
+        dispatch(
+          userRegistrationError({
+            code: 'User Registration',
+            msg: 'User has been already registered',
+          }),
+        );
+      }
+    });
+  };
+}
+
+export function fetchCards({userEnvId, authorId = null, playerId = null}) {
+  const db = DB(userEnvId);
+
+  return function(dispatch) {
+    return db.readCards({authorId, playerId: null}).then(cards => {
       // console.log('USers', data);
       // const promises = data.map(({ uid }) => db.getDetailedUserInfo(uid));
-      dispatch(receiveUsers(users));
+      dispatch(receiveCards(cards));
       // Promise.all(promises).then(detailedUsers => {
       //   dispatch(receiveUsers(detailedUsers));
       //   dispatch(
@@ -50,7 +163,6 @@ export function fetchUsers(userEnv) {
     });
   };
 }
-
 // export function asyncSubmitChallengeReview(challengeSubmission) {
 //   const {cardId, playerId, ...challengeData} = challengeSubmission;
 //   console.log('challengeSubmission', {cardId, playerId, ...challengeData});
@@ -80,7 +192,7 @@ export function fetchUsers(userEnv) {
 //           const challengeSubmissions = cards.filter(c =>
 //             c.allChallengeSubmissions.find(s => s.playerId === u.uid),
 //           );
-//           return {...u, challengeSubmissions, createdCards};
+//           return {...u, challengeSubmissions, , userEnvIdcreatedCards};
 //         });
 //         dispatch(receiveUsers(usersWithSubmissions));
 //         // dispatch(receiveUsers(newUsers));

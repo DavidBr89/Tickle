@@ -8,15 +8,15 @@ import {hot, setConfig} from 'react-hot-loader';
 // import AuthUserContext from './components/AuthUserContext';
 
 // import {db} from 'Firebase';
-import Routes from './Routes';
-import store from './store';
 
 import {createBrowserHistory} from 'history';
 import {screenResize} from 'Reducers/Screen/actions';
 
 import {userMove, changeMapViewport} from 'Reducers/Map/actions';
+import store from './store';
+import Routes from './Routes';
 
-setConfig({ pureSFC: true });
+setConfig({pureSFC: true});
 // db.readCopyUsers();
 
 // TODO check whether it's only created once
@@ -30,11 +30,10 @@ const cardTemplateId = 'temp';
 const geoOpts = {
   enableHighAccuracy: true,
   maximumAge: 3000,
-  timeout: 27000
+  timeout: 27000,
 };
 
 const geoError = err => console.log('err', err);
-
 
 // window.addEventListener('DOMContentLoaded', () => {
 //   //TODO
@@ -51,7 +50,7 @@ const geoError = err => console.log('err', err);
 const geoSuccess = pos => {
   const coords = {
     latitude: pos.coords.latitude,
-    longitude: pos.coords.longitude
+    longitude: pos.coords.longitude,
   };
 
   console.log('watchPosition', coords);
@@ -68,7 +67,7 @@ navigator.geolocation.getCurrentPosition(
   pos => {
     const coords = {
       latitude: pos.coords.latitude,
-      longitude: pos.coords.longitude
+      longitude: pos.coords.longitude,
     };
 
     // Oude Arendonkse Baan, Oud-Turnhout 51.313476, 5.001513

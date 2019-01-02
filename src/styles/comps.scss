@@ -7,7 +7,8 @@
 }
 
 .form-control {
-  @apply .border .shadow .border-black .border-2 .bg-white .py-2 .px-3 .text-grey-darkest;
+  @apply .border .border-black .border-2 .bg-white .py-2 .px-3 .text-grey-darkest;
+
 }
 
 
@@ -30,10 +31,17 @@
 
 
 .btn {
-  @apply .shadow .flex .flex-col .items-center .justify-center .text-lg .font-bold .p-2 .cursor-pointer .border-2 .border-black;
+  @apply
+  .flex .flex-col .items-center .justify-center .text-lg .font-bold .p-2 .cursor-pointer ;
 
   transition: border 0.2s ease-in-out;
 }
+
+
+.btn-shadow {
+  @apply .shadow .border-2 .border-black
+}
+
 
 // .btn-black {
 //   @apply .bg-grey-dark .text-white .text-xl;
@@ -142,6 +150,7 @@
 }
 
 .alert {
+  @apply .bg-red-light .p-2 .border-2 .border
 }
 
 

@@ -31,11 +31,8 @@ import Diary from './components/Diary';
 
 import CardTreeEditorPage from './components/CardTreeEditor';
 
-import {
-  MapCardAuthorPage,
-  TopicMapAuthorPage,
-  UserEnvironmentSettings,
-} from './components/CardAuthor';
+import {MapCardAuthorPage, TopicMapAuthorPage} from './components/CardAuthor';
+import UserEnvironmentSettings from './components/CardAuthor/UserEnvironmentSettings';
 
 import {
   MapViewPage,
@@ -64,7 +61,7 @@ const NoMatch = () => (
 // import history from './BrowserHistory';
 
 // import Login from './components/Login';
-
+const defaultEnv = 'default';
 const Routes = () => (
   <HashRouter>
     <Switch>
@@ -80,7 +77,7 @@ const Routes = () => (
       <Route
         path="/"
         exact
-        render={() => <Redirect to={`/staging/${SIGN_IN.path}`} />}
+        render={() => <Redirect to={`/${defaultEnv}/${SIGN_IN.path}`} />}
       />
 
       <Route path={`/:userEnv/${MYCARDS.path}/`} component={Diary} />
@@ -162,7 +159,7 @@ const Routes = () => (
       />
       <Route
         exact
-        path={ADMIN.path}
+        path={`/:userEnv/${ADMIN.path}`}
         component={() => (
           <DefaultLayout>
             <Admin />

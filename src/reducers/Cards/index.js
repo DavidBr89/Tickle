@@ -105,7 +105,7 @@ function reducer(state = INITIAL_STATE, action) {
 
       const tagVocabulary = setify(
         uniqBy([...createdCards, ...collectibleCards], 'id'),
-        );
+      );
 
       // const cardSets = setify(cards);
       // const tagColorScale = makeTagColorScale(cardSets);
@@ -233,9 +233,11 @@ function reducer(state = INITIAL_STATE, action) {
     }
 
     case UPDATE_CARD_TEMPLATE: {
+      const {tmpCard} = state;
       const card = action.options;
       console.log('TEMPLATE CARD', card);
-      return {...state, tmpCard: {...card, template: true}};
+
+      return {...state, tmpCard: {...tmpCard, ...card, template: true}};
     }
     case DELETE_CARD: {
       const {createdCards} = state;

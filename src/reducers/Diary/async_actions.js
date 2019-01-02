@@ -6,6 +6,7 @@ import { receiveUserInfo } from './actions';
 import NearbyPlaces from '../places.json';
 
 import { db, firebase } from 'Firebase';
+import {getDetailedUserInfo} from 'Firebase/db';
 import setify from 'Utils/setify';
 
 // export const REQUEST_CHALLENGES = 'REQUEST_CHALLENGES';
@@ -30,7 +31,7 @@ import setify from 'Utils/setify';
 // }
 export function getUserInfo(uid) {
   return function(dispatch) {
-    return db.getDetailedUserInfo(uid).then(info => {
+    return getDetailedUserInfo(uid).then(info => {
       const {
         interests: plainInterests,
         createdCards,
