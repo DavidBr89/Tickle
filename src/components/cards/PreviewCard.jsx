@@ -65,14 +65,14 @@ class PreviewCard extends Component {
             <img
               className="z-0 absolute w-full h-full"
               style={{
-                left: 0, top:-0,
+                left: 0,
+                top: -0,
                 display: 'block',
-                  objectFit: 'cover',
+                objectFit: 'cover',
               }}
               src={img.thumbnail || img.url}
               alt="Card cap"
             />
-
           </div>
         )}
         {img === null && (
@@ -102,3 +102,18 @@ class PreviewCard extends Component {
   }
 }
 export default PreviewCard;
+
+export const PreviewCardTemplate = ({className, style, onClick}) => (
+  <div
+    className={`${className} cursor-pointer relative p-1 overflow-hidden bg-white flex flex-col border-2 border-black `}
+    style={{...style}}
+    onClick={onClick}>
+    <h3>New Card</h3>
+    <div className="flex-grow flex flex-col items-center justify-center">
+      <div className="text-5xl">+</div>
+    </div>
+  </div>
+);
+
+export const PreviewCardSwitch = ({edit, ...props}) =>
+  edit ? <PreviewCardTemplate {...props} /> : <PreviewCard {...props} />;

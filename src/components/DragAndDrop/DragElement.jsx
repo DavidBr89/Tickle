@@ -20,7 +20,6 @@ const DragElement = ({dragId, dragCard, x, y, children, className, ...d}) => {
   };
 
   const DragSource = dragSourceMap[dragId];
-  console.log('DragSource', DragSource);
 
   const elem = (
     <div

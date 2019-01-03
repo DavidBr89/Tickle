@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import MapGL from 'Components/utils/Map';
 
+import {TEMP_ID} from 'Constants/cardFields';
+
 import MapAuthor from 'Components/MapAuthor';
 
 import {V2_DRAG} from 'Components/DragAndDrop/';
@@ -72,7 +74,7 @@ const addLine = coords => ({
   },
 });
 
-const MapAreaControl = props => {
+const MapAreaView = props => {
   const {
     latitude,
     longitude,
@@ -129,7 +131,6 @@ const MapAreaControl = props => {
       });
   }, []);
 
-  console.log('width', width, 'height', height);
   const boundVp =
     startLoc[0] !== endLoc[0] && startLoc[1] !== endLoc[1]
       ? fitBounds({
@@ -184,13 +185,13 @@ const MapAreaControl = props => {
   );
 };
 
-MapAreaControl.defaultProps = {width: 300, height: 300};
+MapAreaView.defaultProps = {width: 300, height: 300};
 
 const MapWrapper = props => (
   <div className="absolute w-full h-full">
     <DimWrapper delay={100}>
       {(width, height) => (
-        <MapAreaControl
+        <MapAreaView
           {...props}
           width={Math.max(width, 200)}
           height={Math.max(height, 200)}
@@ -200,14 +201,28 @@ const MapWrapper = props => (
   </div>
 );
 
-const MapAuthorStateFul = props => {
-  const {loc, id, onCardDrop, ...restProps} = props;
+const MapDragAndDrop = props => {
+  const {loc, id, asyncUpdateCard, updateCardTemplate, userEnv} = props;
+  const [lngLat, setLngLat] = useState(loc);
+
   const [mapViewport, setMapViewport] = useState({
     zoom: 14,
     ...loc,
   });
 
-  console.log('props.img', props.img, 'cardDrop', onCardDrop);
+  const mercator = new WebMercatorViewport(mapViewport);
+
+  const cardDrop = cardData => {
+    const {x, y} = cardData;
+    const [longitude, latitude] = mercator.unproject([x, y]);
+
+    const updatedCard = {...cardData, loc: {longitude, latitude}};
+    if (cardData.id !== TEMP_ID)
+      asyncUpdateCard({cardData: updatedCard, userEnv});
+    else updateCardTemplate({loc: {longitude, latitude}});
+
+    // setLngLat({longitude, latitude});
+  };
 
   return (
     <MapAuthor
@@ -215,8 +230,8 @@ const MapAuthorStateFul = props => {
       dragId={V2_DRAG}
       mapViewport={mapViewport}
       selectedCardId={id}
-      onCardDrop={d => console.log('small carddrop', d)}
-      cards={[props]}
+      onCardDrop={cardDrop}
+      cards={[{id: TEMP_ID, loc}]}
       changeMapViewport={setMapViewport}
     />
   );
@@ -226,7 +241,7 @@ const MapAuthorStateFul = props => {
 //   <div className="absolute w-full h-full">
 //     <DimWrapper delay={100}>
 //       {(width, height) => (
-//         <MapAuthorStateFul
+//         <MapDragAndDrop
 //           {...props}
 //           width={Math.max(width, 200)}
 //           height={Math.max(height, 200)}
@@ -236,18 +251,21 @@ const MapAuthorStateFul = props => {
 //   </div>
 // );
 
-const MapViewWrapper = props => (
-  <div className="absolute w-full h-full">
-    <DimWrapper delay={100}>
-      {(width, height) => (
-        <MapAreaControl
-          {...props}
-          width={Math.max(width, 200)}
-          height={Math.max(height, 200)}
-        />
-      )}
-    </DimWrapper>
-  </div>
-);
+const MapAreaWrapper = ({edit, ...props}) => {
+  const Map = edit ? MapDragAndDrop : MapAreaView;
+  return (
+    <div className="absolute w-full h-full">
+      <DimWrapper delay={100}>
+        {(width, height) => (
+          <Map
+            {...props}
+            width={Math.max(width, 200)}
+            height={Math.max(height, 200)}
+          />
+        )}
+      </DimWrapper>
+    </div>
+  );
+};
 
-export default MapViewWrapper;
+export default MapAreaWrapper;

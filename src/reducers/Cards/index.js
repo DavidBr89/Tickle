@@ -55,7 +55,7 @@ const defaultLocation = {
   radius: 500,
 };
 
-const defaultCardTemplate = initCard;
+const defaultCardTemplate = {...initCard, title: {value: 'New Card'}};
 
 const INITIAL_STATE = {
   cardTemplateId,
@@ -114,6 +114,7 @@ function reducer(state = INITIAL_STATE, action) {
         ...state,
         createdCards,
         tagVocabulary,
+        tmpCard: defaultCardTemplate,
         // loadingCards: false
         // tagVocabulary
         // tagColorScale
@@ -139,6 +140,7 @@ function reducer(state = INITIAL_STATE, action) {
         // submittedCards,
         // startedCards,
         tagVocabulary,
+        tmpCard: defaultCardTemplate,
         // loadingCards: false
         // tagColorScale
         // defaultCards: cards
@@ -235,7 +237,6 @@ function reducer(state = INITIAL_STATE, action) {
     case UPDATE_CARD_TEMPLATE: {
       const {tmpCard} = state;
       const card = action.options;
-      console.log('TEMPLATE CARD', card);
 
       return {...state, tmpCard: {...tmpCard, ...card, template: true}};
     }

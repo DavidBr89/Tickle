@@ -152,7 +152,6 @@ export const extractCardFields = ({
 
 export const isFieldInitialized = ({card, attr}) => {
   const field = extractCardFields(card)[attr];
-  console.log('attr', attr, field);
   return field.value !== null;
 };
 

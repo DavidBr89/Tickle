@@ -150,10 +150,6 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     return routeSelectCard(d.id);
   };
 
-  // console.log('fetchCollectibleCards', fetchCollectibleCards);
-  // const fetchCards = () => {
-  //   fetchCollectibleCards({userEnv});
-  // };
 
   const preSelectCardId = () => selectCard(null);
 

@@ -1,16 +1,16 @@
-// import 'w3-css';
-
 import React from 'react';
 import PropTypes from 'prop-types';
-import chroma from 'chroma-js';
 
-// import { css } from 'aphrodite/no-important';
+import ConnectedCard from './ConnectedCard';
 
+import ConnectedEditCard from './ConnectedEditCard';
 
-import PreviewCard from './PreviewCard';
-import CardMarker from './CardMarker';
+import ConnectedReviewCard from './ConnectedReviewCard';
 
+const MetaCard = ({edit, completed, ...props}) => {
+  if (edit) return <ConnectedEditCard {...props} />;
+  if (completed) return <ConnectedReviewCard {...props} />;
+  return <ConnectedCard {...props} />;
+};
 
-
-
-// export {Card, PreviewCard, CardMarker};
+export default MetaCard;

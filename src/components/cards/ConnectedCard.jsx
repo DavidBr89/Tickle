@@ -110,6 +110,7 @@ const mapDispatchToProps = dispatch =>
   );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
+  console.log('ConnectedCard ownProps', ownProps);
   const {
     location,
     match,

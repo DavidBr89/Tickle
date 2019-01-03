@@ -4,8 +4,8 @@ import fetch from 'cross-fetch';
 
 import {extractCardFields} from 'Constants/cardFields.ts';
 
-import {createDbEnv, DB} from 'Firebase';
-import idGenerate from 'Src/idGenerator';
+import CardDB from 'Firebase/db';
+// import idGenerate from 'Src/idGenerator';
 import {
   receivePlaces,
   receiveCollectibleCards,
@@ -33,7 +33,7 @@ import NearbyPlaces from '../places.json';
 
 export function fetchCollectibleCards({uid, userEnv}) {
   return function(dispatch) {
-    const db = new DB(userEnv);
+    const db = new CardDB(userEnv);
     dispatch(loadingCards(true));
     // TODO: change later with obj params
     return db.readCards({playerId: uid}).then(
@@ -48,7 +48,7 @@ export function fetchCollectibleCards({uid, userEnv}) {
 
 export function fetchAllCardsWithSubmissions({userEnv}) {
   return function(dispatch, getState) {
-    const db = new DB(userEnv);
+    const db = new CardDB(userEnv);
     dispatch(loadingCards(true));
     return db.readCards().then(data => {
       dispatch(loadingCards(false));
@@ -61,7 +61,7 @@ export function fetchCreatedCards({userEnv, uid}) {
   return function(dispatch) {
     dispatch(loadingCards(true));
 
-    const db = new DB(userEnv);
+    const db = new CardDB(userEnv);
     return db.readCards({authorId: uid, playerId: null}).then(
       data => {
         dispatch(loadingCards(false));
@@ -72,28 +72,28 @@ export function fetchCreatedCards({userEnv, uid}) {
   };
 }
 
-export function asyncCreateCard({cardData, userEnv}) {
-  return function(dispatch, getState) {
-    const db = new DB(userEnv);
-
-    const newCard = {
-      ...cardData,
-      id: idGenerate(),
-      date: new Date(),
-    };
-    dispatch(createCard(newCard));
-    dispatch(extendSelectedCard(null));
-    dispatch(selectCard(newCard.id));
-
-    return db
-      .doCreateCard(newCard)
-      .then(() => dispatch(createCardSuccess(newCard)));
-  };
-}
-
+// export function asyncCreateCard({cardData, userEnv}) {
+//   return function(dispatch, getState) {
+//     const db = new CardDB(userEnv);
+//
+//     const newCard = {
+//       ...cardData,
+//       id: idGenerate(),
+//       date: new Date(),
+//     };
+//     dispatch(createCard(newCard));
+//     dispatch(extendSelectedCard(null));
+//     dispatch(selectCard(newCard.id));
+//
+//     return db
+//       .doCreateCard(newCard)
+//       .then(() => dispatch(createCardSuccess(newCard)));
+//   };
+// }
+//
 export function asyncRemoveCard({cardId, userEnv}) {
   return function(dispatch) {
-    const db = new DB(userEnv); // createDbEnv(getState());
+    const db = new CardDB(userEnv); // createDbEnv(getState());
     dispatch(deleteCard(cardId));
     dispatch(selectCard(null));
     return db.doDeleteCard(cardId).then(() => {
@@ -105,7 +105,7 @@ export function asyncRemoveCard({cardId, userEnv}) {
 export function asyncUpdateCard({cardData, userEnv}) {
   return (dispatch, getState) => {
     dispatch(updateCard(cardData));
-    const db = new DB(userEnv); // createDbEnv(getState());
+    const db = new CardDB(userEnv); // createDbEnv(getState());
     db.doUpdateCard(cardData)
       .then(() => {
         dispatch(updateCardSuccess(cardData));
@@ -123,7 +123,7 @@ export function asyncAddComment(
   userEnv,
 ) {
   return function(dispatch, getState) {
-    const db = DB(userEnv);
+    const db = CardDB(userEnv);
     dispatch(addComment(commentObj));
     return db
       .addComment(commentObj)
@@ -136,7 +136,7 @@ export function asyncAddComment(
 
 export function asyncSubmitActivity({userEnv, ...activitySubmission}) {
   return function(dispatch) {
-    const db = DB(userEnv);
+    const db = CardDB(userEnv);
 
     dispatch(submitActivity(activitySubmission));
     return db
@@ -152,7 +152,7 @@ export function removeChallengeSubmission({challengeSubmission, userEnv}) {
   const {cardId, playerId} = challengeSubmission;
 
   return function(dispatch, getState) {
-    const db = DB(userEnv); // createDbEnv(getState());
+    const db = CardDB(userEnv); // createDbEnv(getState());
     // dispatch(submitActivity(challengeSubmission));
     return db.removeActivitySubmission({cardId, playerId});
     //   .then(() => dispatch(submitActivitySuccess()))

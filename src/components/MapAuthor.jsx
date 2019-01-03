@@ -29,7 +29,6 @@ const MapAuthor = DragDropContextProvider(props => {
   } = props;
 
   const DropTarget = dropTargetMap[dragId];
-  console.log('DropTarget', DropTarget);
 
   const vp = new PerspectiveMercatorViewport({...mapViewport, width, height});
 

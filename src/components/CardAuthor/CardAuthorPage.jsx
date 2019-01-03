@@ -200,9 +200,7 @@ class CardAuthorPage extends Component {
       centerTemplatePos,
     } = this.props;
 
-    console.log('cards', cards);
     const slotSize = 100 / 3.5;
-    // slotSize / cards.length < slotSize ? 100 : slotSize * cards.length;
 
     return (
       <DefaultLayout

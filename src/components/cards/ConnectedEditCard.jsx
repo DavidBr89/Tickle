@@ -11,6 +11,8 @@ import {withRouter} from 'react-router-dom';
 
 import {DB} from 'Firebase';
 
+import {TEMP_ID} from 'Constants/cardFields';
+
 import {updateCardTemplate, dragCard} from 'Reducers/Cards/actions';
 
 import {changeMapViewport} from 'Reducers/Map/actions';
@@ -116,6 +118,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const removeCard = () => asyncRemoveCard({cardId, userEnv});
 
   const onCardUpdate = cardData =>
+    // take form const
     cardData.id === 'temp'
       ? updateCardTemplate(cardData)
       : updateCard(cardData);
@@ -129,6 +132,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
       path: filePath,
       id: fileId,
     });
+
   const addToStorage = ({file, id}) =>
     db.addFileToEnv({file, path: filePath, id});
   // const fetchComments = cardId ? () => db.readComments(cardId) : null;
