@@ -28,7 +28,7 @@ export const isCardSeen = (
   isActivitySucceeded(c) ||
   c.seen === true;
 
-export const isChallengeOpen = ({activitySubmission}) =>
+export const isActivityOpen = ({activitySubmission}) =>
   !isDefined(activitySubmission);
 
 export const hasCardCreated = (c = {uid: '2332'}, uidTmp = '12345') =>
@@ -49,7 +49,7 @@ export const activityFilterMap = (() => {
     [ACTIVITY_STARTED]: isActivityStarted,
     [ACTIVITY_SUBMITTED]: isActivityStarted,
     [ACTIVITY_SUCCEEDED]: isActivitySucceeded,
-    [ACTIVITY_OPEN]: isChallengeOpen,
+    [ACTIVITY_OPEN]: isActivityOpen,
     [NO_ACTIVITY_FILTER]: () => true,
     [CARD_CREATED]: hasCardCreated,
     [CARD_SEEN]: isCardSeen,

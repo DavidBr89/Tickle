@@ -22,7 +22,6 @@ import {
   // SELECT_CARD,
   TOGGLE_CARD_CHALLENGE,
   // EXTEND_SELECTED_CARD,
-  PLAY_CARD_CHALLENGE,
   // TOGGLE_CARD_AUTHORING,
   DRAG_CARD,
   LOADING_CARDS,
@@ -99,9 +98,7 @@ function reducer(state = INITIAL_STATE, action) {
 
     case RECEIVE_CREATED_CARDS: {
       const {collectibleCards} = state;
-      const cards = action.options;
-
-      const createdCards = cards.map(c => ({...c, edit: true}));
+      const createdCards = action.options;
 
       const tagVocabulary = setify(
         uniqBy([...createdCards, ...collectibleCards], 'id'),

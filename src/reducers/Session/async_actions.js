@@ -1,8 +1,16 @@
 import uniqBy from 'lodash/uniqBy';
 
-import {createDbEnv, DB, auth} from 'Firebase';
+import {auth} from 'Firebase';
+import DB, {
+  addUserToEnv,
+  deleteUserFromEnv,
+  createTmpUser,
+  deleteUser, deleteTmpUser
+} from 'Firebase/db';
+
 import {
-  addFileToStorageBase,
+  addToStorage,
+  removeFromStorage,
   getUser,
   readTmpUser,
   addUserToEnvSet,
@@ -24,7 +32,7 @@ export function fetchUserInfo({uid, userEnv}) {
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
   return function(dispatch) {
-    const db = new DB(userEnv);
+    // const db = new DB(userEnv);
     return getUser(uid)
       .then(usrInfo => {
         dispatch(setAuthUserInfo(userFields({uid, ...usrInfo})));
@@ -34,44 +42,60 @@ export function fetchUserInfo({uid, userEnv}) {
 }
 
 export function signUp({user, password, img, userEnv}) {
-  const {email} = user;
+  const {email, uid} = user;
 
   return dispatch => {
-    const db = DB(userEnv);
+    // const db = DB(userEnv);
 
-    const createUser = profile =>
-      readTmpUser(profile.email)
-        .then(presetInfo =>
-          doCreateUser({...presetInfo, ...profile}).then(authUser => {
-            const {userEnvSet} = presetInfo;
-            // TODO: ADD USER ENVS
-            // addUserToEnvSet({uid: profile.uid, userEnvSet}).then(env => ({
-            //   ...presetInfo,
-            //   userEnvs: [env],
-            // }));
+    const createUser = profile => {
+      const {uid} = profile;
+      return readTmpUser(email).then(presetUserInfo => {
+        const {userEnvIds} = presetUserInfo;
+        return doCreateUser({...presetUserInfo, ...profile})
+          .then(authUser => {
             dispatch(setAuthUserInfo({...authUser}));
             dispatch(setUserEnv(userEnv));
-          }),
-        )
-        .then(() => removeTmpUser());
+          })
+          .then(() =>
+            Promise.all(
+              userEnvIds.map(userEnvId => addUserToEnv({uid, userEnvId})),
+            ),
+          );
+      });
+    };
 
     return auth.doCreateUserWithEmailAndPassword(email, password).then(res => {
       const {uid} = res.user;
 
+      console.log('addToStorage', addToStorage);
+
+      const path = `/images/usr/${uid}`;
       if (img !== null) {
-        return addFileToStorageBase({
+        return addToStorage({
           file: img.file,
-          path: `/images/usr/${uid}`,
+          path,
         })
           .then(imgUrl => {
             const userAndImg = {...user, uid, photoURL: imgUrl};
             createUser(userAndImg);
+            deleteTmpUser(email);
           })
           .catch(error => {
             this.setState({error, loading: false});
           });
       }
-      return createUser({...user, uid});
+      return createUser({...user, uid}).catch(e => {
+        console.log('err', e);
+        removeFromStorage(path);
+        res.user.delete();
+        readTmpUser(email).then(({userEnvIds}) => {
+          Promise.all(
+            userEnvIds.map(userEnvId => deleteUserFromEnv({uid, userEnvId})),
+          );
+        });
+        createTmpUser(email);
+        deleteUser(uid);
+      });
     });
   };
 }
@@ -109,19 +133,11 @@ export const signIn = ({
 // });
 
 export function removeUserFromEnv({uid, envId}) {
-  const db = DB(envId);
   return function(dispatch, getState) {
-    // console.log('CALL WITH uid', uid);
-    const {authUser} = getState().Session;
-    const {userEnvs, uid} = authUser;
-
-    const updatedUserEnv = {userEnvs: userEnvs.filter(u => u.id !== envId)};
-
-    return db
-      .removeUserFromEnv({uid})
+    return deleteUserFromEnv({uid})
       .then(usrInfo => {
-        console.log('retrieve USR INFO', usrInfo);
-        dispatch(setAuthUserInfo(updatedUserEnv));
+        console.log('retrieve USR INFO ERR', usrInfo);
+        // dispatch(setAuthUserInfo(updatedUserEnv));
       })
       .catch(err => console.log('err', err));
   };

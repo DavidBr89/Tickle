@@ -1,8 +1,10 @@
 // import generate from 'firebase-auto-ids';
 
-import fetch from 'cross-fetch';
+// import fetch from 'cross-fetch';
 
-import {extractCardFields} from 'Constants/cardFields.ts';
+import {extractCardFields} from 'Constants/cardFields';
+
+import uuidv1 from 'uuid/v1';
 
 import CardDB from 'Firebase/db';
 // import idGenerate from 'Src/idGenerator';
@@ -31,9 +33,9 @@ import {selectCard, extendSelectedCard} from '../DataView/actions';
 
 import NearbyPlaces from '../places.json';
 
-export function fetchCollectibleCards({uid, userEnv}) {
+export function fetchCollectibleCards({uid, userEnvId}) {
   return function(dispatch) {
-    const db = new CardDB(userEnv);
+    const db = new CardDB(userEnvId);
     dispatch(loadingCards(true));
     // TODO: change later with obj params
     return db.readCards({playerId: uid}).then(
@@ -46,9 +48,9 @@ export function fetchCollectibleCards({uid, userEnv}) {
   };
 }
 
-export function fetchAllCardsWithSubmissions({userEnv}) {
+export function fetchAllCardsWithSubmissions({userEnvId}) {
   return function(dispatch, getState) {
-    const db = new CardDB(userEnv);
+    const db = new CardDB(userEnvId);
     dispatch(loadingCards(true));
     return db.readCards().then(data => {
       dispatch(loadingCards(false));
@@ -57,11 +59,11 @@ export function fetchAllCardsWithSubmissions({userEnv}) {
   };
 }
 
-export function fetchCreatedCards({userEnv, uid}) {
+export function fetchCreatedCards({userEnvId, uid}) {
   return function(dispatch) {
     dispatch(loadingCards(true));
 
-    const db = new CardDB(userEnv);
+    const db = new CardDB(userEnvId);
     return db.readCards({authorId: uid, playerId: null}).then(
       data => {
         dispatch(loadingCards(false));
@@ -72,28 +74,28 @@ export function fetchCreatedCards({userEnv, uid}) {
   };
 }
 
-// export function asyncCreateCard({cardData, userEnv}) {
-//   return function(dispatch, getState) {
-//     const db = new CardDB(userEnv);
-//
-//     const newCard = {
-//       ...cardData,
-//       id: idGenerate(),
-//       date: new Date(),
-//     };
-//     dispatch(createCard(newCard));
-//     dispatch(extendSelectedCard(null));
-//     dispatch(selectCard(newCard.id));
-//
-//     return db
-//       .doCreateCard(newCard)
-//       .then(() => dispatch(createCardSuccess(newCard)));
-//   };
-// }
-//
-export function asyncRemoveCard({cardId, userEnv}) {
+export function asyncCreateCard({cardData, userEnvId}) {
   return function(dispatch) {
-    const db = new CardDB(userEnv); // createDbEnv(getState());
+    const db = new CardDB(userEnvId);
+
+    const newCard = {
+      ...cardData,
+      id: uuidv1(),
+      date: new Date(),
+    };
+    dispatch(createCard(newCard));
+    dispatch(extendSelectedCard(null));
+    dispatch(selectCard(newCard.id));
+
+    return db
+      .doUpdateCard(newCard)
+      .then(() => dispatch(createCardSuccess(newCard)));
+  };
+}
+//
+export function asyncRemoveCard({cardId, userEnvId}) {
+  return function(dispatch) {
+    const db = new CardDB(userEnvId); // createDbEnv(getState());
     dispatch(deleteCard(cardId));
     dispatch(selectCard(null));
     return db.doDeleteCard(cardId).then(() => {
@@ -102,10 +104,10 @@ export function asyncRemoveCard({cardId, userEnv}) {
   };
 }
 
-export function asyncUpdateCard({cardData, userEnv}) {
-  return (dispatch, getState) => {
+export function asyncUpdateCard({cardData, userEnvId}) {
+  return dispatch => {
     dispatch(updateCard(cardData));
-    const db = new CardDB(userEnv); // createDbEnv(getState());
+    const db = new CardDB(userEnvId); // createDbEnv(getState());
     db.doUpdateCard(cardData)
       .then(() => {
         dispatch(updateCardSuccess(cardData));
@@ -114,29 +116,29 @@ export function asyncUpdateCard({cardData, userEnv}) {
   };
 }
 
-export function asyncAddComment(
-  commentObj = {
-    authorId: null,
-    cardId: null,
-    comment: {uid: '', text: '', date: null},
-  },
-  userEnv,
-) {
-  return function(dispatch, getState) {
-    const db = CardDB(userEnv);
-    dispatch(addComment(commentObj));
-    return db
-      .addComment(commentObj)
-      .then(() => {
-        dispatch(addCommentSuccess());
-      })
-      .catch(err => dispatch(addCommentError(err)));
-  };
-}
+// export function asyncAddComment(
+//   commentObj = {
+//     authorId: null,
+//     cardId: null,
+//     comment: {uid: '', text: '', date: null},
+//   },
+//   userEnvId,
+// ) {
+//   return function(dispatch, getState) {
+//     const db = CardDB(userEnvId);
+//     dispatch(addComment(commentObj));
+//     return db
+//       .addComment(commentObj)
+//       .then(() => {
+//         dispatch(addCommentSuccess());
+//       })
+//       .catch(err => dispatch(addCommentError(err)));
+//   };
+// }
 
-export function asyncSubmitActivity({userEnv, ...activitySubmission}) {
+export function asyncSubmitActivity({userEnvId, ...activitySubmission}) {
   return function(dispatch) {
-    const db = CardDB(userEnv);
+    const db = CardDB(userEnvId);
 
     dispatch(submitActivity(activitySubmission));
     return db
@@ -148,11 +150,11 @@ export function asyncSubmitActivity({userEnv, ...activitySubmission}) {
   };
 }
 
-export function removeChallengeSubmission({challengeSubmission, userEnv}) {
+export function removeChallengeSubmission({challengeSubmission, userEnvId}) {
   const {cardId, playerId} = challengeSubmission;
 
   return function(dispatch, getState) {
-    const db = CardDB(userEnv); // createDbEnv(getState());
+    const db = CardDB(userEnvId); // createDbEnv(getState());
     // dispatch(submitActivity(challengeSubmission));
     return db.removeActivitySubmission({cardId, playerId});
     //   .then(() => dispatch(submitActivitySuccess()))

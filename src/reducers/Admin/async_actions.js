@@ -1,10 +1,9 @@
 import fetch from 'cross-fetch';
 import {uniqBy, flatten} from 'lodash';
 
-import {DB, firebase} from 'Firebase';
-import {auth} from 'Firebase';
+import CardDB from 'Firebase/db';
+// import {auth} from 'Firebase';
 import uuidv1 from 'uuid/v1';
-
 
 import {
   readAllUserEnvs,
@@ -19,7 +18,6 @@ import {
   getUserEnvs,
 } from 'Firebase/db';
 
-import idGenerate from 'Src/idGenerator';
 import {
   receiveUsers,
   receiveAllUserEnvs,
@@ -65,7 +63,7 @@ export function fetchAllUserEnvs() {
 }
 
 export function createNewUserEnv(env) {
-  // const db = DB();
+  // const db = CardDB();
   return function(dispatch) {
     return createUserEnv(env).then(() => {
       dispatch(addUserEnv(env));
@@ -124,7 +122,7 @@ export function fetchUsers() {
 }
 
 export function preRegisterUser(usrInfo) {
-  const usr ={ ...usrInfo, uid: uuidv1(), tmp: true}
+  const usr = {...usrInfo, uid: uuidv1(), tmp: true};
   return function(dispatch) {
     getOneUserByEmail(usr.email).then(d => {
       if (d === null) {
@@ -144,25 +142,25 @@ export function preRegisterUser(usrInfo) {
   };
 }
 
-export function fetchCards({userEnvId, authorId = null, playerId = null}) {
-  const db = DB(userEnvId);
-
-  return function(dispatch) {
-    return db.readCards({authorId, playerId: null}).then(cards => {
-      // console.log('USers', data);
-      // const promises = data.map(({ uid }) => db.getDetailedUserInfo(uid));
-      dispatch(receiveCards(cards));
-      // Promise.all(promises).then(detailedUsers => {
-      //   dispatch(receiveUsers(detailedUsers));
-      //   dispatch(
-      //     getCards(
-      //       uniqBy(flatten(detailedUsers.map(u => u.createdCards)), 'id')
-      //     )
-      //   );
-      // });
-    });
-  };
-}
+// export function fetchCards({userEnvId, authorId = null, playerId = null}) {
+//   const db = CardDB(userEnvId);
+//
+//   return function(dispatch) {
+//     return db.readCards({authorId, playerId: null}).then(cards => {
+//       // console.log('USers', data);
+//       // const promises = data.map(({ uid }) => db.getDetailedUserInfo(uid));
+//       dispatch(receiveCards(cards));
+//       // Promise.all(promises).then(detailedUsers => {
+//       //   dispatch(receiveUsers(detailedUsers));
+//       //   dispatch(
+//       //     getCards(
+//       //       uniqBy(flatten(detailedUsers.map(u => u.createdCards)), 'id')
+//       //     )
+//       //   );
+//       // });
+//     });
+//   };
+// }
 // export function asyncSubmitChallengeReview(challengeSubmission) {
 //   const {cardId, playerId, ...challengeData} = challengeSubmission;
 //   console.log('challengeSubmission', {cardId, playerId, ...challengeData});

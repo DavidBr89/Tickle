@@ -33,7 +33,7 @@ import {
 
 const INITIAL_STATE = {
   users: [],
-  cards: [],
+  // cards: [],
   extendedId: null,
   selectedCardId: null,
   cardFilters: [CHALLENGE_SUBMITTED],

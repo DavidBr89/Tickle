@@ -27,9 +27,11 @@ const withAuthentication = Component => {
 
       firebase.auth.onAuthStateChanged(authUser => {
         if (authUser !== null) {
-          const {uid} = authUser;
-          fetchCollectibleCards({userEnv, uid});
-          fetchCreatedCards({userEnv, uid});
+
+          // TODO
+          // const {uid} = authUser;
+          // fetchCollectibleCards({userEnv, uid});
+          // fetchCreatedCards({userEnv, uid});
         } else {
           clearAuthUser();
         }

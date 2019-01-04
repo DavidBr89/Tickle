@@ -227,9 +227,10 @@ function UserPanel({
 
   const baseLiClass = 'cursor-pointer p-2 text-lg';
   const liClass = u =>
-    `${baseLiClass} ${u.tmp &&
-      'bg-red-lighter'} ${u.uid === selectedUserId && 'bg-grey'}`;
+    `${baseLiClass} ${u.uid === selectedUserId && 'bg-grey'} ${u.tmp &&
+      'bg-green'}`;
 
+  console.log('envUsers', envUsers);
   return (
     <details className={className} panelOpen={panelOpen}>
       <summary
@@ -267,7 +268,7 @@ function UserPanel({
           <ul style={{height: 200}}>
             {envUsers.map(u => (
               <li className={liClass(u)} onClick={() => onSelectUser(u.uid)}>
-                {u.email} {u.tmp && '(not registered)'}
+                {u.email}
               </li>
             ))}
           </ul>
@@ -278,15 +279,7 @@ function UserPanel({
 }
 
 function SelectCards(props) {
-  const {
-    className,
-    cards,
-    onCreateCard,
-    templateCard,
-    selectedUserId,
-    urlConfig,
-  } = props;
-
+  const {className, cards, onCreateCard, templateCard, urlConfig} = props;
   // const [cardId, setCardId] = useState(null);
 
   const {
@@ -294,9 +287,10 @@ function SelectCards(props) {
     routing: {routeSelectExtendCard, routeExtendCard},
   } = urlConfig;
 
-  const tmpCards = !selectedUserId ? [...cards, templateCard] : cards;
+  const cardsWithTemplate = [...cards, templateCard];
 
-  const selectedCard = tmpCards.find(c => c.id === selectedCardId) || null;
+  const selectedCard =
+    cardsWithTemplate.find(c => c.id === selectedCardId) || null;
 
   const [panelOpen, setPanelOpen] = useState(false);
 
@@ -319,7 +313,7 @@ function SelectCards(props) {
         Cards
       </summary>
       <div className="flex flex-wrap" style={{...gridStyle}}>
-        {tmpCards.map(c => (
+        {cardsWithTemplate.map(c => (
           <PreviewCardSwitch
             edit={c.edit}
             title={c.title.value}
@@ -363,25 +357,25 @@ export default function AdminPage(props) {
 
   useEffect(() => {
     fetchAllUserEnvs();
-    fetchCards();
+    // fetchCards();
     getUsers();
   }, []);
 
   useEffect(
     () => {
-      fetchCards();
+      // fetchCards();
       // fetchUserIdsFromEnv(userEnvId);
     },
     [userEnvId],
   );
 
-  useEffect(
-    () => {
-      console.log('selectedUserId', selectedUserId, 'userEnvId', userEnvId);
-      fetchCards();
-    },
-    [selectedUserId, userEnvId],
-  );
+  // useEffect(
+  //   () => {
+  //     console.log('selectedUserId', selectedUserId, 'userEnvId', userEnvId);
+  //     fetchCards();
+  //   },
+  //   [selectedUserId, userEnvId],
+  // );
 
   return (
     <div className="content-margin overflow-y-auto">

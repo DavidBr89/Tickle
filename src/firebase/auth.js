@@ -26,8 +26,8 @@ export const doEmailUpdate = email => auth.currentUser.updateEmail(email);
 
 export const getEmail = () => auth.currentUser.email;
 // export const getUserProfile = auth.currentUser;
-
-export const updateUserProfile = userProfile =>
-  auth.currentUser.updateProfile(userProfile);
+//
+// export const updateUserProfile = userProfile =>
+//   auth.currentUser.updateProfile(userProfile);
 
 export const getUserInfo = () => auth.currentUser;

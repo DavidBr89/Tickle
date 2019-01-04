@@ -71,11 +71,23 @@ export const readAllTmpUsers = () =>
       return data;
     });
 
+export const deleteUser = uid =>
+  firestore
+    .collection('user')
+    .doc(uid)
+    .delete();
+
+export const deleteTmpUser = email =>
+  firestore
+    .collection('tmp-users')
+    .doc(email)
+    .delete();
+
 export const removeTmpUser = email =>
   firestore
     .collection('tmp-users')
     .doc(email)
-    .get().delete;
+    .delete();
 
 export const readTmpUser = email =>
   firestore
@@ -164,7 +176,7 @@ export const readUserIdsFromEnv = envId =>
 
 // .catch(err => console.log('err  gkkketUser', err));
 
-export const getDetailedUserInfo = ({ uid, userEnvId }) => {
+export const getDetailedUserInfo = ({uid, userEnvId}) => {
   const {readCards} = makeCardFuncs(userEnvId);
   return getUser(uid)
     .then(usr =>
@@ -180,7 +192,7 @@ export const getDetailedUserInfo = ({ uid, userEnvId }) => {
 export const addUserToEnvSet = ({uid, userEnvSet}) =>
   Promise.all(userEnvSet.map(u => addUserToEnv({uid, userEnv: u})));
 
-export const removeUserFromEnv = ({userEnvId, uid}) =>
+export const deleteUserFromEnv = ({userEnvId, uid}) =>
   firestore
     .collection('card-environments')
     .doc(userEnvId)

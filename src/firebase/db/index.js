@@ -54,14 +54,14 @@ export const readCopyUsers = () => {
     });
 };
 
-const removeFromFirebaseStorage = ({path, id}) => {
-  const imgRef = storageRef.child(`${path}/${id}`);
+const removeFromStorage = path => {
+  const imgRef = storageRef.child(path);
   return imgRef.delete().catch(error => {
     throw new Error(`error in deleting file${path} ${error}`);
   });
 };
 
-export const addFileToFirebaseStorage = ({file, path, id}) => {
+export const addToStorage = ({file, path, id}) => {
   const metadata = {contentType: file.type};
   const imgRef = storageRef.child(`${path}/${id}`);
   return imgRef
@@ -80,10 +80,10 @@ export default function CardDB(ENV_STR = 'default') {
   const cardFuncs = makeCardFuncs(ENV_STR);
 
   const addFileToEnv = ({file, path, id}) =>
-    addFileToFirebaseStorage({file, path: `${ENV_STR}/${path}`, id});
+    addToStorage({file, path: `${ENV_STR}/${path}`, id});
 
   const removeFileFromEnv = ({path, id}) =>
-    removeFromFirebaseStorage({path: `${ENV_STR}/${path}`, id});
+    removeFromStorage({path: `${ENV_STR}/${path}`, id});
 
   return {
     ...activityFuncs,

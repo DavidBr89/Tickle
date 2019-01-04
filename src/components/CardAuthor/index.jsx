@@ -65,7 +65,7 @@ const mapStateToProps = state => {
     d => filterSet.length === 0 || isSubset(d.tags.value || [], filterSet),
   );
 
-  const cards = [templateCard, ...filteredCards];
+  const cards = [templateCard, ...filteredCards].map(d => ({...d, edit: true}));
 
   return {
     ...state.MapView,

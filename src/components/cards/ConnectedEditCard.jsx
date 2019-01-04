@@ -13,7 +13,7 @@ import {DB} from 'Firebase';
 
 import {TEMP_ID} from 'Constants/cardFields';
 
-import {updateCardTemplate, dragCard} from 'Reducers/Cards/actions';
+import * as cardActions from 'Reducers/Cards/actions';
 
 import {changeMapViewport} from 'Reducers/Map/actions';
 
@@ -71,9 +71,8 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       // dragCard,
-      updateCardTemplate,
       ...routeActions,
-      dragCard,
+      ...cardActions,
       ...asyncCardActions,
       changeMapViewport,
       ...routeActions,
@@ -91,10 +90,12 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     history,
     id: cardId,
     tags: {value: tagValues},
+    onCreateCard,
+    onUpdateCard,
   } = ownProps;
 
   // TODO: BUILD IN check
-  const {userEnv} = match.params;
+  const {userEnv: userEnvId} = match.params;
 
   const {
     query: {selectedCardId, extended, flipped},
@@ -108,14 +109,15 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     asyncRemoveCard,
   } = dispatcherProps;
 
-  const createCard = ({tags, title, ...cardData}) => {
-    asyncCreateCard({cardData: {...cardData, title, tags}, userEnv});
-  };
-  const updateCard = cardData => {
-    asyncUpdateCard({cardData, userEnv});
+  const createCard = cardData => {
+    asyncCreateCard({cardData, userEnvId}).then(() => onCreateCard(cardData));
   };
 
-  const removeCard = () => asyncRemoveCard({cardId, userEnv});
+  const updateCard = cardData => {
+    asyncUpdateCard({cardData, userEnvId}).then(() => onUpdateCard(cardData));
+  };
+
+  const removeCard = () => asyncRemoveCard({cardId, userEnvId});
 
   const onCardUpdate = cardData =>
     // take form const
@@ -123,7 +125,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
       ? updateCardTemplate(cardData)
       : updateCard(cardData);
 
-  const db = DB(userEnv);
+  const db = DB(userEnvId);
 
   const filePath = `cards/${authorId}/${cardId}`;
 
@@ -144,7 +146,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
       : [];
 
   const backCardFuncs = makeBackCardFuncs({
-    userEnv,
+    userEnv: userEnvId,
     cardId,
     playerId: authorId,
     authorId,
@@ -180,8 +182,6 @@ const EditCard = ({
   y,
   onClose,
   flipped,
-  // TODO: rename
-  onChallengeClick,
   onCreate,
   template,
   onFlip,
@@ -230,6 +230,21 @@ const EditCard = ({
     }
   />
 );
+
+EditCard.defaultProps = {
+  createCard: d => d,
+  onCreateCard: d => d,
+  onUpdateCard: d => d,
+  removeCard: d => d,
+  onCardUpdate: d => d,
+  x: 0,
+  y: 0,
+  onClose: d => d,
+  flipped: false,
+  template: false,
+  onFlip: d => d,
+  fetchAuthorData: d => d,
+};
 
 export default compose(
   withRouter,
