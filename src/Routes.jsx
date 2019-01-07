@@ -170,9 +170,7 @@ const Routes = () => (
         exact
         path={`/:userEnv/${ACCOUNT.path}`}
         component={() => (
-          <DefaultLayout>
             <Account />
-          </DefaultLayout>
         )}
       />
 

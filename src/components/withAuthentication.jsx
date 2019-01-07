@@ -19,7 +19,7 @@ const withAuthentication = Component => {
       const {
         clearAuthUser,
         fetchCollectibleCards,
-        fetchCreatedCards,
+        fetchUserInfo,
         match,
       } = this.props;
 
@@ -28,6 +28,7 @@ const withAuthentication = Component => {
       firebase.auth.onAuthStateChanged(authUser => {
         if (authUser !== null) {
 
+          fetchUserInfo()
           // TODO
           // const {uid} = authUser;
           // fetchCollectibleCards({userEnv, uid});

@@ -5,7 +5,8 @@ import DB, {
   addUserToEnv,
   deleteUserFromEnv,
   createTmpUser,
-  deleteUser, deleteTmpUser
+  deleteUser,
+  deleteTmpUser,
 } from 'Firebase/db';
 
 import {
@@ -27,17 +28,33 @@ import {
   setUserEnv,
 } from './actions';
 
-export function fetchUserInfo({uid, userEnv}) {
+export function fetchUserInfo() {
   // Thunk middleware knows how to handle functions.
   // It passes the dispatch method as an argument to the function,
   // thus making it able to dispatch actions itself.
-  return function(dispatch) {
+  return function(dispatch, getState) {
+    const {authUser} = getState().Session;
+    const {uid} = authUser;
     // const db = new DB(userEnv);
     return getUser(uid)
       .then(usrInfo => {
         dispatch(setAuthUserInfo(userFields({uid, ...usrInfo})));
       })
       .catch(err => console.log('err', err));
+  };
+}
+
+export function updateUser(usr) {
+  return (dispatch, getState) => {
+    const {authUser} = getState().Session;
+    const newUsr = {...authUser, ...usr};
+    dispatch(setAuthUserInfo(newUsr));
+
+    return doCreateUser(newUsr).then(usr => {
+      console.log('usr Upd success', usr);
+      // dispatch(setAuthUserInfo({...authUser}));
+      // dispatch(setUserEnv(userEnv));
+    });
   };
 }
 
@@ -54,7 +71,7 @@ export function signUp({user, password, img, userEnv}) {
         return doCreateUser({...presetUserInfo, ...profile})
           .then(authUser => {
             dispatch(setAuthUserInfo({...authUser}));
-            dispatch(setUserEnv(userEnv));
+            // dispatch(setUserEnv(userEnv));
           })
           .then(() =>
             Promise.all(

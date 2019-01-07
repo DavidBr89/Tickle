@@ -121,7 +121,7 @@ export function fetchUsers() {
   };
 }
 
-export function preRegisterUser(usrInfo) {
+export function inviteUser(usrInfo) {
   const usr = {...usrInfo, uid: uuidv1(), tmp: true};
   return function(dispatch) {
     getOneUserByEmail(usr.email).then(d => {

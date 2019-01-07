@@ -227,15 +227,15 @@ function UserPanel({
 
   const baseLiClass = 'cursor-pointer p-2 text-lg';
   const liClass = u =>
-    `${baseLiClass} ${u.tmp &&
-      'bg-red-lighter'} ${u.uid === selectedUserId && 'bg-grey'}`;
+    `${baseLiClass} ${u.tmp && 'bg-red-lighter'} ${u.uid === selectedUserId &&
+      'bg-grey'}`;
 
   return (
     <details className={className} panelOpen={panelOpen}>
       <summary
         className={summaryClassName}
         onClick={() => setPanelOpen(!panelOpen)}>
-        Users - {username || 'No User selected'}
+        Users - {username || 'All Users'}
       </summary>
 
       <BlackModal visible={modalOpen}>
@@ -260,7 +260,7 @@ function UserPanel({
           <button
             onClick={() => setModalOpen(true)}
             className="ml-1 btn border">
-            Add User
+            Invite User
           </button>
         </div>
         <div className="overflow-y-auto">

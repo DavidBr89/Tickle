@@ -58,7 +58,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     fetchCollectibleCards,
     fetchCreatedCards,
     registerUserToEnv,
-    preRegisterUser,
+    inviteUser,
   } = dispatchProps;
 
   const {match, history, location} = ownProps;
@@ -106,8 +106,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     userEnvId,
     getUsers: () => fetchUsers(userEnvId),
     selectedUserEnvId: userEnvId,
-    preRegisterUser: usr => {
-      preRegisterUser({...usr, userEnvIds: [userEnvId]});
+    inviteUser: usr => {
+      inviteUser({...usr, userEnvIds: [userEnvId]});
     },
     registerUserToEnv: uid => registerUserToEnv({userEnvId, uid}),
   };
