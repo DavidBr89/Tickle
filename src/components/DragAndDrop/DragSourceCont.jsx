@@ -6,8 +6,8 @@ import HTML5 from 'react-dnd-html5-backend';
 
 import PropTypes from 'prop-types';
 
-export const V1_DRAG ='V1_DRAG' ;
-export const V2_DRAG ='V2_DRAG' ;
+export const V1_DRAG = 'V1_DRAG';
+export const V2_DRAG = 'V2_DRAG';
 
 const boxSource = {
   beginDrag(props) {
@@ -81,9 +81,7 @@ class DragSourceCont extends PureComponent {
   }
 }
 
-
-
-const dragSource = srcId =>
+export const dragSource = srcId =>
   DragSource(srcId, boxSource, (connect, monitor) => ({
     connectDragSource: connect.dragSource(),
     isDragging: monitor.isDragging(),
@@ -93,7 +91,9 @@ const dragSource = srcId =>
     isdropped: monitor.didDrop(),
   }))(DragSourceCont);
 
+export const dragSourceMap = {
+  [V1_DRAG]: dragSource(V1_DRAG),
+  [V2_DRAG]: dragSource(V2_DRAG),
+};
 
-export const dragSourceMap = {[V1_DRAG]: dragSource(V1_DRAG), [V2_DRAG]: dragSource(V2_DRAG)};
-
-export default dragSource
+export default dragSource;

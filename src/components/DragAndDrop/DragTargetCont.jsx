@@ -55,7 +55,7 @@ class DropTargetCont extends PureComponent {
     const {left, top, data} = this.state;
 
     if (!prevProps.isDropped && isDropped) {
-      console.log('canDrop', data);
+      // console.log('canDrop', canDrop);
       dropHandler({
         ...data,
         x: left,
@@ -81,7 +81,7 @@ class DropTargetCont extends PureComponent {
   }
 }
 
-const dropTarget = srcId =>
+export const dropTarget = srcId =>
   DropTarget(srcId, boxTarget, (connect, monitor) => ({
     connectDropTarget: connect.dropTarget(),
     isOver: monitor.isOver(),

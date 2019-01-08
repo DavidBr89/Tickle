@@ -22,10 +22,9 @@ import * as mapActions from 'Reducers/Map/actions';
 import setify from 'Utils/setify'; // eslint-disable-line
 import {screenResize} from 'Reducers/Screen/actions';
 import * as cardActions from 'Reducers/Cards/actions';
-import * as asyncActions from 'Reducers/Cards/async_actions';
-import * as dataViewActions from 'Reducers/DataView/async_actions';
+import * as cardAsyncActions from 'Reducers/Cards/async_actions';
+import * as dataViewThunks from 'Reducers/DataView/dataViewThunks';
 // TODO: refactor these actions
-import * as routeActions from 'Reducers/DataView/async_actions';
 
 import cardRoutes from 'Src/Routes/cardRoutes';
 import isSubset from 'Src/lib/isSubset';
@@ -44,14 +43,13 @@ const mapStateToProps = state => {
   const {createdCards, tmpCard} = state.Cards;
 
   const {filterSet} = state.DataView;
+  const {authUser} = state.Session;
   // console.log('selectedCardid', selectedCardId);
 
   // TODO: own dim reducer
   const {mapSettings, userLocation} = state.MapView;
 
-  const {
-    authUser: {uid, admin},
-  } = state.Session;
+  const {uid, admin} = authUser;
 
   const templateCard = {
     loc: userLocation,
@@ -72,7 +70,7 @@ const mapStateToProps = state => {
     ...state.DataView,
     ...state.Cards,
     ...state.Screen,
-    uid,
+    authUser,
     admin,
     filterSet,
     templateCard,
@@ -85,10 +83,8 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       ...cardActions,
-      ...asyncActions,
-      ...dataViewActions,
-
-      ...routeActions,
+      ...cardAsyncActions,
+      ...dataViewThunks,
       ...mapActions,
       screenResize,
     },
@@ -98,9 +94,18 @@ const mapDispatchToProps = dispatch =>
 // });
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const {cards, filterSet, mapSettings, templateCard, width, height} = state;
+  const {
+    cards,
+    filterSet,
+    authUser,
+    mapSettings,
+    templateCard,
+    width,
+    height,
+  } = state;
 
-  const {changeMapViewport, tagFilter} = dispatcherProps;
+  const {changeMapViewport, fetchCreatedCards, tagFilter} = dispatcherProps;
+
   const mapViewport = {...mapSettings, width, height};
 
   const {dataView, history, location, match, children} = ownProps;
@@ -146,6 +151,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const filterByTag = tag => tagFilter({filterSet, tag});
 
+  const fetchCards = () => fetchCreatedCards({uid: authUser.uid, userEnv});
+
   return {
     ...state,
     ...dispatcherProps,
@@ -162,6 +169,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     children,
     userEnv,
     mapViewport,
+    fetchCards,
     filterByTag,
   };
 };
@@ -185,7 +193,6 @@ function PureMapCardAuthorPage({...props}) {
   };
 
   const cardDrop = cardData => {
-    console.log('original drop');
     const {x, y} = cardData;
     const [longitude, latitude] = mercator.unproject([x, y]);
 

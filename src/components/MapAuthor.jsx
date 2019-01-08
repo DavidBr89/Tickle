@@ -42,7 +42,11 @@ const MapAuthor = DragDropContextProvider(props => {
 
   const dragger = d =>
     selectedCardId === d.id ? (
-      <DragElement {...d} className="drag" dragId={dragId}>
+      <DragElement
+        {...d}
+        key={`${d.id}${dragId}`}
+        className="drag"
+        dragId={dragId}>
         <CardMarker
           style={{
             transform: 'scale(1.4)',

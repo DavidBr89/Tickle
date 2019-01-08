@@ -109,9 +109,9 @@ class BackAuthorWrapper extends React.Component {
     // TODO OUTSOURCE
     dataPromise.then(authorInfo => {
       const {
-        interests,
-        createdCards,
-        collectedCards,
+        interests=[],
+        createdCards=[],
+        collectedCards=[],
         ...basicUserInfo
       } = authorInfo;
 

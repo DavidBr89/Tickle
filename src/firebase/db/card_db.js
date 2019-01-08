@@ -1,4 +1,4 @@
-import {extractCardFields} from 'Constants/cardFields.ts';
+import {extractCardFields, TEMP_ID} from 'Constants/cardFields.ts';
 import makeActivityFuncs from './activity_db.js';
 
 import {firestore, storageRef, Timestamp} from '../firebase';
@@ -81,24 +81,29 @@ const makeCardFuncs = ENV_STR => {
       : new Promise(resolve => resolve({...restImgFields}));
   };
 
-  const doCreateCard = card =>
-    uploadImgFields(card).then(img => {
-      if (card.id === 'temp') {
+  const doCreateCard = rawCard => {
+    const card = extractCardFields(rawCard);
+
+    return uploadImgFields(card).then(imgSrc => {
+      if (card.id === TEMP_ID) {
         throw Error('error: temp card to create');
       } else {
         const timestamp = null; // firestore.FieldValue.serverTimestamp();
-        const newCard = extractCardFields({...card, img, timestamp});
+        const newCard = {...card, img: {value: imgSrc}, timestamp};
 
         return TICKLE_ENV_REF.collection('cards')
           .doc(newCard.id)
           .set(newCard);
       }
     });
+  };
 
   const readCards = ({authorId = null, playerId = null}) => {
     // TODO
     const thumbnailPromise = d => {
-      if (d.img && !d.img.value) return new Promise(resolve => resolve(d));
+      console.log('readCards', d);
+      //TODO
+      if (true) return new Promise(resolve => resolve(d));
 
       const thumbNailRef = storageRef.child(
         `${ENV_STR}/images/cards/${thumbFileName(d.id)}`,

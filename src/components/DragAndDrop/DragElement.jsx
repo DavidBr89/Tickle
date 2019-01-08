@@ -20,6 +20,7 @@ const DragElement = ({dragId, dragCard, x, y, children, className, ...d}) => {
   };
 
   const DragSource = dragSourceMap[dragId];
+  console.log('dragId', dragId);
 
   const elem = (
     <div
@@ -44,7 +45,7 @@ const DragElement = ({dragId, dragCard, x, y, children, className, ...d}) => {
   return (
     <div style={posStyle} className={className}>
       <DragSource
-        key={dragId}
+        dragId={dragId}
         dragHandler={dragCard}
         data={d}
         x={x}

@@ -34,7 +34,6 @@ export default function AccountPage(props) {
     },
     [img.url, img.file],
   );
-  console.log('interests', interests);
 
   return (
     <DefaultLayout
@@ -44,15 +43,27 @@ export default function AccountPage(props) {
           <h1>Account</h1>
         </div>
       }>
-      <div className="content-margin">
+      <div className="content-margin flex flex-col overflow-y-auto">
+        <h2>Photo:</h2>
+        <PhotoUpload
+          style={{flex: '0 0 40vh', maxHeight: '40vh'}}
+          btnClassName="mt-2"
+          imgUrl={img.url}
+          onChange={newImg => {
+            setImg({url: newImg.url, file: newImg.file});
+          }}
+        />
         <section className="text-lg mb-2">
           <h2>Username:</h2>
-          <input className="form-control w-full" type="text" defaultValue={username} />
+          <input
+            className="form-control w-full"
+            type="text"
+            defaultValue={username}
+          />
         </section>
 
         <section className="text-lg mb-2">
           <h2>Interests:</h2>
-
           <SelectTag
             placeholder="Select Interests"
             inputClassName="flex-grow p-2 border-2 border-black"
@@ -77,15 +88,6 @@ export default function AccountPage(props) {
             ))}
           </div>
         </section>
-
-        <PhotoUpload
-          className="flex-grow flex flex-col"
-          imgUrl={img.url}
-          onChange={newImg => {
-            console.log('img', img);
-            setImg({url: newImg.url, file: newImg.file});
-          }}
-        />
       </div>
     </DefaultLayout>
   );

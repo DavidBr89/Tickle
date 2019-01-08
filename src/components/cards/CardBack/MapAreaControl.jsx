@@ -217,6 +217,7 @@ const MapDragAndDrop = props => {
     const [longitude, latitude] = mercator.unproject([x, y]);
 
     const updatedCard = {...cardData, loc: {longitude, latitude}};
+    console.log('YOYOYO BACK drag card back', updatedCard);
     if (cardData.id !== TEMP_ID)
       asyncUpdateCard({cardData: updatedCard, userEnv});
     else updateCardTemplate({loc: {longitude, latitude}});
@@ -227,6 +228,7 @@ const MapDragAndDrop = props => {
   return (
     <MapAuthor
       {...props}
+      key={V2_DRAG}
       dragId={V2_DRAG}
       mapViewport={mapViewport}
       selectedCardId={id}

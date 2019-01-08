@@ -6,6 +6,8 @@ import {LinearInterpolator, FlyToInterpolator} from 'react-map-gl';
 
 import WebMercatorViewport from 'viewport-mercator-project';
 
+// import * as dataViewThunks from 'Reducers/DataView/dataViewThunks';
+
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {compose} from 'recompose';
@@ -25,6 +27,7 @@ import distanceLoc from 'Components/utils/distanceLoc';
 // rename path
 import {screenResize} from 'Reducers/Screen/actions';
 import * as cardActions from 'Reducers/Cards/actions';
+import * as asyncCardActions from 'Reducers/Cards/async_actions';
 
 import * as dataViewActions from 'Reducers/DataView/actions';
 
@@ -33,7 +36,7 @@ import withAuthentication from 'Src/components/withAuthentication';
 import cardRoutes from 'Src/Routes/cardRoutes';
 
 import {shiftCenterMap} from 'Src/lib/geo';
-import {tagFilter} from 'Reducers/DataView/async_actions';
+import {tagFilter} from 'Reducers/DataView/dataViewThunks';
 import {fallbackTagValues} from 'Constants/cardFields';
 import isSubset from 'Src/lib/isSubset';
 import CardViewPage from './CardViewPage';
@@ -77,7 +80,7 @@ const mapDispatchToProps = dispatch =>
     {
       ...cardActions,
       ...mapActions,
-      // ...asyncActions,
+      ...asyncCardActions,
       ...dataViewActions,
       tagFilter,
       // ...dataViewAsyncActions,
@@ -115,7 +118,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const {params} = match;
   const {userEnv} = params;
 
-  const {changeMapViewport, tagFilter} = dispatcherProps;
+  const {changeMapViewport, fetchCollectibleCards, tagFilter} = dispatcherProps;
 
   const {
     query: {selectedCardId, extended, flipped},
@@ -168,6 +171,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const filterByTag = tag => tagFilter({filterSet, tag});
 
+  const fetchCards = () => fetchCollectibleCards({uid, userEnv})
+
   return {
     ...state,
     ...dispatcherProps,
@@ -182,6 +187,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     userEnv,
     mapViewport,
     filterByTag,
+    fetchCards,
     ...ownProps,
   };
 };
@@ -199,10 +205,7 @@ PureMapViewPage.defaultProps = {};
 PureMapViewPage.propTypes = {};
 
 function PureTopicMapViewPage({...props}) {
-  return (
-    <CardViewPage {...props}>
-    </CardViewPage>
-  );
+  return <CardViewPage {...props} />;
 }
 
 PureMapViewPage.defaultProps = {};

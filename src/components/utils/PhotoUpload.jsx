@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
 
 import Compress from 'compress.js';
@@ -57,42 +57,30 @@ export default class PhotoUpload extends Component {
       onChange,
       defaultImg,
       title,
-      maxHeight,
-      // width,
-      // height,
       imgUrl,
       imgName,
+      btnClassName="",
     } = this.props;
 
     return (
-      <div className={className} style={{...style}}>
-        <div
-          className="flex-grow w-full h-full flex flex-col justify-center items-center border-dashed border-black border-2"
-          style={style}>
+      <Fragment>
+        {imgUrl ? (
+          <img
+            className={className}
+            style={{...style, objectFit: 'cover'}}
+            src={imgUrl}
+            alt="test"
+          />
+        ) : (
           <div
-            className="flex-grow flex flex-col"
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              width: '100%',
-            }}>
-            {imgUrl ? (
-              <img
-                className="flex-grow"
-                src={imgUrl}
-                style={{objectFit: 'cover'}}
-                alt="test"
-              />
-            ) : (
-              <div className="m-auto text-4xl font-bold pl-2 pr-2 text-muted">
-                {'No Image'}
-              </div>
-            )}
+            className={`flex flex-col justify-center items-center h-full text-4xl border border-black font-bold text-muted ${className}`}
+            style={style}>
+            <div className="m-auto">No Image</div>
           </div>
-        </div>
+        )}
         <label
           htmlFor="file-upload"
-          className="btn btn-shadow mt-2"
+          className={`flex-no-shrink btn btn-shadow mb-4 ${btnClassName}`}
           style={{
             width: '100%',
             display: null,
@@ -144,7 +132,7 @@ export default class PhotoUpload extends Component {
               });
           }}
         />
-      </div>
+      </Fragment>
     );
   }
 }

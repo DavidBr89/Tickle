@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
 
 import DefaultLayout from 'Components/DefaultLayout';
@@ -28,131 +28,113 @@ const LoadingScreen = ({visible, style}) => {
   return null;
 };
 
-class CardViewPage extends Component {
-  static propTypes = {
-    cards: PropTypes.array,
-    cardSets: PropTypes.array,
-    selectedTags: PropTypes.array,
-    selectedCardId: PropTypes.oneOf([PropTypes.string, null]),
-    width: PropTypes.number,
-    height: PropTypes.number,
-    previewCardAction: PropTypes.func,
-    filterCards: PropTypes.func,
-    addCardFilter: PropTypes.func,
-    setDataView: PropTypes.func,
-    filterSet: PropTypes.func,
-    toggleAuthEnv: PropTypes.func,
-    tagColorScale: PropTypes.func,
-    screenResize: PropTypes.func,
-  };
+function CardViewPage(props) {
+  const {
+    cards,
+    selectedCardId,
+    // width,
+    height,
+    previewCardAction,
+    filterCards,
+    addCardFilter,
+    tagVocabulary,
+    tagColorScale,
+    isSmartphone,
+    cardPanelVisible,
+    toggleCardPanel,
+    filterByChallengeState,
+    isLoadingCards,
+    extendedCard,
+    selectedCard,
+    width,
+    children,
+    concealCardStack,
+    cardStackBottom,
+    filterSet,
+    filterByTag,
+    fetchCards
+  } = props;
 
-  static defaultProps = {
-    cards: [],
-    cardSets: [],
-    selectedTags: [],
-    selectedCardId: null,
-    width: 500,
-    height: 500,
-    previewCardAction: d => d,
-    filterCards: d => d,
-    addCardFilter: d => d,
-    setDataView: d => d,
-    filterSet: d => d,
-    toggleAuthEnv: d => d,
-    tagColorScale: () => 'green',
-    screenResize: d => d,
-  };
+  useEffect(() => {
+    fetchCards();
+  }, []);
+  // const cardStackWidth = width;
+  const slotSize = Math.min(width / 3.5, 200);
+  // const cardStackWidth = width;
 
-  // componentDidMount() {
-  //   const {
-  //     screenResize,
-  //     getUserCards,
-  //     fetchCards,
-  //     preSelectCardId
-  //   } = this.props;
-  //
-  //   // fetchCards();
-  //   // screenResize({
-  //   //   width: this.cont.offsetWidth,
-  //   //   height: this.cont.offsetHeight
-  //   // });
-  //   // preSelectCardId();
-  // }
+  return (
+    <DefaultLayout
+      className="w-full h-full relative overflow-hidden flex-col-wrapper"
+      menu={
+        <div className="flex-grow flex justify-end items-center">
+          <button
+            className="btn btn-white border-2 border-black"
+            onClick={() => concealCardStack()}>
+            Hide
+          </button>
+          <CardTagSearch
+            tags={tagVocabulary}
+            filterSet={filterSet}
+            onClick={filterByTag}
+          />
+        </div>
+      }>
+      <CardStackContainer
+        onConceal={concealCardStack}
+        bottom={cardStackBottom}
+        width={width}
+        height={height}
+        cards={cards}
+        touch={isSmartphone}
+        selectedCardId={selectedCardId}
+        duration={600}
+        onClick={previewCardAction}
+        slotSize={slotSize}
+      />
 
-  componentWillUnmount() {
-    // window.addEventListener('resize', () => {});
-  }
+      <BlackModal
+        visible={extendedCard !== null}
+        style={{margin: `${!isSmartphone ? '2.5rem' : ''} auto`}}>
+        {selectedCard !== null && <ConnectedCard {...selectedCard} />}
+      </BlackModal>
 
-  render() {
-    const {
-      cards,
-      selectedCardId,
-      // width,
-      height,
-      previewCardAction,
-      filterCards,
-      addCardFilter,
-      tagVocabulary,
-      tagColorScale,
-      isSmartphone,
-      cardPanelVisible,
-      toggleCardPanel,
-      filterByChallengeState,
-      isLoadingCards,
-      extendedCard,
-      selectedCard,
-      width,
-      children,
-      concealCardStack,
-      cardStackBottom,
-      filterSet,
-      filterByTag
-    } = this.props;
-
-    // const cardStackWidth = width;
-    const slotSize = Math.min(width / 3.5, 200);
-    // const cardStackWidth = width;
-
-    return (
-      <DefaultLayout
-        className="w-full h-full relative overflow-hidden flex-col-wrapper"
-        menu={
-          <div className="flex-grow flex justify-end items-center">
-            <button
-              className="btn btn-white border-2 border-black"
-              onClick={() => concealCardStack()}>
-              Hide
-            </button>
-            <CardTagSearch
-              tags={tagVocabulary}
-              filterSet={filterSet}
-              onClick={filterByTag}
-            />
-          </div>
-        }>
-        <CardStackContainer
-          onConceal={concealCardStack}
-          bottom={cardStackBottom}
-          width={width}
-          height={height}
-          cards={cards}
-          touch={isSmartphone}
-          selectedCardId={selectedCardId}
-          duration={600}
-          onClick={previewCardAction}
-          slotSize={slotSize}
-        />
-
-        <BlackModal
-          visible={extendedCard !== null}
-          style={{margin: `${!isSmartphone ? '2.5rem' : ''} auto`}}>
-          {selectedCard !== null && <ConnectedCard {...selectedCard} />}
-        </BlackModal>
-
-        {children}
-      </DefaultLayout>
-    );
-  }
+      {children}
+    </DefaultLayout>
+  );
 }
+
+CardViewPage.propTypes = {
+  cards: PropTypes.array,
+  cardSets: PropTypes.array,
+  selectedTags: PropTypes.array,
+  selectedCardId: PropTypes.oneOf([PropTypes.string, null]),
+  width: PropTypes.number,
+  height: PropTypes.number,
+  previewCardAction: PropTypes.func,
+  filterCards: PropTypes.func,
+  addCardFilter: PropTypes.func,
+  setDataView: PropTypes.func,
+  filterSet: PropTypes.func,
+  toggleAuthEnv: PropTypes.func,
+  tagColorScale: PropTypes.func,
+  screenResize: PropTypes.func,
+};
+
+CardViewPage.defaultProps = {
+  cards: [],
+  cardSets: [],
+  selectedTags: [],
+  selectedCardId: null,
+  width: 500,
+  height: 500,
+  previewCardAction: d => d,
+  filterCards: d => d,
+  addCardFilter: d => d,
+  setDataView: d => d,
+  filterSet: d => d,
+  toggleAuthEnv: d => d,
+  tagColorScale: () => 'green',
+  screenResize: d => d,
+};
 
 export default CardViewPage;

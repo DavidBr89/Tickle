@@ -1,4 +1,4 @@
-import React, {Component, useState, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 
 import DefaultLayout from 'Components/DefaultLayout';
@@ -6,7 +6,7 @@ import {BlackModal} from 'Utils/Modal';
 
 import EditCard from 'Components/cards/ConnectedEditCard';
 
-import {DropDown} from 'Utils/TagInput';
+// import {DropDown} from 'Utils/TagInput';
 import {SelectInput} from 'Components/utils/SelectField';
 import mbxGeoCoding from '@mapbox/mapbox-sdk/services/geocoding';
 import CardStackContainer from '../CardStack';
@@ -117,135 +117,125 @@ const GoToPlace = ({onChange, ...props}) => {
 
 // const TimoutGrid = ReactTimeout(CardStack);
 
-class CardAuthorPage extends Component {
-  static propTypes = {
-    cards: PropTypes.array,
-    cardSets: PropTypes.array,
-    selectedTags: PropTypes.array,
-    selectedCardId: PropTypes.oneOf([PropTypes.string, null]),
-    width: PropTypes.number,
-    height: PropTypes.number,
-    authEnv: PropTypes.boolean,
-    dataView: PropTypes.boolean,
-    previewCardAction: PropTypes.func,
-    selectCard: PropTypes.func,
-    filterCards: PropTypes.func,
-    addCardFilter: PropTypes.func,
-    filterSet: PropTypes.func,
-    toggleAuthEnv: PropTypes.func,
-    tagColorScale: PropTypes.func,
-    screenResize: PropTypes.func,
-    fetchCards: PropTypes.func,
-  };
+function CardAuthorPage(props) {
+  const {
+    cards,
+    selectedCardId,
+    height,
+    authEnv,
+    previewCardAction,
+    selectCard,
+    filterCards,
+    addCardFilter,
+    dataView,
+    filterSet,
+    toggleAuthEnv,
+    filterByTag,
+    cardSets,
+    selectedTags,
+    selectedCard,
+    isSmartphone,
+    tagVocabulary,
+    extCardId,
+    children,
+    selectTemplate,
+    templateSelected,
+    cardStackBottom,
+    width,
+    centerTemplatePos,
+    fetchCards,
+  } = props;
 
-  static defaultProps = {
-    cards: [],
-    cardSets: [],
-    selectedTags: [],
-    selectedCardId: null,
-    width: 500,
-    height: 500,
-    authEnv: false,
-    dataView: 'geo',
-    previewCardAction: d => d,
-    selectCard: d => d,
-    filterCards: d => d,
-    addCardFilter: d => d,
-    filterSet: d => d,
-    toggleAuthEnv: d => d,
-    tagColorScale: () => 'green',
-    screenResize: d => d,
-    fetchCards: d => d,
-    preSelectCardId: d => d,
-  };
+  const slotSize = 100 / 3.5;
 
-  componentDidMount() {
-    const {
-      screenResize,
-      fetchCards,
-      preSelectCardId,
-      userMove,
-      changeMapViewport,
-    } = this.props;
-  }
+  useEffect(() => {
+    // TODO: error?
+    fetchCards();
+  }, []);
 
-  componentWillUnmount() {}
+  return (
+    <DefaultLayout
+      className="relative overflow-hidden w-full h-full flex-col"
+      menu={
+        <div className="flex-grow flex justify-between items-center">
+          <button
+            type="button"
+            className={`btn btn-white ml-3 ${templateSelected && 'btn-black'}`}
+            onClick={selectTemplate}>
+            New Card
+          </button>
 
-  render() {
-    const {
-      cards,
-      selectedCardId,
-      // width,
-      height,
-      authEnv,
-      previewCardAction,
-      selectCard,
-      filterCards,
-      addCardFilter,
-      dataView,
-      filterSet,
-      toggleAuthEnv,
-      filterByTag,
-      cardSets,
-      selectedTags,
-      selectedCard,
-      isSmartphone,
-      tagVocabulary,
-      extCardId,
-      children,
-      selectTemplate,
-      templateSelected,
-      cardStackBottom,
-      width,
-      centerTemplatePos,
-    } = this.props;
-
-    const slotSize = 100 / 3.5;
-
-    return (
-      <DefaultLayout
-        className="relative overflow-hidden w-full h-full flex-col"
-        menu={
-          <div className="flex-grow flex justify-between items-center">
-            <button
-              type="button"
-              className={`btn btn-white ml-3 ${templateSelected &&
-                'btn-black'}`}
-              onClick={selectTemplate}>
-              New Card
-            </button>
-
-            <GoToPlace onChange={centerTemplatePos} />
-            <CardTagSearch
-              tags={tagVocabulary}
-              filterSet={filterSet}
-              onClick={filterByTag}
-            />
-          </div>
-        }>
-        <BlackModal visible={extCardId !== null}>
-          {selectedCard !== null && <EditCard {...selectedCard} />}
-        </BlackModal>
-        <CardStackContainer
-          bottom={cardStackBottom}
-          cards={cards}
-          selectedCardId={selectedCardId}
-          touch={isSmartphone}
-          duration={600}
-          width={width}
-          height={height}
-          unit="%"
-          onClick={previewCardAction}
-          slotSize={slotSize}
-          style={{
-            zIndex: 1000,
-          }}
-        />
-        {children}
-      </DefaultLayout>
-    );
-  }
+          <GoToPlace onChange={centerTemplatePos} />
+          <CardTagSearch
+            tags={tagVocabulary}
+            filterSet={filterSet}
+            onClick={filterByTag}
+          />
+        </div>
+      }>
+      <BlackModal visible={extCardId !== null}>
+        {extCardId !== null && <EditCard {...selectedCard} />}
+      </BlackModal>
+      <CardStackContainer
+        bottom={cardStackBottom}
+        cards={cards}
+        selectedCardId={selectedCardId}
+        touch={isSmartphone}
+        duration={600}
+        width={width}
+        height={height}
+        unit="%"
+        onClick={previewCardAction}
+        slotSize={slotSize}
+        style={{
+          zIndex: 1000,
+        }}
+      />
+      {children}
+    </DefaultLayout>
+  );
 }
+
+CardAuthorPage.propTypes = {
+  cards: PropTypes.array,
+  cardSets: PropTypes.array,
+  selectedTags: PropTypes.array,
+  selectedCardId: PropTypes.oneOf([PropTypes.string, null]),
+  width: PropTypes.number,
+  height: PropTypes.number,
+  authEnv: PropTypes.boolean,
+  dataView: PropTypes.boolean,
+  previewCardAction: PropTypes.func,
+  selectCard: PropTypes.func,
+  filterCards: PropTypes.func,
+  addCardFilter: PropTypes.func,
+  filterSet: PropTypes.func,
+  toggleAuthEnv: PropTypes.func,
+  tagColorScale: PropTypes.func,
+  screenResize: PropTypes.func,
+  fetchCards: PropTypes.func,
+};
+
+CardAuthorPage.defaultProps = {
+  cards: [],
+  cardSets: [],
+  selectedTags: [],
+  selectedCardId: null,
+  width: 500,
+  height: 500,
+  authEnv: false,
+  dataView: 'geo',
+  previewCardAction: d => d,
+  selectCard: d => d,
+  filterCards: d => d,
+  addCardFilter: d => d,
+  filterSet: d => d,
+  toggleAuthEnv: d => d,
+  tagColorScale: () => 'green',
+  screenResize: d => d,
+  fetchCards: d => d,
+  preSelectCardId: d => d,
+};
 
 export default CardAuthorPage;
 // export default withAuthorization(authCondition)(CardAuthorPage);

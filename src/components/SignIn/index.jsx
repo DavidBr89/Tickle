@@ -38,6 +38,7 @@ const inputClass =
   'border-4 bg-white text-2xl py-2 px-3 text-grey-darkest border-black';
 
 const SignInPage = ({signIn, ...props}) => {
+  console.log('useState', useState);
   const [error, setError] = useState(null);
   const {match, history} = props;
   const {

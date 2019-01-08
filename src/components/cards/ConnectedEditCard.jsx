@@ -19,7 +19,6 @@ import {changeMapViewport} from 'Reducers/Map/actions';
 
 import * as asyncCardActions from 'Reducers/Cards/async_actions';
 
-import * as routeActions from 'Reducers/DataView/async_actions';
 
 import cardRoutes from 'Src/Routes/cardRoutes';
 import makeBackCardFuncs from './backCardDbMixins';
@@ -71,11 +70,9 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       // dragCard,
-      ...routeActions,
       ...cardActions,
       ...asyncCardActions,
       changeMapViewport,
-      ...routeActions,
     },
     dispatch,
   );
@@ -90,7 +87,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     history,
     id: cardId,
     tags: {value: tagValues},
-    onCreateCard,
+    onCreateCard=d=>d,
     onUpdateCard,
   } = ownProps;
 
@@ -110,6 +107,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   } = dispatcherProps;
 
   const createCard = cardData => {
+    console.log('why that?', cardData);
     asyncCreateCard({cardData, userEnvId}).then(() => onCreateCard(cardData));
   };
 
@@ -119,11 +117,13 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const removeCard = () => asyncRemoveCard({cardId, userEnvId});
 
-  const onCardUpdate = cardData =>
+  const onCardUpdate = cardData => {
+    // TODO why that
     // take form const
-    cardData.id === 'temp'
+    cardData.id === TEMP_ID
       ? updateCardTemplate(cardData)
       : updateCard(cardData);
+  };
 
   const db = DB(userEnvId);
 

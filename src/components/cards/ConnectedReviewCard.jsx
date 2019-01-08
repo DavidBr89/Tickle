@@ -10,7 +10,6 @@ import {asyncSubmitChallengeReview} from 'Reducers/Admin/async_actions';
 
 import * as dataViewActions from 'Reducers/DataView/actions';
 
-import * as routeActions from 'Reducers/DataView/async_actions';
 
 import MediaChallengeReview from 'Components/Challenges/MediaChallenge/MediaChallengeReview';
 import {Card} from './index';
@@ -58,7 +57,6 @@ const mapDispatchToProps = dispatch =>
     {
       // dragCard,
       ...dataViewActions,
-      ...routeActions,
       submitChallengeReview: asyncSubmitChallengeReview,
     },
     dispatch,

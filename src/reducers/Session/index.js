@@ -14,73 +14,74 @@ import {
   // SET_DEVICE
 } from './actions';
 
-const treeData = {
-  id: 'Top Level',
-  children: [
-    {
-      id: 'Level 2: A',
-      title: 'Level 2: A',
-      children: [
-        {id: 'Son of A', children: []},
-        {id: 'Daughter of A', children: []},
-      ],
-    },
-    {
-      id: 'Daughter of A',
-      title: 'Daughter of A',
-      children: [{id: 'lisa', children: []}, {id: 'gisela', children: []}],
-    },
-    {
-      id: 'Son of A',
-      title: 'Son of A',
-      children: [{id: 'jan', children: []}, {id: 'nils', children: []}],
-    },
-    {
-      id: 'Daughter of A',
-      title: 'Daughter of A',
-      children: [],
-    },
-    {
-      id: 'Level 2: B',
-      title: 'Level 2: B',
-      children: [
-        {
-          id: 'son of a',
-          title: 'son of a',
-          children: [],
-        },
-        {
-          id: 'Daughter of A',
-          title: 'Daughter of A',
-          children: [],
-        },
-      ],
-    },
-  ],
-};
-
-const date = new Date();
-const deStratified = [
-  {id: 'Top Level', parent: null, title: 'Top Level', date},
-  {id: 'Level 2: A', parent: 'Top Level', title: 'Level 2: A', date},
-  {id: 'Daughter of A', parent: 'Top Level', title: 'Daughter of A', date},
-  {id: 'Son of A', parent: 'Top Level', title: 'Son of A', date},
-  {id: 'Level 2: B', parent: 'Top Level', title: 'Level 2: B', date},
-  {id: 'lisa', parent: 'Daughter of A', title: 'lisa', date},
-  {id: 'gisela', parent: 'Daughter of A', title: 'gisela', date},
-  {id: 'jan', parent: 'Son of A', title: 'jan', date},
-  {id: 'nils', parent: 'Son of A', title: 'nils', date},
-];
+// const treeData = {
+//   id: 'Top Level',
+//   children: [
+//     {
+//       id: 'Level 2: A',
+//       title: 'Level 2: A',
+//       children: [
+//         {id: 'Son of A', children: []},
+//         {id: 'Daughter of A', children: []},
+//       ],
+//     },
+//     {
+//       id: 'Daughter of A',
+//       title: 'Daughter of A',
+//       children: [{id: 'lisa', children: []}, {id: 'gisela', children: []}],
+//     },
+//     {
+//       id: 'Son of A',
+//       title: 'Son of A',
+//       children: [{id: 'jan', children: []}, {id: 'nils', children: []}],
+//     },
+//     {
+//       id: 'Daughter of A',
+//       title: 'Daughter of A',
+//       children: [],
+//     },
+//     {
+//       id: 'Level 2: B',
+//       title: 'Level 2: B',
+//       children: [
+//         {
+//           id: 'son of a',
+//           title: 'son of a',
+//           children: [],
+//         },
+//         {
+//           id: 'Daughter of A',
+//           title: 'Daughter of A',
+//           children: [],
+//         },
+//       ],
+//     },
+//   ],
+// };
+//
+// const date = new Date();
+// const deStratified = [
+//   {id: 'Top Level', parent: null, title: 'Top Level', date},
+//   {id: 'Level 2: A', parent: 'Top Level', title: 'Level 2: A', date},
+//   {id: 'Daughter of A', parent: 'Top Level', title: 'Daughter of A', date},
+//   {id: 'Son of A', parent: 'Top Level', title: 'Son of A', date},
+//   {id: 'Level 2: B', parent: 'Top Level', title: 'Level 2: B', date},
+//   {id: 'lisa', parent: 'Daughter of A', title: 'lisa', date},
+//   {id: 'gisela', parent: 'Daughter of A', title: 'gisela', date},
+//   {id: 'jan', parent: 'Son of A', title: 'jan', date},
+//   {id: 'nils', parent: 'Son of A', title: 'nils', date},
+// ];
 
 const INITIAL_STATE = {
   authUser: null,
   cardSets: [],
   cards: [],
-  createdCards: [],
-  submittedCards: [],
+  // createdCards: [],
+  // submittedCards: [],
   device: {smallScreen: false, iOs: false},
   selectedUserEnvId: 'staging',
   tagTreeData: [],
+  globalInterests: []
 };
 
 function sessionReducer(state = INITIAL_STATE, action) {

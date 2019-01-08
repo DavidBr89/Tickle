@@ -65,7 +65,6 @@ export const TIMERANGE = 'timerange';
 export const ACTIVITY = 'activity';
 // export const TIMESTAMP = 'timestamp';
 
-const defaultVal = () => ({key: null, value: null});
 
 const DEFAULT_TAG = 'general';
 export const fallbackTagValues = tags =>
@@ -87,53 +86,47 @@ export const initCard = {
   activitySubmission: null,
 };
 
-const extractValues = ({
-  timerange, // { start: null, end: null },
-  title,
-  tags,
-  description,
-  media,
-  // timestamp,
-  activity,
-  points,
-  activitySubmission,
-}) => ({
-  timerange: timerange.value,
-  title: title.value,
-  tags: tags.value,
-  description: description.value,
-  media: media.value,
-  activity: activity.value,
-  points: points.value,
-  activitySubmission: activitySubmission.value,
-});
+// const extractValues = ({
+//   timerange, // { start: null, end: null },
+//   title,
+//   tags,
+//   description,
+//   media,
+//   // timestamp,
+//   activity,
+//   points,
+//   activitySubmission,
+// }) => ({
+//   timerange: timerange.value,
+//   title: title.value,
+//   tags: tags.value,
+//   description: description.value,
+//   media: media.value,
+//   activity: activity.value,
+//   points: points.value,
+//   activitySubmission: activitySubmission.value,
+// });
 
 // TODO: where is activity submission?
-export const extractCardFields = ({
-  id = 'string',
-  uid = 'string',
-  loc = {latitude: 50.85146, longitude: 4.315483},
-  img = defaultVal(),
-  timerange = defaultVal(), // { start: null, end: null },
-  title = defaultVal(),
-  tags = defaultVal(),
-  description = defaultVal(),
-  media = defaultVal(),
-  timestamp = defaultVal(),
-  activity = defaultVal(),
-  points = defaultVal(),
-  activitySubmission = null,
-}) =>
-  // if (!Array.isArray(tags)) {
-  //   throw new Error('tags is not an array');
-  // }
-  //
-  // if (!Array.isArray(media)) {
-  //   throw new Error('media is not an array');
-  // }
-  // TODO: more
+const defaultObjVal = () => ({key: null, value: null});
+export const extractCardFields = obj => {
+  const {
+    id = 'string',
+    uid = 'string',
+    loc = {latitude: 50.85146, longitude: 4.315483},
+    img = defaultObjVal(),
+    timerange = {...defaultObjVal(), thumbnail: null}, // { start: null, end: null },
+    title = defaultObjVal(),
+    tags = defaultObjVal(),
+    description = defaultObjVal(),
+    media = defaultObjVal(),
+    timestamp = defaultObjVal(),
+    activity = defaultObjVal(),
+    points = defaultObjVal(),
+    activitySubmission = null,
+  } = obj;
 
-  ({
+  return {
     id,
     uid,
     img, // {url, thumbnail, title}
@@ -148,7 +141,8 @@ export const extractCardFields = ({
     points,
     // allChallengeSubmissions,
     activitySubmission,
-  });
+  };
+};
 
 export const isFieldInitialized = ({card, attr}) => {
   const field = extractCardFields(card)[attr];

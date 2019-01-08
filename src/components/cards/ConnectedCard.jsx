@@ -8,8 +8,7 @@ import {connect} from 'react-redux';
 
 import {asyncSubmitActivity} from 'Reducers/Cards/async_actions';
 
-import * as dataViewActions from 'Reducers/DataView/actions';
-import * as routeActions from 'Reducers/DataView/async_actions';
+import * as dataViewActions from 'Reducers/DataView/dataViewThunks';
 import MediaChallenge from 'Components/Challenges/MediaChallenge';
 
 // import StarRating from 'Components/utils/StarRating';

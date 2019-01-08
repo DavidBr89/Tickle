@@ -13,7 +13,7 @@ import cardRoutes from 'Src/Routes/cardRoutes';
 
 import * as diaryActions from 'Reducers/Diary/actions';
 
-import * as dataViewActions from 'Reducers/DataView/async_actions';
+import * as dataViewActions from 'Reducers/DataView/dataViewThunks';
 
 import {challengeTypeMap, isCardSeen} from 'Constants/cardFields';
 
