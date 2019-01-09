@@ -19,7 +19,7 @@ const SelectField = ({
 
   const selected = values; // values.find(v => accId(v) === selectedId) || null;
 
-  console.log('visible', visible, 'values', values);
+  // console.log('visible', visible, 'values', values);
   return (
     <div className={`${className} relative `} style={style}>
       <div

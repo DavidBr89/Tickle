@@ -1,15 +1,19 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
+import uuidv1 from 'uuid/v1';
+import uniq from 'lodash/uniq';
+import UserIcon from 'react-feather/dist/icons/user';
+import MoreIcon from 'react-feather/dist/icons/more-horizontal';
 
 import cardRoutes from 'Src/Routes/cardRoutes';
 
-import uuidv1 from 'uuid/v1';
 import {CloseIcon} from 'Src/styles/menu_icons';
-import PreviewCard, {PreviewCardSwitch} from 'Components/cards/PreviewCard';
+import PreviewCard, {
+  PreviewCardSwitch
+} from 'Components/cards/PreviewCard';
+
 import {SelectInput} from 'Components/utils/SelectField';
 import {Link, withRouter} from 'react-router-dom';
-import uniq from 'lodash/uniq';
-import UserIcon from 'react-feather/dist/icons/user';
 import {TEMP_ID} from 'Constants/cardFields';
 
 import {initCard} from 'Constants/cardFields';
@@ -20,10 +24,15 @@ import {SelectTag} from 'Components/utils/SelectField';
 
 import MetaCard from 'Components/cards';
 
-import User from './User';
+import {UserPreview, UserDetail, InviteUserForm} from './User';
 
-const detailsClassName = 'shadow text-2xl p-2 mb-5 border-2 border-black';
-const summaryClassName = 'mb-3';
+const detailsClass = 'shadow text-2xl p-2 mb-5 border-2 border-black';
+const summaryClass = 'mb-3';
+
+// const listItemClass = 'cursor-pointer flex text-xl border mb-1 justify-between p-2';
+
+const baseLiClass =
+  'cursor-pointer p-2 text-lg flex justify-between items-center';
 
 const UserEnvPanel = ({
   className,
@@ -32,7 +41,7 @@ const UserEnvPanel = ({
   routeUserEnv,
   removeUserEnv,
   title,
-  userEnvId,
+  userEnvId
 }) => {
   const [panelOpen, setPanelOpen] = useState(false);
   const [envName, setEnvName] = useState('');
@@ -40,13 +49,13 @@ const UserEnvPanel = ({
   const selectedUserEnv = userEnvs.find(d => d.id === userEnvId) || {};
   const {
     name: userEnvName = null,
-    id: selectedUserEnvId = null,
+    id: selectedUserEnvId = null
   } = selectedUserEnv;
 
   return (
     <details className={className} panelOpen={panelOpen}>
       <summary
-        className={summaryClassName}
+        className={summaryClass}
         onClick={() => setPanelOpen(!panelOpen)}>
         {`Select User environment ${userEnvName}`}
       </summary>
@@ -76,10 +85,10 @@ const UserEnvPanel = ({
           {userEnvs.map(d => (
             <li
               onClick={() => routeUserEnv(d.id)}
-              className={`cursor-pointer flex text-xl border mb-1 justify-between p-2 ${selectedUserEnvId ===
-                d.id && 'bg-grey'}`}>
+              className={`${baseLiClass} ${selectedUserEnvId === d.id &&
+                'bg-grey'}`}>
               <div>{d.name}</div>
-              <CloseIcon
+              <MoreIcon
                 onClick={e => {
                   e.stopPropagation();
                   removeUserEnv(d);
@@ -124,86 +133,7 @@ const UserEnvPanel = ({
         </button>
       </form>
   */
-
-const TagSet = ({values, placeholder}) => (
-  <div className="flex mt-1">
-    {values.length === 0 && (
-      <div className="tag-label bg-grey mr-1 mb-1">{placeholder}</div>
-    )}
-    {values.map(a => (
-      <div className="tag-label bg-black mr-1 mb-1">{a}</div>
-    ))}
-  </div>
-);
-
-const RegisterUserForm = ({onSubmit, error, ...usr}) => {
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState(null);
-  const [aims, setAims] = useState([]);
-  const [deficits, setDeficits] = useState([]);
-
-  const disabled = email === null;
-  return (
-    <form
-      className="flex-grow flex flex-col"
-      onSubmit={e => e.preventDefault()}>
-      <div className="flex-grow flex flex-col" style={{flexGrow: 0.6}}>
-        <UserIcon className="flex-grow w-auto h-auto" />
-      </div>
-      <div className="flex flex-none mb-3">
-        <input
-          value={email}
-          className="form-control flex-grow mr-2"
-          onChange={event => setEmail(event.target.value)}
-          type="email"
-          placeholder="email"
-        />
-        <input
-          value={fullName}
-          className="form-control flex-grow "
-          onChange={event => setFullName(event.target.value)}
-          type="text"
-          placeholder="First and last name"
-        />
-      </div>
-      <div className="mb-3">
-        <SelectTag
-          placeholder="Enter Learning Aims"
-          inputClassName="flex-grow p-2 border-2 border-black"
-          idAcc={d => d.id}
-          onChange={newAim => {
-            setAims(uniq([...aims, newAim]));
-          }}
-          values={[{id: 'sports'}, {id: 'yeah'}, {id: 'doooh'}]}
-        />
-        <TagSet values={aims} placeholder="No aim" />
-      </div>
-      <div>
-        <SelectTag
-          btnContent="Add"
-          placeholder="Enter Learning deficits"
-          inputClassName="z-0 flex-grow p-2 border-2 border-black"
-          className=""
-          idAcc={d => d.id}
-          onChange={newDeficit => setDeficits(uniq([...deficits, newDeficit]))}
-          values={[{id: 'sports'}, {id: 'yeah'}, {id: 'doooh'}]}
-        />
-        <TagSet values={deficits} placeholder="No deficits" />
-      </div>
-      <div className="mt-auto">
-        {error && <div className="alert mb-2">{error.msg}</div>}
-        <button
-          disabled={disabled}
-          type="submit"
-          className={`w-full mt-3 btn btn-black ${disabled && 'disabled'}`}
-          onClick={() => onSubmit({...usr, aims, deficits, fullName, email})}>
-          Create{' '}
-        </button>
-      </div>
-    </form>
-  );
-};
-
+const modalDim = {maxWidth: '40vw'};
 function UserPanel({
   className,
   selectedUserId,
@@ -213,43 +143,49 @@ function UserPanel({
   users,
   userEnvId,
   PreviewCard,
-  preRegisterUser,
+  inviteUser
 }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [panelOpen, setPanelOpen] = useState(false);
 
-  const [curUserId, setCurUserId] = useState(false);
+  const [modalExt, setModalExt] = useState(false);
 
-  const user = users.find(u => u.uid === selectedUserId) || {};
-  const {username} = user;
+  const selectedUser =
+    users.find(u => u.uid === selectedUserId) || null;
+  const {uid: selUid = null} = selectedUser || {};
+  const {username: title = 'All Users'} = selectedUser || {};
 
   const envUsers = users.filter(u => u.userEnvIds.includes(userEnvId));
 
-  const baseLiClass = 'cursor-pointer p-2 text-lg';
   const liClass = u =>
-    `${baseLiClass} ${u.tmp && 'bg-red-lighter'} ${u.uid === selectedUserId &&
-      'bg-grey'}`;
+    `${baseLiClass} ${u.uid === selectedUserId && 'bg-grey'}`;
 
   return (
     <details className={className} panelOpen={panelOpen}>
       <summary
-        className={summaryClassName}
+        className={summaryClass}
         onClick={() => setPanelOpen(!panelOpen)}>
-        Users - {username || 'All Users'}
+        Users - {title}
       </summary>
 
       <BlackModal visible={modalOpen}>
-        <ModalBody title="New User" onClose={() => setModalOpen(false)}>
-          <RegisterUserForm
-            {...user}
-            onSubmit={preRegisterUser}
+        <ModalBody
+          title="New User"
+          style={{...modalDim}}
+          onClose={() => setModalOpen(false)}>
+          <InviteUserForm
+            user={selectedUser || {}}
+            onSubmit={inviteUser}
             error={userRegErr}
           />
         </ModalBody>
       </BlackModal>
 
-      <User {...user} />
-
+      {selectedUser ? (
+        <UserPreview user={selectedUser} />
+      ) : (
+        <div>Events</div>
+      )}
       <div className="border">
         <div className="flex mt-2 mb-2">
           <div
@@ -266,37 +202,58 @@ function UserPanel({
         <div className="overflow-y-auto">
           <ul style={{height: 200}}>
             {envUsers.map(u => (
-              <li className={liClass(u)} onClick={() => onSelectUser(u.uid)}>
-                {u.email} {u.tmp && '(not registered)'}
+              <li
+                className={liClass(u)}
+                onClick={() => {
+                  selUid === u.uid
+                    ? setModalExt(!modalExt)
+                    : onSelectUser(u.uid);
+                }}>
+                <span>
+                  {u.email} {u.tmp && '(not registered)'}
+                </span>
+                <MoreIcon />
               </li>
             ))}
           </ul>
         </div>
       </div>
+
+      <BlackModal visible={modalExt}>
+        {selectedUser && (
+          <ModalBody
+            style={{...modalDim}}
+            title={`User: ${selectedUser.username}`}
+            onClose={() => setModalExt(false)}>
+            {selectedUser && <UserDetail user={selectedUser} />}
+          </ModalBody>
+        )}
+      </BlackModal>
     </details>
   );
 }
 
-function SelectCards(props) {
+function CardPanel(props) {
   const {
     className,
     cards,
     onCreateCard,
     templateCard,
     selectedUserId,
-    urlConfig,
+    urlConfig
   } = props;
 
   // const [cardId, setCardId] = useState(null);
 
   const {
     query: {selectedCardId, extended, flipped},
-    routing: {routeSelectExtendCard, routeExtendCard},
+    routing: {routeSelectExtendCard, routeExtendCard}
   } = urlConfig;
 
   const tmpCards = !selectedUserId ? [...cards, templateCard] : cards;
 
-  const selectedCard = tmpCards.find(c => c.id === selectedCardId) || null;
+  const selectedCard =
+    tmpCards.find(c => c.id === selectedCardId) || null;
 
   const [panelOpen, setPanelOpen] = useState(false);
 
@@ -308,17 +265,20 @@ function SelectCards(props) {
     // gridAutoFlow: 'column dense',
     gridTemplateColumns: 'repeat(auto-fit, 10rem)',
     gridAutoRows: `minmax(${h}rem, 1fr)`,
-    gridTemplateRows: `minmax(${h}rem, 1fr)`,
+    gridTemplateRows: `minmax(${h}rem, 1fr)`
   };
 
   return (
     <details className={className} panelOpen={panelOpen}>
       <summary
-        className={summaryClassName}
+        className={summaryClass}
         onClick={() => setPanelOpen(!panelOpen)}>
         Cards
       </summary>
       <div className="flex flex-wrap" style={{...gridStyle}}>
+        {tmpCards.length === 0 && (
+          <div className="text-2xl">No Cards</div>
+        )}
         {tmpCards.map(c => (
           <PreviewCardSwitch
             edit={c.edit}
@@ -329,7 +289,10 @@ function SelectCards(props) {
       </div>
       <BlackModal visible={extended}>
         {extended && (
-          /* TODO */ <MetaCard {...selectedCard} onCreateCard={onCreateCard} />
+          /* TODO */ <MetaCard
+            {...selectedCard}
+            onCreateCard={onCreateCard}
+          />
         )}
       </BlackModal>
     </details>
@@ -358,7 +321,7 @@ export default function AdminPage(props) {
     fetchUserIdsFromEnv,
     registerUserToEnv,
     cards,
-    templateCard,
+    templateCard
   } = props;
 
   useEffect(() => {
@@ -372,34 +335,39 @@ export default function AdminPage(props) {
       fetchCards();
       // fetchUserIdsFromEnv(userEnvId);
     },
-    [userEnvId],
+    [userEnvId]
   );
 
   useEffect(
     () => {
-      console.log('selectedUserId', selectedUserId, 'userEnvId', userEnvId);
+      console.log(
+        'selectedUserId',
+        selectedUserId,
+        'userEnvId',
+        userEnvId
+      );
       fetchCards();
     },
-    [selectedUserId, userEnvId],
+    [selectedUserId, userEnvId]
   );
 
   return (
     <div className="content-margin overflow-y-auto">
       <h1 className="mb-3">User Environments</h1>
-      <UserEnvPanel className={detailsClassName} {...props} />
+      <UserEnvPanel className={detailsClass} {...props} />
       <UserPanel
         {...props}
         users={users}
         envUserIds={envUserIds}
-        className={detailsClassName}
+        className={detailsClass}
         selectedUserId={selectedUserId}
         registerUserToEnv={registerUserToEnv}
         onSelectUser={selectUser}
       />
-      <SelectCards
+      <CardPanel
         {...props}
         title={`Cards ${userEnvId}`}
-        className={detailsClassName}
+        className={detailsClass}
         cards={cards}
       />
     </div>
@@ -407,5 +375,5 @@ export default function AdminPage(props) {
 }
 
 AdminPage.defaultProps = {
-  envUsers: [],
+  envUsers: []
 };

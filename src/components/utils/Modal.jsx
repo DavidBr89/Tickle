@@ -25,7 +25,7 @@ const reduxConnect = comp => {
   )(comp);
 };
 
-export const BlackModal = reduxConnect(({visible, mobile, ...props}) =>
+export const BlackModal = reduxConnect(({visible, mobile, style, ...props}) =>
   ReactDOM.createPortal(
     <div
       className="fixed w-screen h-screen"
@@ -40,7 +40,7 @@ export const BlackModal = reduxConnect(({visible, mobile, ...props}) =>
         opacity: visible ? 1 : 0,
         transition: 'opacity 0.3s',
       }}>
-      <InlineModal visible={visible} mobile={mobile} {...props} />
+      <InlineModal visible={visible} mobile={mobile} style={style} {...props} />
     </div>,
     BODY,
   ),
@@ -73,8 +73,8 @@ export const InlineModal = ({
     <div
       className="h-full w-full"
       style={{
-        maxWidth: 500,
-        maxHeight: 800,
+        // maxWidth: 500,
+        // maxHeight: 800,
         margin: `${!mobile ? '2.5rem' : ''} auto`,
         ...style,
       }}>
@@ -115,9 +115,7 @@ export const ModalBody = ({
       boxShadow: 'black 0.2rem 0.2rem',
       ...style,
     }}>
-    <div
-      className="flex justify-between items-center p-4 flex-no-shrink"
-      style={{...style}}>
+    <div className="flex justify-between items-center p-4 flex-no-shrink">
       <h1 className="modal-title capitalize">{title}</h1>
       <button className="btn" onClick={onClose}>
         <X />

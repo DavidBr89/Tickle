@@ -7,7 +7,7 @@
     "import",
     "prettier"
   ],
-  "parser": "typescript-eslint-parser",
+  "parser": "babel-eslint",
   "parserOptions": {
     "ecmaVersion": 8,
     "sourceType": "module",
@@ -24,10 +24,10 @@
     }],
     "prettier/prettier": ["error", {
       "singleQuote": true,
-      "trailingComma": "all",
       "bracketSpacing": false,
       "jsxBracketSameLine": true,
-      "useTabs": false
+      "useTabs": false,
+      "printWidth": 72
     }],
     "no-plusplus": 0,
     "func-names": 0,

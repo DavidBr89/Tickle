@@ -47,13 +47,13 @@ git clone https://github.com/DinoJay/TickleClient
 * Then install the dependencies:
 
 ```
-yarn install
+npm install
 ```
 
 * Run development server:
 
 ```
-yarn start
+npm start
 ```
 
 Open the web browser to `localhost:3000`
@@ -61,7 +61,7 @@ Open the web browser to `localhost:3000`
 ### To build the production package
 
 ```
-yarn run build
+npm run build
 ```
 
 
@@ -72,7 +72,7 @@ To use it, you need to install additional dependencies though:
 To do the actual linting, run:
 
 ```
-yarn run lint
+npm run lint
 ```
 
 ### Notes on importing css styles
