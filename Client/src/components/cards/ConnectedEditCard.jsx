@@ -19,7 +19,6 @@ import {changeMapViewport} from 'Reducers/Map/actions';
 
 import * as asyncCardActions from 'Reducers/Cards/async_actions';
 
-
 import cardRoutes from 'Src/Routes/cardRoutes';
 import makeBackCardFuncs from './backCardDbMixins';
 import EditCardFront from './CardFront/EditCardFront';
@@ -35,7 +34,7 @@ function mapStateToProps(state) {
     ...state.DataView,
     ...state.Screen,
     userLocation: state.MapView.userLocation,
-    ...state.Session,
+    ...state.Session
   };
 }
 
@@ -45,7 +44,7 @@ const DeleteButton = ({style, className, onClick}) => (
     type="button"
     style={{
       alignItems: 'center',
-      ...style,
+      ...style
     }}
     onClick={onClick}>
     <div>
@@ -57,13 +56,13 @@ const DeleteButton = ({style, className, onClick}) => (
 DeleteButton.propTypes = {
   style: PropTypes.object,
   onClick: PropTypes.func,
-  className: PropTypes.string,
+  className: PropTypes.string
 };
 
 DeleteButton.defaultProps = {
   style: {},
   onClick: d => d,
-  className: '',
+  className: ''
 };
 
 const mapDispatchToProps = dispatch =>
@@ -72,9 +71,9 @@ const mapDispatchToProps = dispatch =>
       // dragCard,
       ...cardActions,
       ...asyncCardActions,
-      changeMapViewport,
+      changeMapViewport
     },
-    dispatch,
+    dispatch
   );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
@@ -87,33 +86,37 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     history,
     id: cardId,
     tags: {value: tagValues},
-    onCreateCard=d=>d,
-    onUpdateCard,
+    onCreateCard = d => d,
+    onUpdateCard = d => d
   } = ownProps;
 
+  console.log('ONUPDATE CARD', onUpdateCard);
   // TODO: BUILD IN check
   const {userEnv: userEnvId} = match.params;
 
   const {
     query: {selectedCardId, extended, flipped},
-    routing: {routeFlipCard, routeExtendCard},
+    routing: {routeFlipCard, routeExtendCard}
   } = cardRoutes({history, location});
 
   const {
     updateCardTemplate,
     asyncCreateCard,
     asyncUpdateCard,
-    asyncRemoveCard,
+    asyncRemoveCard
   } = dispatcherProps;
 
   const createCard = cardData => {
     console.log('why that?', cardData);
-    asyncCreateCard({cardData, userEnvId}).then(() => onCreateCard(cardData));
+    return asyncCreateCard({cardData, userEnvId}).then(() =>
+      onCreateCard(cardData)
+    );
   };
 
-  const updateCard = cardData => {
-    asyncUpdateCard({cardData, userEnvId}).then(() => onUpdateCard(cardData));
-  };
+  const updateCard = cardData =>
+    asyncUpdateCard({cardData, userEnvId}).then(() =>
+      onUpdateCard(cardData)
+    );
 
   const removeCard = () => asyncRemoveCard({cardId, userEnvId});
 
@@ -132,7 +135,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const removeFromStorage = fileId =>
     db.removeFileFromEnv({
       path: filePath,
-      id: fileId,
+      id: fileId
     });
 
   const addToStorage = ({file, id}) =>
@@ -149,7 +152,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     userEnv: userEnvId,
     cardId,
     playerId: authorId,
-    authorId,
+    authorId
   });
 
   const onClose = routeExtendCard;
@@ -170,7 +173,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     removeFromStorage,
     ...backCardFuncs,
     ...ownProps,
-    relatedCardsByTag,
+    relatedCardsByTag
   };
 };
 
@@ -243,7 +246,7 @@ EditCard.defaultProps = {
   flipped: false,
   template: false,
   onFlip: d => d,
-  fetchAuthorData: d => d,
+  fetchAuthorData: d => d
 };
 
 export default compose(
@@ -251,6 +254,6 @@ export default compose(
   connect(
     mapStateToProps,
     mapDispatchToProps,
-    mergeProps,
-  ),
+    mergeProps
+  )
 )(EditCard);

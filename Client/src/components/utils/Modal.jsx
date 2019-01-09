@@ -73,8 +73,8 @@ export const InlineModal = ({
     <div
       className="h-full w-full"
       style={{
-        // maxWidth: 500,
-        // maxHeight: 800,
+        maxWidth: 500,
+        maxHeight: 800,
         margin: `${!mobile ? '2.5rem' : ''} auto`,
         ...style,
       }}>

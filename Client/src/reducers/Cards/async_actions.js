@@ -26,7 +26,7 @@ import {
   addCommentSuccess,
   addCommentError,
   submitActivity,
-  submitActivitySuccess,
+  submitActivitySuccess
 } from './actions';
 
 import {selectCard, extendSelectedCard} from '../DataView/actions';
@@ -43,7 +43,7 @@ export function fetchCollectibleCards({uid, userEnvId}) {
         dispatch(loadingCards(false));
         dispatch(receiveCollectibleCards(data.map(extractCardFields)));
       },
-      err => console.log('fetch createdCards', err),
+      err => console.log('fetch createdCards', err)
     );
   };
 }
@@ -69,7 +69,7 @@ export function fetchCreatedCards({userEnvId, uid}) {
         dispatch(loadingCards(false));
         dispatch(receiveCreatedCards(data.map(extractCardFields)));
       },
-      err => console.log('fetch createdCards', err),
+      err => console.log('fetch createdCards', err)
     );
   };
 }
@@ -81,7 +81,7 @@ export function asyncCreateCard({cardData, userEnvId}) {
     const newCard = {
       ...cardData,
       id: uuidv1(),
-      date: new Date(),
+      date: new Date()
     };
     dispatch(createCard(newCard));
     dispatch(extendSelectedCard(null));
@@ -107,11 +107,9 @@ export function asyncRemoveCard({cardId, userEnvId}) {
 export function asyncUpdateCard({cardData, userEnvId}) {
   return dispatch => {
     dispatch(updateCard(cardData));
-    const db = new CardDB(userEnvId); // createDbEnv(getState());
-    db.doUpdateCard(cardData)
-      .then(() => {
-        dispatch(updateCardSuccess(cardData));
-      })
+    const db = new CardDB(userEnvId);
+    return db.doUpdateCard(cardData)
+      .then(() => dispatch(updateCardSuccess(cardData)))
       .catch(err => dispatch(updateCardError(err)));
   };
 }
@@ -136,7 +134,10 @@ export function asyncUpdateCard({cardData, userEnvId}) {
 //   };
 // }
 
-export function asyncSubmitActivity({userEnvId, ...activitySubmission}) {
+export function asyncSubmitActivity({
+  userEnvId,
+  ...activitySubmission
+}) {
   return function(dispatch) {
     const db = CardDB(userEnvId);
 
@@ -150,7 +151,10 @@ export function asyncSubmitActivity({userEnvId, ...activitySubmission}) {
   };
 }
 
-export function removeChallengeSubmission({challengeSubmission, userEnvId}) {
+export function removeChallengeSubmission({
+  challengeSubmission,
+  userEnvId
+}) {
   const {cardId, playerId} = challengeSubmission;
 
   return function(dispatch, getState) {

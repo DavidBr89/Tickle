@@ -1,5 +1,6 @@
 import {extractCardFields, TEMP_ID} from 'Constants/cardFields.ts';
-import makeActivityFuncs from './activity_db.js';
+import makeActivityFuncs from './activity_db';
+import {addToStorage} from './index';
 
 import {firestore, storageRef, Timestamp} from '../firebase';
 
@@ -27,8 +28,8 @@ const makeCommentFuncs = TICKLE_ENV_REF => {
             getBasicUser(uid).then(usr => ({
               ...usr,
               ...data,
-              date: data.timestamp.toDate(),
-            })),
+              date: data.timestamp.toDate()
+            }))
           );
         });
 
@@ -47,7 +48,9 @@ const makeCommentFuncs = TICKLE_ENV_REF => {
 };
 
 const makeCardFuncs = ENV_STR => {
-  const TICKLE_ENV_REF = firestore.collection('card-environments').doc(ENV_STR);
+  const TICKLE_ENV_REF = firestore
+    .collection('card-environments')
+    .doc(ENV_STR);
 
   const activityDB = makeActivityFuncs(ENV_STR);
   const commentFuncs = makeCommentFuncs(TICKLE_ENV_REF);
@@ -58,33 +61,26 @@ const makeCardFuncs = ENV_STR => {
       .delete();
 
   // TODO: error handling
-  const uploadImgFields = card => {
-    console.log('card', card);
-    if (card.img.value === null) return new Promise(resolve => resolve(null));
+  const uploadCardImg = (img, id) => {
+    console.log('card Img Upload', img);
+    if (img=== null || !img.file)
+      return new Promise(resolve => resolve(img));
 
-    const {file = null, ...restImgFields} = card.img;
+    const {file = null, ...restImgFields} = img;
 
-    return file
-      ? activityDB
-        .addFileToFirebaseStorage({
-          file,
-          path: `${ENV_STR}/cards/images`,
-          id: card.id,
-        })
-        .then(url => {
-          const img = {
-            ...restImgFields,
-            url,
-          };
-          return new Promise(resolve => resolve(img));
-        })
-      : new Promise(resolve => resolve({...restImgFields}));
+    return addToStorage({
+      file: img.file,
+      path: `${ENV_STR}/cards/images/${id}`
+    }).then(
+      url => new Promise(resolve => resolve({...restImgFields, url}))
+    );
   };
 
-  const doCreateCard = rawCard => {
+  const doUpdateCard = rawCard => {
     const card = extractCardFields(rawCard);
+    console.log('card to Be', card);
 
-    return uploadImgFields(card).then(imgSrc => {
+    return uploadCardImg(card.img.value, card.id).then(imgSrc => {
       if (card.id === TEMP_ID) {
         throw Error('error: temp card to create');
       } else {
@@ -102,11 +98,11 @@ const makeCardFuncs = ENV_STR => {
     // TODO
     const thumbnailPromise = d => {
       console.log('readCards', d);
-      //TODO
+      // TODO
       if (true) return new Promise(resolve => resolve(d));
 
       const thumbNailRef = storageRef.child(
-        `${ENV_STR}/images/cards/${thumbFileName(d.id)}`,
+        `${ENV_STR}/images/cards/${thumbFileName(d.id)}`
       );
 
       return thumbNailRef.getDownloadURL().then(
@@ -115,7 +111,7 @@ const makeCardFuncs = ENV_STR => {
           const img = {...d.img, thumbnail: null};
           console.log('No thumbnail error', err);
           return {...d, img};
-        },
+        }
       );
     };
 
@@ -129,14 +125,18 @@ const makeCardFuncs = ENV_STR => {
         .getAllActivitySubs(c.id)
         .then(allChallengeSubmissions => ({
           ...c,
-          allChallengeSubmissions,
+          allChallengeSubmissions
         }));
     };
 
     const refCards =
       authorId === null
         ? TICKLE_ENV_REF.collection('cards')
-        : TICKLE_ENV_REF.collection('cards').where('uid', '==', authorId);
+        : TICKLE_ENV_REF.collection('cards').where(
+          'uid',
+          '==',
+          authorId
+        );
 
     return refCards
       .get()
@@ -148,16 +148,17 @@ const makeCardFuncs = ENV_STR => {
         return tmpData;
       })
       .then(data =>
-        Promise.all(data.map(e => thumbnailPromise(e).then(activityPromise))),
+        Promise.all(
+          data.map(e => thumbnailPromise(e).then(activityPromise))
+        )
       );
   };
 
   return {
-    doCreateCard,
-    doUpdateCard: doCreateCard,
+    doUpdateCard,
     doDeleteCard,
     readCards,
-    ...commentFuncs,
+    ...commentFuncs
   };
 };
 
