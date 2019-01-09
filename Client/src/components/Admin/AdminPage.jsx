@@ -70,7 +70,7 @@ const UserEnvPanel = ({
           <input
             className="border-2 text-lg"
             style={{flexGrow: 0.75}}
-            value={envName}
+      value={envName}
             placeholder="Add a card environment for your users"
             onChange={e => setEnvName(e.target.value)}
           />

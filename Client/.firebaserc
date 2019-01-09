@@ -1,0 +1,9 @@
+{
+  "projects": {
+    "default": "tickle-194510",
+    "staging": "tickle-staging",
+    "production": "tickle-vds",
+    "geo-prod": "tickle-vds-geo",
+    "dev": "tickle-dev-96235"
+  }
+}
