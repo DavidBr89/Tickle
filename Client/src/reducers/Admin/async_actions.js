@@ -13,10 +13,13 @@ import {
   readAllUsers,
   readAllTmpUsers,
   createTmpUser,
+  doCreateUser,
   getOneUserByEmail,
   getOneUserFromEnv,
   getUserEnvs,
-} from 'Firebase/db';
+  deleteUser,
+  deleteTmpUser
+} from 'Firebase/db/user_db';
 
 import {
   receiveUsers,
@@ -29,7 +32,10 @@ import {
   insertUserIntoEnv,
   addUserEnv,
   addUser,
+  updateUserInfo,
   userRegistrationError,
+  removeUserSuccess,
+  removeUser
 } from './actions';
 
 import NearbyPlaces from '../places.json';
@@ -63,7 +69,6 @@ export function fetchAllUserEnvs() {
 }
 
 export function createNewUserEnv(env) {
-  // const db = CardDB();
   return function(dispatch) {
     return createUserEnv(env).then(() => {
       dispatch(addUserEnv(env));
@@ -101,6 +106,15 @@ export function registerUserToEnv({userEnvId, uid}) {
 //   };
 // }
 
+export function removeUserAcc(uid) {
+  return function(dispatch) {
+    dispatch(removeUser(uid));
+    Promise.all([deleteUser(uid), deleteTmpUser(uid)]).then(() => {
+      dispatch(removeUserSuccess());
+    });
+  };
+}
+
 export function fetchUsers() {
   return function(dispatch) {
     const usersWithEnvIdsPromise = readAllUsers().then(users =>
@@ -108,10 +122,10 @@ export function fetchUsers() {
         users.map(u =>
           getUserEnvs(u.uid).then(userEnvs => ({
             ...u,
-            userEnvIds: userEnvs.map(e => e.id),
-          })),
-        ),
-      ),
+            userEnvIds: userEnvs.map(e => e.id)
+          }))
+        )
+      )
     );
 
     const promises = [usersWithEnvIdsPromise, readAllTmpUsers()];
@@ -123,6 +137,7 @@ export function fetchUsers() {
 
 export function inviteUser(usrInfo) {
   const usr = {...usrInfo, uid: uuidv1(), tmp: true};
+  console.log('inviteUser', usrInfo);
   return function(dispatch) {
     getOneUserByEmail(usr.email).then(d => {
       if (d === null) {
@@ -134,11 +149,27 @@ export function inviteUser(usrInfo) {
         dispatch(
           userRegistrationError({
             code: 'User Registration',
-            msg: 'User has been already registered',
-          }),
+            msg: 'User has been already registered'
+          })
         );
       }
     });
+  };
+}
+
+export function updateUser(usrInfo) {
+  console.log('yeah first', usrInfo);
+  return function(dispatch) {
+    if (usrInfo.tmp) {
+      createTmpUser(usrInfo).then(() => {
+        dispatch(updateUserInfo(usrInfo));
+      });
+    } else {
+      doCreateUser(usrInfo).then(() => {
+        console.log('yeah', usrInfo);
+        dispatch(updateUserInfo(usrInfo));
+      });
+    }
   };
 }
 

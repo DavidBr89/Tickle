@@ -54,7 +54,7 @@ const CardViewable = ({
               activity.value || {
                 // TODO: remove later
                 description: 'placeholder',
-                title: 'placeholder title',
+                title: 'placeholder title'
               }
             }
             submission={activitySubmission}
@@ -102,10 +102,10 @@ const mapDispatchToProps = dispatch =>
     {
       // dragCard,
       ...dataViewActions,
-      asyncSubmitActivity,
-      ...routeActions,
+      asyncSubmitActivity
+      // ...routeActions,
     },
-    dispatch,
+    dispatch
   );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
@@ -117,7 +117,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     id: cardId,
     uid: authorId,
     tags: {value: tagValues},
-    onClose,
+    onClose
   } = ownProps;
 
   const {tagVocabulary, userLocation} = state;
@@ -130,7 +130,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const {
     query: {selectedCardId, extended, flipped},
-    routing: {routeFlipCard, routeExtendCard},
+    routing: {routeFlipCard, routeExtendCard}
   } = cardRoutes({history, location});
 
   // console.log('render');
@@ -144,7 +144,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
       ...challData,
       playerId,
       cardId,
-      userEnv,
+      userEnv
     });
   };
 
@@ -154,7 +154,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const removeFromStorage = fileId =>
     db.removeFileFromEnv({
       path: filePath,
-      id: fileId,
+      id: fileId
     });
   const addToStorage = ({file, id}) =>
     db.addFileToEnv({file, path: filePath, id});
@@ -170,7 +170,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     userEnv,
     cardId,
     playerId,
-    authorId,
+    authorId
   });
 
   return {
@@ -184,7 +184,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     onClose: onClose || closeHandler,
     onFlip,
     flipped,
-    relatedCardsByTag,
+    relatedCardsByTag
   };
 };
 
@@ -193,6 +193,6 @@ export default compose(
   connect(
     mapStateToProps,
     mapDispatchToProps,
-    mergeProps,
-  ),
+    mergeProps
+  )
 )(CardViewable);

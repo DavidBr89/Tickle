@@ -44,7 +44,7 @@ export function fetchUserInfo() {
   };
 }
 
-export function updateUser(usr) {
+export function updateAuthUser(usr) {
   return (dispatch, getState) => {
     const {authUser} = getState().Session;
     const newUsr = {...authUser, ...usr};

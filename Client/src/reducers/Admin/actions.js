@@ -31,6 +31,7 @@ export function insertUserIntoEnv(options) {
   return {type: INSERT_USER_INTO_ENV, options};
 }
 
+
 export const ADD_USER_ENV = 'ADD_USER_ENV';
 export function addUserEnv(options) {
   return {type: ADD_USER_ENV, options};
@@ -39,6 +40,26 @@ export function addUserEnv(options) {
 export const ADD_USER = 'ADD_USER';
 export function addUser(options) {
   return {type: ADD_USER, options};
+}
+
+export const UPDATE_USER_INFO = 'UPDATE_USER_INFO';
+export function updateUserInfo(options) {
+  return {type: UPDATE_USER_INFO, options};
+}
+
+export const UPDATE_USER_INFO_SUCCESS = 'UPDATE_USER_INFO_SUCCESS';
+export function updateUserInfoSuccess(options) {
+  return {type: UPDATE_USER_INFO_SUCCESS, options};
+}
+
+export const REMOVE_USER_SUCCESS = 'REMOVE_USER_SUCCESS';
+export function removeUserSuccess(options) {
+  return {type: REMOVE_USER_SUCCESS, options};
+}
+
+export const REMOVE_USER = 'REMOVE_USER';
+export function removeUser(options) {
+  return {type: REMOVE_USER, options};
 }
 
 export const SELECT_USERS_BY_ENV = 'SELECT_USERS_BY_ENV';

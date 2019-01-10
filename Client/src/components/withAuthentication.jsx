@@ -40,7 +40,7 @@ const withAuthentication = Component => {
     }
 
     render() {
-      return <Component {...this.props} />;
+      return <Component  />;
     }
   }
 

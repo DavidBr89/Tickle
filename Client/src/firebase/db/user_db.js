@@ -40,7 +40,7 @@ export const readAllUsers = () =>
 
       const dataPromises = data.map(d => {
         const thumbNailRef = storageRef.child(
-          `/images/usr/${thumbFileName(d.uid)}`,
+          `/images/usr/${thumbFileName(d.uid)}`
         );
         // return d;
         return thumbNailRef.getDownloadURL().then(
@@ -49,12 +49,12 @@ export const readAllUsers = () =>
             // TODO: check later
             const img = {...d, thumbnail: null};
             return {...d, ...img};
-          },
+          }
         );
       });
 
       return Promise.all(dataPromises).catch(error =>
-        console.log('error in reading users', error),
+        console.log('error in reading users', error)
       );
     });
 
@@ -73,21 +73,23 @@ export const readAllTmpUsers = () =>
 
 export const deleteUser = uid =>
   firestore
-    .collection('user')
+    .collection('users')
     .doc(uid)
     .delete();
 
-export const deleteTmpUser = email =>
+export const deleteTmpUser = uid =>
   firestore
     .collection('tmp-users')
-    .doc(email)
+    // .where('uid', '==', uid)
+    .doc(uid)
     .delete();
 
-export const removeTmpUser = email =>
-  firestore
-    .collection('tmp-users')
-    .doc(email)
-    .delete();
+// export const deleteTmpUserByEmail = email =>
+//   firestore
+//     .collection('tmp-users')
+//     .doc(email)
+//     .where('uid', '==', email)
+//     .delete();
 
 export const readTmpUser = email =>
   firestore
@@ -132,10 +134,13 @@ export const getUser = uid =>
       if (!usr) {
         return Promise.reject({
           code: 'User has not been registered to environment!',
-          message: 'User has not been registered to environment!',
+          message: 'User has not been registered to environment!'
         });
       }
-      return readAllUserEnvs(uid).then(userEnvs => ({...usr, userEnvs}));
+      return readAllUserEnvs(uid).then(userEnvs => ({
+        ...usr,
+        userEnvs
+      }));
     });
 
 export const getThumbNailRef = uid =>
@@ -157,8 +162,8 @@ export const getUserEnvs = uid =>
             .get()
             .then(qs => qs.docs.map(d => d.data().uid))
             .then(userIds => (userIds.includes(uid) ? env : null));
-        }),
-      ),
+        })
+      )
     )
     .then(res => res.filter(d => d !== null));
 
@@ -183,8 +188,8 @@ export const getDetailedUserInfo = ({uid, userEnvId}) => {
       readCards({authorId: uid}).then(createdCards => ({
         ...usr,
         createdCards,
-        collectedCards: [],
-      })),
+        collectedCards: []
+      }))
     )
     .catch(err => console.log('err i getUser', err));
 };

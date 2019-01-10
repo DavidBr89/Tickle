@@ -32,7 +32,7 @@ export default class PhotoUpload extends Component {
     onChange: PropTypes.func,
     placeholder: PropTypes.string,
     defaultImg: PropTypes.any,
-    imgName: PropTypes.string,
+    imgName: PropTypes.string
   };
 
   static defaultProps = {
@@ -46,7 +46,7 @@ export default class PhotoUpload extends Component {
     height: 250,
     maxHeight: 300,
     imgName: null,
-    title: 'Browse Images',
+    title: 'Browse Images'
   };
 
   render() {
@@ -59,7 +59,8 @@ export default class PhotoUpload extends Component {
       title,
       imgUrl,
       imgName,
-      btnClassName="",
+      imgStyle,
+      btnClassName = ''
     } = this.props;
 
     return (
@@ -67,7 +68,7 @@ export default class PhotoUpload extends Component {
         {imgUrl ? (
           <img
             className={className}
-            style={{...style, objectFit: 'cover'}}
+            style={{...imgStyle, objectFit: 'cover'}}
             src={imgUrl}
             alt="test"
           />
@@ -86,7 +87,7 @@ export default class PhotoUpload extends Component {
             display: null,
             whiteSpace: 'nowrap',
             overflow: 'hidden',
-            textOverflow: 'ellipsis',
+            textOverflow: 'ellipsis'
           }}>
           {imgName ? `Edit: ${imgName}` : title}
         </label>
@@ -102,7 +103,7 @@ export default class PhotoUpload extends Component {
 
             // TODO remove
             const imgType = imgName.slice(
-              ((imgName.lastIndexOf('.') - 1) >>> 0) + 2,
+              ((imgName.lastIndexOf('.') - 1) >>> 0) + 2
             );
             // onChange({
             //   url: convertToImgSrc(e.target.files),
@@ -114,20 +115,23 @@ export default class PhotoUpload extends Component {
                 quality: 0.6,
                 maxWidth: 1920,
                 // maxHeight: 800,
-                resize: true,
+                resize: true
               })
               .then(data => {
                 const img1 = data[0];
                 const base64str = img1.data;
                 const imgExt = img1.ext;
-                const file = Compress.convertBase64ToFile(base64str, imgExt);
+                const file = Compress.convertBase64ToFile(
+                  base64str,
+                  imgExt
+                );
 
                 onChange({
                   url: convertToImgSrc(files),
                   title: null,
                   imgType,
                   name: imgName,
-                  file,
+                  file
                 });
               });
           }}

@@ -10,9 +10,7 @@ import {submitUserInfoToDB} from 'Reducers/Session/async_actions';
 
 import {uniq} from 'lodash';
 
-import {
-  fetchCollectibleCards,
-} from 'Reducers/Cards/async_actions';
+import * as sessionThunks from 'Reducers/Session/async_actions';
 
 import * as actions from 'Reducers/Session/actions';
 import {screenResize} from 'Reducers/Screen/actions';
@@ -29,9 +27,9 @@ exampleAction: authUser => {
     dispatch(setAuthUser(authUser));
   }
 */
-const mapStateToProps = state => ({});
+const mapStateToProps = ({Session:{authUser}}) => ({authUser});
 
-const mapDispatchToProps = dispatch => bindActionCreators({}, dispatch);
+const mapDispatchToProps = dispatch => bindActionCreators(sessionThunks, dispatch);
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const {authUser} = stateProps;

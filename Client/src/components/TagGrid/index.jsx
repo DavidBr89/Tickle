@@ -87,7 +87,7 @@ const TagGrid = props => {
   const gridDom = React.createRef();
   useEffect(() => {
     wrapGrid(gridDom.current, {
-      easing: 'easein',
+      // easing: 'easein',
       stagger: 0,
       duration: 800,
     });

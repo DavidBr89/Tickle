@@ -22,9 +22,9 @@ import AdminPage from './AdminPage';
 const mapStateToProps = state => ({
   ...state.Session,
   ...state.Cards,
-  ...state.Admin,
   ...state.MapView,
   ...state.Session.authUser,
+  ...state.Admin
   // userEnvs: state.Session.authUser ? state.Session.authUser.userEnvs : [],
 });
 
@@ -34,9 +34,9 @@ const mapDispatchToProps = dispatch =>
       ...asyncSessionActions,
       ...asyncAdminActions,
       ...adminActions,
-      ...asyncCardActions,
+      ...asyncCardActions
     },
-    dispatch,
+    dispatch
   );
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
@@ -47,7 +47,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     envUserIds,
     collectibleCards,
     createdCards,
-    userEnvs,
+    userEnvs
   } = stateProps;
 
   const {
@@ -58,7 +58,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     fetchCollectibleCards,
     fetchCreatedCards,
     registerUserToEnv,
-    inviteUser,
+    inviteUser
   } = dispatchProps;
 
   const {match, history, location} = ownProps;
@@ -71,24 +71,28 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     id: TEMP_ID,
     template: true,
     edit: true,
-    ...tmpCard,
+    ...tmpCard
   };
 
   const {
-    params: {userEnv: userEnvId},
+    params: {userEnv: userEnvId}
   } = match;
 
   const routeUserEnv = env => history.push(`/${env}/${ADMIN.path}`);
 
   const cardType = 'created';
-  const fetchCards = () =>
-    cardType === 'created'
+  const fetchCards = () => {
+    //TODO
+    return cardType === 'created'
       ? fetchCreatedCards({userEnvId, uid: selectedUserId})
       : fetchCollectibleCards({userEnvId, uid: selectedUserId});
+  }
 
-  const cards = cardType === 'created' ? createdCards : collectibleCards;
+  const cards =
+    cardType === 'created' ? createdCards : collectibleCards;
 
-  const onCreateCard = () => console.log('selectedUserId', selectedUserId);
+  const onCreateCard = () =>
+    console.log('selectedUserId', selectedUserId);
 
   return {
     ...stateProps,
@@ -104,12 +108,11 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     // nonEnvUsers,
     userEnvs,
     userEnvId,
-    getUsers: () => fetchUsers(userEnvId),
     selectedUserEnvId: userEnvId,
     inviteUser: usr => {
       inviteUser({...usr, userEnvIds: [userEnvId]});
     },
-    registerUserToEnv: uid => registerUserToEnv({userEnvId, uid}),
+    registerUserToEnv: uid => registerUserToEnv({userEnvId, uid})
   };
 };
 
@@ -120,6 +123,6 @@ export default compose(
   connect(
     mapStateToProps,
     mapDispatchToProps,
-    mergeProps,
-  ),
+    mergeProps
+  )
 )(AdminPage);

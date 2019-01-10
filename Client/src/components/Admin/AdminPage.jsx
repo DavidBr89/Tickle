@@ -24,15 +24,16 @@ import {SelectTag} from 'Components/utils/SelectField';
 
 import MetaCard from 'Components/cards';
 
-import {UserPreview, UserDetail, InviteUserForm} from './User';
+import UserPanel from './UserPanel';
 
 const detailsClass = 'shadow text-2xl p-2 mb-5 border-2 border-black';
 const summaryClass = 'mb-3';
 
+const modalDim = {maxWidth: '40vw'};
 // const listItemClass = 'cursor-pointer flex text-xl border mb-1 justify-between p-2';
 
 const baseLiClass =
-  'cursor-pointer p-2 text-lg flex justify-between items-center';
+  'border cursor-pointer p-2 text-lg flex justify-between items-center';
 
 const UserEnvPanel = ({
   className,
@@ -133,106 +134,6 @@ const UserEnvPanel = ({
         </button>
       </form>
   */
-const modalDim = {maxWidth: '40vw'};
-function UserPanel({
-  className,
-  selectedUserId,
-  onSelectUser,
-  userRegErr,
-  // registerUserToEnv,
-  users,
-  userEnvId,
-  PreviewCard,
-  inviteUser
-}) {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [panelOpen, setPanelOpen] = useState(false);
-
-  const [modalExt, setModalExt] = useState(false);
-
-  const selectedUser =
-    users.find(u => u.uid === selectedUserId) || null;
-  const {uid: selUid = null} = selectedUser || {};
-  const {username: title = 'All Users'} = selectedUser || {};
-
-  const envUsers = users.filter(u => u.userEnvIds.includes(userEnvId));
-
-  const liClass = u =>
-    `${baseLiClass} ${u.uid === selectedUserId && 'bg-grey'}`;
-
-  return (
-    <details className={className} panelOpen={panelOpen}>
-      <summary
-        className={summaryClass}
-        onClick={() => setPanelOpen(!panelOpen)}>
-        Users - {title}
-      </summary>
-
-      <BlackModal visible={modalOpen}>
-        <ModalBody
-          title="New User"
-          style={{...modalDim}}
-          onClose={() => setModalOpen(false)}>
-          <InviteUserForm
-            user={selectedUser || {}}
-            onSubmit={inviteUser}
-            error={userRegErr}
-          />
-        </ModalBody>
-      </BlackModal>
-
-      {selectedUser ? (
-        <UserPreview user={selectedUser} />
-      ) : (
-        <div>Events</div>
-      )}
-      <div className="border">
-        <div className="flex mt-2 mb-2">
-          <div
-            className={`${baseLiClass} italic`}
-            onClick={() => onSelectUser(null)}>
-            All Users
-          </div>
-          <button
-            onClick={() => setModalOpen(true)}
-            className="ml-1 btn border">
-            Invite User
-          </button>
-        </div>
-        <div className="overflow-y-auto">
-          <ul style={{height: 200}}>
-            {envUsers.map(u => (
-              <li
-                className={liClass(u)}
-                onClick={() => {
-                  selUid === u.uid
-                    ? setModalExt(!modalExt)
-                    : onSelectUser(u.uid);
-                }}>
-                <span>
-                  {u.email} {u.tmp && '(not registered)'}
-                </span>
-                <MoreIcon />
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      <BlackModal visible={modalExt}>
-        {selectedUser && (
-          <ModalBody
-            style={{...modalDim}}
-            title={`User: ${selectedUser.username}`}
-            onClose={() => setModalExt(false)}>
-            {selectedUser && <UserDetail user={selectedUser} />}
-          </ModalBody>
-        )}
-      </BlackModal>
-    </details>
-  );
-}
-
 function CardPanel(props) {
   const {
     className,
@@ -277,7 +178,7 @@ function CardPanel(props) {
       </summary>
       <div className="flex flex-wrap" style={{...gridStyle}}>
         {tmpCards.length === 0 && (
-          <div className="text-2xl">No Cards</div>
+          <div className="text-4xl self-center">No Cards</div>
         )}
         {tmpCards.map(c => (
           <PreviewCardSwitch
@@ -312,6 +213,7 @@ export default function AdminPage(props) {
     users,
     userEnvId,
     fetchAllUserEnvs,
+    fetchUsers,
     selectUser,
     selectedUsers,
     selectedUserId,
@@ -327,7 +229,7 @@ export default function AdminPage(props) {
   useEffect(() => {
     fetchAllUserEnvs();
     fetchCards();
-    getUsers();
+    fetchUsers();
   }, []);
 
   useEffect(
@@ -340,12 +242,6 @@ export default function AdminPage(props) {
 
   useEffect(
     () => {
-      console.log(
-        'selectedUserId',
-        selectedUserId,
-        'userEnvId',
-        userEnvId
-      );
       fetchCards();
     },
     [selectedUserId, userEnvId]

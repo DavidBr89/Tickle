@@ -11,7 +11,7 @@ import {
   CHALLENGE_STARTED,
   CHALLENGE_SUCCEEDED,
   CHALLENGE_SUBMITTED,
-  CARD_CREATED,
+  CARD_CREATED
 } from 'Constants/cardFields';
 import {
   RECEIVE_USERS,
@@ -29,6 +29,8 @@ import {
   SELECT_USERS_BY_ENV,
   USER_REGISTRATION_ERROR,
   ADD_USER,
+  UPDATE_USER_INFO,
+  REMOVE_USER
 } from './actions';
 
 const INITIAL_STATE = {
@@ -41,7 +43,7 @@ const INITIAL_STATE = {
   selectedUserId: null,
   userEnvs: [],
   envUserIds: [],
-  userRegErr: null,
+  userRegErr: null
 };
 
 function reducer(state = INITIAL_STATE, action) {
@@ -57,6 +59,25 @@ function reducer(state = INITIAL_STATE, action) {
       const selectedUserId = action.options;
       return {...state, selectedUserId};
     }
+    case REMOVE_USER: {
+      const {users} = state;
+      const uid = action.options;
+      return {
+        ...state,
+        users: users.filter(u => u.uid !== uid),
+        selectedUserId: null
+      };
+    }
+    case UPDATE_USER_INFO: {
+      const {users} = state;
+      const usrInfo = action.options;
+      const {uid} = usrInfo;
+      console.log('UID', uid);
+      return {
+        ...state,
+        users: users.map(d => (d.uid === uid ? usrInfo : d))
+      };
+    }
     case CARD_FILTER_CHANGE: {
       const cardFilters = action.options;
       return {...state, cardFilters};
@@ -70,7 +91,11 @@ function reducer(state = INITIAL_STATE, action) {
       const usr = action.options;
       const {uid} = usr;
       const newEnvUserIds = [...envUserIds, uid];
-      return {...state, users: [...users, usr], envUserIds: newEnvUserIds};
+      return {
+        ...state,
+        users: [...users, usr],
+        envUserIds: newEnvUserIds
+      };
     }
     case RECEIVE_CARDS: {
       const cards = action.options;
@@ -111,18 +136,14 @@ function reducer(state = INITIAL_STATE, action) {
             ...c,
             allChallengeSubmissions: [
               challengeSubmission,
-              ...c.allChallengeSubmissions,
-            ],
+              ...c.allChallengeSubmissions
+            ]
           };
         }
         return c;
       });
 
       return {...state, cards: newCards};
-    }
-    case SELECT_USER: {
-      const selectedUserId = action.options;
-      return {...state, selectedUserId, selectedCardId: null};
     }
     case SELECT_CARD_ID: {
       const selectedCardId = action.options;

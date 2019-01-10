@@ -16,23 +16,52 @@ import {SelectTag} from 'Utils/SelectField';
 
 const USR_IMG_PATH = 'images/usr';
 export default function AccountPage(props) {
-  const {onClose, style, authUser, setAuthUserInfo, updateUser} = props;
+  const {
+    onClose,
+    style,
+    authUser,
+    setAuthUserInfo,
+    updateAuthUser
+  } = props;
 
-  const {uid, username, interests: initInterests, photoURL = null} = authUser;
+  const {
+    uid,
+    name: initName,
+    email,
+    username,
+    interests: initInterests,
+    photoURL = null
+  } = authUser;
 
   const [interests, setInterests] = useState(initInterests);
+  const [name, setName] = useState(initName);
   const [img, setImg] = useState({url: photoURL, file: null});
 
   useEffect(
     () => {
       if (img.file) {
-        console.log('imgUrl', img);
-        addToStorage({file: img.file, path: `${USR_IMG_PATH}/${uid}`}).then(
-          imgUrl => updateUser({photoURL: imgUrl}),
-        );
+        addToStorage({
+          file: img.file,
+          path: `${USR_IMG_PATH}/${uid}`
+        }).then(imgUrl => updateAuthUser({photoURL: imgUrl}));
       }
     },
-    [img.url, img.file],
+    [img.url, img.file]
+  );
+
+  useEffect(
+    () => {
+      // TODO debounce
+      updateAuthUser({name});
+    },
+    [name]
+  );
+
+  useEffect(
+    () => {
+      updateAuthUser({interests});
+    },
+    [interests]
   );
 
   return (
@@ -44,15 +73,37 @@ export default function AccountPage(props) {
         </div>
       }>
       <div className="content-margin flex flex-col overflow-y-auto">
-        <h2>Photo:</h2>
-        <PhotoUpload
-          style={{flex: '0 0 40vh', maxHeight: '40vh'}}
-          btnClassName="mt-2"
-          imgUrl={img.url}
-          onChange={newImg => {
-            setImg({url: newImg.url, file: newImg.file});
-          }}
-        />
+        <section className="mb-2">
+          <div className="flex flex-wrap">
+            <div className="flex-grow">
+              <h2>Name:</h2>
+              <input
+                className="form-control w-full "
+                type="text"
+                defaultValue={name}
+                placeholder="Full name"
+                onChange={e => setName(e.target.value)}
+              />
+            </div>
+            <div className="ml-2 flex-grow flex flex-col">
+              <h2>Email:</h2>
+              <div className="border pl-1 text-lg flex-grow flex flex-col justify-center">
+                <div>{email}</div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section className="flex flex-col mb-2">
+          <h2>Photo:</h2>
+          <PhotoUpload
+            btnClassName="mt-2"
+            imgStyle={{height: '30vh'}}
+            imgUrl={img.url}
+            onChange={newImg => {
+              setImg({url: newImg.url, file: newImg.file});
+            }}
+          />
+        </section>
         <section className="text-lg mb-2">
           <h2>Username:</h2>
           <input
@@ -77,12 +128,16 @@ export default function AccountPage(props) {
           />
           <div className="flex mt-2">
             {interests.length === 0 && (
-              <div className="tag-label bg-grey mb-1 mt-1">No Interests</div>
+              <div className="tag-label bg-grey mb-1 mt-1">
+                No Interests
+              </div>
             )}
             {interests.map(d => (
               <div
                 className="tag-label mr-1 mt-1 mb-1 bg-black cursor-pointer"
-                onClick={() => setInterests(interests.filter(e => e !== d))}>
+                onClick={() =>
+                  setInterests(interests.filter(e => e !== d))
+                }>
                 {d}
               </div>
             ))}
