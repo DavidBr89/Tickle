@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useLayoutEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import MoreIcon from 'react-feather/dist/icons/more-horizontal';
 
 import UserIcon from 'react-feather/dist/icons/user';
@@ -7,6 +7,8 @@ import {SelectTag} from 'Components/utils/SelectField';
 import {BlackModal, ModalBody} from 'Components/utils/Modal';
 import AlertButton from 'Components/utils/AlertButton';
 import isEqual from 'lodash/isEqual';
+
+import TabSwitcher from 'Src/components/utils/Fade';
 
 function useDeepCompareMemoize(value) {
   const getMemoized = React.useMemo(() => {
@@ -19,15 +21,6 @@ function useDeepCompareMemoize(value) {
     };
   }, []);
   return getMemoized(value);
-}
-
-function useDidUpdateEffect(fn, inputs) {
-  const didMountRef = React.useRef(false);
-
-  useEffect(() => {
-    if (didMountRef.current) fn();
-    else didMountRef.current = true;
-  }, inputs);
 }
 
 const summaryClass = 'mb-3';
@@ -179,16 +172,66 @@ const UserProfileUpdate = ({
   );
 };
 
-export const InviteUserForm = ({onSubmit, error, user}) => {
-  const [fullName, setFullName] = useState('');
+// const TabSwitcher = ({children}) => {
+//   const [visibleIndex, setVisibleIndex] = useState(0);
+//
+//   return (
+//     <div className="flex relative flex-col flex-grow overflow-hidden">
+//       {children.map((t, i) => (
+//         <Fade
+//           className="absolute w-full h-full flex flex-col flex-grow"
+//           in={visibleIndex === i}>
+//           {t}
+//           <div className="w-full flex justify-between">
+//             <button
+//               onClick={() =>
+//                 setVisibleIndex(Math.max(0, visibleIndex - 1))
+//               }>
+//               back
+//             </button>
+//             <button
+//               onClick={() =>
+//                 setVisibleIndex(
+//                   Math.min(children.length, visibleIndex + 1)
+//                 )
+//               }>
+//               forward
+//             </button>
+//           </div>
+//         </Fade>
+//       ))}
+//     </div>
+//   );
+// };
 
+const SendInvitationEmail = ({onSubmit, ...props}) => {
+  const [subject, setSubject] = useState(null);
+  const [msg, setMsg] = useState(null);
+  return (
+    <form
+      onSubmit={e => {
+        e.preventDefault();
+        onSubmit();
+      }}>
+      <input className="form-control" />
+      <textArea />
+    </form>
+  );
+};
+
+export const InviteUserForm = ({onSubmit, error, user}) => {
   const [userProfile, setProfile] = useMergeState({
     deficits: [],
     aims: [],
-    email: null
+    email: null,
+    name: null
   });
-  const {deficits, aims, email} = userProfile;
+  const {deficits, aims, email, name} = userProfile;
   const disabled = email === null;
+
+  const [modalOpen, setModalOpen] = useState(false);
+
+  // onSubmit({...user, aims, deficits, name, email})
   return (
     <form
       className="flex-grow flex flex-col"
@@ -205,7 +248,7 @@ export const InviteUserForm = ({onSubmit, error, user}) => {
           placeholder="email"
         />
         <input
-          value={fullName}
+          value={name}
           className="form-control flex-grow"
           onChange={event => setProfile({name: event.target.value})}
           type="text"
@@ -226,10 +269,8 @@ export const InviteUserForm = ({onSubmit, error, user}) => {
           type="submit"
           className={`w-full mt-3 btn btn-black ${disabled &&
             'disabled'}`}
-          onClick={() =>
-            onSubmit({...user, aims, deficits, fullName, email})
-          }>
-          Create{' '}
+          onClick={() => onSubmit(userProfile)}>
+          Send Email Invitation
         </button>
       </div>
     </form>
@@ -298,11 +339,15 @@ export default function UserPanel(props) {
           title="New User"
           style={{...modalDim}}
           onClose={() => toggleInviteUserModal(false)}>
-          <InviteUserForm
-            user={selectedUser || {}}
-            onSubmit={inviteUser}
-            error={userRegErr}
-          />
+          <TabSwitcher>
+            <InviteUserForm
+              title="Invite User"
+              user={selectedUser || {}}
+              onSubmit={inviteUser}
+              error={userRegErr}
+            />
+            <SendInvitationEmail title="Send Invitation Email" />
+          </TabSwitcher>
         </ModalBody>
       </BlackModal>
 

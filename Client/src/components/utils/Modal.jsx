@@ -12,38 +12,47 @@ import X from 'react-feather/dist/icons/x';
 import {connect} from 'react-redux';
 
 const reduxConnect = comp => {
-  const mapStateToProps = state => ({mobile: state.Screen.isSmartphone});
+  const mapStateToProps = state => ({
+    mobile: state.Screen.isSmartphone
+  });
 
   const mergeProps = (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
-    ...ownProps,
+    ...ownProps
   });
 
   return connect(
     mapStateToProps,
-    mergeProps,
+    mergeProps
   )(comp);
 };
 
-export const BlackModal = reduxConnect(({visible, mobile, style, ...props}) =>
-  ReactDOM.createPortal(
-    <div
-      className="fixed w-screen h-screen"
-      style={{
-        zIndex: 1000, // visible ? 1000 : -1000,
-        pointerEvents: !visible ? 'none' : null,
-        top: 0,
-        left: 0,
-        background: chroma('black')
-          .alpha(0.3)
-          .css(),
-        opacity: visible ? 1 : 0,
-        transition: 'opacity 0.3s',
-      }}>
-      <InlineModal visible={visible} mobile={mobile} style={style} {...props} />
-    </div>,
-    BODY,
-  ),
+export const BlackModal = reduxConnect(
+  ({visible, mobile, style, className, ...props}) =>
+    ReactDOM.createPortal(
+      <div
+        className="fixed w-screen h-screen"
+        style={{
+          // zIndex: 1000, // visible ? 1000 : -1000,
+          pointerEvents: !visible ? 'none' : null,
+          top: 0,
+          left: 0,
+          background: chroma('black')
+            .alpha(0.3)
+            .css(),
+          opacity: visible ? 1 : 0,
+          transition: 'opacity 0.3s'
+        }}>
+        <InlineModal
+          className={className}
+          visible={visible}
+          mobile={mobile}
+          style={style}
+          {...props}
+        />
+      </div>,
+      BODY
+    )
 );
 
 const BODY = document.querySelector('body');
@@ -55,7 +64,7 @@ export const InlineModal = ({
   onClose,
   style,
   className,
-  mobile,
+  mobile
   // background,
 }) => (
   <div
@@ -68,7 +77,7 @@ export const InlineModal = ({
       top: visible ? 0 : '200%',
       right: 0,
       bottom: 0,
-      transition: 'top 0.4s',
+      transition: 'top 0.4s'
     }}>
     <div
       className="h-full w-full"
@@ -76,7 +85,7 @@ export const InlineModal = ({
         maxWidth: 500,
         maxHeight: 800,
         margin: `${!mobile ? '2.5rem' : ''} auto`,
-        ...style,
+        ...style
       }}>
       {children}
     </div>
@@ -84,11 +93,11 @@ export const InlineModal = ({
 );
 
 InlineModal.defaultProps = {
-  className: '',
+  className: ''
 };
 
 export const BareModal = reduxConnect(props =>
-  ReactDOM.createPortal(<InlineModal {...props} />, BODY),
+  ReactDOM.createPortal(<InlineModal {...props} />, BODY)
 );
 
 export const Modal = BareModal;
@@ -101,7 +110,7 @@ export const ModalBody = ({
   style,
   title,
   className,
-  onClose,
+  onClose
 }) => (
   <div
     className={`modal-content h-full flex flex-col bg-white ${className}`}
@@ -113,7 +122,7 @@ export const ModalBody = ({
       maxWidth: 500,
       maxHeight: 800,
       boxShadow: 'black 0.2rem 0.2rem',
-      ...style,
+      ...style
     }}>
     <div className="flex justify-between items-center p-4 flex-no-shrink">
       <h1 className="modal-title capitalize">{title}</h1>
@@ -146,7 +155,7 @@ ModalBody.propTypes = {
   onSubmit: PropTypes.func,
   footerBtnText: PropTypes.text,
   styles: PropTypes.object,
-  uiColor: PropTypes.string,
+  uiColor: PropTypes.string
   // background: PropTypes.string
 };
 
@@ -154,14 +163,14 @@ ModalBody.defaultProps = {
   onSubmit: null,
   footerBtnText: 'Close',
   uiColor: 'grey',
-  styles: {},
+  styles: {}
 };
 
 const mapStateToProps = state => ({...state.Screen});
 
 const mergeProps = (stateProps, _, ownProps) => ({
   ...stateProps,
-  ...ownProps,
+  ...ownProps
 });
 
 const ResponsiveModal = ({isSmartphone, ...props}) => (
@@ -169,7 +178,7 @@ const ResponsiveModal = ({isSmartphone, ...props}) => (
     className=""
     {...props}
     style={{
-      margin: `${!isSmartphone ? '5.5rem' : ''} auto`,
+      margin: `${!isSmartphone ? '5.5rem' : ''} auto`
     }}
   />
 );
@@ -177,5 +186,5 @@ const ResponsiveModal = ({isSmartphone, ...props}) => (
 export const ConnectedResponsiveModal = connect(
   mapStateToProps,
   null,
-  mergeProps,
+  mergeProps
 )(ResponsiveModal);

@@ -15,7 +15,7 @@ class PreviewCard extends Component {
     onClick: PropTypes.func.isRequired,
     style: PropTypes.object,
     edit: PropTypes.bool,
-    type: PropTypes.string,
+    type: PropTypes.string
   };
 
   static defaultProps = {
@@ -29,7 +29,7 @@ class PreviewCard extends Component {
     edit: false,
     type: null,
     showImg: true,
-    accessible: true,
+    accessible: true
   };
 
   render() {
@@ -44,7 +44,7 @@ class PreviewCard extends Component {
       type,
       showImg,
       accessible,
-      className,
+      className
     } = this.props;
 
     return (
@@ -56,9 +56,9 @@ class PreviewCard extends Component {
           <div className="flex-grow relative">
             <div className="flex flex-no-shrink">
               <h1
-                className="flex-grow m-1  pl-1 pr-1 text-xl truncate-text"
+                className="z-10 flex-grow m-1  pl-1 pr-1 text-xl truncate-text"
                 style={{minHeight: '1.25rem'}}>
-                {title || 'No title'}
+                <span className="px-1 bg-white">{title || 'No title'}</span>
               </h1>
             </div>
 
@@ -68,7 +68,7 @@ class PreviewCard extends Component {
                 left: 0,
                 top: -0,
                 display: 'block',
-                objectFit: 'cover',
+                objectFit: 'cover'
               }}
               src={img.thumbnail || img.url}
               alt="Card cap"
@@ -116,4 +116,8 @@ export const PreviewCardTemplate = ({className, style, onClick}) => (
 );
 
 export const PreviewCardSwitch = ({edit, ...props}) =>
-  edit ? <PreviewCardTemplate {...props} /> : <PreviewCard {...props} />;
+  edit ? (
+    <PreviewCardTemplate {...props} />
+  ) : (
+    <PreviewCard {...props} />
+  );

@@ -110,9 +110,9 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 const authCondition = authUser => authUser !== null;
 
 export default compose(
-  withRouter,
   withAuthorization(authCondition),
   withAuthentication,
+  withRouter,
   connect(
     mapStateToProps,
     mapDispatchToProps,
