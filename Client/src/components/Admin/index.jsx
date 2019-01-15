@@ -110,6 +110,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     userEnvId,
     selectedUserEnvId: userEnvId,
     inviteUser: usr => {
+      //TODO
       inviteUser({...usr, userEnvIds: [userEnvId]});
     },
     registerUserToEnv: uid => registerUserToEnv({userEnvId, uid})

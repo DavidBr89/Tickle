@@ -1,90 +1,62 @@
-import React, { Component } from 'react';
+import React, {
+  Component,
+  useImperativeMethods,
+  useRef,
+  useEffect
+} from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import scrollIntoView from 'scroll-into-view';
 
-const { Provider, Consumer } = React.createContext({
+const {Provider, Consumer} = React.createContext({
   register: null,
   unregister: null
 });
 
-class ScrollView extends Component {
-  static propTypes = {
-    children: PropTypes.node
+const ScrollView = React.forwardRef(({children}, ref) => {
+  const elements = {};
+
+  const register = (name, ref) => {
+    elements[name] = ref;
   };
 
-  register = (name, ref) => {
-    this.elements[name] = ref;
+  const unregister = name => {
+    delete elements[name];
   };
 
-  unregister = name => {
-    delete this.elements[name];
-  };
+  // const childRef = useRef();
 
-  elements = {};
+  useImperativeMethods(ref, () => ({
+    scrollTo(name, opts = {time: 500, left: 1}) {
+      const node = ReactDOM.findDOMNode(elements[name].current);
+      const {time, left} = opts;
+      scrollIntoView(node, {
+        time,
+        align: {
+          left
+          // leftOffset: 0
+        }
+      });
+    }
+  }));
 
-  // const node = ReactDOM.findDOMNode(this.elements[name]);
-  // const { left, top } = opts;
-  // // node.scrollLeft = 20000;
-  // // node.scrollIntoView(false);
-  // scrollIntoView(node, {
-  //   time: opts.time,
-  //   align: { left, top }
-  // });
+  return (
+    <Provider value={{register, unregister}}>
+      {React.cloneElement(children)}
+    </Provider>
+  );
+});
 
-  scrollTo = (name, opts = { time: 500, left: 1 }) => {
-    const node = ReactDOM.findDOMNode(this.elements[name]);
-    console.log('opts', opts);
-    const { time, left } = opts;
-    // node.scrollLeft = 20000;
-    // node.scrollIntoView(false);
-    scrollIntoView(node, {
-      time,
-      align: {
-        left
-        // leftOffset: 0
-      }
-    });
-  };
+const ScrollConsumer = ({register, unregister, name, children}) => {
+  const ref = React.createRef();
 
-  render() {
-    return (
-      <Provider
-        value={{
-          register: this.register.bind(this),
-          unregister: this.unregister.bind(this)
-        }}
-      >
-        {React.cloneElement(this.props.children, {
-          ref: e => (this.node = e)
-        })}
-      </Provider>
-    );
-  }
-}
+  useEffect(() => {
+    register(name, ref);
+    return unregister;
+  });
 
-class ScrollConsumer extends Component {
-  static propTypes = {
-    children: PropTypes.node
-  };
-
-  componentDidMount() {
-    this.props.register(this.props.name, this);
-  }
-
-  componentWillUnmount() {
-    this.props.unregister(this.props.name);
-  }
-
-  componenDidUpdate() {
-    this.props.register(this.props.name, this);
-    return null;
-  }
-
-  render() {
-    return this.props.children;
-  }
-}
+  return React.cloneElement(children, {ref});
+};
 
 class ScrollElement extends Component {
   static contextTypes = {
@@ -97,15 +69,14 @@ class ScrollElement extends Component {
   };
 
   render() {
-    const { name } = this.props;
+    const {name} = this.props;
     return (
       <Consumer>
-        {({ register, unregister }) => (
+        {({register, unregister}) => (
           <ScrollConsumer
             register={register}
             unregister={unregister}
-            name={name}
-          >
+            name={name}>
             {this.props.children}
           </ScrollConsumer>
         )}
@@ -114,4 +85,4 @@ class ScrollElement extends Component {
   }
 }
 
-export { ScrollView, ScrollElement };
+export {ScrollView, ScrollElement};

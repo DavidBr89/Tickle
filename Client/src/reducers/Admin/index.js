@@ -94,7 +94,8 @@ function reducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         users: [...users, usr],
-        envUserIds: newEnvUserIds
+        envUserIds: newEnvUserIds,
+        userRegErr: null
       };
     }
     case RECEIVE_CARDS: {

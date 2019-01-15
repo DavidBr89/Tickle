@@ -1,24 +1,28 @@
 import {isEqual} from 'lodash';
 
 export const userFields = ({
-  interests,
-  uid,
+  interests = [],
+  uid = null,
   name = null,
-  username,
-  email,
-  photoURL,
+  username = null,
+  email = null,
+  photoURL = null,
   admin = false,
   userEnvs = [],
+  ...rest
 }) => ({
-  interests,
   uid,
+  interests,
   name,
   username,
   email,
   photoURL,
   admin,
   userEnvs,
+  ...rest
 });
+
+export const initUserFields = userFields({});
 
 export const compareUserFields = (
   {
@@ -27,7 +31,7 @@ export const compareUserFields = (
     name: nameA,
     username: usernameA,
     email: emailA,
-    photoURL: photoURLA,
+    photoURL: photoURLA
   },
   {
     interests: interestsB,
@@ -35,8 +39,8 @@ export const compareUserFields = (
     uid: uidB,
     username: usernameB,
     email: emailB,
-    photoURL: photoURLB,
-  },
+    photoURL: photoURLB
+  }
 ) => {
   if (!isEqual(interestsA, interestsB)) {
     // console.log('interests unequal');

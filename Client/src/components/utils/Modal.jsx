@@ -33,7 +33,7 @@ export const BlackModal = reduxConnect(
       <div
         className="fixed w-screen h-screen"
         style={{
-          // zIndex: 1000, // visible ? 1000 : -1000,
+          zIndex: 1000, // visible ? 1000 : -1000,
           pointerEvents: !visible ? 'none' : null,
           top: 0,
           left: 0,
@@ -125,13 +125,13 @@ export const ModalBody = ({
       ...style
     }}>
     <div className="flex justify-between items-center p-4 flex-no-shrink">
-      <h1 className="modal-title capitalize">{title}</h1>
+      <h2 className="capitalize">{title}</h2>
       <button className="btn" onClick={onClose}>
         <X />
       </button>
     </div>
     <div
-      className="flex flex-col p-4 flex-grow overflow-y-auto"
+      className="flex flex-col pb-4 px-4 flex-grow overflow-y-auto"
       style={
         {
           // flex: '1 1 auto',

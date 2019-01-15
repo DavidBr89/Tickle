@@ -253,12 +253,7 @@ export default function AdminPage(props) {
       <UserEnvPanel className={detailsClass} {...props} />
       <UserPanel
         {...props}
-        users={users}
-        envUserIds={envUserIds}
         className={detailsClass}
-        selectedUserId={selectedUserId}
-        registerUserToEnv={registerUserToEnv}
-        onSelectUser={selectUser}
       />
       <CardPanel
         {...props}

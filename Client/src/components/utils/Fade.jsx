@@ -1,6 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Transition from 'react-transition-group/Transition';
 
+import {ScrollView, ScrollElement} from 'Utils/ScrollView';
+
 const duration = 300;
 const defaultStyle = {
   transition: `transform ${duration}ms `
@@ -19,67 +21,84 @@ function usePrevious(value) {
 const transitionStyles = forward => ({
   entering: {transform: `translateX(0%)`},
   entered: {transform: `translateX(0%)`},
-  exiting: {transform: `translateX(${forward ? '110%' : '-100%'})`},
-  exited: {transform: `translateX(${forward ? '110%' : '-100%'})`}
+  exiting: {transform: `translateX(${forward ? '110%' : '-110%'})`},
+  exited: {transform: `translateX(${forward ? '110%' : '-110%'})`}
 });
 
-export const Fade = ({in: inProp, className, index, children}) => {
-  const prevIndex = usePrevious(index);
+export const Fade = ({in: inProp, className, index, children}) => (
+  <div
+    className={className}
+    style={{
+      ...defaultStyle,
+      transform: `translateX(${index * 100}%)`
+    }}>
+    {children}
+  </div>
+);
 
-  const forward = prevIndex > index;
+export const TabSwitcher = props => {
+  const [visibleIndex, setVisibleIndex] = useState(0);
 
   return (
-    <Transition in={inProp} timeout={duration}>
-      {transState => (
-        <div
-          className={className}
-          style={{
-            ...defaultStyle,
-            ...transitionStyles(forward)[transState]
-          }}>
-          {children}
-        </div>
-      )}
-    </Transition>
+    <PureTabSwitcher
+      {...props}
+      visibleIndex={visibleIndex}
+      setVisibleIndex={setVisibleIndex}
+    />
   );
 };
 
-export const TabSwitcher = ({children}) => {
-  const [visibleIndex, setVisibleIndex] = useState(0);
-
+export const PureTabSwitcher = ({
+  children,
+  visibleIndex,
+  setVisibleIndex
+}) => {
   const nextIndex =
     visibleIndex + 1 < children.length ? visibleIndex + 1 : null;
 
+  const scrollCont = React.createRef();
   const prevIndex = visibleIndex - 1 > -1 ? visibleIndex - 1 : null;
 
+  useEffect(() => {
+    scrollCont.current.scrollTo(visibleIndex);
+  });
+
   return (
-    <div className="flex relative flex-col flex-grow overflow-hidden">
-      {children.map((t, i) => (
-        <Fade
-          className="absolute w-full h-full flex flex-col flex-grow"
-          in={visibleIndex === i}
-          index={visibleIndex}>
-          {t}
-          <div className="w-full flex justify-between">
-            {prevIndex !== null && (
-              <button
-                className="flex-grow btn"
-                type="button"
-                onClick={() => setVisibleIndex(prevIndex)}>
-                {children[prevIndex].props.title}
-              </button>
-            )}
-            {nextIndex !== null && (
-              <button
-                className="flex-grow btn"
-                type="button"
-                onClick={() => setVisibleIndex(nextIndex)}>
-                {children[nextIndex].props.title}
-              </button>
-            )}
-          </div>
-        </Fade>
-      ))}
+    <div className="relative flex relative flex-col flex-grow overflow-x-hidden">
+      <ScrollView ref={scrollCont}>
+        <div
+          className="flex flex-grow "
+          style={{
+            width: `${children.length * 100}%`
+          }}>
+          {children.map((t, i) => (
+            <ScrollElement name={i}>
+              <div
+                style={{width: `${100 / children.length}%`}}
+                className="p-1 flex flex-col flex-grow"
+                key={t.id}>
+                {t.content}
+                <div className="w-full flex justify-between">
+                  {prevIndex !== null && (
+                    <div className="flex-grow flex items-center">
+                      {React.cloneElement(children[prevIndex].acc, {
+                        onClick: () => setVisibleIndex(prevIndex)
+                      })}
+                    </div>
+                  )}
+                  {nextIndex !== null && (
+                    <div className="flex-grow flex items-center">
+                      {React.cloneElement(children[nextIndex].acc, {
+                        onClick: () => setVisibleIndex(nextIndex)
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </ScrollElement>
+          ))}
+        </div>
+      </ScrollView>
     </div>
   );
 };

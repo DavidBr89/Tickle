@@ -1,12 +1,15 @@
 import React, {useState, useEffect} from 'react';
 import MoreIcon from 'react-feather/dist/icons/more-horizontal';
-
+import ChevronsLeft from 'react-feather/dist/icons/chevrons-left';
+import ChevronsRight from 'react-feather/dist/icons/chevrons-right';
 import UserIcon from 'react-feather/dist/icons/user';
+import isEqual from 'lodash/isEqual';
+
 import uniq from 'lodash/uniq';
 import {SelectTag} from 'Components/utils/SelectField';
 import {BlackModal, ModalBody} from 'Components/utils/Modal';
 import AlertButton from 'Components/utils/AlertButton';
-import isEqual from 'lodash/isEqual';
+import {initUserFields} from 'Constants/userFields';
 
 import TabSwitcher from 'Src/components/utils/Fade';
 
@@ -29,8 +32,8 @@ const baseLiClass =
 
 const modalDim = {maxWidth: '40vw'};
 
-const TagSet = ({values, placeholder}) => (
-  <div className="flex mt-1">
+const TagSet = ({values, className, placeholder}) => (
+  <div className={`flex mt-1 flex-wrap ${className}`}>
     {values.length === 0 && (
       <div className="tag-label bg-grey mr-1 mb-1">{placeholder}</div>
     )}
@@ -46,45 +49,146 @@ const useMergeState = initState => {
   return [state, mergeState];
 };
 
-export const UserPreview = ({user, className, style}) => {
+const InviteUser = ({onSubmit, userRegErr}) => {
+  const [userProfile, setUserProfile] = useState(null);
+
+  const [visibleIndex, setVisibleIndex] = useState(0);
+
+  const BtnHelper = ({
+    text,
+    iconLeft,
+    iconRight,
+    disabled,
+    onClick
+  }) => (
+    <button
+      disabled={disabled}
+      type="button"
+      onClick={onClick}
+      className={`w-full btn thick-border ${disabled &&
+        'disabled'} w-full flex justify-center items-center`}>
+      {iconLeft && <div style={{height: 30}}>{iconLeft}</div>}
+      <div>{text}</div>
+      {iconRight && <div style={{height: 30}}>{iconRight}</div>}
+    </button>
+  );
+
+  const disabled = userProfile === null || !userProfile.email;
+
+  return (
+    <TabSwitcher {...{visibleIndex, setVisibleIndex}}>
+      {[
+        {
+          id: 'inviteUser',
+          content: (
+            <InviteUserForm
+              title="Invite User"
+              onChange={prf => setUserProfile(prf)}
+            />
+          ),
+          acc: (
+            <BtnHelper
+              text="User Profile"
+              iconLeft={<ChevronsLeft className="h-full" />}
+            />
+          )
+        },
+        {
+          id: 'sendEmail',
+          content: (
+            <SendInvitationEmail
+              userProfile={userProfile}
+              error={userRegErr}
+              onSubmit={msg => onSubmit({...userProfile, msg})}
+            />
+          ),
+          acc: (
+            <BtnHelper
+              disabled={disabled}
+              text="Send Invitation Email"
+              iconRight={<ChevronsRight className="h-full" />}
+            />
+          )
+        }
+      ]}
+    </TabSwitcher>
+  );
+};
+
+export const UserPreviewInfo = ({user, className, style}) => {
   const {
     username,
     deficits = [],
+    aims = [],
     interests,
     fullname,
     email,
     photoURL
   } = user;
 
-  const photoStyle = {minWidth: 300, height: 200};
-  const photo = photoURL ? (
-    <img
-      className="flex-grow"
-      alt-text="user photo"
-      src={photoURL}
-      style={photoStyle}
-    />
-  ) : (
-    <UserIcon className="flex-grow" style={photoStyle} />
-  );
-
   return (
-    <div
-      className={`${className} border flex flex-wrap p-2`}
-      style={style}>
-      <div className="flex flex-col" style={{flex: '0.5'}}>
-        {photo}
-      </div>
-      <div className="ml-3 flex flex-col ">
-        <div>{fullname}</div>
-        <div className="text-sm">{email}</div>
-        <div className="mt-2 flex ">
-          <div className="">
-            <label>Interests</label>
-            <TagSet values={interests} placeholder="No Interests" />
+    <div className={`${className} border flex p-1`} style={style}>
+      <UserThumbnail
+        style={{maxWidth: 300}}
+        user={user}
+        className="m-2"
+      />
+      <div className="flex flex-col ">
+        <div className="mt-2 flex flex-wrap">
+          <div className="m-1 flex-auto" style={{flex: 0.5}}>
+            <label className="tex">Interests</label>
+            <TagSet
+              className=""
+              values={interests}
+              placeholder="No Interests"
+            />
+          </div>
+          <div className="flex-auto m-1">
+            <label>Learning Aims</label>
+            <TagSet
+              className=""
+              values={aims}
+              placeholder="No Interests"
+            />
+          </div>
+          <div className="flex-auto m-1">
+            <label>Learning deficits</label>
+            <TagSet values={deficits} placeholder="No Interests" />
           </div>
         </div>
       </div>
+    </div>
+  );
+};
+
+export const UserThumbnail = ({user, className, style}) => {
+  const {
+    username,
+    deficits = [],
+    aims = [],
+    interests,
+    fullname,
+    email,
+    photoURL
+  } = user;
+
+  const photoStyle = {
+    // maxHeight: 200,
+    objectFit: 'contain',
+    ...style
+  };
+
+  return (
+    <div
+      className={`${className} flex-grow flex-col relative`}
+      style={photoStyle}>
+      {photoURL ? (
+        <img
+        className="absolute w-full h-full"
+        alt-text="user photo" src={photoURL} />
+      ) : (
+        <UserIcon className="absolute w-full h-full" />
+      )}
     </div>
   );
 };
@@ -93,7 +197,7 @@ const PlaceholderUserPreview = props => (
   <div>PlaceholderUserPreview</div>
 );
 
-export const UserDetail = ({
+export const EditUserInfo = ({
   className,
   style,
   updateUser,
@@ -110,21 +214,23 @@ export const UserDetail = ({
   );
 
   return (
-    <div className={`${className} p-2 flex flex-col`} style={style}>
-      <UserPreview user={user} {...props} className="mb-2 p-2" />
+    <div className={`flex flex-col ${className} `} style={style}>
+      <UserThumbnail
+        className="flex-shrink mb-2"
+        user={user}
+        {...props}
+      />
       <UserProfileUpdate
         {...props}
         user={userProfile}
         onAimsChange={aims => {
-          console.log('aims change', aims);
-
           setProfile({aims});
         }}
         onDeficitsChange={deficits => setProfile({deficits})}
       />
       <AlertButton
         type="button"
-        className="btn bg-red btn-shadow text-white self-end mt-auto"
+        className="btn bg-red btn-shadow text-white flex-no-shrink mt-auto self-end"
         msg="Do you really want to delete the user?"
         onClick={onRemoveUser}>
         Remove User
@@ -137,7 +243,8 @@ const UserProfileUpdate = ({
   onChangeEmail,
   user,
   onAimsChange,
-  onDeficitsChange
+  onDeficitsChange,
+  interests = []
 }) => {
   const {aims = [], deficits = [], goals = []} = user;
   return (
@@ -154,7 +261,7 @@ const UserProfileUpdate = ({
         />
         <TagSet values={aims} placeholder="No aim" />
       </div>
-      <div>
+      <div className="mb-3">
         <SelectTag
           btnContent="Add"
           placeholder="Enter Learning deficits"
@@ -167,6 +274,20 @@ const UserProfileUpdate = ({
           values={[{id: 'sports'}, {id: 'yeah'}, {id: 'doooh'}]}
         />
         <TagSet values={deficits} placeholder="No deficits" />
+      </div>
+      <div className="mb-3">
+        <SelectTag
+          btnContent="Add"
+          placeholder="Enter interests"
+          inputClassName="z-0 flex-grow p-2 border-2 border-black"
+          className=""
+          idAcc={d => d.id}
+          onChange={newDeficit =>
+            onDeficitsChange(uniq([...deficits, newDeficit]))
+          }
+          values={[{id: 'sports'}, {id: 'yeah'}, {id: 'doooh'}]}
+        />
+        <TagSet values={interests} placeholder="No deficits" />
       </div>
     </>
   );
@@ -204,32 +325,53 @@ const UserProfileUpdate = ({
 //   );
 // };
 
-const SendInvitationEmail = ({onSubmit, ...props}) => {
+const SendInvitationEmail = ({onSubmit, error, ...props}) => {
   const [subject, setSubject] = useState(null);
-  const [msg, setMsg] = useState(null);
+  const [body, setBody] = useState(null);
   return (
     <form
+      className="flex flex-col h-full"
       onSubmit={e => {
         e.preventDefault();
-        onSubmit();
+        onSubmit({subject, body});
       }}>
-      <input className="form-control" />
-      <textArea />
+      <section className="mb-2">
+        <h2 className="mb-2">Subject:</h2>
+        <input
+          onChange={e => setSubject(e.target.value)}
+          placeholder="Your Subject"
+          className="form-control w-full"
+        />
+      </section>
+      <section className="">
+        <h2 className="mb-2">Message:</h2>
+        <textarea
+          onChange={e => setBody(e.target.value)}
+          placeholder="Your message"
+          className="w-full form-control"
+          rows="10"
+        />
+      </section>
+      <button type="submit" className="btn btn-black">
+        Send Email
+      </button>
+      {error && <div className="alert">{error.msg}</div>}
     </form>
   );
 };
 
-export const InviteUserForm = ({onSubmit, error, user}) => {
-  const [userProfile, setProfile] = useMergeState({
-    deficits: [],
-    aims: [],
-    email: null,
-    name: null
-  });
+export const InviteUserForm = ({onChange, error, user}) => {
+  const [userProfile, setProfile] = useMergeState(initUserFields);
   const {deficits, aims, email, name} = userProfile;
   const disabled = email === null;
 
-  const [modalOpen, setModalOpen] = useState(false);
+  useEffect(
+    () => {
+      console.log('effect');
+      onChange(userProfile);
+    },
+    [useDeepCompareMemoize(userProfile)]
+  );
 
   // onSubmit({...user, aims, deficits, name, email})
   return (
@@ -264,14 +406,6 @@ export const InviteUserForm = ({onSubmit, error, user}) => {
       />
       <div className="mt-auto">
         {error && <div className="alert mb-2">{error.msg}</div>}
-        <button
-          disabled={disabled}
-          type="submit"
-          className={`w-full mt-3 btn btn-black ${disabled &&
-            'disabled'}`}
-          onClick={() => onSubmit(userProfile)}>
-          Send Email Invitation
-        </button>
       </div>
     </form>
   );
@@ -296,7 +430,7 @@ export default function UserPanel(props) {
   const {
     className,
     selectedUserId,
-    onSelectUser,
+    selectUser,
     userRegErr,
     // registerUserToEnv,
     users,
@@ -319,8 +453,6 @@ export default function UserPanel(props) {
   const {username: title = 'All Users'} = selectedUser || {};
 
   const envUsers = users.filter(u => u.userEnvIds.includes(userEnvId));
-  console.log('all users', users);
-  console.log('selected user', users);
 
   const liClass = u =>
     `${baseLiClass} ${u.uid === selectedUserId && 'bg-grey'}`;
@@ -339,20 +471,12 @@ export default function UserPanel(props) {
           title="New User"
           style={{...modalDim}}
           onClose={() => toggleInviteUserModal(false)}>
-          <TabSwitcher>
-            <InviteUserForm
-              title="Invite User"
-              user={selectedUser || {}}
-              onSubmit={inviteUser}
-              error={userRegErr}
-            />
-            <SendInvitationEmail title="Send Invitation Email" />
-          </TabSwitcher>
+          <InviteUser onSubmit={inviteUser} userRegErr={userRegErr} />
         </ModalBody>
       </BlackModal>
 
       {selectedUser ? (
-        <UserPreview
+        <UserPreviewInfo
           user={selectedUser}
           style={{height: headerHeight}}
         />
@@ -363,7 +487,7 @@ export default function UserPanel(props) {
         <div className="flex mt-2 mb-2">
           <div
             className={`${baseLiClass} italic`}
-            onClick={() => onSelectUser(null)}>
+            onClick={() => selectUser(null)}>
             All Users
           </div>
           <button
@@ -380,7 +504,7 @@ export default function UserPanel(props) {
                 onClick={() => {
                   selUid === u.uid
                     ? toggleUserModal(!userModalOpen)
-                    : onSelectUser(u.uid);
+                    : selectUser(u.uid);
                 }}>
                 <span>
                   {u.email} {u.tmp && '(not registered)'}
@@ -396,10 +520,10 @@ export default function UserPanel(props) {
         {selectedUser && (
           <ModalBody
             style={{...modalDim}}
-            title={`User: ${selectedUser.username}`}
+            title={selectedUser.username}
             onClose={() => toggleUserModal(false)}>
             {selectedUser && (
-              <UserDetail
+              <EditUserInfo
                 {...props}
                 className="flex-grow"
                 user={selectedUser}

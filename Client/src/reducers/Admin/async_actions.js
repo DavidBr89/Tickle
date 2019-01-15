@@ -137,18 +137,16 @@ export function fetchUsers() {
 
 export function inviteUser(usrInfo) {
   const usr = {...usrInfo, uid: uuidv1(), tmp: true};
-  console.log('inviteUser', usrInfo);
   return function(dispatch) {
     getOneUserByEmail(usr.email).then(d => {
       if (d === null) {
-        // TODO add uid
         createTmpUser(usr).then(() => {
           dispatch(addUser({...usr}));
         });
       } else {
         dispatch(
           userRegistrationError({
-            code: 'User Registration',
+            type: 'User Registration',
             msg: 'User has been already registered'
           })
         );
