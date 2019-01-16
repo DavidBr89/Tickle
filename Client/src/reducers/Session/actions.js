@@ -1,3 +1,8 @@
+export const REMOVE_TOPIC = 'ADD_TOPIC';
+export function removeTopic(options) {
+  return {type: REMOVE_TOPIC, options};
+}
+
 export const AUTH_USER_SET = 'AUTH_USER_SET';
 export function setAuthUser(options) {
   return {type: AUTH_USER_SET, options};
@@ -12,7 +17,8 @@ export function setAuthUserInfo(options) {
   return {type: SET_AUTH_USER_INFO, options};
 }
 
-export const SUBMIT_USER_INFO_TO_DB_SUCCESS = 'SUBMIT_USER_INFO_TO_DB_SUCCESS';
+export const SUBMIT_USER_INFO_TO_DB_SUCCESS =
+  'SUBMIT_USER_INFO_TO_DB_SUCCESS';
 export function submitUserInfoToDBSuccess(options) {
   return {type: SUBMIT_USER_INFO_TO_DB_SUCCESS, options};
 }
@@ -36,6 +42,16 @@ export function setUserEnv(options) {
 export const SET_USERS = 'SET_USERS';
 export function setUsers(options) {
   return {type: SET_USERS, options};
+}
+
+export const RECEIVE_TOPICS = 'RECEIVE_TOPICS';
+export function receiveTopics(options) {
+  return {type: RECEIVE_TOPICS, options};
+}
+
+export const ADD_TOPIC = 'ADD_TOPIC';
+export function addTopic(options) {
+  return {type: ADD_TOPIC, options};
 }
 
 export const RECEIVE_USER_INFO = 'RECEIVE_USER_INFO';

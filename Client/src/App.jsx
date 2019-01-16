@@ -30,7 +30,7 @@ const cardTemplateId = 'temp';
 const geoOpts = {
   enableHighAccuracy: true,
   maximumAge: 3000,
-  timeout: 27000,
+  timeout: 27000
 };
 
 const geoError = err => console.log('err', err);
@@ -50,7 +50,7 @@ const geoError = err => console.log('err', err);
 const geoSuccess = pos => {
   const coords = {
     latitude: pos.coords.latitude,
-    longitude: pos.coords.longitude,
+    longitude: pos.coords.longitude
   };
 
   // Oude Arendonkse Baan, Oud-Turnhout 51.313476, 5.001513
@@ -66,7 +66,7 @@ navigator.geolocation.getCurrentPosition(
   pos => {
     const coords = {
       latitude: pos.coords.latitude,
-      longitude: pos.coords.longitude,
+      longitude: pos.coords.longitude
     };
 
     // Oude Arendonkse Baan, Oud-Turnhout 51.313476, 5.001513
@@ -75,7 +75,7 @@ navigator.geolocation.getCurrentPosition(
     store.dispatch(changeMapViewport(coords));
   },
   err => console.log('err', err),
-  geoOpts,
+  geoOpts
 );
 
 navigator.geolocation.watchPosition(geoSuccess, geoError, geoOpts);

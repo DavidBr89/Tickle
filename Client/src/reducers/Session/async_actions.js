@@ -1,37 +1,59 @@
 import uniqBy from 'lodash/uniqBy';
 
 import {auth} from 'Firebase';
-import DB, {
+import topicDbGen from 'Firebase/db/topic_db';
+
+import {removeFromStorage} from 'Firebase/db';
+
+import {
   addUserToEnv,
   deleteUserFromEnv,
   createTmpUser,
   deleteUser,
   deleteTmpUser,
-} from 'Firebase/db';
-
-import {
   addToStorage,
-  removeFromStorage,
   getUser,
   readTmpUser,
-  addUserToEnvSet,
-  removeTmpUser,
-  doCreateUser,
-} from 'Firebase/db';
+  doCreateUser
+} from 'Firebase/db/user_db';
 
 import {userFields} from 'Constants/userFields';
+
 import {
   setAuthUser,
   setAuthUserInfo,
   submitUserInfoToDBSuccess,
   errorSubmitUser,
   setUserEnv,
+  receiveTopics,
+  addTopic
 } from './actions';
 
+export function createTopic(topic, userEnv) {
+  return function(dispatch) {
+    const {doCreateTopic} = topicDbGen(userEnv);
+
+    return doCreateTopic(topic)
+      .then(() => {
+        dispatch(addTopic(topic));
+      })
+      .catch(err => console.log('err', err));
+  };
+}
+
+export function fetchTopics(userEnv) {
+  return function(dispatch) {
+    const {doReadTopics} = topicDbGen(userEnv);
+
+    return doReadTopics()
+      .then(topics => {
+        dispatch(receiveTopics(topics));
+      })
+      .catch(err => console.log('err', err));
+  };
+}
+
 export function fetchUserInfo() {
-  // Thunk middleware knows how to handle functions.
-  // It passes the dispatch method as an argument to the function,
-  // thus making it able to dispatch actions itself.
   return function(dispatch, getState) {
     const {authUser} = getState().Session;
     const {uid} = authUser;
@@ -75,45 +97,51 @@ export function signUp({user, password, img, userEnv}) {
           })
           .then(() =>
             Promise.all(
-              userEnvIds.map(userEnvId => addUserToEnv({uid, userEnvId})),
-            ),
+              userEnvIds.map(userEnvId =>
+                addUserToEnv({uid, userEnvId})
+              )
+            )
           );
       });
     };
 
-    return auth.doCreateUserWithEmailAndPassword(email, password).then(res => {
-      const {uid} = res.user;
+    return auth
+      .doCreateUserWithEmailAndPassword(email, password)
+      .then(res => {
+        const {uid} = res.user;
 
-      console.log('addToStorage', addToStorage);
+        console.log('addToStorage', addToStorage);
 
-      const path = `/images/usr/${uid}`;
-      if (img !== null) {
-        return addToStorage({
-          file: img.file,
-          path,
-        })
-          .then(imgUrl => {
-            const userAndImg = {...user, uid, photoURL: imgUrl};
-            createUser(userAndImg);
-            deleteTmpUser(email);
+        const path = `/images/usr/${uid}`;
+        if (img !== null) {
+          return addToStorage({
+            file: img.file,
+            path
           })
-          .catch(error => {
-            this.setState({error, loading: false});
+            .then(imgUrl => {
+              const userAndImg = {...user, uid, photoURL: imgUrl};
+              createUser(userAndImg);
+              deleteTmpUser(email);
+            })
+            .catch(error => {
+              this.setState({error, loading: false});
+            });
+        }
+        return createUser({...user, uid}).catch(e => {
+          console.log('err', e);
+          removeFromStorage(path);
+          res.user.delete();
+          readTmpUser(email).then(({userEnvIds}) => {
+            Promise.all(
+              userEnvIds.map(userEnvId =>
+                deleteUserFromEnv({uid, userEnvId})
+              )
+            );
           });
-      }
-      return createUser({...user, uid}).catch(e => {
-        console.log('err', e);
-        removeFromStorage(path);
-        res.user.delete();
-        readTmpUser(email).then(({userEnvIds}) => {
-          Promise.all(
-            userEnvIds.map(userEnvId => deleteUserFromEnv({uid, userEnvId})),
-          );
+          createTmpUser(email);
+          deleteUser(uid);
         });
-        createTmpUser(email);
-        deleteUser(uid);
       });
-    });
   };
 }
 
@@ -122,7 +150,7 @@ export const signIn = ({
   password,
   userEnvId,
   onSuccess = d => d,
-  onError = d => d,
+  onError = d => d
 }) => (dispatch, getState) =>
   auth.doSignInWithEmailAndPassword(email, password).then(resp => {
     const {user} = resp;
@@ -130,7 +158,9 @@ export const signIn = ({
 
     return getUser(uid)
       .then(usrInfo => {
-        dispatch(setAuthUserInfo(userFields({...usrInfo, envId: userEnvId})));
+        dispatch(
+          setAuthUserInfo(userFields({...usrInfo, envId: userEnvId}))
+        );
 
         // TODO: validation
         // TODO: error
@@ -140,8 +170,8 @@ export const signIn = ({
       .catch(err =>
         Promise.reject({
           code: 'User has not been found!',
-          message: 'User has not been found!',
-        }),
+          message: 'User has not been found!'
+        })
       );
   });
 // .catch(error => {
@@ -186,18 +216,18 @@ export function registerUserToEnv({envId, newEnv}) {
 }
 
 // /TODO: CHECK DAVID
-export function updateAuthUserInfo({userEnv, ...userProfile}) {
-  return function(dispatch) {
-    const db = DB(userEnv);
-    // dispatch(setAuthUserInfo(userFields(userProfile)));
-    return db
-      .doCreateUser(userProfile)
-      .then(usrInfo => {
-        dispatch(setAuthUserInfo(userFields(userProfile)));
-      })
-      .catch(err => console.log('err', err));
-  };
-}
+// export function updateAuthUserInfo({userEnv, ...userProfile}) {
+//   return function(dispatch) {
+//     const db = DB(userEnv);
+//     // dispatch(setAuthUserInfo(userFields(userProfile)));
+//     return db
+//       .doCreateUser(userProfile)
+//       .then(usrInfo => {
+//         dispatch(setAuthUserInfo(userFields(userProfile)));
+//       })
+//       .catch(err => console.log('err', err));
+//   };
+// }
 
 export function selectUserEnv(env) {
   return function(dispatch, getState) {

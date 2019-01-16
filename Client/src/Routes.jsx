@@ -161,9 +161,7 @@ const Routes = () => (
         exact
         path={`/:userEnv/${ADMIN.path}`}
         component={() => (
-          <DefaultLayout>
             <Admin />
-          </DefaultLayout>
         )}
       />
       <Route

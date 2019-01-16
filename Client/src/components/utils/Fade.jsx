@@ -36,7 +36,7 @@ export const Fade = ({in: inProp, className, index, children}) => (
   </div>
 );
 
-export const TabSwitcher = props => {
+export default function TabSwitcher(props) {
   const [visibleIndex, setVisibleIndex] = useState(0);
 
   return (
@@ -103,4 +103,3 @@ export const PureTabSwitcher = ({
   );
 };
 
-export default TabSwitcher;

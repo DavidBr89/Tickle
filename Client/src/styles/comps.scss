@@ -18,7 +18,7 @@
 
 
 .tag-label-helper {
-  @apply .py-1 .px-1 .font-bold .text-white .flex .items-center .justify-center .uppercase;
+  @apply .py-1 .px-1 .font-bold .flex .items-center .justify-center .uppercase;
 }
 
 .tag-label {
@@ -31,8 +31,7 @@
 
 
 .btn {
-  @apply
-  .text-lg .font-bold .p-2 .cursor-pointer ;
+  @apply .flex .flex-col .items-center .font-bold .p-2 .cursor-pointer;
 
   transition: border 0.2s ease-in-out;
 }
@@ -134,7 +133,7 @@
 
 
 .btn-black {
-  @apply .bg-grey-dark .text-white;
+  @apply .bg-black .text-white;
 }
 
 .btn-black:hover {

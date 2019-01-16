@@ -23,7 +23,6 @@ const mapStateToProps = state => ({
   ...state.Session,
   ...state.Cards,
   ...state.MapView,
-  ...state.Session.authUser,
   ...state.Admin
   // userEnvs: state.Session.authUser ? state.Session.authUser.userEnvs : [],
 });
@@ -40,14 +39,17 @@ const mapDispatchToProps = dispatch =>
   );
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
-  const {uid, tmpCard, mapSettings, userLocation} = stateProps;
   const {
     selectedUserId,
     users,
     envUserIds,
     collectibleCards,
     createdCards,
-    userEnvs
+    userEnvs,
+    uid,
+    tmpCard,
+    mapSettings,
+    userLocation
   } = stateProps;
 
   const {
@@ -81,18 +83,19 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const routeUserEnv = env => history.push(`/${env}/${ADMIN.path}`);
 
   const cardType = 'created';
-  const fetchCards = () => {
-    //TODO
-    return cardType === 'created'
+  const fetchCards = () =>
+    // TODO
+    cardType === 'created'
       ? fetchCreatedCards({userEnvId, uid: selectedUserId})
       : fetchCollectibleCards({userEnvId, uid: selectedUserId});
-  }
 
   const cards =
     cardType === 'created' ? createdCards : collectibleCards;
 
   const onCreateCard = () =>
     console.log('selectedUserId', selectedUserId);
+
+  console.log('topics', stateProps);
 
   return {
     ...stateProps,
@@ -110,10 +113,9 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     userEnvId,
     selectedUserEnvId: userEnvId,
     inviteUser: usr => {
-      //TODO
+      // TODO
       inviteUser({...usr, userEnvIds: [userEnvId]});
-    },
-    registerUserToEnv: uid => registerUserToEnv({userEnvId, uid})
+    }
   };
 };
 

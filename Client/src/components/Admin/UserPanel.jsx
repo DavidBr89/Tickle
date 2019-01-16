@@ -3,7 +3,6 @@ import MoreIcon from 'react-feather/dist/icons/more-horizontal';
 import ChevronsLeft from 'react-feather/dist/icons/chevrons-left';
 import ChevronsRight from 'react-feather/dist/icons/chevrons-right';
 import UserIcon from 'react-feather/dist/icons/user';
-import isEqual from 'lodash/isEqual';
 
 import uniq from 'lodash/uniq';
 import {SelectTag} from 'Components/utils/SelectField';
@@ -12,19 +11,8 @@ import AlertButton from 'Components/utils/AlertButton';
 import {initUserFields} from 'Constants/userFields';
 
 import TabSwitcher from 'Src/components/utils/Fade';
-
-function useDeepCompareMemoize(value) {
-  const getMemoized = React.useMemo(() => {
-    let memoized;
-    return current => {
-      if (!isEqual(current, memoized)) {
-        memoized = current;
-      }
-      return memoized;
-    };
-  }, []);
-  return getMemoized(value);
-}
+import useMergeState from 'Src/components/utils/useMergeState';
+import useDeepCompareMemoize from 'Src/components/utils/useDeepCompareMemoize';
 
 const summaryClass = 'mb-3';
 const baseLiClass =
@@ -32,22 +20,18 @@ const baseLiClass =
 
 const modalDim = {maxWidth: '40vw'};
 
+const tagClass = 'text-base mr-1 mb-1 p-1 text-white uppercase';
+
 const TagSet = ({values, className, placeholder}) => (
   <div className={`flex mt-1 flex-wrap ${className}`}>
     {values.length === 0 && (
-      <div className="tag-label bg-grey mr-1 mb-1">{placeholder}</div>
+      <div className={`${tagClass} bg-black`}>{placeholder}</div>
     )}
     {values.map(a => (
-      <div className="tag-label bg-black mr-1 mb-1">{a}</div>
+      <div className={`${tagClass} bg-black`}>{a}</div>
     ))}
   </div>
 );
-
-const useMergeState = initState => {
-  const [state, setState] = useState(initState);
-  const mergeState = newState => setState({...state, ...newState});
-  return [state, mergeState];
-};
 
 const InviteUser = ({onSubmit, userRegErr}) => {
   const [userProfile, setUserProfile] = useState(null);
@@ -129,13 +113,12 @@ export const UserPreviewInfo = ({user, className, style}) => {
   return (
     <div className={`${className} border flex p-1`} style={style}>
       <UserThumbnail
-        style={{maxWidth: 300}}
         user={user}
-        className="m-2"
+        className="m-2 flex-none h-1/3 w-1/3"
       />
-      <div className="flex flex-col ">
-        <div className="mt-2 flex flex-wrap">
-          <div className="m-1 flex-auto" style={{flex: 0.5}}>
+      <div className="flex flex-col">
+        <div className="mt-2 flex flex-col flex-wrap">
+          <div className="m-1 flex-auto">
             <label className="tex">Interests</label>
             <TagSet
               className=""
@@ -161,7 +144,7 @@ export const UserPreviewInfo = ({user, className, style}) => {
   );
 };
 
-export const UserThumbnail = ({user, className, style}) => {
+export const UserThumbnail = ({user = {}, className, style}) => {
   const {
     username,
     deficits = [],
@@ -179,15 +162,15 @@ export const UserThumbnail = ({user, className, style}) => {
   };
 
   return (
-    <div
-      className={`${className} flex-grow flex-col relative`}
-      style={photoStyle}>
+    <div style={photoStyle} className={`${className} relative`}>
       {photoURL ? (
         <img
-        className="absolute w-full h-full"
-        alt-text="user photo" src={photoURL} />
+          className="w-full h-full absolute"
+          alt-text="user photo"
+          src={photoURL}
+        />
       ) : (
-        <UserIcon className="absolute w-full h-full" />
+        <UserIcon className={`w-full h-full absolute ${className}`} />
       )}
     </div>
   );
@@ -216,7 +199,7 @@ export const EditUserInfo = ({
   return (
     <div className={`flex flex-col ${className} `} style={style}>
       <UserThumbnail
-        className="flex-shrink mb-2"
+        className="flex-shrink flex-grow mb-2"
         user={user}
         {...props}
       />
@@ -367,7 +350,6 @@ export const InviteUserForm = ({onChange, error, user}) => {
 
   useEffect(
     () => {
-      console.log('effect');
       onChange(userProfile);
     },
     [useDeepCompareMemoize(userProfile)]
@@ -378,9 +360,7 @@ export const InviteUserForm = ({onChange, error, user}) => {
     <form
       className="flex-grow flex flex-col"
       onSubmit={e => e.preventDefault()}>
-      <div className="flex-grow flex flex-col" style={{flexGrow: 0.6}}>
-        <UserIcon className="flex-grow w-auto h-auto" />
-      </div>
+      <UserThumbnail className="flex-grow" />
       <div className="flex flex-none mb-3">
         <input
           value={email}
@@ -477,6 +457,7 @@ export default function UserPanel(props) {
 
       {selectedUser ? (
         <UserPreviewInfo
+          className=""
           user={selectedUser}
           style={{height: headerHeight}}
         />
@@ -492,7 +473,7 @@ export default function UserPanel(props) {
           </div>
           <button
             onClick={() => toggleInviteUserModal(true)}
-            className="ml-1 btn border">
+            className="text-base ml-1 btn border">
             Invite User
           </button>
         </div>
@@ -519,7 +500,6 @@ export default function UserPanel(props) {
       <BlackModal visible={userModalOpen}>
         {selectedUser && (
           <ModalBody
-            style={{...modalDim}}
             title={selectedUser.username}
             onClose={() => toggleUserModal(false)}>
             {selectedUser && (

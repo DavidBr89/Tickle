@@ -61,7 +61,7 @@ export default class FileUpload extends Component {
         <label
           htmlFor="all-file-upload"
           style={{ width: '100%' }}
-          className="btn"
+          className="btn thick-border"
         >
           <div
             style={{

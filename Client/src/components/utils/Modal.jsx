@@ -13,7 +13,7 @@ import {connect} from 'react-redux';
 
 const reduxConnect = comp => {
   const mapStateToProps = state => ({
-    mobile: state.Screen.isSmartphone
+    topMargin: state.Screen.isSmartphone
   });
 
   const mergeProps = (stateProps, dispatchProps, ownProps) => ({
@@ -28,7 +28,7 @@ const reduxConnect = comp => {
 };
 
 export const BlackModal = reduxConnect(
-  ({visible, mobile, style, className, ...props}) =>
+  ({visible, topMargin, style, className, ...props}) =>
     ReactDOM.createPortal(
       <div
         className="fixed w-screen h-screen"
@@ -46,7 +46,7 @@ export const BlackModal = reduxConnect(
         <InlineModal
           className={className}
           visible={visible}
-          mobile={mobile}
+          topMargin={topMargin}
           style={style}
           {...props}
         />
@@ -55,7 +55,7 @@ export const BlackModal = reduxConnect(
     )
 );
 
-const BODY = document.querySelector('body');
+const BODY = document.querySelector('#modals');
 
 export const InlineModal = ({
   visible,
@@ -64,17 +64,17 @@ export const InlineModal = ({
   onClose,
   style,
   className,
-  mobile
+  topMargin
   // background,
 }) => (
   <div
-    className={`absolute w-full h-full ${className}`}
+    className={`absolute ${className}`}
     style={{
-      zIndex: 1000, // visible ? 1000 : -1000,
+      zIndex: visible ? 1000 : -1000,
       pointerEvents: !visible ? 'none' : null,
-      opacity: 1,
+      opacity: visible ? 1 : 0,
       left: 0,
-      top: visible ? 0 : '200%',
+      top: visible ? 0 : '200vh',
       right: 0,
       bottom: 0,
       transition: 'top 0.4s'
@@ -84,7 +84,7 @@ export const InlineModal = ({
       style={{
         maxWidth: 500,
         maxHeight: 800,
-        margin: `${!mobile ? '2.5rem' : ''} auto`,
+        margin: `${topMargin ? '2.5rem' : ''} auto`,
         ...style
       }}>
       {children}
@@ -96,11 +96,9 @@ InlineModal.defaultProps = {
   className: ''
 };
 
-export const BareModal = reduxConnect(props =>
+export const Modal = reduxConnect(props =>
   ReactDOM.createPortal(<InlineModal {...props} />, BODY)
 );
-
-export const Modal = BareModal;
 
 // TODO: fix padding bottom
 // TODO: access child state
@@ -126,7 +124,7 @@ export const ModalBody = ({
     }}>
     <div className="flex justify-between items-center p-4 flex-no-shrink">
       <h2 className="capitalize">{title}</h2>
-      <button className="btn" onClick={onClose}>
+      <button className="btn thick-border" onClick={onClose}>
         <X />
       </button>
     </div>

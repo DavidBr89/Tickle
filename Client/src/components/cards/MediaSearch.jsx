@@ -40,11 +40,11 @@ const formClass = 'form-control text-lg';
 const navIcons = [
   {
     key: WIKIPEDIA,
-    node: <AlignLeft size={30} />,
+    node: <AlignLeft size={30} />
   },
   {
     key: YOUTUBE,
-    node: <Youtube size={30} />,
+    node: <Youtube size={30} />
   },
   {
     key: GIPHY,
@@ -53,11 +53,11 @@ const navIcons = [
         style={{
           paddingLeft: '13px',
           paddingRight: '13px',
-          fontWeight: 'bold',
+          fontWeight: 'bold'
         }}>
         GIF
       </small>
-    ),
+    )
   },
 
   {
@@ -65,16 +65,20 @@ const navIcons = [
     node: (
       <div
         style={{
-          fontweight: 'bold',
+          fontweight: 'bold'
         }}>
         Upload
       </div>
-    ),
+    )
   },
   {
     key: OVERVIEW,
-    node: <span style={{fontWeight: 'bold', fontSize: 'large'}}>Overview</span>,
-  },
+    node: (
+      <span style={{fontWeight: 'bold', fontSize: 'large'}}>
+        Overview
+      </span>
+    )
+  }
 ];
 
 const userContentUploadPath = id => `media/${id}`;
@@ -97,8 +101,8 @@ const UploadUserContent = ({
           title: m.name,
           thumbnail: m.url,
           source: USER_CONTENT,
-          date: new Date(),
-        })),
+          date: new Date()
+        }))
       );
     }}
   />
@@ -108,7 +112,7 @@ UploadUserContent.propTypes = {
   onChange: PropTypes.func.isRequired,
   addToStorage: PropTypes.func.isRequired,
   removeFromStorage: PropTypes.func.isRequired,
-  className: PropTypes.string,
+  className: PropTypes.string
 };
 
 UploadUserContent.defaultProps = {className: ''};
@@ -121,7 +125,7 @@ const truncateStyle = {
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
-  width: '100%',
+  width: '100%'
 };
 
 const flickrUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${
@@ -184,7 +188,7 @@ const searchWikipedia = q =>
         url: d.fullurl,
         id: d.fullurl,
         source: WIKIPEDIA,
-        type: TEXT,
+        type: TEXT
       }));
 
       return new Promise(resolve => resolve(results));
@@ -198,9 +202,9 @@ const searchYoutube = (q = '') =>
         q,
         type: 'video',
         maxResults: 20,
-        order: 'viewCount',
+        order: 'viewCount'
         // publishedAfter: '2015-01-01T00:00:00Z'
-      }),
+      })
     )
       .then(res => res.json())
       .then(({items}) => {
@@ -213,10 +217,10 @@ const searchYoutube = (q = '') =>
           descr: d.snippet.description,
           thumbnail: d.snippet.thumbnails.default.url,
           source: YOUTUBE,
-          type: VIDEO,
+          type: VIDEO
         }));
         resolve(res);
-      }),
+      })
   );
 
 const searchGiphy = (q = 'pokemon') =>
@@ -231,10 +235,10 @@ const searchGiphy = (q = 'pokemon') =>
           thumbnail: d.images.downsized_still.url,
           gifurl: d.url,
           source: GIPHY,
-          type: IMG,
-        })),
-      ),
-    ),
+          type: IMG
+        }))
+      )
+    )
   );
 
 const pinterestUrl =
@@ -263,7 +267,7 @@ Iframe.propTypes = {
   url: PropTypes.string,
   onClick: PropTypes.func,
   edit: PropTypes.bool,
-  style: PropTypes.object,
+  style: PropTypes.object
 };
 
 Iframe.defaultProps = {
@@ -271,11 +275,13 @@ Iframe.defaultProps = {
   url: '',
   onClick: d => d,
   style: {},
-  edit: false,
+  edit: false
 };
 
 const Article = ({url, title, descr, onClick}) => (
-  <div className="relative overflow-hidden w-full h-full" onClick={onClick}>
+  <div
+    className="relative overflow-hidden w-full h-full"
+    onClick={onClick}>
     <h2>
       <NewTabLink href={url}>{title}</NewTabLink>
     </h2>
@@ -288,14 +294,14 @@ Article.propTypes = {
   title: PropTypes.string,
   url: PropTypes.string,
   descr: PropTypes.string,
-  onClick: PropTypes.func,
+  onClick: PropTypes.func
 };
 
 Article.defaultProps = {
   title: '',
   url: '',
   descr: '',
-  onClick: d => d,
+  onClick: d => d
 };
 
 const CellDetail = ({thumbnail, title, descr, url, onClick}) => (
@@ -322,18 +328,18 @@ CellDetail.propTypes = {
   className: PropTypes.string,
   children: PropTypes.any,
   uiColor: PropTypes.string,
-  focusColor: PropTypes.string,
+  focusColor: PropTypes.string
 };
 
 CellDetail.defaultProps = {
   className: '',
   children: null,
   uiColor: 'grey',
-  focusColor: 'black',
+  focusColor: 'black'
 };
 const CellWrapper = ({btn, className, focusColor, style, ...props}) => (
   <div
-    className="flex relative p-3 mb-3 border border-2 w-full h-full"
+    className="flex p-3 mb-3 border border-2"
     style={{...style, cursor: 'pointer'}}>
     <CellDetail {...props} /> <div className="ml-3">{btn}</div>
   </div>
@@ -345,7 +351,7 @@ CellWrapper.propTypes = {
   style: PropTypes.object,
   selected: PropTypes.bool,
   uiColor: PropTypes.string,
-  focusColor: PropTypes.string,
+  focusColor: PropTypes.string
 };
 
 CellWrapper.defaultProps = {
@@ -359,7 +365,7 @@ CellWrapper.defaultProps = {
   style: {},
   className: '',
   uiColor: 'grey',
-  focusColor: 'black',
+  focusColor: 'black'
 };
 
 // const CardThemeHoc = ({ children, ...props }) => (
@@ -372,14 +378,14 @@ class UrlMedia extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
-    onChange: PropTypes.func,
+    onChange: PropTypes.func
   };
 
   state = {
     url: null,
     descr: null,
     title: null,
-    data: [...this.props.preSelected],
+    data: [...this.props.preSelected]
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -403,7 +409,7 @@ class UrlMedia extends Component {
       descr,
       source: URL,
       type: TEXT,
-      date: new Date(),
+      date: new Date()
     };
 
     // TODO: check later
@@ -411,13 +417,13 @@ class UrlMedia extends Component {
       data: uniqBy([urlItem, ...oldData], 'id'),
       title: '',
       url: '',
-      descr: '',
+      descr: ''
     }));
   };
 
   removeItem = id => {
     this.setState(({data: oldData}) => ({
-      data: oldData.filter(d => d.id !== id),
+      data: oldData.filter(d => d.id !== id)
     }));
   };
 
@@ -445,7 +451,9 @@ class UrlMedia extends Component {
                 className={formClass}
                 placeholder="Description"
                 value={descr}
-                onChange={event => this.setState({descr: event.target.value})}
+                onChange={event =>
+                  this.setState({descr: event.target.value})
+                }
               />
             </div>
             <div className="form-group">
@@ -454,7 +462,9 @@ class UrlMedia extends Component {
                 placeholder="Url"
                 className={formClass}
                 value={url}
-                onChange={event => this.setState({url: event.target.value})}
+                onChange={event =>
+                  this.setState({url: event.target.value})
+                }
               />
             </div>
             <button type="submit" className="btn">
@@ -464,36 +474,39 @@ class UrlMedia extends Component {
         </div>
         {data.length > 0 ? (
           <div style={{width: '100%', height: '100%'}}>
-            <ScrollList data={data} maxHeight="90%">
-              {(d, isSelected) => (
+            {data.map(d => (
+              <div
+                className="mb-3 p-3 border"
+                style={{
+                  height: 150,
+                  // width: '100%',
+                  cursor: 'pointer'
+                }}>
                 <div
-                  className={`mb-3 p-3 border ${isSelected && 'shadow'}`}
-                  selected={isSelected}
                   style={{
-                    height: 150,
-                    // width: '100%',
-                    cursor: 'pointer',
+                    display: 'flex',
+                    justifyContent: 'space-between'
                   }}>
-                  <div
+                  <h3
                     style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
+                      overflow: 'hidden',
+                      whiteSpace: 'no-wrap',
+                      textOverflow: 'ellipsis'
                     }}>
-                    <h3
-                      style={{
-                        overflow: 'hidden',
-                        whiteSpace: 'no-wrap',
-                        textOverflow: 'ellipsis',
-                      }}>
-                      {d.title}
-                    </h3>
-                    <MediaBtn selected onClick={() => this.removeItem(d.id)} />
+                    {d.title}
+                  </h3>
+                  <div>
+                    <MediaBtn
+                      selected
+                      onClick={() => this.removeItem(d.id)}
+                    />
                   </div>
-                  <small>{d.url}</small>
-                  <div>{d.descr}</div>
                 </div>
-              )}
-            </ScrollList>
+                <small>{d.url}</small>
+                <div>{d.descr}</div>
+              </div>
+            ))}
+            )}
           </div>
         ) : (
           <div className="m-3 text-muted">
@@ -508,7 +521,7 @@ class UrlMedia extends Component {
 class MediaSearch extends Component {
   static propTypes = {
     onChange: PropTypes.func,
-    selectedMedia: PropTypes.arrayOf(PropTypes.object),
+    selectedMedia: PropTypes.arrayOf(PropTypes.object)
   };
 
   static defaultProps = {onChange: () => null, selectedMedia: []};
@@ -516,7 +529,12 @@ class MediaSearch extends Component {
   state = {selected: WIKIPEDIA};
 
   activeTab = sel => {
-    const {media, addToStorage, removeFromStorage, onChange} = this.props;
+    const {
+      media,
+      addToStorage,
+      removeFromStorage,
+      onChange
+    } = this.props;
 
     const selectedMedia = media.value || [];
     const changeMedia = src => newMedia => {
@@ -526,11 +544,15 @@ class MediaSearch extends Component {
       return onChange(sortByDate([...splitMedia, ...newMedia]));
     };
 
-    const selArticles = selectedMedia.filter(m => m.source === WIKIPEDIA);
+    const selArticles = selectedMedia.filter(
+      m => m.source === WIKIPEDIA
+    );
     const selVideos = selectedMedia.filter(m => m.source === YOUTUBE);
     const selGIFs = selectedMedia.filter(m => m.source === GIPHY);
     const selURLs = selectedMedia.filter(m => m.source === URL);
-    const selUserContent = selectedMedia.filter(m => m.source === USER_CONTENT);
+    const selUserContent = selectedMedia.filter(
+      m => m.source === USER_CONTENT
+    );
     // const selPhotos = selectedMedia.filter(m => m.source === FLICKR);
 
     switch (sel) {
@@ -635,7 +657,8 @@ class MediaSearch extends Component {
   render() {
     const {selected} = this.state;
 
-    const btnClass = sel => (sel === selected ? 'btn btn-black' : 'btn');
+    const btnClass = sel =>
+      sel === selected ? 'btn btn-black' : 'btn';
 
     const navBtn = ({key, node}) => (
       <button
@@ -658,25 +681,23 @@ class MediaSearch extends Component {
   }
 }
 
-function MediaBtn({selected, onClick}) {
+function MediaBtn({selected, onClick, className}) {
   return (
     <div
-      className="btn bg-light-grey"
+      className={`btn bg-light-grey ${className}`}
       style={{
-        color: selected ? 'tomato' : 'black',
+        color: selected ? 'tomato' : 'black'
       }}
       onClick={onClick}>
-      <span>
-        {selected ? (
-          <Trash2 fill="whitesmoke" size={40} />
-        ) : (
-          <PlusSquare
-            className="border-4 border-black"
-            fill="whitesmoke"
-            size={40}
-          />
-        )}
-      </span>
+      {selected ? (
+        <Trash2 fill="whitesmoke" size={40} />
+      ) : (
+        <PlusSquare
+          className="border-4 border-black"
+          fill="whitesmoke"
+          size={40}
+        />
+      )}
     </div>
   );
 }
@@ -690,7 +711,7 @@ class MetaSearch extends Component {
     defaultQuery: PropTypes.string,
     source: PropTypes.string,
     type: PropTypes.string,
-    style: PropTypes.object,
+    style: PropTypes.object
   };
 
   static defaultProps = {
@@ -700,7 +721,7 @@ class MetaSearch extends Component {
     onAdd: d => d,
     selected: null,
     preSelected: [],
-    style: {},
+    style: {}
   };
 
   constructor(props) {
@@ -713,12 +734,14 @@ class MetaSearch extends Component {
 
   state = {
     data: [], // this.props.search === null ? this.props.defaultData : []
-    selectedIds: this.props.preSelected.map(d => d.id),
+    selectedIds: this.props.preSelected.map(d => d.id)
   };
 
   componentDidMount() {
     const {searchFn, defaultQuery} = this.props;
-    searchFn(defaultQuery).then(data => this.mounted && this.setState({data}));
+    searchFn(defaultQuery).then(
+      data => this.mounted && this.setState({data})
+    );
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -756,26 +779,19 @@ class MetaSearch extends Component {
 
   addItem = id => {
     this.setState(oldState => ({
-      selectedIds: [...oldState.selectedIds, id],
+      selectedIds: [...oldState.selectedIds, id]
     }));
   };
 
   removeItem = id => {
     this.setState(oldState => ({
-      selectedIds: oldState.selectedIds.filter(d => d !== id),
+      selectedIds: oldState.selectedIds.filter(d => d !== id)
     }));
   };
 
   render() {
     const {data, selectedIds} = this.state;
     const {defaultQuery, style} = this.props;
-    // let GoogleAuth;
-    // const SCOPE = 'https://www.googleapis.com/auth/youtube.force-ssl';
-    // Load the API's client and auth2 modules.
-    // Call the initClient function after the modules load.
-    // }
-
-    // TODO: fix view height
     return (
       <div className="flex flex-col" role="tabpanel">
         <div style={{width: '100%'}}>
@@ -785,41 +801,30 @@ class MetaSearch extends Component {
             placeholder={`Search...for instance ${defaultQuery}`}
             onChange={evt => this.onSearch(evt.target.value)}
           />
-        </div>
-        <ScrollList data={data} maxHeight="100%" className="flex flex-col p-1">
-          {(d, isSelected) => (
-            <CellWrapper
-              className="mb-3"
-              selected={isSelected}
-              style={{
-                height: '40vh',
-                maxHeight: 300,
-                // marginLeft: '5%',
-                // paddingRight: '10%'
-              }}
-              {...d}
-              btn={
+          {data.map(d => (
+            <div className="border p-2 ml-3 flex mb-3">
+              <CellDetail {...this.props} {...d} />
+              <div>
                 <MediaBtn
                   selected={selectedIds.includes(d.id)}
                   onClick={e => {
                     e.stopPropagation();
-                    // if (isSelected) {
                     selectedIds.includes(d.id)
                       ? this.removeItem(d.id)
                       : this.addItem(d.id);
-                    // }
                   }}
                 />
-              }
-            />
-          )}
-        </ScrollList>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
 }
 
 // const duckSearch = q => new Promise(resolve =>
+//
 //     $.ajax({
 //       url: `https://api.duckduckgo.com/?q=${q}&pretty=1&no_html=0&no_redirect=0&skip_disambig=1&format=json&t=tickle`,
 //       jsonp: true
@@ -833,7 +838,7 @@ class MediaPreview extends Component {
 
   static defaultProps = {
     data: [],
-    edit: false,
+    edit: false
   };
 
   render() {
@@ -841,7 +846,9 @@ class MediaPreview extends Component {
 
     return (
       <div style={{width: '100%'}}>
-        {data.length === 0 && <h3>{'No media added to this Card!'} </h3>}
+        {data.length === 0 && (
+          <h3>{'No media added to this Card!'} </h3>
+        )}
         <ScrollList data={data}>
           {(d, selected) => (
             <CellWrapper {...d} selected={selected === d.url} />
@@ -857,7 +864,7 @@ class MediaOverview extends Component {
 
   static defaultProps = {
     data: [],
-    edit: false,
+    edit: false
   };
 
   state = {...this.props};
@@ -874,11 +881,11 @@ class MediaOverview extends Component {
     const {removeFromStorage} = this.props;
     if (m.source === USER_CONTENT) {
       removeFromStorage(m.id).then(() =>
-        console.log('removedMediaItem Success', m.id),
+        console.log('removedMediaItem Success', m.id)
       );
     }
     this.setState(oldState => ({
-      data: oldState.data.filter(d => d.id !== m.id),
+      data: oldState.data.filter(d => d.id !== m.id)
     }));
   };
 
@@ -889,29 +896,20 @@ class MediaOverview extends Component {
     // TODO: fix view height
 
     return (
-      <div
-        className={className}
-        style={{
-          justifyContent: data.length === 0 ? 'center' : null,
-          alignItems: 'center',
-        }}>
+      <div className={`${className} flex flex-col`}>
         {data.length === 0 && (
           <h3 className="text-muted">
             {'No media added to this Card!'}
           </h3>
         )}
-        <ScrollList data={data} maxHeight="100%">
-          {(d, selected) => (
-            <CellWrapper
-              {...d}
-              selected={selected === d.url}
-              btn={
-                edit && <MediaBtn selected onClick={() => this.removeItem(d)} />
-              }
-              style={{height: 300}}
-            />
-          )}
-        </ScrollList>
+        {data.map(d => (
+          <div className="flex-none flex p-3 mb-3 border border-2">
+            <CellDetail {...this.props} {...d} />
+            <div className="ml-3">
+              <MediaBtn selected onClick={() => this.removeItem(d)} />
+            </div>
+          </div>
+        ))}
       </div>
     );
   }

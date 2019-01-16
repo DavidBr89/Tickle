@@ -18,10 +18,10 @@ export const isCardSeen = (
   c = {
     activitySubmission: {
       feedback: {accomplished: false},
-      completed: false,
+      completed: false
     },
-    seen: false,
-  },
+    seen: false
+  }
 ) =>
   isActivityStarted(c) ||
   isActivityStarted(c) ||
@@ -52,7 +52,7 @@ export const activityFilterMap = (() => {
     [ACTIVITY_OPEN]: isActivityOpen,
     [NO_ACTIVITY_FILTER]: () => true,
     [CARD_CREATED]: hasCardCreated,
-    [CARD_SEEN]: isCardSeen,
+    [CARD_SEEN]: isCardSeen
   };
   return obj;
 })();
@@ -64,7 +64,6 @@ export const MEDIA = 'media';
 export const TIMERANGE = 'timerange';
 export const ACTIVITY = 'activity';
 // export const TIMESTAMP = 'timestamp';
-
 
 const DEFAULT_TAG = 'general';
 export const fallbackTagValues = tags =>
@@ -83,7 +82,7 @@ export const initCard = {
   timestamp: {key: null, value: null},
   activity: {key: null, value: null},
   points: {key: null, value: null},
-  activitySubmission: null,
+  activitySubmission: null
 };
 
 // const extractValues = ({
@@ -107,8 +106,10 @@ export const initCard = {
 //   activitySubmission: activitySubmission.value,
 // });
 
+
 // TODO: where is activity submission?
 const defaultObjVal = () => ({key: null, value: null});
+
 export const extractCardFields = obj => {
   const {
     id = 'string',
@@ -123,7 +124,7 @@ export const extractCardFields = obj => {
     timestamp = defaultObjVal(),
     activity = defaultObjVal(),
     points = defaultObjVal(),
-    activitySubmission = null,
+    activitySubmission = null
   } = obj;
 
   return {
@@ -140,7 +141,7 @@ export const extractCardFields = obj => {
     description,
     points,
     // allChallengeSubmissions,
-    activitySubmission,
+    activitySubmission
   };
 };
 
@@ -156,6 +157,6 @@ export const getNumInitFields = card => {
     isInit('title'),
     isInit('tags'),
     isInit('media'),
-    isInit('description'),
+    isInit('description')
   ].filter(d => d).length;
 };

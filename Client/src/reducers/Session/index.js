@@ -1,16 +1,15 @@
-import {DB} from 'Firebase';
-
 import {
   AUTH_USER_SET,
   SET_AUTH_USER_INFO,
   CLEAR_AUTH_USER,
   ERROR_SUBMIT_USER,
   RECEIVE_USER_INFO,
-  SELECT_CARD_ID,
   EXTEND_USER_INFO,
   SUBMIT_USER_INFO_TO_DB_SUCCESS,
   SET_USER_ENV,
   SET_TAG_TREE_DATA,
+  ADD_TOPIC,
+  REMOVE_TOPIC
   // SET_DEVICE
 } from './actions';
 
@@ -80,12 +79,23 @@ const INITIAL_STATE = {
   // submittedCards: [],
   device: {smallScreen: false, iOs: false},
   selectedUserEnvId: 'staging',
-  tagTreeData: [],
-  globalInterests: []
+  // tagTreeData: [],
+  globalInterests: [],
+  topics: []
 };
 
 function sessionReducer(state = INITIAL_STATE, action) {
   switch (action.type) {
+    case REMOVE_TOPIC: {
+      const {topics} = state;
+      const topicId = action.options;
+      return {...state, topics: topics.filter(d => d.id !== topicId)};
+    }
+    case ADD_TOPIC: {
+      const {topics} = state;
+      const topic = action.options;
+      return {...state, topics: [...topics, topic]};
+    }
     case SET_TAG_TREE_DATA: {
       const tagTreeData = action.options;
       return {...state, tagTreeData};
@@ -120,7 +130,11 @@ function sessionReducer(state = INITIAL_STATE, action) {
     }
     case SUBMIT_USER_INFO_TO_DB_SUCCESS: {
       // const { options } = action;
-      return {...state, userInfoExtended: false, errorUpdateUserMsg: null};
+      return {
+        ...state,
+        userInfoExtended: false,
+        errorUpdateUserMsg: null
+      };
     }
     default:
       return state;

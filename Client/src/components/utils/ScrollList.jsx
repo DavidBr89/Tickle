@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-import { ScrollView, ScrollElement } from 'Utils/ScrollView';
+import {ScrollView, ScrollElement} from 'Utils/ScrollView';
 
 class ScrollList extends Component {
   static propTypes = {
@@ -23,17 +23,14 @@ class ScrollList extends Component {
     itemStyle: {}
   };
 
-  state = { selected: null };
+  state = {selected: null};
 
   componentDidUpdate() {
-    const { selected } = this.state;
+    const {selected} = this.state;
 
-    this.scrollTo(selected);
+    console.log('this scroll', this._scroller);
+    this._scroller.scrollTo(selected);
   }
-
-  scrollTo = name => {
-    this._scroller.scrollTo(name);
-  };
 
   render() {
     const {
@@ -44,7 +41,7 @@ class ScrollList extends Component {
       style,
       itemStyle
     } = this.props;
-    const { selected } = this.state;
+    const {selected} = this.state;
     // TODO: change url;
     return (
       <div
@@ -55,20 +52,19 @@ class ScrollList extends Component {
           maxHeight,
           overflowY: 'scroll',
           ...style
-        }}
-      >
+        }}>
         <ScrollView ref={scroller => (this._scroller = scroller)}>
-          <div className={className} style={{ height: '100%', ...style }}>
+          <div className={className} style={{height: '100%', ...style}}>
             {data.map(d => (
               <ScrollElement name={d.url}>
                 <div
                   style={itemStyle}
                   onClick={() =>
                     this.setState(oldState => ({
-                      selected: oldState.selected !== d.url ? d.url : null
+                      selected:
+                        oldState.selected !== d.url ? d.url : null
                     }))
-                  }
-                >
+                  }>
                   {children(d, d.url === selected)}
                 </div>
               </ScrollElement>

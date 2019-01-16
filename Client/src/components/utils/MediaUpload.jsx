@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { X } from 'react-feather';
+import X from 'react-feather/dist/icons/x';
 // import { uniqBy } from 'lodash';
 import FileUpload from 'Utils/FileUpload';
 // import { ModalBody } from 'Utils/Modal';
-import ScrollList from 'Utils/ScrollList';
+// import ScrollList from 'Utils/ScrollList';
 
 import uuidv1 from 'uuid/v1';
 

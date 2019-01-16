@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import MediaChallenge from 'Components/Challenges/MediaChallenge';
 import {TagInput, PreviewTags} from 'Utils/Tag';
-import {BareModal, ModalBody} from 'Utils/Modal';
+import {InlineModal, ModalBody} from 'Utils/Modal';
 
 import {MediaOverview} from 'Components/cards/MediaSearch';
 
@@ -29,7 +29,7 @@ class ReadCardFront extends Component {
     tagColorScale: PropTypes.func,
     challenge: PropTypes.object,
     bookmarkable: PropTypes.boolean,
-    challengeComp: PropTypes.element,
+    challengeComp: PropTypes.element
   };
 
   static defaultProps = {
@@ -48,12 +48,12 @@ class ReadCardFront extends Component {
     tagColorScale: () => 'green',
     bookmarkable: false,
     onRemoveChallengeSubmission: d => d,
-    challengeComp: MediaChallenge,
+    challengeComp: MediaChallenge
   };
 
   state = {
     dialogKey: null,
-    modalVisible: false,
+    modalVisible: false
   };
 
   closeModal = () => this.setState({modalVisible: false});
@@ -89,7 +89,7 @@ class ReadCardFront extends Component {
       media,
       img,
       activitySubmission,
-      challengeComp,
+      challengeComp
     } = this.props;
 
     const CloseBtn = () => (
@@ -137,7 +137,7 @@ class ReadCardFront extends Component {
       case 'Challenge':
         return React.cloneElement(challengeComp, {
           onClose: this.closeModal,
-          activitySubmission,
+          activitySubmission
         });
       default:
         return <div>error</div>;
@@ -154,12 +154,12 @@ class ReadCardFront extends Component {
 
     return (
       <>
-        <BareModal
+        <InlineModal
           visible={modalVisible}
           title={dialogKey}
           onClose={() => this.setState({modalVisible: false})}>
           {this.modalReadContent(dialogKey)}
-        </BareModal>
+        </InlineModal>
 
         <CardFront
           {...this.props}
@@ -170,7 +170,7 @@ class ReadCardFront extends Component {
           onMediaClick={() => setDialogKey('Media')}
           bottomControls={
             <button
-              className="btn btn-black"
+              className="btn bg-black text-2xl text-white"
               onClick={() => setDialogKey('Challenge')}>
               {this.btnText()}
             </button>

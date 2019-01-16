@@ -1,7 +1,7 @@
 import React, {Component, PureComponent} from 'react';
 import PropTypes from 'prop-types';
 
-import {isEqual} from 'lodash';
+import isEqual from 'lodash/isEqual';
 
 import ChallengeAuthor from 'Src/components/ChallengeAuthor';
 
@@ -12,8 +12,9 @@ import {
   MEDIA,
   TAGS,
   extractCardFields,
-  initCard,
+  initCard
 } from 'Constants/cardFields.ts';
+
 import {MediaSearch} from '../MediaSearch';
 
 import CardFrontTemplate from './CardFrontTemplate';
@@ -23,12 +24,12 @@ import EditPhoto from './EditPhoto';
 class NumberInput extends Component {
   static propTypes = {
     className: PropTypes.string,
-    onChange: PropTypes.func,
+    onChange: PropTypes.func
   };
 
   static defaultProps = {
     className: '',
-    onChange: d => d,
+    onChange: d => d
   };
 
   state = {value: 0, error: null, ...this.state};
@@ -56,8 +57,11 @@ class NumberInput extends Component {
         onClose={() => onClose()}
         footer={
           <button
-            className="btn"
-            style={{opacity: disabled ? 0.5 : 1, transition: 'opacity 200ms'}}
+            className="btn thick-border"
+            style={{
+              opacity: disabled ? 0.5 : 1,
+              transition: 'opacity 200ms'
+            }}
             disabled={disabled}
             onClick={() => onUpdate(value)}>
             Update
@@ -91,13 +95,13 @@ const defaultProps = {
   creator: 'Jan',
   radius: 500,
   media: [],
-  comments: [],
+  comments: []
 };
 
 class TextAreaModal extends Component {
   static propTypes = {
     children: PropTypes.node,
-    className: PropTypes.string,
+    className: PropTypes.string
   };
 
   state = {...this.props};
@@ -111,7 +115,10 @@ class TextAreaModal extends Component {
         {...this.props}
         onClose={() => onUpdate(text)}
         footer={
-          <button type="button" className="btn" onClick={() => onUpdate(text)}>
+          <button
+            type="button"
+            className="btn"
+            onClick={() => onUpdate(text)}>
             Update
           </button>
         }>
@@ -131,7 +138,7 @@ class TitleModalBody extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
-    onUpdate: PropTypes.func,
+    onUpdate: PropTypes.func
   };
 
   state = {value: null, key: null, ...this.props};
@@ -156,7 +163,7 @@ class TitleModalBody extends Component {
           className="capitalize form-control text-2xl w-full text-xl"
           onChange={e =>
             this.setState({
-              value: e.target.value || null,
+              value: e.target.value || null
             })
           }
           value={value}
@@ -209,7 +216,10 @@ function writeModalContent() {
   const {title, tags, img, description, media, points} = data;
 
   const closeBtn = (
-    <button type="button" className="btn" onClick={this.onCloseModal}>
+    <button
+      type="button"
+      className="btn thick-border"
+      onClick={this.onCloseModal}>
       Close
     </button>
   );
@@ -239,7 +249,7 @@ function writeModalContent() {
             style={{width: '100%'}}
             onChange={newTags =>
               this.updateField('tags', {
-                value: newTags.length > 0 ? newTags : null,
+                value: newTags.length > 0 ? newTags : null
               })
             }
             editable
@@ -269,7 +279,9 @@ function writeModalContent() {
           {...modalProps}
           text={description.value}
           onUpdate={newDescr => {
-            this.updateFieldAndCloseModal('description', {value: newDescr});
+            this.updateFieldAndCloseModal('description', {
+              value: newDescr
+            });
           }}
         />
       );
@@ -324,7 +336,7 @@ class EditCardFront extends PureComponent {
     // ...ReadCardFront.propTypes,
     template: PropTypes.bool,
     onAttrUpdate: PropTypes.func,
-    onSubmit: PropTypes.func,
+    onSubmit: PropTypes.func
     // allChallenges: PropTypes.array
   };
 
@@ -333,14 +345,14 @@ class EditCardFront extends PureComponent {
     onAttrUpdate: d => d,
     onSubmit: d => d,
     allChallenges: [],
-    template: false,
+    template: false
   };
 
   state = {
     data: {
-      ...extractCardFields({...this.props}),
+      ...extractCardFields({...this.props})
     },
-    dialog: null,
+    dialog: null
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -382,9 +394,9 @@ class EditCardFront extends PureComponent {
     this.setState({
       data: {
         ...data,
-        [field]: {...oldVal, ...val},
+        [field]: {...oldVal, ...val}
       },
-      dialog: null,
+      dialog: null
     });
   }
 
@@ -399,7 +411,7 @@ class EditCardFront extends PureComponent {
       onSubmit,
       template,
       smallScreen,
-      onCreate,
+      onCreate
     } = this.props;
 
     const {data, dialog} = this.state;
@@ -413,7 +425,7 @@ class EditCardFront extends PureComponent {
       media,
       children,
       activity,
-      points,
+      points
     } = data;
 
     return (
@@ -428,35 +440,37 @@ class EditCardFront extends PureComponent {
           }}
           onClose={onClose}
           onFlip={onFlip}
-          onFieldLabelChange={(attr, val) => this.updateField(attr, val)}
+          onFieldLabelChange={(attr, val) =>
+            this.updateField(attr, val)
+          }
           onTagsClick={() => {
             this.setState({
-              dialog: {title: 'Tags', data: tags},
+              dialog: {title: 'Tags', data: tags}
             });
           }}
           onTitleClick={() =>
             this.setState({
-              dialog: {title: 'Title', data: title},
+              dialog: {title: 'Title', data: title}
             })
           }
           onImgClick={() => {
             this.setState({
-              dialog: {title: 'Photo', data: tags},
+              dialog: {title: 'Photo', data: tags}
             });
           }}
           onDescriptionClick={() => {
             this.setState({
-              dialog: {title: 'Description', data: description},
+              dialog: {title: 'Description', data: description}
             });
           }}
           onMediaClick={() =>
             this.setState({
-              dialog: {title: 'Media', data: media},
+              dialog: {title: 'Media', data: media}
             })
           }
           onChallengeClick={() =>
             this.setState({
-              dialog: {title: 'activity', data: activity},
+              dialog: {title: 'activity', data: activity}
             })
           }
           bottomControls={
@@ -471,7 +485,7 @@ class EditCardFront extends PureComponent {
           }
           onPointsClick={() =>
             this.setState({
-              dialog: {title: 'Points', data: points},
+              dialog: {title: 'Points', data: points}
             })
           }
           edit

@@ -15,7 +15,9 @@ const TagField = ({values, className, style, onClick}) => {
       className={`flex ${className} items-center flex-wrap`}
       style={{...style}}>
       {values.map(t => (
-        <div className="tag-label bg-black text-xl mr-1 mt-1 mb-1">{t}</div>
+        <div className="tag-label bg-black text-white text-xl mr-1 mt-1 mb-1">
+          {t}
+        </div>
       ))}
     </div>
   );
@@ -25,10 +27,16 @@ TagField.defaultProps = {
   values: [],
   className: '',
   style: {},
-  onClick: d => d,
+  onClick: d => d
 };
 
-export const TitleField = ({onClick, edit, children, className, value}) => {
+export const TitleField = ({
+  onClick,
+  edit,
+  children,
+  className,
+  value
+}) => {
   if (!value) return null;
   return (
     <div className={`flex ${className}`} onClick={onClick}>
@@ -59,7 +67,7 @@ class CardFront extends Component {
     challenge: PropTypes.object,
     bookmarkable: PropTypes.boolean,
     onPointsClick: PropTypes.func,
-    bottomControls: PropTypes.node,
+    bottomControls: PropTypes.node
   };
 
   static defaultProps = {
@@ -81,7 +89,7 @@ class CardFront extends Component {
     bookmarkable: false,
     onRemoveChallengeSubmission: d => d,
     onPointsClick: d => d,
-    bottomControls: <React.Fragment />,
+    bottomControls: <React.Fragment />
   };
 
   render() {
@@ -109,7 +117,7 @@ class CardFront extends Component {
       template,
       onPointsClick,
       bottomControls,
-      className,
+      className
     } = this.props;
 
     // console.log('media', media, title);
@@ -121,12 +129,10 @@ class CardFront extends Component {
         className={`flex flex-col w-full h-full ${className}`}>
         <ImgOverlay
           onClick={onImgClick}
-          src={img ? img.url : null}
+          src={img ? img.value.url : null}
           style={{
-            // maxHeight: '35%',
             flex: '0 1 50%',
-            // flex: `0 1 ${100 - numInitFields * 10}%`,
-            cursor: 'pointer',
+            cursor: 'pointer'
           }}>
           <div className="absolute z-10 w-full h-full flex justify-end items-end">
             <MediaField
@@ -159,7 +165,9 @@ class CardFront extends Component {
         </div>
 
         <CardControls onFlip={onFlip} onClose={onClose}>
-          <div className="flex ml-auto mr-auto mb-2">{bottomControls}</div>
+          <div className="flex ml-auto mr-auto mb-2">
+            {bottomControls}
+          </div>
         </CardControls>
       </div>
     );
