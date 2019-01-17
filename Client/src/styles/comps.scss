@@ -2,7 +2,7 @@
   @apply .mb-2 .text-lg .text-grey-darkest
 }
 
-.thick-border {
+.border-btn {
   @apply .border-2 .border-black;
 }
 
@@ -17,22 +17,17 @@
 }
 
 
-.tag-label-helper {
+.tag-label {
   @apply .py-1 .px-1 .font-bold .flex .items-center .justify-center .uppercase;
 }
 
-.tag-label {
-  @apply .tag-label-helper;
-}
 
-.tag-label-grey {
-  @apply .tag-label-helper .bg-grey;
+.interact {
+  @apply .font-bold .cursor-pointer .uppercase;
 }
-
 
 .btn {
-  @apply .flex .flex-col .items-center .font-bold .p-2 .cursor-pointer;
-
+  @apply .flex .flex-col .items-center .p-2 .interact;
   transition: border 0.2s ease-in-out;
 }
 

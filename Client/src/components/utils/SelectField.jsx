@@ -12,7 +12,7 @@ const SelectField = ({
   ChildComp,
   selectedComp,
   accId,
-  placeholder,
+  placeholder
 }) => {
   const [visible, setVisible] = useState(false);
   const [selectedId, setSelected] = useState(null);
@@ -37,13 +37,13 @@ const SelectField = ({
           // opacity: visible && values.length > 0 ? 1 : 0,
           transition: 'opacity 200ms',
           pointerEvents: !visible && 'none',
-          display: !visible && 'none',
+          display: !visible && 'none'
         }}>
         <ul className="mt-2 list-reset p-2 bg-white border border-black shadow">
           {values.map(x => (
             <li
-              className={`${optionClassName} ${accId(x) === selectedId &&
-                'bg-grey'} cursor-pointer `}
+              className={`${optionClassName} ${accId(x) ===
+                selectedId && 'bg-grey'} cursor-pointer `}
               onMouseDown={e => e.preventDefault()}
               onClick={() => {
                 setSelected(accId(x));
@@ -65,10 +65,16 @@ SelectField.defaultProps = {
   placeholder: 'No selection',
   selectedId: null,
   accId: d => d.id,
-  onChange: d => d,
+  onChange: d => d
 };
 
-const InputComp = ({className, placeholder, forwardRef, value, onChange}) => (
+const InputComp = ({
+  className,
+  placeholder,
+  forwardRef,
+  value,
+  onChange
+}) => (
   <input
     className={className}
     ref={forwardRef}
@@ -97,14 +103,14 @@ export const SelectInput = ({
     () => {
       onInputChange(inputVal);
     },
-    [inputVal],
+    [inputVal]
   );
 
   useEffect(
     () => {
       if (id !== null) onIdChange(id);
     },
-    [id],
+    [id]
   );
 
   return (
@@ -137,13 +143,15 @@ SelectInput.defaultProps = {
   ChildComp: () => <></>,
   accId: d => d.id,
   accInputVal: d => d.id,
-  values: [],
+  values: []
 };
 
 const FilterInput = ({...props}) => {
   const {values, accId, onChange} = props;
   const [inputVal, setInputVal] = useState('');
-  const filteredValues = values.filter(d => accId(d).includes(inputVal));
+  const filteredValues = values.filter(d =>
+    accId(d).includes(inputVal)
+  );
 
   return (
     <SelectInput
@@ -166,7 +174,7 @@ export const SelectTag = ({
   btnContent,
   onChange,
   selectedClassName,
-  style,
+  style
 }) => {
   const [inputVal, setInputVal] = useState(null);
   const [key, resetKey] = useState(uuidv1());
@@ -185,7 +193,6 @@ export const SelectTag = ({
       <button
         className="ml-2 bg-white btn btn-shadow"
         onClick={() => {
-          // console.log('SelectTag INPUT', inputVal);
           onChange(inputVal);
           resetKey(uuidv1());
         }}>
@@ -200,7 +207,7 @@ SelectTag.defaultProps = {
   accId: d => d.id,
   accInputVal: d => d.id,
   placeholder: 'Enter',
-  btnContent: 'Add',
+  btnContent: 'Add'
 };
 
 export default SelectField;

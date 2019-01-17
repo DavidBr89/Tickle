@@ -81,7 +81,7 @@ export default class PhotoUpload extends Component {
         )}
         <label
           htmlFor="file-upload"
-          className={`flex-no-shrink btn btn-shadow mb-4 ${btnClassName}`}
+          className={`flex-no-shrink btn btn-shadow mt-3 ${btnClassName}`}
           style={{
             width: '100%',
             display: null,
@@ -92,7 +92,7 @@ export default class PhotoUpload extends Component {
           {imgName ? `Edit: ${imgName}` : title}
         </label>
         <input
-          className="mt-3 form-control truncate-text"
+          className="form-control truncate-text"
           id="file-upload"
           type="file"
           accept="image/*"

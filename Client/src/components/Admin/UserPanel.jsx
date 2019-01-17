@@ -10,7 +10,7 @@ import {BlackModal, ModalBody} from 'Components/utils/Modal';
 import AlertButton from 'Components/utils/AlertButton';
 import {initUserFields} from 'Constants/userFields';
 
-import TabSwitcher from 'Src/components/utils/Fade';
+import TabSwitcher from 'Src/components/utils/TabSwitcher';
 import useMergeState from 'Src/components/utils/useMergeState';
 import useDeepCompareMemoize from 'Src/components/utils/useDeepCompareMemoize';
 
@@ -34,12 +34,13 @@ const TagSet = ({values, className, placeholder}) => (
 );
 
 const InviteUser = ({onSubmit, userRegErr}) => {
-  const [userProfile, setUserProfile] = useState(null);
+  const [userProfile, setUserProfile] = useState({...initUserFields});
 
   const [visibleIndex, setVisibleIndex] = useState(0);
 
   const BtnHelper = ({
     text,
+    className,
     iconLeft,
     iconRight,
     disabled,
@@ -50,10 +51,12 @@ const InviteUser = ({onSubmit, userRegErr}) => {
       type="button"
       onClick={onClick}
       className={`w-full btn thick-border ${disabled &&
-        'disabled'} w-full flex justify-center items-center`}>
-      {iconLeft && <div style={{height: 30}}>{iconLeft}</div>}
-      <div>{text}</div>
-      {iconRight && <div style={{height: 30}}>{iconRight}</div>}
+        'disabled'} w-full ${className}`}>
+      <div className="flex justify-center items-center">
+        {iconLeft && <div style={{height: 30}}>{iconLeft}</div>}
+        <div>{text}</div>
+        {iconRight && <div style={{height: 30}}>{iconRight}</div>}
+      </div>
     </button>
   );
 
@@ -61,40 +64,55 @@ const InviteUser = ({onSubmit, userRegErr}) => {
 
   return (
     <TabSwitcher {...{visibleIndex, setVisibleIndex}}>
-      {[
-        {
-          id: 'inviteUser',
-          content: (
-            <InviteUserForm
-              title="Invite User"
-              onChange={prf => setUserProfile(prf)}
-            />
-          ),
-          acc: (
-            <BtnHelper
-              text="User Profile"
-              iconLeft={<ChevronsLeft className="h-full" />}
-            />
-          )
-        },
-        {
-          id: 'sendEmail',
-          content: (
-            <SendInvitationEmail
-              userProfile={userProfile}
-              error={userRegErr}
-              onSubmit={msg => onSubmit({...userProfile, msg})}
-            />
-          ),
-          acc: (
-            <BtnHelper
-              disabled={disabled}
-              text="Send Invitation Email"
-              iconRight={<ChevronsRight className="h-full" />}
-            />
-          )
-        }
-      ]}
+      <>
+        <InviteUserForm
+          user={userProfile}
+          title="Invite User"
+          onChange={prf => setUserProfile(prf)}
+        />
+        <BtnHelper
+          onClick={() => setVisibleIndex(1)}
+          disabled={disabled}
+          text="Enter learning Profile"
+          iconRight={<ChevronsRight className="h-full" />}
+        />
+      </>
+      <>
+        <UserProfileUpdate
+          user={userProfile}
+          onDeficitsChange={newDeficits =>
+            setUserProfile({deficits: newDeficits})
+          }
+          onAimsChange={newAims => setUserProfile({aims: newAims})}
+        />
+        <div className="mt-auto flex">
+          <BtnHelper
+            className="mr-2"
+            onClick={() => setVisibleIndex(0)}
+            disabled={disabled}
+            text="Enter Email"
+            iconLeft={<ChevronsLeft className="h-full" />}
+          />
+          <BtnHelper
+            onClick={() => setVisibleIndex(2)}
+            disabled={disabled}
+            text="Send invitation email"
+            iconRight={<ChevronsRight className="h-full" />}
+          />
+        </div>
+      </>
+      <>
+        <SendInvitationEmail
+          userProfile={userProfile}
+          error={userRegErr}
+          onSubmit={msg => onSubmit({...userProfile, msg})}
+        />
+        <BtnHelper
+          onClick={() => setVisibleIndex(1)}
+          text="User Profile"
+          iconLeft={<ChevronsLeft className="h-full" />}
+        />
+      </>
     </TabSwitcher>
   );
 };
@@ -377,13 +395,6 @@ export const InviteUserForm = ({onChange, error, user}) => {
           placeholder="First and last name"
         />
       </div>
-      <UserProfileUpdate
-        user={userProfile}
-        onDeficitsChange={newDeficits =>
-          setProfile({deficits: newDeficits})
-        }
-        onAimsChange={newAims => setProfile({aims: newAims})}
-      />
       <div className="mt-auto">
         {error && <div className="alert mb-2">{error.msg}</div>}
       </div>
