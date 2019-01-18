@@ -8,7 +8,6 @@
 
 .form-control {
   @apply .border .border-black .border-2 .bg-white .py-2 .px-3 .text-grey-darkest;
-
 }
 
 
@@ -27,27 +26,19 @@
 }
 
 .btn {
-  @apply .flex .flex-col .items-center .p-2 .interact;
+  @apply .flex .flex-col .justify-center .items-center .p-2 .interact;
   transition: border 0.2s ease-in-out;
 }
-
 
 .btn-shadow {
   @apply .shadow .border-2 .border-black
 }
 
 
-// .btn-black {
-//   @apply .bg-grey-dark .text-white .text-xl;
-// }
-
 .btn-white {
   @apply .bg-white .text-xl;
 }
 
-// .btn-border-black {
-//   @apply .border-2 .border-black
-// }
 
 .header-black {
   @apply .py-2 .px-2 .bg-black .font-bold .text-white;
@@ -111,17 +102,6 @@
 
 
 
-// .sub-link:hover {
-//   @apply .bg-grey-dark .text-white;
-// }
-
-// .nav-link:hover, .sub-link:hover {
-//   @apply .bg-grey-dark;
-//   a {
-//     @apply .text-white;
-//   }
-// }
-
 .tag-btn {
   @apply .font-bold .py-2 .px-2 .border-2 .bg-grey-light;
 }
@@ -155,6 +135,3 @@
     text-overflow: ellipsis;
 }
 
-// .list-item.active {
-//   @apply .bg-grey-dark;
-// }

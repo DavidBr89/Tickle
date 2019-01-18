@@ -14,15 +14,17 @@ const InnerBtn = ({
     type={type}
     className={`border-btn shadow ${className}`}
     {...props}>
-    <div className="interact flex justify-center items-center">
+    <div className="h-full interact flex justify-center items-center">
       {left && (
-        <div className="mr-auto p-1 h-full bg-black">
+        <div className="flex flex-col items-center mr-auto p-1 h-full bg-black">
           <ChevronLeft color="white" />
         </div>
       )}
       <span className={!left ? 'ml-auto' : 'mr-auto'}>{children}</span>
       {!left && (
-        <div className="ml-auto p-1 h-full bg-black">
+        <div
+          className="
+          flex flex-col justify-center ml-auto p-1 h-full bg-black">
           <ChevronRight color="white" />
         </div>
       )}

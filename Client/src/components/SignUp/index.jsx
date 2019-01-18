@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {Link, withRouter} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
 import uniq from 'lodash/uniq';
-// import styled from 'styled-components';
+import styled from 'styled-components';
 
 import {compose} from 'recompose';
 import {connect} from 'react-redux';
@@ -15,6 +15,7 @@ import PhotoUpload from 'Src/components/utils/PhotoUpload';
 import {signUp} from 'Src/reducers/Session/async_actions';
 import {SelectTag} from 'Src/components/utils/SelectField';
 import {PrevBtn, NextBtn} from 'Src/components/utils/PrevNextBtn';
+import styledComp from 'Src/components/utils/styledComp';
 
 import DefaultLayout from 'Src/components/DefaultLayout';
 import TabSwitcher from 'Src/components/utils/TabSwitcher';
@@ -70,16 +71,40 @@ const INITIAL_STATE = {
   passwordOne: '',
   passwordTwo: '',
   error: null,
-  img: {url: null },
+  img: {url: null},
   interests: [],
   loading: false
 };
+
+// 'form-control flex-grow mb-3 text-2xl'
+const StyledInput = styledComp({
+  element: 'input',
+  className: 'form-control flex-grow mb-3 text-2xl'
+});
+
+const FormGroup = styledComp({
+  element: 'div',
+  className: 'flex flex-col flex-wrap mb-3 flex-no-shrink'
+});
+
+const prevNextClass = 'text-xl p-1';
+const StyledPrevBtn = styledComp({
+  element: PrevBtn,
+  className: prevNextClass
+});
+
+const StyledNextBtn = styledComp({
+  element: NextBtn,
+  className: prevNextClass
+});
 
 const SignUpForm = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [visibleTabIndex, setVisibleTabIndex] = useState(0);
-  const [userProfileState, setUserProfileState] = useState(INITIAL_STATE);
+  const [userProfileState, setUserProfileState] = useMergeState(
+    INITIAL_STATE
+  );
 
   const {history, admin, signUp, userEnv, className} = props;
 
@@ -118,7 +143,7 @@ const SignUpForm = props => {
       password: passwordOne
     })
       .then(() => {
-        setUserProfileState(() => ({...INITIAL_STATE}));
+        // setUserProfileState(() => ({...INITIAL_STATE}));
         history.push(`/${userEnv}/${routes.GEO_VIEW.path}`);
       })
       .catch(newError => {
@@ -134,51 +159,36 @@ const SignUpForm = props => {
     passwordOne === '' ||
     email === '' ||
     username === '';
-  // img === null;
-  const StyledInput = props => (
-    <input className="form-control flex-grow mb-3" {...props} />
-  );
 
-  const FormGroup = props => (
-    <div
-      className="flex flex-col flex-wrap mb-3 flex-no-shrink"
-      {...props}
-    />
-  );
-
+  console.log('userProfileState', userProfileState);
   return (
-    <div>
-      <div
-        className="form-group flex flex-col"
-        style={{flex: 0.5, minHeight: 300}}>
-        <PhotoUpload
-          className="flex-grow flex flex-col"
-          imgUrl={img.url}
-          onChange={newImg => {
-            setUserProfileState({img: newImg});
-          }}
-        />
-      </div>
+    <form onSubmit={onSubmit} className={`${className} flex flex-col`}>
+      <PhotoUpload
+        className="flex-grow mb-2"
+        imgUrl={img.url}
+        onChange={newImg => {
+          setUserProfileState({img: newImg});
+        }}
+      />
       <TabSwitcher
         visibleIndex={visibleTabIndex}
-        className={`${className} flex flex-col`}
-        onSubmit={onSubmit}>
+        className="flex-no-shrink flex flex-col">
         <FormGroup>
-          <input
-            className="flex-grow form-control mr-1 mb-3"
+          <StyledInput
             value={fullname || ''}
             onChange={event => setUserProfileState(event.target.value)}
             type="text"
             placeholder="First Name"
           />
           <StyledInput
-            className="flex-grow form-control mr-1 mb-3"
             value={fullname || ''}
             onChange={event => setUserProfileState(event.target.value)}
             type="text"
             placeholder="Last name"
           />
-          <NextBtn onClick={goNextIndex}>Enter Email</NextBtn>
+          <StyledNextBtn onClick={goNextIndex}>
+            Enter Email
+          </StyledNextBtn>
         </FormGroup>
         <FormGroup>
           <StyledInput
@@ -198,19 +208,21 @@ const SignUpForm = props => {
             placeholder="Username"
           />
           <div className="w-full flex">
-            <PrevBtn className="flex-grow mr-2" onClick={goPrevIndex}>
+            <StyledPrevBtn
+              className="flex-grow mr-2"
+              onClick={goPrevIndex}>
               Enter Name
-            </PrevBtn>
-            <NextBtn className="flex-grow" onClick={goNextIndex}>
+            </StyledPrevBtn>
+            <StyledNextBtn className="flex-grow" onClick={goNextIndex}>
               Enter Interests
-            </NextBtn>
+            </StyledNextBtn>
           </div>
         </FormGroup>
 
         <FormGroup>
           <SelectTag
             placeholder="Select Interests"
-            inputClassName="flex-grow p-2 border-2 border-black"
+            inputClassName="flex-grow p-2 border-2 border-black text-xl"
             className="flex-grow"
             idAcc={d => d.id}
             onChange={tag =>
@@ -222,7 +234,7 @@ const SignUpForm = props => {
           />
           <div className="flex mt-2 mb-3">
             {interests.length === 0 && (
-              <div className="tag-label bg-grey text-2xl text-white mb-1 mt-1">
+              <div className="tag-label bg-grey p-2 text-2xl text-white mb-2 mt-1">
                 No Interests
               </div>
             )}
@@ -233,12 +245,14 @@ const SignUpForm = props => {
             ))}
           </div>
           <div className="flex">
-            <PrevBtn className="flex-grow mr-2" onClick={goPrevIndex}>
+            <StyledPrevBtn
+              className="flex-grow mr-2"
+              onClick={goPrevIndex}>
               Enter Email
-            </PrevBtn>
-            <NextBtn className="flex-grow" onClick={goNextIndex}>
+            </StyledPrevBtn>
+            <StyledNextBtn className="flex-grow" onClick={goNextIndex}>
               Enter Password
-            </NextBtn>
+            </StyledNextBtn>
           </div>
         </FormGroup>
         <FormGroup>
@@ -259,15 +273,15 @@ const SignUpForm = props => {
             placeholder="Confirm Password"
           />
           <div className="flex ">
-            <PrevBtn
+            <StyledPrevBtn
               className="mr-2"
               style={{flexGrow: 0.3}}
               onClick={goPrevIndex}>
               Enter Interests
-            </PrevBtn>
+            </StyledPrevBtn>
             <button
               style={{flexGrow: 0.7}}
-              className="flex-grow btn btn-shadow bg-white mr-2"
+              className="flex-grow btn border-btn text-xl"
               disabled={isInvalid}
               type="submit">
               Sign Up
@@ -283,7 +297,7 @@ const SignUpForm = props => {
           Loading...
         </div>
       )}
-    </div>
+    </form>
   );
 };
 

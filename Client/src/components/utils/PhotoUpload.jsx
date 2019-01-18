@@ -64,24 +64,29 @@ export default class PhotoUpload extends Component {
     } = this.props;
 
     return (
-      <Fragment>
-        {imgUrl ? (
-          <img
-            className={className}
-            style={{...imgStyle, objectFit: 'cover'}}
-            src={imgUrl}
-            alt="test"
-          />
-        ) : (
-          <div
-            className={`flex flex-col justify-center items-center h-full text-4xl border border-black font-bold text-muted ${className}`}
-            style={style}>
+      <div className={`${className} flex flex-col`} style={style}>
+        <div
+          className="flex-grow flex flex-col justify-center items-center text-4xl border border-black font-bold text-muted "
+          style={style}>
+          {imgUrl ? (
+              <div
+                className="flex-grow w-full"
+                style={{
+                  ...imgStyle,
+                  background: `url(${imgUrl}) `,
+                  backgroundSize: 'contain',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'center'
+                }}
+                alt="test"
+              />
+          ) : (
             <div className="m-auto">No Image</div>
-          </div>
-        )}
+          )}
+        </div>
         <label
           htmlFor="file-upload"
-          className={`flex-no-shrink btn btn-shadow mt-3 ${btnClassName}`}
+          className={`flex-no-shrink btn btn-shadow text-xl mt-3 ${btnClassName}`}
           style={{
             width: '100%',
             display: null,
@@ -136,7 +141,7 @@ export default class PhotoUpload extends Component {
               });
           }}
         />
-      </Fragment>
+      </div>
     );
   }
 }

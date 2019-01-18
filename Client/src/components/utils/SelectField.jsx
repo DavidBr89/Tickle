@@ -196,7 +196,7 @@ export const SelectTag = ({
           onChange(inputVal);
           resetKey(uuidv1());
         }}>
-        {btnContent}
+        <div>{btnContent}</div>
       </button>
     </div>
   );
