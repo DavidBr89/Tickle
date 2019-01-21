@@ -2,19 +2,27 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from './Flipper.scss';
 
-const Flipper = ({flipped, front, back, frontClassName, backClassName}) => (
-  <div className={`${cx.flipContainer} ${flipped && cx.flip}`}>
+const Flipper = ({
+  flipped,
+  front,
+  back,
+  className,
+  frontClassName,
+  backClassName
+}) => (
+  <div
+    className={`${cx.flipContainer} ${flipped &&
+      cx.flip} ${className}`}>
     <div className={`${cx.flipper} ${flipped && cx.flip}`}>
       <div
         className={`${cx.front} ${frontClassName}`}
-        style={{pointerEvents: flipped ? 'none' : null}}
-      >
+        style={{pointerEvents: flipped ? 'none' : null}}>
         {front}
       </div>
       <div
         className={`${cx.back} ${backClassName}`}
         style={{
-          pointerEvents: !flipped ? 'none' : null,
+          pointerEvents: !flipped ? 'none' : null
         }}>
         {back}
       </div>

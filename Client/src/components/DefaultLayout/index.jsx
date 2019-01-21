@@ -16,13 +16,13 @@ class NavBar extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
-    ui: PropTypes.node,
+    ui: PropTypes.node
   };
 
   static defaultProps = {
     children: <div>no content</div>,
     className: '',
-    ui: <React.Fragment />,
+    ui: <React.Fragment />
   };
 
   // state = {
@@ -32,7 +32,9 @@ class NavBar extends Component {
   render() {
     const {style, open, children, onToggle, ui, className} = this.props;
     return (
-      <div className={`relative z-50 w-full ${className}`} style={{...style}}>
+      <div
+        className={`relative z-50 w-full ${className}`}
+        style={{...style}}>
         <div
           className="navbar flex items-center relative m-2 "
           style={{minHeight: 48}}>
@@ -51,14 +53,14 @@ class NavBar extends Component {
             width: '80vw',
             maxWidth: 250,
             transition: 'transform 200ms',
-            transform: `translateX( ${open ? 0 : -153}% )`,
+            transform: `translateX( ${open ? 0 : -153}% )`
           }}>
           <div
             className="p-3"
             style={{
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'center',
+              justifyContent: 'center'
             }}>
             {children}
           </div>
@@ -71,7 +73,7 @@ class NavBar extends Component {
 class DefaultLayout extends Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
-    activePath: PropTypes.string,
+    activePath: PropTypes.string
   };
 
   constructor(props) {
@@ -84,7 +86,7 @@ class DefaultLayout extends Component {
 
   handleClick = () => {
     this.setState(prevState => ({
-      open: !prevState.open,
+      open: !prevState.open
     }));
   };
 
@@ -92,18 +94,26 @@ class DefaultLayout extends Component {
     const {screenResize} = this.props;
     const android = /(android)/i.test(navigator.userAgent);
     const iOS =
-      !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+      !!navigator.platform &&
+      /iPad|iPhone|iPod/.test(navigator.platform);
 
     screenResize({
       width: this.cont.offsetWidth,
       height: this.cont.offsetHeight,
       android,
-      iOS,
+      iOS
     });
   }
 
   render() {
-    const {children, activePath, userEnv, menu, className, style} = this.props;
+    const {
+      children,
+      activePath,
+      userEnv,
+      menu,
+      className,
+      style
+    } = this.props;
     const {open} = this.state;
 
     // style={{ height: isAndroid ? '100vh' : '100vh' }}
@@ -112,14 +122,16 @@ class DefaultLayout extends Component {
         id="content-container"
         ref={c => (this.cont = c)}
         style={style}
-        className={className}>
+      >
         <div style={{display: 'flex'}}>
           <NavBar
             ui={menu}
             open={open}
             style={{position: 'absolute'}}
             onToggle={this.handleClick}>
-            <div className="text-xl font-bold uppercase mb-2">{userEnv}</div>
+            <div className="text-xl font-bold uppercase mb-2">
+              {userEnv}
+            </div>
             <RouteNavigation>
               {({name}) => (
                 <div
@@ -140,25 +152,25 @@ class DefaultLayout extends Component {
 
 const mapStateToProps = state => ({
   ...state.Screen,
-  userEnv: state.Session.selectedUserEnvId,
+  userEnv: state.Session.selectedUserEnvId
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      screenResize,
+      screenResize
     },
-    dispatch,
+    dispatch
   );
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...stateProps,
   ...dispatchProps,
-  ...ownProps,
+  ...ownProps
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-  mergeProps,
+  mergeProps
 )(DefaultLayout);

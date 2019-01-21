@@ -69,22 +69,6 @@ const DEFAULT_TAG = 'general';
 export const fallbackTagValues = tags =>
   tags.value !== null ? tags.value : [DEFAULT_TAG];
 
-export const initCard = {
-  // id,
-  // uid,
-  img: {key: null, value: null},
-  loc: {latitude: 50.85146, longitude: 4.315483},
-  timerange: {key: null, value: null}, // { start: null, end: null },
-  title: {key: null, value: null},
-  tags: {key: null, value: null},
-  description: {key: null, value: null},
-  media: {key: null, value: null},
-  timestamp: {key: null, value: null},
-  activity: {key: null, value: null},
-  points: {key: null, value: null},
-  activitySubmission: null
-};
-
 // const extractValues = ({
 //   timerange, // { start: null, end: null },
 //   title,
@@ -105,7 +89,6 @@ export const initCard = {
 //   points: points.value,
 //   activitySubmission: activitySubmission.value,
 // });
-
 
 // TODO: where is activity submission?
 const defaultObjVal = () => ({key: null, value: null});
@@ -144,6 +127,8 @@ export const extractCardFields = obj => {
     activitySubmission
   };
 };
+
+export const initCardFields = extractCardFields({});
 
 export const isFieldInitialized = ({card, attr}) => {
   const field = extractCardFields(card)[attr];

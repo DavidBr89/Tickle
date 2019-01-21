@@ -1,8 +1,8 @@
-import { union, difference, uniq } from 'lodash';
+import {union, difference, uniq} from 'lodash';
 
-import { TEMPLATE_ID } from 'Constants/cardTemplate';
+import {TEMPLATE_ID} from 'Constants/cardTemplate';
 
-import { CHALLENGE_NOT_SUBMITTED } from 'Constants/cardFields.ts';
+import {CHALLENGE_NOT_SUBMITTED} from 'Constants/cardFields.ts';
 import {
   SET_DATA_VIEW,
   TOGGLE_AUTH_ENV,
@@ -12,6 +12,7 @@ import {
   REMOVE_CARD_FILTER,
   FILTER_CARDS,
   CONCEAL_CARD_STACK,
+  EXTEND_CARD_STACK,
   FILTER_BY_CHALLENGE_STATE,
   FLIP_CARD
   // ADD_CARD_FILTER,
@@ -23,6 +24,7 @@ const INITIAL_STATE = {
   // dataView: 'topic',
   // authEnv: false,
   cardStackBottom: false,
+  cardStackExtended: false,
   // selectedCardId: null,
   extCard: null,
   filterSet: [],
@@ -33,7 +35,7 @@ const INITIAL_STATE = {
 export default function dataViewReducer(state = INITIAL_STATE, action) {
   switch (action.type) {
     case SET_DATA_VIEW: {
-      return { ...state, dataView: action.options };
+      return {...state, dataView: action.options};
     }
     case SELECT_CARD: {
       const selectedCardId = action.options;
@@ -47,11 +49,11 @@ export default function dataViewReducer(state = INITIAL_STATE, action) {
       const extCardId = action.options;
       // console.log('extCardId', extCardId);
       // TODO: update
-      return { ...state, extCardId };
+      return {...state, extCardId};
     }
 
     case ADD_CARD_FILTER: {
-      const { filterSet } = state;
+      const {filterSet} = state;
       const tag = action.options;
       const newFs = uniq([...filterSet, tag]);
       return {
@@ -62,7 +64,7 @@ export default function dataViewReducer(state = INITIAL_STATE, action) {
     }
 
     case REMOVE_CARD_FILTER: {
-      const { filterSet } = state;
+      const {filterSet} = state;
       const tag = action.options;
 
       return {
@@ -82,16 +84,20 @@ export default function dataViewReducer(state = INITIAL_STATE, action) {
     }
     case FLIP_CARD: {
       const cardFlipped = action.options;
-      return { ...state, cardFlipped };
+      return {...state, cardFlipped};
+    }
+
+    case EXTEND_CARD_STACK: {
+      return {...state, cardStackExtended: !state.cardStackExtended};
     }
 
     case CONCEAL_CARD_STACK: {
-      return { ...state, cardStackBottom: !state.cardStackBottom };
+      return {...state, cardStackBottom: !state.cardStackBottom};
     }
 
     case FILTER_BY_CHALLENGE_STATE: {
       const challengeStateFilter = action.options;
-      return { ...state, challengeStateFilter };
+      return {...state, challengeStateFilter};
     }
     // case ADD_CARD_FILTER: {
     //   const { filterSet } = state;

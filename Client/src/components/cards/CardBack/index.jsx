@@ -20,17 +20,20 @@ const BackField = ({
   icon,
   children,
   disabled,
-  extended,
+  extended
 }) => (
   <div
-    className={`overflow-hidden relative flex-col-wrapper ${className}`}
+    className={`overflow-hidden relative flex flex-col ${className}`}
     style={{
-      ...style,
+      ...style
     }}>
     <div
       className="mb-1 z-10 absolute flex-grow flex justify-end items-center"
       style={{right: 0}}>
-      <button type="button" className="btn bg-white m-2" onClick={onClick}>
+      <button
+        type="button"
+        className="btn bg-white m-2"
+        onClick={onClick}>
         {extended ? <Minimize /> : <Maximize />}
       </button>
     </div>
@@ -45,7 +48,7 @@ BackField.defaultProps = {
   className: '',
   children: null,
   disabled: false,
-  extended: false,
+  extended: false
 };
 
 class CardBack extends Component {
@@ -55,20 +58,20 @@ class CardBack extends Component {
       username: PropTypes.string,
       email: PropTypes.string,
       uid: PropTypes.string,
-      usrImgUrl: PropTypes.oneOf(null, PropTypes.string),
+      usrImgUrl: PropTypes.oneOf(null, PropTypes.string)
     }),
     onFlip: PropTypes.func.isRequired,
     linkedCards: PropTypes.array,
     cardSets: PropTypes.array,
     loc: PropTypes.shape({
       latitude: PropTypes.number,
-      longitude: PropTypes.number,
+      longitude: PropTypes.number
     }),
     uiColor: PropTypes.string,
     edit: PropTypes.bool,
     mapRadius: PropTypes.number,
     setMapRadius: PropTypes.func,
-    onDelete: PropTypes.func,
+    onDelete: PropTypes.func
   };
 
   static defaultProps = {
@@ -79,14 +82,14 @@ class CardBack extends Component {
     onFlip: d => d,
     mapRadius: 100,
     setMapRadius: d => d,
-    onDelete: d => d,
+    onDelete: d => d
   };
 
   state = {extended: null};
 
   selectField = field => {
     this.setState(({extended: prevExtended}) => ({
-      extended: prevExtended !== field ? field : null,
+      extended: prevExtended !== field ? field : null
     }));
   };
 
@@ -110,7 +113,7 @@ class CardBack extends Component {
       addComment,
       authUser,
       controls,
-      relatedCardsByTag,
+      relatedCardsByTag
     } = this.props;
 
     const {extended} = this.state;
@@ -125,7 +128,7 @@ class CardBack extends Component {
       };
       return {
         transition: 'all 0.2s',
-        flex: flexStyle(),
+        flex: flexStyle()
         // overflow: fieldExtended ? 'scroll' : 'hidden'
       };
     };
@@ -133,7 +136,7 @@ class CardBack extends Component {
     return (
       <div className={`flex flex-col flex-grow ${className}`}>
         <div className="flex-grow m-2 relative">
-          <div className="absolute h-full w-full flex-col-wrapper ">
+          <div className="absolute h-full w-full flex flex-col  ">
             <BackField
               className="mb-2"
               style={displayStyle('author')}
@@ -192,7 +195,7 @@ CardBack.propTypes = {
   onClose: PropTypes.func,
   edit: PropTypes.bool,
   uiColor: PropTypes.string,
-  setMapRadius: PropTypes.func,
+  setMapRadius: PropTypes.func
 };
 
 CardBack.defaultProps = {
@@ -202,7 +205,7 @@ CardBack.defaultProps = {
   background: 'black',
   uiColor: 'black',
   title: null,
-  setMapRadius: d => d,
+  setMapRadius: d => d
 };
 
 export default CardBack;

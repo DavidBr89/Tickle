@@ -31,17 +31,14 @@ const CardViewable = ({
   ...props
 }) => (
   <Card
+    key={props.id}
+    {...props}
     iOS={iOS}
     smallScreen={smallScreen}
-    key={props.id}
     bookmarkable
     front={<ReadCardFront />}
     onClose={closeCard}
-    tagColorScale={tagColorScale}
-    uiColor="grey"
-    background="whitesmoke"
     frontView={flipped}
-    {...props}
     challengeComp={
       <MediaChallenge
         {...props.activity}
@@ -52,7 +49,7 @@ const CardViewable = ({
         onUpdate={newChallengeSub => {
           onSubmitActivity({
             cardId: props.id,
-            ...newChallengeSub,
+            ...newChallengeSub
           });
         }}
       />
@@ -62,7 +59,7 @@ const CardViewable = ({
 
 const mapStateToProps = state => ({
   ...state.Screen,
-  ...state.Session,
+  ...state.Session
 });
 
 const mapDispatchToProps = dispatch =>
@@ -71,9 +68,9 @@ const mapDispatchToProps = dispatch =>
       // dragCard,
       ...dataViewActions,
       asyncSubmitActivity,
-      ...routeActions,
+      ...routeActions
     },
-    dispatch,
+    dispatch
   );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
@@ -82,7 +79,11 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const {uid} = authUser;
   const {path} = match;
   const {flipped} = match.params;
-  const {routeExtendCard, routeFlipCard, asyncSubmitActivity} = dispatcherProps;
+  const {
+    routeExtendCard,
+    routeFlipCard,
+    asyncSubmitActivity
+  } = dispatcherProps;
   // TODO replace by regex
 
   const closeCard = () => {
@@ -105,7 +106,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     closeCard,
     flipHandler,
     // TODO refactor
-    frontView: !flipped,
+    frontView: !flipped
   };
 };
 
@@ -114,6 +115,6 @@ export default compose(
   connect(
     mapStateToProps,
     mapDispatchToProps,
-    mergeProps,
-  ),
+    mergeProps
+  )
 )(CardViewable);

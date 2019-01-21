@@ -1,14 +1,14 @@
-import React, {useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
+import {range} from 'd3';
 
 import DefaultLayout from 'Components/DefaultLayout';
 
 import ConnectedCard from 'Cards/ConnectedCard';
 import {BlackModal, ConnectedResponsiveModal} from 'Utils/Modal';
+import PreviewCard from 'Components/cards/PreviewCard';
+import {ScrollView, ScrollElement} from 'Utils/ScrollView';
 import CardTagSearch from '../CardTagSearch';
-import CardStackContainer from '../CardStack';
-
-// import { StyledButton } from 'Utils/StyledComps';
 
 const LoadingScreen = ({visible, style}) => {
   if (visible) {
@@ -19,13 +19,90 @@ const LoadingScreen = ({visible, style}) => {
           justifyContent: 'center',
           alignItems: 'center',
           zIndex: 4000,
-          ...style,
+          ...style
         }}>
         <h1>...LOADING CARDS</h1>
       </div>
     );
   }
   return null;
+};
+
+const CardSlideShow = ({smallScreen, ...props}) => {
+  const {cards, selectedCardId, cardWidth, onClick, extended} = props;
+
+  const width = cardWidth;
+  const height = 200;
+
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [isScrolling, toggleScrolling] = useState(false);
+
+  const scrollCont = React.createRef();
+  useEffect(
+    () => {
+      if (selectedIndex !== null)
+        scrollCont.current.scrollTo(selectedIndex, {
+          behavior: 'smooth',
+          // block: 'start',
+          inline: 'center'
+        });
+    },
+    [selectedIndex]
+  );
+
+  const card = props =>
+    extended ? (
+      <ConnectedCard {...props} className="z-50" />
+    ) : (
+      <PreviewCard
+        className="h-full w-full "
+        title={props.title.value}
+        img={props.img.value}
+      />
+    );
+  return (
+    <div
+      className="flex flex-col mx-4"
+      style={{height: '38vh', maxHeight: 300}}>
+      <ScrollView ref={scrollCont}>
+        <div
+          className="flex-grow flex overflow-x-auto overflow-y-hidden
+          py-8
+          "
+          style={{
+            // height,
+            transition: 'height 300ms, width 300ms',
+            scrollSnapPointsX: `repeat(${width}px)`,
+            scrollSnapType: 'x mandatory'
+          }}>
+          {cards.map((c, i) => (
+            <ScrollElement name={i}>
+              <div
+                className={`mx-4 ${
+                  selectedCardId === c.id ? 'z-50' : 'z-10'
+                }`}
+                style={{
+                  transform: `scale(${
+                    selectedCardId === c.id ? 1.2 : 1
+                  })`,
+                  transition: 'transform 300ms',
+                  width,
+                  scrollSnapAlign: 'start'
+                  // marginLeft: '2%',
+                  // marginRight: '2%'
+                }}
+                onClick={() => {
+                  setSelectedIndex(i);
+                  onClick(c);
+                }}>
+                {card(c)}
+              </div>
+            </ScrollElement>
+          ))}
+        </div>
+      </ScrollView>
+    </div>
+  );
 };
 
 function CardViewPage(props) {
@@ -52,14 +129,15 @@ function CardViewPage(props) {
     cardStackBottom,
     filterSet,
     filterByTag,
-    fetchCards
+    fetchCards,
+    extendCardStack,
+    cardStackExtended,
+    smallScreen
   } = props;
 
   useEffect(() => {
     fetchCards();
   }, []);
-  // const cardStackWidth = width;
-  const slotSize = Math.min(width / 3.5, 200);
   // const cardStackWidth = width;
 
   return (
@@ -72,6 +150,11 @@ function CardViewPage(props) {
             onClick={() => concealCardStack()}>
             Hide
           </button>
+          <button
+            className="hidden btn btn-white border-2 border-black"
+            onClick={() => extendCardStack()}>
+            Extend
+          </button>
           <CardTagSearch
             tags={tagVocabulary}
             filterSet={filterSet}
@@ -79,17 +162,15 @@ function CardViewPage(props) {
           />
         </div>
       }>
-      <CardStackContainer
-        onConceal={concealCardStack}
+      <CardSlideShow
+        smallScreen={smallScreen}
+        extended={cardStackExtended}
         bottom={cardStackBottom}
-        width={width}
+        cardWidth={Math.min(200, width / 2.7)}
         height={height}
         cards={cards}
-        touch={isSmartphone}
         selectedCardId={selectedCardId}
-        duration={600}
         onClick={previewCardAction}
-        slotSize={slotSize}
       />
 
       <BlackModal
@@ -117,7 +198,7 @@ CardViewPage.propTypes = {
   filterSet: PropTypes.func,
   toggleAuthEnv: PropTypes.func,
   tagColorScale: PropTypes.func,
-  screenResize: PropTypes.func,
+  screenResize: PropTypes.func
 };
 
 CardViewPage.defaultProps = {
@@ -134,7 +215,7 @@ CardViewPage.defaultProps = {
   filterSet: d => d,
   toggleAuthEnv: d => d,
   tagColorScale: () => 'green',
-  screenResize: d => d,
+  screenResize: d => d
 };
 
 export default CardViewPage;

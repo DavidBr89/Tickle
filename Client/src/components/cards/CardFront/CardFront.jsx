@@ -129,7 +129,7 @@ class CardFront extends Component {
         className={`flex flex-col w-full h-full ${className}`}>
         <ImgOverlay
           onClick={onImgClick}
-          src={img ? img.value.url : null}
+          src={img.value ? img.value.url : null}
           style={{
             flex: '0 1 50%',
             cursor: 'pointer'

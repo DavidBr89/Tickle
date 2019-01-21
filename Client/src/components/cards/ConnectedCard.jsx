@@ -20,6 +20,7 @@ import {PreviewTags} from 'Utils/Tag';
 import {DB} from 'Firebase';
 
 import cardRoutes from 'Src/Routes/cardRoutes';
+import {initCardFields} from 'Src/constants/cardFields';
 import makeBackCardFuncs from './backCardDbMixins';
 
 import CardBack from './CardBack';
@@ -80,6 +81,9 @@ const CardViewable = ({
   />
 );
 
+CardViewable.defaultProps = {
+  // ...initcardfields
+};
 // props.activitySubmission && props.activitySubmission.feedback ? (
 //   <ChallengeResult
 //     tags={props.tags}
@@ -110,6 +114,7 @@ const mapDispatchToProps = dispatch =>
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
   console.log('ConnectedCard ownProps', ownProps);
+  const defProps = {...initCardFields, ...ownProps};
   const {
     location,
     match,
@@ -118,7 +123,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     uid: authorId,
     tags: {value: tagValues},
     onClose
-  } = ownProps;
+  } = defProps;
+
+  console.log('tagValues', tagValues);
 
   const {tagVocabulary, userLocation} = state;
 
@@ -176,7 +183,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   return {
     ...state,
     ...dispatcherProps,
-    ...ownProps,
+    ...defProps,
     onSubmitActivity,
     ...backCardFuncs,
     addToStorage,

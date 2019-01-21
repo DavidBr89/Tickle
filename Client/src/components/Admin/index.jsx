@@ -6,6 +6,7 @@ import {withRouter} from 'react-router-dom';
 
 import cardRoutes from 'Src/Routes/cardRoutes';
 import * as asyncSessionActions from 'Reducers/Session/async_actions';
+import * as sessionActions from 'Reducers/Session/actions';
 import * as asyncAdminActions from 'Reducers/Admin/async_actions';
 import * as asyncCardActions from 'Reducers/Cards/async_actions';
 import * as adminActions from 'Reducers/Admin/actions';
@@ -31,6 +32,7 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       ...asyncSessionActions,
+      ...sessionActions,
       ...asyncAdminActions,
       ...adminActions,
       ...asyncCardActions
@@ -49,7 +51,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     uid,
     tmpCard,
     mapSettings,
-    userLocation
+    userLocation, selectedUserEnvId: userEnvId
   } = stateProps;
 
   const {
@@ -60,7 +62,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     fetchCollectibleCards,
     fetchCreatedCards,
     registerUserToEnv,
-    inviteUser
+    inviteUser, setUserEnv
   } = dispatchProps;
 
   const {match, history, location} = ownProps;
@@ -76,11 +78,13 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     ...tmpCard
   };
 
-  const {
-    params: {userEnv: userEnvId}
-  } = match;
+  // const {
+  //   params: {userEnv: userEnvId}
+  // } = match;
 
-  const routeUserEnv = env => history.push(`/${env}/${ADMIN.path}`);
+  const routeUserEnv = env => setUserEnv(env);
+
+    // history.push(`/${env}/${ADMIN.path}`);
 
   const cardType = 'created';
   const fetchCards = () =>

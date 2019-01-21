@@ -46,6 +46,11 @@ export function concealCardStack(options) {
   return { type: CONCEAL_CARD_STACK, options };
 }
 
+export const EXTEND_CARD_STACK = 'EXTEND_CARD_STACK';
+export function extendCardStack(options) {
+  return { type: EXTEND_CARD_STACK, options };
+}
+
 export const FILTER_BY_CHALLENGE_STATE = 'FILTER_BY_CHALLLENGE_STATE';
 export function filterByChallengeState(options) {
   return { type: FILTER_BY_CHALLENGE_STATE, options };

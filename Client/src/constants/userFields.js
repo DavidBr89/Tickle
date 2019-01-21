@@ -9,7 +9,7 @@ export const userFields = ({
   photoURL = null,
   admin = false,
   userEnvs = [],
-  mobileNumber=null,
+  mobileNumber = null,
   ...rest
 }) => ({
   uid,

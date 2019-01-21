@@ -58,7 +58,9 @@ class PreviewCard extends Component {
               <h1
                 className="z-10 flex-grow m-1  pl-1 pr-1 text-xl truncate-text"
                 style={{minHeight: '1.25rem'}}>
-                <span className="px-1 bg-white">{title || 'No title'}</span>
+                <span className="px-1 bg-white">
+                  {title || 'No title'}
+                </span>
               </h1>
             </div>
 

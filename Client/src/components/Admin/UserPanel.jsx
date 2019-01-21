@@ -68,7 +68,7 @@ const InviteUser = ({onSubmit, userRegErr}) => {
     <TabSwitcher
       visibleIndex={visibleIndex}
       setVisibleIndex={setVisibleIndex}
-      tabClassName="p-1">
+      tabClassName="flex-grow">
       <>
         <InviteUserForm
           user={userProfile}
