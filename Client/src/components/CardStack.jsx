@@ -125,7 +125,7 @@ const CardStackContainer = ({
       {...props}
       cardWidth={cardWidth}
       cardHeight={cardHeight}
-      className="mt-24 flex justify-center pl-4 pr-4  z-40 pt-2"
+      className="flex justify-center pl-4 pr-4  z-40 pt-2"
       style={{
         flex: `0 0 ${cardHeight}px`,
         transition: 'margin 0.5s',

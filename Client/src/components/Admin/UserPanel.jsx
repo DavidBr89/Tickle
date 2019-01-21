@@ -14,6 +14,8 @@ import TabSwitcher from 'Src/components/utils/TabSwitcher';
 import useMergeState from 'Src/components/utils/useMergeState';
 import useDeepCompareMemoize from 'Src/components/utils/useDeepCompareMemoize';
 
+import styledComp from 'Src/components/utils/styledComp';
+
 const summaryClass = 'mb-3';
 const baseLiClass =
   'cursor-pointer p-2 text-lg flex justify-between items-center';
@@ -63,7 +65,10 @@ const InviteUser = ({onSubmit, userRegErr}) => {
   const disabled = userProfile === null || !userProfile.email;
 
   return (
-    <TabSwitcher {...{visibleIndex, setVisibleIndex}}>
+    <TabSwitcher
+      visibleIndex={visibleIndex}
+      setVisibleIndex={setVisibleIndex}
+      tabClassName="p-1">
       <>
         <InviteUserForm
           user={userProfile}
@@ -129,7 +134,9 @@ export const UserPreviewInfo = ({user, className, style}) => {
   } = user;
 
   return (
-    <div className={`${className} border flex p-1`} style={style}>
+    <div
+      className={`${className} border flex flex-wrap p-1`}
+      style={style}>
       <UserThumbnail
         user={user}
         className="m-2 flex-none h-1/3 w-1/3"
@@ -180,15 +187,22 @@ export const UserThumbnail = ({user = {}, className, style}) => {
   };
 
   return (
-    <div style={photoStyle} className={`${className} relative`}>
+    <div
+      style={photoStyle}
+      className={`${className} flex flex-col relative`}>
       {photoURL ? (
-        <img
-          className="w-full h-full absolute"
-          alt-text="user photo"
-          src={photoURL}
+        <div
+          className="flex-grow"
+          style={{
+            background: `url(${photoURL}) `,
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center'
+          }}
+          alt="test"
         />
       ) : (
-        <UserIcon className={`w-full h-full absolute ${className}`} />
+        <UserIcon className={`flex-grow w-full ${className}`} />
       )}
     </div>
   );
@@ -201,7 +215,7 @@ const PlaceholderUserPreview = props => (
 export const EditUserInfo = ({
   className,
   style,
-  updateUser,
+  onUpdateUser,
   onRemoveUser,
   user,
   ...props
@@ -209,7 +223,7 @@ export const EditUserInfo = ({
   const [userProfile, setProfile] = useMergeState(user);
   useEffect(
     () => {
-      updateUser(userProfile);
+      onUpdateUser(userProfile);
     },
     [useDeepCompareMemoize(userProfile)]
   );
@@ -237,6 +251,73 @@ export const EditUserInfo = ({
         Remove User
       </AlertButton>
     </div>
+  );
+};
+
+const TabBtn = ({className, children, active, ...props}) => (
+  <button
+    type="button"
+    {...props}
+    className={`flex-grow btn border ${className} ${
+      active ? 'btn-active' : null
+    }`}>
+    {children}
+  </button>
+);
+
+// const TabBtn = styledComp({
+//   element: 'button',
+//   type: 'button',
+//   className: 'btn border'
+// });
+
+const UserActivity = props => <div>Activity</div>;
+const Messenger = props => <div>Messenger</div>;
+
+const UserInfoModal = ({...props}) => {
+  const {visible, user, onClose} = props;
+  const {username = null} = user || {};
+
+  const [visibleIndex, setVisibleIndex] = useState(0);
+  const goToTab = index => () => setVisibleIndex(index);
+
+  const modalContent = user ? (
+    <>
+      <div className="flex mt-1 mb-3">
+        <TabBtn
+          active={visibleIndex === 0}
+          className="mr-1"
+          onClick={goToTab(0)}>
+          Activity
+        </TabBtn>
+        <TabBtn
+          active={visibleIndex === 1}
+          className="mr-1"
+          onClick={goToTab(1)}>
+          User Info
+        </TabBtn>
+        <TabBtn active={visibleIndex === 2} onClick={goToTab(2)}>
+          Messenger
+        </TabBtn>
+      </div>
+      <TabSwitcher
+        visibleIndex={visibleIndex}
+        setVisibleIndex={setVisibleIndex}
+        className="flex-grow"
+        tabClassName="p-1">
+        <UserActivity />
+        <EditUserInfo {...props} className="flex-grow" user={user} />
+        <Messenger />
+      </TabSwitcher>
+    </>
+  ) : null;
+
+  return (
+    <BlackModal visible={visible}>
+      <ModalBody title={username} onClose={onClose}>
+        {modalContent}
+      </ModalBody>
+    </BlackModal>
   );
 };
 
@@ -363,7 +444,7 @@ const SendInvitationEmail = ({onSubmit, error, ...props}) => {
 
 export const InviteUserForm = ({onChange, error, user}) => {
   const [userProfile, setProfile] = useMergeState(initUserFields);
-  const {deficits, aims, email, name} = userProfile;
+  const {deficits, aims, mobileNumber, email, name} = userProfile;
   const disabled = email === null;
 
   useEffect(
@@ -379,7 +460,7 @@ export const InviteUserForm = ({onChange, error, user}) => {
       className="flex-grow flex flex-col"
       onSubmit={e => e.preventDefault()}>
       <UserThumbnail className="flex-grow" />
-      <div className="flex flex-none mb-3">
+      <div className="flex flex-wrap mb-3 p-1">
         <input
           value={email}
           className="form-control flex-grow mr-2"
@@ -389,10 +470,19 @@ export const InviteUserForm = ({onChange, error, user}) => {
         />
         <input
           value={name}
-          className="form-control flex-grow"
+          className="form-control flex-grow "
           onChange={event => setProfile({name: event.target.value})}
           type="text"
           placeholder="First and last name"
+        />
+        <input
+          value={mobileNumber}
+          className="form-control flex-grow mt-1"
+          onChange={event =>
+            setProfile({mobileNumber: event.target.value})
+          }
+          type="tel"
+          placeholder="mobile number"
         />
       </div>
       <div className="mt-auto">
@@ -423,6 +513,7 @@ export default function UserPanel(props) {
     selectedUserId,
     selectUser,
     userRegErr,
+    updateUser,
     // registerUserToEnv,
     users,
     userEnvId,
@@ -506,29 +597,19 @@ export default function UserPanel(props) {
             ))}
           </ul>
         </div>
+        <UserInfoModal
+          user={selectedUser}
+          visible={userModalOpen}
+          onClose={() => toggleUserModal(false)}
+          onUpdateUser={updateUser}
+          onRemoveUser={() => {
+            toggleUserModal(false);
+            setTimeout(() => {
+              removeUserAcc(selectedUser.uid);
+            }, 300);
+          }}
+        />
       </div>
-
-      <BlackModal visible={userModalOpen}>
-        {selectedUser && (
-          <ModalBody
-            title={selectedUser.username}
-            onClose={() => toggleUserModal(false)}>
-            {selectedUser && (
-              <EditUserInfo
-                {...props}
-                className="flex-grow"
-                user={selectedUser}
-                onRemoveUser={() => {
-                  toggleUserModal(false);
-                  setTimeout(() => {
-                    removeUserAcc(selectedUser.uid);
-                  }, 300);
-                }}
-              />
-            )}
-          </ModalBody>
-        )}
-      </BlackModal>
     </details>
   );
 }

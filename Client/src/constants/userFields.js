@@ -9,6 +9,7 @@ export const userFields = ({
   photoURL = null,
   admin = false,
   userEnvs = [],
+  mobileNumber=null,
   ...rest
 }) => ({
   uid,
@@ -19,6 +20,7 @@ export const userFields = ({
   photoURL,
   admin,
   userEnvs,
+  mobileNumber,
   ...rest
 });
 

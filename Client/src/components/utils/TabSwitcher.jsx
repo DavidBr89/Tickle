@@ -14,7 +14,8 @@ export default function TabSwitcher({
   children,
   visibleIndex,
   setVisibleIndex,
-  className
+  className,
+  tabClassName
 }) {
   const scrollCont = React.createRef();
 
@@ -28,10 +29,10 @@ export default function TabSwitcher({
 
   return (
     <div
-      className={`relative flex relative flex-col overflow-x-hidden ${className}`}>
+      className={`relative flex relative flex-grow flex-col overflow-x-hidden ${className}`}>
       <ScrollView ref={scrollCont}>
         <div
-          className="flex flex-grow m-1"
+          className="flex flex-grow"
           style={{
             width: `${children.length * 100}%`
           }}>
@@ -39,7 +40,7 @@ export default function TabSwitcher({
             <ScrollElement name={i}>
               <div
                 style={{width: `${100 / children.length}%`}}
-                className="flex flex-col flex-grow">
+                className={`flex flex-col flex-grow p-1 ${tabClassName}`}>
                 {t}
               </div>
             </ScrollElement>

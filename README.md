@@ -41,7 +41,13 @@ TICKLE playground for our Project
 * You'll need to have [git](https://git-scm.com/) and [node](https://nodejs.org/en/) installed in your system.
 
 ```
-git clone https://github.com/DinoJay/TickleClient
+git clone https://github.com/DinoJay/Tickle
+```
+
+* Go to Client Directory:
+
+```
+cd Client
 ```
 
 * Then install the dependencies:

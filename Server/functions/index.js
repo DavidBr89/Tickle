@@ -1,44 +1,69 @@
-// The Cloud Functions for Firebase SDK to create Cloud Functions and setup triggers.
+/**
+ * Copyright 2016 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+'use strict';
+
+// [START import]
 const functions = require('firebase-functions');
-
-// The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require('firebase-admin');
-
-admin.initializeApp(functions.config().firebase);
-
-const gcs = require('@google-cloud/storage')();
+admin.initializeApp()
 const spawn = require('child-process-promise').spawn;
 const path = require('path');
 const os = require('os');
 const fs = require('fs');
 
 
+const events = require('./events');
 
-// // Take the text parameter passed to this HTTP endpoint and insert it into the
-// // Realtime Database under the path /messages/:pushId/original
-// exports.addMessage = functions.https.onRequest((req, res) => {
-//   // Grab the text parameter.
-//   const original = req.query.text;
-//   // Push the new message into the Realtime Database using the Firebase Admin SDK.
-//   return admin.database().ref('/messages').push({original: original}).then((snapshot) => {
-//     // Redirect with 303 SEE OTHER to the URL of the pushed object in the Firebase console.
-//     return res.redirect(303, snapshot.ref);
-//   });
-// });
+
+exports.emailNotifications= require('./sendEmailConfirmations');
+
+// exports.onCardCreate = functions.firestore.document('/card-environments')
+//     .onCreate((snap, context) => {
+// // [END makeUppercaseTrigger]
+//       // [START makeUppercaseBody]
+//       // Grab the current value of what was written to the Realtime Database.
+//       // const original = snap.data().original;
+//       // console.log('Uppercasing', context.params.documentId, original);
+//       // const uppercase = original.toUpperCase();
 //
-// // Listens for new messages added to /messages/:pushId/original and creates an
-// // uppercase version of the message to /messages/:pushId/uppercase
-// exports.makeUppercase = functions.database.ref('/messages/{pushId}/original').onWrite((event) => {
-//   // Grab the current value of what was written to the Realtime Database.
-//   const original = event.data.val();
-//   console.log('Uppercasing', event.params.pushId, original);
-//   const uppercase = original.toUpperCase();
-//   // You must return a Promise when performing asynchronous tasks inside a Functions such as
-//   // writing to the Firebase Realtime Database.
-//   // Setting an "uppercase" sibling in the Realtime Database returns a Promise.
-//   return event.data.ref.parent.child('uppercase').set(uppercase);
-// });
-//
+//       // admin.firestore().collection('events').add({test: 'test'});
+//       // You must return a Promise when performing asynchronous tasks inside a Functions such as
+//       // writing to the Firebase Realtime Database.
+//       // Setting an 'uppercase' sibling in the Realtime Database returns a Promise.
+//       // return snap.ref.set({uppercase}, {merge: true});
+//       // [END makeUppercaseBody]
+//     });
+  exports.onCardCreate = functions.firestore.document('/card-environments/{documentId}/cards/{cardId}')
+    .onCreate((snap, context) => {
+// [END makeUppercaseTrigger]
+      // [START makeUppercaseBody]
+      // Grab the current value of what was written to the Realtime Database.
+      // const original = snap.data().original;
+      // console.log('Uppercasing', context.params.documentId, original);
+      // const uppercase = original.toUpperCase();
+
+      admin.firestore().collection('events').add({test: 'test'});
+      // You must return a Promise when performing asynchronous tasks inside a Functions such as
+      // writing to the Firebase Realtime Database.
+      // Setting an 'uppercase' sibling in the Realtime Database returns a Promise.
+      return snap.ref.set({uppercase}, {merge: true});
+      // [END makeUppercaseBody]
+    });
+
+// [END import]
 
 // [START generateThumbnail]
 /**
@@ -46,8 +71,7 @@ const fs = require('fs');
  * ImageMagick.
  */
 // [START generateThumbnailTrigger]
-// console.log('func stor', functions.storage);
-exports.generateThumbnail = functions.storage.object().onFinalize((object) => {
+exports.generateThumbnail = functions.storage.object().onFinalize(async (object) => {
 // [END generateThumbnailTrigger]
   // [START eventAttributes]
   const fileBucket = object.bucket; // The Storage bucket that contains the file.
@@ -59,47 +83,39 @@ exports.generateThumbnail = functions.storage.object().onFinalize((object) => {
   // [START stopConditions]
   // Exit if this is triggered on a file that is not an image.
   if (!contentType.startsWith('image/')) {
-    console.log('This is not an image.');
-    return null;
+    return console.log('This is not an image.');
   }
 
-  console.log('filePath', filePath);
   // Get the file name.
   const fileName = path.basename(filePath);
   // Exit if the image is already a thumbnail.
   if (fileName.startsWith('thumb_')) {
-    console.log('Already a Thumbnail.');
-    return null;
+    return console.log('Already a Thumbnail.');
   }
   // [END stopConditions]
 
   // [START thumbnailGeneration]
   // Download file from bucket.
-  const bucket = gcs.bucket(fileBucket);
+  const bucket = admin.storage().bucket(fileBucket);
   const tempFilePath = path.join(os.tmpdir(), fileName);
   const metadata = {
     contentType: contentType,
   };
-  return bucket.file(filePath).download({
-    destination: tempFilePath,
-  }).then(() => {
-    console.log('Image downloaded locally to', tempFilePath);
-    // Generate a thumbnail using ImageMagick.
-    return spawn('convert', [tempFilePath, '-thumbnail', '200x200>', tempFilePath]);
-  }).then(() => {
-    console.log('Thumbnail created at', tempFilePath);
-    // We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail.
-    const thumbFileName = `thumb_${fileName}`;
-    const thumbFilePath = path.join(path.dirname(filePath), thumbFileName);
-    console.log('ThumbnailfilePath', thumbFilePath);
-    // Uploading the thumbnail.
-    return bucket.upload(tempFilePath, {
-      destination: thumbFilePath,
-      metadata: metadata,
-    });
-    // Once the thumbnail has been uploaded delete the local file to free up disk space.
-  }).then(() => fs.unlinkSync(tempFilePath));
+  await bucket.file(filePath).download({destination: tempFilePath});
+  console.log('Image downloaded locally to', tempFilePath);
+  // Generate a thumbnail using ImageMagick.
+  await spawn('convert', [tempFilePath, '-thumbnail', '200x200>', tempFilePath]);
+  console.log('Thumbnail created at', tempFilePath);
+  // We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail.
+  const thumbFileName = `thumb_${fileName}`;
+  const thumbFilePath = path.join(path.dirname(filePath), thumbFileName);
+  // Uploading the thumbnail.
+  await bucket.upload(tempFilePath, {
+    destination: thumbFilePath,
+    metadata: metadata,
+  });
+  // Once the thumbnail has been uploaded delete the local file to free up disk space.
+  return fs.unlinkSync(tempFilePath);
   // [END thumbnailGeneration]
 });
-// [END generateThumbnail
-
+// [END generateThumbnail]
