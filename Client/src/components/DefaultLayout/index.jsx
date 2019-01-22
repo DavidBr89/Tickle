@@ -39,7 +39,7 @@ class NavBar extends Component {
           className="navbar flex items-center relative m-2 "
           style={{minHeight: 48}}>
           <button
-            className="border-4 shadow border-black cursor-pointer p-2 z-50 flex-col-wrapper items-center bg-white"
+            className="border-4 shadow border-black cursor-pointer p-2 z-50 flex flex-col items-center bg-white"
             onClick={onToggle}
             type="button">
             <img src={IcAk} className="m-1" />
@@ -121,13 +121,11 @@ class DefaultLayout extends Component {
       <div
         id="content-container"
         ref={c => (this.cont = c)}
-        style={style}
-      >
+        style={style}>
         <div style={{display: 'flex'}}>
           <NavBar
             ui={menu}
             open={open}
-            style={{position: 'absolute'}}
             onToggle={this.handleClick}>
             <div className="text-xl font-bold uppercase mb-2">
               {userEnv}

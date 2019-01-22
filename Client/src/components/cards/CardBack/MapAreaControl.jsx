@@ -2,13 +2,20 @@ import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import MapGL from 'Components/utils/Map';
 
-import {TEMP_ID} from 'Constants/cardFields';
+import {
+  TEMP_ID,
+  initCardFields,
+  extractCardFields
+} from 'Constants/cardFields';
 
 import MapAuthor from 'Components/MapAuthor';
 
 import {V2_DRAG} from 'Components/DragAndDrop/';
 
-import {WebMercatorViewport, fitBounds} from 'viewport-mercator-project';
+import {
+  WebMercatorViewport,
+  fitBounds
+} from 'viewport-mercator-project';
 
 // TODO remove
 import DimWrapper from 'Utils/DimensionsWrapper';
@@ -24,7 +31,7 @@ import userIcon from 'Components/utils/user.svg';
 import mbxDirections from '@mapbox/mapbox-sdk/services/directions';
 
 const directionService = mbxDirections({
-  accessToken: process.env.MapboxAccessToken,
+  accessToken: process.env.MapboxAccessToken
 });
 
 // useEffect(() => {
@@ -60,18 +67,18 @@ const addLine = coords => ({
       properties: {},
       geometry: {
         type: 'LineString',
-        coordinates: coords,
-      },
-    },
+        coordinates: coords
+      }
+    }
   },
   layout: {
     'line-join': 'round',
-    'line-cap': 'round',
+    'line-cap': 'round'
   },
   paint: {
     'line-color': 'tomato',
-    'line-width': 6,
-  },
+    'line-width': 6
+  }
 });
 
 const MapAreaView = props => {
@@ -86,7 +93,7 @@ const MapAreaView = props => {
     loc,
     width,
     height,
-    userLocation,
+    userLocation
   } = props;
 
   const startLoc = [userLocation.longitude, userLocation.latitude];
@@ -98,13 +105,13 @@ const MapAreaView = props => {
     waypoints: [
       {
         coordinates: startLoc,
-        approach: 'unrestricted',
+        approach: 'unrestricted'
       },
       {
         coordinates: endLoc,
-        bearing: [100, 60],
-      },
-    ],
+        bearing: [100, 60]
+      }
+    ]
   };
 
   const mapDOMRef = React.createRef();
@@ -120,9 +127,9 @@ const MapAreaView = props => {
         const {
           routes: [
             {
-              geometry: {coordinates},
-            },
-          ],
+              geometry: {coordinates}
+            }
+          ]
         } = body;
 
         const newMap = map;
@@ -139,7 +146,7 @@ const MapAreaView = props => {
         height: Math.max(100, height),
         bounds: [startLoc, endLoc],
         padding: 30,
-        offset: [0, 40],
+        offset: [0, 40]
       })
       : {...userLocation, zoom: 14};
 
@@ -167,7 +174,7 @@ const MapAreaView = props => {
         style={{
           transform: 'translate(-50%,-50%)',
           left: userPos[0],
-          top: userPos[1],
+          top: userPos[1]
         }}
       />
 
@@ -178,7 +185,7 @@ const MapAreaView = props => {
           left: cardPos[0],
           top: cardPos[1],
           width: 35,
-          height: 45,
+          height: 45
         }}
       />
     </div>
@@ -207,7 +214,7 @@ const MapDragAndDrop = props => {
 
   const [mapViewport, setMapViewport] = useState({
     zoom: 14,
-    ...loc,
+    ...loc
   });
 
   const mercator = new WebMercatorViewport(mapViewport);
@@ -217,7 +224,6 @@ const MapDragAndDrop = props => {
     const [longitude, latitude] = mercator.unproject([x, y]);
 
     const updatedCard = {...cardData, loc: {longitude, latitude}};
-    console.log('YOYOYO BACK drag card back', updatedCard);
     if (cardData.id !== TEMP_ID)
       asyncUpdateCard({cardData: updatedCard, userEnv});
     else updateCardTemplate({loc: {longitude, latitude}});
@@ -233,11 +239,13 @@ const MapDragAndDrop = props => {
       mapViewport={mapViewport}
       selectedCardId={id}
       onCardDrop={cardDrop}
-      cards={[{id: TEMP_ID, loc}]}
+      cards={[{...props}]}
       changeMapViewport={setMapViewport}
     />
   );
 };
+
+MapDragAndDrop.defaultProps = initCardFields;
 
 // const MapAuthorWrapper = props => (
 //   <div className="absolute w-full h-full">

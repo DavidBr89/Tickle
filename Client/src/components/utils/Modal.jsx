@@ -13,7 +13,7 @@ import {connect} from 'react-redux';
 
 const reduxConnect = comp => {
   const mapStateToProps = state => ({
-    topMargin: state.Screen.isSmartphone
+    ...state.smallScreen
   });
 
   const mergeProps = (stateProps, dispatchProps, ownProps) => ({
@@ -28,7 +28,7 @@ const reduxConnect = comp => {
 };
 
 export const BlackModal = reduxConnect(
-  ({visible, topMargin, style, className, ...props}) =>
+  ({visible, smallScreen, style, className, ...props}) =>
     ReactDOM.createPortal(
       <div
         className="fixed w-screen h-screen"
@@ -46,8 +46,8 @@ export const BlackModal = reduxConnect(
         <InlineModal
           className={className}
           visible={visible}
-          topMargin={topMargin}
-          style={style}
+          topMargin={!smallScreen}
+          style={{...style}}
           {...props}
         />
       </div>,
@@ -84,8 +84,8 @@ export const InlineModal = ({
       style={{
         maxWidth: 500,
         maxHeight: 800,
-        margin: `${topMargin ? '2.5rem' : ''} auto`,
-        ...style
+        ...style,
+        margin: `${topMargin ? '2.5rem' : ''} auto`
       }}>
       {children}
     </div>

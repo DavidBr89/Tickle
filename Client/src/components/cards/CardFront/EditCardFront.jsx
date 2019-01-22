@@ -8,18 +8,37 @@ import ChallengeAuthor from 'Src/components/ChallengeAuthor';
 import {Modal, ModalBody} from 'Components/utils/Modal';
 import {ExtendedEditTags} from 'Components/utils/TagInput';
 
-import {
-  MEDIA,
-  TAGS,
-  extractCardFields,
-  initCard
-} from 'Constants/cardFields.ts';
+import {extractCardFields, initCard} from 'Constants/cardFields.ts';
 
+import {
+  TITLE,
+  TAGS,
+  DESCRIPTION,
+  MEDIA,
+  TIMERANGE,
+  ACTIVITY
+} from 'Constants/cardFields';
 import {MediaSearch} from '../MediaSearch';
 
 import CardFrontTemplate from './CardFrontTemplate';
 
 import EditPhoto from './EditPhoto';
+
+import {ImgOverlay, MediaField, EditIcon} from './mixinsCardFront';
+
+const TagField = ({tags, style, onClick, className}) => {
+  if (!tags) return null;
+  return (
+    <div
+      onClick={onClick}
+      className={`flex ${className} items-center flex-no-wrap overflow-x-hidden`}
+      style={{...style}}>
+      {tags.map(t => (
+        <div className="tag-label bg-black text-lg mr-1 ">{t}</div>
+      ))}
+    </div>
+  );
+};
 
 class NumberInput extends Component {
   static propTypes = {
@@ -82,6 +101,30 @@ class NumberInput extends Component {
     );
   }
 }
+
+const PlaceholderFrame = ({
+  onClick,
+  empty,
+  placeholder,
+  className,
+  style,
+  edit,
+  children
+}) => (
+  <div
+    className={`${className} cursor-pointer items-center flex`}
+    style={{width: '90%'}}
+    onClick={onClick}>
+    {empty ? (
+      <div className="italic text-2xl">{placeholder}</div>
+    ) : (
+      children
+    )}
+    <div className="ml-auto">
+      <EditIcon className="p-2" />
+    </div>
+  </div>
+);
 
 const defaultProps = {
   title: null,
@@ -350,7 +393,7 @@ class EditCardFront extends PureComponent {
 
   state = {
     data: {
-      ...extractCardFields({...this.props})
+      ...extractCardFields({})
     },
     dialog: null
   };
@@ -406,14 +449,13 @@ class EditCardFront extends PureComponent {
       onFlip,
       style,
       background,
-      uiColor,
-      tagColorScale,
       onSubmit,
       template,
       smallScreen,
       onCreate
     } = this.props;
 
+    console.log('props editcardfront', this.state.data);
     const {data, dialog} = this.state;
     const modalVisible = dialog !== null;
     const {
@@ -428,6 +470,113 @@ class EditCardFront extends PureComponent {
       points
     } = data;
 
+    const onTagsClick = () => {
+      this.setState({
+        dialog: {title: 'Tags', data: tags}
+      });
+    };
+    const onTitleClick = () =>
+      this.setState({
+        dialog: {title: 'Title', data: title}
+      });
+    const onImgClick = () => {
+      this.setState({
+        dialog: {title: 'Photo', data: tags}
+      });
+    };
+
+    const onDescriptionClick = () => {
+      this.setState({
+        dialog: {title: 'Description', data: description}
+      });
+    };
+    const onMediaClick = () =>
+      this.setState({
+        dialog: {title: 'Media', data: media}
+      });
+    const onChallengeClick = () =>
+      this.setState({
+        dialog: {title: 'activity', data: activity}
+      });
+
+    const fieldNodes = [
+      {
+        id: TITLE,
+        label: 'Title',
+        node: (
+          <PlaceholderFrame
+            onClick={onTitleClick}
+            className=""
+            empty={title.value === null}
+            placeholder="Title">
+            <div className="capitalize text-2xl truncate-text">
+              {title.value}
+            </div>
+          </PlaceholderFrame>
+        )
+      },
+      {
+        id: TAGS,
+        label: 'Tags',
+        node: (
+          <PlaceholderFrame
+            onClick={onTagsClick}
+            className=""
+            empty={tags.value === null}
+            placeholder="Tags">
+            <TagField tags={tags.value} />
+          </PlaceholderFrame>
+        )
+      },
+      {
+        id: DESCRIPTION,
+        label: 'Text',
+        node: (
+          <PlaceholderFrame
+            onClick={onDescriptionClick}
+            empty={description.value === null}
+            placeholder="Description">
+            <div className="capitalize truncate-text text-xl">
+              {description.value}
+            </div>
+          </PlaceholderFrame>
+        )
+      },
+      {
+        id: MEDIA,
+        label: 'Media',
+        node: (
+          <PlaceholderFrame
+            empty={media.value === null}
+            placeholder="Media"
+            onClick={onMediaClick}>
+            <MediaField media={media} />
+          </PlaceholderFrame>
+        )
+      },
+      {
+        id: TIMERANGE,
+        label: 'Date',
+        node: (
+          <PlaceholderFrame onClick={d => d} placeholder="Date" empty />
+        )
+      },
+      {
+        id: ACTIVITY,
+        label: 'Activity',
+        node: (
+          <PlaceholderFrame
+            onClick={onChallengeClick}
+            placeholder="Activity"
+            empty={activity.value === null}>
+            <div className="capitalize truncate-text text-xl">
+              {activity.value && activity.value.title}
+            </div>
+          </PlaceholderFrame>
+        )
+      }
+    ];
+
     return (
       <React.Fragment>
         <Modal className="z-50" visible={modalVisible}>
@@ -438,41 +587,13 @@ class EditCardFront extends PureComponent {
           onResetField={attr => {
             this.updateField(attr, initCard[attr]);
           }}
+          fieldNodes={fieldNodes}
           onClose={onClose}
           onFlip={onFlip}
           onFieldLabelChange={(attr, val) =>
             this.updateField(attr, val)
           }
-          onTagsClick={() => {
-            this.setState({
-              dialog: {title: 'Tags', data: tags}
-            });
-          }}
-          onTitleClick={() =>
-            this.setState({
-              dialog: {title: 'Title', data: title}
-            })
-          }
-          onImgClick={() => {
-            this.setState({
-              dialog: {title: 'Photo', data: tags}
-            });
-          }}
-          onDescriptionClick={() => {
-            this.setState({
-              dialog: {title: 'Description', data: description}
-            });
-          }}
-          onMediaClick={() =>
-            this.setState({
-              dialog: {title: 'Media', data: media}
-            })
-          }
-          onChallengeClick={() =>
-            this.setState({
-              dialog: {title: 'activity', data: activity}
-            })
-          }
+          {...data}
           bottomControls={
             template && (
               <button

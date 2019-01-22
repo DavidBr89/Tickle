@@ -4,7 +4,7 @@ import setify from 'Components/utils/setify';
 import uniq from 'lodash/uniq';
 import uniqBy from 'lodash/uniqBy';
 
-import {initCard} from 'Constants/cardFields.ts';
+import {initCardFields} from 'Constants/cardFields';
 import {
   RECEIVE_PLACES,
   UPDATE_CARD,
@@ -54,7 +54,7 @@ const defaultLocation = {
   radius: 500,
 };
 
-const defaultCardTemplate = {...initCard, title: {value: 'New Card'}};
+const defaultCardTemplate = {...initCardFields, title: {value: 'New Card'}};
 
 const INITIAL_STATE = {
   cardTemplateId,
@@ -62,7 +62,7 @@ const INITIAL_STATE = {
   createdCards: [],
   tagVocabulary: [],
   // TODO: update
-  tmpCard: {...initCard},
+  tmpCard: {...initCardFields},
   challenges: [],
   cardChallengeOpen: false,
   selectedTags: [],
@@ -100,6 +100,7 @@ function reducer(state = INITIAL_STATE, action) {
       const {collectibleCards} = state;
       const createdCards = action.options;
 
+      console.log('createdCards', createdCards);
       const tagVocabulary = setify(
         uniqBy([...createdCards, ...collectibleCards], 'id'),
       );

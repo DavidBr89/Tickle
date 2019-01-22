@@ -9,6 +9,7 @@ import EditCard from 'Components/cards/ConnectedEditCard';
 // import {DropDown} from 'Utils/TagInput';
 import {SelectInput} from 'Components/utils/SelectField';
 import mbxGeoCoding from '@mapbox/mapbox-sdk/services/geocoding';
+import CardSlideShow from 'Src/components/CardSlideShow';
 import CardStackContainer from '../CardStack';
 
 // import CardDragAuthorOverlay from './CardDragAuthorOverlay';
@@ -16,7 +17,7 @@ import CardStackContainer from '../CardStack';
 import CardTagSearch from '../CardTagSearch';
 
 const directionService = mbxGeoCoding({
-  accessToken: process.env.MapboxAccessToken,
+  accessToken: process.env.MapboxAccessToken
 });
 
 const SelectPlace = ({onChange, className, ...props}) => {
@@ -28,7 +29,7 @@ const SelectPlace = ({onChange, className, ...props}) => {
       directionService
         .forwardGeocode({
           query,
-          limit: 5,
+          limit: 5
         })
         .send()
         .then(response => {
@@ -37,7 +38,7 @@ const SelectPlace = ({onChange, className, ...props}) => {
           console.log('match', match);
         });
     },
-    [query],
+    [query]
   );
 
   return (
@@ -70,7 +71,10 @@ const GoToPlace = ({onChange, ...props}) => {
         className=""
         {...props}
         onChange={place =>
-          setLoc({longitude: place.center[0], latitude: place.center[1]})
+          setLoc({
+            longitude: place.center[0],
+            latitude: place.center[1]
+          })
         }
       />
       <button type="submit" className="btn btn-black">
@@ -144,6 +148,7 @@ function CardAuthorPage(props) {
     width,
     centerTemplatePos,
     fetchCards,
+    cardStackExtended
   } = props;
 
   const slotSize = 100 / 3.5;
@@ -160,7 +165,8 @@ function CardAuthorPage(props) {
         <div className="flex-grow flex justify-between items-center">
           <button
             type="button"
-            className={`btn btn-white ml-3 ${templateSelected && 'btn-black'}`}
+            className={`btn btn-white ml-3 ${templateSelected &&
+              'btn-black'}`}
             onClick={selectTemplate}>
             New Card
           </button>
@@ -176,20 +182,14 @@ function CardAuthorPage(props) {
       <BlackModal visible={extCardId !== null}>
         {extCardId !== null && <EditCard {...selectedCard} />}
       </BlackModal>
-      <CardStackContainer
+      <CardSlideShow
+        extended={cardStackExtended}
         bottom={cardStackBottom}
+        cardWidth={Math.min(200, width / 2.7)}
+        height={height}
         cards={cards}
         selectedCardId={selectedCardId}
-        touch={isSmartphone}
-        duration={600}
-        width={width}
-        height={height}
-        unit="%"
         onClick={previewCardAction}
-        slotSize={slotSize}
-        style={{
-          zIndex: 1000,
-        }}
       />
       {children}
     </DefaultLayout>
@@ -213,7 +213,7 @@ CardAuthorPage.propTypes = {
   toggleAuthEnv: PropTypes.func,
   tagColorScale: PropTypes.func,
   screenResize: PropTypes.func,
-  fetchCards: PropTypes.func,
+  fetchCards: PropTypes.func
 };
 
 CardAuthorPage.defaultProps = {
@@ -234,7 +234,7 @@ CardAuthorPage.defaultProps = {
   tagColorScale: () => 'green',
   screenResize: d => d,
   fetchCards: d => d,
-  preSelectCardId: d => d,
+  preSelectCardId: d => d
 };
 
 export default CardAuthorPage;

@@ -18,6 +18,7 @@ export default function TabSwitcher({
   tabClassName
 }) {
   const scrollCont = React.createRef();
+  const wrapperCont = React.createRef();
 
   useEffect(() => {
     scrollCont.current.scrollTo(visibleIndex);
@@ -29,8 +30,8 @@ export default function TabSwitcher({
 
   return (
     <div
-      className={`relative flex relative flex-grow flex-col overflow-x-hidden ${className}`}>
-      <ScrollView ref={scrollCont}>
+      className={`relative flex relative flex-grow flex-col overflow-x-hidden ${className}`} ref={wrapperCont}>
+      <ScrollView ref={scrollCont} boundary={wrapperCont}>
         <div
           className="flex flex-grow"
           style={{

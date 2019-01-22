@@ -20,23 +20,13 @@ import {changeMapViewport} from 'Reducers/Map/actions';
 import * as asyncCardActions from 'Reducers/Cards/async_actions';
 
 import cardRoutes from 'Src/Routes/cardRoutes';
+import {initCardFields} from 'Src/constants/cardFields';
 import makeBackCardFuncs from './backCardDbMixins';
 import EditCardFront from './CardFront/EditCardFront';
 
 import CardBack from './CardBack';
 
 import CardFrame from './CardFrame';
-
-function mapStateToProps(state) {
-  return {
-    ...state.MapView,
-    ...state.Cards,
-    ...state.DataView,
-    ...state.Screen,
-    userLocation: state.MapView.userLocation,
-    ...state.Session
-  };
-}
 
 const DeleteButton = ({style, className, onClick}) => (
   <button
@@ -80,6 +70,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const {mapViewport, width, height, authUser, tagVocabulary} = state;
   const {uid: authorId} = authUser;
 
+
+  const defProps = {...initCardFields, ...ownProps};
+
   const {
     match,
     location,
@@ -88,9 +81,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     tags: {value: tagValues},
     onCreateCard = d => d,
     onUpdateCard = d => d
-  } = ownProps;
+  } = defProps;
 
-  console.log('ONUPDATE CARD', onUpdateCard);
+  console.log('defProps', defProps);
   // TODO: BUILD IN check
   const {userEnv: userEnvId} = match.params;
 
@@ -177,6 +170,17 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   };
 };
 
+function mapStateToProps(state) {
+  return {
+    ...state.MapView,
+    ...state.Cards,
+    ...state.DataView,
+    ...state.Screen,
+    userLocation: state.MapView.userLocation,
+    ...state.Session
+  };
+}
+
 const EditCard = ({
   createCard,
   removeCard,
@@ -190,6 +194,7 @@ const EditCard = ({
   onFlip,
   fetchAuthorData,
   id,
+  cardFields,
   ...props
 }) => (
   <CardFrame

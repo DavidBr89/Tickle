@@ -10,110 +10,47 @@ import PropTypes from 'prop-types';
 
 import scrollIntoView from 'scroll-into-view-if-needed';
 
-if (!Element.prototype.scrollIntoViewIfNeeded) {
-  Element.prototype.scrollIntoViewIfNeeded = function(centerIfNeeded) {
-    centerIfNeeded = arguments.length === 0 ? true : !!centerIfNeeded;
-
-    const parent = this.parentNode;
-
-    const parentComputedStyle = window.getComputedStyle(parent, null);
-
-    const parentBorderTopWidth = parseInt(
-      parentComputedStyle.getPropertyValue('border-top-width')
-    );
-
-    const parentBorderLeftWidth = parseInt(
-      parentComputedStyle.getPropertyValue('border-left-width')
-    );
-
-    const overTop =
-      this.offsetTop - parent.offsetTop < parent.scrollTop;
-
-    const overBottom =
-      this.offsetTop -
-        parent.offsetTop +
-        this.clientHeight -
-        parentBorderTopWidth >
-      parent.scrollTop + parent.clientHeight;
-
-    const overLeft =
-      this.offsetLeft - parent.offsetLeft < parent.scrollLeft;
-
-    const overRight =
-      this.offsetLeft -
-        parent.offsetLeft +
-        this.clientWidth -
-        parentBorderLeftWidth >
-      parent.scrollLeft + parent.clientWidth;
-
-    const alignWithTop = overTop && !overBottom;
-
-    if ((overTop || overBottom) && centerIfNeeded) {
-      parent.scrollTop =
-        this.offsetTop -
-        parent.offsetTop -
-        parent.clientHeight / 2 -
-        parentBorderTopWidth +
-        this.clientHeight / 2;
-    }
-
-    if ((overLeft || overRight) && centerIfNeeded) {
-      parent.scrollLeft =
-        this.offsetLeft -
-        parent.offsetLeft -
-        parent.clientWidth / 2 -
-        parentBorderLeftWidth +
-        this.clientWidth / 2;
-    }
-
-    if (
-      (overTop || overBottom || overLeft || overRight) &&
-      !centerIfNeeded
-    ) {
-      this.scrollIntoView(alignWithTop);
-    }
-  };
-}
-
 const {Provider, Consumer} = React.createContext({
   register: null,
   unregister: null
 });
 
-const ScrollView = React.forwardRef(
-  ({children, onScrollEnd = d => d}, ref) => {
-    const elements = {};
+const ScrollView = React.forwardRef((props, ref) => {
+  const {children, boundary, onScrollEnd = d => d} = props;
+  const elements = {};
 
-    const register = (name, ref) => {
-      elements[name] = ref;
-    };
+  const register = (name, ref) => {
+    elements[name] = ref;
+  };
 
-    const unregister = name => {
-      delete elements[name];
-    };
+  const unregister = name => {
+    delete elements[name];
+  };
 
-    const childRef = useRef();
+  const childRef = useRef();
 
-    // console.log('Imperative ref', ref);
-    useImperativeMethods(ref, () => ({
-      scrollTo(name, opts = {}) {
-        const node = ReactDOM.findDOMNode(elements[name].current);
-        scrollIntoView(node, {
-          behavior: 'smooth',
-          inline: 'center',
-          scrollMode: 'if-needed',
-          ...opts
-        });
-      }
-    }));
+  console.log('boundary', boundary);
+  useImperativeMethods(ref, () => ({
+    scrollTo(name, opts = {}) {
+      const node = ReactDOM.findDOMNode(elements[name].current);
+      scrollIntoView(node, {
+        behavior: 'smooth',
+        inline: 'center',
+        // scrollMode: 'if-needed',
+        boundary: boundary
+          ? boundary.current
+          : document.getElementById('#content-container'),
+        ...opts
+      });
+    }
+  }));
 
-    return (
-      <Provider value={{register, unregister}}>
-        {React.cloneElement(children, {ref: childRef})}
-      </Provider>
-    );
-  }
-);
+  return (
+    <Provider value={{register, unregister}}>
+      {React.cloneElement(children, {ref: childRef})}
+    </Provider>
+  );
+});
 
 const ScrollConsumer = ({register, unregister, name, children}) => {
   const ref = React.createRef();

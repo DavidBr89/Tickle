@@ -33,7 +33,7 @@ import withAuthorization from 'Src/components/withAuthorization';
 import withAuthentication from 'Src/components/withAuthentication';
 import {shiftCenterMap} from 'Src/lib/geo';
 // import {initCard} from 'Constants/cardFields';
-import {fallbackTagValues} from 'Constants/cardFields';
+import {initCardFields, fallbackTagValues} from 'Constants/cardFields';
 import CardAuthorPage from './CardAuthorPage';
 
 // import mapViewReducer from './reducer';
@@ -52,18 +52,22 @@ const mapStateToProps = state => {
   const {uid, admin} = authUser;
 
   const templateCard = {
+    ...initCardFields,
     loc: userLocation,
     uid,
     id: TEMP_ID,
-    template: true,
-    ...tmpCard,
+    template: true
   };
 
   const filteredCards = createdCards.filter(
-    d => filterSet.length === 0 || isSubset(d.tags.value || [], filterSet),
+    d =>
+      filterSet.length === 0 || isSubset(d.tags.value || [], filterSet)
   );
 
-  const cards = [templateCard, ...filteredCards].map(d => ({...d, edit: true}));
+  const cards = [templateCard, ...filteredCards].map(d => ({
+    ...d,
+    edit: true
+  }));
 
   return {
     ...state.MapView,
@@ -74,7 +78,7 @@ const mapStateToProps = state => {
     admin,
     filterSet,
     templateCard,
-    cards,
+    cards
     // tagColorScale
   };
 };
@@ -86,9 +90,9 @@ const mapDispatchToProps = dispatch =>
       ...cardAsyncActions,
       ...dataViewThunks,
       ...mapActions,
-      screenResize,
+      screenResize
     },
-    dispatch,
+    dispatch
   );
 
 // });
@@ -101,22 +105,26 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     mapSettings,
     templateCard,
     width,
-    height,
+    height
   } = state;
 
-  const {changeMapViewport, fetchCreatedCards, tagFilter} = dispatcherProps;
+  const {
+    changeMapViewport,
+    fetchCreatedCards,
+    tagFilter
+  } = dispatcherProps;
 
   const mapViewport = {...mapSettings, width, height};
 
   const {dataView, history, location, match, children} = ownProps;
 
   const {
-    params: {userEnv},
+    params: {userEnv}
   } = match;
 
   const {
     query: {selectedCardId, extended},
-    routing: {routeSelectCard, routeExtendCard},
+    routing: {routeSelectCard, routeExtendCard}
   } = cardRoutes({history, location});
 
   const extCardId = extended ? selectedCardId : null;
@@ -126,7 +134,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const selectedCard = cards.find(d => d.id === selectedCardId) || null;
 
   const selectedTags =
-    selectedCard !== null ? fallbackTagValues(selectedCard.tags) : filterSet;
+    selectedCard !== null
+      ? fallbackTagValues(selectedCard.tags)
+      : filterSet;
 
   const mercator = new WebMercatorViewport(mapViewport);
   const reCenterMap = lngLat =>
@@ -134,7 +144,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
       ...mapViewport,
       ...shiftCenterMap({...lngLat, mercator}),
       transitionDuration: 2000,
-      transitionInterpolator: new FlyToInterpolator(),
+      transitionInterpolator: new FlyToInterpolator()
     });
 
   const previewCardAction = d => {
@@ -151,8 +161,10 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const filterByTag = tag => tagFilter({filterSet, tag});
 
-  const fetchCards = () => fetchCreatedCards({uid: authUser.uid, userEnv});
+  const fetchCards = () =>
+    fetchCreatedCards({uid: authUser.uid, userEnv});
 
+  console.log('cards before', cards);
   return {
     ...state,
     ...dispatcherProps,
@@ -163,14 +175,14 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     selectedCard,
     selectedTags,
     dataView,
-    selectedCardId,
+    selectedCardId: selectedCard ? selectedCardId : null,
     extCardId,
     templateSelected,
     children,
     userEnv,
     mapViewport,
     fetchCards,
-    filterByTag,
+    filterByTag
   };
 };
 
@@ -182,7 +194,7 @@ function PureMapCardAuthorPage({...props}) {
     reCenterMap,
     mapViewport,
     updateCardTemplate,
-    userEnv,
+    userEnv
   } = props;
 
   const mercator = new WebMercatorViewport(mapViewport);
@@ -201,6 +213,7 @@ function PureMapCardAuthorPage({...props}) {
     else asyncUpdateCard({cardData: updatedCard, userEnv});
   };
 
+  console.log('props before reduce', props);
   return (
     <CardAuthorPage {...props} centerTemplatePos={centerTemplatePos}>
       <MapAuthor
@@ -229,12 +242,14 @@ const composeScaffold = comp =>
     connect(
       mapStateToProps,
       mapDispatchToProps,
-      mergeProps,
-    ),
+      mergeProps
+    )
   )(comp);
 
 export const MapCardAuthorPage = composeScaffold(PureMapCardAuthorPage);
 
-export const TopicMapAuthorPage = composeScaffold(PrivateTopicMapAuthorPage);
+export const TopicMapAuthorPage = composeScaffold(
+  PrivateTopicMapAuthorPage
+);
 
 export default CardAuthorPage;

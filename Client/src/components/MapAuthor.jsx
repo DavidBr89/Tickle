@@ -25,13 +25,18 @@ const MapAuthor = DragDropContextProvider(props => {
     style,
     className,
     mapViewport,
-    dragId,
+    dragId
   } = props;
 
   const DropTarget = dropTargetMap[dragId];
 
-  const vp = new PerspectiveMercatorViewport({...mapViewport, width, height});
+  const vp = new PerspectiveMercatorViewport({
+    ...mapViewport,
+    width,
+    height
+  });
 
+  console.log('', props, 'cards reduce', cards);
   const locNodes = cards.reduce((acc, n) => {
     const [x, y] = vp.project([n.loc.longitude, n.loc.latitude]);
     if (x > 0 && x < width && y > 0 && y < height) {
@@ -49,7 +54,7 @@ const MapAuthor = DragDropContextProvider(props => {
         dragId={dragId}>
         <CardMarker
           style={{
-            transform: 'scale(1.4)',
+            transform: 'scale(1.4)'
           }}
         />
       </DragElement>
@@ -61,7 +66,7 @@ const MapAuthor = DragDropContextProvider(props => {
           position: 'absolute',
           transform: 'translate(-50%,-50%)',
           left: d.x,
-          top: d.y,
+          top: d.y
         }}
       />
     );

@@ -4,11 +4,13 @@ import {range} from 'd3';
 
 import DefaultLayout from 'Components/DefaultLayout';
 
-import ConnectedCard from 'Cards/ConnectedCard';
+import MetaCard from 'Src/components/cards/';
 import {BlackModal, ConnectedResponsiveModal} from 'Utils/Modal';
 import PreviewCard from 'Components/cards/PreviewCard';
 import {ScrollView, ScrollElement} from 'Utils/ScrollView';
 import CardTagSearch from '../CardTagSearch';
+
+import CardSlideShow from 'Src/components/CardSlideShow';
 
 const LoadingScreen = ({visible, style}) => {
   if (visible) {
@@ -26,83 +28,6 @@ const LoadingScreen = ({visible, style}) => {
     );
   }
   return null;
-};
-
-const CardSlideShow = ({smallScreen, ...props}) => {
-  const {cards, selectedCardId, cardWidth, onClick, extended} = props;
-
-  const width = cardWidth;
-  const height = 200;
-
-  const [selectedIndex, setSelectedIndex] = useState(null);
-  const [isScrolling, toggleScrolling] = useState(false);
-
-  const scrollCont = React.createRef();
-  useEffect(
-    () => {
-      if (selectedIndex !== null)
-        scrollCont.current.scrollTo(selectedIndex, {
-          behavior: 'smooth',
-          // block: 'start',
-          inline: 'center'
-        });
-    },
-    [selectedIndex]
-  );
-
-  const card = props =>
-    extended ? (
-      <ConnectedCard {...props} className="z-50" />
-    ) : (
-      <PreviewCard
-        className="h-full w-full "
-        title={props.title.value}
-        img={props.img.value}
-      />
-    );
-  return (
-    <div
-      className="flex flex-col mx-4"
-      style={{height: '38vh', maxHeight: 300}}>
-      <ScrollView ref={scrollCont}>
-        <div
-          className="flex-grow flex overflow-x-auto overflow-y-hidden
-          py-8
-          "
-          style={{
-            // height,
-            transition: 'height 300ms, width 300ms',
-            scrollSnapPointsX: `repeat(${width}px)`,
-            scrollSnapType: 'x mandatory'
-          }}>
-          {cards.map((c, i) => (
-            <ScrollElement name={i}>
-              <div
-                className={`mx-4 ${
-                  selectedCardId === c.id ? 'z-50' : 'z-10'
-                }`}
-                style={{
-                  transform: `scale(${
-                    selectedCardId === c.id ? 1.2 : 1
-                  })`,
-                  transition: 'transform 300ms',
-                  width,
-                  scrollSnapAlign: 'start'
-                  // marginLeft: '2%',
-                  // marginRight: '2%'
-                }}
-                onClick={() => {
-                  setSelectedIndex(i);
-                  onClick(c);
-                }}>
-                {card(c)}
-              </div>
-            </ScrollElement>
-          ))}
-        </div>
-      </ScrollView>
-    </div>
-  );
 };
 
 function CardViewPage(props) {
@@ -151,7 +76,8 @@ function CardViewPage(props) {
             Hide
           </button>
           <button
-            className="hidden btn btn-white border-2 border-black"
+            className="btn btn-white border-2 border-black"
+            style={{display: 'none'}}
             onClick={() => extendCardStack()}>
             Extend
           </button>
@@ -173,12 +99,9 @@ function CardViewPage(props) {
         onClick={previewCardAction}
       />
 
-      <BlackModal
-        visible={extendedCard !== null}
-        style={{margin: `${!isSmartphone ? '2.5rem' : ''} auto`}}>
-        {selectedCard !== null && <ConnectedCard {...selectedCard} />}
+      <BlackModal visible={extendedCard !== null}>
+        {selectedCard !== null && <MetaCard {...selectedCard} />}
       </BlackModal>
-
       {children}
     </DefaultLayout>
   );

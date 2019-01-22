@@ -919,7 +919,7 @@ module.exports = {
 
   options: {
     prefix: '',
-    important: true,
+    important: false,
     separator: ':'
   }
 };

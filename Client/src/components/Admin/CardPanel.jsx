@@ -8,6 +8,16 @@ import MetaCard from 'Components/cards';
 
 const summaryClass = 'mb-3';
 
+const TemplateEditor = (props) => {
+  const {templateFields=[]} = props;
+
+  return <div>{
+    templateFields.map(d => <div>{d.key}</div>)
+
+
+  }</div>
+}
+
 export default function CardPanel(props) {
   const {
     className,
@@ -19,7 +29,7 @@ export default function CardPanel(props) {
   } = props;
 
   const {
-    query: {selectedCardId, extended, flipped},
+    query: {selectedCardId, extended: cardExtended, flipped},
     routing: {routeSelectExtendCard, routeExtendCard}
   } = urlConfig;
 
@@ -29,6 +39,7 @@ export default function CardPanel(props) {
     tmpCards.find(c => c.id === selectedCardId) || null;
 
   const [panelOpen, setPanelOpen] = useState(false);
+  const [templateExtended, toggleTemplateExtended] = useState(false);
 
   const h = 10;
   const gridStyle = {
@@ -48,6 +59,11 @@ export default function CardPanel(props) {
         onClick={() => setPanelOpen(!panelOpen)}>
         Cards
       </summary>
+      <div className="flex justify-end">
+        <button className="btn border " type="button">
+          Card Template Editor
+        </button>
+      </div>
       <div className="flex flex-wrap" style={{...gridStyle}}>
         {tmpCards.length === 0 && (
           <div className="text-4xl self-center">No Cards</div>
@@ -60,13 +76,13 @@ export default function CardPanel(props) {
           />
         ))}
       </div>
-      <BlackModal key="cardPanel" visible={extended}>
-        {extended && (
-          <MetaCard
-            {...selectedCard}
-            onCreateCard={onCreateCard}
-          />
+      <BlackModal key="cardPanel" visible={cardExtended}>
+        {cardExtended && (
+          <MetaCard {...selectedCard} onCreateCard={onCreateCard} />
         )}
+      </BlackModal>
+      <BlackModal visible={templateExtended}>
+        <TemplateEditor/>
       </BlackModal>
     </details>
   );

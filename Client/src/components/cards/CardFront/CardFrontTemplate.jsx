@@ -4,57 +4,15 @@ import PropTypes from 'prop-types';
 import {
   extractCardFields,
   initCard,
-  isFieldInitialized,
+  isFieldInitialized
 } from 'Constants/cardFields';
 // import Check from 'react-feather/dist/icons/check';
 import X from 'react-feather/dist/icons/x';
 
 import CardControls from 'Components/cards/CardControls';
 import sortBy from 'lodash/sortBy';
-import {
-  TITLE,
-  TAGS,
-  DESCRIPTION,
-  MEDIA,
-  TIMERANGE,
-  ACTIVITY,
-} from 'Constants/cardFields';
 
 import {ImgOverlay, MediaField, EditIcon} from './mixinsCardFront';
-
-const TagField = ({tags, style, onClick, className}) => {
-  if (!tags) return null;
-  return (
-    <div
-      onClick={onClick}
-      className={`flex ${className} items-center flex-no-wrap overflow-x-hidden`}
-      style={{...style}}>
-      {tags.map(t => (
-        <div className="tag-label bg-black text-lg mr-1 ">{t}</div>
-      ))}
-    </div>
-  );
-};
-
-export const PlaceholderFrame = ({
-  onClick,
-  empty,
-  placeholder,
-  className,
-  style,
-  edit,
-  children,
-}) => (
-  <div
-    className={`${className} cursor-pointer items-center flex`}
-    style={{width: '90%'}}
-    onClick={onClick}>
-    {empty ? <div className="italic text-2xl">{placeholder}</div> : children}
-    <div className="ml-auto">
-      <EditIcon className="p-2" />
-    </div>
-  </div>
-);
 
 const RemoveBtn = ({on, children, onClick, style, className}) => (
   <div className={className} style={style}>
@@ -81,7 +39,7 @@ const FieldList = ({values, visiblity, onRemove}) =>
             opacity: visiblity[d.id] ? 1 : 0.5,
             transform: `translateY(${110 * i}%)`,
             transition: 'transform 0.2s ease-in-out',
-            minWidth: 0 /* important */,
+            minWidth: 0 /* important */
           }}>
           <div
             className="flex-grow flex items-center justify-between border-2 p-2 ml-1 mr-1"
@@ -102,7 +60,7 @@ const SelectField = ({
   onChange,
   values = [],
   children,
-  selectedId,
+  selectedId
 }) => {
   const [visible, setVisible] = useState(false);
   const selected = values.find(v => v.id === selectedId) || null;
@@ -146,12 +104,12 @@ class SelectCardField extends Component {
     tagNode: PropTypes.oneOf([PropTypes.node, null]),
     descrNode: PropTypes.oneOf([PropTypes.node, null]),
     mediaNode: PropTypes.oneOf([PropTypes.node, null]),
-    dateNode: PropTypes.oneOf([PropTypes.node, null]),
+    dateNode: PropTypes.oneOf([PropTypes.node, null])
   };
 
   static defaultProps = {
     className: '',
-    fields: [],
+    fields: []
   };
 
   constructor(props) {
@@ -162,7 +120,7 @@ class SelectCardField extends Component {
 
     this.state = {
       visiblity,
-      selectedAttrId,
+      selectedAttrId
     };
   }
   // deriveStateFromProps() {
@@ -183,7 +141,7 @@ class SelectCardField extends Component {
       const newVisibility = {...visiblity, [attr]: false};
       this.setState({
         visiblity: newVisibility,
-        selectedAttrId: selectNextFieldId(newVisibility),
+        selectedAttrId: selectNextFieldId(newVisibility)
       });
       onDeselect(attr);
     };
@@ -194,7 +152,7 @@ class SelectCardField extends Component {
       const newVisibility = {...visiblity, [selectedAttrId]: true};
       this.setState({
         visiblity: newVisibility,
-        selectedAttrId: selectNextFieldId(newVisibility),
+        selectedAttrId: selectNextFieldId(newVisibility)
       });
     };
 
@@ -218,7 +176,8 @@ class SelectCardField extends Component {
             }}
           />
           <button
-            className={`btn btn-lg border-2 ${disabled && 'btn-disabled'}`}
+            className={`btn btn-lg border-2 ${disabled &&
+              'btn-disabled'}`}
             type="submit">
             Add Field
           </button>
@@ -257,7 +216,7 @@ export default class CardFrontTemplate extends Component {
     activity: PropTypes.object,
     bookmarkable: PropTypes.boolean,
     onPointsClick: PropTypes.func,
-    bottomControls: PropTypes.node,
+    bottomControls: PropTypes.node
   };
 
   static defaultProps = {
@@ -278,7 +237,7 @@ export default class CardFrontTemplate extends Component {
     bookmarkable: false,
     onRemoveChallengeSubmission: d => d,
     onPointsClick: d => d,
-    bottomControls: <React.Fragment />,
+    bottomControls: <React.Fragment />
   };
 
   render() {
@@ -307,97 +266,17 @@ export default class CardFrontTemplate extends Component {
       onResetField,
       onTimeRangeClick = d => d,
       activity,
+      fieldNodes
     } = this.props;
 
-    // console.log('mediaIcons', mediaIcons);
-    const fieldNodes = [
-      {
-        id: TITLE,
-        label: 'Title',
-        node: (
-          <PlaceholderFrame
-            onClick={onTitleClick}
-            className=""
-            empty={title.value === null}
-            placeholder="Title">
-            <div className="capitalize text-2xl truncate-text">
-              {title.value}
-            </div>
-          </PlaceholderFrame>
-        ),
-      },
-      {
-        id: TAGS,
-        label: 'Tags',
-        node: (
-          <PlaceholderFrame
-            onClick={onTagsClick}
-            className=""
-            empty={tags.value === null}
-            placeholder="Tags">
-            <TagField tags={tags.value} />
-          </PlaceholderFrame>
-        ),
-      },
-      {
-        id: DESCRIPTION,
-        label: 'Text',
-        node: (
-          <PlaceholderFrame
-            onClick={onDescriptionClick}
-            empty={description.value === null}
-            placeholder="Description">
-            <div className="capitalize truncate-text text-xl">
-              {getValue(description)}
-            </div>
-          </PlaceholderFrame>
-        ),
-      },
-      {
-        id: MEDIA,
-        label: 'Media',
-        node: (
-          <PlaceholderFrame
-            empty={media.value === null}
-            placeholder="Media"
-            onClick={onMediaClick}>
-            <MediaField media={media} />
-          </PlaceholderFrame>
-        ),
-      },
-      {
-        id: TIMERANGE,
-        label: 'Date',
-        node: (
-          <PlaceholderFrame
-            onClick={onTimeRangeClick}
-            placeholder="Date"
-            empty
-          />
-        ),
-      },
-      {
-        id: ACTIVITY,
-        label: 'Activity',
-        node: (
-          <PlaceholderFrame
-            onClick={onChallengeClick}
-            placeholder="Activity"
-            empty={activity.value === null}>
-            <div className="capitalize truncate-text text-xl">
-              {activity.value && activity.value.title}
-            </div>
-          </PlaceholderFrame>
-        ),
-      },
-    ];
-    console.log('fieldNodes', fieldNodes);
     const fieldVisibility = fieldNodes.reduce(
-      (acc, d) => ({
+      (acc, d) => {
+
+        return ({
         ...acc,
-        [d.id]: isFieldInitialized({card: this.props, attr: d.id}),
-      }),
-      {},
+        [d.id]: this.props[d.id].value !== null // isFieldInitialized({card: this.props, attr: d.id}),
+      }) },
+      {}
     );
 
     return (
@@ -409,7 +288,7 @@ export default class CardFrontTemplate extends Component {
           src={img.value ? img.value.url : null}
           style={{
             flex: '0 0 50%',
-            cursor: 'pointer',
+            cursor: 'pointer'
           }}>
           <div className="absolute z-10 w-full h-full flex items-end">
             <EditIcon className="m-1 p-1 " onClick={onImgClick} />
