@@ -393,7 +393,7 @@ class EditCardFront extends PureComponent {
 
   state = {
     data: {
-      ...extractCardFields({})
+      ...this.props
     },
     dialog: null
   };
@@ -499,6 +499,7 @@ class EditCardFront extends PureComponent {
         dialog: {title: 'activity', data: activity}
       });
 
+    console.log('title.value', title.value);
     const fieldNodes = [
       {
         id: TITLE,
