@@ -70,7 +70,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const {mapViewport, width, height, authUser, tagVocabulary} = state;
   const {uid: authorId} = authUser;
 
-
+  // TODO: this is weird, I cannot set defaultProps
   const defProps = {...initCardFields, ...ownProps};
 
   const {
@@ -83,7 +83,6 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     onUpdateCard = d => d
   } = defProps;
 
-  console.log('defProps', defProps);
   // TODO: BUILD IN check
   const {userEnv: userEnvId} = match.params;
 
@@ -165,8 +164,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     addToStorage,
     removeFromStorage,
     ...backCardFuncs,
-    ...ownProps,
-    relatedCardsByTag
+    relatedCardsByTag,
+    ...defProps
   };
 };
 
@@ -251,7 +250,8 @@ EditCard.defaultProps = {
   flipped: false,
   template: false,
   onFlip: d => d,
-  fetchAuthorData: d => d
+  fetchAuthorData: d => d,
+  ...initCardFields
 };
 
 export default compose(

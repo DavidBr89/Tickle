@@ -29,9 +29,9 @@ import Admin from './components/Admin';
 import Account from './components/Account';
 import Diary from './components/Diary';
 
-import CardTreeEditorPage from './components/CardTreeEditor';
+// import CardTreeEditorPage from './components/CardTreeEditor';
 
-import {MapCardAuthorPage, TopicMapAuthorPage} from './components/CardAuthor';
+import {MapCardAuthorPage} from './components/CardAuthor';
 import UserEnvironmentSettings from './components/CardAuthor/UserEnvironmentSettings';
 
 import {
@@ -92,10 +92,6 @@ const Routes = () => (
       />
 
       <Route path={`/:userEnv/${GEO_AUTHOR.path}`} render={MapCardAuthorPage} />
-      <Route
-        path={`/:userEnv/${TREE_AUTHOR.path}`}
-        component={CardTreeEditorPage}
-      />
 
       <Route
         exact

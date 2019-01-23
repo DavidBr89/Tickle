@@ -44,6 +44,9 @@ export const CHALLENGE_NOT_SUBMITTED = 'CHALLENGE_NOT_SUBMITTED';
 export const ACTIVITY_SUCCEEDED = 'ACTIVITY_SUCCEEDED';
 export const CARD_CREATED = 'CARD_CREATED';
 
+const DATE = 'date';
+const POINTS = 'points';
+
 export const activityFilterMap = (() => {
   const obj = {
     [ACTIVITY_STARTED]: isActivityStarted,
@@ -63,7 +66,8 @@ export const DESCRIPTION = 'description';
 export const MEDIA = 'media';
 export const TIMERANGE = 'timerange';
 export const ACTIVITY = 'activity';
-// export const TIMESTAMP = 'timestamp';
+export const IMG = 'image';
+export const TIMESTAMP = 'timestamp';
 
 const DEFAULT_TAG = 'general';
 export const fallbackTagValues = tags =>
@@ -91,22 +95,22 @@ export const fallbackTagValues = tags =>
 // });
 
 // TODO: where is activity submission?
-const defaultObjVal = () => ({key: null, value: null});
+const defaultObjVal = () => ({label: null, value: null});
 
 export const extractCardFields = obj => {
   const {
     id = 'string',
     uid = 'string',
     loc = {latitude: 50.85146, longitude: 4.315483},
-    img = defaultObjVal(),
+    img = defaultObjVal(IMG),
     timerange = {...defaultObjVal(), thumbnail: null}, // { start: null, end: null },
-    title = defaultObjVal(),
-    tags = defaultObjVal(),
-    description = defaultObjVal(),
-    media = defaultObjVal(),
-    timestamp = defaultObjVal(),
-    activity = defaultObjVal(),
-    points = defaultObjVal(),
+    title = defaultObjVal(TITLE),
+    tags = defaultObjVal(TAGS),
+    description = defaultObjVal(DESCRIPTION),
+    media = defaultObjVal(MEDIA),
+    date = defaultObjVal(DATE),
+    activity = defaultObjVal(ACTIVITY),
+    points = defaultObjVal(POINTS),
     activitySubmission = null
   } = obj;
 
@@ -115,7 +119,7 @@ export const extractCardFields = obj => {
     uid,
     img, // {url, thumbnail, title}
     loc,
-    timestamp,
+    date,
     timerange,
     tags,
     media,
