@@ -29,7 +29,6 @@ const ScrollView = React.forwardRef((props, ref) => {
 
   const childRef = useRef();
 
-  console.log('boundary', boundary);
   useImperativeMethods(ref, () => ({
     scrollTo(name, opts = {}) {
       const node = ReactDOM.findDOMNode(elements[name].current);

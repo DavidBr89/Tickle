@@ -8,7 +8,7 @@ import {
   extractCardFields
 } from 'Constants/cardFields';
 
-import MapAuthor from 'Components/MapAuthor';
+import MapAuthor from 'Src/components/CardAuthor/MapAuthor';
 
 import {V2_DRAG} from 'Components/DragAndDrop/';
 

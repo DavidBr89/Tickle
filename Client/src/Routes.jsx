@@ -31,7 +31,7 @@ import Diary from './components/Diary';
 
 // import CardTreeEditorPage from './components/CardTreeEditor';
 
-import {MapCardAuthorPage} from './components/CardAuthor';
+import CardAuthorPage from './components/CardAuthor';
 import UserEnvironmentSettings from './components/CardAuthor/UserEnvironmentSettings';
 
 import {
@@ -91,7 +91,7 @@ const Routes = () => (
         )}
       />
 
-      <Route path={`/:userEnv/${GEO_AUTHOR.path}`} render={MapCardAuthorPage} />
+      <Route path={`/:userEnv/${GEO_AUTHOR.path}`} render={CardAuthorPage} />
 
       <Route
         exact

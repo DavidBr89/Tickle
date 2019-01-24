@@ -12,25 +12,27 @@ function usePrevious(value) {
 
 export default function TabSwitcher({
   children,
-  visibleIndex,
-  setVisibleIndex,
-  className,
-  tabClassName
+  visibleIndex = null,
+  setVisibleIndex = d => d,
+  className = '',
+  tabClassName = ''
 }) {
   const scrollCont = React.createRef();
   const wrapperCont = React.createRef();
 
-  useEffect(() => {
-    scrollCont.current.scrollTo(visibleIndex);
-    // scrollCont.childNodes.map(el => {
-    //   console.log('blur', el);
-    //   el.blur();
-    // });
-  });
+  useEffect(
+    () => {
+      console.log('visibleIndex', visibleIndex);
+      visibleIndex !== null &&
+        scrollCont.current.scrollTo(visibleIndex);
+    },
+    [visibleIndex]
+  );
 
   return (
     <div
-      className={`relative flex relative flex-grow flex-col overflow-x-hidden ${className}`} ref={wrapperCont}>
+      className={`relative flex relative flex-grow flex-col overflow-x-hidden ${className}`}
+      ref={wrapperCont}>
       <ScrollView ref={scrollCont} boundary={wrapperCont}>
         <div
           className="flex flex-grow"

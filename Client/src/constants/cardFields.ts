@@ -66,7 +66,7 @@ export const DESCRIPTION = 'description';
 export const MEDIA = 'media';
 export const TIMERANGE = 'timerange';
 export const ACTIVITY = 'activity';
-export const IMG = 'image';
+export const IMG = 'img';
 export const TIMESTAMP = 'timestamp';
 
 const DEFAULT_TAG = 'general';

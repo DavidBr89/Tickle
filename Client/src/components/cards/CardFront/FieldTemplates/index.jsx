@@ -15,13 +15,13 @@ import {
   IMG
 } from 'Constants/cardFields';
 
-import {ExtendedEditTags} from './TagInput';
-
-import EditPhoto from './EditPhoto';
+import * as Img from './Img';
 import MediaSearch from './MediaSearch';
-import ActivityModal from './Activity';
 
-export {ActivityModal};
+import * as Title from './Title';
+import * as Description from './Description';
+import * as Activity from './Activity';
+import * as Tags from './Tags';
 
 export function NumberInput({...props}) {
   const {onUpdate, data, onClose} = props;
@@ -74,34 +74,6 @@ export function NumberInput({...props}) {
   );
 }
 
-export const DescriptionModal = props => {
-  console.log('description', props.description);
-  const {onChange, modalProps, description} = props;
-  const [text, setText] = useState(description.value);
-  const tmpData = {value: text};
-
-  return (
-    <ModalBody
-      {...modalProps}
-      footer={
-        <button
-          type="button"
-          className="btn"
-          onClick={() => onChange(tmpData)}>
-          Update
-        </button>
-      }>
-      <textarea
-        className="form-control w-full"
-        onChange={e => setText(e.target.value)}
-        rows={5}
-        placeholder="Please insert your description">
-        {text}
-      </textarea>
-    </ModalBody>
-  );
-};
-
 // const closeBtn = (
 //   <button
 //     type="button"
@@ -111,87 +83,14 @@ export const DescriptionModal = props => {
 //   </button>
 // );
 
-export const TitleModal = props => {
-  const {modalProps, onChange, visible, title: initTitle} = props;
-
-  const [titleText, setTitleText] = useState(initTitle.value);
-
-  // console.log('titleProps', initTitle, 'titleText', titleText);
-  const tmpTitle = {value: titleText};
-
-  return (
-    <ModalBody
-      onClose={() => onChange(tmpTitle)}
-      {...modalProps}
-      footer={
-        <button
-          type="button"
-          className="btn"
-          onClick={() => onChange(tmpTitle)}>
-          Update
-        </button>
-      }>
-      <input
-        className="capitalize form-control text-2xl w-full text-xl"
-        onChange={e => setTitleText(e.target.value || null)}
-        value={titleText}
-      />
-    </ModalBody>
-  );
-};
-
-export const EditTagsModal = props => {
-  const {
-    onChange,
-    onClose,
-    footer,
-    visible,
-    title,
-    tagVocabulary,
-    tags,
-    modalProps
-  } = props;
-
-  return (
-    <ModalBody {...modalProps}>
-      <ExtendedEditTags
-        style={{width: '100%'}}
-        onChange={newTags => onChange({value: newTags})}
-        editable
-        data={tags.value}
-        vocabulary={tagVocabulary}
-      />
-    </ModalBody>
-  );
-};
-
-export const EditPhotoModal = props => {
-  const {img, onChange} = props;
-
-  return (
-    <ModalBody {...props}>
-      <EditPhoto
-        imgUrl={img.value ? img.value.url : null}
-        imgName={img.value && img.value.name}
-        onChange={imgVal => onChange(IMG, {...img, value: imgVal})}
-      />
-    </ModalBody>
-  );
-};
-
-export const MediaSearchModal = props => (
-  <ModalBody {...props}>
-    <MediaSearch {...props} />
-  </ModalBody>
-);
-
 const TimeRange = () => <div>test</div>;
 
-export const modalComps = {
-  [TITLE]: TitleModal,
-  [TAGS]: EditTagsModal,
-  [DESCRIPTION]: DescriptionModal,
-  [MEDIA]: MediaSearch,
-  [TIMERANGE]: TimeRange,
-  [ACTIVITY]: ActivityModal
+export const fieldComps = {
+  [Title.key]: Title,
+  [Description.key]: Description,
+  [Img.key]: Img,
+  // [MEDIA]: MediaSearch,
+  [Tags.key]: Tags,
+  // [TIMERANGE]: TimeRange,
+  [Activity.key]: Activity
 };

@@ -5,8 +5,6 @@ import {FlyToInterpolator} from 'react-map-gl';
 
 import WebMercatorViewport from 'viewport-mercator-project';
 
-import MapAuthor from 'Components/MapAuthor';
-
 // import TopicMapAuthor from 'Components/DataView/TopicMap/DragTopicMap';
 import {TEMP_ID} from 'Constants/cardFields';
 import {V1_DRAG} from 'Components/DragAndDrop';
@@ -34,6 +32,7 @@ import withAuthentication from 'Src/components/withAuthentication';
 import {shiftCenterMap} from 'Src/lib/geo';
 // import {initCard} from 'Constants/cardFields';
 import {initCardFields, fallbackTagValues} from 'Constants/cardFields';
+import MapAuthor from './MapAuthor';
 import CardAuthorPage from './CardAuthorPage';
 
 // import mapViewReducer from './reducer';
@@ -54,6 +53,7 @@ const mapStateToProps = state => {
   const templateCard = {
     ...initCardFields,
     loc: userLocation,
+    ...tmpCard,
     uid,
     id: TEMP_ID,
     template: true
@@ -164,7 +164,6 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const fetchCards = () =>
     fetchCreatedCards({uid: authUser.uid, userEnv});
 
-  console.log('cards before', cards);
   return {
     ...state,
     ...dispatcherProps,
@@ -213,7 +212,6 @@ function PureMapCardAuthorPage({...props}) {
     else asyncUpdateCard({cardData: updatedCard, userEnv});
   };
 
-  console.log('props before reduce', props);
   return (
     <CardAuthorPage {...props} centerTemplatePos={centerTemplatePos}>
       <MapAuthor
@@ -230,10 +228,6 @@ PureMapCardAuthorPage.defaultProps = {};
 
 PureMapCardAuthorPage.propTypes = {};
 
-function PrivateTopicMapAuthorPage({...props}) {
-  return <CardAuthorPage {...props} />;
-}
-
 const composeScaffold = comp =>
   compose(
     withAuthentication,
@@ -246,10 +240,4 @@ const composeScaffold = comp =>
     )
   )(comp);
 
-export const MapCardAuthorPage = composeScaffold(PureMapCardAuthorPage);
-
-export const TopicMapAuthorPage = composeScaffold(
-  PrivateTopicMapAuthorPage
-);
-
-export default CardAuthorPage;
+export default composeScaffold(PureMapCardAuthorPage);

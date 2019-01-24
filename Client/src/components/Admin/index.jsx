@@ -1,3 +1,5 @@
+import {lazy} from 'react';
+
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
@@ -51,7 +53,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     uid,
     tmpCard,
     mapSettings,
-    userLocation, selectedUserEnvId: userEnvId
+    userLocation,
+    selectedUserEnvId: userEnvId
   } = stateProps;
 
   const {
@@ -62,7 +65,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     fetchCollectibleCards,
     fetchCreatedCards,
     registerUserToEnv,
-    inviteUser, setUserEnv
+    inviteUser,
+    setUserEnv
   } = dispatchProps;
 
   const {match, history, location} = ownProps;
@@ -84,7 +88,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 
   const routeUserEnv = env => setUserEnv(env);
 
-    // history.push(`/${env}/${ADMIN.path}`);
+  // history.push(`/${env}/${ADMIN.path}`);
 
   const cardType = 'created';
   const fetchCards = () =>
@@ -123,13 +127,14 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   };
 };
 
-export default compose(
-  withRouter,
-  withAuthentication,
-  withAuthorization(),
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-    mergeProps
-  )
-)(AdminPage);
+export default
+  compose(
+    withRouter,
+    withAuthentication,
+    withAuthorization(),
+    connect(
+      mapStateToProps,
+      mapDispatchToProps,
+      mergeProps
+    )
+  )(AdminPage)

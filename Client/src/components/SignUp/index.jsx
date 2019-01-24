@@ -13,7 +13,7 @@ import * as routes from 'Src/constants/routeSpec';
 import PhotoUpload from 'Src/components/utils/PhotoUpload';
 
 import {signUp} from 'Src/reducers/Session/async_actions';
-import {SelectTag} from 'Src/components/utils/SelectField';
+import {SelectTags} from 'Src/components/utils/SelectField';
 import {PrevBtn, NextBtn} from 'Src/components/utils/PrevNextBtn';
 import styledComp from 'Src/components/utils/styledComp';
 
@@ -220,7 +220,7 @@ const SignUpForm = props => {
         </FormGroup>
 
         <FormGroup>
-          <SelectTag
+          <SelectTags
             placeholder="Select Interests"
             inputClassName="flex-grow p-2 border-2 border-black text-xl"
             className="flex-grow"

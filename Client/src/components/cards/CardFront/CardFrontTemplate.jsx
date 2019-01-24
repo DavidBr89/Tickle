@@ -33,10 +33,10 @@ const FieldList = ({values, visiblity, onRemove}) =>
     <ul className="list-reset flex-grow relative  overflow-y-auto">
       {values.map((d, i) => (
         <li
-          key={d.id}
+          key={d.key}
           className="w-full absolute flex items-center"
           style={{
-            opacity: visiblity[d.id] ? 1 : 0.5,
+            opacity: visiblity[d.key] ? 1 : 0.5,
             transform: `translateY(${110 * i}%)`,
             transition: 'transform 0.2s ease-in-out',
             minWidth: 0 /* important */
@@ -44,7 +44,7 @@ const FieldList = ({values, visiblity, onRemove}) =>
           <div
             className="flex-grow flex items-center justify-between border-2 p-2 ml-1 mr-1"
             style={{minWidth: 0}}>
-            <RemoveBtn onClick={onRemove(d.id)}>{d.label}</RemoveBtn>
+            <RemoveBtn onClick={onRemove(d.key)}>{d.label}</RemoveBtn>
             {d.node}
           </div>
         </li>
@@ -63,7 +63,7 @@ const SelectField = ({
   selectedId
 }) => {
   const [visible, setVisible] = useState(false);
-  const selected = values.find(v => v.id === selectedId) || null;
+  const selected = values.find(v => v.key === selectedId) || null;
 
   return (
     <div className={`${className} relative z-10`}>
@@ -78,7 +78,7 @@ const SelectField = ({
         <ul className="mt-2 list-reset p-2 z-10 bg-white border border-black shadow">
           {values.map(x => (
             <li
-              className={`${optionClassName} ${x.id === selectedId &&
+              className={`${optionClassName} ${x.key === selectedId &&
                 'bg-grey'} cursor-pointer`}
               onMouseDown={e => e.preventDefault()}
               onClick={() => {
@@ -132,8 +132,8 @@ class SelectCardField extends Component {
 
     const {visiblity, selectedAttrId} = this.state;
 
-    const notSelectedFields = fields.filter(d => !visiblity[d.id]);
-    const selectedCardFields = fields.filter(d => visiblity[d.id]);
+    const notSelectedFields = fields.filter(d => !visiblity[d.key]);
+    const selectedCardFields = fields.filter(d => visiblity[d.key]);
     const disabled = notSelectedFields.length === 0;
     const allHidden = selectedCardFields.length === 0;
 
@@ -172,7 +172,7 @@ class SelectCardField extends Component {
             optionClassName="p-2"
             values={notSelectedFields}
             onChange={v => {
-              this.setState({selectedAttrId: v.id});
+              this.setState({selectedAttrId: v.key});
             }}
           />
           <button
@@ -269,13 +269,12 @@ export default class CardFrontTemplate extends Component {
       fieldNodes
     } = this.props;
 
+    console.log('fieldNodes', fieldNodes);
     const fieldVisibility = fieldNodes.reduce(
-      (acc, d) => {
-
-        return ({
+      (acc, d) => ({
         ...acc,
-        [d.id]: this.props[d.id].value !== null // isFieldInitialized({card: this.props, attr: d.id}),
-      }) },
+        [d.key]: this.props[d.key].value !== null // isFieldInitialized({card: this.props, attr: d.key}),
+      }),
       {}
     );
 

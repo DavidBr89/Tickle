@@ -18,7 +18,7 @@ const boxTarget = {
 
     console.log('ITEM DATA', item);
     component.drop(item.data, left, top);
-  },
+  }
   // },
   // canDrop(props, monitor, component) {
   //   console.log('canDrop', component, monitor);
@@ -35,19 +35,19 @@ class DropTargetCont extends PureComponent {
     children: PropTypes.element.isRequired,
     // dropped: PropTypes.bool.isRequired,
     dropHandler: PropTypes.func,
-    style: PropTypes.object,
+    style: PropTypes.object
   };
 
   static defaultProps = {
     dropHandler: d => d,
-    style: {},
+    style: {}
   };
 
   state = {
     top: 100,
     left: 100,
     data: null,
-    dropped: false,
+    dropped: false
   };
 
   componentDidUpdate(prevProps) {
@@ -55,11 +55,10 @@ class DropTargetCont extends PureComponent {
     const {left, top, data} = this.state;
 
     if (!prevProps.isDropped && isDropped) {
-      // console.log('canDrop', canDrop);
       dropHandler({
         ...data,
         x: left,
-        y: top,
+        y: top
       });
     }
   }
@@ -76,7 +75,7 @@ class DropTargetCont extends PureComponent {
     return connectDropTarget(
       <div style={style} className={className}>
         {children}
-      </div>,
+      </div>
     );
   }
 }
@@ -89,10 +88,10 @@ export const dropTarget = srcId =>
     sourceClientOffset: monitor.getSourceClientOffset(),
     diffFromInitialOffset: monitor.getDifferenceFromInitialOffset(),
     isDropped: monitor.didDrop(),
-    canDrop: monitor.canDrop(),
+    canDrop: monitor.canDrop()
   }))(DropTargetCont);
 
 export const dropTargetMap = {
   [V1_DRAG]: dropTarget(V1_DRAG),
-  [V2_DRAG]: dropTarget(V2_DRAG),
+  [V2_DRAG]: dropTarget(V2_DRAG)
 };

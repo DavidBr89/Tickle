@@ -5,7 +5,7 @@ import ChevronsRight from 'react-feather/dist/icons/chevrons-right';
 import UserIcon from 'react-feather/dist/icons/user';
 
 import uniq from 'lodash/uniq';
-import {SelectTag} from 'Components/utils/SelectField';
+import {SelectTags} from 'Components/utils/SelectField';
 import {BlackModal, ModalBody} from 'Components/utils/Modal';
 import AlertButton from 'Components/utils/AlertButton';
 import {initUserFields} from 'Constants/userFields';
@@ -332,7 +332,7 @@ const UserProfileUpdate = ({
   return (
     <>
       <div className="mb-3">
-        <SelectTag
+        <SelectTags
           placeholder="Enter Learning Aims"
           inputClassName="flex-grow p-2 border-2 border-black"
           idAcc={d => d.id}
@@ -344,7 +344,7 @@ const UserProfileUpdate = ({
         <TagSet values={aims} placeholder="No aim" />
       </div>
       <div className="mb-3">
-        <SelectTag
+        <SelectTags
           btnContent="Add"
           placeholder="Enter Learning deficits"
           inputClassName="z-0 flex-grow p-2 border-2 border-black"
@@ -358,7 +358,7 @@ const UserProfileUpdate = ({
         <TagSet values={deficits} placeholder="No deficits" />
       </div>
       <div className="mb-3">
-        <SelectTag
+        <SelectTags
           btnContent="Add"
           placeholder="Enter interests"
           inputClassName="z-0 flex-grow p-2 border-2 border-black"

@@ -14,9 +14,10 @@ const SelectField = ({
   accId,
   placeholder
 }) => {
-  const [visible, setVisible] = useState(false);
+  const [focus, setFocus] = useState(false);
   const [selectedId, setSelected] = useState(null);
 
+  const visible = focus && values.length > 0;
   const selected = values; // values.find(v => accId(v) === selectedId) || null;
 
   // console.log('visible', visible, 'values', values);
@@ -25,8 +26,8 @@ const SelectField = ({
       <div
         className={`h-full flex flex-grow cursor-pointer ${selectedClassName}`}
         tabIndex="-1"
-        onFocus={() => setVisible(true)}
-        onBlur={() => setVisible(false)}>
+        onFocus={() => setFocus(true)}
+        onBlur={() => setFocus(false)}>
         {React.cloneElement(selectedComp, {...selected})}
       </div>
       <div
@@ -47,7 +48,7 @@ const SelectField = ({
               onMouseDown={e => e.preventDefault()}
               onClick={() => {
                 setSelected(accId(x));
-                setTimeout(() => setVisible(false), 50);
+                setTimeout(() => setFocus(false), 50);
                 onChange(x);
               }}>
               <ChildComp {...x} key={accId(x)} />
@@ -165,7 +166,7 @@ const FilterInput = ({...props}) => {
   );
 };
 
-export const SelectTag = ({
+export const SelectTags = ({
   values,
   className,
   accId,
@@ -174,13 +175,15 @@ export const SelectTag = ({
   btnContent,
   onChange,
   selectedClassName,
-  style
+  style,
+  ...rest
 }) => {
   const [inputVal, setInputVal] = useState(null);
   const [key, resetKey] = useState(uuidv1());
   return (
     <div key={key} className={`flex ${className}`} style={style}>
       <FilterInput
+        {...rest}
         className="flex-grow"
         placeholder={placeholder}
         inputClassName={inputClassName}
@@ -202,7 +205,7 @@ export const SelectTag = ({
   );
 };
 
-SelectTag.defaultProps = {
+SelectTags.defaultProps = {
   onChange: d => d,
   accId: d => d.id,
   accInputVal: d => d.id,

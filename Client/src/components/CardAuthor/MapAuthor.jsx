@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import CardMarker from 'Components/cards/CardMarker';
+import CardMarker from 'Src/components/cards/CardMarker';
 
-import {dropTargetMap} from 'Components/DragAndDrop/DragTargetCont';
-import DragDropContextProvider from 'Components/DragAndDrop/DragContextProvider';
-import DragElement from 'Components/DragAndDrop/DragElement';
+import {dropTargetMap} from 'Src/components/DragAndDrop/DragTargetCont';
+import DragDropContextProvider from 'Src/Components/DragAndDrop/DragContextProvider';
+import DragElement from 'Src/components/DragAndDrop/DragElement';
 
 import {PerspectiveMercatorViewport} from 'viewport-mercator-project';
 
-import Map from 'Components/utils/Map';
+import Map from 'Src/components/utils/Map';
 
 // const DropTarget = dropTarget('dragSourceCard');
 // const memDropTarget = memoize(dropTarget);
@@ -36,7 +36,6 @@ const MapAuthor = DragDropContextProvider(props => {
     height
   });
 
-  console.log('', props, 'cards reduce', cards);
   const locNodes = cards.reduce((acc, n) => {
     const [x, y] = vp.project([n.loc.longitude, n.loc.latitude]);
     if (x > 0 && x < width && y > 0 && y < height) {
