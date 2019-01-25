@@ -33,8 +33,8 @@ function getBoundingBox(coords, acc = d => [d[0], d[1]]) {
       leftTop: [bounds.minX, bounds.maxY],
       leftBottom: [bounds.minX, bounds.minY],
       rightTop: [bounds.maxX, bounds.maxY],
-      rightBottom: [bounds.maxX, bounds.minY],
-    },
+      rightBottom: [bounds.maxX, bounds.minY]
+    }
   ];
 }
 // const euclDist = (x1, y1, x2, y2) => Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
@@ -67,18 +67,18 @@ function circle([x, y], offsetX, offsetY) {
     [x, y - offsetX],
     [x - 0.7071 * offsetX, y - 0.7071 * offsetY],
     [x - offsetX, y],
-    [x - 0.7071 * offsetX, y + 0.7071 * offsetY],
+    [x - 0.7071 * offsetX, y + 0.7071 * offsetY]
   ];
 }
 function groupPoints(
   nodes,
   offsetX = 0,
   offsetY = 0,
-  accessor = d => [d[0], d[1]],
+  accessor = d => [d[0], d[1]]
 ) {
   return nodes.reduce(
     (acc, d) => acc.concat(circle(accessor(d), offsetX, offsetY)),
-    [],
+    []
   );
 }
 function findCenterPos(values) {
@@ -89,14 +89,14 @@ function findCenterPos(values) {
         bbox[2].leftTop,
         bbox[2].leftBottom,
         bbox[2].rightTop,
-        bbox[2].rightBottom,
+        bbox[2].rightBottom
       ],
       // values.map(d => [d.x, d.y]),
       20,
-      20,
+      20
     ),
     Infinity,
-    Infinity,
+    Infinity
   );
   const centerPos = d3.polygonCentroid(poly);
   return centerPos;
@@ -106,13 +106,13 @@ class Cluster extends Component {
   static propTypes = {
     children: PropTypes.func,
     className: PropTypes.string,
-    scale: PropTypes.number,
+    scale: PropTypes.number
   };
 
   static defaultProps = {
     children: () => null,
     className: '',
-    radius: 1,
+    radius: 1
   };
 
   oldClusters = [];
@@ -125,7 +125,7 @@ class Cluster extends Component {
       // TODO find real function
       radius,
       x: n => n.x,
-      y: n => n.y,
+      y: n => n.y
     }).map(values => {
       const centerPos = findCenterPos(values);
       const tags = uniq(flatten(values.map(e => e.tags)));
@@ -135,7 +135,7 @@ class Cluster extends Component {
         tags,
         count: values.length,
         values,
-        centerPos,
+        centerPos
       };
     });
 
@@ -153,18 +153,20 @@ class Cluster extends Component {
       .y(d => d.centerPos[1])
       .extent([[-1, -1], [width + 1, height + 1]]);
 
-    const cells = voronoi.polygons(clusters).map(({data, ...polygonObj}) => {
-      const polygon = Object.values(polygonObj);
-      const centroid = d3.polygonCentroid(polygon);
-      const size = data.values.length * 30;
-      return {...data, size, centroid, polygon};
-    });
+    const cells = voronoi
+      .polygons(clusters)
+      .map(({data, ...polygonObj}) => {
+        const polygon = Object.values(polygonObj);
+        const centroid = d3.polygonCentroid(polygon);
+        const size = data.values.length * 30;
+        return {...data, size, centroid, polygon};
+      });
     return cells;
   };
 
   state = {
     // clusters: [],
-    links: [],
+    links: []
   };
 
   render() {
@@ -179,16 +181,18 @@ class Cluster extends Component {
       links,
       nodes,
       labels,
-      children,
+      children
     } = this.props;
 
-    const clusters = this.findClusters().map(({centroid, centerPos, ...d}) => ({
-      centroid,
-      centerPos,
-      x: centerPos[0],
-      y: centerPos[1],
-      data: d,
-    }));
+    const clusters = this.findClusters().map(
+      ({centroid, centerPos, ...d}) => ({
+        centroid,
+        centerPos,
+        x: centerPos[0],
+        y: centerPos[1],
+        data: d
+      })
+    );
     // const cells = this.getVoronoiCells(clusters);
     // console.log('clusters', clusters);
 

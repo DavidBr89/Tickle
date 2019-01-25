@@ -10,7 +10,7 @@ import EditCard from 'Components/cards/ConnectedEditCard';
 import {SelectInput} from 'Components/utils/SelectField';
 import mbxGeoCoding from '@mapbox/mapbox-sdk/services/geocoding';
 import CardSlideShow from 'Src/components/CardSlideShow';
-import CardStackContainer from '../CardStack';
+// import CardStackContainer from '../CardStack';
 
 // import CardDragAuthorOverlay from './CardDragAuthorOverlay';
 

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import {Link, withRouter} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
 import uniq from 'lodash/uniq';
-import styled from 'styled-components';
 
 import {compose} from 'recompose';
 import {connect} from 'react-redux';
