@@ -140,8 +140,6 @@ class EditCardFront extends PureComponent {
       };
     });
 
-    console.log("data", data);
-
     return (
       <React.Fragment>
         <BlackModal className="z-50" visible={modalVisible}>
