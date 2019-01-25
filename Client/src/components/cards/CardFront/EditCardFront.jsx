@@ -74,30 +74,6 @@ class EditCardFront extends PureComponent {
     dialogKey: null
   };
 
-  onCloseModal = () => {
-    const {data} = this.state;
-    const {onUpdate} = this.props;
-    // onUpdate({ ...data });
-    this.setState({dialogKey: null});
-  };
-
-  // updateField({field, val}) {
-  //   const {[field]: oldVal, data} = this.state;
-  //   console.log('field', field, 'val', val);
-  //   this.setState({data: {...data, [field]: {...oldVal, ...val}}});
-  // }
-
-  updateFieldAndCloseModal(field, val) {
-    const {[field]: oldVal, data} = this.state;
-    this.setState({
-      data: {
-        ...data,
-        [field]: {...oldVal, ...val}
-      },
-      dialogKey: null
-    });
-  }
-
   render() {
     const {
       onClose,
@@ -125,114 +101,6 @@ class EditCardFront extends PureComponent {
       points
     } = data;
 
-    const onTagsClick = () => {
-      this.setState({
-        dialogKey: {key: TAGS, data: tags}
-      });
-    };
-    const onTitleClick = () =>
-      this.setState({
-        dialogKey: {key: TITLE, data: title}
-      });
-
-    const onImgClick = () => {
-      this.setState({
-        dialogKey: {key: IMG, data: tags}
-      });
-    };
-
-    const onDescriptionClick = () => {
-      this.setState({
-        dialogKey: {key: DESCRIPTION, data: description}
-      });
-    };
-    const onMediaClick = () =>
-      this.setState({
-        dialogKey: {key: MEDIA, data: media}
-      });
-    const onChallengeClick = () =>
-      this.setState({
-        dialogKey: {title: ACTIVITY, data: activity}
-      });
-    //
-    // const fieldNodes = [
-    //   {
-    //     id: TITLE,
-    //     label: 'Title',
-    //     node: (
-    //       <PlaceholderFrame
-    //         onClick={onTitleClick}
-    //         className=""
-    //         empty={title.value === null}
-    //         placeholder="Title">
-    //         <div className="capitalize text-2xl truncate-text">
-    //           {title.value}
-    //         </div>
-    //       </PlaceholderFrame>
-    //     )
-    //   },
-    //   {
-    //     id: TAGS,
-    //     label: 'Tags',
-    //     node: (
-    //       <PlaceholderFrame
-    //         onClick={onTagsClick}
-    //         className=""
-    //         empty={tags.value === null}
-    //         placeholder="Tags">
-    //         <TagField tags={tags.value} />
-    //       </PlaceholderFrame>
-    //     )
-    //   },
-    //   {
-    //     id: DESCRIPTION,
-    //     label: 'Text',
-    //     node: (
-    //       <PlaceholderFrame
-    //         onClick={onDescriptionClick}
-    //         empty={description.value === null}
-    //         placeholder="Description">
-    //         <div className="capitalize truncate-text text-xl">
-    //           {description.value}
-    //         </div>
-    //       </PlaceholderFrame>
-    //     )
-    //   },
-    //   {
-    //     id: MEDIA,
-    //     label: 'Media',
-    //     node: (
-    //       <PlaceholderFrame
-    //         empty={media.value === null}
-    //         placeholder="Media"
-    //         onClick={onMediaClick}>
-    //         <MediaField media={media} />
-    //       </PlaceholderFrame>
-    //     )
-    //   },
-    //   {
-    //     id: TIMERANGE,
-    //     label: 'Date',
-    //     node: (
-    //       <PlaceholderFrame onClick={d => d} placeholder="Date" empty />
-    //     )
-    //   },
-    //   {
-    //     id: ACTIVITY,
-    //     label: 'Activity',
-    //     node: (
-    //       <PlaceholderFrame
-    //         onClick={onChallengeClick}
-    //         placeholder="Activity"
-    //         empty={activity.value === null}>
-    //         <div className="capitalize truncate-text text-xl">
-    //           {activity.value && activity.value.title}
-    //         </div>
-    //       </PlaceholderFrame>
-    //     )
-    //   }
-    // ];
-
     const updateField = d => {
       console.log('UPDATE FIELD d.id', d);
       this.setState({data: {...data, [d.key]: d}});
@@ -254,11 +122,8 @@ class EditCardFront extends PureComponent {
       onClose: onCloseModal
     };
 
-    console.log('fieldComps', fieldComps);
     const previewFields = Object.keys(fieldComps).map(k => {
-      console.log('key', k);
       const d = fieldComps[k];
-      console.log('COmp', d);
 
       return {
         ...d,
@@ -274,6 +139,8 @@ class EditCardFront extends PureComponent {
         )
       };
     });
+
+    console.log("data", data);
 
     return (
       <React.Fragment>

@@ -158,13 +158,6 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const db = DB(userEnv);
 
   const filePath = `activitySubmissions/${cardId}/${playerId}`;
-  const removeFromStorage = fileId =>
-    db.removeFileFromEnv({
-      path: filePath,
-      id: fileId
-    });
-  const addToStorage = ({file, id}) =>
-    db.addFileToEnv({file, path: filePath, id});
 
   const onFlip = routeFlipCard;
 
@@ -186,8 +179,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     ...defProps,
     onSubmitActivity,
     ...backCardFuncs,
-    addToStorage,
-    removeFromStorage,
+    addFileToEnv: db.addFileToEnv,
+    removeFromEnv: db.removeFileFromEnv,
     onClose: onClose || closeHandler,
     onFlip,
     flipped,

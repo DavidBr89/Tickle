@@ -7,6 +7,7 @@ import {TITLE} from 'Src/constants/cardFields';
 import PreviewFrame from './PreviewFrame';
 
 export const id = TITLE;
+export const label = TITLE;
 export const key = TITLE;
 
 export const ModalContent = props => {

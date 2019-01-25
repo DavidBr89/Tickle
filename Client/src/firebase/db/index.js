@@ -49,7 +49,7 @@ export const readCopyUsers = () => {
         firestore
           .collection('old_users_2')
           .doc(d.uid)
-          .set(d),
+          .set(d)
       );
     });
 };
@@ -57,7 +57,7 @@ export const readCopyUsers = () => {
 export const removeFromStorage = path => {
   const imgRef = storageRef.child(path);
   return imgRef.delete().catch(error => {
-    throw new Error(`error in deleting file${path} ${error}`);
+    throw new Error(`error in deleting file ${path} ${error}`);
   });
 };
 
@@ -79,16 +79,16 @@ export default function CardDB(ENV_STR = 'default') {
   const activityFuncs = makeActivityFuncs(ENV_STR);
   const cardFuncs = makeCardFuncs(ENV_STR);
 
-  const addFileToEnv = ({file, path, id}) =>
-    addToStorage({file, path: `${ENV_STR}/${path}`, id});
+  const addFileToEnv = ({file, path}) =>
+    addToStorage({file, path: `${ENV_STR}/${path}`});
 
-  const removeFileFromEnv = ({path, id}) =>
-    removeFromStorage({path: `${ENV_STR}/${path}`, id});
+  const removeFileFromEnv = path =>
+    removeFromStorage(`${ENV_STR}/${path}`);
 
   return {
     ...activityFuncs,
     ...cardFuncs,
     removeFileFromEnv,
-    addFileToEnv,
+    addFileToEnv
   };
 }

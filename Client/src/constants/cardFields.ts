@@ -67,6 +67,7 @@ export const MEDIA = 'media';
 export const TIMERANGE = 'timerange';
 export const ACTIVITY = 'activity';
 export const IMG = 'img';
+export const VIDEOS = 'videos';
 export const TIMESTAMP = 'timestamp';
 
 const DEFAULT_TAG = 'general';
@@ -107,7 +108,7 @@ export const extractCardFields = obj => {
     title = defaultObjVal(TITLE),
     tags = defaultObjVal(TAGS),
     description = defaultObjVal(DESCRIPTION),
-    media = defaultObjVal(MEDIA),
+    videos = defaultObjVal(VIDEOS),
     date = defaultObjVal(DATE),
     activity = defaultObjVal(ACTIVITY),
     points = defaultObjVal(POINTS),
@@ -122,7 +123,7 @@ export const extractCardFields = obj => {
     date,
     timerange,
     tags,
-    media,
+    videos,
     title,
     activity,
     description,

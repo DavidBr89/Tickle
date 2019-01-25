@@ -22,6 +22,7 @@ import * as Title from './Title';
 import * as Description from './Description';
 import * as Activity from './Activity';
 import * as Tags from './Tags';
+import * as Videos from './Videos';
 
 export function NumberInput({...props}) {
   const {onUpdate, data, onClose} = props;
@@ -74,23 +75,14 @@ export function NumberInput({...props}) {
   );
 }
 
-// const closeBtn = (
-//   <button
-//     type="button"
-//     className="btn thick-border"
-//     onClick={this.onCloseModal}>
-//     Close
-//   </button>
-// );
-
 const TimeRange = () => <div>test</div>;
 
 export const fieldComps = {
+  // TODO: gif wikipedia
   [Title.key]: Title,
   [Description.key]: Description,
   [Img.key]: Img,
-  // [MEDIA]: MediaSearch,
+  [Videos.key]: Videos,
   [Tags.key]: Tags,
-  // [TIMERANGE]: TimeRange,
   [Activity.key]: Activity
 };

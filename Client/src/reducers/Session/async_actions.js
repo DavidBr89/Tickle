@@ -3,7 +3,7 @@ import uniqBy from 'lodash/uniqBy';
 import {auth} from 'Firebase';
 import topicDbGen from 'Firebase/db/topic_db';
 
-import {removeFromStorage} from 'Firebase/db';
+import {removeFromStorage, addToStorage} from 'Firebase/db';
 
 import {
   addUserToEnv,
@@ -11,7 +11,6 @@ import {
   createTmpUser,
   deleteUser,
   deleteTmpUser,
-  addToStorage,
   getUser,
   readTmpUser,
   doCreateUser
