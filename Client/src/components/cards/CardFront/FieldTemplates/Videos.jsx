@@ -31,7 +31,6 @@ const searchYoutube = (q = '') =>
     )
       .then(res => res.json())
       .then(({items}) => {
-        console.log('items', items);
         const res = items.map(d => ({
           // url2: `http://www.youtube.com/embed/${d.id.videoId}`,
           url: `https://www.youtube.com/watch?v=${d.id.videoId}`,
@@ -63,7 +62,7 @@ const VideoPreview = ({thumbnail, title, descr, url, onClick}) => (
 );
 
 export const key = VIDEOS;
-export const label = VIDEOS;
+export const label = 'Videos';
 
 export const ModalContent = props => {
   const {videos, onChange, modalProps} = props;
@@ -118,24 +117,16 @@ export const ModalContent = props => {
 };
 
 export const Preview = ({onClick, videos}) => {
-  const imgText = () => {
-    if (videos.value) {
-      return videos.value.name || videos.value.url;
-    }
-    return 'No Video';
-  };
-
   const numVideos = videos.value !== null ? videos.value.length : 0;
+  const text = () => `${numVideos} Video${numVideos > 1 ? 's' : ''}`;
 
   return (
     <PreviewFrame
       onClick={onClick}
-      className=""
-      empty={videos.value === null}
-      placeholder="Video">
-      <div className="text-2xl truncate-text flex">{`${numVideos} Video${
-        numVideos.length > 0 ? 's' : ''
-      }`}</div>
-    </PreviewFrame>
+      empty={videos.value === null || videos.value.length === 0}
+      type="Video"
+      placeholder="No Video"
+      content={() => text}
+    />
   );
 };

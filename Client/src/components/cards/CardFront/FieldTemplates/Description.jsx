@@ -6,30 +6,19 @@ import {DESCRIPTION} from 'Src/constants/cardFields';
 import PreviewFrame from './PreviewFrame';
 
 export const key = DESCRIPTION;
-export const label = 'description';
+export const label = 'Description';
 
 export const ModalContent = props => {
   const {onChange, modalProps, description} = props;
-  const [text, setText] = useState(description.value);
-  const tmpData = {key, label, value: text};
 
   return (
-    <ModalBody
-      {...modalProps}
-      footer={
-        <button
-          type="button"
-          className="btn"
-          onClick={() => onChange(tmpData)}>
-          Update
-        </button>
-      }>
+    <ModalBody {...modalProps}>
       <textarea
-        className="form-control w-full"
-        onChange={e => setText(e.target.value)}
-        rows={5}
+        className="mt-1 form-control w-full text-lg"
+        onChange={e => onChange({key, label, value: e.target.value})}
+        rows={8}
         placeholder="Please insert your description">
-        {text}
+        {description.value}
       </textarea>
     </ModalBody>
   );
@@ -39,9 +28,7 @@ export const Preview = ({description, onClick}) => (
   <PreviewFrame
     onClick={onClick}
     empty={description.value === null}
-    placeholder="Description">
-    <div className="capitalize truncate-text text-xl">
-      {description.value}
-    </div>
-  </PreviewFrame>
+    content={() => description.value}
+    type={label}
+  />
 );

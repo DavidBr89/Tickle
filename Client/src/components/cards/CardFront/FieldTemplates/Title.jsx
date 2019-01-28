@@ -6,8 +6,7 @@ import {TITLE} from 'Src/constants/cardFields';
 
 import PreviewFrame from './PreviewFrame';
 
-export const id = TITLE;
-export const label = TITLE;
+export const label = 'Title';
 export const key = TITLE;
 
 export const ModalContent = props => {
@@ -42,11 +41,8 @@ export const ModalContent = props => {
 export const Preview = ({onClick, title}) => (
   <PreviewFrame
     onClick={onClick}
-    className=""
+    type={label}
     empty={title.value === null}
-    placeholder="Title">
-    <div className="capitalize text-2xl truncate-text">
-      {title.value}
-    </div>
-  </PreviewFrame>
+    content={() => <div className="text-truncate">{title.value}</div>}
+  />
 );

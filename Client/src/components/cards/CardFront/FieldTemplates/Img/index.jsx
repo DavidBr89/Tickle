@@ -10,7 +10,7 @@ import EditImg from './EditImg';
 
 export const key = IMG;
 
-export const label = IMG;
+export const label = 'Image';
 
 export const ModalContent = props => {
   const {img, onChange, modalProps} = props;
@@ -27,21 +27,15 @@ export const ModalContent = props => {
   );
 };
 
-export const Preview = ({onClick, img}) => {
-  const imgText = () => {
-    if (img.value) {
-      return img.value.name || img.value.url;
-    }
-    return 'No Image';
-  };
-
-  return (
-    <PreviewFrame
-      onClick={onClick}
-      className=""
-      empty={img.value === null}
-      placeholder="Tags">
-      <div className="text-2xl truncate-text flex">{imgText()}</div>
-    </PreviewFrame>
-  );
-};
+export const Preview = ({onClick, img}) => (
+  <PreviewFrame
+    onClick={onClick}
+    type={label}
+    empty={img.value === null}
+    content={() => (
+      <div className="truncate-text">
+        {img.value.name || img.value.url}
+      </div>
+    )}
+  />
+);

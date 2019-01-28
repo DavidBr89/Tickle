@@ -59,10 +59,9 @@ const MapAuthor = DragDropContextProvider(props => {
       </DragElement>
     ) : (
       <CardMarker
-        className="drag"
+        className="absolute drag"
         {...d}
         style={{
-          position: 'absolute',
           transform: 'translate(-50%,-50%)',
           left: d.x,
           top: d.y

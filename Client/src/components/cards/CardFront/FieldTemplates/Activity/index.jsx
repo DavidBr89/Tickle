@@ -10,7 +10,7 @@ import TextChallengeAuthor from './TextChallengeAuthor';
 import PreviewFrame from '../PreviewFrame';
 
 export const key = ACTIVITY;
-export const label = 'activity';
+export const label = 'Activity';
 
 const ActivityAuthor = props => {
   const {activity: initAcitivity, modalProps, onChange} = props;
@@ -40,7 +40,10 @@ const ActivityAuthor = props => {
           </div>
         </button>
       }>
-      <TextChallengeAuthor {...activity} onChange={setActivity} />
+      <TextChallengeAuthor
+        {...activity}
+        onChange={value => setActivity({key, label, value})}
+      />
     </ModalBody>
   );
 };
@@ -50,10 +53,8 @@ export const ModalContent = ActivityAuthor;
 export const Preview = ({activity, onClick}) => (
   <PreviewFrame
     onClick={onClick}
+    type={label}
     empty={activity.value === null}
-    placeholder="Activity">
-    <div className="capitalize truncate-text text-xl">
-      {activity.value}
-    </div>
-  </PreviewFrame>
+    content={() => activity.value.title}
+  />
 );

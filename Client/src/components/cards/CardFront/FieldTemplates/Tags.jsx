@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import uniq from 'lodash/uniq';
 
-import {SelectTags} from 'Utils/SelectField';
+import {SelectTags} from 'Src/components/utils/SelectField';
 
 import {ModalBody} from 'Components/utils/Modal';
 
@@ -14,7 +14,7 @@ import PreviewFrame from './PreviewFrame';
 
 export const key = TAGS;
 
-export const label = TAGS;
+export const label = 'Tags';
 
 export const ModalContent = props => {
   const {tags: initTags, onChange, modalProps} = props;
@@ -62,12 +62,14 @@ export const ModalContent = props => {
 export const Preview = ({onClick, tags}) => (
   <PreviewFrame
     onClick={onClick}
-    className=""
-    empty={tags.value === null}
-    placeholder="Tags">
-    <div className="capitalize text-2xl truncate-text flex">
-      {tags.value &&
-        tags.value.map(d => <div className="tag-label mr-1">{d}</div>)}
-    </div>
-  </PreviewFrame>
+    type={label}
+    empty={tags.value === null || tags.value.length === 0}
+    content={() => (
+      <div className="flex">
+        {tags.value.map(d => (
+          <div className="tag-label mr-1">{d}</div>
+        ))}
+      </div>
+    )}
+  />
 );

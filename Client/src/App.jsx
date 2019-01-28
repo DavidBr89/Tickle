@@ -3,7 +3,7 @@ import thunkMiddleware from 'redux-thunk';
 
 import {Provider} from 'react-redux';
 
-import {hot, setConfig} from 'react-hot-loader';
+import {hot} from 'react-hot-loader';
 // import withAuthentication from './components/withAuthentication';oo
 // import AuthUserContext from './components/AuthUserContext';
 
@@ -16,8 +16,6 @@ import {userMove, changeMapViewport} from 'Reducers/Map/actions';
 import store from './store';
 import Routes from './Routes';
 
-setConfig({pureSFC: true});
-// db.readCopyUsers();
 
 // TODO check whether it's only created once
 const history = createBrowserHistory();

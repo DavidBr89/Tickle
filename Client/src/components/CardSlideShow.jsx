@@ -7,28 +7,27 @@ import PreviewCard from 'Src/components/cards/PreviewCard';
 
 import {ScrollView, ScrollElement} from 'Utils/ScrollView';
 
-export default function CardSlideShow({smallScreen, ...props}) {
+export default function CardSlideShow({...props}) {
   const {cards, selectedCardId, cardWidth, onClick, extended} = props;
 
+  // const selectedIndex = cards.findIndex(c => c.id === selectedCardId);
+  // console.log('selectedIndex', selectedIndex);
   const width = cardWidth;
   const height = 200;
-
-  const [selectedIndex, setSelectedIndex] = useState(null);
-  const [isScrolling, toggleScrolling] = useState(false);
 
   const scrollCont = React.createRef();
   const wrapperCont = React.createRef();
 
   useEffect(
     () => {
-      if (selectedIndex !== null)
-        scrollCont.current.scrollTo(selectedIndex, {
+      if (selectedCardId !== null)
+        scrollCont.current.scrollTo(selectedCardId, {
           behavior: 'smooth',
           // block: 'start',
           inline: 'center'
         });
     },
-    [selectedIndex]
+    [selectedCardId]
   );
 
   const card = props =>
@@ -80,8 +79,8 @@ export default function CardSlideShow({smallScreen, ...props}) {
               scrollSnapType: 'x mandatory'
             }}>
             {bufferCont}
-            {cards.map((c, i) => (
-              <ScrollElement name={i}>
+            {cards.map(c => (
+              <ScrollElement name={c.id}>
                 <div
                   className={`flex-none mx-4 ${
                     selectedCardId === c.id ? 'z-20' : 'z-10'
@@ -93,11 +92,8 @@ export default function CardSlideShow({smallScreen, ...props}) {
                     transition: 'transform 300ms',
                     width,
                     scrollSnapAlign: 'start'
-                    // marginLeft: '2%',
-                    // marginRight: '2%'
                   }}
                   onClick={() => {
-                    setSelectedIndex(i);
                     onClick(c);
                   }}>
                   {card(c)}

@@ -1,9 +1,12 @@
-import React, {Component, useState} from 'react';
+import React, {Component, useState, useEfect} from 'react';
 import PropTypes from 'prop-types';
 
 import uuidv1 from 'uuid/v1';
 
 import Rating, {StarRating} from 'Components/utils/Rating';
+
+import useMergeState from 'Components/utils/useMergeState';
+import useDeepCompareMemoize from 'Components/utils/useMergeState';
 
 const DifficultyRating = ({onChange, highlighted, ...props}) => (
   <Rating {...props} numHighlighted={highlighted} num={6}>
@@ -19,86 +22,62 @@ const DifficultyRating = ({onChange, highlighted, ...props}) => (
   </Rating>
 );
 
-class TextChallengeAuthor extends Component {
-  static propTypes = {
-    className: PropTypes.string,
-    styles: PropTypes.object,
-    onChange: PropTypes.func,
-    placeholder: PropTypes.string,
-    reset: PropTypes.bool,
-  };
+export default function TextActivityEditor(props) {
+  const {
+    onChange,
+    className,
+    placeholder,
+    styles,
+    onChange,
+    title
+  } = props;
 
-  static defaultProps = {
-    className: '',
-    styles: {},
-    onChange: d => d,
-    uiColor: 'grey',
-    description: null,
-    title: null,
-  };
+  const [activity, setActivity] = useMergeState({
+    description: '',
+    difficulty: 1,
+    id: uuidv1(),
+    ...props
+  });
 
-  state = {description: '', difficulty: 1, id: uuidv1(), ...this.props};
+  useEfect(
+    () => {
+      console.log('activity change', activity);
+      onChange(activity);
+    },
+    [useDeepCompareMemoize(activity)]
+  );
 
-  componentDidUpdate(prevProps, prevState) {
-    const {description, difficulty, title, id} = this.state;
-    const {onChange} = this.props;
-    if (description !== prevState.description || title !== prevState.title) {
-      onChange({
-        id,
-        type: 'text',
-        description,
-        difficulty,
-        title,
-      });
-    }
-  }
-
-  render() {
-    const {
-      className,
-      placeholder,
-      styles,
-      onChange,
-      description,
-      title,
-    } = this.props;
-
-    const {difficulty} = this.state;
-
-    return (
-      <div
-        className={`${className} flex flex-col flex-grow w-full h-full`}
-        style={{...styles}}>
-        <section className="mb-4">
-          <h2 className="mb-1">Title</h2>
-          <input
-            className="form-control w-full"
-            placeholder="Title"
-            defaultValue={title}
-            onChange={e => this.setState({title: e.target.value})}
-          />
-        </section>
-        <section className="mb-4">
-          <h2 className="mb-1">Description</h2>
-          <textarea
-            className="form-control w-full"
-            placeholder="Description"
-            onChange={e => this.setState({description: e.target.value})}
-            defaultValue={description}
-            style={{minHeight: 200}}
-          />
-        </section>
-        <section>
-          <h2>Difficulty</h2>
-          <DifficultyRating
-            highlighted={difficulty}
-            onChange={df => this.setState({difficulty: df})}
-            disabled={false}
-          />
-        </section>
-      </div>
-    );
-  }
+  return (
+    <div
+      className={`${className} flex flex-col flex-grow w-full h-full`}
+      style={{...styles}}>
+      <section className="mb-4">
+        <h2 className="mb-1">Title</h2>
+        <input
+          className="form-control w-full"
+          placeholder="Title"
+          defaultValue={title}
+          onChange={e => setActivity({title: e.target.value})}
+        />
+      </section>
+      <section className="mb-4">
+        <h2 className="mb-1">Description</h2>
+        <textarea
+          className="form-control w-full"
+          placeholder="Description"
+          onChange={e => setActivity({description: e.target.value})}
+          defaultValue={activity.description}
+          style={{minHeight: 200}}
+        />
+      </section>
+      <section>
+        <h2>Difficulty</h2>
+        <DifficultyRating
+          highlighted={activity.difficulty}
+          onChange={df => setActivity({difficulty: df})}
+          disabled={false}
+        />
+      </section>
+    </div>
+  );
 }
-
-export default TextChallengeAuthor;

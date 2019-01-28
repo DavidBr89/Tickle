@@ -196,8 +196,10 @@ export const SelectTags = ({
       <button
         className="ml-2 bg-white btn btn-shadow"
         onClick={() => {
-          onChange(inputVal);
-          resetKey(uuidv1());
+          if (inputVal !== null && inputVal !== '') {
+            onChange(inputVal);
+            resetKey(uuidv1());
+          }
         }}>
         <div>{btnContent}</div>
       </button>

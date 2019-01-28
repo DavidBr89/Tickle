@@ -21,28 +21,32 @@ const EditIcon = ({edit, className, style, onClick}) => (
   </IconCont>
 );
 
-export default function PlaceholderFrame({
+export default function PreviewFrame({
   onClick,
   empty,
-  placeholder,
-  className,
+  placeholder = 'empty',
+  className = '',
   style,
-  edit,
-  children
+  type = 'type',
+  children,
+  content = d => d
 }) {
   return (
     <div
-      className={`${className} cursor-pointer items-center flex`}
-      style={{width: '90%'}}
+      className={`${className} text-2xl overflow-hidden flex-no-grow cursor-pointer items-center flex `}
       onClick={onClick}>
-      {empty ? (
-        <div className="italic text-2xl">{placeholder}</div>
-      ) : (
-        children
-      )}
-      <div className="ml-auto">
-        <EditIcon className="p-2" />
+      <div
+        className={`capitalize font-bold ${empty && 'text-grey'} mr-1`}>
+        {type}:
       </div>
+      {!empty && (
+        <div className="flex-no-grow flex-shrink text-truncate">
+          {content()}
+        </div>
+      )}
+      {empty && (
+        <span className="text-grey capitalize">{placeholder}</span>
+      )}
     </div>
   );
 }

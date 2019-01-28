@@ -12,7 +12,7 @@ function CardCluster({
   transition,
   id,
   onClick,
-  children,
+  children
   // ...props
 }) {
   // TODO: fix
@@ -28,7 +28,7 @@ function CardCluster({
         height: size,
         left: x,
         top: y,
-        transform: 'translate(-50%,-50%)',
+        transform: 'translate(-50%,-50%)'
       }}>
       <div className="w-full h-full" style={{padding: '10.65%'}}>
         <div
@@ -39,9 +39,9 @@ function CardCluster({
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            flexWrap: 'wrap',
+            flexWrap: 'wrap'
           }}>
-          <CardMarker style={{width: 30, height: 30}} />
+          {children(data)}
           <div className="ml-1">{data.values.length}</div>
         </div>
       </div>

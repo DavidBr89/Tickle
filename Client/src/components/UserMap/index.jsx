@@ -27,16 +27,17 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import userIcon from './user.svg';
 
 // TODO: constant
-const mapStyleUrl = 'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l';
+const mapStyleUrl =
+  'mapbox://styles/jmaushag/cjesg6aqogwum2rp1f9hdhb8l';
 
 const defaultLocation = {
   latitude: 50.85146,
-  longitude: 4.315483,
+  longitude: 4.315483
 };
 
 const shadowStyle = {
   boxShadow: '3px 3px black',
-  border: '1px solid #000',
+  border: '1px solid #000'
   // border: '1px solid black'
 };
 
@@ -44,7 +45,8 @@ const metersPerPixel = function(latitude, zoomLevel) {
   const earthCircumference = 40075017;
   const latitudeRadians = latitude * (Math.PI / 180);
   return (
-    (earthCircumference * Math.cos(latitudeRadians)) / 2 ** (zoomLevel + 8)
+    (earthCircumference * Math.cos(latitudeRadians)) /
+    2 ** (zoomLevel + 8)
   );
 };
 
@@ -56,7 +58,7 @@ class UserMap extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
-    disabled: PropTypes.boolean,
+    disabled: PropTypes.boolean
   };
 
   static defaultProps = {
@@ -66,10 +68,10 @@ class UserMap extends Component {
       ...defaultLocation,
       width: 100,
       height: 100,
-      zoom: 10,
+      zoom: 10
     },
     cards: [],
-    showUser: false,
+    showUser: false
   };
 
   render() {
@@ -77,7 +79,7 @@ class UserMap extends Component {
       cards,
       children,
       userLocation,
-      preview,
+      previewCardAction,
       width,
       height,
       isCardDragging,
@@ -86,7 +88,7 @@ class UserMap extends Component {
       style,
       mapViewport,
       selectedCardId,
-      changeMapViewport,
+      changeMapViewport
     } = this.props;
 
     const {latitude, longitude, zoom} = mapViewport;
@@ -96,12 +98,17 @@ class UserMap extends Component {
 
     const userPos = mercator.project([
       userLocation.longitude,
-      userLocation.latitude,
+      userLocation.latitude
     ]);
 
     const accessibleRadius = geometricRadius(latitude, 50, zoom);
 
-    console.log('mercator', {...mercator});
+    console.log('selectedCardId', selectedCardId);
+    const isSelected = c => {
+      console.log('XXX cluster', c);
+      return c.values.map(e => e.id).includes(selectedCardId);
+    };
+
     return (
       <div className={className} style={style}>
         <Map {...this.props}>
@@ -120,9 +127,12 @@ class UserMap extends Component {
                     size={65}
                     data={d}
                     onClick={() => {
-                      preview(d.values[0]);
+                      const firstCard = d.values[0];
+                      previewCardAction(firstCard);
                     }}>
-                    {c => <CardMarker {...c} />}
+                    {c => (
+                      <CardMarker {...c} selected={isSelected(c)} />
+                    )}
                   </CardCluster>
                 )}
               </ArrayPipe>
@@ -133,8 +143,7 @@ class UserMap extends Component {
             style={{
               position: 'absolute',
               left: userPos[0],
-              top: userPos[1],
-              // zIndex: 2000
+              top: userPos[1]
             }}>
             <img
               src={userIcon}
@@ -148,7 +157,7 @@ class UserMap extends Component {
             style={{
               position: 'absolute',
               left: userPos[0],
-              top: userPos[1],
+              top: userPos[1]
               // zIndex: 2000
             }}>
             <div
@@ -159,9 +168,10 @@ class UserMap extends Component {
                 // top: y1 - r,
                 border: '2px solid grey',
                 borderRadius: '50%',
-                transition: 'width 0.5s, height 0.5s, left 0.5s, top 0.5s',
+                transition:
+                  'width 0.5s, height 0.5s, left 0.5s, top 0.5s',
                 width: accessibleRadius * 2,
-                height: accessibleRadius * 2,
+                height: accessibleRadius * 2
                 // background: 'green',
                 // opacity: 0.3
               }}
@@ -177,7 +187,7 @@ class UserMap extends Component {
                   width,
                   height,
                   zoom,
-                  ...userLocation,
+                  ...userLocation
                 })
               }>
               <MapPin />
@@ -194,25 +204,26 @@ const mapStateToProps = ({
   MapView: {mapViewport, userLocation, width, height, accessibleRadius},
   DataView: {selectedCardId},
   Cards: {isCardDragging},
-  Screen,
+  Screen
 }) => ({
   viewport: {...mapViewport, ...Screen},
   userLocation,
   accessibleRadius,
   selectedCardId,
-  isCardDragging,
+  isCardDragging
 });
 
-const mapDispatchToProps = dispatch => bindActionCreators(mapActions, dispatch);
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(mapActions, dispatch);
 
 const mergeProps = (state, dispatcherProps, ownProps) => ({
   ...state,
   ...dispatcherProps,
-  ...ownProps,
+  ...ownProps
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-  mergeProps,
+  mergeProps
 )(UserMap);

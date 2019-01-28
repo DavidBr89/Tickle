@@ -1,27 +1,13 @@
-import React, {Component, PureComponent} from 'react';
+import React, {Component, useState} from 'react';
 import PropTypes from 'prop-types';
 
-import isEqual from 'lodash/isEqual';
-
-import {BlackModal, ModalBody} from 'Components/utils/Modal';
+import {BlackModal} from 'Components/utils/Modal';
 
 import {extractCardFields, initCard} from 'Constants/cardFields.ts';
 
-import {
-  TITLE,
-  TAGS,
-  DESCRIPTION,
-  MEDIA,
-  TIMERANGE,
-  ACTIVITY,
-  IMG
-} from 'Constants/cardFields';
-
-// import {MediaSearch} from '../MediaSearch';
+import {TITLE} from 'Constants/cardFields';
 
 import CardFrontTemplate from './CardFrontTemplate';
-
-import {ImgOverlay, MediaField, EditIcon} from './mixinsCardFront';
 
 import {fieldComps} from './FieldTemplates';
 
@@ -54,131 +40,75 @@ const defaultProps = {
   comments: []
 };
 
-class EditCardFront extends PureComponent {
-  static propTypes = {
-    // ...ReadCardFront.propTypes,
-    template: PropTypes.bool,
-    onAttrUpdate: PropTypes.func,
-    onSubmit: PropTypes.func
-    // allChallenges: PropTypes.array
+export default function EditCardFront(props) {
+  const {onClose, onFlip, style, template, onCreate, onUpdate} = props;
+
+  const [data, setData] = useState(extractCardFields(props));
+  const [dialogKey, setDialogKey] = useState(null);
+
+  const modalVisible = dialogKey !== null;
+
+  const updateField = d => {
+    setData({...data, [d.key]: d});
   };
 
-  static defaultProps = {
-    ...initCard
+  const resetField = key => {
+    setData({...data, [key]: {...data[key], value: null}});
+  };
+  const onCloseModal = () => {
+    onUpdate({...data});
+    setDialogKey(null);
   };
 
-  state = {
-    data: {
-      ...extractCardFields({...this.props})
-    },
-    dialogKey: null
+  const Comp =
+    dialogKey !== null ? fieldComps[dialogKey] : fieldComps[TITLE];
+
+  const modalProps = {
+    visible: modalVisible,
+    title: dialogKey,
+    onClose: onCloseModal
   };
 
-  render() {
-    const {
-      onClose,
-      onFlip,
-      style,
-      background,
-      onSubmit,
-      template,
-      smallScreen,
-      onCreate
-    } = this.props;
+  const previewFields = Object.keys(fieldComps).map(k => {
+    const d = fieldComps[k];
 
-    const {data, dialogKey} = this.state;
-    const modalVisible = dialogKey !== null;
-
-    const {
-      id,
-      title,
-      tags,
-      img,
-      description,
-      media,
-      children,
-      activity,
-      points
-    } = data;
-
-    const updateField = d => {
-      console.log('UPDATE FIELD d.id', d);
-      this.setState({data: {...data, [d.key]: d}});
+    return {
+      ...d,
+      node: <d.Preview {...data} onClick={() => setDialogKey(d.key)} />
     };
+  });
 
-    const onCloseModal = () => {
-      const {data} = this.state;
-      const {onUpdate} = this.props;
-      // onUpdate({ ...data });
-      this.setState({dialogKey: null});
-    };
-
-    const Comp =
-      dialogKey !== null ? fieldComps[dialogKey] : fieldComps[TITLE];
-
-    const modalProps = {
-      visible: modalVisible,
-      title: dialogKey,
-      onClose: onCloseModal
-    };
-
-    const previewFields = Object.keys(fieldComps).map(k => {
-      const d = fieldComps[k];
-
-      return {
-        ...d,
-        node: (
-          <d.Preview
-            {...data}
-            onClick={() => {
-              this.setState({
-                dialogKey: d.key
-              });
-            }}
-          />
-        )
-      };
-    });
-
-    return (
-      <React.Fragment>
-        <BlackModal className="z-50" visible={modalVisible}>
-          <Comp.ModalContent
-            {...this.props}
-            modalProps={modalProps}
-            onChange={updateField}
-            {...data}
-          />
-        </BlackModal>
-        <CardFrontTemplate
-          {...this.props}
-          onResetField={attr => {
-            this.updateField(attr, initCard[attr]);
-          }}
-          fieldNodes={previewFields}
-          onClose={onClose}
-          onFlip={onFlip}
-          onFieldLabelChange={(attr, val) =>
-            this.updateField(attr, val)
-          }
+  return (
+    <>
+      <BlackModal className="z-50" visible={modalVisible}>
+        <Comp.ModalContent
+          {...props}
+          modalProps={modalProps}
+          onChange={updateField}
           {...data}
-          bottomControls={
-            template && (
-              <button
-                type="button"
-                className=" btn text-xl m-2"
-                onClick={() => onCreate(data)}>
-                Create
-              </button>
-            )
-          }
-          edit
         />
-      </React.Fragment>
-    );
-  }
+      </BlackModal>
+      <CardFrontTemplate
+        {...props}
+        fieldNodes={previewFields}
+        onResetField={resetField}
+        onClose={onClose}
+        onFlip={onFlip}
+        onFieldLabelChange={updateField}
+        {...data}
+        bottomControls={
+          template && (
+            <button
+              type="button"
+              className=" btn text-xl m-2"
+              onClick={() => onCreate(data)}>
+              Create
+            </button>
+          )
+        }
+      />
+    </>
+  );
 }
 
 EditCardFront.defaultProps = defaultProps;
-
-export default EditCardFront;
