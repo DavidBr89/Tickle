@@ -8,7 +8,8 @@ import CardControls from 'Components/cards/CardControls';
 import Comments from './Comments';
 import RelatedTags from './RelatedTags';
 import BackAuthor from './BackAuthor';
-import MapAreaControl from './MapAreaControl';
+// TODO
+import MapPreview from './MapPreview';
 
 const BackField = ({
   onClick,
@@ -162,7 +163,7 @@ class CardBack extends Component {
               onClick={() => this.selectField('map')}
               extended={extended === 'map'}
               style={displayStyle('map')}>
-              <MapAreaControl {...this.props} />
+              <MapPreview {...this.props} edit={false} />
             </BackField>
             <BackField
               className="relative"

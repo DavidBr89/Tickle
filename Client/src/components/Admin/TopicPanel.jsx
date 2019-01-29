@@ -8,6 +8,8 @@ import {BlackModal, ModalBody} from 'Components/utils/Modal';
 import AlertButton from 'Components/utils/AlertButton';
 import isEqual from 'lodash/isEqual';
 
+import uuidv1 from 'uuid/v1';
+
 import useMergeState from 'Src/components/utils/useMergeState';
 import useDeepCompareMemoize from 'Src/components/utils/useDeepCompareMemoize';
 
@@ -22,25 +24,23 @@ import useDeepCompareMemoize from 'Src/components/utils/useDeepCompareMemoize';
 //   </div>
 // );
 
-const TopicEdit = ({...props}) => {
-  const {
-    topic,
-    onSubmit,
-    title: initTitle = null,
-    description: initDescr = null
-  } = props;
+const NewTopic = ({...props}) => {
+  const {onSubmit, onRemove, topic: initTopic} = props;
 
-  const [{title, description}, setTopic] = useMergeState({
-    title: initTitle,
-    description: initDescr
-  });
+  const defaultTopic = {description: null, title: null, id: uuidv1()};
+  const [topic, setTopic] = useMergeState(initTopic || defaultTopic);
 
-  useEffect(
-    () => {
-      // onSubmit(topic);
-    },
-    [useDeepCompareMemoize(topic)]
-  );
+  const disabled = topic.description === null && topic.title === null;
+
+  console.log('topic', topic);
+  // useEffect(
+  //   () => {
+  //     if (topic.description && topic.title) {
+  //       onSubmit(topic);
+  //     }
+  //   },
+  //   [useDeepCompareMemoize(topic)]
+  // );
 
   return (
     <div>
@@ -50,7 +50,7 @@ const TopicEdit = ({...props}) => {
           className="w-full form-control"
           onChange={e => setTopic({title: e.target.value})}
           type="text"
-          value={title}
+          value={topic.title}
         />
       </div>
       <div className="w-full">
@@ -60,9 +60,19 @@ const TopicEdit = ({...props}) => {
           rows="10"
           className="w-full form-control"
           type="text"
-          value={description}
+          value={topic.description}
         />
       </div>
+      <button
+        type="button"
+        className="btn"
+        disabled={disabled}
+        onClick={() => {
+          onSubmit(topic);
+          setTopic({...defaultTopic});
+        }}>
+        {initTopic ? 'Update Topic' : 'Add new Topic'}
+      </button>
     </div>
   );
 };
@@ -73,15 +83,15 @@ export default function TopicPanel(props) {
     onSelectUser,
     userRegErr,
     title = '',
-    createTopic,
-    // registerUserToEnv,
+    onSubmitTopic,
     users,
-    topics
+    topicDict,
+    removeTopic
   } = props;
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [topicId, setTopicId] = useState(null);
-  const topic = topics.find(t => t.id === topicId);
+  const topic = topicDict.find(t => t.id === topicId) || null;
 
   // TODO untangle
   const [panelOpen, setPanelOpen] = useState(false);
@@ -98,7 +108,11 @@ export default function TopicPanel(props) {
         <ModalBody
           title="Edit Topic"
           onClose={() => setModalOpen(false)}>
-          <TopicEdit topic={topic} onSubmit={createTopic} />
+          <NewTopic
+            topic={topic}
+            onSubmit={onSubmitTopic}
+            onRemove={removeTopic}
+          />
         </ModalBody>
       </BlackModal>
       <summary
@@ -107,23 +121,21 @@ export default function TopicPanel(props) {
         Topic Panel - {title}{' '}
       </summary>
       <div className="flex mt-1 flex-wrap">
-        {topics.map(a => (
+        {topicDict.map(a => (
           <div
             className="tag-label w-32 h-32 bg-black mr-1 mb-1"
             onClick={() => setTopicId(a.id)}>
             {a.title}
           </div>
         ))}
-        {topics.length === 0 && (
+        {topicDict.length === 0 && (
           <div className="tag-label text-white w-32 h-32 bg-grey mr-1 mb-1 text-2xl">
-            No Topics
+            No topics
           </div>
         )}
         <button
           type="button"
-          className="tag-label w-32 h-32 thick-border mr-1 mb-1
-          text-black
-          "
+          className="tag-label w-32 h-32 thick-border mr-1 mb-1 text-black"
           onClick={() => setModalOpen(true)}>
           Add new Topic
         </button>

@@ -71,7 +71,8 @@ const mapStateToProps = state => {
     collectibleCards,
     cardPanelVisible,
     ...state.Cards,
-    ...state.Screen
+    ...state.Screen,
+    ...state.Session
     // cards: filteredCards
     // cardSets,
     // selectedTags,
@@ -107,7 +108,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     accessibleRadius,
     mapSettings,
     width,
-    height
+    height,
+    userEnvId
   } = state;
 
   const mapViewport = {
@@ -157,7 +159,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     changeMapViewport({
       ...mapViewport,
       // ...d.loc,
-      ...shiftCenterMap({...d.loc, mercator}),
+      ...shiftCenterMap({...d.loc.value, mercator}),
       transitionDuration: 1000,
       transitionInterpolator: new FlyToInterpolator(),
       transitionEasing: d3.easePoly
@@ -166,7 +168,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   };
 
   const filteredCards = collectibleCards
-    .filter(d => isSubset(fallbackTagValues(d.tags), filterSet))
+    .filter(d => isSubset(d.topics.value, filterSet))
     .map(c => {
       const accessible = true; // visible;
 
@@ -181,12 +183,13 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const selectedTags =
     selectedCard !== null
-      ? fallbackTagValues(selectedCard.tags)
+      ? selectedCard.topics.value
       : filterSet;
 
   const filterByTag = tag => tagFilter({filterSet, tag});
 
-  const fetchCards = () => fetchCollectibleCards({uid, userEnv});
+  const fetchCards = () =>
+    fetchCollectibleCards({uid, userEnvId});
 
   return {
     ...state,

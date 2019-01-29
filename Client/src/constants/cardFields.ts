@@ -60,8 +60,9 @@ export const activityFilterMap = (() => {
   return obj;
 })();
 
+export const LOC = 'loc';
 export const TITLE = 'title';
-export const TAGS = 'tags';
+export const TOPICS = 'topics';
 export const DESCRIPTION = 'description';
 export const MEDIA = 'media';
 export const TIMERANGE = 'timerange';
@@ -71,13 +72,13 @@ export const VIDEOS = 'videos';
 export const TIMESTAMP = 'timestamp';
 
 const DEFAULT_TAG = 'general';
-export const fallbackTagValues = tags =>
-  tags.value !== null ? tags.value : [DEFAULT_TAG];
+export const fallbackTagValues = topics =>
+  topics.value !== null ? topics.value : [DEFAULT_TAG];
 
 // const extractValues = ({
 //   timerange, // { start: null, end: null },
 //   title,
-//   tags,
+//   topics,
 //   description,
 //   media,
 //   // timestamp,
@@ -87,7 +88,7 @@ export const fallbackTagValues = tags =>
 // }) => ({
 //   timerange: timerange.value,
 //   title: title.value,
-//   tags: tags.value,
+//   topics: topics.value,
 //   description: description.value,
 //   media: media.value,
 //   activity: activity.value,
@@ -100,13 +101,13 @@ const defaultObjVal = () => ({label: null, value: null});
 
 export const extractCardFields = obj => {
   const {
-    id = 'string',
-    uid = 'string',
+    id = 'defaultId',
+    uid = 'defaultUID',
     loc = {latitude: 50.85146, longitude: 4.315483},
     img = defaultObjVal(IMG),
     timerange = {...defaultObjVal(), thumbnail: null}, // { start: null, end: null },
     title = defaultObjVal(TITLE),
-    tags = defaultObjVal(TAGS),
+    topics = defaultObjVal(TOPICS),
     description = defaultObjVal(DESCRIPTION),
     videos = defaultObjVal(VIDEOS),
     date = defaultObjVal(DATE),
@@ -122,7 +123,7 @@ export const extractCardFields = obj => {
     loc,
     date,
     timerange,
-    tags,
+    topics,
     videos,
     title,
     activity,
@@ -145,7 +146,7 @@ export const getNumInitFields = card => {
 
   return [
     isInit('title'),
-    isInit('tags'),
+    isInit('topics'),
     isInit('media'),
     isInit('description')
   ].filter(d => d).length;

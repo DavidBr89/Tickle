@@ -8,9 +8,8 @@ import MetaCard from 'Src/components/cards/';
 import {BlackModal, ConnectedResponsiveModal} from 'Utils/Modal';
 import PreviewCard from 'Components/cards/PreviewCard';
 import {ScrollView, ScrollElement} from 'Utils/ScrollView';
-import CardTagSearch from '../CardTagSearch';
-
 import CardSlideShow from 'Src/components/CardSlideShow';
+import CardTagSearch from '../CardTagSearch';
 
 const LoadingScreen = ({visible, style}) => {
   if (visible) {
@@ -39,7 +38,7 @@ function CardViewPage(props) {
     previewCardAction,
     filterCards,
     addCardFilter,
-    tagVocabulary,
+    topicVocabulary,
     tagColorScale,
     isSmartphone,
     cardPanelVisible,
@@ -82,7 +81,7 @@ function CardViewPage(props) {
             Extend
           </button>
           <CardTagSearch
-            tags={tagVocabulary}
+            topics={topicVocabulary}
             filterSet={filterSet}
             onClick={filterByTag}
           />
@@ -96,8 +95,15 @@ function CardViewPage(props) {
         height={height}
         cards={cards}
         selectedCardId={selectedCardId}
-        onClick={previewCardAction}
-      />
+        onClick={previewCardAction}>
+        {c => (
+          <PreviewCard
+            title={c.title.value}
+            img={c.img.value}
+            className="w-full h-full"
+          />
+        )}
+      </CardSlideShow>
 
       <BlackModal visible={extendedCard !== null}>
         {selectedCard !== null && <MetaCard {...selectedCard} />}

@@ -54,7 +54,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     tmpCard,
     mapSettings,
     userLocation,
-    selectedUserEnvId: userEnvId
+    userEnvId
   } = stateProps;
 
   const {
@@ -66,7 +66,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     fetchCreatedCards,
     registerUserToEnv,
     inviteUser,
-    setUserEnv
+    setUserEnv,
+    createTopic, updateTopic
   } = dispatchProps;
 
   const {match, history, location} = ownProps;
@@ -86,6 +87,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   //   params: {userEnv: userEnvId}
   // } = match;
 
+  const onSubmitTopic = topic => updateTopic(topic, userEnvId);
   const routeUserEnv = env => setUserEnv(env);
 
   // history.push(`/${env}/${ADMIN.path}`);
@@ -119,6 +121,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     // nonEnvUsers,
     userEnvs,
     userEnvId,
+    onSubmitTopic,
     selectedUserEnvId: userEnvId,
     inviteUser: usr => {
       // TODO
@@ -127,14 +130,13 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   };
 };
 
-export default
-  compose(
-    withRouter,
-    withAuthentication,
-    withAuthorization(),
-    connect(
-      mapStateToProps,
-      mapDispatchToProps,
-      mergeProps
-    )
-  )(AdminPage)
+export default compose(
+  withRouter,
+  withAuthentication,
+  withAuthorization(),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+    mergeProps
+  )
+)(AdminPage);

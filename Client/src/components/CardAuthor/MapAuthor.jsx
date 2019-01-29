@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 
 import CardMarker from 'Src/components/cards/CardMarker';
@@ -10,9 +10,6 @@ import DragElement from 'Src/components/DragAndDrop/DragElement';
 import {PerspectiveMercatorViewport} from 'viewport-mercator-project';
 
 import Map from 'Src/components/utils/Map';
-
-// const DropTarget = dropTarget('dragSourceCard');
-// const memDropTarget = memoize(dropTarget);
 
 const MapAuthor = DragDropContextProvider(props => {
   const {
@@ -37,7 +34,11 @@ const MapAuthor = DragDropContextProvider(props => {
   });
 
   const locNodes = cards.reduce((acc, n) => {
-    const [x, y] = vp.project([n.loc.longitude, n.loc.latitude]);
+    console.log('node', n);
+    const [x, y] = vp.project([
+      n.loc.value.longitude,
+      n.loc.value.latitude
+    ]);
     if (x > 0 && x < width && y > 0 && y < height) {
       return [{...n, x, y}, ...acc];
     }
@@ -46,11 +47,7 @@ const MapAuthor = DragDropContextProvider(props => {
 
   const dragger = d =>
     selectedCardId === d.id ? (
-      <DragElement
-        {...d}
-        key={`${d.id}${dragId}`}
-        className="drag"
-        dragId={dragId}>
+      <DragElement {...d} className="drag" dragId={dragId}>
         <CardMarker
           style={{
             transform: 'scale(1.4)'

@@ -3,28 +3,29 @@ import {uniq, flatten} from 'lodash';
 
 import {fallbackTagValues} from 'Constants/cardFields';
 
-export default function setify(data, acc = d => fallbackTagValues(d.tags)) {
+export default function setify(data) {
   const spreadData = flatten(
     data.map(d => {
-      const tags = acc(d);
-      return tags.map(t => ({...d, tagId: t, tags}));
-    }),
+      const topics = d.topics.value || [];
+      return topics.map(t => ({...d, topicId: t, topics}));
+    })
   );
 
   const nested = nest()
-    .key(d => d.tagId)
+    .key(d => d.topicId)
     .entries(spreadData)
     .map(d => {
-      const tags = uniq(flatten(d.values.map(e => e.tags))).filter(
-        e => d.key !== e.key,
+      const topics = uniq(flatten(d.values.map(e => e.topics))).filter(
+        e => d.key !== e.key
       );
       return {
         ...d,
         count: d.values.length,
-        tags,
-        tagId: d.key,
+        topics,
+        topicId: d.key
       };
     })
     .sort((a, b) => b.values.length - a.values.length);
+  console.log('nested', nested);
   return nested;
 }

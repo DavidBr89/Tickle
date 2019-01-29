@@ -131,7 +131,7 @@ class Cluster extends Component {
       const tags = uniq(flatten(values.map(e => e.tags)));
 
       return {
-        id: tags.join(','),
+        id: values.map(d => d.id).join(','),
         tags,
         count: values.length,
         values,

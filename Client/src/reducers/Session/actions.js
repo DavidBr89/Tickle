@@ -1,7 +1,3 @@
-export const REMOVE_TOPIC = 'ADD_TOPIC';
-export function removeTopic(options) {
-  return {type: REMOVE_TOPIC, options};
-}
 
 export const AUTH_USER_SET = 'AUTH_USER_SET';
 export function setAuthUser(options) {
@@ -44,15 +40,6 @@ export function setUsers(options) {
   return {type: SET_USERS, options};
 }
 
-export const RECEIVE_TOPICS = 'RECEIVE_TOPICS';
-export function receiveTopics(options) {
-  return {type: RECEIVE_TOPICS, options};
-}
-
-export const ADD_TOPIC = 'ADD_TOPIC';
-export function addTopic(options) {
-  return {type: ADD_TOPIC, options};
-}
 
 export const RECEIVE_USER_INFO = 'RECEIVE_USER_INFO';
 export function receiveUserInfo(options) {

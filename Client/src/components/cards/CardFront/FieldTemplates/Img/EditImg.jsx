@@ -1,4 +1,4 @@
-import React, {useState, Component} from 'react';
+import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 
 import PhotoUpload from 'Utils/PhotoUpload';
@@ -15,6 +15,13 @@ const AddUrl = props => {
   const {onChange, style = {}, className = ''} = props;
 
   const [imgUrl, setImgUrl] = useState(props.imgUrl);
+
+  useEffect(
+    () => {
+      onChange({url: imgUrl});
+    },
+    [imgUrl]
+  );
 
   return (
     <div
@@ -43,7 +50,7 @@ const AddUrl = props => {
             placeholder="Add Image Url"
             type="url"
             onClick={inputClick}
-            onChange={e => setTimeout(setImgUrl(e.target.value), 50)}
+            onChange={e => setImgUrl(e.target.value)}
           />
         </div>
       </div>

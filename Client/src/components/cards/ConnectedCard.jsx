@@ -96,9 +96,9 @@ const mapStateToProps = state => {
   console.log('state', state);
   const {userLocation} = state.MapView;
   const {authUser} = state.Session;
-  const {tagVocabulary} = state.Cards;
+  const {topicVocabulary} = state.Cards;
 
-  return {userLocation, authUser, tagVocabulary};
+  return {userLocation, authUser, topicVocabulary};
 };
 
 const mapDispatchToProps = dispatch =>
@@ -121,13 +121,11 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     history,
     id: cardId,
     uid: authorId,
-    tags: {value: tagValues},
+    topics: {value: topicValues},
     onClose
   } = defProps;
 
-  console.log('tagValues', tagValues);
-
-  const {tagVocabulary, userLocation} = state;
+  const {topicVocabulary, userLocation} = state;
 
   const {authUser} = state;
   const {uid: playerId} = authUser;
@@ -162,8 +160,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const onFlip = routeFlipCard;
 
   const relatedCardsByTag =
-    tagValues !== null
-      ? tagVocabulary.filter(d => tagValues.includes(d.tagId))
+    topicValues !== null
+      ? topicVocabulary.filter(d => topicValues.includes(d.tagId))
       : [];
 
   const backCardFuncs = makeBackCardFuncs({

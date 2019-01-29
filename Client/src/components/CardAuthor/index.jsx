@@ -52,7 +52,7 @@ const mapStateToProps = state => {
 
   const templateCard = {
     ...initCardFields,
-    loc: userLocation,
+    loc: {value: userLocation},
     ...tmpCard,
     uid,
     id: TEMP_ID,
@@ -61,7 +61,7 @@ const mapStateToProps = state => {
 
   const filteredCards = createdCards.filter(
     d =>
-      filterSet.length === 0 || isSubset(d.tags.value || [], filterSet)
+      filterSet.length === 0 || isSubset(d.topics.value || [], filterSet)
   );
 
   const cards = [templateCard, ...filteredCards].map(d => ({
@@ -135,14 +135,14 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const selectedTags =
     selectedCard !== null
-      ? fallbackTagValues(selectedCard.tags)
+      ? fallbackTagValues(selectedCard.topics)
       : filterSet;
 
   const mercator = new WebMercatorViewport(mapViewport);
-  const reCenterMap = lngLat =>
+  const reCenterMap = loc =>
     changeMapViewport({
       ...mapViewport,
-      ...shiftCenterMap({...lngLat, mercator}),
+      ...shiftCenterMap({...loc.value, mercator}),
       transitionDuration: 2000,
       transitionInterpolator: new FlyToInterpolator()
     });
@@ -198,16 +198,19 @@ function PureMapCardAuthorPage({...props}) {
 
   const mercator = new WebMercatorViewport(mapViewport);
 
-  const centerTemplatePos = loc => {
-    reCenterMap(loc);
-    updateCardTemplate({loc});
+  const centerTemplatePos = value => {
+    reCenterMap(value);
+    updateCardTemplate({loc: {value}});
   };
 
   const cardDrop = cardData => {
     const {x, y} = cardData;
     const [longitude, latitude] = mercator.unproject([x, y]);
 
-    const updatedCard = {...cardData, loc: {longitude, latitude}};
+    const updatedCard = {
+      ...cardData,
+      loc: {value: {longitude, latitude}}
+    };
     if (cardData.id === TEMP_ID) updateCardTemplate(updatedCard);
     else asyncUpdateCard({cardData: updatedCard, userEnv});
   };

@@ -1,7 +1,7 @@
 import uniqBy from 'lodash/uniqBy';
 
 import {auth} from 'Firebase';
-import topicDbGen from 'Firebase/db/topic_db';
+import TopicDB from 'Firebase/db/topic_db';
 
 import {removeFromStorage, addToStorage} from 'Firebase/db';
 
@@ -27,30 +27,6 @@ import {
   receiveTopics,
   addTopic
 } from './actions';
-
-export function createTopic(topic, userEnv) {
-  return function(dispatch) {
-    const {doCreateTopic} = topicDbGen(userEnv);
-
-    return doCreateTopic(topic)
-      .then(() => {
-        dispatch(addTopic(topic));
-      })
-      .catch(err => console.log('err', err));
-  };
-}
-
-export function fetchTopics(userEnv) {
-  return function(dispatch) {
-    const {doReadTopics} = topicDbGen(userEnv);
-
-    return doReadTopics()
-      .then(topics => {
-        dispatch(receiveTopics(topics));
-      })
-      .catch(err => console.log('err', err));
-  };
-}
 
 export function fetchUserInfo() {
   return function(dispatch, getState) {
@@ -152,14 +128,13 @@ export const signIn = ({
   onError = d => d
 }) => (dispatch, getState) =>
   auth.doSignInWithEmailAndPassword(email, password).then(resp => {
+    console.log('userEnvId', userEnvId);
     const {user} = resp;
     const {uid} = user;
 
     return getUser(uid)
       .then(usrInfo => {
-        dispatch(
-          setAuthUserInfo(userFields({...usrInfo, envId: userEnvId}))
-        );
+        dispatch(setAuthUserInfo(userFields({...usrInfo})));
 
         // TODO: validation
         // TODO: error
@@ -249,63 +224,3 @@ export function selectUserEnv(env) {
     //   .catch(err => console.log('err', err));
   };
 }
-
-// export function submitUserInfoToDB({ userData, userEnv }) {
-//   return function(dispatch) {
-//     const db = DB(userEnv);
-//     // dispatch(setAuthUserInfo(userInfo));
-//
-//     const usr = userFields(userData);
-//     const submitUserDispatchWrapper = () => {
-//       const { file, uid } = userData;
-//       if (file) {
-//         return db
-//           .addFileToEnv({ file, path: 'users/images', id: uid })
-//           .then((photoURL) => {
-//             const newUsr = { ...usr, photoURL };
-//             db.doCreateUser(newUsr).then(() => {
-//               dispatch(submitUserInfoToDBSuccess(newUsr));
-//             });
-//           });
-//       }
-//       return db.doCreateUser(usr).then(() => {
-//         dispatch(submitUserInfoToDBSuccess(usr));
-//       });
-//     };
-//
-//     if (auth.getEmail() !== usr.email) {
-//       return auth
-//         .doEmailUpdate(usr.email)
-//         .then(() => {
-//           submitUserDispatchWrapper();
-//         })
-//         .catch((error) => {
-//           console.log('error', error.message);
-//           dispatch(errorSubmitUser(error.message));
-//         });
-//     }
-//
-//     const { passwordOne, passwordTwo } = userData;
-//     if (passwordOne || passwordTwo) {
-//       if (passwordOne === passwordTwo) {
-//         return auth
-//           .doPasswordUpdate(userData.passwordOne)
-//           .then(() => {
-//             submitUserDispatchWrapper();
-//           })
-//           .catch((error) => {
-//             dispatch(errorSubmitUser(error.message));
-//           });
-//       }
-//       return dispatch(errorSubmitUser('Passwords are not matching'));
-//     }
-//
-//     return submitUserDispatchWrapper();
-//     // return db
-//     //   .getUser(uid)
-//     //   .then(usrInfo => {
-//     //     dispatch(setAuthUserInfo(usrInfo));
-//     //   })
-//     //   .catch(err => console.log('err', err));
-//   };
-// }

@@ -6,7 +6,9 @@ import {extractCardFields} from 'Constants/cardFields';
 
 import uuidv1 from 'uuid/v1';
 
-import CardDB from 'Firebase/db';
+import CardDB from 'Firebase/db/card_db';
+
+import TopicDB from 'Src/firebase/db/topic_db';
 // import idGenerate from 'Src/idGenerator';
 import {
   receivePlaces,
@@ -26,7 +28,10 @@ import {
   addCommentSuccess,
   addCommentError,
   submitActivity,
-  submitActivitySuccess
+  submitActivitySuccess,
+  receiveTopics,
+  deleteTopic,
+  putTopic
 } from './actions';
 
 import {selectCard, extendSelectedCard} from '../DataView/actions';
@@ -35,6 +40,7 @@ import NearbyPlaces from '../places.json';
 
 export function fetchCollectibleCards({uid, userEnvId}) {
   return function(dispatch) {
+    console.log('fetchCollectibleCards', userEnvId);
     const db = new CardDB(userEnvId);
     dispatch(loadingCards(true));
     // TODO: change later with obj params
@@ -108,7 +114,8 @@ export function asyncUpdateCard({cardData, userEnvId}) {
   return dispatch => {
     dispatch(updateCard(cardData));
     const db = new CardDB(userEnvId);
-    return db.doUpdateCard(cardData)
+    return db
+      .doUpdateCard(cardData)
       .then(() => dispatch(updateCardSuccess(cardData)))
       .catch(err => dispatch(updateCardError(err)));
   };
@@ -165,5 +172,41 @@ export function removeChallengeSubmission({
     //   .catch(err => {
     //     throw new Error('error saving challenge submission');
     //   });
+  };
+}
+
+export function updateTopic(topic, userEnv) {
+  return function(dispatch) {
+    const {doCreateTopic} = TopicDB(userEnv);
+
+    return doCreateTopic(topic)
+      .then(() => {
+        dispatch(putTopic(topic));
+      })
+      .catch(err => console.log('err', err));
+  };
+}
+
+export function removeTopic(topicId, userEnv) {
+  return function(dispatch) {
+    const {doDeleteTopic} = TopicDB(userEnv);
+
+    return doDeleteTopic(topicId)
+      .then(() => {
+        dispatch(removeTopic(topicId));
+      })
+      .catch(err => console.log('err', err));
+  };
+}
+
+export function fetchTopics(userEnv) {
+  return function(dispatch) {
+    const {doReadTopics, doAddTopic} = TopicDB(userEnv);
+
+    return doReadTopics()
+      .then(topics => {
+        dispatch(receiveTopics(topics));
+      })
+      .catch(err => console.log('err', err));
   };
 }

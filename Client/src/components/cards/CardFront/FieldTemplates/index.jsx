@@ -6,23 +6,23 @@ import {Modal, ModalBody} from 'Components/utils/Modal';
 
 import {
   TITLE,
-  TAGS,
   DESCRIPTION,
   MEDIA,
   TIMERANGE,
   ACTIVITY,
   POINTS,
-  IMG
+  IMG,
+  LOC
 } from 'Constants/cardFields';
 
 import * as Img from './Img';
-import MediaSearch from './MediaSearch';
 
 import * as Title from './Title';
 import * as Description from './Description';
 import * as Activity from './Activity';
-import * as Tags from './Tags';
+import * as Topics from './Topics';
 import * as Videos from './Videos';
+import * as GeoLocation from './GeoLocation';
 
 export function NumberInput({...props}) {
   const {onUpdate, data, onClose} = props;
@@ -83,6 +83,7 @@ export const fieldComps = {
   [Description.key]: Description,
   [Img.key]: Img,
   [Videos.key]: Videos,
-  [Tags.key]: Tags,
-  [Activity.key]: Activity
+  [Topics.key]: Topics,
+  [Activity.key]: Activity,
+  [GeoLocation.key]: GeoLocation
 };

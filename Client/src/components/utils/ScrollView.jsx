@@ -31,7 +31,10 @@ const ScrollView = React.forwardRef((props, ref) => {
 
   useImperativeMethods(ref, () => ({
     scrollTo(name, opts = {}) {
-      const node = ReactDOM.findDOMNode(elements[name].current);
+      const elem = elements[name];
+      if (!elem) return;
+
+      const node = ReactDOM.findDOMNode(elem.current);
       scrollIntoView(node, {
         behavior: 'smooth',
         inline: 'center',

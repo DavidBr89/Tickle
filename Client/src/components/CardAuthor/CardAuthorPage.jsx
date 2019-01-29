@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import DefaultLayout from 'Components/DefaultLayout';
 import {BlackModal} from 'Utils/Modal';
 
+import PreviewCard from 'Src/components/cards/PreviewCard';
+
 import EditCard from 'Components/cards/ConnectedEditCard';
 
 // import {DropDown} from 'Utils/TagInput';
@@ -54,33 +56,6 @@ const SelectPlace = ({onChange, className, ...props}) => {
       accInputVal={d => d.place_name}
       ChildComp={d => <div>{d.place_name}</div>}
     />
-  );
-};
-
-const GoToPlace = ({onChange, ...props}) => {
-  const [loc, setLoc] = useState({longitude: 0, latitude: 0});
-
-  return (
-    <form
-      className="flex"
-      onSubmit={e => {
-        e.preventDefault();
-        onChange(loc);
-      }}>
-      <SelectPlace
-        className=""
-        {...props}
-        onChange={place =>
-          setLoc({
-            longitude: place.center[0],
-            latitude: place.center[1]
-          })
-        }
-      />
-      <button type="submit" className="btn btn-black">
-        Go
-      </button>
-    </form>
   );
 };
 
@@ -139,7 +114,7 @@ function CardAuthorPage(props) {
     selectedTags,
     selectedCard,
     isSmartphone,
-    tagVocabulary,
+    topicVocabulary,
     extCardId,
     children,
     selectTemplate,
@@ -171,16 +146,20 @@ function CardAuthorPage(props) {
             New Card
           </button>
 
-          <GoToPlace onChange={centerTemplatePos} />
           <CardTagSearch
-            tags={tagVocabulary}
+            topics={topicVocabulary}
             filterSet={filterSet}
             onClick={filterByTag}
           />
         </div>
       }>
       <BlackModal visible={extCardId !== null}>
-        {extCardId !== null && <EditCard {...selectedCard} />}
+        {extCardId !== null && (
+          <EditCard
+            {...selectedCard}
+            centerTemplatePos={centerTemplatePos}
+          />
+        )}
       </BlackModal>
       <CardSlideShow
         extended={cardStackExtended}
@@ -189,8 +168,15 @@ function CardAuthorPage(props) {
         height={height}
         cards={cards}
         selectedCardId={selectedCardId}
-        onClick={previewCardAction}
-      />
+        onClick={previewCardAction}>
+        {c => (
+          <PreviewCard
+            className="h-full w-full "
+            title={c.title.value}
+            img={c.img.value}
+          />
+        )}
+      </CardSlideShow>
       {children}
     </DefaultLayout>
   );

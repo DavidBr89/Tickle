@@ -49,6 +49,7 @@ export default function EditCardFront(props) {
   const modalVisible = dialogKey !== null;
 
   const updateField = d => {
+    console.log('updateField', d);
     setData({...data, [d.key]: d});
   };
 
@@ -84,8 +85,8 @@ export default function EditCardFront(props) {
         <Comp.ModalContent
           {...props}
           modalProps={modalProps}
-          onChange={updateField}
           {...data}
+          onChange={updateField}
         />
       </BlackModal>
       <CardFrontTemplate

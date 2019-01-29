@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import SlideMenu from 'Components/utils/SlideMenu';
 
 function CardTagFilter({
-  tags,
+  topics,
   filterSet,
   onChange,
   onSelect,
@@ -12,13 +12,13 @@ function CardTagFilter({
   height,
   ...props
 }) {
-  const [setFilteredTags, filteredTags] = useState(tags);
+  // const [setFilteredTags, filteredTags] = useState(tags);
   return (
     <div className="flex justify-end relative m-2 z-20">
       <SlideMenu className="flex-grow">
-        <h3>Tags</h3>
+        <h3>Topics</h3>
         <div className="mt-3 flex flex-wrap">
-          {tags.map(d => (
+          {topics.map(d => (
             <div
               className={`cursor-pointer tag-label m-1
                 ${filterSet.includes(d.key) ? 'bg-black' : 'bg-grey'}`}

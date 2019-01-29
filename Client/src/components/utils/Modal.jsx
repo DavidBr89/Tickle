@@ -11,9 +11,11 @@ import X from 'react-feather/dist/icons/x';
 
 import {connect} from 'react-redux';
 
+const BODY = document.querySelector('#modals');
+
 const reduxConnect = comp => {
   const mapStateToProps = state => ({
-    ...state.smallScreen
+    ...state.Screen
   });
 
   const mergeProps = (stateProps, dispatchProps, ownProps) => ({
@@ -33,7 +35,7 @@ export const BlackModal = reduxConnect(
       <div
         className="fixed w-screen h-screen"
         style={{
-          zIndex: 1000, // visible ? 1000 : -1000,
+          zIndex: 1000,
           pointerEvents: !visible ? 'none' : null,
           top: 0,
           left: 0,
@@ -55,8 +57,6 @@ export const BlackModal = reduxConnect(
     )
 );
 
-const BODY = document.querySelector('#modals');
-
 export const InlineModal = ({
   visible,
   title,
@@ -65,7 +65,6 @@ export const InlineModal = ({
   style,
   className,
   topMargin
-  // background,
 }) => (
   <div
     className={`absolute ${className}`}

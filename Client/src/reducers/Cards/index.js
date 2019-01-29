@@ -1,7 +1,6 @@
 // import updCardDataDim from './updateDataDimension';
 import setify from 'Components/utils/setify';
 
-import uniq from 'lodash/uniq';
 import uniqBy from 'lodash/uniqBy';
 
 import {initCardFields} from 'Constants/cardFields';
@@ -27,6 +26,8 @@ import {
   LOADING_CARDS,
   TOGGLE_TSNE_VIEW,
   SUBMIT_CHALLENGE,
+  PUT_TOPIC,
+  REMOVE_TOPIC
   // ADD_CARD_FILTER,
   // REMOVE_CARD_FILTER,
   // FILTER_CARDS
@@ -34,43 +35,31 @@ import {
 
 const isDefined = a => a !== null && a !== undefined;
 
-// const gen = new generate.Generator();
-
-// const toGeoJSON = points => ({
-//   type: 'FeatureCollection',
-//   features: points.map(p => ({
-//     type: 'Feature',
-//     geometry: {
-//       type: 'Point',
-//       coordinates: p
-//     }
-//   }))
-// });
 const cardTemplateId = 'temp';
 
 const defaultLocation = {
   latitude: 50.85146,
   longitude: 4.315483,
-  radius: 500,
+  radius: 500
 };
 
-const defaultCardTemplate = {...initCardFields, title: {value: 'New Card'}};
+const defaultCardTemplate = {
+  ...initCardFields,
+  title: {value: 'New Card'},
+  loc: {value: defaultLocation}
+};
 
 const INITIAL_STATE = {
   cardTemplateId,
   collectibleCards: [],
   createdCards: [],
-  tagVocabulary: [],
-  // TODO: update
-  tmpCard: {...initCardFields},
+  //TODO remove
+  topicVocabulary: [],
+  topicDict: [],
+  tmpCard: defaultCardTemplate,
   challenges: [],
   cardChallengeOpen: false,
-  selectedTags: [],
-  // TODO: change later
-  // filterSet: []
-  // TODO: outsource
-  //
-  // TODO: adapt colors
+  selectedTags: []
 };
 
 // const cardTemplateId = 'temp';
@@ -80,7 +69,7 @@ function reducer(state = INITIAL_STATE, action) {
       const isLoadingCards = action.options;
       return {
         ...state,
-        isLoadingCards,
+        isLoadingCards
       };
     }
 
@@ -100,24 +89,15 @@ function reducer(state = INITIAL_STATE, action) {
       const {collectibleCards} = state;
       const createdCards = action.options;
 
-      console.log('createdCards', createdCards);
-      const tagVocabulary = setify(
-        uniqBy([...createdCards, ...collectibleCards], 'id'),
+      const topicVocabulary = setify(
+        uniqBy([...createdCards, ...collectibleCards], 'id')
       );
-
-      // const cardSets = setify(cards);
-      // const tagColorScale = makeTagColorScale(cardSets);
 
       return {
         ...state,
         createdCards,
-        tagVocabulary,
-        tmpCard: defaultCardTemplate,
-        // loadingCards: false
-        // tagVocabulary
-        // tagColorScale
-        // cards
-        // isCardDragging
+        topicVocabulary,
+        tmpCard: defaultCardTemplate
       };
     }
 
@@ -125,24 +105,15 @@ function reducer(state = INITIAL_STATE, action) {
       const collectibleCards = action.options;
       const {createdCards} = state;
 
-      const tagVocabulary = setify(
-        uniqBy([...collectibleCards, ...createdCards], 'id'),
+      const topicVocabulary = setify(
+        uniqBy([...collectibleCards, ...createdCards], 'id')
       );
-      // const tagVocabulary = uniq(
-      //   cards.reduce((acc, c) => [...acc, ...c.tags], [])
-      // );
+
       return {
         ...state,
         collectibleCards,
-        // nestedTagVocabulary,
-        // submittedCards,
-        // startedCards,
-        tagVocabulary,
-        tmpCard: defaultCardTemplate,
-        // loadingCards: false
-        // tagColorScale
-        // defaultCards: cards
-        // isCardDragging
+        topicVocabulary,
+        tmpCard: defaultCardTemplate
       };
     }
 
@@ -154,7 +125,7 @@ function reducer(state = INITIAL_STATE, action) {
       // const newCards = [...createdCards, newCard];
 
       return {
-        ...state,
+        ...state
         // createdCards: newCards,
         // selectedCardId: newCard.id
       };
@@ -164,16 +135,11 @@ function reducer(state = INITIAL_STATE, action) {
 
       const newCard = action.options;
 
-      const tagVocabulary = setify(
-        uniqBy([...collectibleCards, ...createdCards, newCard], 'id'),
-      );
-
       return {
         ...state,
         createdCards: [newCard, ...createdCards],
         collectibleCards: [newCard, ...collectibleCards],
-        tmpCard: defaultCardTemplate,
-        tagVocabulary,
+        tmpCard: defaultCardTemplate
       };
     }
 
@@ -193,14 +159,16 @@ function reducer(state = INITIAL_STATE, action) {
       };
 
       const updatedCreatedCards = createdCards.map(doUpdateCard);
-      const updatedCollectibleCards = collectibleCards.map(doUpdateCard);
+      const updatedCollectibleCards = collectibleCards.map(
+        doUpdateCard
+      );
 
       return {
         ...state,
         // TODO: remove
         // tmpCards: updatedCards,
         createdCards: updatedCreatedCards,
-        collectibleCards: updatedCollectibleCards,
+        collectibleCards: updatedCollectibleCards
       };
     }
 
@@ -220,7 +188,7 @@ function reducer(state = INITIAL_STATE, action) {
         ...state,
         // TODO: remove
         // tmpCards: updatedCards,
-        collectibleCards: updatedCards,
+        collectibleCards: updatedCards
       };
     }
 
@@ -228,7 +196,7 @@ function reducer(state = INITIAL_STATE, action) {
       const {cardChallengeOpen} = action.options;
       return {
         ...state,
-        cardChallengeOpen,
+        cardChallengeOpen
       };
     }
 
@@ -249,7 +217,7 @@ function reducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         createdCards: newCreatedCards,
-        extCardId: null,
+        extCardId: null
         // selectedCardId: 'temp'
       };
     }
@@ -267,18 +235,18 @@ function reducer(state = INITIAL_STATE, action) {
         ({
           id,
           geometry: {
-            location: {lat: latitude, lng: longitude},
+            location: {lat: latitude, lng: longitude}
           },
           types: tags,
-          name: title,
+          name: title
         }) => ({
           id,
           loc: {latitude, longitude},
           tags,
           title,
           challenge: {type: null},
-          media: [],
-        }),
+          media: []
+        })
       );
       // console.log('cardPlaces', placeCards);
       // const newCards = [...state.cards, ...placeCards];
@@ -286,7 +254,26 @@ function reducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         accessibleCards: placeCards,
-        defaultCards: placeCards,
+        defaultCards: placeCards
+      };
+    }
+
+    case PUT_TOPIC: {
+      const newTopic = action.options;
+      const {topicDict} = state;
+
+      const alreadyExist =
+        topicDict.find(d => d.id === newTopic.id) || null;
+
+      const newTopicDict =
+        alreadyExist !== null
+          ? topicDict.map(d => (d.id === newTopic.id ? newTopic : d))
+          : [newTopic, ...topicDict];
+
+      return {
+        ...state,
+        topicDict: newTopicDict
+        // isLoadingCards
       };
     }
 
@@ -338,7 +325,7 @@ function reducer(state = INITIAL_STATE, action) {
       const isCardDragging = action.options;
       return {
         ...state,
-        isCardDragging,
+        isCardDragging
       };
     }
 

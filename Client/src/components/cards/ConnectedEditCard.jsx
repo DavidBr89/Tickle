@@ -67,7 +67,7 @@ const mapDispatchToProps = dispatch =>
   );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const {mapViewport, width, height, authUser, tagVocabulary} = state;
+  const {mapViewport, width, height, authUser, topicVocabulary} = state;
   const {uid: authorId} = authUser;
 
   // TODO: this is weird, I cannot set defaultProps
@@ -78,7 +78,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     location,
     history,
     id: cardId,
-    tags: {value: tagValues},
+    topics: {value: topicValues},
     onCreateCard = d => d,
     onUpdateCard = d => d
   } = defProps;
@@ -136,8 +136,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   // const addComment = text => db.addComment({ uid: authorId, cardId, text });
 
   const relatedCardsByTag =
-    tagValues !== null
-      ? tagVocabulary.filter(d => tagValues.includes(d.tagId))
+    topicValues !== null
+      ? topicVocabulary.filter(d => topicValues.includes(d.tagId))
       : [];
 
   const backCardFuncs = makeBackCardFuncs({
@@ -160,7 +160,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     onFlip,
     flipped,
     removeCard,
-    tagVocabulary,
+    topicVocabulary,
     addToStorage,
     removeFromStorage,
     ...backCardFuncs,
