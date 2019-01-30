@@ -3,18 +3,24 @@ import setify from 'Components/utils/setify';
 
 import uniqBy from 'lodash/uniqBy';
 
-import {initCardFields} from 'Constants/cardFields';
+import {
+  initCardFields,
+  cardFieldKeys as initCardFieldKeys
+} from 'Constants/cardFields';
+
 import {
   RECEIVE_PLACES,
   UPDATE_CARD,
   // UPDATE_CARD_SUCCESS,
   UPDATE_CARD_TEMPLATE,
   RECEIVE_COLLECTIBLE_CARDS,
+  RECEIVE_TOPICS,
   RECEIVE_CREATED_CARDS,
   CREATE_CARD,
   SUCCESS_CREATE_CARD,
   ERROR_CREATE_CARD,
   DELETE_CARD,
+  DELETE_TOPIC,
   ERROR_DELETE_CARD,
   SUCCESS_DELETE_CARD,
   SEE_CARD,
@@ -27,7 +33,9 @@ import {
   TOGGLE_TSNE_VIEW,
   SUBMIT_CHALLENGE,
   PUT_TOPIC,
-  REMOVE_TOPIC
+  ADD_CARD_FIELD,
+  RECEIVE_CARD_FIELDS,
+  DELETE_CARD_FIELD
   // ADD_CARD_FILTER,
   // REMOVE_CARD_FILTER,
   // FILTER_CARDS
@@ -50,10 +58,11 @@ const defaultCardTemplate = {
 };
 
 const INITIAL_STATE = {
+  cardFieldKeys: initCardFieldKeys,
   cardTemplateId,
   collectibleCards: [],
   createdCards: [],
-  //TODO remove
+  // TODO remove
   topicVocabulary: [],
   topicDict: [],
   tmpCard: defaultCardTemplate,
@@ -89,16 +98,29 @@ function reducer(state = INITIAL_STATE, action) {
       const {collectibleCards} = state;
       const createdCards = action.options;
 
-      const topicVocabulary = setify(
-        uniqBy([...createdCards, ...collectibleCards], 'id')
-      );
+      // const topicVocabulary = setify(
+      //   uniqBy([...createdCards, ...collectibleCards], 'id')
+      // );
 
       return {
         ...state,
         createdCards,
-        topicVocabulary,
+        // TODO REMOVE
+        // topicVocabulary,
+        // topicDict: topicVocabulary,
         tmpCard: defaultCardTemplate
       };
+    }
+
+    case RECEIVE_TOPICS: {
+      const topicDict = action.options;
+      return {...state, topicDict};
+    }
+
+    case DELETE_TOPIC: {
+      const id = action.options;
+      const {topicDict} = state;
+      return {...state, topicDict: topicDict.filter(d => d.id !== id)};
     }
 
     case RECEIVE_COLLECTIBLE_CARDS: {
@@ -277,6 +299,15 @@ function reducer(state = INITIAL_STATE, action) {
       };
     }
 
+    case ADD_CARD_FIELD: {
+      const cKey = action.options;
+      return {...state, cardFieldKeys: [...state.cardFieldKeys, cKey]};
+    }
+    case RECEIVE_CARD_FIELDS: {
+    }
+
+    case DELETE_CARD_FIELD: {
+    }
     // case ADD_CARD_FILTER: {
     //   const { filterSet } = state;
     //   const tag = action.options;

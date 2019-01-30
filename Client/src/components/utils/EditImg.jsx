@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 
 import PhotoUpload from 'Utils/PhotoUpload';
-import TabNav from 'Utils/TabNav';
 
 import TabSwitcher from 'Src/components/utils/TabSwitcher';
 
@@ -14,11 +13,11 @@ const AddUrl = props => {
   };
   const {onChange, style = {}, className = ''} = props;
 
-  const [imgUrl, setImgUrl] = useState(props.imgUrl);
+  const [imgUrl, setImgUrl] = useState(props.url);
 
   useEffect(
     () => {
-      onChange({url: imgUrl});
+      if(props.url !== imgUrl) onChange({url: imgUrl});
     },
     [imgUrl]
   );
@@ -58,12 +57,12 @@ const AddUrl = props => {
   );
 };
 
-export default function EditPhoto(props) {
+export default function EditImg(props) {
   const [index, setIndex] = useState(0);
   const {className} = props;
 
   const btnClassName = i =>
-    `btn flex-grow text-lg border m-1 ${index === i && 'btn-active'}`;
+    `btn flex-grow border m-1 ${index === i && 'btn-active-alt'}`;
 
   return (
     <div className={`${className} flex flex-col`}>
@@ -84,16 +83,8 @@ export default function EditPhoto(props) {
       <TabSwitcher
         className="flex flex-col flex-grow"
         visibleIndex={index}>
-        <PhotoUpload
-          key={`${props.imgUrl}0`}
-          className="flex-grow flex flex-col "
-          {...props}
-        />
-        <AddUrl
-          className="flex-grow"
-          key={`${props.imgUrl}1`}
-          {...props}
-        />
+        <PhotoUpload className="flex-grow flex flex-col " {...props} />
+        <AddUrl className="flex-grow" {...props} />
       </TabSwitcher>
     </div>
   );

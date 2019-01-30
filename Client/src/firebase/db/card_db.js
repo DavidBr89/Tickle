@@ -80,18 +80,9 @@ const makeCardFuncs = ENV_STR => {
     const card = extractCardFields(rawCard);
     console.log('card to Be', card);
 
-    return uploadCardImg(card.img.value, card.id).then(imgSrc => {
-      if (card.id === TEMP_ID) {
-        throw Error('error: temp card to create');
-      } else {
-        const timestamp = null; // firestore.FieldValue.serverTimestamp();
-        const newCard = {...card, img: {value: imgSrc}, timestamp};
-
         return TICKLE_ENV_REF.collection('cards')
-          .doc(newCard.id)
-          .set(newCard);
-      }
-    });
+          .doc(card.id)
+          .set(card);
   };
 
   const readCards = ({authorId = null, playerId = null}) => {

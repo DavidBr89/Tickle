@@ -62,10 +62,11 @@ export const removeFromStorage = path => {
 };
 
 export const addToStorage = ({file, path}) => {
-  const metadata = {contentType: file.type};
+  console.log('file', file, 'path', path);
+  // const metadata = {contentType: file.type};
   const imgRef = storageRef.child(`${path}`);
   return imgRef
-    .put(file, metadata)
+    .put(file)
     .then(() => imgRef.getDownloadURL())
     .catch(err => {
       console.log('err', err);

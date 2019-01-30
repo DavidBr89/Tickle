@@ -71,6 +71,19 @@ export const IMG = 'img';
 export const VIDEOS = 'videos';
 export const TIMESTAMP = 'timestamp';
 
+export const cardFieldKeys = [
+  LOC,
+  TITLE,
+  TOPICS,
+  DESCRIPTION,
+  MEDIA,
+  TIMERANGE,
+  ACTIVITY,
+  IMG,
+  VIDEOS,
+  TIMESTAMP
+];
+
 const DEFAULT_TAG = 'general';
 export const fallbackTagValues = topics =>
   topics.value !== null ? topics.value : [DEFAULT_TAG];

@@ -188,12 +188,13 @@ export function updateTopic(topic, userEnv) {
 }
 
 export function removeTopic(topicId, userEnv) {
+  console.log('remove topic', topicId, userEnv);
   return function(dispatch) {
     const {doDeleteTopic} = TopicDB(userEnv);
 
     return doDeleteTopic(topicId)
       .then(() => {
-        dispatch(removeTopic(topicId));
+        dispatch(deleteTopic(topicId));
       })
       .catch(err => console.log('err', err));
   };

@@ -17,6 +17,7 @@ import UserPanel from './UserPanel';
 import TopicPanel from './TopicPanel';
 import UserEnvPanel from './UserEnvPanel.jsx';
 import CardPanel from './CardPanel';
+import TemplateCardPanel from './TemplateCardPanel';
 
 const detailsClass = 'shadow text-2xl p-2 mb-5 border-2 border-black';
 const summaryClass = 'mb-3';
@@ -46,13 +47,15 @@ export default function AdminPage(props) {
     registerUserToEnv,
     cards,
     templateCard,
-    fetchTopics
+    fetchTopics,
+    getTopics
   } = props;
 
   useEffect(() => {
     fetchAllUserEnvs();
     fetchCards();
     fetchUsers();
+    getTopics();
   }, []);
 
   useEffect(
@@ -83,6 +86,7 @@ export default function AdminPage(props) {
         <UserEnvPanel className={detailsClass} {...props} />
         <TopicPanel {...props} className={detailsClass} />
         <UserPanel {...props} className={detailsClass} />
+        <TemplateCardPanel {...props} className={detailsClass}></TemplateCardPanel>
         <CardPanel
           {...props}
           title={`Cards ${userEnvId}`}

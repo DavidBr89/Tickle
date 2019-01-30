@@ -61,7 +61,8 @@ const mapStateToProps = state => {
 
   const filteredCards = createdCards.filter(
     d =>
-      filterSet.length === 0 || isSubset(d.topics.value || [], filterSet)
+      filterSet.length === 0 ||
+      isSubset(d.topics.value || [], filterSet)
   );
 
   const cards = [templateCard, ...filteredCards].map(d => ({
@@ -74,6 +75,7 @@ const mapStateToProps = state => {
     ...state.DataView,
     ...state.Cards,
     ...state.Screen,
+    ...state.Session,
     authUser,
     admin,
     filterSet,
@@ -105,7 +107,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     mapSettings,
     templateCard,
     width,
-    height
+    height,
+    userEnvId
   } = state;
 
   const {
@@ -118,9 +121,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const {dataView, history, location, match, children} = ownProps;
 
-  const {
-    params: {userEnv}
-  } = match;
+  // const {
+  //   params: {userEnv}
+  // } = match;
 
   const {
     query: {selectedCardId, extended},
@@ -162,7 +165,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const filterByTag = tag => tagFilter({filterSet, tag});
 
   const fetchCards = () =>
-    fetchCreatedCards({uid: authUser.uid, userEnv});
+    fetchCreatedCards({uid: authUser.uid, userEnvId});
 
   return {
     ...state,
@@ -178,7 +181,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     extCardId,
     templateSelected,
     children,
-    userEnv,
+    userEnvId,
     mapViewport,
     fetchCards,
     filterByTag
@@ -193,7 +196,7 @@ function PureMapCardAuthorPage({...props}) {
     reCenterMap,
     mapViewport,
     updateCardTemplate,
-    userEnv
+    userEnvId
   } = props;
 
   const mercator = new WebMercatorViewport(mapViewport);
@@ -212,7 +215,7 @@ function PureMapCardAuthorPage({...props}) {
       loc: {value: {longitude, latitude}}
     };
     if (cardData.id === TEMP_ID) updateCardTemplate(updatedCard);
-    else asyncUpdateCard({cardData: updatedCard, userEnv});
+    else asyncUpdateCard({cardData: updatedCard, userEnvId});
   };
 
   return (

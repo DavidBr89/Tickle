@@ -4,9 +4,8 @@ import {IMG} from 'Src/constants/cardFields';
 
 import {ModalBody} from 'Components/utils/Modal';
 
+import EditImg from 'Src/components/utils/EditImg';
 import PreviewFrame from '../PreviewFrame';
-
-import EditImg from './EditImg';
 
 export const key = IMG;
 
@@ -19,9 +18,12 @@ export const ModalContent = props => {
     <ModalBody {...modalProps}>
       <EditImg
         className="flex-grow"
-        imgUrl={img.value ? img.value.url : null}
-        imgName={img.value && img.value.name}
-        onChange={imgVal => onChange({key, label, value: imgVal})}
+        {...img.value}
+        onChange={imgVal => {
+          console.log('imgVal', imgVal);
+            onChange({key, label, value: imgVal})}
+        }
+
       />
     </ModalBody>
   );

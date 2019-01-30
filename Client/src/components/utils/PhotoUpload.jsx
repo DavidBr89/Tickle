@@ -1,7 +1,13 @@
-import React, {Component, Fragment} from 'react';
+import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 
+import uuidv1 from 'uuid/v1';
+
 import Compress from 'compress.js';
+
+import {addToStorage, removeFromStorage} from 'Src/firebase/db';
+import useDeepCompareMemoize from 'Src/components/utils/useDeepCompareMemoize';
+import useMemoize from 'Src/components/utils/useMemoize';
 
 const compress = new Compress();
 
@@ -25,123 +31,106 @@ function convertToImgSrc(fileList) {
   return null;
 }
 
-export default class PhotoUpload extends Component {
-  static propTypes = {
-    className: PropTypes.string,
-    style: PropTypes.object,
-    onChange: PropTypes.func,
-    placeholder: PropTypes.string,
-    defaultImg: PropTypes.any,
-    imgName: PropTypes.string
-  };
+export default function PhotoUpload(props) {
+  const {
+    className = '',
+    style = {},
+    onChange,
+    title = 'Browse Images',
+    url,
+    name,
+    id = null,
+    imgStyle = {},
+    btnClassName = '',
+    folder = 'img'
+  } = props;
 
-  static defaultProps = {
-    className: '',
-    style: {},
-    onChange: d => d,
-    uiColor: 'grey',
-    placeholder: 'Add your description',
-    defaultImg: null,
-    width: 250,
-    height: 250,
-    maxHeight: 300,
-    imgName: null,
-    title: 'Browse Images'
-  };
+  const oldId = useMemoize(id);
 
-  render() {
-    const {
-      className,
-      placeholder,
-      style,
-      onChange,
-      defaultImg,
-      title,
-      imgUrl,
-      imgName,
-      imgStyle,
-      btnClassName = ''
-    } = this.props;
+  const makePath = newId => `${folder}/${newId}`;
+  useEffect(
+    () => {
+      if (id !== null && oldId !== null && id !== oldId) {
+        removeFromStorage(makePath(oldId)).then(e =>
+          console.log('remove img success')
+        );
+      }
+    },
+    [id]
+  );
 
-    return (
-      <div className={`${className} flex flex-col`} style={style}>
-        <div
-          className="flex-grow flex flex-col justify-center items-center text-4xl border border-black font-bold text-muted "
-          style={style}>
-          {imgUrl ? (
-              <div
-                className="flex-grow w-full"
-                style={{
-                  ...imgStyle,
-                  background: `url(${imgUrl}) `,
-                  backgroundSize: 'contain',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundPosition: 'center'
-                }}
-                alt="test"
-              />
-          ) : (
-            <div className="m-auto">No Image</div>
-          )}
-        </div>
-        <label
-          htmlFor="file-upload"
-          className={`flex-no-shrink btn btn-shadow text-xl mt-3 ${btnClassName}`}
-          style={{
-            width: '100%',
-            display: null,
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
-          }}>
-          {imgName ? `Edit: ${imgName}` : title}
-        </label>
-        <input
-          className="form-control truncate-text"
-          id="file-upload"
-          type="file"
-          accept="image/*"
-          capture="environment"
-          onChange={e => {
-            const files = [...e.target.files];
-            const imgName = e.target.files[0].name;
-
-            // TODO remove
-            const imgType = imgName.slice(
-              ((imgName.lastIndexOf('.') - 1) >>> 0) + 2
-            );
-            // onChange({
-            //   url: convertToImgSrc(e.target.files),
-            //   file: e.target.files[0]
-            // });
-            compress
-              .compress(files, {
-                size: 1.5,
-                quality: 0.6,
-                maxWidth: 1920,
-                // maxHeight: 800,
-                resize: true
-              })
-              .then(data => {
-                const img1 = data[0];
-                const base64str = img1.data;
-                const imgExt = img1.ext;
-                const file = Compress.convertBase64ToFile(
-                  base64str,
-                  imgExt
-                );
-
-                onChange({
-                  url: convertToImgSrc(files),
-                  title: null,
-                  imgType,
-                  name: imgName,
-                  file
-                });
-              });
-          }}
-        />
+  return (
+    <div className={`${className} flex flex-col`} style={style}>
+      <div
+        className="flex-grow flex flex-col justify-center items-center text-4xl border border-black font-bold text-muted "
+        style={style}>
+        {url ? (
+          <div
+            className="flex-grow w-full"
+            style={{
+              ...imgStyle,
+              background: `url(${url}) `,
+              backgroundSize: 'contain',
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center'
+            }}
+            alt="test"
+          />
+        ) : (
+          <div className="m-auto">No Image</div>
+        )}
       </div>
-    );
-  }
+      <label
+        htmlFor="file-upload"
+        className={`flex-no-shrink btn btn-shadow text-xl mt-3 ${btnClassName}`}
+        style={{
+          width: '100%',
+          display: null,
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis'
+        }}>
+        {name ? `Edit: ${name}` : title}
+      </label>
+      <input
+        className="form-control truncate-text"
+        id="file-upload"
+        type="file"
+        accept="image/*"
+        capture="environment"
+        onChange={e => {
+          const files = [...e.target.files];
+          const {name} = e.target.files[0];
+          compress
+            .compress(files, {
+              size: 1.5,
+              quality: 0.6,
+              maxWidth: 1920,
+              // maxHeight: 800,
+              resize: true
+            })
+            .then(data => {
+              const img1 = data[0];
+              const base64str = img1.data;
+              const imgExt = img1.ext;
+              const file = Compress.convertBase64ToFile(
+                base64str,
+                imgExt
+              );
+              const newId = uuidv1();
+
+              addToStorage({file, path: makePath(newId)}).then(
+                newUrl => {
+                  onChange({
+                    url: newUrl,
+                    name,
+                    id: newId
+                  });
+                }
+              );
+            });
+        }}
+      />
+    </div>
+  );
 }

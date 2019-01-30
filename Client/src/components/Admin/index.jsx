@@ -54,7 +54,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     tmpCard,
     mapSettings,
     userLocation,
-    userEnvId
+    userEnvId,
   } = stateProps;
 
   const {
@@ -67,7 +67,10 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     registerUserToEnv,
     inviteUser,
     setUserEnv,
-    createTopic, updateTopic
+    createTopic,
+    updateTopic,
+    removeTopic,
+    fetchTopics,
   } = dispatchProps;
 
   const {match, history, location} = ownProps;
@@ -87,12 +90,12 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   //   params: {userEnv: userEnvId}
   // } = match;
 
-  const onSubmitTopic = topic => updateTopic(topic, userEnvId);
   const routeUserEnv = env => setUserEnv(env);
 
   // history.push(`/${env}/${ADMIN.path}`);
 
   const cardType = 'created';
+  const getTopics = () => fetchTopics(userEnvId);
   const fetchCards = () =>
     // TODO
     cardType === 'created'
@@ -105,8 +108,6 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const onCreateCard = () =>
     console.log('selectedUserId', selectedUserId);
 
-  console.log('topics', stateProps);
-
   return {
     ...stateProps,
     ...dispatchProps,
@@ -118,10 +119,10 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     templateCard,
     fetchCards,
     onCreateCard,
+    getTopics,
     // nonEnvUsers,
     userEnvs,
     userEnvId,
-    onSubmitTopic,
     selectedUserEnvId: userEnvId,
     inviteUser: usr => {
       // TODO

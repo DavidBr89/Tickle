@@ -138,9 +138,9 @@ export function submitActivityFeedback(options) {
   return {type: SUBMIT_CHALLENGE_FEEDBACK, options};
 }
 
-export const REMOVE_TOPIC = 'ADD_TOPIC';
-export function removeTopic(options) {
-  return {type: REMOVE_TOPIC, options};
+export const DELETE_TOPIC = 'DELETE_TOPIC';
+export function deleteTopic(options) {
+  return {type: DELETE_TOPIC, options};
 }
 
 export const RECEIVE_TOPICS = 'RECEIVE_TOPICS';
@@ -152,6 +152,23 @@ export const PUT_TOPIC = 'PUT_TOPIC';
 export function putTopic(options) {
   return {type: PUT_TOPIC, options};
 }
+
+export const DELETE_CARD_FIELD = 'DELETE_CARD_FIELD';
+export function deleteCardField(options) {
+  return {type: DELETE_TOPIC, options};
+}
+
+export const RECEIVE_CARD_FIELDS = 'RECEIVE_TOPICS';
+export function receiveCardFields(options) {
+  return {type: RECEIVE_TOPICS, options};
+}
+
+export const ADD_CARD_FIELD = 'PUT_TOPIC';
+export function addCardField(options) {
+  return {type: PUT_TOPIC, options};
+}
+
+
 
 // export const TOGGLE_DATA_VIEW = 'TOGGLE_DATA_VIEW';
 // export function toggleDataView(options) {

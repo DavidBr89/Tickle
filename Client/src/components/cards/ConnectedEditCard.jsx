@@ -55,6 +55,17 @@ DeleteButton.defaultProps = {
   className: ''
 };
 
+function mapStateToProps(state) {
+  return {
+    ...state.MapView,
+    ...state.Cards,
+    ...state.DataView,
+    ...state.Screen,
+    userLocation: state.MapView.userLocation,
+    ...state.Session
+  };
+}
+
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
@@ -67,7 +78,7 @@ const mapDispatchToProps = dispatch =>
   );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const {mapViewport, width, height, authUser, topicVocabulary} = state;
+  const {mapViewport, width, height, userEnvId, authUser, topicVocabulary} = state;
   const {uid: authorId} = authUser;
 
   // TODO: this is weird, I cannot set defaultProps
@@ -80,12 +91,13 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     id: cardId,
     topics: {value: topicValues},
     onCreateCard = d => d,
-    onUpdateCard = d => d
+    onUpdateCard = d => d,
   } = defProps;
 
   // TODO: BUILD IN check
-  const {userEnv: userEnvId} = match.params;
+  // const {userEnv: userEnvId} = match.params;
 
+  console.log('userEnvId', userEnvId);
   const {
     query: {selectedCardId, extended, flipped},
     routing: {routeFlipCard, routeExtendCard}
@@ -168,17 +180,6 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     ...defProps
   };
 };
-
-function mapStateToProps(state) {
-  return {
-    ...state.MapView,
-    ...state.Cards,
-    ...state.DataView,
-    ...state.Screen,
-    userLocation: state.MapView.userLocation,
-    ...state.Session
-  };
-}
 
 const EditCard = ({
   createCard,

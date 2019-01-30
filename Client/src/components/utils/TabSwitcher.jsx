@@ -13,7 +13,6 @@ function usePrevious(value) {
 export default function TabSwitcher({
   children,
   visibleIndex = null,
-  setVisibleIndex = d => d,
   className = '',
   tabClassName = ''
 }) {
