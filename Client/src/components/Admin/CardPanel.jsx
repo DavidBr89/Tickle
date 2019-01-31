@@ -74,6 +74,7 @@ export default function CardPanel(props) {
         {tmpCards.map(c => (
           <PreviewCardSwitch
             edit={c.edit}
+            img={c.img.value}
             title={c.title.value}
             onClick={() => routeSelectExtendCard(c.id)}
           />

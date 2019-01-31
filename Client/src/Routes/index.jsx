@@ -1,138 +1,91 @@
 import React from 'react';
 import {Route, HashRouter, Redirect, Switch} from 'react-router-dom';
 
-import SignUp from './components/SignUp';
-import SignIn, {SignInRedirect} from './components/SignIn';
-import LandingPage from './components/LandingPage';
-import Home from './components/Home';
-import CardView from './components/CardView';
-import Admin from './components/Admin';
-import Account from './components/Account';
-import Diary from './components/Diary';
-import TagView from './components/DataView/ForceOverlay/TreeMapCluster';
-
-import {
-  MapCardAuthorPage,
-  TopicMapAuthorPage,
-  CardEnvSettings
-} from './components/CardAuthor';
-
-import {MapViewPage, TopicMapViewPage} from './components/CardView';
-
-// import MapAuthor from './components/DataView/Map/MapAuthor';
-
-import DefaultLayout from './components/DefaultLayout';
-
-import UserMap from 'Components/DataView/Map/UserMap';
-
-import withAuthentication from './components/withAuthentication';
-// import AuthUserContext from './components/AuthUserContext';
+import BookWidget from '~/components/BookWidgets';
 
 import {
   MYCARDS,
   GEO_VIEW,
   TAG_VIEW,
-  TOPIC_VIEW,
   AUTHOR,
   ACCOUNT,
   GEO_AUTHOR,
-  TAG_AUTHOR,
-  TOPIC_AUTHOR,
   SIGN_UP,
   SIGN_IN,
-  HOME,
   ADMIN,
   ADMIN_SIGN_UP,
-  LANDING
-} from 'Constants/routeSpec';
+  DATAVIEW
+} from '~/constants/routeSpec';
 
-// const GRID = 'grid';
+import SignUp from '~/components/SignUp';
+import SignIn from '~/components/SignIn';
+import Admin from '~/components/Admin';
+import Account from '~/components/Account';
+import Diary from '~/components/Diary';
 
-// import history from './BrowserHistory';
+// import CardTreeEditorPage from './components/CardTreeEditor';
 
-// import Login from './components/Login';
+import CardAuthorPage from '~/components/CardAuthor';
+import UserEnvironmentSettings from '~/components/CardAuthor/UserEnvironmentSettings';
 
+import {
+  MapViewPage,
+  TopicMapViewPage,
+  SelectUserEnv,
+  TagViewPage
+} from '~/components/CardView';
+
+import DefaultLayout from '~/components/DefaultLayout';
+
+const NoMatch = () => (
+  <DefaultLayout>
+    <div className="content-margin">
+      <h1>No Match</h1>
+    </div>
+  </DefaultLayout>
+);
+
+const defaultEnv = 'default';
+
+/**
+ * This function defines the routes for the whole app
+ */
 const Routes = () => (
   <HashRouter>
     <Switch>
       <Route
-        path="/:userEnv"
-        exact
-        render={({
-          match: {
-            params: {userEnv}
-          }
-        }) => <Redirect to={`/${userEnv}/${SIGN_IN.path}`} />}
-      />
-      <Route
         path="/"
         exact
-        render={() => <Redirect to={`/staging/${SIGN_IN.path}`} />}
+        render={() => (
+          <Redirect to={`/${defaultEnv}/${SIGN_IN.path}`} />
+        )}
       />
 
+      <Route path={`/${MYCARDS.path}`} component={Diary} />
       <Route
-        path={`/:userEnv/${
-          MYCARDS.path
-        }/:selectedCardId?/:showOption?/:flipped?`}
-        render={props => <Diary {...basePath(props)} />}
-      />
-
-      <Route
-        path={`:/userEnv/${AUTHOR.path}`}
+        path={`/${AUTHOR.path}`}
         exact
         render={() => (
           <DefaultLayout>
-            <CardEnvSettings />
+            <UserEnvironmentSettings />
           </DefaultLayout>
         )}
       />
-
+      <Route path={`/${GEO_AUTHOR.path}`} render={CardAuthorPage} />
       <Route
-        path={`/:userEnv/${
-          GEO_AUTHOR.path
-        }/:selectedCardId?/:showOption?/:flipped?`}
-        render={props => (
-          <MapCardAuthorPage {...basePath(props, GEO_AUTHOR.path)} />
+        exact
+        path={`/${DATAVIEW.path}`}
+        component={() => (
+          <DefaultLayout>
+            <SelectUserEnv />
+          </DefaultLayout>
         )}
       />
-      <Route
-        path={`/:userEnv/${
-          TOPIC_AUTHOR.path
-        }/:selectedCardId?/:showOption?/:flipped?`}
-        render={() => <TopicMapAuthorPage />}
-      />
+      <Route exact path={`/${GEO_VIEW.path}`} component={MapViewPage} />
+      <Route exact path={`/${TAG_VIEW.path}`} component={TagViewPage} />
       <Route
         exact
-        path={`/:userEnv/${
-          TOPIC_VIEW.path
-        }/:selectedCardId?/:showOption?/:flipped?`}
-        render={() => <TopicMapViewPage />}
-      />
-      <Route
-        exact
-        path={`/:userEnv/${
-          GEO_VIEW.path
-        }/:selectedCardId?/:showOption?/:flipped?`}
-        render={() => (
-          <CardView>
-            {props => <UserMap {...props} className="absolute" />}
-          </CardView>
-        )}
-      />
-      <Route
-        exact
-        path={`/:userEnv/${
-          TAG_VIEW.path
-        }/:selectedCardId?/:showOption?/:flipped?`}
-        render={() => (
-          <CardView>
-            {props => <TagView {...props} className="absolute" />}
-          </CardView>
-        )}
-      />
-      <Route
-        exact
-        path={`/:userEnv/:admin?/${SIGN_UP.path}`}
+        path={`/:userEnv/${SIGN_UP.path}/:admin?`}
         component={() => <SignUp admin={false} />}
       />
       <Route
@@ -144,34 +97,31 @@ const Routes = () => (
           </DefaultLayout>
         )}
       />
-      <Route path={`/:userEnv/${SIGN_IN.path}`} component={() => <SignIn />} />
+      <Route path={`/:userEnv/${SIGN_IN.path}`} component={SignIn} />
+
       <Route
         exact
-        path={HOME.path}
+        path="/bookwidget"
         component={() => (
           <DefaultLayout>
-            <Home />
+            <div className="content-margin">
+              <BookWidget />
+            </div>
           </DefaultLayout>
         )}
       />
       <Route
         exact
-        path={ADMIN.path}
-        component={() => (
-          <DefaultLayout>
-            <Admin />
-          </DefaultLayout>
-        )}
+        path={`/${ADMIN.path}`}
+        component={() => <Admin />}
       />
       <Route
         exact
-        path={ACCOUNT.path}
-        component={() => (
-          <DefaultLayout>
-            <Account />
-          </DefaultLayout>
-        )}
+        path={`/${ACCOUNT.path}`}
+        component={() => <Account />}
       />
+
+      <Route component={NoMatch} />
     </Switch>
   </HashRouter>
 );

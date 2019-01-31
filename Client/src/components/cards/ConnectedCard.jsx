@@ -10,7 +10,7 @@ import {connect} from 'react-redux';
 import {asyncSubmitActivity} from '~/reducers/Cards/async_actions';
 
 import * as dataViewActions from '~/reducers/DataView/dataViewThunks';
-import MediaChallenge from '~/components/Challenges/MediaChallenge';
+import MediaChallenge from '~/components/cards/CardFront/FieldTemplates/Activity/TextChallenge';
 
 import DB from '~/firebase/db/card_db';
 

@@ -17,6 +17,12 @@ const AuthorDetails = ({
   createdCards,
   ...authorPreviewProps
 }) => {
+  console.log(
+    'collectedCards',
+    collectedCards,
+    'createdCards',
+    createdCards
+  );
   const skills = setify([...collectedCards, ...createdCards]);
 
   return (
@@ -38,6 +44,7 @@ const AuthorDetails = ({
         {createdCards.slice(0, 4).map(d => (
           <PreviewCard
             title={d.title.value}
+            img={d.img.value}
             className="m-1 p-2"
             style={{flex: '0 0 100px', height: 130}}
           />

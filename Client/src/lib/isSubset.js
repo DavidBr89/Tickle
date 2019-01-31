@@ -4,8 +4,6 @@ const lowercase = s => s.toLowerCase();
 
 /**
  * Utiility to find subsets between array of topics
- * @param {array} input array of strings
- * @returns {boolean} if one elements of one array are included in the other.
  */
 const isSubset = (s0, s1) => {
   if (s0 === null || s1 === null) return 0;

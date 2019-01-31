@@ -86,8 +86,6 @@ NavigationHelper.defaultProps = {
 /**
  * Utility to map routes to session state i.e. authenticated,
  * not authenticated and admin
- * @param {} TODO
- * @returns {} TODO
  */
 const RouteNavigation = ({authUser, match, ...props}) => {
   const {

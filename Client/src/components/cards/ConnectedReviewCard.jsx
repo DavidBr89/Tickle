@@ -10,7 +10,6 @@ import {asyncSubmitChallengeReview} from '~/reducers/Admin/async_actions';
 
 import * as dataViewActions from '~/reducers/DataView/actions';
 
-import MediaChallengeReview from '~/components/Challenges/MediaChallenge/MediaChallengeReview';
 
 import ReadCardFront from './CardFront/ReadCardFront';
 
@@ -29,20 +28,7 @@ const CardReview = ({
   onClose,
   ...props
 }) => (
-  <MediaChallengeReview
-    submitChallengeReview={submitChallengeReview}
-    onClose={onClose}
-    description={description}
-    title={title}
-    tags={tags}
-    {...challengeSubmission}
-    onSubmit={fb => {
-      submitChallengeReview({
-        ...challengeSubmission,
-        feedback: {...fb, uid}
-      });
-    }}
-  />
+  <div>TODO</div>
 );
 
 const mapStateToProps = state => ({

@@ -1,8 +1,6 @@
 /** Defining all the route constants for the Router
  * In order to use them in the Router you have to add a '/'
  * TODO: maybe already the slash here include here
- * @param {} TODO
- * @returns {} TODO
  */
 export const TAGS = 'TAGS';
 export const GEO = 'GEO';

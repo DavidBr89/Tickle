@@ -1,4 +1,3 @@
-import {matchPath} from 'react-router';
 import queryString from 'query-string';
 
 export default function cardRoutes({

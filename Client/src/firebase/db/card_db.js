@@ -76,9 +76,8 @@ const makeCardFuncs = ENV_STR => {
 
   const readCards = ({authorId = null, playerId = null}) => {
     const thumbnailPromise = d => {
-
       const thumbNailRef = storageRef.child(
-        `${ENV_STR}/images/cards/${thumbFileName(d.id)}`
+        `img/${thumbFileName(d.id)}`
       );
 
       return thumbNailRef.getDownloadURL().then(
