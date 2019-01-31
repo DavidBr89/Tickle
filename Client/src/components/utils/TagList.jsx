@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-// import * as d3 from 'd3';
-import throttle from 'react-throttle';
 
-// import { colorScale, shadowStyle } from '../cards/styles';
 import Tag from './Tag';
 
 class TagList extends Component {

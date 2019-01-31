@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 // import PropTypes from 'prop-types';
 
-import IcAk from 'Styles/alphabet_icons/ic_ak.svg';
+import IcAk from '~/styles/alphabet_icons/ic_ak.svg';
 
 export default function CardMarker(props) {
   const {

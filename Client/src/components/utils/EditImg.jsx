@@ -1,9 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 
-import PhotoUpload from 'Utils/PhotoUpload';
-
-import TabSwitcher from 'Src/components/utils/TabSwitcher';
+import PhotoUpload from '~/components/utils/PhotoUpload';
+import TabSwitcher from '~/components/utils/TabSwitcher';
 
 const AddUrl = props => {
   const inputClick = ev => {
@@ -15,12 +14,9 @@ const AddUrl = props => {
 
   const [imgUrl, setImgUrl] = useState(props.url);
 
-  useEffect(
-    () => {
-      if(props.url !== imgUrl) onChange({url: imgUrl});
-    },
-    [imgUrl]
-  );
+  useEffect(() => {
+    if (props.url !== imgUrl) onChange({url: imgUrl});
+  }, [imgUrl]);
 
   return (
     <div

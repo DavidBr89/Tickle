@@ -6,13 +6,11 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {compose} from 'recompose';
 
-import {asyncSubmitChallengeReview} from 'Reducers/Admin/async_actions';
+import {asyncSubmitChallengeReview} from '~/reducers/Admin/async_actions';
 
-import * as dataViewActions from 'Reducers/DataView/actions';
+import * as dataViewActions from '~/reducers/DataView/actions';
 
-
-import MediaChallengeReview from 'Components/Challenges/MediaChallenge/MediaChallengeReview';
-import {Card} from './index';
+import MediaChallengeReview from '~/components/Challenges/MediaChallenge/MediaChallengeReview';
 
 import ReadCardFront from './CardFront/ReadCardFront';
 
@@ -41,7 +39,7 @@ const CardReview = ({
     onSubmit={fb => {
       submitChallengeReview({
         ...challengeSubmission,
-        feedback: {...fb, uid},
+        feedback: {...fb, uid}
       });
     }}
   />
@@ -49,7 +47,7 @@ const CardReview = ({
 
 const mapStateToProps = state => ({
   ...state.Screen,
-  ...state.Session,
+  ...state.Session
 });
 
 const mapDispatchToProps = dispatch =>
@@ -57,9 +55,9 @@ const mapDispatchToProps = dispatch =>
     {
       // dragCard,
       ...dataViewActions,
-      submitChallengeReview: asyncSubmitChallengeReview,
+      submitChallengeReview: asyncSubmitChallengeReview
     },
-    dispatch,
+    dispatch
   );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
@@ -79,7 +77,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     ...dispatcherProps,
     ...ownProps,
     // onFlip,
-    uid,
+    uid
     // onSubmitChallenge
   };
 };
@@ -87,5 +85,5 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-  mergeProps,
+  mergeProps
 )(CardReview);

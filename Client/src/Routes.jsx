@@ -1,30 +1,24 @@
 import React from 'react';
 import {Route, HashRouter, Redirect, Switch} from 'react-router-dom';
 
-import BookWidget from 'Components/BookWidgets';
+import BookWidget from './components/BookWidgets';
 
 import {
   MYCARDS,
   GEO_VIEW,
   TAG_VIEW,
-  TOPIC_VIEW,
   AUTHOR,
   ACCOUNT,
   GEO_AUTHOR,
-  TAG_AUTHOR,
-  TREE_AUTHOR,
   SIGN_UP,
   SIGN_IN,
-  HOME,
   ADMIN,
   ADMIN_SIGN_UP,
-  LANDING,
-  DATAVIEW,
-} from 'Constants/routeSpec';
+  DATAVIEW
+} from './constants/routeSpec';
 
 import SignUp from './components/SignUp';
-import SignIn, {SignInRedirect} from './components/SignIn';
-import Home from './components/Home';
+import SignIn from './components/SignIn';
 import Admin from './components/Admin';
 import Account from './components/Account';
 import Diary from './components/Diary';
@@ -38,15 +32,10 @@ import {
   MapViewPage,
   TopicMapViewPage,
   SelectUserEnv,
-  TagViewPage,
+  TagViewPage
 } from './components/CardView';
 
-// import MapAuthor from './components/DataView/Map/MapAuthor';
-
 import DefaultLayout from './components/DefaultLayout';
-
-// import withAuthentication from './components/withAuthentication';
-// import AuthUserContext from './components/AuthUserContext';
 
 const NoMatch = () => (
   <DefaultLayout>
@@ -56,33 +45,25 @@ const NoMatch = () => (
   </DefaultLayout>
 );
 
-// const GRID = 'grid';
-
-// import history from './BrowserHistory';
-
-// import Login from './components/Login';
 const defaultEnv = 'default';
+
+/**
+ * This function defines the routes for the whole app
+ */
 const Routes = () => (
   <HashRouter>
     <Switch>
       <Route
-        path="/:userEnv"
-        exact
-        render={({
-          match: {
-            params: {userEnv},
-          },
-        }) => <Redirect to={`/${userEnv}/${SIGN_IN.path}`} />}
-      />
-      <Route
         path="/"
         exact
-        render={() => <Redirect to={`/${defaultEnv}/${SIGN_IN.path}`} />}
+        render={() => (
+          <Redirect to={`/${defaultEnv}/${SIGN_IN.path}`} />
+        )}
       />
 
-      <Route path={`/:userEnv/${MYCARDS.path}/`} component={Diary} />
+      <Route path={`/${MYCARDS.path}`} component={Diary} />
       <Route
-        path={`/:userEnv/${AUTHOR.path}`}
+        path={`/${AUTHOR.path}`}
         exact
         render={() => (
           <DefaultLayout>
@@ -90,33 +71,18 @@ const Routes = () => (
           </DefaultLayout>
         )}
       />
-
-      <Route path={`/:userEnv/${GEO_AUTHOR.path}`} render={CardAuthorPage} />
-
+      <Route path={`/${GEO_AUTHOR.path}`} render={CardAuthorPage} />
       <Route
         exact
-        path={`/:userEnv/${DATAVIEW.path}/`}
+        path={`/${DATAVIEW.path}`}
         component={() => (
           <DefaultLayout>
             <SelectUserEnv />
           </DefaultLayout>
         )}
       />
-      <Route
-        exact
-        path={`/:userEnv/${TOPIC_VIEW.path}`}
-        component={TopicMapViewPage}
-      />
-      <Route
-        exact
-        path={`/:userEnv/${GEO_VIEW.path}`}
-        component={MapViewPage}
-      />
-      <Route
-        exact
-        path={`/:userEnv/${TAG_VIEW.path}`}
-        component={TagViewPage}
-      />
+      <Route exact path={`/${GEO_VIEW.path}`} component={MapViewPage} />
+      <Route exact path={`/${TAG_VIEW.path}`} component={TagViewPage} />
       <Route
         exact
         path={`/:userEnv/${SIGN_UP.path}/:admin?`}
@@ -132,19 +98,10 @@ const Routes = () => (
         )}
       />
       <Route path={`/:userEnv/${SIGN_IN.path}`} component={SignIn} />
-      <Route
-        exact
-        path={HOME.path}
-        component={() => (
-          <DefaultLayout>
-            <Home />
-          </DefaultLayout>
-        )}
-      />
 
       <Route
         exact
-        path="/:userEnv/bookwidget"
+        path="/bookwidget"
         component={() => (
           <DefaultLayout>
             <div className="content-margin">
@@ -155,17 +112,13 @@ const Routes = () => (
       />
       <Route
         exact
-        path={`/:userEnv/${ADMIN.path}`}
-        component={() => (
-            <Admin />
-        )}
+        path={`/${ADMIN.path}`}
+        component={() => <Admin />}
       />
       <Route
         exact
-        path={`/:userEnv/${ACCOUNT.path}`}
-        component={() => (
-            <Account />
-        )}
+        path={`/${ACCOUNT.path}`}
+        component={() => <Account />}
       />
 
       <Route component={NoMatch} />

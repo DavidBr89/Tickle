@@ -1,14 +1,20 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-import {ModalBody} from 'Utils/Modal';
+import {ModalBody} from '~/components/utils/Modal';
 
-import {MediaList} from 'Utils/MediaUpload';
+// TODO remove
+import {PreviewTags} from '~/components/utils/Tag';
 
-import {TagInput, PreviewTags} from 'Utils/Tag';
+import {StarRating} from '~/components/utils/Rating';
 
-import {StarRating} from 'Components/utils/Rating';
-
+// TODO rewrite
+/**
+ * review the user response to an activity,
+ * TODO it needs to be rewritten in hooks
+ * @param {number} input any number
+ * @returns {number} that number, plus one.
+ */
 class ReviewMediaChallenge extends Component {
   static propTypes = {
     className: PropTypes.string,
@@ -16,7 +22,7 @@ class ReviewMediaChallenge extends Component {
     styles: PropTypes.object,
     stylesheet: PropTypes.object,
     challengeSubmission: PropTypes.oneOf([PropTypes.object, null]),
-    bookmarkable: PropTypes.boolean,
+    bookmarkable: PropTypes.boolean
   };
 
   static defaultProps = {
@@ -24,14 +30,14 @@ class ReviewMediaChallenge extends Component {
     challengeSubmission: null,
     feedback: null,
     styles: {},
-    stylesheet: {},
+    stylesheet: {}
   };
 
   state = {
     rating: this.props.feedback ? this.props.feedback.rating : 0,
     text: this.props.feedback ? this.props.feedback.text : '',
     ...this.props,
-    feedbackSent: this.props.feedback !== null,
+    feedbackSent: this.props.feedback !== null
   };
 
   render() {
@@ -45,7 +51,7 @@ class ReviewMediaChallenge extends Component {
       onSubmit,
       tags,
       media,
-      response,
+      response
     } = this.props;
 
     const {feedbackSent, text, rating} = this.state;
@@ -64,13 +70,16 @@ class ReviewMediaChallenge extends Component {
                 onSubmit({text, rating, accomplished: true});
                 this.setState({feedbackSent: true});
               }}>
-              <div style={{display: 'inline-flex', alignItems: 'center'}}>
+              <div
+                style={{display: 'inline-flex', alignItems: 'center'}}>
                 {feedbackSent ? 'Feeback is sent!' : 'Send Feedback'}
               </div>
             </button>
           </div>
         }>
-        <div className="flex-full flexCol" style={{background: 'smokewhite'}}>
+        <div
+          className="flex-full flexCol"
+          style={{background: 'smokewhite'}}>
           <div>
             <h4>Description</h4>
             <p>{description}</p>
@@ -85,11 +94,6 @@ class ReviewMediaChallenge extends Component {
           </div>
           <div>
             <h4>Submitted Media</h4>
-            <MediaList
-              data={media}
-              className="mb-3"
-              disabled
-            />
           </div>
           <div>
             <h4>Feedback</h4>

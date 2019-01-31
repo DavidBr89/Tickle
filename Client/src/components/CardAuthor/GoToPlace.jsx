@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import mbxGeoCoding from '@mapbox/mapbox-sdk/services/geocoding';
 
-import {SelectInput} from 'Components/utils/SelectField';
+import {SelectInput} from '~/components/utils/SelectField';
 
 const directionService = mbxGeoCoding({
   accessToken: process.env.MapboxAccessToken

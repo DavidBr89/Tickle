@@ -2,21 +2,29 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import {bindActionCreators} from 'redux';
-import CardMarker from 'Components/cards/CardMarker';
+import CardMarker from '~/components/cards/CardMarker';
 
 import {connect} from 'react-redux';
 
-import {dragCard} from 'Reducers/Cards/actions';
+import {dragCard} from '~/reducers/Cards/actions';
 import {dragSourceMap} from './DragSourceCont';
 
 // TODO hack
 
-const DragElement = ({dragId, dragCard, x, y, children, className, ...d}) => {
+const DragElement = ({
+  dragId,
+  dragCard,
+  x,
+  y,
+  children,
+  className,
+  ...d
+}) => {
   const posStyle = {
     position: 'absolute',
     left: x,
     top: y,
-    transform: 'translate(-50%, -50%)',
+    transform: 'translate(-50%, -50%)'
   };
 
   const DragSource = dragSourceMap[dragId];
@@ -36,7 +44,7 @@ const DragElement = ({dragId, dragCard, x, y, children, className, ...d}) => {
         justifyContent: 'center',
         alignItems: 'center',
         // borderRadius: '10%',
-        border: 'black dashed 2px',
+        border: 'black dashed 2px'
       }}>
       {children}
     </div>
@@ -70,14 +78,14 @@ function mapStateToProps(state) {
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      dragCard,
+      dragCard
     },
-    dispatch,
+    dispatch
   );
 
 const mergeProps = (_, dispatcherProps, ownProps) => ({
   ...dispatcherProps,
-  ...ownProps,
+  ...ownProps
 });
 
 DragElement.defaultProps = {};
@@ -87,7 +95,7 @@ DragElement.propTypes = {};
 const ConnectedDragElement = connect(
   mapStateToProps,
   mapDispatchToProps,
-  mergeProps,
+  mergeProps
 )(DragElement);
 
 // export default ConnectedDragElement;

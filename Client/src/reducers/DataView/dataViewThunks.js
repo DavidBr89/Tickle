@@ -1,14 +1,14 @@
-import {
-  selectCard,
-  extendSelectedCard,
-  addCardFilter,
-  removeCardFilter,
-  flipCard,
-} from './actions';
+import {addCardFilter, removeCardFilter} from './actions';
 
-export function tagFilter({filterSet, tag}) {
+/**
+ * Dispatcher the right redux action for filtering cards based on topics
+ * @param {array} set of topic id strings
+ * @param {string} topic id
+ * @returns {function} dispatches the right redux action
+ */
+export function topicFilter({filterSet, topic}) {
   return function(dispatch) {
-    if (filterSet.includes(tag)) dispatch(removeCardFilter(tag));
-    else dispatch(addCardFilter(tag));
+    if (filterSet.includes(topic)) dispatch(removeCardFilter(topic));
+    else dispatch(addCardFilter(topic));
   };
 }

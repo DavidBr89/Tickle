@@ -1,16 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import PreviewCard from 'Components/cards/PreviewCard';
+import PreviewCard from '~/components/cards/PreviewCard';
 
-import {scaleLinear, extent, range, scaleOrdinal} from 'd3';
+import setify from '~/components/utils/setify';
 
-import {db} from 'Firebase';
-
-// import { skillTypes } from '../../dummyData';
-import setify from 'Utils/setify';
-import CardMarker from '../CardMarker';
-
+/**
+ * Component for author profile on the back of the card
+ */
 const AuthorDetails = ({
   onClose,
   style, // skills,
@@ -50,11 +47,18 @@ const AuthorDetails = ({
   );
 };
 
-const AuthorPreview = ({className, photoURL, style, username, name, email}) => (
+const AuthorPreview = ({
+  className,
+  photoURL,
+  style,
+  username,
+  name,
+  email
+}) => (
   <div
     className={className}
     style={{
-      ...style,
+      ...style
     }}>
     <img
       className="absolute h-full w-full"
@@ -70,7 +74,7 @@ const AuthorPreview = ({className, photoURL, style, username, name, email}) => (
 
 AuthorPreview.defaultProps = {
   photoURL:
-    'https://images.unsplash.com/photo-1522602398-e378288fe36d?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=75ef40ce9a4927d016af73bb4aa7ac55&auto=format&fit=crop&w=3350&q=80',
+    'https://images.unsplash.com/photo-1522602398-e378288fe36d?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=75ef40ce9a4927d016af73bb4aa7ac55&auto=format&fit=crop&w=3350&q=80'
 };
 
 const BackAuthor = ({
@@ -99,9 +103,12 @@ const BackAuthor = ({
 
 BackAuthor.defaultProps = {};
 
+/**
+ * Component to wrap data fetching for author profile
+ */
 class BackAuthorWrapper extends React.Component {
   static defaultProps = {
-    fetchData: new Promise(resolve => resolve(null)),
+    fetchData: new Promise(resolve => resolve(null))
   };
 
   componentDidMount() {
@@ -109,9 +116,9 @@ class BackAuthorWrapper extends React.Component {
     // TODO OUTSOURCE
     dataPromise.then(authorInfo => {
       const {
-        interests=[],
-        createdCards=[],
-        collectedCards=[],
+        interests = [],
+        createdCards = [],
+        collectedCards = [],
         ...basicUserInfo
       } = authorInfo;
 
@@ -123,12 +130,12 @@ class BackAuthorWrapper extends React.Component {
         interests,
         createdCards,
         collectedCards,
-        skills,
+        skills
       };
 
       this.setState({
         basicUserInfo,
-        detailedUserInfo,
+        detailedUserInfo
       });
     });
   }

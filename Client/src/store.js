@@ -6,7 +6,6 @@ import thunkMiddleware from 'redux-thunk';
 import rootReducer from './reducers';
 import {saveState, loadState} from './localStorage';
 
-import {DB} from 'Firebase';
 import throttle from 'lodash/throttle';
 
 // localStorage.clear();

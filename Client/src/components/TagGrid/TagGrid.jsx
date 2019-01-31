@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import * as d3 from 'd3';
 
-import icAk from 'Styles/alphabet_icons/ic_ak.svg';
+import icAk from 'Src/styles/alphabet_icons/ic_ak.svg';
 
 
 function calcTreeMap({

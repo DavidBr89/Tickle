@@ -1,14 +1,14 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
-import {range} from 'd3';
 
-import DefaultLayout from 'Components/DefaultLayout';
+import DefaultLayout from '~/components/DefaultLayout';
 
-import MetaCard from 'Src/components/cards/';
-import {BlackModal, ConnectedResponsiveModal} from 'Utils/Modal';
-import PreviewCard from 'Components/cards/PreviewCard';
-import {ScrollView, ScrollElement} from 'Utils/ScrollView';
-import CardSlideShow from 'Src/components/CardSlideShow';
+import MetaCard from '~/components/cards/';
+import {BlackModal} from '~/components/utils/Modal';
+
+import PreviewCard from '~/components/cards/PreviewCard';
+
+import CardSlideShow from '~/components/CardSlideShow';
 import CardTagSearch from '../CardTagSearch';
 
 const LoadingScreen = ({visible, style}) => {

@@ -1,65 +1,17 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 
-import DefaultLayout from 'Components/DefaultLayout';
-import {BlackModal} from 'Utils/Modal';
+import DefaultLayout from '~/components/DefaultLayout';
+import {BlackModal} from '~/components/utils/Modal';
 
-import PreviewCard from 'Src/components/cards/PreviewCard';
+import PreviewCard from '~/components/cards/PreviewCard';
 
-import EditCard from 'Components/cards/ConnectedEditCard';
+import EditCard from '~/components/cards/ConnectedEditCard';
 
-// import {DropDown} from 'Utils/TagInput';
-import {SelectInput} from 'Components/utils/SelectField';
-import mbxGeoCoding from '@mapbox/mapbox-sdk/services/geocoding';
-import CardSlideShow from 'Src/components/CardSlideShow';
-// import CardStackContainer from '../CardStack';
-
-// import CardDragAuthorOverlay from './CardDragAuthorOverlay';
+import CardSlideShow from '~/components/CardSlideShow';
 
 import CardTagSearch from '../CardTagSearch';
 
-const directionService = mbxGeoCoding({
-  accessToken: process.env.MapboxAccessToken
-});
-
-const SelectPlace = ({onChange, className, ...props}) => {
-  const [query, setQuery] = useState('');
-  const [matches, setMatches] = useState([]);
-
-  useEffect(
-    () => {
-      directionService
-        .forwardGeocode({
-          query,
-          limit: 5
-        })
-        .send()
-        .then(response => {
-          const match = response.body;
-          if (match.features) setMatches(match.features);
-          console.log('match', match);
-        });
-    },
-    [query]
-  );
-
-  return (
-    <SelectInput
-      className={className}
-      values={matches}
-      onInputChange={t => setQuery(t)}
-      onIdChange={id => {
-        const m = matches.find(d => d.id === id);
-        onChange(m);
-      }}
-      accId={d => d.id}
-      accInputVal={d => d.place_name}
-      ChildComp={d => <div>{d.place_name}</div>}
-    />
-  );
-};
-
-// import DragLayer from './DragAndDrop/DragLayer';
 
 // import { StyledButton } from 'Utils/StyledComps';
 
@@ -94,7 +46,6 @@ const SelectPlace = ({onChange, className, ...props}) => {
 //   '#253494'
 // ].map(c => chroma(c).alpha(0.1));
 
-// const TimoutGrid = ReactTimeout(CardStack);
 
 function CardAuthorPage(props) {
   const {

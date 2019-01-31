@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-import menuIconSrc from 'Src/styles/menu_icons/menuIconStolen.svg';
+import menuIconSrc from '~/styles/menu_icons/menuIconStolen.svg';
 
 const SlideMenu = ({
   className,

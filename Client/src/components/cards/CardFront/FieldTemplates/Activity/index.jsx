@@ -1,12 +1,10 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 
-import {ModalBody} from 'Src/components/utils/Modal';
 
-import {ACTIVITY} from 'Src/constants/cardFields';
-
+import {ModalBody} from '~/components/utils/Modal';
+import {ACTIVITY} from '~/constants/cardFields';
 import TextChallengeAuthor from './TextChallengeAuthor';
-
 import PreviewFrame from '../PreviewFrame';
 
 export const key = ACTIVITY;

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-import CardMarker from 'Components/cards/CardMarker';
+import CardMarker from '~/components/cards/CardMarker';
 
 function CardCluster({
   coords: [x, y],

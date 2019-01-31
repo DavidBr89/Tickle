@@ -1,11 +1,14 @@
-import {extractCardFields, TEMP_ID} from 'Constants/cardFields.ts';
+import {extractCardFields} from '~/constants/cardFields.ts';
 import makeActivityFuncs from './activity_db';
-import {addToStorage} from './index';
+import {addToStorage, removeFromStorage} from './index';
 
 import {firestore, storageRef, Timestamp} from '../firebase';
 
 const thumbFileName = fileName => `thumb_${fileName}`;
 
+/**
+ * Comment DB functions
+ */
 const makeCommentFuncs = TICKLE_ENV_REF => {
   const getBasicUser = uid =>
     firestore
@@ -40,13 +43,16 @@ const makeCommentFuncs = TICKLE_ENV_REF => {
     TICKLE_ENV_REF.collection('cards')
       .doc(cardId)
       .collection('comments')
-      // TODO: change later will break in future firebase release
-      // TODO: change later
       .add({uid, text, timestamp: Timestamp.fromDate(new Date())});
 
   return {readComments, addComment};
 };
 
+/**
+ * Card db functions
+ * @param {string} environment id
+ * @returns {object} to access cards in db
+ */
 const makeCardFuncs = ENV_STR => {
   const TICKLE_ENV_REF = firestore
     .collection('card-environments')
@@ -60,37 +66,16 @@ const makeCardFuncs = ENV_STR => {
       .doc(cid)
       .delete();
 
-  // TODO: error handling
-  const uploadCardImg = (img, id) => {
-    console.log('card Img Upload', img);
-    if (img=== null || !img.file)
-      return new Promise(resolve => resolve(img));
-
-    const {file = null, ...restImgFields} = img;
-
-    return addToStorage({
-      file: img.file,
-      path: `${ENV_STR}/cards/images/${id}`
-    }).then(
-      url => new Promise(resolve => resolve({...restImgFields, url}))
-    );
-  };
-
   const doUpdateCard = rawCard => {
     const card = extractCardFields(rawCard);
-    console.log('card to Be', card);
 
-        return TICKLE_ENV_REF.collection('cards')
-          .doc(card.id)
-          .set(card);
+    return TICKLE_ENV_REF.collection('cards')
+      .doc(card.id)
+      .set(card);
   };
 
   const readCards = ({authorId = null, playerId = null}) => {
-    // TODO
     const thumbnailPromise = d => {
-      console.log('readCards', d);
-      // TODO
-      if (true) return new Promise(resolve => resolve(d));
 
       const thumbNailRef = storageRef.child(
         `${ENV_STR}/images/cards/${thumbFileName(d.id)}`
@@ -145,9 +130,17 @@ const makeCardFuncs = ENV_STR => {
       );
   };
 
+  const addFileToEnv = ({file, path}) =>
+    addToStorage({file, path: `${ENV_STR}/${path}`});
+
+  const removeFileFromEnv = path =>
+    removeFromStorage(`${ENV_STR}/${path}`);
+
   return {
     doUpdateCard,
     doDeleteCard,
+    addFileToEnv,
+    removeFileFromEnv,
     readCards,
     ...commentFuncs
   };

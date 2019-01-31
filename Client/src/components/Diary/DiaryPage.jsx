@@ -2,39 +2,37 @@ import React, {Component, useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {wrapGrid} from 'animate-css-grid';
 
-import menuIconSrc from 'Src/styles/menu_icons/menuIconStolen.svg';
+import menuIconSrc from '~/styles/menu_icons/menuIconStolen.svg';
 
-// import {wrapGrid} from 'animate-css-grid';
+import PreviewCard from '~/components/cards/PreviewCard';
+import ConnectedCard from '~/components/cards/ConnectedCard';
 
-import PreviewCard from 'Components/cards/PreviewCard';
-import ConnectedCard from 'Components/cards/ConnectedCard';
+import {BlackModal} from '~/components/utils/Modal';
+import DefaultLayout from '~/components/DefaultLayout';
 
-import {BlackModal} from 'Utils/Modal';
-import DefaultLayout from 'Components/DefaultLayout';
-// import BookWidget from 'Components/BookWidgets';
-
-import SlideMenu from 'Components/utils/SlideMenu';
+import SlideMenu from '~/components/utils/SlideMenu';
 
 import {
   ACTIVITY_STARTED,
   ACTIVITY_SUBMITTED,
   ACTIVITY_SUCCEEDED,
   NO_ACTIVITY_FILTER,
-  activityFilterMap,
-} from 'Constants/cardFields';
+  activityFilterMap
+} from '~/constants/cardFields';
 
-import isSubset from 'Src/lib/isSubset';
+// TODO put into components/utils
+import isSubset from '~/lib/isSubset';
 
 const activityFilters = [
   {type: ACTIVITY_STARTED, label: 'Activity Started'},
   {type: ACTIVITY_SUBMITTED, label: 'Activity Submitted'},
   {type: ACTIVITY_SUCCEEDED, label: 'Activity Succeeded'},
-  {type: NO_ACTIVITY_FILTER, label: 'All'},
+  {type: NO_ACTIVITY_FILTER, label: 'All'}
 ];
 
 const INITIAL_GRID_STATE = {
   colNum: 10,
-  rowNum: 10,
+  rowNum: 10
 };
 
 const cardTypeText = cardType => {
@@ -58,35 +56,41 @@ const ModalWrapper = ({card, onClose}) => {
   const delay = 400;
 
   // console.log('card id', id, 'selectedCard', selectedCard);
-  useEffect(
-    () => {
-      // close card directly
-      if (id === null) {
-        setTimeout(() => setCard(card), delay);
-        setHidden(true);
-      }
-      // open card directly when there was no card before
-      if (selectedCard === null && id !== null) {
+  useEffect(() => {
+    // close card directly
+    if (id === null) {
+      setTimeout(() => setCard(card), delay);
+      setHidden(true);
+    }
+    // open card directly when there was no card before
+    if (selectedCard === null && id !== null) {
+      setCard(card);
+      setHidden(false);
+    } else if (id !== null && selectedCard !== null) {
+      // delay the opening of new card
+      setHidden(true);
+      setTimeout(() => {
         setCard(card);
         setHidden(false);
-      } else if (id !== null && selectedCard !== null) {
-        // delay the opening of new card
-        setHidden(true);
-        setTimeout(() => {
-          setCard(card);
-          setHidden(false);
-        }, delay);
-      }
-    },
-    [id],
-  );
+      }, delay);
+    }
+  }, [id]);
 
   return (
     <BlackModal visible={!hidden}>
-      {selectedCard && <ConnectedCard {...selectedCard} onClose={onClose} />}
+      {selectedCard && (
+        <ConnectedCard {...selectedCard} onClose={onClose} />
+      )}
     </BlackModal>
   );
 };
+
+/**
+ * This Component displays all the cards the use has interfaced with.
+ * This means submitted, rated, and bookmarked cards
+ * TODO: filter options and testing in general
+ * @param {cards} user cards
+ */
 
 const MyDiary = props => {
   const {
@@ -95,14 +99,13 @@ const MyDiary = props => {
     selectCard,
     extendCard,
     selectedCard,
-    relatedTags,
     height,
     cardExtended,
     selectCardType,
     numCollectibleCards,
     numSeenCards,
-    tagVocabulary,
-    closeCard,
+    topicDict,
+    closeCard
   } = props;
 
   const [cardType, setCardType] = useState(NO_ACTIVITY_FILTER);
@@ -116,16 +119,15 @@ const MyDiary = props => {
     wrapGrid(gridDom.current, {
       easing: 'backInOut',
       stagger: 0,
-      duration: 400,
+      duration: 400
     });
   }, []);
 
   const filterByTag = key => {
-    setSelectedTags(
-      prevTags =>
-        prevTags.includes(key)
-          ? prevTags.filter(d => d !== key)
-          : [...prevTags, key],
+    setSelectedTags(prevTags =>
+      prevTags.includes(key)
+        ? prevTags.filter(d => d !== key)
+        : [...prevTags, key]
     );
   };
 
@@ -147,10 +149,10 @@ const MyDiary = props => {
     // gridAutoFlow: 'column dense',
     gridTemplateColumns: 'repeat(auto-fit, minmax(10vh, 125px))',
     gridAutoRows: `minmax(${h}rem, 2fr)`,
-    gridTemplateRows: `minmax(${h}rem, 2fr)`,
+    gridTemplateRows: `minmax(${h}rem, 2fr)`
   };
 
-  const tags = tagVocabulary.slice(0, 10);
+  const tags = topicDict.slice(0, 10);
 
   const cardGrid = (
     <div ref={gridDom} className="flex-grow w-full" style={gridStyle}>
@@ -161,7 +163,7 @@ const MyDiary = props => {
               transform: `scale(${d.id === selectedCardId ? 1.15 : 1})`,
               transformOrigin: d.id === selectedCardId && null,
               pointerEvents: selectedCardId !== null && 'none',
-              transition: 'transform 300ms',
+              transition: 'transform 300ms'
             }}
             className="h-full"
             onClick={() => selectCard(d.id)}

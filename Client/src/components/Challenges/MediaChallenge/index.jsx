@@ -4,65 +4,11 @@ import PropTypes from 'prop-types';
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 
-import * as Icon from 'react-feather';
-import withAuthorization from 'Components/withAuthorization';
+import withAuthorization from '~/components/withAuthorization';
 
-import MediaUpload from 'Utils/MediaUpload';
+import MediaUpload from '~/components/utils/MediaUpload';
 
-import {ScrollView, ScrollElement} from 'Utils/ScrollView';
-
-import ChevronsDown from 'react-feather/dist/icons/chevron-down';
-
-import {BlackModal, ModalBody} from 'Utils/Modal';
-
-// import DelayClick from 'Components/utils/DelayClick';
-
-/*
-        <Btn
-          className="mr-1"
-          onClick={() => {
-            if (!started) {
-              this.setState({ started: true });
-              addChallengeSubmission({ media, response, completed: false });
-            } else {
-              onRemoveSubmission();
-            }
-          }}
-        >
-          <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-            <div className="mr-1">{!started ? 'Bookmark' : 'UnBookmark'}</div>
-            {started && <div>{iconLock}</div>}
-          </div>
-        </Btn>
-*/
-
-// class AddMedia extends Component {
-//   static propTypes = {
-//     children: PropTypes.node,
-//     className: PropTypes.string
-//   };
-//
-//   render() {
-//     const {
-//       response, media, addToStorage, removeFromStorage
-//     } = this.props;
-//     return (
-//       <div>
-//
-//         <MediaUpload
-//           onAdd={addToStorage}
-//           onRemove={removeFromStorage}
-//           className="flex-grow"
-//           btnText="Upload Media"
-//           media={media}
-//           buttonStyle={{ width: 30 }}
-//           onChange={(newMedia) => {
-//           }}
-//         />
-//       </div>
-//     );
-//   }
-// }
+import {BlackModal, ModalBody} from '~/components/utils/Modal';
 
 class MediaChallenge extends Component {
   static propTypes = {
@@ -71,18 +17,18 @@ class MediaChallenge extends Component {
     styles: PropTypes.object,
     submission: PropTypes.oneOf([PropTypes.object, null]),
     bookmarkable: PropTypes.boolean,
-    isSmartphone: PropTypes.boolean,
+    isSmartphone: PropTypes.boolean
   };
 
   static defaultProps = {
     className: '',
     activity: {
       description: 'placeholder challenge',
-      title: null,
+      title: null
     },
     activitySubmission: null,
     media: [],
-    response: null,
+    response: null
   };
 
   state = {
@@ -90,7 +36,7 @@ class MediaChallenge extends Component {
     response: null,
     completed: false,
     mediaModalVisible: false,
-    ...this.props.submission,
+    ...this.props.submission
   };
 
   textAreaTimeoutId = null;
@@ -103,7 +49,7 @@ class MediaChallenge extends Component {
       onSubmit,
       addToStorage,
       removeFromStorage,
-      media,
+      media
     } = this.props;
 
     const {response, mediaModalVisible} = this.state;
@@ -124,7 +70,7 @@ class MediaChallenge extends Component {
               onSubmit({
                 media,
                 response,
-                completed: true,
+                completed: true
               });
               onClose();
             }}>
@@ -134,7 +80,9 @@ class MediaChallenge extends Component {
         <div className="flex flex-col flex-grow">
           <div style={{maxHeight: 200}} className="mb-5">
             <h2 className="mb-2">Description</h2>
-            <p className="flex-no-shrink w-full text-lg">{description}</p>
+            <p className="flex-no-shrink w-full text-lg">
+              {description}
+            </p>
           </div>
 
           <div className="mb-3">
@@ -148,7 +96,7 @@ class MediaChallenge extends Component {
                 const text = e.target.value;
                 this.setState({
                   response: text !== '' ? text : null,
-                  completed: false,
+                  completed: false
                 });
               }}
             />
@@ -169,7 +117,11 @@ class MediaChallenge extends Component {
                 onRemove={removeFromStorage}
                 btnText="Upload Media"
                 onChange={newMedia => {
-                  onSubmit({media: newMedia, response, completed: false});
+                  onSubmit({
+                    media: newMedia,
+                    response,
+                    completed: false
+                  });
                 }}
               />
             </ModalBody>
@@ -184,5 +136,5 @@ const authCondition = authUser => authUser !== null;
 
 export default compose(
   withAuthorization(authCondition),
-  withRouter,
+  withRouter
 )(MediaChallenge);

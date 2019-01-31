@@ -1,19 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import PropTypes from 'prop-types';
-import MapGL from 'Components/utils/Map';
+// import PropTypes from 'prop-types';
+import MapGL from '~/components/utils/Map';
 
 import {FlyToInterpolator} from 'react-map-gl';
 
-import {
-  TEMP_ID,
-  initCardFields,
-  extractCardFields
-} from 'Constants/cardFields';
+import {initCardFields} from '~/constants/cardFields';
 
-import MapAuthor from 'Src/components/CardAuthor/MapAuthor';
-import GoToPlace from 'Src/components/CardAuthor/GoToPlace';
+import MapAuthor from '~/components/CardAuthor/MapAuthor';
+import GoToPlace from '~/components/CardAuthor/GoToPlace';
 
-import {V2_DRAG} from 'Components/DragAndDrop/';
+import {V2_DRAG} from '~/components/DragAndDrop/';
 
 import {
   WebMercatorViewport,
@@ -21,11 +17,10 @@ import {
 } from 'viewport-mercator-project';
 
 // TODO remove
-import DimWrapper from 'Utils/DimensionsWrapper';
-// import { geoProject } from 'Lib/geo';
-import CardMarker from 'Components/cards/CardMarker';
+import DimWrapper from '~/components/utils/DimensionsWrapper';
+import CardMarker from '~/components/cards/CardMarker';
 
-import userIcon from 'Components/utils/user.svg';
+import userIcon from '~/components/utils/user.svg';
 
 // import MapboxDirections from '@mapbox/mapbox-gl-directions';
 

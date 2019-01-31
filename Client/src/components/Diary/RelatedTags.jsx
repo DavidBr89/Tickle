@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-import PreviewCard from 'Components/cards/PreviewCard';
-
-import PreviewCardStack from 'Components/cards/PreviewCardStack';
+import PreviewCard from '~/components/cards/PreviewCard';
+import PreviewCardStack from '~/components/cards/PreviewCardStack';
 
 class RelatedTags extends Component {
   static propTypes = {
     children: PropTypes.node,
-    nestedTags: PropTypes.array,
+    nestedTags: PropTypes.array
   };
 
   render() {
@@ -18,7 +17,7 @@ class RelatedTags extends Component {
       display: 'grid',
       gridTemplateColumns: `repeat(auto-fill, 100px)`,
       gridGap: '1rem',
-      gridAutoRows: '140px',
+      gridAutoRows: '140px'
     };
 
     console.log('RelatedTags xxx yoyoyoyo');
@@ -33,7 +32,7 @@ class RelatedTags extends Component {
             style={{
               // position: 'absolute',
               gridColumn: 'span 2',
-              gridRow: 'span 2',
+              gridRow: 'span 2'
             }}
           />
           {nestedTags.map(n => (

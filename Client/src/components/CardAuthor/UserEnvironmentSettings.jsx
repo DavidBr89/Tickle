@@ -7,16 +7,15 @@ import {connect} from 'react-redux';
 import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
 
-import {DB} from 'Firebase';
-import * as asyncSessionActions from 'Reducers/Session/async_actions';
-import * as asyncAdminActions from 'Reducers/Admin/async_actions';
+import * as asyncSessionActions from '~/reducers/Session/async_actions';
+import * as asyncAdminActions from '~/reducers/Admin/async_actions';
 
-import withAuthorization from 'Src/components/withAuthorization';
-import withAuthentication from 'Src/components/withAuthentication.jsx';
+import withAuthorization from '~/components/withAuthorization';
+import withAuthentication from '~/components/withAuthentication';
 
-import {CloseIcon} from 'Src/styles/menu_icons';
+import {CloseIcon} from '~/styles/menu_icons';
 
-import {AUTHOR} from 'Constants/routeSpec';
+import {AUTHOR} from '~/constants/routeSpec';
 
 const summaryClassName = 'text-2xl p-2 mb-3 border';
 const SelectUserEnv = ({
@@ -24,7 +23,7 @@ const SelectUserEnv = ({
   userEnvs,
   routeUserEnv,
   removeUserEnv,
-  selectedUserEnvId,
+  selectedUserEnvId
 }) => {
   const [envName, setEnvName] = useState('');
 
@@ -46,7 +45,10 @@ const SelectUserEnv = ({
           placeholder="Add a card environment for your users"
           onChange={e => setEnvName({envName: e.target.value})}
         />
-        <button type="submit" className="ml-2 btn" style={{flexGrow: 0.25}}>
+        <button
+          type="submit"
+          className="ml-2 btn"
+          style={{flexGrow: 0.25}}>
           Add
         </button>
       </form>
@@ -98,7 +100,7 @@ function UserEnvironmentSettings(props) {
     selectedUserEnvId,
     routeUserEnv,
     readUsers,
-    users,
+    users
   } = props;
 
   useEffect(() => {
@@ -117,7 +119,9 @@ function UserEnvironmentSettings(props) {
 const mapStateToProps = state => ({
   ...state.Session,
   ...state.Admin,
-  userEnvs: state.Session.authUser ? state.Session.authUser.userEnvs : [],
+  userEnvs: state.Session.authUser
+    ? state.Session.authUser.userEnvs
+    : []
 });
 
 /*
@@ -126,15 +130,23 @@ exampleAction: authUser => {
   }
 */
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({...asyncSessionActions, ...asyncAdminActions}, dispatch);
+  bindActionCreators(
+    {...asyncSessionActions, ...asyncAdminActions},
+    dispatch
+  );
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
-  const {addUserEnv, selectUserEnv, removeUserEnv, fetchUsers} = dispatchProps;
+  const {
+    addUserEnv,
+    selectUserEnv,
+    removeUserEnv,
+    fetchUsers
+  } = dispatchProps;
 
   const {match, history} = ownProps;
 
   const {
-    params: {userEnv},
+    params: {userEnv}
   } = match;
 
   const routeUserEnv = env => history.push(`/${env}/${AUTHOR.path}`);
@@ -146,7 +158,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     routeUserEnv,
     readUsers: () => fetchUsers(userEnv),
     selectedUserEnvId: userEnv,
-    addUserEnv: newEnv => addUserEnv({envId: userEnv, newEnv}),
+    addUserEnv: newEnv => addUserEnv({envId: userEnv, newEnv})
   };
 };
 
@@ -157,6 +169,6 @@ export default compose(
   connect(
     mapStateToProps,
     mapDispatchToProps,
-    mergeProps,
-  ),
+    mergeProps
+  )
 )(UserEnvironmentSettings);

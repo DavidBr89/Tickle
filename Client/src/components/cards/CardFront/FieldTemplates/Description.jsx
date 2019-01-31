@@ -1,7 +1,7 @@
-import React, {Component, useState} from 'react';
+import React from 'react';
 
-import {Modal, ModalBody} from 'Components/utils/Modal';
-import {DESCRIPTION} from 'Src/constants/cardFields';
+import {ModalBody} from '~/components/utils/Modal';
+import {DESCRIPTION} from '~/constants/cardFields';
 
 import PreviewFrame from './PreviewFrame';
 

@@ -6,20 +6,20 @@ import {connect} from 'react-redux';
 import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
 
-import cardRoutes from 'Src/Routes/cardRoutes';
-import * as asyncSessionActions from 'Reducers/Session/async_actions';
-import * as sessionActions from 'Reducers/Session/actions';
-import * as asyncAdminActions from 'Reducers/Admin/async_actions';
-import * as asyncCardActions from 'Reducers/Cards/async_actions';
-import * as adminActions from 'Reducers/Admin/actions';
+import cardRoutes from '~/Routes/cardRoutes';
+import * as asyncSessionActions from '~/reducers/Session/async_actions';
+import * as sessionActions from '~/reducers/Session/actions';
+import * as asyncAdminActions from '~/reducers/Admin/async_actions';
+import * as asyncCardActions from '~/reducers/Cards/async_actions';
+import * as adminActions from '~/reducers/Admin/actions';
 
-import withAuthorization from 'Src/components/withAuthorization';
-import withAuthentication from 'Src/components/withAuthentication';
+import withAuthorization from '~/components/withAuthorization';
+import withAuthentication from '~/components/withAuthentication';
 
 // import uuidv1 from 'uuid/v1';
 
-import {ADMIN} from 'Constants/routeSpec';
-import {TEMP_ID} from 'Constants/cardFields';
+import {ADMIN} from '~/constants/routeSpec';
+import {TEMP_ID} from '~/constants/cardFields';
 import AdminPage from './AdminPage';
 
 const mapStateToProps = state => ({

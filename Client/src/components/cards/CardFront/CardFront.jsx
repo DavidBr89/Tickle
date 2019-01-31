@@ -1,9 +1,9 @@
 import React, {Component, PureComponent} from 'react';
 import PropTypes from 'prop-types';
 
-import CardControls from 'Components/cards/CardControls';
-import {mediaScale} from 'Constants/mediaTypes';
-import {getNumInitFields} from 'Constants/cardFields';
+import CardControls from '~/components/cards/CardControls';
+import {mediaScale} from '~/constants/mediaTypes';
+import {getNumInitFields} from '~/constants/cardFields';
 
 import {ImgOverlay, TextField, MediaField} from './mixinsCardFront';
 

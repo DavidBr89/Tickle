@@ -7,5 +7,7 @@ import './styles/layout.scss';
 import './styles/comps.scss';
 
 import App from './App';
-
+/**
+ * render the whole app to the DOM
+ */
 render(<App />, document.getElementById('app'));

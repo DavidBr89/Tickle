@@ -1,14 +1,9 @@
-// import generate from 'firebase-auto-ids';
-
-// import fetch from 'cross-fetch';
-
-import {extractCardFields} from 'Constants/cardFields';
 
 import uuidv1 from 'uuid/v1';
 
-import CardDB from 'Firebase/db/card_db';
-
-import TopicDB from 'Src/firebase/db/topic_db';
+import CardDB from '~/firebase/db/card_db';
+import {extractCardFields} from '~/constants/cardFields';
+import TopicDB from '~/firebase/db/topic_db';
 // import idGenerate from 'Src/idGenerator';
 import {
   receivePlaces,
@@ -36,11 +31,13 @@ import {
 
 import {selectCard, extendSelectedCard} from '../DataView/actions';
 
-import NearbyPlaces from '../places.json';
-
+/**
+ * fetches collectible cards for one user
+ * @param {string} uid for user
+ * @returns {string} user environment id
+ */
 export function fetchCollectibleCards({uid, userEnvId}) {
   return function(dispatch) {
-    console.log('fetchCollectibleCards', userEnvId);
     const db = new CardDB(userEnvId);
     dispatch(loadingCards(true));
     // TODO: change later with obj params

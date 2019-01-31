@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { createShadowStyle, UIthemeContext } from 'Cards/styles';
-
 import PhotoUpload from 'Utils/PhotoUpload';
 
 function convertToImgSrc(fileList) {

@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {compose} from 'recompose';
 
-import {db} from 'Firebase';
+import db from '~/firebase/db/user_db';
 
 import withAuthorization from '../withAuthorization';
 

@@ -6,34 +6,6 @@ import makeCardFuncs from './card_db';
 export * from './utils_db';
 export * from './user_db';
 
-const pruneFields = fields => {
-  const isNotFileOrFunc = val =>
-    !(val instanceof File) && !(val instanceof Function);
-
-  const pruneObject = obj =>
-    Object.keys(obj).reduce((acc, attr) => {
-      const val = obj[attr];
-      if (isNotFileOrFunc(val)) acc[attr] = val;
-      return acc;
-    }, {});
-
-  return Object.keys(fields).reduce((acc, attr) => {
-    const val = fields[attr];
-    if (val instanceof Array) {
-      acc[attr] = val;
-      return acc;
-    }
-    if (val instanceof Object) {
-      acc[attr] = pruneObject(val);
-      return acc;
-    }
-    if (isNotFileOrFunc(val)) acc[attr] = val;
-    return acc;
-  }, {});
-};
-
-// const thumbFileName = fileName => `thumb_${fileName}`;
-
 export const readCopyUsers = () => {
   firestore
     .collection('users')
@@ -75,21 +47,3 @@ export const addToStorage = ({file, path}) => {
       // promises in the chain.
     });
 };
-
-export default function CardDB(ENV_STR = 'default') {
-  const activityFuncs = makeActivityFuncs(ENV_STR);
-  const cardFuncs = makeCardFuncs(ENV_STR);
-
-  const addFileToEnv = ({file, path}) =>
-    addToStorage({file, path: `${ENV_STR}/${path}`});
-
-  const removeFileFromEnv = path =>
-    removeFromStorage(`${ENV_STR}/${path}`);
-
-  return {
-    ...activityFuncs,
-    ...cardFuncs,
-    removeFileFromEnv,
-    addFileToEnv
-  };
-}

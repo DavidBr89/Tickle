@@ -1,16 +1,16 @@
 import React, {Component, useState} from 'react';
 import PropTypes from 'prop-types';
 
+import sortBy from 'lodash/sortBy';
 import {
   extractCardFields,
   initCard,
   isFieldInitialized
-} from 'Constants/cardFields';
+} from '~/constants/cardFields';
 // import Check from 'react-feather/dist/icons/check';
 import X from 'react-feather/dist/icons/x';
 
-import CardControls from 'Components/cards/CardControls';
-import sortBy from 'lodash/sortBy';
+import CardControls from '~/components/cards/CardControls';
 
 import {ImgOverlay, MediaField, EditIcon} from './mixinsCardFront';
 

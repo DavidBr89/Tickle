@@ -5,16 +5,15 @@ import ChevronsRight from 'react-feather/dist/icons/chevrons-right';
 import UserIcon from 'react-feather/dist/icons/user';
 
 import uniq from 'lodash/uniq';
-import {SelectTags} from 'Components/utils/SelectField';
-import {BlackModal, ModalBody} from 'Components/utils/Modal';
-import AlertButton from 'Components/utils/AlertButton';
-import {initUserFields} from 'Constants/userFields';
 
-import TabSwitcher from 'Src/components/utils/TabSwitcher';
-import useMergeState from 'Src/components/utils/useMergeState';
-import useDeepCompareMemoize from 'Src/components/utils/useDeepCompareMemoize';
+import {SelectTags} from '~/components/utils/SelectField';
+import {BlackModal, ModalBody} from '~/components/utils/Modal';
+import AlertButton from '~/components/utils/AlertButton';
+import {initUserFields} from '~/constants/userFields';
 
-import styledComp from 'Src/components/utils/styledComp';
+import TabSwitcher from '~/components/utils/TabSwitcher';
+import useMergeState from '~/components/utils/useMergeState';
+import useDeepCompareMemoize from '~/components/utils/useDeepCompareMemoize';
 
 const summaryClass = 'mb-3';
 const baseLiClass =
@@ -221,12 +220,9 @@ export const EditUserInfo = ({
   ...props
 }) => {
   const [userProfile, setProfile] = useMergeState(user);
-  useEffect(
-    () => {
-      onUpdateUser(userProfile);
-    },
-    [useDeepCompareMemoize(userProfile)]
-  );
+  useEffect(() => {
+    onUpdateUser(userProfile);
+  }, [useDeepCompareMemoize(userProfile)]);
 
   return (
     <div className={`flex flex-col ${className} `} style={style}>
@@ -447,12 +443,9 @@ export const InviteUserForm = ({onChange, error, user}) => {
   const {deficits, aims, mobileNumber, email, name} = userProfile;
   const disabled = email === null;
 
-  useEffect(
-    () => {
-      onChange(userProfile);
-    },
-    [useDeepCompareMemoize(userProfile)]
-  );
+  useEffect(() => {
+    onChange(userProfile);
+  }, [useDeepCompareMemoize(userProfile)]);
 
   // onSubmit({...user, aims, deficits, name, email})
   return (

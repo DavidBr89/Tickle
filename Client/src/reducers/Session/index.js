@@ -8,7 +8,6 @@ import {
   SUBMIT_USER_INFO_TO_DB_SUCCESS,
   SET_USER_ENV,
   SET_TAG_TREE_DATA,
-  ADD_TOPIC,
   REMOVE_TOPIC
   // SET_DEVICE
 } from './actions';
@@ -28,16 +27,6 @@ const INITIAL_STATE = {
 
 function sessionReducer(state = INITIAL_STATE, action) {
   switch (action.type) {
-    case REMOVE_TOPIC: {
-      const {topics} = state;
-      const topicId = action.options;
-      return {...state, topics: topics.filter(d => d.id !== topicId)};
-    }
-    case ADD_TOPIC: {
-      const {topics} = state;
-      const topic = action.options;
-      return {...state, topicDict: [...topics, topic]};
-    }
     case SET_TAG_TREE_DATA: {
       const tagTreeData = action.options;
       return {...state, tagTreeData};

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-import MapGL from 'Components/utils/Map';
+import MapGL from '~/components/utils/Map';
 
 import {
   WebMercatorViewport,
@@ -8,11 +8,11 @@ import {
 } from 'viewport-mercator-project';
 
 // TODO remove
-import DimWrapper from 'Utils/DimensionsWrapper';
+import DimWrapper from '~/components/utils/DimensionsWrapper';
 // import { geoProject } from 'Lib/geo';
-import CardMarker from 'Components/cards/CardMarker';
+import CardMarker from '~/components/cards/CardMarker';
 
-import userIcon from 'Components/utils/user.svg';
+import userIcon from '~/components/utils/user.svg';
 
 // import MapboxDirections from '@mapbox/mapbox-gl-directions';
 
@@ -94,7 +94,7 @@ const MapAreaView = props => {
     geometries: 'geojson',
     waypoints: [
       {
-        coordinates: startLoc,
+        coordinates: startLoc
         // approach: 'unrestricted'
       },
       {

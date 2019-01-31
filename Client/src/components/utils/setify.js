@@ -1,7 +1,6 @@
 import {nest} from 'd3';
-import {uniq, flatten} from 'lodash';
-
-import {fallbackTagValues} from 'Constants/cardFields';
+import uniq from 'lodash/uniq';
+import flatten from 'lodash/flatten';
 
 export default function setify(data) {
   const spreadData = flatten(

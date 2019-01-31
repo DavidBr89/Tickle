@@ -6,7 +6,7 @@ import uuidv1 from 'uuid/v1';
 import Rating, {StarRating} from 'Components/utils/Rating';
 
 import useMergeState from 'Components/utils/useMergeState';
-import useDeepCompareMemoize from 'Components/utils/useMergeState';
+import useDeepCompareMemoize from 'Components/utils/useDeepCompareMemoize';
 
 const DifficultyRating = ({onChange, highlighted, ...props}) => (
   <Rating {...props} numHighlighted={highlighted} num={6}>
@@ -23,14 +23,7 @@ const DifficultyRating = ({onChange, highlighted, ...props}) => (
 );
 
 export default function TextActivityEditor(props) {
-  const {
-    onChange,
-    className,
-    placeholder,
-    styles,
-    onChange,
-    title
-  } = props;
+  const {className, placeholder, styles, onChange, title} = props;
 
   const [activity, setActivity] = useMergeState({
     description: '',

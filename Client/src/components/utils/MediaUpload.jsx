@@ -1,20 +1,14 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
 import X from 'react-feather/dist/icons/x';
-// import { uniqBy } from 'lodash';
-import FileUpload from 'Utils/FileUpload';
-// import { ModalBody } from 'Utils/Modal';
-// import ScrollList from 'Utils/ScrollList';
+import FileUpload from '~/components/utils/FileUpload';
 
 import uuidv1 from 'uuid/v1';
 
+import {TEXT, IMG, VIDEO} from '~/constants/mediaTypes';
 
-// import { GlobalThemeConsumer } from 'Src/styles/GlobalThemeContext';
-
-import { TEXT, IMG, VIDEO } from 'Constants/mediaTypes';
-
-import { NewTabLink } from 'Components/utils/StyledComps';
+import {NewTabLink} from '~/components/utils/StyledComps';
 
 class DataUploadForm extends Component {
   static propTypes = {
@@ -31,7 +25,10 @@ class DataUploadForm extends Component {
   };
 
   state = {
-    description: null, imgUrl: null, file: null, type: TEXT
+    description: null,
+    imgUrl: null,
+    file: null,
+    type: TEXT
   };
 
   render() {
@@ -44,26 +41,25 @@ class DataUploadForm extends Component {
       btnText
     } = this.props;
 
-    const { imgUrl, file, type } = this.state;
+    const {imgUrl, file, type} = this.state;
     const imgRegex = /.(jpg|jpeg|png|gif)$/i;
     const videoRegex = /.(ogg|h264|webm|vp9|hls)$/i;
     const disabledUpload = !file || disabled;
     return (
       <div
         className={`${className} flex items-center`}
-        style={{ ...style }}
-      >
+        style={{...style}}>
         <FileUpload
           disabled={disabled}
           btnText={btnText}
           style={buttonStyle}
           fileName={file ? file.name : null}
-          onChange={({ url, file: newFile }) => {
+          onChange={({url, file: newFile}) => {
             let ftype = TEXT;
             if (newFile.name.match(imgRegex)) ftype = IMG;
             if (newFile.name.match(videoRegex)) ftype = VIDEO;
-            const st = { imgUrl: url, file: newFile, type: ftype };
-            onChange({ ...st });
+            const st = {imgUrl: url, file: newFile, type: ftype};
+            onChange({...st});
             this.setState(st);
           }}
         />
@@ -73,19 +69,22 @@ class DataUploadForm extends Component {
 }
 
 const MediaItem = ({
-  url, name, onRemove, disabled, children = null, id
+  url,
+  name,
+  onRemove,
+  disabled,
+  children = null,
+  id
 }) => {
   const label = url ? name : 'loading';
   return (
-    <div
-      className="bg-grey-light mt-1 p-2 w-full flex justify-between items-center"
-    >
+    <div className="bg-grey-light mt-1 p-2 w-full flex justify-between items-center">
       {children === null ? (
         <div className="truncate" style={{}}>
           <NewTabLink href={url}>{label}</NewTabLink>
         </div>
       ) : (
-        children({ url, name, loading: url === null })
+        children({url, name, loading: url === null})
       )}
       {!disabled && (
         <div>
@@ -93,8 +92,7 @@ const MediaItem = ({
             className="btn"
             disabled={!url}
             onClick={onRemove}
-            style={{ minWidth: 'unset' }}
-          >
+            style={{minWidth: 'unset'}}>
             <X />
           </button>
         </div>
@@ -111,7 +109,6 @@ MediaItem.defaultProps = {
   children: null,
   onRemove: null
 };
-
 
 class MediaUpload extends Component {
   static propTypes = {
@@ -131,22 +128,23 @@ class MediaUpload extends Component {
     disabled: false
   };
 
-  state = { media: [], pendingMedia: [], ...this.props };
-
+  state = {media: [], pendingMedia: [], ...this.props};
 
   componentDidUpdate(prevProps, prevState) {
-    const { media: oldMedia } = prevState;
-    const { onChange, onAdd } = this.props;
-    const { media, pendingMedia } = this.state;
+    const {media: oldMedia} = prevState;
+    const {onChange, onAdd} = this.props;
+    const {media, pendingMedia} = this.state;
 
     if (oldMedia.length !== media.length) {
       onChange(media);
     }
 
     if (pendingMedia.length > 0) {
-      const promises = pendingMedia.map(({ file, id, ...rest }) => onAdd({ id, file }).then(url => ({ ...rest, url, id })));
+      const promises = pendingMedia.map(({file, id, ...rest}) =>
+        onAdd({id, file}).then(url => ({...rest, url, id}))
+      );
 
-      Promise.all(promises).then((uploadedMediaItems) => {
+      Promise.all(promises).then(uploadedMediaItems => {
         this.setState({
           media: [...media, ...uploadedMediaItems],
           pendingMedia: []
@@ -161,46 +159,53 @@ class MediaUpload extends Component {
       style,
       disabled,
       btnText,
-      className, onRemove
+      className,
+      onRemove
     } = this.props;
-    const { media, pendingMedia } = this.state;
+    const {media, pendingMedia} = this.state;
     const allMedia = [...media, ...pendingMedia];
 
-    const removeFile = (id) => {
+    const removeFile = id => {
       onRemove(id);
-      this.setState({ media: media.filter(d => d.id !== id) });
+      this.setState({media: media.filter(d => d.id !== id)});
     };
 
-    const addPendingFile = (file) => {
-      const id = uuidv1();// file.name;
+    const addPendingFile = file => {
+      const id = uuidv1(); // file.name;
       const pendingMediaItem = {
-        file, id, name: file.name, url: null
+        file,
+        id,
+        name: file.name,
+        url: null
       };
 
-      if (media.filter(m => m.id === pendingMediaItem.id).length === 0) {
-        this.setState(({
+      if (
+        media.filter(m => m.id === pendingMediaItem.id).length === 0
+      ) {
+        this.setState({
           pendingMedia: [...pendingMedia, pendingMediaItem]
-        }));
+        });
       }
     };
-
 
     return (
       <div className={`${className} flex flex-col`}>
         <div className="flex flex-col flex-grow mt-3 mb-3 p-1 border">
           {allMedia.length > 0 ? (
-
             <div
               className="flex-grow justify-center items-center"
-              style={style}
-            >
+              style={style}>
               {allMedia.map(d => (
-                <MediaItem {...d} disabled={disabled} onRemove={() => removeFile(d.id)} />
+                <MediaItem
+                  {...d}
+                  disabled={disabled}
+                  onRemove={() => removeFile(d.id)}
+                />
               ))}
             </div>
           ) : (
             <div className="flex-grow flex flex-no-shrink justify-center items-center ">
-              <div className="text-muted" style={{ fontSize: 'x-large' }}>
+              <div className="text-muted" style={{fontSize: 'x-large'}}>
                 No Media added
               </div>
             </div>
@@ -209,7 +214,7 @@ class MediaUpload extends Component {
         <FileUpload
           disabled={disabled}
           btnText={btnText}
-          onChange={({ file }) => {
+          onChange={({file}) => {
             addPendingFile(file);
           }}
         />

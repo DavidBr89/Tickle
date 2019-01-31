@@ -6,21 +6,16 @@ import {withRouter} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
-import {asyncSubmitActivity} from 'Reducers/Cards/async_actions';
+// TODO does not exist yet
+import {asyncSubmitActivity} from '~/reducers/Cards/async_actions';
 
-import * as dataViewActions from 'Reducers/DataView/dataViewThunks';
-import MediaChallenge from 'Components/Challenges/MediaChallenge';
+import * as dataViewActions from '~/reducers/DataView/dataViewThunks';
+import MediaChallenge from '~/components/Challenges/MediaChallenge';
 
-// import StarRating from 'Components/utils/StarRating';
+import DB from '~/firebase/db/card_db';
 
-import {ModalBody} from 'Utils/Modal';
-
-import {PreviewTags} from 'Utils/Tag';
-
-import {DB} from 'Firebase';
-
-import cardRoutes from 'Src/Routes/cardRoutes';
-import {initCardFields} from 'Src/constants/cardFields';
+import cardRoutes from '~/Routes/cardRoutes';
+import {initCardFields} from '~/constants/cardFields';
 import makeBackCardFuncs from './backCardDbMixins';
 
 import CardBack from './CardBack';
@@ -28,6 +23,9 @@ import CardBack from './CardBack';
 import ReadCardFront from './CardFront/ReadCardFront';
 import CardFrame from './CardFrame';
 
+/**
+ * Representation component to show viewable Card
+ */
 const CardViewable = ({
   flipped,
   removeFromStorage,
@@ -155,8 +153,6 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
 
   const db = DB(userEnv);
 
-  const filePath = `activitySubmissions/${cardId}/${playerId}`;
-
   const onFlip = routeFlipCard;
 
   const relatedCardsByTag =
@@ -186,6 +182,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   };
 };
 
+/**
+ * Connect CardViewable to the Store
+ */
 export default compose(
   withRouter,
   connect(

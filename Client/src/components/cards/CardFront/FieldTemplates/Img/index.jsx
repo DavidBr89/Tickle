@@ -1,10 +1,10 @@
 import React, {useState, Component} from 'react';
 
-import {IMG} from 'Src/constants/cardFields';
+import {IMG} from '~/constants/cardFields';
 
-import {ModalBody} from 'Components/utils/Modal';
+import {ModalBody} from '~/components/utils/Modal';
 
-import EditImg from 'Src/components/utils/EditImg';
+import EditImg from '~/components/utils/EditImg';
 import PreviewFrame from '../PreviewFrame';
 
 export const key = IMG;

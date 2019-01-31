@@ -3,13 +3,15 @@ import MoreIcon from 'react-feather/dist/icons/more-horizontal';
 
 import UserIcon from 'react-feather/dist/icons/user';
 import uniq from 'lodash/uniq';
-import {SelectTag} from 'Components/utils/SelectField';
-import {BlackModal, ModalBody} from 'Components/utils/Modal';
-import AlertButton from 'Components/utils/AlertButton';
+
 import isEqual from 'lodash/isEqual';
 
-import useMergeState from 'Src/components/utils/useMergeState';
-import useDeepCompareMemoize from 'Src/components/utils/useDeepCompareMemoize';
+import {SelectTag} from '~/components/utils/SelectField';
+import {BlackModal, ModalBody} from '~/components/utils/Modal';
+import AlertButton from '~/components/utils/AlertButton';
+
+import useMergeState from '~/components/utils/useMergeState';
+import useDeepCompareMemoize from '~/components/utils/useDeepCompareMemoize';
 
 // const TagSet = ({values, className, placeholder}) => (
 //   <div className={`flex mt-1 flex-wrap ${className}`}>

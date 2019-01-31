@@ -9,18 +9,15 @@ import {connect} from 'react-redux';
 
 import {withRouter} from 'react-router-dom';
 
-import {DB} from 'Firebase';
+import DB from '~/firebase/db/card_db';
+import * as cardActions from '~/reducers/Cards/actions';
 
-import {TEMP_ID} from 'Constants/cardFields';
+import {changeMapViewport} from '~/reducers/Map/actions';
 
-import * as cardActions from 'Reducers/Cards/actions';
+import * as asyncCardActions from '~/reducers/Cards/async_actions';
 
-import {changeMapViewport} from 'Reducers/Map/actions';
-
-import * as asyncCardActions from 'Reducers/Cards/async_actions';
-
-import cardRoutes from 'Src/Routes/cardRoutes';
-import {initCardFields} from 'Src/constants/cardFields';
+import cardRoutes from '~/Routes/cardRoutes';
+import {initCardFields, TEMP_ID} from '~/constants/cardFields';
 import makeBackCardFuncs from './backCardDbMixins';
 import EditCardFront from './CardFront/EditCardFront';
 
@@ -78,7 +75,14 @@ const mapDispatchToProps = dispatch =>
   );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const {mapViewport, width, height, userEnvId, authUser, topicVocabulary} = state;
+  const {
+    mapViewport,
+    width,
+    height,
+    userEnvId,
+    authUser,
+    topicVocabulary
+  } = state;
   const {uid: authorId} = authUser;
 
   // TODO: this is weird, I cannot set defaultProps
@@ -91,13 +95,12 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     id: cardId,
     topics: {value: topicValues},
     onCreateCard = d => d,
-    onUpdateCard = d => d,
+    onUpdateCard = d => d
   } = defProps;
 
   // TODO: BUILD IN check
   // const {userEnv: userEnvId} = match.params;
 
-  console.log('userEnvId', userEnvId);
   const {
     query: {selectedCardId, extended, flipped},
     routing: {routeFlipCard, routeExtendCard}
@@ -110,12 +113,10 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     asyncRemoveCard
   } = dispatcherProps;
 
-  const createCard = cardData => {
-    console.log('why that?', cardData);
-    return asyncCreateCard({cardData, userEnvId}).then(() =>
+  const createCard = cardData =>
+    asyncCreateCard({cardData, userEnvId}).then(() =>
       onCreateCard(cardData)
     );
-  };
 
   const updateCard = cardData =>
     asyncUpdateCard({cardData, userEnvId}).then(() =>
@@ -181,6 +182,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   };
 };
 
+/**
+ * Representation Component for editable card
+ */
 const EditCard = ({
   createCard,
   removeCard,
@@ -255,6 +259,9 @@ EditCard.defaultProps = {
   ...initCardFields
 };
 
+/**
+ * Connect the EditCard component to the Store
+ */
 export default compose(
   withRouter,
   connect(

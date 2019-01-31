@@ -1,22 +1,25 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 
-import {PreviewCardSwitch} from 'Components/cards/PreviewCard';
+import {PreviewCardSwitch} from '~/components/cards/PreviewCard';
 
-import {BlackModal, ModalBody} from 'Components/utils/Modal';
-import MetaCard from 'Components/cards';
+import {BlackModal, ModalBody} from '~/components/utils/Modal';
+
+import MetaCard from '~/components/cards';
 
 const summaryClass = 'mb-3';
 
-const TemplateEditor = (props) => {
-  const {templateFields=[]} = props;
+const TemplateEditor = props => {
+  const {templateFields = []} = props;
 
-  return <div>{
-    templateFields.map(d => <div>{d.key}</div>)
-
-
-  }</div>
-}
+  return (
+    <div>
+      {templateFields.map(d => (
+        <div>{d.key}</div>
+      ))}
+    </div>
+  );
+};
 
 export default function CardPanel(props) {
   const {
@@ -82,7 +85,7 @@ export default function CardPanel(props) {
         )}
       </BlackModal>
       <BlackModal visible={templateExtended}>
-        <TemplateEditor/>
+        <TemplateEditor />
       </BlackModal>
     </details>
   );

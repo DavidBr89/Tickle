@@ -2,7 +2,7 @@ import React, {useState, useEffect, Component} from 'react';
 
 import PropTypes from 'prop-types';
 
-import {Modal, ModalBody} from 'Components/utils/Modal';
+import {Modal, ModalBody} from '~/components/utils/Modal';
 
 import {
   TITLE,
@@ -13,7 +13,7 @@ import {
   POINTS,
   IMG,
   LOC
-} from 'Constants/cardFields';
+} from '~/constants/cardFields';
 
 import * as Img from './Img';
 

@@ -1,61 +1,46 @@
 import React from 'react';
 import * as d3 from 'd3';
 import PropTypes from 'prop-types';
-import {PerspectiveMercatorViewport} from 'viewport-mercator-project';
-import {LinearInterpolator, FlyToInterpolator} from 'react-map-gl';
 
 import WebMercatorViewport from 'viewport-mercator-project';
-
-// import * as dataViewThunks from 'Reducers/DataView/dataViewThunks';
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
 
-// import TopicMapVis from 'Components/DataView/TopicMap/TopicMapVis';
-import TagGrid from 'Components/TagGrid';
+import TagGrid from '~/components/TagGrid';
 
-import * as mapActions from 'Reducers/Map/actions';
+import * as mapActions from '~/reducers/Map/actions';
 
-import UserMap from 'Components/UserMap';
+import UserMap from '~/components/UserMap';
+import mapTransition from '~/components/utils/mapTransition';
 
-import {
-  resizeCardWindow,
-  userMove,
-  changeViewport
-} from 'Reducers/Map/actions';
+import setify from '~/components/utils/setify';
+// import distanceLoc from 'Src/components/utils/distanceLoc';
 
-import setify from 'Utils/setify';
-import distanceLoc from 'Components/utils/distanceLoc';
 // rename path
-import {screenResize} from 'Reducers/Screen/actions';
-import * as cardActions from 'Reducers/Cards/actions';
-import * as asyncCardActions from 'Reducers/Cards/async_actions';
+import {screenResize} from '~/reducers/Screen/actions';
+import * as cardActions from '~/reducers/Cards/actions';
+import * as asyncCardActions from '~/reducers/Cards/async_actions';
 
-import * as dataViewActions from 'Reducers/DataView/actions';
+import * as dataViewActions from '~/reducers/DataView/actions';
 
-import withAuthorization from 'Src/components/withAuthorization';
-import withAuthentication from 'Src/components/withAuthentication';
-import cardRoutes from 'Src/Routes/cardRoutes';
+import withAuthorization from '~/components/withAuthorization';
+import withAuthentication from '~/components/withAuthentication';
+import cardRoutes from '~/Routes/cardRoutes';
 
-import {shiftCenterMap} from 'Src/lib/geo';
-import {tagFilter} from 'Reducers/DataView/dataViewThunks';
-import {fallbackTagValues} from 'Constants/cardFields';
-import isSubset from 'Src/lib/isSubset';
+import {shiftCenterMap} from '~/lib/geo';
+import {topicFilter} from '~/reducers/DataView/dataViewThunks';
+import isSubset from '~/lib/isSubset';
 import CardViewPage from './CardViewPage';
 import SelectUserEnv from './SelectUserEnv';
 
 const mapStateToProps = state => {
   const {collectibleCards} = state.Cards;
 
-  const {width, height} = state.Screen;
-  const {
-    // selectedCardId,
-    filterSet,
-    cardPanelVisible
-    // challengeStateFilter
-  } = state.DataView;
+  const {width} = state.Screen;
+  const {filterSet, cardPanelVisible} = state.DataView;
 
   const {mapSettings} = state.MapView;
 
@@ -73,10 +58,6 @@ const mapStateToProps = state => {
     ...state.Cards,
     ...state.Screen,
     ...state.Session
-    // cards: filteredCards
-    // cardSets,
-    // selectedTags,
-    // tagColorScale
   };
 };
 
@@ -87,12 +68,8 @@ const mapDispatchToProps = dispatch =>
       ...mapActions,
       ...asyncCardActions,
       ...dataViewActions,
-      tagFilter,
-      // ...dataViewAsyncActions,
-      resizeCardWindow,
-      userMove,
-      screenResize,
-      changeViewport
+      topicFilter,
+      screenResize
     },
     dispatch
   );
@@ -127,7 +104,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   const {
     changeMapViewport,
     fetchCollectibleCards,
-    tagFilter
+    topicFilter
   } = dispatcherProps;
 
   const {
@@ -160,10 +137,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
       ...mapViewport,
       // ...d.loc,
       ...shiftCenterMap({...d.loc.value, mercator}),
-      transitionDuration: 1000,
-      transitionInterpolator: new FlyToInterpolator(),
-      transitionEasing: d3.easePoly
-      // zoom: 11,
+      ...mapTransition
     });
   };
 
@@ -182,14 +156,11 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     filteredCards.find(d => d.id === selectedCardId) || null;
 
   const selectedTags =
-    selectedCard !== null
-      ? selectedCard.topics.value
-      : filterSet;
+    selectedCard !== null ? selectedCard.topics.value : filterSet;
 
-  const filterByTag = tag => tagFilter({filterSet, tag});
+  const filterByTopic = topic => topicFilter({filterSet, topic});
 
-  const fetchCards = () =>
-    fetchCollectibleCards({uid, userEnvId});
+  const fetchCards = () => fetchCollectibleCards({uid, userEnvId});
 
   return {
     ...state,
@@ -204,14 +175,13 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     selectedCard,
     userEnv,
     mapViewport,
-    filterByTag,
+    filterByTopic,
     fetchCards,
     ...ownProps
   };
 };
 
 function PureMapViewPage({...props}) {
-  console.log('PureMapViewPage', props);
   return (
     <CardViewPage {...props}>
       <UserMap className="absolute" {...props} />

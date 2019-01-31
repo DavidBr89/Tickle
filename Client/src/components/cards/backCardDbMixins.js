@@ -1,20 +1,21 @@
-import {DB} from 'Firebase';
-import {getDetailedUserInfo} from 'Firebase/db';
+import CardDb from '~/firebase/db/card_db';
+import {getDetailedUserInfo} from '~/firebase/db';
 
 export default ({userEnv, cardId, playerId, authorId}) => {
-  const db = DB(userEnv);
+  const db = CardDb(userEnv);
 
   const commentPromises = db.readComments(cardId);
-  const addComment = text => db.addComment({uid: playerId, cardId, text});
+  const addComment = text =>
+    db.addComment({uid: playerId, cardId, text});
 
   const authorDataPromise = getDetailedUserInfo({
     uid: authorId,
-    userEnvId: userEnv,
+    userEnvId: userEnv
   });
 
   return {
     commentPromises,
     addComment,
-    authorDataPromise,
+    authorDataPromise
   };
 };

@@ -1,19 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
-
 import uuidv1 from 'uuid/v1';
-
 import Compress from 'compress.js';
 
-import {addToStorage, removeFromStorage} from 'Src/firebase/db';
-import useDeepCompareMemoize from 'Src/components/utils/useDeepCompareMemoize';
-import useMemoize from 'Src/components/utils/useMemoize';
+import {addToStorage, removeFromStorage} from '~/firebase/db';
+import useDeepCompareMemoize from '~/components/utils/useDeepCompareMemoize';
+import useMemoize from '~/components/utils/useMemoize';
 
 const compress = new Compress();
-
-// import { DimWrapper } from 'Utils';
-
-// import { createShadowStyle, UIthemeContext } from 'Cards/style';
 
 function convertToImgSrc(fileList) {
   let file = null;

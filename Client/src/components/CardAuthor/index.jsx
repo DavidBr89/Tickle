@@ -6,8 +6,8 @@ import {FlyToInterpolator} from 'react-map-gl';
 import WebMercatorViewport from 'viewport-mercator-project';
 
 // import TopicMapAuthor from 'Components/DataView/TopicMap/DragTopicMap';
-import {TEMP_ID} from 'Constants/cardFields';
-import {V1_DRAG} from 'Components/DragAndDrop';
+import {TEMP_ID} from '~/constants/cardFields';
+import {V1_DRAG} from '~/components/DragAndDrop';
 
 // import React from 'react';
 import {connect} from 'react-redux';
@@ -15,23 +15,23 @@ import {bindActionCreators} from 'redux';
 import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
 
-import * as mapActions from 'Reducers/Map/actions';
+import * as mapActions from '~/reducers/Map/actions';
 
-import setify from 'Utils/setify'; // eslint-disable-line
-import {screenResize} from 'Reducers/Screen/actions';
-import * as cardActions from 'Reducers/Cards/actions';
-import * as cardAsyncActions from 'Reducers/Cards/async_actions';
-import * as dataViewThunks from 'Reducers/DataView/dataViewThunks';
+import setify from '~/components/utils/setify'; // eslint-disable-line
+import {screenResize} from '~/reducers/Screen/actions';
+import * as cardActions from '~/reducers/Cards/actions';
+import * as cardAsyncActions from '~/reducers/Cards/async_actions';
+import * as dataViewThunks from '~/reducers/DataView/dataViewThunks';
 // TODO: refactor these actions
 
-import cardRoutes from 'Src/Routes/cardRoutes';
-import isSubset from 'Src/lib/isSubset';
+import cardRoutes from '~/Routes/cardRoutes';
+import isSubset from '~/lib/isSubset';
 
-import withAuthorization from 'Src/components/withAuthorization';
-import withAuthentication from 'Src/components/withAuthentication';
-import {shiftCenterMap} from 'Src/lib/geo';
+import withAuthorization from '~/components/withAuthorization';
+import withAuthentication from '~/components/withAuthentication';
+import {shiftCenterMap} from '~/lib/geo';
 // import {initCard} from 'Constants/cardFields';
-import {initCardFields, fallbackTagValues} from 'Constants/cardFields';
+import {initCardFields, fallbackTagValues} from '~/constants/cardFields';
 import MapAuthor from './MapAuthor';
 import CardAuthorPage from './CardAuthorPage';
 

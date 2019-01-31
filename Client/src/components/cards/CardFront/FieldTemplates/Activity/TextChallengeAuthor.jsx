@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import uuidv1 from 'uuid/v1';
 
-import Rating, {StarRating} from 'Components/utils/Rating';
+import Rating, {StarRating} from '~/components/utils/Rating';
 
 const DifficultyRating = ({onChange, highlighted, ...props}) => (
   <Rating {...props} numHighlighted={highlighted} num={6}>

@@ -1,10 +1,10 @@
-import React, {useState, useEffect, Component} from 'react';
+import React, {useState} from 'react';
 
-import {NewTabLink} from 'Components/utils/StyledComps';
-import {VIDEOS} from 'Src/constants/cardFields';
-import {ModalBody} from 'Components/utils/Modal';
+import {NewTabLink} from '~/components/utils/StyledComps';
+import {VIDEOS} from '~/constants/cardFields';
+import {ModalBody} from '~/components/utils/Modal';
 
-import TabSwitcher from 'Src/components/utils/TabSwitcher';
+import TabSwitcher from '~/components/utils/TabSwitcher';
 
 import PreviewFrame from './PreviewFrame';
 

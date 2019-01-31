@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react';
+import React, { useState} from 'react';
 import PropTypes from 'prop-types';
 import {Link, withRouter} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
@@ -7,19 +7,19 @@ import uniq from 'lodash/uniq';
 import {compose} from 'recompose';
 import {connect} from 'react-redux';
 
-import * as routes from 'Src/constants/routeSpec';
+import * as routes from '~/constants/routeSpec';
 
-import PhotoUpload from 'Src/components/utils/PhotoUpload';
+import PhotoUpload from '~/components/utils/PhotoUpload';
 
-import {signUp} from 'Src/reducers/Session/async_actions';
-import {SelectTags} from 'Src/components/utils/SelectField';
-import {PrevBtn, NextBtn} from 'Src/components/utils/PrevNextBtn';
-import styledComp from 'Src/components/utils/styledComp';
+import {signUp} from '~/reducers/Session/async_actions';
+import {SelectTags} from '~/components/utils/SelectField';
+import {PrevBtn, NextBtn} from '~/components/utils/PrevNextBtn';
+import styledComp from '~/components/utils/styledComp';
 
-import DefaultLayout from 'Src/components/DefaultLayout';
-import TabSwitcher from 'Src/components/utils/TabSwitcher';
+import DefaultLayout from '~/components/DefaultLayout';
+import TabSwitcher from '~/components/utils/TabSwitcher';
 
-import useMergeState from 'Src/components/utils/useMergeState';
+import useMergeState from '~/components/utils/useMergeState';
 
 import backgroundUrl from './signup_background.png';
 

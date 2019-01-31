@@ -1,14 +1,11 @@
 import React, {Component, useState} from 'react';
 import PropTypes from 'prop-types';
+import {BlackModal} from '~/components/utils/Modal';
 
-import {BlackModal} from 'Components/utils/Modal';
-
-import {extractCardFields, initCard} from 'Constants/cardFields.ts';
-
-import {TITLE} from 'Constants/cardFields';
+import {extractCardFields, initCard} from '~/constants/cardFields';
+import {TITLE} from '~/constants/cardFields';
 
 import CardFrontTemplate from './CardFrontTemplate';
-
 import {fieldComps} from './FieldTemplates';
 
 const TagField = ({tags, style, onClick, className}) => {

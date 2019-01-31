@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import MapGL, {FlyToInterpolator} from 'react-map-gl';
 
 import WebMercatorViewport from 'viewport-mercator-project';
 
@@ -8,16 +7,17 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import MapPin from 'react-feather/dist/icons/map-pin';
 
-import {geoProject} from 'Lib/geo';
+import {geoProject} from '~/lib/geo';
 
-import CardMarker from 'Components/cards/CardMarker';
+import CardMarker from '~/components/cards/CardMarker';
 
-import Map from 'Components/utils/Map';
+import Map from '~/components/utils/Map';
 
 // import { UserOverlay } from '../../utils/map-layers/DivOverlay';
 
-import * as mapActions from 'Reducers/Map/actions';
-import ArrayPipe from 'Components/utils/ArrayPipe';
+import * as mapActions from '~/reducers/Map/actions';
+import ArrayPipe from '~/components/utils/ArrayPipe';
+
 import Cluster from './Cluster';
 import CardCluster from './CardCluster';
 // import ForceCollide from '../ForceOverlay/MiniForceCollide';

@@ -1,12 +1,12 @@
 // import updCardDataDim from './updateDataDimension';
-import setify from 'Components/utils/setify';
 
 import uniqBy from 'lodash/uniqBy';
+import setify from '~/components/utils/setify';
 
 import {
   initCardFields,
   cardFieldKeys as initCardFieldKeys
-} from 'Constants/cardFields';
+} from '~/constants/cardFields';
 
 import {
   RECEIVE_PLACES,

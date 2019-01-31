@@ -1,21 +1,20 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 
-import { compose } from 'recompose';
-import { withRouter } from 'react-router-dom';
+import {compose} from 'recompose';
+import {withRouter} from 'react-router-dom';
 
-import * as asyncActions from 'Reducers/Session/async_actions';
+import * as asyncActions from '~/reducers/Session/async_actions';
 
-import withAuthorization from 'Src/components/withAuthorization';
-import withAuthentication from 'Src/components/withAuthentication.jsx';
+import withAuthorization from '~/components/withAuthorization';
+import withAuthentication from '~/components/withAuthentication.jsx';
 
-import { CloseIcon } from 'Src/styles/menu_icons';
+// import {CloseIcon} from '~/styles/menu_icons';
 
-import { DATAVIEW } from 'Constants/routeSpec';
-
+import {DATAVIEW} from '~/constants/routeSpec';
 
 class SelectUserEnv extends Component {
   static propTypes = {
@@ -27,7 +26,7 @@ class SelectUserEnv extends Component {
     userEnvs: []
   };
 
-  state = { tmpEnvName: null };
+  state = {tmpEnvName: null};
 
   render() {
     const {
@@ -36,9 +35,10 @@ class SelectUserEnv extends Component {
       removeUserEnv,
       selectUserEnv,
       userEnvs,
-      selectedUserEnvId, routeUserEnv
+      selectedUserEnvId,
+      routeUserEnv
     } = this.props;
-    const { tmpEnvName } = this.state;
+    const {tmpEnvName} = this.state;
     return (
       <div className="content-margin">
         <h1 className="mb-3">Select User Environments</h1>
@@ -47,9 +47,8 @@ class SelectUserEnv extends Component {
             {userEnvs.map(d => (
               <li
                 onClick={() => routeUserEnv(d.id)}
-                className={`list-item ${selectedUserEnvId === d.id
-                  && 'active'}`}
-              >
+                className={`list-item ${selectedUserEnvId === d.id &&
+                  'active'}`}>
                 <div>{d.id}</div>
               </li>
             ))}
@@ -62,16 +61,21 @@ class SelectUserEnv extends Component {
 
 const mapStateToProps = state => ({
   ...state.Session,
-  userEnvs: state.Session.authUser ? state.Session.authUser.userEnvs : []
+  userEnvs: state.Session.authUser
+    ? state.Session.authUser.userEnvs
+    : []
 });
 
-const mapDispatchToProps = dispatch => bindActionCreators(asyncActions, dispatch);
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(asyncActions, dispatch);
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
-  const { addUserEnv } = dispatchProps;
-  const { match, history } = ownProps;
+  const {addUserEnv} = dispatchProps;
+  const {match, history} = ownProps;
 
-  const { params: { userEnv } } = match;
+  const {
+    params: {userEnv}
+  } = match;
 
   const routeUserEnv = env => history.push(`/${env}/${DATAVIEW.path}`);
 
@@ -81,7 +85,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     ...ownProps,
     routeUserEnv,
     selectedUserEnvId: userEnv,
-    addUserEnv: newEnv => addUserEnv({ envId: userEnv, newEnv })
+    addUserEnv: newEnv => addUserEnv({envId: userEnv, newEnv})
   };
 };
 
@@ -92,6 +96,6 @@ export default compose(
   connect(
     mapStateToProps,
     mapDispatchToProps,
-    mergeProps,
-  ),
+    mergeProps
+  )
 )(SelectUserEnv);

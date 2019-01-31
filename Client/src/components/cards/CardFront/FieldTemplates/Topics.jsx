@@ -1,14 +1,14 @@
 import React, {useState, useEffect} from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import uniq from 'lodash/uniq';
 
-import {SelectTags} from 'Src/components/utils/SelectField';
+import {SelectTags} from '~/components/utils/SelectField';
 
-import {ModalBody} from 'Components/utils/Modal';
+import {ModalBody} from '~/components/utils/Modal';
 
-import useDeepCompareMemoize from 'Src/components/utils/useDeepCompareMemoize';
+import useDeepCompareMemoize from '~/components/utils/useDeepCompareMemoize';
 
-import {TOPICS} from 'Src/constants/cardFields';
+import {TOPICS} from '~/constants/cardFields';
 
 import PreviewFrame from './PreviewFrame';
 
@@ -21,12 +21,9 @@ export const ModalContent = props => {
 
   const [topics, setTags] = useState(initTags.value || []);
 
-  useEffect(
-    () => {
-      onChange({key, label, value: topics});
-    },
-    [useDeepCompareMemoize(topics)]
-  );
+  useEffect(() => {
+    onChange({key, label, value: topics});
+  }, [useDeepCompareMemoize(topics)]);
 
   return (
     <ModalBody {...modalProps}>

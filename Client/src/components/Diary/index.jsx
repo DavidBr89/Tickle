@@ -9,23 +9,23 @@ import {compose} from 'recompose';
 // import intersection from 'lodash/intersection';
 import uniq from 'lodash/uniq';
 
-import cardRoutes from 'Src/Routes/cardRoutes';
+import cardRoutes from '~/Routes/cardRoutes';
 
-import * as diaryActions from 'Reducers/Diary/actions';
+import * as diaryActions from '~/reducers/Diary/actions';
 
-import * as dataViewActions from 'Reducers/DataView/dataViewThunks';
+import * as dataViewActions from '~/reducers/DataView/dataViewThunks';
 
-import {challengeTypeMap, isCardSeen} from 'Constants/cardFields';
+import {challengeTypeMap, isCardSeen} from '~/constants/cardFields';
 
 import {
   isChallengeStarted,
   isChallengeSubmitted,
   isChallengeSucceeded,
-  fallbackTagValues,
-} from 'Constants/cardFields';
+  fallbackTagValues
+} from '~/constants/cardFields';
 
-import withAuthorization from 'Components/withAuthorization';
-import withAuthentication from 'Components/withAuthentication';
+import withAuthorization from '~/components/withAuthorization';
+import withAuthentication from '~/components/withAuthentication';
 import DiaryPage from './DiaryPage';
 
 const mapStateToProps = state => {
@@ -38,8 +38,8 @@ const mapStateToProps = state => {
   const userTags = uniq(
     collectibleCards.reduce(
       (acc, c) => [...acc, ...fallbackTagValues(c.tags)],
-      [],
-    ),
+      []
+    )
   );
 
   return {
@@ -51,7 +51,7 @@ const mapStateToProps = state => {
     userTags,
     ...state.Cards,
     ...state.Screen,
-    ...state.Diary,
+    ...state.Diary
   };
 };
 
@@ -70,7 +70,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 
   const {
     query: {selectedCardId, extended, flipped},
-    routing: {routeSelectCard, routeExtendCard, routeSelectExtendCard},
+    routing: {routeSelectCard, routeExtendCard, routeSelectExtendCard}
   } = cardRoutes({history, location});
 
   const selectedCard = cards.find(c => c.id === selectedCardId) || null;
@@ -103,7 +103,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
       if (a.id < b.id) return -1;
       if (a.id > b.id) return 1;
       return 0;
-    }),
+    })
   };
 };
 
@@ -116,6 +116,6 @@ export default compose(
   connect(
     mapStateToProps,
     mapDispatchToProps,
-    mergeProps,
-  ),
+    mergeProps
+  )
 )(DiaryPage);

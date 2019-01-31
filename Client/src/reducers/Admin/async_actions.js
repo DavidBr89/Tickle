@@ -1,8 +1,4 @@
-import fetch from 'cross-fetch';
-import {uniqBy, flatten} from 'lodash';
-
-import CardDB from 'Firebase/db';
-// import {auth} from 'Firebase';
+import CardDB from '~/firebase/db';
 import uuidv1 from 'uuid/v1';
 
 import {
@@ -19,7 +15,7 @@ import {
   getUserEnvs,
   deleteUser,
   deleteTmpUser
-} from 'Firebase/db/user_db';
+} from '~/firebase/db/user_db';
 
 import {
   receiveUsers,
@@ -38,7 +34,7 @@ import {
   removeUser
 } from './actions';
 
-import NearbyPlaces from '../places.json';
+// import NearbyPlaces from '../places.json';
 
 // export const REQUEST_CHALLENGES = 'REQUEST_CHALLENGES';
 // function requestChallenges(subreddit) {

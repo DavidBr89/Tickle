@@ -1,11 +1,12 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { timeFormat } from 'd3';
+import {connect} from 'react-redux';
+import {timeFormat} from 'd3';
 import User from 'react-feather/dist/icons/user';
 
-import { firebase } from 'Firebase';
-
+/**
+ * Component to fetch data for CommentList
+ */
 class CommentsWrapper extends Component {
   static propTypes = {
     author: PropTypes.object,
@@ -19,29 +20,25 @@ class CommentsWrapper extends Component {
     addComment: d => d
   };
 
-  state = { comments: [], extended: false };
+  state = {comments: [], extended: false};
 
   componentDidMount() {
-    const { cardId, commentPromises } = this.props;
-    commentPromises.then((comments) => {
-      console.log('fetchComments', comments);
-      this.setState({ comments });
-      // const allProms = comments.map(c =>
-      //   db.getUser(c.uid).then(user => ({...c, ...user})),
-      // );
-      //
-      // Promise.all(allProms).then(commentsWithUser => {
-      //   this.setState({comments: commentsWithUser});
-      // });
+    const {commentPromises} = this.props;
+    commentPromises.then(comments => {
+      this.setState({comments});
     });
   }
 
   render() {
-    const { comments } = this.state;
+    const {comments} = this.state;
     const {
-      author, cardId, addComment, extended, userInfoPromise
+      author,
+      cardId,
+      addComment,
+      extended,
+      userInfoPromise
     } = this.props;
-    const { uid } = author;
+    const {uid} = author;
     return (
       <CommentList
         extended={extended}
@@ -49,36 +46,41 @@ class CommentsWrapper extends Component {
         data={comments}
         author={author}
         cardId={cardId}
-        onAdd={(text) => {
-          addComment(text)
-            .then(err => console.log('comment added', err));
+        onAdd={text => {
+          addComment(text).then(err =>
+            console.log('comment added', err)
+          );
 
           const comment = {
-            text, cardId, uid, date: new Date()
+            text,
+            cardId,
+            uid,
+            date: new Date()
           };
 
-          this.setState({ comments: [...comments, comment] });
+          this.setState({comments: [...comments, comment]});
         }}
       />
     );
   }
 }
 
-const CommentList = ({
-  data, author, onAdd, extended
-}) => (
-  <div
-    className="m-2 flex flex-col flex-grow flex-shrink"
-  >
+/**
+ * List of Comments
+ */
+const CommentList = ({data, author, onAdd, extended}) => (
+  <div className="m-2 flex flex-col flex-grow flex-shrink">
     <div className="flex mb-2">
       <h2 className="tag-label bg-black">Comments</h2>
     </div>
 
-    {data.length === 0 && (<div className="tex-lg">No Comments</div>)}
+    {data.length === 0 && <div className="tex-lg">No Comments</div>}
     <div className="mb-auto overflow-y-auto">
-      {data.map(({ ...c }) => (<OneComment {...c} />))}
+      {data.map(({...c}) => (
+        <OneComment {...c} />
+      ))}
     </div>
-    {extended && (<AddComment onClick={onAdd} />)}
+    {extended && <AddComment onClick={onAdd} />}
   </div>
 );
 
@@ -90,39 +92,25 @@ CommentList.defaultProps = {
   stylesheet: {}
 };
 
+/**
+ * One single Comment
+ */
+const OneComment = props => {
+  const {text, username, photoURL, date} = props;
 
-class OneComment extends Component {
-  static propTypes = {
-    date: PropTypes.object,
-    text: PropTypes.string
-  };
+  const formatTime = timeFormat('%B %d, %Y');
 
-  static defaultProps ={ date: new Date(), text: '' }
-
-
-  render() {
-    const {
-      text, username, photoURL, date
-    } = this.props;
-
-    const formatTime = timeFormat('%B %d, %Y');
-
-    return (<div className="flex mb-2">
+  return (
+    <div className="flex mb-2">
       <div className="mr-2 border-2 border-black flex-col-wrapper justify-center">
-        {photoURL !== null
-          ? <img
-            width="30"
-            height="30"
-            src={photoURL}
-            alt="alt"
-          /> : <User />
-
-        }
+        {photoURL !== null ? (
+          <img width="30" height="30" src={photoURL} alt="alt" />
+        ) : (
+          <User />
+        )}
       </div>
       <div>
-        <div className="mb-1">
-          {text}
-        </div>
+        <div className="mb-1">{text}</div>
         <div className="italic text-sm">
           {' '}
           <span className="font-bold">{username}</span>
@@ -130,14 +118,8 @@ class OneComment extends Component {
           {formatTime(date)}
         </div>
       </div>
-            </div>
-    );
-  }
-}
-
-
-OneComment.defaultProps = {
-  photoURL: null
+    </div>
+  );
 };
 // class CommentFetcher extends Component {
 //   static propTypes = {
@@ -174,18 +156,18 @@ class AddComment extends Component {
     onClick: PropTypes.func
   };
 
-  state = { text: null };
+  state = {text: null};
 
   render() {
-    const { onClick } = this.props;
-    const { text } = this.state;
+    const {onClick} = this.props;
+    const {text} = this.state;
     return (
       <div className="mt-5">
         <input
           className="mb-2 form-control mb-1 w-full"
           placeholder="Write a comment"
           type="text"
-          onChange={e => this.setState({ text: e.target.value })}
+          onChange={e => this.setState({text: e.target.value})}
         />
         <button
           className="btn w-full"
@@ -193,9 +175,8 @@ class AddComment extends Component {
           disabled={text === null || text === ''}
           onClick={() => {
             onClick(text);
-            this.setState({ text: null });
-          }}
-        >
+            this.setState({text: null});
+          }}>
           Submit
         </button>
       </div>
@@ -204,7 +185,6 @@ class AddComment extends Component {
 }
 
 export default CommentsWrapper;
-
 
 // const CommentsCont = connect(
 //   null,

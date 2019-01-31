@@ -1,30 +1,11 @@
-// import { combineReducers } from 'redux';
-// import cards from './cards';
-// import visibilityFilter from './visibilityFilter';
-// import turf from 'turf';
-// import booleanWithin from '@turf/boolean-within';
-
-// import setBBox from './fitbounds';
-// import mapboxgl from 'mapbox-gl';
-
-import {
-  CHALLENGE_STARTED,
-  CHALLENGE_SUCCEEDED,
-  CHALLENGE_SUBMITTED,
-  CARD_CREATED
-} from 'Constants/cardFields';
 import {
   RECEIVE_USERS,
   RECEIVE_ALL_USER_ENVS,
   GET_CARDS,
-  TOGGLE_MODAL,
   SELECT_USER,
-  SELECT_CARD_ID,
   INSERT_USER_INTO_ENV,
   ADD_USER_ENV,
-  EXTEND_SELECTION,
   SUBMIT_CHALLENGE_REVIEW,
-  CARD_FILTER_CHANGE,
   RECEIVE_CARDS,
   SELECT_USERS_BY_ENV,
   USER_REGISTRATION_ERROR,
@@ -38,7 +19,6 @@ const INITIAL_STATE = {
   // cards: [],
   extendedId: null,
   selectedCardId: null,
-  cardFilters: [CHALLENGE_SUBMITTED],
   flipped: false,
   selectedUserId: null,
   userEnvs: [],
@@ -72,15 +52,10 @@ function reducer(state = INITIAL_STATE, action) {
       const {users} = state;
       const usrInfo = action.options;
       const {uid} = usrInfo;
-      console.log('UID', uid);
       return {
         ...state,
         users: users.map(d => (d.uid === uid ? usrInfo : d))
       };
-    }
-    case CARD_FILTER_CHANGE: {
-      const cardFilters = action.options;
-      return {...state, cardFilters};
     }
     case RECEIVE_USERS: {
       const users = action.options;
@@ -145,11 +120,6 @@ function reducer(state = INITIAL_STATE, action) {
       });
 
       return {...state, cards: newCards};
-    }
-    case SELECT_CARD_ID: {
-      const selectedCardId = action.options;
-      // console.log('selectedCardId OPTS', selectedCardId);
-      return {...state, selectedCardId};
     }
     case USER_REGISTRATION_ERROR: {
       const userRegErr = action.options;

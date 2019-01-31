@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import PreviewCard from 'Components/cards/PreviewCard';
+import PreviewCard from '~/components/cards/PreviewCard';
 
 const PreviewCardStack = ({values, id, className, onClick, style}) => (
   <div

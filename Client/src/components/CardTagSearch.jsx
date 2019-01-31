@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 
-import SlideMenu from 'Components/utils/SlideMenu';
+import SlideMenu from '~/components/utils/SlideMenu';
 
 function CardTagFilter({
   topics,

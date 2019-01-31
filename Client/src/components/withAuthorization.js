@@ -4,12 +4,11 @@ import {connect} from 'react-redux';
 import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
 
-import {SIGN_IN} from 'Constants/routeSpec';
+import * as asyncActions from '~/reducers/Session/async_actions';
 
-import * as asyncActions from 'Reducers/Session/async_actions';
-import {firebase} from '../firebase';
-
-const withAuthorization = (condition = authUser => !!authUser) => Component => {
+const withAuthorization = (
+  condition = authUser => !!authUser
+) => Component => {
   class WithAuthorization extends React.Component {
     state = {};
 
@@ -39,17 +38,17 @@ const withAuthorization = (condition = authUser => !!authUser) => Component => {
 
   const mapStateToProps = state => ({
     authUser: state.Session.authUser,
-    userEnv: state.Session.userEnvSelectedId,
+    userEnv: state.Session.userEnvSelectedId
   });
 
   const mapDispatchToProps = dispatch => ({
-    ...bindActionCreators(asyncActions, dispatch),
+    ...bindActionCreators(asyncActions, dispatch)
   });
 
   const mergeProps = (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
     ...dispatchProps,
-    ...ownProps,
+    ...ownProps
     // onSetAuthUser
   });
 
@@ -58,8 +57,8 @@ const withAuthorization = (condition = authUser => !!authUser) => Component => {
     connect(
       mapStateToProps,
       mapDispatchToProps,
-      mergeProps,
-    ),
+      mergeProps
+    )
   )(WithAuthorization);
 };
 

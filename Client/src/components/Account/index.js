@@ -6,20 +6,18 @@ import withAuthorization from '../withAuthorization';
 import withAuthentication from '../withAuthentication';
 
 import AccountPage from './AccountPage';
-import {submitUserInfoToDB} from 'Reducers/Session/async_actions';
+import {submitUserInfoToDB} from '~/reducers/Session/async_actions';
 
-import {uniq} from 'lodash';
+import * as sessionThunks from '~/reducers/Session/async_actions';
 
-import * as sessionThunks from 'Reducers/Session/async_actions';
-
-import * as actions from 'Reducers/Session/actions';
-import {screenResize} from 'Reducers/Screen/actions';
+import * as actions from '~/reducers/Session/actions';
+import {screenResize} from '~/reducers/Screen/actions';
 
 import {
   isChallengeSucceeded,
   isChallengeStarted,
-  isChallengeSubmitted,
-} from 'Constants/cardFields';
+  isChallengeSubmitted
+} from '~/constants/cardFields';
 
 const isDefined = a => a !== null && a !== undefined;
 /*
@@ -27,9 +25,10 @@ exampleAction: authUser => {
     dispatch(setAuthUser(authUser));
   }
 */
-const mapStateToProps = ({Session:{authUser}}) => ({authUser});
+const mapStateToProps = ({Session: {authUser}}) => ({authUser});
 
-const mapDispatchToProps = dispatch => bindActionCreators(sessionThunks, dispatch);
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(sessionThunks, dispatch);
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const {authUser} = stateProps;
@@ -37,7 +36,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   return {
     ...ownProps,
     ...stateProps,
-    ...dispatchProps,
+    ...dispatchProps
   };
 };
 
@@ -48,6 +47,6 @@ export default compose(
   connect(
     mapStateToProps,
     mapDispatchToProps,
-    mergeProps,
-  ),
+    mergeProps
+  )
 )(AccountPage);

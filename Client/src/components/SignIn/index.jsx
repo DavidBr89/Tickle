@@ -3,50 +3,40 @@ import PropTypes from 'prop-types';
 import {bindActionCreators} from 'redux';
 import {withRouter, Redirect} from 'react-router-dom';
 import {compose} from 'recompose';
+import {connect} from 'react-redux';
 
-import {signIn} from 'Reducers/Session/async_actions';
+import {signIn} from '~/reducers/Session/async_actions';
 // import { compose } from 'recompose';
 
 // import { bindActionCreators } from 'redux';
-import {connect} from 'react-redux';
 
-import {auth} from 'Firebase';
-import {ModalBody} from 'Components/utils/Modal';
+import {ModalBody} from '~/components/utils/Modal';
 
-import {GEO_VIEW, SIGN_IN} from 'Constants/routeSpec';
+import {GEO_VIEW, SIGN_IN} from '~/constants/routeSpec';
 
-import DefaultLayout from 'Components/DefaultLayout';
+import DefaultLayout from '~/components/DefaultLayout';
 import {PasswordForgetLink} from '../Password';
 import {SignUpLink} from '../SignUp';
 
 import backgroundUrl from './signin_background.png';
 
 const byPropKey = (propertyName, value) => () => ({
-  [propertyName]: value,
+  [propertyName]: value
 });
-
-function onSubmit(event) {
-  const {email, password} = this.state;
-
-  const {onAuthenticate} = this.props;
-}
-
-// const backgroundUrl =
-//   'https://images.unsplash.com/photo-1522602398-e378288fe36d?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=75ef40ce9a4927d016af73bb4aa7ac55&auto=format&fit=crop&w=3350&q=80';
 
 const inputClass =
   'border-4 bg-white text-2xl py-2 px-3 text-grey-darkest border-black';
 
+/**
+ * SignIn component for the user
+ * TODO untangle Redux functionality into another file
+ */
 const SignInPage = ({signIn, ...props}) => {
-  console.log('useState', useState);
   const [error, setError] = useState(null);
   const {match, history} = props;
   const {
-    params: {userEnv},
+    params: {userEnv}
   } = match;
-  // const userEnv = params.userEnv || props.userEnv;
-
-  // console.log('history p', history);
 
   return (
     <DefaultLayout
@@ -54,14 +44,13 @@ const SignInPage = ({signIn, ...props}) => {
       style={{
         backgroundImage: `url("${backgroundUrl}")`,
         backgroundRepeat: 'no-repeat',
-        backgroundSize:
-          'cover' /* Resize the background image to cover the entire container */,
+        backgroundSize: 'cover'
       }}>
       <div
         className="z-50 w-full absolute flex justify-center"
         style={{
           transform: `translateY(${error ? '0' : '-200%'})`,
-          transition: 'transform 100ms',
+          transition: 'transform 100ms'
         }}>
         <div className="max-w-md bg-white m-2 p-4 border-2 border-black shadow text-2xl">
           {error}
@@ -78,9 +67,9 @@ const SignInPage = ({signIn, ...props}) => {
                 userEnvId: userEnv,
                 email,
                 password,
-                onError,
+                onError
               }).then(() => {
-                history.push(`/${userEnv}/${GEO_VIEW.path}`);
+                history.push(`/${GEO_VIEW.path}`);
               })
             }
           />
@@ -89,7 +78,8 @@ const SignInPage = ({signIn, ...props}) => {
           </div>
           {!userEnv && (
             <div className="alert mt-3">
-              You did not specify a user environment! Please change the URL
+              You did not specify a user environment! Please change the
+              URL
             </div>
           )}
         </div>
@@ -104,17 +94,17 @@ const SignInPage = ({signIn, ...props}) => {
 const INITIAL_STATE = {
   email: null,
   password: null,
-  error: null,
+  error: null
 };
 
 class StatefulSignInForm extends React.Component {
   static propTypes = {
-    onAuthenticate: PropTypes.func,
+    onAuthenticate: PropTypes.func
   };
 
   static defaultProps = {
     onAuthenticate: d => d,
-    history: null,
+    history: null
   };
 
   state = {...INITIAL_STATE};
@@ -132,7 +122,7 @@ class StatefulSignInForm extends React.Component {
         onSubmit={() =>
           onSubmit({
             email,
-            password,
+            password
             // onError: err => {
             //   console.log('ERROR in sign in', err);
             //   // this.setState({error: err});
@@ -166,7 +156,7 @@ const SignInForm = ({
   error,
   onPasswordChange,
   onEmailChange,
-  disabled,
+  disabled
 }) => (
   <form
     className="mb-1 "
@@ -211,7 +201,7 @@ SignInForm.propTypes = {
   isInvalid: PropTypes.bool,
   error: PropTypes.string,
   onPasswordChange: PropTypes.func,
-  onEmailChange: PropTypes.func,
+  onEmailChange: PropTypes.func
 };
 
 SignInForm.defaultProps = {
@@ -221,7 +211,7 @@ SignInForm.defaultProps = {
   isInvalid: null,
   error: null,
   onPasswordChange: null,
-  onEmailChange: null,
+  onEmailChange: null
 };
 
 // export class SignInModalBody extends Component {
@@ -273,29 +263,21 @@ SignInForm.defaultProps = {
 // }
 //
 const mapStateToProps = state => ({
-  userEnv: state.Session.userEnvSelectedId,
+  userEnv: state.Session.userEnvSelectedId
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      signIn,
+      signIn
     },
-    dispatch,
+    dispatch
   );
-//
-// const authCondition = authUser => !!authUser;
-//
-// export default compose(
-//   withAuthorization(authCondition),
-//   connect(null, mapDispatchToProps)
-// )(HomePage);
-//
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...stateProps,
   ...dispatchProps,
-  ...ownProps,
+  ...ownProps
 });
 
 export default compose(
@@ -303,12 +285,14 @@ export default compose(
   connect(
     mapStateToProps,
     mapDispatchToProps,
-    mergeProps,
-  ),
+    mergeProps
+  )
 )(SignInPage);
 
 const SignInRedirectPure = ({userEnv}) => (
   <Redirect to={`/${userEnv}/${SIGN_IN.path}`} />
 );
 
-export const SignInRedirect = connect(mapStateToProps)(SignInRedirectPure);
+export const SignInRedirect = connect(mapStateToProps)(
+  SignInRedirectPure
+);

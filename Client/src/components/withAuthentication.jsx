@@ -1,18 +1,20 @@
 import React from 'react';
-// import { bindActionCreators } from 'redux';
 import {connect} from 'react-redux';
 
 import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
 
-import {firebase} from 'Firebase';
+import {firebase} from '~/firebase';
 
-import * as cardActions from 'Reducers/Cards/async_actions';
+import * as cardActions from '~/reducers/Cards/async_actions';
 
-import * as sessionAsyncActions from 'Reducers/Session/async_actions';
-import * as sessionActions from 'Reducers/Session/actions';
+import * as sessionAsyncActions from '~/reducers/Session/async_actions';
+import * as sessionActions from '~/reducers/Session/actions';
 import {bindActionCreators} from 'redux';
 
+/**
+ * Authentication Higher Order Component to implement a Session
+ */
 const withAuthentication = Component => {
   class WithAuthentication extends React.Component {
     componentDidMount() {
@@ -20,15 +22,14 @@ const withAuthentication = Component => {
         clearAuthUser,
         fetchCollectibleCards,
         fetchUserInfo,
-        match,
+        match
       } = this.props;
 
       const {userEnv} = match.params;
 
       firebase.auth.onAuthStateChanged(authUser => {
         if (authUser !== null) {
-
-          fetchUserInfo()
+          fetchUserInfo();
           // TODO
           // const {uid} = authUser;
           // fetchCollectibleCards({userEnv, uid});
@@ -40,18 +41,18 @@ const withAuthentication = Component => {
     }
 
     render() {
-      return <Component  {...this.props}/>;
+      return <Component {...this.props} />;
     }
   }
 
   const mapStateToProps = state => ({
-    authUser: state.Session.authUser,
+    authUser: state.Session.authUser
   });
 
   const mergeProps = (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
     ...dispatchProps,
-    ...ownProps,
+    ...ownProps
   });
 
   const mapDispatchToProps = dispatch => ({
@@ -59,10 +60,10 @@ const withAuthentication = Component => {
       {
         ...sessionAsyncActions,
         ...sessionActions,
-        ...cardActions,
+        ...cardActions
       },
-      dispatch,
-    ),
+      dispatch
+    )
   });
 
   return compose(
@@ -70,8 +71,8 @@ const withAuthentication = Component => {
     connect(
       mapStateToProps,
       mapDispatchToProps,
-      mergeProps,
-    ),
+      mergeProps
+    )
   )(WithAuthentication);
 };
 

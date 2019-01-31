@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 
-import {ScrollView, ScrollElement} from 'Utils/ScrollView';
+import {ScrollView, ScrollElement} from '~/components/utils/ScrollView';
 
 function usePrevious(value) {
   const ref = useRef();

@@ -1,21 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import IcAk from 'Styles/alphabet_icons/ic_ak.svg';
+import IcAk from '~/styles/alphabet_icons/ic_ak.svg';
 import Edit from 'react-feather/dist/icons/edit';
 
-import {mediaScale} from 'Constants/mediaTypes';
+import {mediaScale} from '~/constants/mediaTypes';
 
 const createIcon = type =>
   React.createElement(type, {
-    style: {color: 'black'},
+    style: {color: 'black'}
   });
 
-// const iconClasses =
-//   'border border-white p-1 m-1 flex-col-wrapper items-center text-white';
-
 const IconCont = ({className, styles, onClick, children}) => (
-  <div className="mr-1 flex items-center cursor-pointer" onClick={onClick}>
+  <div
+    className="mr-1 flex items-center cursor-pointer"
+    onClick={onClick}>
     <div className={`flex-col-wrapper justify-center ${className}`}>
       {children}
     </div>
@@ -23,7 +22,7 @@ const IconCont = ({className, styles, onClick, children}) => (
 );
 
 IconCont.defaultProps = {
-  className: 'text-white',
+  className: 'text-white'
 };
 
 export const MediaField = ({media, onClick, edit, className}) => {
@@ -41,15 +40,6 @@ export const MediaField = ({media, onClick, edit, className}) => {
     </div>
   );
 };
-const MediaIcons = ({values}) => (
-  <div className="flex items-center">
-    {values.map(m => (
-      <IconCont className="p-1 m-1 border-black border-2">
-        {createIcon(mediaScale(m.type))}
-      </IconCont>
-    ))}
-  </div>
-);
 
 const PreviewTags = ({
   values,
@@ -58,7 +48,7 @@ const PreviewTags = ({
   small,
   colorScale,
   onClick,
-  className,
+  className
 }) => (
   <div
     onClick={onClick}
@@ -73,12 +63,12 @@ const PreviewTags = ({
 PreviewTags.propTypes = {
   values: PropTypes.oneOfType([PropTypes.array, null]),
   style: PropTypes.object,
-  placeholder: PropTypes.string,
+  placeholder: PropTypes.string
 };
 
 PreviewTags.defaultProps = {
   values: null,
-  style: {},
+  style: {}
 };
 
 export const TagField = ({values, edit, onClick, placeholder}) => {
@@ -102,8 +92,7 @@ export const ImgOverlay = ({
   className,
   style,
   children,
-  footer,
-  onClick,
+  onClick
 }) => (
   <div
     onClick={onClick}
@@ -114,7 +103,7 @@ export const ImgOverlay = ({
       marginRight: 'auto',
       width: '100%',
       overflow: 'hidden',
-      ...style,
+      ...style
     }}>
     {src ? (
       <img
@@ -123,12 +112,12 @@ export const ImgOverlay = ({
         style={{
           width: '100%',
           height: '100%',
-          objectFit: 'cover',
+          objectFit: 'cover'
         }}
       />
     ) : (
       <div className="w-full h-full bg-yellow-dark p-8">
-        <img className="w-full h-full" src={IcAk} />
+        <img className="w-full h-full" src={IcAk} alt="logo" />
       </div>
     )}
     <div
@@ -138,7 +127,7 @@ export const ImgOverlay = ({
         height: '100%',
         // zIndex: 200,
         left: 0,
-        top: 0,
+        top: 0
       }}>
       {children}
     </div>
@@ -160,10 +149,12 @@ export const TitleField = ({
   children,
   className,
   placeholder,
-  hidden,
+  hidden
 }) => {
   if (hidden) return null;
-  const titleCont = children || <span className="italic">{placeholder}</span>;
+  const titleCont = children || (
+    <span className="italic">{placeholder}</span>
+  );
   return (
     <div
       className={`flex items-center items-center ${className}`}
@@ -181,7 +172,7 @@ export const TextField = ({
   className,
   style,
   edit,
-  value,
+  value
 }) => {
   if (value === null) return null;
   return (
@@ -203,7 +194,7 @@ TextField.propTypes = {
   onClick: PropTypes.func,
   placeholder: PropTypes.string,
   style: PropTypes.object,
-  edit: PropTypes.bool,
+  edit: PropTypes.bool
 };
 
 TextField.defaultProps = {
@@ -213,5 +204,5 @@ TextField.defaultProps = {
   placeholder:
     'Add a description for your card to give hints how to succeed the Challenge',
   style: {},
-  edit: false,
+  edit: false
 };

@@ -1,10 +1,10 @@
-import {NO_CARD_FILTER} from 'Constants/cardFields.ts';
+import {NO_CARD_FILTER} from '~/constants/cardFields';
 import {
   RECEIVE_USER_INFO,
   SELECT_CARD_ID,
   EXTEND_TAB,
   EXTEND_USER_INFO,
-  SELECT_CARD_TYPE,
+  SELECT_CARD_TYPE
 } from './actions';
 
 const INITIAL_STATE = {
@@ -17,7 +17,7 @@ const INITIAL_STATE = {
   modalActive: false,
   extendedCardID: null,
   userInfoExtended: false,
-  selectedCardType: NO_CARD_FILTER,
+  selectedCardType: NO_CARD_FILTER
 };
 
 function reducer(state = INITIAL_STATE, action) {
@@ -33,7 +33,7 @@ function reducer(state = INITIAL_STATE, action) {
       const selectedCardType = action.options;
       return {
         ...state,
-        selectedCardType,
+        selectedCardType
       };
     }
     default:

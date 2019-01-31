@@ -1,13 +1,12 @@
 import fetch from 'cross-fetch';
-import { uniqBy, flatten } from 'lodash';
+import {uniqBy, flatten} from 'lodash';
 
-import { receiveUserInfo } from './actions';
+import {receiveUserInfo} from './actions';
 
 import NearbyPlaces from '../places.json';
 
-import { db, firebase } from 'Firebase';
-import {getDetailedUserInfo} from 'Firebase/db';
-import setify from 'Utils/setify';
+import {getDetailedUserInfo} from '~/firebase/db/user_db';
+import setify from '~/components/utils/setify';
 
 // export const REQUEST_CHALLENGES = 'REQUEST_CHALLENGES';
 // function requestChallenges(subreddit) {

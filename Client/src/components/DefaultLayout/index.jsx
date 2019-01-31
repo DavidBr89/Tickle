@@ -3,71 +3,52 @@ import PropTypes from 'prop-types';
 
 import {bindActionCreators} from 'redux';
 
-import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 
-import MenuIcon from 'react-feather/dist/icons/menu';
+// import MenuIcon from 'react-feather/dist/icons/menu';
 
-import {screenResize} from 'Reducers/Screen/actions';
-import IcAk from 'Styles/alphabet_icons/ic_ak.svg';
+import {screenResize} from '~/reducers/Screen/actions';
+import IcAk from '~/styles/alphabet_icons/ic_ak.svg';
 import RouteNavigation from '../Navigation';
 
-class NavBar extends Component {
-  static propTypes = {
-    children: PropTypes.node,
-    className: PropTypes.string,
-    ui: PropTypes.node
-  };
-
-  static defaultProps = {
-    children: <div>no content</div>,
-    className: '',
-    ui: <React.Fragment />
-  };
-
-  // state = {
-  //   open: false
-  // jhhhjj};
-
-  render() {
-    const {style, open, children, onToggle, ui, className} = this.props;
-    return (
+function NavBar(props) {
+  const {style, open, children, onToggle, ui, className} = props;
+  return (
+    <div
+      className={`relative z-50 w-full ${className}`}
+      style={{...style}}>
       <div
-        className={`relative z-50 w-full ${className}`}
-        style={{...style}}>
+        className="navbar flex items-center relative m-2 "
+        style={{minHeight: 48}}>
+        <button
+          className="border-4 shadow border-black cursor-pointer p-2 z-50 flex flex-col items-center bg-white"
+          onClick={onToggle}
+          type="button">
+          <img src={IcAk} className="m-1" />
+        </button>
+        {ui}
+      </div>
+      <div
+        className="ml-2 bg-white shadow border-2 border-black"
+        style={{
+          position: 'absolute',
+          width: '80vw',
+          maxWidth: 250,
+          transition: 'transform 200ms',
+          transform: `translateX( ${open ? 0 : -153}% )`
+        }}>
         <div
-          className="navbar flex items-center relative m-2 "
-          style={{minHeight: 48}}>
-          <button
-            className="border-4 shadow border-black cursor-pointer p-2 z-50 flex flex-col items-center bg-white"
-            onClick={onToggle}
-            type="button">
-            <img src={IcAk} className="m-1" />
-          </button>
-          {ui}
-        </div>
-        <div
-          className="ml-2 bg-white shadow border-2 border-black"
+          className="p-3"
           style={{
-            position: 'absolute',
-            width: '80vw',
-            maxWidth: 250,
-            transition: 'transform 200ms',
-            transform: `translateX( ${open ? 0 : -153}% )`
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center'
           }}>
-          <div
-            className="p-3"
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center'
-            }}>
-            {children}
-          </div>
+          {children}
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 class DefaultLayout extends Component {
@@ -122,11 +103,8 @@ class DefaultLayout extends Component {
         id="content-container"
         ref={c => (this.cont = c)}
         style={style}>
-        <div style={{display: 'flex'}}>
-          <NavBar
-            ui={menu}
-            open={open}
-            onToggle={this.handleClick}>
+        <div className="flex">
+          <NavBar ui={menu} open={open} onToggle={this.handleClick}>
             <div className="text-xl font-bold uppercase mb-2">
               {userEnv}
             </div>

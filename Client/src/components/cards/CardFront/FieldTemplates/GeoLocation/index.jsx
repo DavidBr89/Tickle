@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 
-import {ModalBody} from 'Components/utils/Modal';
+import {ModalBody} from '~/components/utils/Modal';
 
-import {LOC} from 'Src/constants/cardFields';
+import {LOC} from '~/constants/cardFields';
 
 import PreviewFrame from '../PreviewFrame';
 import GeoLocation from './GeoLocation';
@@ -24,7 +24,6 @@ export const ModalContent = props => {
 };
 
 export const Preview = ({onClick, loc}) => {
-  console.log('loc', loc);
   return (
     <PreviewFrame
       onClick={onClick}

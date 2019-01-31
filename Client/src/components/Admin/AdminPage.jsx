@@ -4,15 +4,16 @@ import uuidv1 from 'uuid/v1';
 // import uniq from 'lodash/uniq';
 // import UserIcon from 'react-feather/dist/icons/user';
 
-import {SelectInput} from 'Components/utils/SelectField';
+import {SelectInput} from '~/components/utils/SelectField';
 import {Link, withRouter} from 'react-router-dom';
-import {TEMP_ID} from 'Constants/cardFields';
 
-import {initCard} from 'Constants/cardFields';
+import {TEMP_ID} from '~/constants/cardFields';
 
-import {SelectTag} from 'Components/utils/SelectField';
+import {initCard} from '~/constants/cardFields';
 
-import DefaultLayout from 'Components/DefaultLayout';
+import {SelectTag} from '~/components/utils/SelectField';
+
+import DefaultLayout from '~/components/DefaultLayout';
 import UserPanel from './UserPanel';
 import TopicPanel from './TopicPanel';
 import UserEnvPanel from './UserEnvPanel.jsx';
@@ -58,21 +59,15 @@ export default function AdminPage(props) {
     getTopics();
   }, []);
 
-  useEffect(
-    () => {
-      fetchCards();
-      fetchTopics(userEnvId);
-      // fetchUserIdsFromEnv(userEnvId);
-    },
-    [userEnvId]
-  );
+  useEffect(() => {
+    fetchCards();
+    fetchTopics(userEnvId);
+    // fetchUserIdsFromEnv(userEnvId);
+  }, [userEnvId]);
 
-  useEffect(
-    () => {
-      fetchCards();
-    },
-    [selectedUserId, userEnvId]
-  );
+  useEffect(() => {
+    fetchCards();
+  }, [selectedUserId, userEnvId]);
 
   return (
     <DefaultLayout
@@ -86,7 +81,7 @@ export default function AdminPage(props) {
         <UserEnvPanel className={detailsClass} {...props} />
         <TopicPanel {...props} className={detailsClass} />
         <UserPanel {...props} className={detailsClass} />
-        <TemplateCardPanel {...props} className={detailsClass}></TemplateCardPanel>
+        <TemplateCardPanel {...props} className={detailsClass} />
         <CardPanel
           {...props}
           title={`Cards ${userEnvId}`}

@@ -1,9 +1,8 @@
 import uniqBy from 'lodash/uniqBy';
 
-import {auth} from 'Firebase';
-import TopicDB from 'Firebase/db/topic_db';
+import {auth} from '~/firebase';
 
-import {removeFromStorage, addToStorage} from 'Firebase/db';
+import {removeFromStorage, addToStorage} from '~/firebase/db';
 
 import {
   addUserToEnv,
@@ -14,9 +13,9 @@ import {
   getUser,
   readTmpUser,
   doCreateUser
-} from 'Firebase/db/user_db';
+} from '~/firebase/db/user_db';
 
-import {userFields} from 'Constants/userFields';
+import {userFields} from '~/constants/userFields';
 
 import {
   setAuthUser,

@@ -1,20 +1,16 @@
 import React, {Component, PureComponent} from 'react';
 import PropTypes from 'prop-types';
+import {InlineModal, ModalBody} from '~/components/utils/Modal';
 
-// import { css } from 'aphrodite';
-
-import MediaChallenge from 'Components/Challenges/MediaChallenge';
-import {TagInput, PreviewTags} from 'Utils/Tag';
-import {InlineModal, ModalBody} from 'Utils/Modal';
-
-// TODO change
-import {IMG} from 'Constants/mediaTypes';
 import {MediaOverview} from './FieldTemplates/MediaSearch.jsx';
 
 import placeholderImgSrc from '../placeholder.png';
 
 import CardFront from './CardFront';
-
+/**
+ * CardFront Component, only Readable
+ * TODO: rewrite in hooks
+ */
 class ReadCardFront extends Component {
   static propTypes = {
     children: PropTypes.node,
@@ -49,7 +45,6 @@ class ReadCardFront extends Component {
     tagColorScale: () => 'green',
     bookmarkable: false,
     onRemoveChallengeSubmission: d => d,
-    challengeComp: MediaChallenge
   };
 
   state = {

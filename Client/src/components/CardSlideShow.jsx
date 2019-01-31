@@ -1,52 +1,27 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
-import {range} from 'd3';
 
-import MetaCard from 'Src/components/cards/';
-
-import {ScrollView, ScrollElement} from 'Utils/ScrollView';
+import {ScrollView, ScrollElement} from '~/components/utils/ScrollView';
 
 export default function CardSlideShow({...props}) {
-  const {
-    cards,
-    selectedCardId,
-    cardWidth,
-    onClick,
-    extended,
-    children
-  } = props;
+  const {cards, selectedCardId, cardWidth, onClick, children} = props;
 
-  // const selectedIndex = cards.findIndex(c => c.id === selectedCardId);
-  // console.log('selectedIndex', selectedIndex);
   const width = cardWidth;
   const height = 200;
 
   const scrollCont = React.createRef();
   const wrapperCont = React.createRef();
 
-  useEffect(
-    () => {
-      if (selectedCardId !== null)
-        scrollCont.current.scrollTo(selectedCardId, {
-          behavior: 'smooth',
-          // block: 'start',
-          inline: 'center'
-        });
-    },
-    [selectedCardId]
-  );
+  useEffect(() => {
+    if (selectedCardId !== null)
+      scrollCont.current.scrollTo(selectedCardId, {
+        behavior: 'smooth',
+        inline: 'center'
+      });
+  }, [selectedCardId]);
 
-  // const card = props =>
-  //   extended ? (
-  //     <MetaCard {...props} className="z-50" />
-  //   ) : (
-  //     <PreviewCard
-  //       className="h-full w-full "
-  //       title={props.title.value}
-  //       img={props.img.value}
-  //     />
-  //   );
 
+  //TODO find a better way to center scrollContainer
   const bufferCont = (
     <div
       className="flex-none z-10"

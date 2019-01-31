@@ -1,21 +1,19 @@
 import React, {memo, useState, useEffect} from 'react';
-
 import PropTypes from 'prop-types';
 import intersection from 'lodash/intersection';
-import PreviewCard from 'Components/cards/PreviewCard';
-import PreviewCardStack from 'Components/cards/PreviewCardStack';
-import {BlackModal, ModalBody} from 'Components/utils/Modal';
-import cardRoutes from 'Src/Routes/cardRoutes';
+
+import PreviewCard from '~/components/cards/PreviewCard';
+import PreviewCardStack from '~/components/cards/PreviewCardStack';
+import {BlackModal, ModalBody} from '~/components/utils/Modal';
+import cardRoutes from '~/Routes/cardRoutes';
 
 import {withRouter} from 'react-router-dom';
-
-import ConnectedCard from 'Cards/ConnectedCard';
 
 const gridStyle = {
   display: 'grid',
   gridGap: 10,
   gridTemplateColumns: 'repeat(auto-fill, minmax(120px,1fr))',
-  gridAutoRows: 160,
+  gridAutoRows: 160
 };
 
 const CardsModal = ({
@@ -24,7 +22,7 @@ const CardsModal = ({
   tagId,
   children,
   onClose,
-  onSelectCard,
+  onSelectCard
 }) => (
   <BlackModal visible={visible} title={title}>
     <ModalBody onClose={onClose} title={tagId}>
@@ -40,16 +38,17 @@ const RelatedTags = ({
   location,
   collectibleCards,
   tags,
-  tagVocabulary = [],
+  tagVocabulary = []
 }) => {
   const [selectedTagId, setSelectedTagId] = useState(null);
 
   const {
-    routing: {routeSelectCard, routeExtendCard},
+    routing: {routeSelectCard, routeExtendCard}
   } = cardRoutes({history, location});
 
   const modalVisible = selectedTagId !== null;
-  const tagObj = tagVocabulary.find(d => d.tagId === selectedTagId) || null;
+  const tagObj =
+    tagVocabulary.find(d => d.tagId === selectedTagId) || null;
 
   return (
     <div className="m-2 flex-grow flex flex-col">
@@ -63,7 +62,9 @@ const RelatedTags = ({
       </div>
 
       <div className="flex-grow" style={gridStyle}>
-        {tags.length === 0 && <div className="text-2xl w-full">No Cards</div>}
+        {tags.length === 0 && (
+          <div className="text-2xl w-full">No Cards</div>
+        )}
         {tags.map(d => (
           <PreviewCardStack
             id={d.tagId}

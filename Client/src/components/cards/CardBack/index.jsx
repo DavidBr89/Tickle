@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Minimize from 'react-feather/dist/icons/minimize';
 import Maximize from 'react-feather/dist/icons/maximize';
 
-import CardControls from 'Components/cards/CardControls';
+import CardControls from '~/components/cards/CardControls';
 import Comments from './Comments';
 import RelatedTags from './RelatedTags';
 import BackAuthor from './BackAuthor';

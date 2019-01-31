@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
-import { auth } from 'Firebase';
+import {auth} from '~/firebase';
 
 const byPropKey = (propertyName, value) => () => ({
   [propertyName]: value
@@ -11,21 +11,25 @@ const INITIAL_STATE = {
   passwordTwo: '',
   error: null
 };
-
+/**
+ * Form to change password
+ * @param {number} input any number
+ * @returns {number} that number, plus one.
+ */
 class PasswordChangeForm extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { ...INITIAL_STATE };
+    this.state = {...INITIAL_STATE};
   }
 
   onSubmit = event => {
-    const { passwordOne } = this.state;
+    const {passwordOne} = this.state;
 
     auth
       .doPasswordUpdate(passwordOne)
       .then(() => {
-        this.setState(() => ({ ...INITIAL_STATE }));
+        this.setState(() => ({...INITIAL_STATE}));
       })
       .catch(error => {
         this.setState(byPropKey('error', error));
@@ -35,7 +39,7 @@ class PasswordChangeForm extends Component {
   };
 
   render() {
-    const { passwordOne, passwordTwo, error } = this.state;
+    const {passwordOne, passwordTwo, error} = this.state;
 
     const isInvalid = passwordOne !== passwordTwo || passwordOne === '';
 

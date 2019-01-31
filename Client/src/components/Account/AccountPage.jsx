@@ -1,20 +1,17 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 
-import * as Icon from 'react-feather';
-
-import DB, {addToStorage} from 'Firebase/db';
+import {addToStorage} from '~/firebase/db';
 import uniq from 'lodash/uniq';
 
-// import {BareModal, Modal, ModalBody} from 'Utils/Modal';
+import PhotoUpload from '~/components/utils/PhotoUpload';
 
-import PhotoUpload from 'Utils/PhotoUpload';
+import DefaultLayout from '~/components/DefaultLayout';
 
-import DefaultLayout from 'Components/DefaultLayout';
-
-import {SelectTag} from 'Utils/SelectField';
+import {SelectTags} from '~/components/utils/SelectField';
 
 const USR_IMG_PATH = 'images/usr';
+
 export default function AccountPage(props) {
   const {
     onClose,
@@ -37,32 +34,23 @@ export default function AccountPage(props) {
   const [name, setName] = useState(initName);
   const [img, setImg] = useState({url: photoURL, file: null});
 
-  useEffect(
-    () => {
-      if (img.file) {
-        addToStorage({
-          file: img.file,
-          path: `${USR_IMG_PATH}/${uid}`
-        }).then(imgUrl => updateAuthUser({photoURL: imgUrl}));
-      }
-    },
-    [img.url, img.file]
-  );
+  useEffect(() => {
+    if (img.file) {
+      addToStorage({
+        file: img.file,
+        path: `${USR_IMG_PATH}/${uid}`
+      }).then(imgUrl => updateAuthUser({photoURL: imgUrl}));
+    }
+  }, [img.url, img.file]);
 
-  useEffect(
-    () => {
-      // TODO debounce
-      updateAuthUser({name});
-    },
-    [name]
-  );
+  useEffect(() => {
+    // TODO debounce
+    updateAuthUser({name});
+  }, [name]);
 
-  useEffect(
-    () => {
-      updateAuthUser({interests});
-    },
-    [interests]
-  );
+  useEffect(() => {
+    updateAuthUser({interests});
+  }, [interests]);
 
   return (
     <DefaultLayout
@@ -115,7 +103,7 @@ export default function AccountPage(props) {
 
         <section className="text-lg mb-2">
           <h2>Interests:</h2>
-          <SelectTag
+          <SelectTags
             placeholder="Select Interests"
             inputClassName="flex-grow p-2 border-2 border-black"
             className="flex-grow"

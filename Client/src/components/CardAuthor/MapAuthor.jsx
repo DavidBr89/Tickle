@@ -1,15 +1,14 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 
-import CardMarker from 'Src/components/cards/CardMarker';
-
-import {dropTargetMap} from 'Src/components/DragAndDrop/DragTargetCont';
-import DragDropContextProvider from 'Src/Components/DragAndDrop/DragContextProvider';
-import DragElement from 'Src/components/DragAndDrop/DragElement';
-
 import {PerspectiveMercatorViewport} from 'viewport-mercator-project';
 
-import Map from 'Src/components/utils/Map';
+import CardMarker from '~/components/cards/CardMarker';
+import {dropTargetMap} from '~/components/DragAndDrop/DragTargetCont';
+import DragDropContextProvider from '~/components/DragAndDrop/DragContextProvider';
+import DragElement from '~/components/DragAndDrop/DragElement';
+
+import Map from '~/components/utils/Map';
 
 const MapAuthor = DragDropContextProvider(props => {
   const {
