@@ -36,6 +36,7 @@ export default function PhotoUpload(props) {
     id = null,
     imgStyle = {},
     btnClassName = '',
+    //TODO make a constant out of
     folder = 'img'
   } = props;
 

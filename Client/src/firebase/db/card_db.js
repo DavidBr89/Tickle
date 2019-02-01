@@ -4,7 +4,8 @@ import {addToStorage, removeFromStorage} from './index';
 
 import {firestore, storageRef, Timestamp} from '../firebase';
 
-const thumbFileName = fileName => `thumb_${fileName}`;
+//TODO make constant
+const thumbFileName = id => `thumb_${id}`;
 
 /**
  * Comment DB functions

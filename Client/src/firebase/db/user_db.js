@@ -77,11 +77,11 @@ export const deleteUser = uid =>
     .doc(uid)
     .delete();
 
-export const deleteTmpUser = uid =>
+export const deleteTmpUser = email =>
   firestore
     .collection('tmp-users')
     // .where('uid', '==', uid)
-    .doc(uid)
+    .doc(email)
     .delete();
 
 // export const deleteTmpUserByEmail = email =>
