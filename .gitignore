@@ -40,4 +40,4 @@ api_keys.json
 ngrok
 
 #ignore firebase credentials
-firebase_api_keys.json
+firebase.json
