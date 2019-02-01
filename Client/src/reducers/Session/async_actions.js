@@ -44,6 +44,7 @@ export function updateAuthUser(usr) {
   return (dispatch, getState) => {
     const {authUser} = getState().Session;
     const newUsr = {...authUser, ...usr};
+    console.log('newUsr', newUsr);
     dispatch(setAuthUserInfo(newUsr));
 
     return doCreateUser(newUsr).then(usr => {
@@ -54,24 +55,23 @@ export function updateAuthUser(usr) {
   };
 }
 
-export function signUp({user, password, img, userEnv}) {
+export function signUp({user, password, userEnvId}) {
   const {email, uid} = user;
 
   return dispatch => {
-    // const db = DB(userEnv);
-
     const createUser = profile => {
       const {uid} = profile;
       return readTmpUser(email).then(presetUserInfo => {
-        const {userEnvIds} = presetUserInfo;
-        return doCreateUser({...presetUserInfo, ...profile})
-          .then(authUser => {
-            dispatch(setAuthUserInfo({...authUser}));
+        const {userEnvIds = []} = presetUserInfo;
+        const info = {...presetUserInfo, ...profile};
+        return doCreateUser(info)
+          .then(() => {
+            dispatch(setAuthUserInfo(info));
             // dispatch(setUserEnv(userEnv));
           })
           .then(() =>
             Promise.all(
-              userEnvIds.map(userEnvId =>
+              [userEnvId, ...userEnvIds].map(userEnvId =>
                 addUserToEnv({uid, userEnvId})
               )
             )
@@ -84,36 +84,21 @@ export function signUp({user, password, img, userEnv}) {
       .then(res => {
         const {uid} = res.user;
 
-        console.log('addToStorage', addToStorage);
-
-        const path = `/images/usr/${uid}`;
-        if (img !== null) {
-          return addToStorage({
-            file: img.file,
-            path
-          })
-            .then(imgUrl => {
-              const userAndImg = {...user, uid, photoURL: imgUrl};
-              createUser(userAndImg);
-              deleteTmpUser(email);
-            })
-            .catch(error => {
-              this.setState({error, loading: false});
-            });
-        }
         return createUser({...user, uid}).catch(e => {
-          console.log('err', e);
-          removeFromStorage(path);
-          res.user.delete();
-          readTmpUser(email).then(({userEnvIds}) => {
-            Promise.all(
-              userEnvIds.map(userEnvId =>
-                deleteUserFromEnv({uid, userEnvId})
-              )
-            );
-          });
-          createTmpUser(email);
-          deleteUser(uid);
+          // TODO error handling in firebase function
+          console.log('error', e);
+          // on Error
+          // readTmpUser(email).then(d => {
+          //   const {userEnvIds} = d;
+          //   // console.log('TMPUSER userEnvIds', userEnvIds);
+          //   // Promise.all(
+          //   //   userEnvIds.map(userEnvId =>
+          //   //     deleteUserFromEnv({uid, userEnvId})
+          //   //   )
+          //   // );
+          // });
+          // createTmpUser(email);
+          // deleteUser(uid);
         });
       });
   };

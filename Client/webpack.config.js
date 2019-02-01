@@ -35,7 +35,7 @@ module.exports = {
   module: {
     rules: loaders
   },
-  devtool: 'cheap-module-eval-source-map',
+  devtool: 'eval-source-map',
   devServer: {
     contentBase: './public',
     overlay: true,

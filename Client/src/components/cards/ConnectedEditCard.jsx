@@ -75,21 +75,14 @@ const mapDispatchToProps = dispatch =>
   );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  const {
-    mapViewport,
-    width,
-    height,
-    userEnvId,
-    authUser,
-    topicVocabulary
-  } = state;
+  // Rename topic
+  const {userEnvId, authUser, topicVocabulary} = state;
   const {uid: authorId} = authUser;
 
   // TODO: this is weird, I cannot set defaultProps
   const defProps = {...initCardFields, ...ownProps};
 
   const {
-    match,
     location,
     history,
     id: cardId,
@@ -102,7 +95,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
   // const {userEnv: userEnvId} = match.params;
 
   const {
-    query: {selectedCardId, extended, flipped},
+    query: {extended, flipped},
     routing: {routeFlipCard, routeExtendCard}
   } = cardRoutes({history, location});
 
@@ -153,8 +146,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
       ? topicVocabulary.filter(d => topicValues.includes(d.tagId))
       : [];
 
+  console.log('userEnvId', userEnvId);
   const backCardFuncs = makeBackCardFuncs({
-    userEnv: userEnvId,
+    userEnvId,
     cardId,
     playerId: authorId,
     authorId

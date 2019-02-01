@@ -12,7 +12,7 @@ import {asyncSubmitActivity} from '~/reducers/Cards/async_actions';
 import * as dataViewActions from '~/reducers/DataView/dataViewThunks';
 import MediaChallenge from '~/components/cards/CardFront/FieldTemplates/Activity/TextChallenge';
 
-import DB from '~/firebase/db/card_db';
+import CardDB from '~/firebase/db/card_db';
 
 import cardRoutes from '~/Routes/cardRoutes';
 import {initCardFields} from '~/constants/cardFields';
@@ -90,14 +90,11 @@ CardViewable.defaultProps = {
 //   />
 // ) : (
 
-const mapStateToProps = state => {
-  console.log('state', state);
-  const {userLocation} = state.MapView;
-  const {authUser} = state.Session;
-  const {topicVocabulary} = state.Cards;
-
-  return {userLocation, authUser, topicVocabulary};
-};
+const mapStateToProps = state => ({
+  ...state.Session,
+  ...state.Cards,
+  ...state.MapView
+});
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
@@ -111,7 +108,6 @@ const mapDispatchToProps = dispatch =>
   );
 
 const mergeProps = (state, dispatcherProps, ownProps) => {
-  console.log('ConnectedCard ownProps', ownProps);
   const defProps = {...initCardFields, ...ownProps};
   const {
     location,
@@ -120,16 +116,18 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     id: cardId,
     uid: authorId,
     topics: {value: topicValues},
-    onClose
+    onClose,
   } = defProps;
 
-  const {topicVocabulary, userLocation} = state;
+  const {topicVocabulary,
+
+
+    userEnvId,
+    userLocation} = state;
 
   const {authUser} = state;
   const {uid: playerId} = authUser;
   const {asyncSubmitActivity} = dispatcherProps;
-
-  const {userEnv} = match.params;
 
   const {
     query: {selectedCardId, extended, flipped},
@@ -147,11 +145,12 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
       ...challData,
       playerId,
       cardId,
-      userEnv
+      userEnvId
     });
   };
 
-  const db = DB(userEnv);
+  console.log('userEnvId', userEnvId);
+  const cardDb = CardDB(userEnvId);
 
   const onFlip = routeFlipCard;
 
@@ -161,7 +160,7 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
       : [];
 
   const backCardFuncs = makeBackCardFuncs({
-    userEnv,
+    userEnvId,
     cardId,
     playerId,
     authorId
@@ -173,8 +172,8 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     ...defProps,
     onSubmitActivity,
     ...backCardFuncs,
-    addFileToEnv: db.addFileToEnv,
-    removeFromEnv: db.removeFileFromEnv,
+    addFileToEnv: cardDb.addFileToEnv,
+    removeFromEnv: cardDb.removeFileFromEnv,
     onClose: onClose || closeHandler,
     onFlip,
     flipped,

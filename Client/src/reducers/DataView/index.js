@@ -1,6 +1,6 @@
-import {union} from 'lodash/union';
-import {uniq} from 'lodash/uniq';
-import {difference} from 'lodash/difference';
+import union from 'lodash/union';
+import uniq from 'lodash/uniq';
+import difference from 'lodash/difference';
 
 import {TEMPLATE_ID} from '~/constants/cardTemplate';
 

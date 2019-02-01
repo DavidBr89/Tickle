@@ -75,21 +75,6 @@ const makeCardFuncs = ENV_STR => {
   };
 
   const readCards = ({authorId = null, playerId = null}) => {
-    const thumbnailPromise = d => {
-      const thumbNailRef = storageRef.child(
-        `img/${thumbFileName(d.id)}`
-      );
-
-      return thumbNailRef.getDownloadURL().then(
-        url => ({...d, img: {...d.img, thumbnail: url}}),
-        err => {
-          const img = {...d.img, thumbnail: null};
-          console.log('No thumbnail error', err);
-          return {...d, img};
-        }
-      );
-    };
-
     const activityPromise = c => {
       if (playerId) {
         return activityDB
@@ -122,11 +107,7 @@ const makeCardFuncs = ENV_STR => {
         });
         return tmpData;
       })
-      .then(data =>
-        Promise.all(
-          data.map(e => thumbnailPromise(e).then(activityPromise))
-        )
-      );
+      .then(data => Promise.all(data.map(activityPromise)));
   };
 
   const addFileToEnv = ({file, path}) =>

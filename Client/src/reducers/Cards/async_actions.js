@@ -1,4 +1,3 @@
-
 import uuidv1 from 'uuid/v1';
 
 import CardDB from '~/firebase/db/card_db';
@@ -37,12 +36,13 @@ import {selectCard, extendSelectedCard} from '../DataView/actions';
  * @returns {string} user environment id
  */
 export function fetchCollectibleCards({uid, userEnvId}) {
-  return function(dispatch) {
+  return function(dispatch, getState) {
     const db = new CardDB(userEnvId);
     dispatch(loadingCards(true));
     // TODO: change later with obj params
     return db.readCards({playerId: uid}).then(
       data => {
+        console.log('ZZZ userEnvId', userEnvId, 'uid', uid);
         dispatch(loadingCards(false));
         dispatch(receiveCollectibleCards(data.map(extractCardFields)));
       },
@@ -51,8 +51,8 @@ export function fetchCollectibleCards({uid, userEnvId}) {
   };
 }
 
-export function fetchAllCardsWithSubmissions({userEnvId}) {
-  return function(dispatch, getState) {
+export function fetchAllCardsWithSubmissions(userEnvId) {
+  return function(dispatch) {
     const db = new CardDB(userEnvId);
     dispatch(loadingCards(true));
     return db.readCards().then(data => {

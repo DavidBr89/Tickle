@@ -42,16 +42,13 @@ export default function PhotoUpload(props) {
   const oldId = useMemoize(id);
 
   const makePath = newId => `${folder}/${newId}`;
-  useEffect(
-    () => {
-      if (id !== null && oldId !== null && id !== oldId) {
-        removeFromStorage(makePath(oldId)).then(e =>
-          console.log('remove img success')
-        );
-      }
-    },
-    [id]
-  );
+  useEffect(() => {
+    if (id !== null && oldId !== null && id !== oldId) {
+      removeFromStorage(makePath(oldId)).then(e =>
+        console.log('remove img success')
+      );
+    }
+  }, [id]);
 
   return (
     <div className={`${className} flex flex-col`} style={style}>
@@ -76,7 +73,7 @@ export default function PhotoUpload(props) {
       </div>
       <label
         htmlFor="file-upload"
-        className={`flex-no-shrink btn btn-shadow text-xl mt-3 ${btnClassName}`}
+        className={`flex-no-shrink btn btn-shadow bg-white text-xl mt-3 ${btnClassName}`}
         style={{
           width: '100%',
           display: null,
@@ -95,6 +92,7 @@ export default function PhotoUpload(props) {
         onChange={e => {
           const files = [...e.target.files];
           const {name} = e.target.files[0];
+          // TODO do a type for different file types
           compress
             .compress(files, {
               size: 1.5,

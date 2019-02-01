@@ -65,7 +65,8 @@ const TagGrid = props => {
       {...d}
       key={d.key}
       filterSet={filterSet}
-      onClick={tag => topicFilter({tag, filterSet})}
+      onClick={topic =>
+          topicFilter({topic, filterSet})}
       highlighted={selectedTags.includes(d.key)}
       selected={filterSet.includes(d.key)}>
       {d.key}

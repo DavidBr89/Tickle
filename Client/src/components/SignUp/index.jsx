@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import {Link, withRouter} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
@@ -11,7 +11,7 @@ import * as routes from '~/constants/routeSpec';
 
 import PhotoUpload from '~/components/utils/PhotoUpload';
 
-import {signUp} from '~/reducers/Session/async_actions';
+import * as sessionActions from '~/reducers/Session/async_actions';
 import {SelectTags} from '~/components/utils/SelectField';
 import {PrevBtn, NextBtn} from '~/components/utils/PrevNextBtn';
 import styledComp from '~/components/utils/styledComp';
@@ -23,6 +23,10 @@ import useMergeState from '~/components/utils/useMergeState';
 
 import backgroundUrl from './signup_background.png';
 
+import validateEmail from '~/components/utils/validateEmail';
+
+const EMAIL_ALREADY_IN_USE = 'auth/email-already-in-use';
+
 const SignUpPage = ({match, ...props}) => {
   const {params} = match;
   const {admin, userEnv} = params;
@@ -30,11 +34,13 @@ const SignUpPage = ({match, ...props}) => {
 
   return (
     <DefaultLayout
-      style={{
-        backgroundImage: `url("${backgroundUrl}")`,
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: 'cover'
-      }}
+      style={
+        {
+          // backgroundImage: `url("${backgroundUrl}")`,
+          // backgroundRepeat: 'no-repeat',
+          // backgroundSize: 'cover'
+        }
+      }
       menu={
         <div className="absolute w-full flex justify-center">
           <h1>
@@ -43,11 +49,11 @@ const SignUpPage = ({match, ...props}) => {
           </h1>
         </div>
       }>
-      <div className="content-margin overflow-scroll flex flex-col flex-grow">
+      <div className="overflow-scroll flex flex-col flex-grow justify-end">
         <SignUpForm
-          className="flex-grow"
+          className="flex-grow flex flex-col"
           {...props}
-          userEnv={userEnv}
+          userEnvId={userEnv}
           admin={isAdmin}
         />
       </div>
@@ -66,7 +72,8 @@ SignUpPage.defaultProps = {
 const INITIAL_STATE = {
   username: '',
   email: '',
-  fullname: null,
+  firstName: null,
+  lastName: null,
   passwordOne: '',
   passwordTwo: '',
   error: null,
@@ -75,18 +82,35 @@ const INITIAL_STATE = {
   loading: false
 };
 
+const StyledInput = ({style, className, children, ...rest}) => (
+  <div className={className} style={style}>
+    <input
+      className="w-full form-control flex-grow mb-3 text-2xl"
+      {...rest}
+    />
+  </div>
+);
 // 'form-control flex-grow mb-3 text-2xl'
-const StyledInput = styledComp({
-  element: 'input',
-  className: 'form-control flex-grow mb-3 text-2xl'
-});
+// const StyledInput = styledComp({
+//   element: 'input',
+//   className: 'form-control flex-grow mb-3 text-2xl'
+// });
 
-const FormGroup = styledComp({
-  element: 'div',
-  className: 'flex flex-col flex-wrap mb-3 flex-no-shrink'
-});
+const FormGroup = ({style, className, children, ...rest}) => (
+  <div
+    className={`flex flex-col flex-wrap mb-3 flex-grow flex-no-shrink justify-end ${className}`}
+    style={style}>
+    <div className="w-full px-16 py-4">{children}</div>
+  </div>
+);
 
-const prevNextClass = 'text-xl p-1';
+// const FormGroup = styledComp({
+//   element: 'div',
+//   className:
+//     'flex flex-col flex-wrap mb-3 flex-grow flex-no-shrink justify-end'
+// });
+//
+const prevNextClass = 'bg-white w-full text-xl p-1';
 const StyledPrevBtn = styledComp({
   element: PrevBtn,
   className: prevNextClass
@@ -101,14 +125,21 @@ const SignUpForm = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [visibleTabIndex, setVisibleTabIndex] = useState(0);
-  const [userProfileState, setUserProfileState] = useMergeState(
-    INITIAL_STATE
-  );
+  const [userProfile, setUserProfile] = useMergeState(INITIAL_STATE);
 
-  const {history, admin, signUp, userEnv, className} = props;
+  const {
+    history,
+    admin,
+    signUp,
+    updateAuthUser,
+    userEnvId,
+    className
+  } = props;
 
-  const goNextIndex = () =>
+  const goNextIndex = () => {
     setVisibleTabIndex(Math.min(4, visibleTabIndex + 1));
+    setError(null);
+  };
   const goPrevIndex = () =>
     setVisibleTabIndex(Math.max(0, visibleTabIndex - 1));
 
@@ -118,36 +149,36 @@ const SignUpForm = props => {
     passwordOne,
     passwordTwo,
     img,
-    fullname,
+    firstName,
+    lastName,
     interests
-  } = userProfileState;
-
-  const user = {
-    username,
-    email,
-    fullname,
-    admin,
-    interests
-  };
+  } = userProfile;
 
   const onSubmit = event => {
     event.preventDefault();
+    if (passwordOne !== passwordTwo)
+      return setError({message: 'Password is not correct'});
 
     setIsLoading(true);
 
     signUp({
-      user,
+      user: userProfile,
       img,
-      userEnv,
+      userEnvId,
       password: passwordOne
     })
       .then(() => {
-        // setUserProfileState(() => ({...INITIAL_STATE}));
-        history.push(`/${userEnv}/${routes.GEO_VIEW.path}`);
+        goNextIndex();
+        // setUserProfile(() => ({...INITIAL_STATE}));
       })
-      .catch(newError => {
+      .catch(err => {
         setIsLoading(false);
-        setError(newError);
+        console.log('newError', err);
+        if (err.code === EMAIL_ALREADY_IN_USE) {
+          setVisibleTabIndex(1);
+        }
+
+        setError(err);
       });
 
     event.preventDefault();
@@ -159,49 +190,67 @@ const SignUpForm = props => {
     email === '' ||
     username === '';
 
-  console.log('userProfileState', userProfileState);
   return (
     <form onSubmit={onSubmit} className={`${className} flex flex-col`}>
-      <PhotoUpload
-        className="flex-grow mb-2"
-        imgUrl={img.url}
-        onChange={newImg => {
-          setUserProfileState({img: newImg});
-        }}
-      />
+      {!error && isLoading && (
+        <div className="m-auto" style={{fontSize: 'large'}}>
+          Loading...
+        </div>
+      )}
+
+      {error && <div className="m-6 alert">{error.message}</div>}
       <TabSwitcher
         visibleIndex={visibleTabIndex}
-        className="flex-no-shrink flex flex-col">
-        <FormGroup>
+        className="flex-no-shrink flex flex-col"
+        tabClassName="flex-grow justify-end">
+        <FormGroup
+          style={{
+            backgroundImage: `url("${backgroundUrl}")`,
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover'
+          }}>
           <StyledInput
-            value={fullname || ''}
-            onChange={event => setUserProfileState(event.target.value)}
+            value={firstName}
+            onChange={event =>
+              setUserProfile({firstName: event.target.value})
+            }
             type="text"
             placeholder="First Name"
           />
           <StyledInput
-            value={fullname || ''}
-            onChange={event => setUserProfileState(event.target.value)}
+            value={lastName}
+            onChange={event =>
+              setUserProfile({lastName: event.target.value})
+            }
             type="text"
             placeholder="Last name"
           />
-          <StyledNextBtn onClick={goNextIndex}>
+          <StyledNextBtn
+            onClick={() => {
+              if (firstName && lastName) {
+                goNextIndex();
+              } else {
+                setError({
+                  message: 'Please specifiy first or lastName!'
+                });
+              }
+            }}>
             Enter Email
           </StyledNextBtn>
         </FormGroup>
         <FormGroup>
           <StyledInput
             value={email}
-            onChange={event =>
-              setUserProfileState({email: event.target.value})
-            }
-            type="text"
+            onChange={event => {
+              setUserProfile({email: event.target.value});
+            }}
+            type="email"
             placeholder="Email Address"
           />
           <StyledInput
             value={username}
             onChange={event =>
-              setUserProfileState({username: event.target.value})
+              setUserProfile({username: event.target.value})
             }
             type="text"
             placeholder="Username"
@@ -212,7 +261,16 @@ const SignUpForm = props => {
               onClick={goPrevIndex}>
               Enter Name
             </StyledPrevBtn>
-            <StyledNextBtn className="flex-grow" onClick={goNextIndex}>
+            <StyledNextBtn
+              className="flex-grow"
+              onClick={() => {
+                if (username && validateEmail(email)) {
+                  return goNextIndex();
+                }
+                setError({
+                  message: 'email or username is not correct'
+                });
+              }}>
               Enter Interests
             </StyledNextBtn>
           </div>
@@ -225,7 +283,7 @@ const SignUpForm = props => {
             className="flex-grow"
             idAcc={d => d.id}
             onChange={tag =>
-              setUserProfileState({
+              setUserProfile({
                 interests: uniq([...interests, tag])
               })
             }
@@ -249,7 +307,11 @@ const SignUpForm = props => {
               onClick={goPrevIndex}>
               Enter Email
             </StyledPrevBtn>
-            <StyledNextBtn className="flex-grow" onClick={goNextIndex}>
+            <StyledNextBtn
+              className="flex-grow"
+              onClick={() => {
+                goNextIndex();
+              }}>
               Enter Password
             </StyledNextBtn>
           </div>
@@ -258,7 +320,7 @@ const SignUpForm = props => {
           <StyledInput
             value={passwordOne}
             onChange={event =>
-              setUserProfileState({passwordOne: event.target.value})
+              setUserProfile({passwordOne: event.target.value})
             }
             type="password"
             placeholder="Password"
@@ -266,36 +328,38 @@ const SignUpForm = props => {
           <StyledInput
             value={passwordTwo}
             onChange={event =>
-              setUserProfileState({passwordTwo: event.target.value})
+              setUserProfile({passwordTwo: event.target.value})
             }
             type="password"
             placeholder="Confirm Password"
           />
           <div className="flex ">
-            <StyledPrevBtn
-              className="mr-2"
-              style={{flexGrow: 0.3}}
-              onClick={goPrevIndex}>
+            <StyledPrevBtn className="mr-2" onClick={goPrevIndex}>
               Enter Interests
             </StyledPrevBtn>
-            <button
-              style={{flexGrow: 0.7}}
-              className="flex-grow btn border-btn text-xl"
-              disabled={isInvalid}
-              type="submit">
+            <StyledNextBtn
+              type="submit
+              ">
               Sign Up
-            </button>
+            </StyledNextBtn>
           </div>
         </FormGroup>
+        <FormGroup className="flex-grow flex flex-col">
+          <PhotoUpload
+            className="flex-grow mb-2"
+            {...img}
+            onChange={newImg => {
+              updateAuthUser({img: newImg});
+              setUserProfile({img: newImg});
+            }}
+          />
+          <StyledNextBtn
+            className="mr-2"
+            onClick={() => history.push(`/${routes.GEO_VIEW.path}`)}>
+            Go!
+          </StyledNextBtn>
+        </FormGroup>
       </TabSwitcher>
-      {error && (
-        <div className="ml-2 alert alert-danger">{error.message}</div>
-      )}
-      {!error && isLoading && (
-        <div clasName="ml-2" style={{fontSize: 'large'}}>
-          Loading...
-        </div>
-      )}
     </form>
   );
 };
@@ -316,7 +380,7 @@ const SignUpLink = ({userEnv}) => (
 );
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({signUp}, dispatch);
+  bindActionCreators(sessionActions, dispatch);
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...stateProps,

@@ -1,8 +1,8 @@
 import CardDb from '~/firebase/db/card_db';
 import {getDetailedUserInfo} from '~/firebase/db';
 
-export default ({userEnv, cardId, playerId, authorId}) => {
-  const db = CardDb(userEnv);
+export default ({userEnvId, cardId, playerId, authorId}) => {
+  const db = CardDb(userEnvId);
 
   const commentPromises = db.readComments(cardId);
   const addComment = text =>
@@ -10,7 +10,7 @@ export default ({userEnv, cardId, playerId, authorId}) => {
 
   const authorDataPromise = getDetailedUserInfo({
     uid: authorId,
-    userEnvId: userEnv
+    userEnvId: userEnvId
   });
 
   return {

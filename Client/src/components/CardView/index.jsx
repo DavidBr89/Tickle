@@ -141,8 +141,9 @@ const mergeProps = (state, dispatcherProps, ownProps) => {
     });
   };
 
+  console.log('filterSet', filterSet);
   const filteredCards = collectibleCards
-    .filter(d => isSubset(d.topics.value, filterSet))
+    .filter(d => filterSet.length === 0 || isSubset(d.topics.value, filterSet))
     .map(c => {
       const accessible = true; // visible;
 
