@@ -1,8 +1,12 @@
 const webpack = require('webpack');
 const path = require('path');
-const loaders = require('./webpack.loaders');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ErrorOverlayPlugin = require('error-overlay-webpack-plugin');
+// To generate a manifest file
+const WebpackPwaManifest = require('webpack-pwa-manifest');
+// To create service workers and notifications and so on
+const WorkboxPlugin = require('workbox-webpack-plugin');
+const loaders = require('./webpack.loaders');
 // const { CheckerPlugin } = require('awesome-typescript-loader')
 
 const apiTokens = require('./api_keys.json');
@@ -74,6 +78,32 @@ module.exports = {
       'process.env.NODE_ENV': JSON.stringify('development')
       // 'process.env.BABEL_ENV': JSON.stringify('development')
     }),
-    new ErrorOverlayPlugin()
+    new ErrorOverlayPlugin(),
+    new WebpackPwaManifest({
+      short_name: 'Tickle',
+      name: 'Tickle',
+      start_url: '.',
+      display: 'standalone',
+      gcm_sender_id: '103953800507',
+      inject: true,
+      icons: [
+        {
+          src: path.resolve('src/styles/tickle.png'),
+          sizes: [36, 48, 72, 96, 144, 192, 512],
+          destination: path.join('icons', 'android')
+        },
+        {
+          src: path.resolve('src/styles/tickle.png'),
+          size: 144
+        }
+      ],
+      scope: '.',
+      background_color: '#231F20',
+      theme_color: '#231F20'
+    }),
+    new WorkboxPlugin.InjectManifest({
+      swSrc: path.join('src', 'firebase-messaging-sw.js'),
+      globPatterns: ['dist/*.{js,png,html,css}']
+    })
   ]
 };

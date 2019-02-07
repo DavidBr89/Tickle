@@ -1,0 +1,9 @@
+{
+    "short_name": "Tickle",
+    "name": "Tickle",
+    "start_url": "/",
+    "background_color": "#3367D6",
+    "display": "standalone",
+    "theme_color": "#3367D6",
+    "gcm_sender_id": "103953800507"
+}
